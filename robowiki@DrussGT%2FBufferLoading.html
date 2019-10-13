@@ -1,0 +1,220 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>DrussGT/BufferLoading - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Druss, GT/Buffer, Loading'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/BufferLoading">DrussGT/BufferLoading</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>The new buffer loading technique that will (hopefully) meet the approval of certain fellow Robocoders ;-)
+<p>
+<pre>
+     public void loadStatBuffers(){
+         float[] empty = {};
+       
+         float[] velSlicesRough = {2f ,4f ,6f};
+         float[] velSlices = {1f ,3f ,5f ,7f};
+         float[] velSlicesFine = {1f ,2f ,3f ,4f ,5f ,6f ,7f ,8f};
+      
+         float[] bftSlicesRough = {20f ,40f ,60f};
+         float[] bftSlices = {15f , 30f , 45f , 65f};
+         float[] bftSlicesFine = {6f , 10f , 25f , 34f , 42f , 50f , 58f , 66f};
+         
+         float[] tsdcSlicesRough = {0.25f ,0.5f ,0.75f};
+         float[] tsdcSlices = {0.2f ,0.4f ,0.6f ,0.8f};
+         float[] tsdcSlicesFine = {0.1f ,0.2f ,0.3f ,0.4f ,0.5f ,0.6f ,0.8f};
+         
+         float[] accelSlices = {-0.4f ,0.4f};
+         
+         float[] tsvcSlicesRough = {0.15f ,0.357f ,0.75f};
+         float[] tsvcSlices = {0.1f ,0.2f ,0.4f ,0.8f};
+         float[] tsvcSlicesFine = {0.05f ,0.1f ,0.16f ,0.2f ,0.4f ,0.6f ,0.85f};
+         
+         float[] dl10SlicesRough = {7.5f ,20f ,50f};
+         float[] dl10Slices = {5f ,10f ,20f ,35f ,50f ,57.5f};
+         float[] dl10SlicesFine = {4f ,7.5f ,12.5f ,22.5f ,30f ,37.5f ,52.5f ,60f};
+         
+         float[] wallSlicesRough = {0.33f , 0.66f};
+         float[] wallSlices = {0.25f , 0.5f , 0.75f};         
+      
+         float[][][] sets = new float[][][]	{
+               {empty,empty,empty,empty,empty,empty, empty, empty},
+               {velSlicesRough,empty,empty,empty,empty,empty, empty, empty},
+               {velSlices,empty,empty,empty,empty,empty, empty, empty},
+               {velSlices, bftSlicesRough, empty, empty, tsvcSlices, empty, empty, empty},
+               {velSlicesFine, bftSlicesFine, tsdcSlicesFine, empty, empty, dl10SlicesFine, empty, empty},
+               {velSlices, empty, tsdcSlicesFine, accelSlices, tsvcSlices, empty, empty, empty},
+               {velSlicesFine, empty, tsdcSlicesFine, empty, tsvcSlicesRough, empty, empty, empty},
+               {velSlices, bftSlicesFine, tsdcSlicesFine, empty, empty, dl10SlicesFine, empty, empty},
+               {velSlicesFine, empty, tsdcSlicesFine, empty, tsvcSlicesFine, dl10SlicesRough, empty, empty},
+               {velSlicesRough, empty, tsdcSlicesFine, empty, empty, empty, empty, empty},
+               {empty, bftSlicesFine, tsdcSlices, accelSlices, empty, empty, empty, empty},
+               {empty, bftSlicesRough, empty, empty, tsvcSlicesFine, empty, empty, wallSlicesRough},
+               {empty, bftSlicesRough, empty, accelSlices, tsvcSlices, empty, empty, wallSlicesRough},
+               {velSlices, bftSlicesFine, tsdcSlices, empty, tsvcSlicesFine, empty, empty, empty},
+               {velSlicesFine, bftSlicesFine, empty, accelSlices, empty, empty, empty, empty},
+               {velSlices, empty, tsdcSlices, empty, empty, dl10SlicesFine, wallSlices, empty},
+               {velSlicesFine, empty, empty, accelSlices, tsvcSlices, empty, empty, empty},
+               {empty, empty, empty, empty, tsvcSlicesFine, empty, wallSlices, empty},
+               {empty, bftSlices, empty, accelSlices, empty, dl10Slices, wallSlicesRough, empty},
+               {velSlices, empty, empty, empty, tsvcSlicesRough, dl10SlicesRough, wallSlices, empty},
+               {velSlicesFine, empty, tsdcSlicesFine, empty, tsvcSlices, empty, wallSlicesRough, empty},
+               {velSlices, bftSlicesFine, tsdcSlicesFine, empty, empty, empty, empty, empty},
+               {empty, bftSlicesFine, tsdcSlices, accelSlices, empty, empty, empty, wallSlicesRough},
+               {velSlices, empty, tsdcSlicesRough, empty, empty, dl10Slices, empty, empty},
+               {velSlicesFine, empty, tsdcSlices, empty, tsvcSlicesRough, dl10SlicesFine, empty, empty},
+               {velSlices, empty, empty, empty, empty, dl10SlicesRough, empty, empty},
+               {velSlicesRough, empty, tsdcSlices, empty, empty, empty, wallSlicesRough, empty},
+               {velSlicesFine, empty, empty, empty, tsvcSlices, empty, empty, wallSlicesRough},
+               {velSlices, empty, tsdcSlicesRough, empty, empty, dl10SlicesFine, wallSlices, empty},
+               {velSlicesFine, bftSlices, empty, empty, empty, dl10Slices, empty, empty},
+               {velSlicesRough, bftSlices, empty, empty, tsvcSlicesFine, dl10Slices, empty, empty},
+               {velSlicesFine, empty, empty, empty, empty, dl10Slices, empty, wallSlicesRough},
+               {velSlices, bftSlicesRough, empty, empty, empty, dl10SlicesFine, empty, empty},
+               {velSlicesRough, empty, empty, empty, empty, empty, wallSlicesRough, empty},
+               {velSlicesRough, bftSlicesFine, empty, empty, empty, empty, empty, wallSlicesRough},
+               {velSlicesRough, bftSlicesFine, empty, empty, tsvcSlices, empty, empty, empty},
+               {velSlices, bftSlicesFine, empty, empty, empty, empty, empty, empty},
+               {velSlicesFine, empty, empty, empty, tsvcSlices, dl10Slices, empty, empty},
+               {empty, empty, tsdcSlicesFine, accelSlices, tsvcSlicesFine, empty, wallSlicesRough, empty},
+               {velSlicesFine, empty, empty, accelSlices, tsvcSlicesRough, empty, empty, empty},
+               {velSlicesFine, empty, tsdcSlicesFine, empty, tsvcSlicesFine, empty, empty, empty},
+               {velSlicesRough, empty, empty, accelSlices, tsvcSlicesFine, dl10SlicesRough, empty, empty},
+               {velSlices, bftSlices, tsdcSlicesRough, empty, empty, empty, empty, empty},
+               {velSlicesRough, bftSlices, empty, accelSlices, empty, empty, empty, empty},
+               {velSlicesFine, bftSlicesFine, empty, empty, empty, dl10SlicesFine, wallSlicesRough, empty},
+               {velSlicesRough, bftSlicesFine, empty, accelSlices, empty, empty, wallSlices, empty},
+               {empty, empty, empty, accelSlices, tsvcSlicesRough, empty, wallSlicesRough, wallSlicesRough},
+               {velSlices, empty, empty, empty, tsvcSlicesRough, empty, empty, wallSlicesRough},
+               {velSlicesRough, bftSlicesRough, empty, empty, tsvcSlices, empty, wallSlicesRough, empty},
+               {velSlicesFine, bftSlicesFine, tsdcSlicesFine, empty, empty, empty, empty, empty},
+               {empty, bftSlicesFine, empty, accelSlices, tsvcSlices, dl10Slices, empty, empty},
+               {velSlicesRough, bftSlicesFine, empty, empty, tsvcSlices, empty, wallSlices, empty},
+               {velSlices, bftSlicesFine, empty, empty, empty, empty, wallSlices, empty},
+               {velSlices, empty, empty, empty, empty, dl10SlicesFine, empty, wallSlicesRough},
+               {empty, bftSlicesRough, tsdcSlices, accelSlices, tsvcSlicesFine, empty, empty, empty},
+               {velSlicesFine, bftSlicesRough, empty, accelSlices, empty, dl10Slices, empty, empty},
+               {velSlicesFine, empty, tsdcSlicesRough, empty, empty, dl10Slices, empty, empty},
+               {velSlicesFine, bftSlicesRough, empty, empty, empty, dl10SlicesFine, empty, empty},
+               {velSlicesFine, bftSlicesFine, empty, empty, empty, empty, empty, empty},
+               {velSlicesRough, bftSlicesFine, empty, empty, empty, empty, empty, wallSlicesRough},
+               {velSlicesRough, bftSlices, empty, empty, tsvcSlicesRough, empty, wallSlices, empty},
+               {velSlicesFine, empty, empty, accelSlices, tsvcSlices, empty, wallSlicesRough, empty},
+               {empty, empty, tsdcSlicesRough, empty, empty, empty, wallSlices, empty},
+               {velSlices, bftSlices, empty, empty, tsvcSlices, empty, wallSlices, empty},
+               {velSlicesRough, bftSlicesRough, empty, empty, empty, dl10SlicesRough, empty, empty},
+               {velSlicesRough, empty, empty, empty, tsvcSlicesRough, empty, wallSlicesRough, empty},
+               {velSlicesRough, bftSlicesRough, empty, empty, tsvcSlices, empty, empty, empty},
+               {empty, empty, empty, accelSlices, tsvcSlices, dl10SlicesRough, wallSlicesRough, empty},
+               {velSlices, empty, tsdcSlices, accelSlices, empty, empty, wallSlicesRough, empty},
+               {empty, empty, empty, accelSlices, tsvcSlicesFine, empty, wallSlicesRough, wallSlicesRough},
+               {velSlicesFine, bftSlicesFine, empty, empty, empty, empty, wallSlicesRough, empty},
+               {velSlicesFine, bftSlicesFine, empty, empty, empty, empty, empty, wallSlicesRough},
+               {velSlicesRough, bftSlicesFine, empty, empty, tsvcSlices, empty, wallSlicesRough, empty},
+               {velSlices, empty, tsdcSlicesRough, empty, tsvcSlicesFine, empty, empty, empty},
+               {velSlices, empty, empty, empty, empty, empty, wallSlicesRough, wallSlicesRough},
+               {empty, bftSlicesRough, empty, empty, empty, dl10SlicesFine, wallSlicesRough, empty},
+               {velSlicesFine, empty, tsdcSlicesRough, accelSlices, empty, empty, wallSlicesRough, empty},
+               {velSlicesRough, bftSlices, empty, empty, tsvcSlices, dl10Slices, empty, empty},
+               {velSlicesFine, bftSlicesRough, empty, empty, tsvcSlicesFine, dl10SlicesRough, empty, empty},
+               {velSlicesFine, empty, empty, empty, empty, dl10SlicesRough, empty, empty},
+               {velSlicesRough, empty, empty, empty, tsvcSlicesRough, dl10SlicesFine, wallSlicesRough, empty},
+               {velSlicesFine, bftSlicesRough, tsdcSlicesRough, empty, empty, empty, empty, wallSlicesRough},
+               {velSlicesRough, empty, empty, accelSlices, empty, empty, empty, wallSlicesRough},
+               {empty, bftSlicesRough, tsdcSlicesRough, empty, empty, empty, empty, wallSlicesRough},
+               {velSlicesRough, bftSlices, empty, accelSlices, empty, empty, wallSlicesRough, empty},
+               {velSlicesFine, empty, empty, empty, empty, dl10SlicesFine, empty, empty},
+               {velSlices, empty, tsdcSlicesFine, empty, empty, empty, wallSlices, empty},
+               {velSlices, empty, empty, empty, empty, empty, wallSlices, empty},
+               {velSlicesRough, bftSlicesRough, tsdcSlicesRough, empty, empty, empty, wallSlicesRough, empty},
+               {velSlices, bftSlicesFine, empty, empty, tsvcSlices, empty, empty, empty},
+               {velSlicesRough, empty, tsdcSlicesFine, empty, empty, empty, empty, wallSlicesRough},
+               {empty, bftSlicesRough, empty, accelSlices, tsvcSlicesFine, empty, empty, wallSlicesRough},
+               {empty, bftSlicesRough, empty, empty, tsvcSlices, empty, wallSlices, empty},
+               {velSlices, empty, tsdcSlices, empty, tsvcSlicesFine, empty, empty, empty},
+               {velSlices, empty, tsdcSlices, accelSlices, empty, empty, empty, empty},
+               {velSlices, empty, empty, accelSlices, empty, empty, empty, empty},
+               {velSlicesFine, bftSlicesRough, empty, empty, empty, empty, empty, empty},
+               {empty, bftSlicesFine, empty, empty, empty, empty, wallSlicesRough, empty},
+               {velSlices, bftSlicesFine, empty, empty, empty, dl10Slices, wallSlices, empty},
+               {velSlicesFine, empty, tsdcSlices, accelSlices, empty, dl10SlicesRough, empty, empty},
+               {velSlicesFine, bftSlicesRough, empty, empty, empty, empty, wallSlicesRough, wallSlicesRough},
+               {velSlicesFine, empty, tsdcSlicesFine, accelSlices, empty, empty, wallSlices, empty},
+               {empty, bftSlices, tsdcSlicesFine, accelSlices, empty, empty, empty, empty}
+               };       
+                    
+         float[][][] flatSets = new float[][][] {{velSlicesFine, bftSlicesRough, empty, accelSlices, empty, dl10Slices, empty, empty},
+               {velSlicesFine, empty, tsdcSlicesRough, empty, empty, dl10Slices, empty, empty},
+               {velSlicesFine, bftSlicesRough, empty, empty, empty, dl10SlicesFine, empty, empty},
+               {velSlicesFine, bftSlicesFine, empty, empty, empty, empty, empty, empty},
+               {velSlicesRough, bftSlicesFine, empty, empty, empty, empty, empty, wallSlicesRough},
+               {velSlicesRough, bftSlices, empty, empty, tsvcSlicesRough, empty, wallSlices, empty},
+               {velSlicesFine, empty, empty, accelSlices, tsvcSlices, empty, wallSlicesRough, empty},
+               {empty, empty, tsdcSlicesRough, empty, empty, empty, wallSlices, empty},
+               {velSlices, bftSlices, empty, empty, tsvcSlices, empty, wallSlices, empty},
+               {velSlicesRough, bftSlicesRough, empty, empty, empty, dl10SlicesRough, empty, empty},
+               {velSlicesRough, empty, empty, empty, tsvcSlicesRough, empty, wallSlicesRough, empty},
+               {velSlicesRough, bftSlicesRough, empty, empty, tsvcSlices, empty, empty, empty},
+               {empty, empty, empty, accelSlices, tsvcSlices, dl10SlicesRough, wallSlicesRough, empty},
+               {velSlices, empty, tsdcSlices, accelSlices, empty, empty, wallSlicesRough, empty},
+               {empty, empty, empty, accelSlices, tsvcSlicesFine, empty, wallSlicesRough, wallSlicesRough},
+               {velSlicesFine, bftSlicesFine, empty, empty, empty, empty, wallSlicesRough, empty},
+               {velSlicesFine, bftSlicesFine, empty, empty, empty, empty, empty, wallSlicesRough},
+               {velSlicesRough, bftSlicesFine, empty, empty, tsvcSlices, empty, wallSlicesRough, empty},
+               {velSlices, empty, tsdcSlicesRough, empty, tsvcSlicesFine, empty, empty, empty},
+               {velSlices, empty, empty, empty, empty, empty, wallSlicesRough, wallSlicesRough},
+               {empty, bftSlicesRough, empty, empty, empty, dl10SlicesFine, wallSlicesRough, empty},
+               {velSlicesFine, empty, tsdcSlicesRough, accelSlices, empty, empty, wallSlicesRough, empty},
+               {velSlicesRough, bftSlices, empty, empty, tsvcSlices, dl10Slices, empty, empty},
+               {velSlicesFine, bftSlicesRough, empty, empty, tsvcSlicesFine, dl10SlicesRough, empty, empty},
+               {velSlicesFine, empty, empty, empty, empty, dl10SlicesRough, empty, empty},
+               {velSlicesRough, empty, empty, empty, tsvcSlicesRough, dl10SlicesFine, wallSlicesRough, empty},
+               {velSlicesFine, bftSlicesRough, tsdcSlicesRough, empty, empty, empty, empty, wallSlicesRough},
+               {velSlicesRough, empty, empty, accelSlices, empty, empty, empty, wallSlicesRough},
+               {empty, bftSlicesRough, tsdcSlicesRough, empty, empty, empty, empty, wallSlicesRough},
+               {velSlicesRough, bftSlices, empty, accelSlices, empty, empty, wallSlicesRough, empty},
+               {velSlicesFine, empty, empty, empty, empty, dl10SlicesFine, empty, empty},
+               {velSlices, empty, tsdcSlicesFine, empty, empty, empty, wallSlices, empty},
+               {velSlices, empty, empty, empty, empty, empty, wallSlices, empty},
+               {velSlicesRough, bftSlicesRough, tsdcSlicesRough, empty, empty, empty, wallSlicesRough, empty},
+               {velSlices, bftSlicesFine, empty, empty, tsvcSlices, empty, empty, empty},
+               {velSlicesRough, empty, tsdcSlicesFine, empty, empty, empty, empty, wallSlicesRough},
+               {empty, bftSlicesRough, empty, accelSlices, tsvcSlicesFine, empty, empty, wallSlicesRough},
+               {empty, bftSlicesRough, empty, empty, tsvcSlices, empty, wallSlices, empty},
+               {velSlices, empty, tsdcSlices, empty, tsvcSlicesFine, empty, empty, empty},
+               {velSlices, empty, tsdcSlices, accelSlices, empty, empty, empty, empty},
+               {velSlices, empty, empty, accelSlices, empty, empty, empty, empty},
+               {velSlicesFine, bftSlicesRough, empty, empty, empty, empty, empty, empty},
+               {empty, bftSlicesFine, empty, empty, empty, empty, wallSlicesRough, empty},
+               {velSlices, bftSlicesFine, empty, empty, empty, dl10Slices, wallSlices, empty},
+               {velSlicesFine, empty, tsdcSlices, accelSlices, empty, dl10SlicesRough, empty, empty},
+               {velSlicesFine, bftSlicesRough, empty, empty, empty, empty, wallSlicesRough, wallSlicesRough},
+               {velSlicesFine, empty, tsdcSlicesFine, accelSlices, empty, empty, wallSlices, empty},
+               {empty, bftSlices, tsdcSlicesFine, accelSlices, empty, empty, empty, empty}};
+               
+         putBuffersInto(sets,statBuffers);
+         putBuffersInto(flatSets,flattenerBuffers);
+         
+      			
+      }
+      
+       private static void putBuffersInto(float[][][] sets, ArrayList buffers){
+         for(int i = 0; i &lt; sets.length; i++){
+            float[][] set = sets[i];
+            buffers.add(new StatBuffer(set[0],set[1],set[2],set[3],set[4],set[5],set[6],set[7]));
+         }
+      
+      }
+</pre>
+<p>
+And what's more it has less semicolons ;-) Anything else that you see which needs immediate improvement? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+I think the number of hand-coded buffers is still something only a madman would make, but besides that it looks fine to me =P -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Yeah yeah... but you see, I don't have a comp-sci background, so I can't implement any of your fancy linear regression neural nets (or whatever they are). I just go with brute force. I figure that if I have more buffers in my bot than you, it'll be a better bot than yours against a larger number of bots. So far this method seems to have worked =) Instead I can focus on doing what I do best, optimizing algorithms in my bot to prevent it from skipping turns when I put all these buffers in there. I took a similar line of thought with my gun with its 10 dimensions, 2 aiming techniques and 100 extracted scans. Intuitively, I don't think this method will work quite as well with an antisurfer gun, though. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Eh, well those neural nets are kind of failing to work right now. I'm not quite sure the advantages I was seeing were simply that it made the movement more confusing to learning guns, and for that I'd be better off with a flattener. I'm now switching to plain linear regression because that should give more reliable results than the silly neural mess. One note though, is that while our perferred approaches are different, they are both are ways of extracting more meaningful stats from the same raw data. Just as your numerous buffers show more information, my "guessfactor readjustment" approach also attempts to extract more meaningful stats from the raw data (by attempting to interpolate better guessfactors, instead of weighting dissimilar situations lower). In any case, your bot is on top (for now), so your approach does certainly work =) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=DrussGT/BufferLoading" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=DrussGT/BufferLoading">View other revisions</a><br>Last edited June 10, 2008 20:08 EST by <a href="robowiki?Rednaxela" title="ID 13292 from d198-53-128-24.abhsia.telus.net">Rednaxela</a> <a href="robowiki?action=browse&diff=1&id=DrussGT/BufferLoading">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

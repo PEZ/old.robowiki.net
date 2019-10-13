@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>DataBullet - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Data, Bullet'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=DataBullet">DataBullet</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>You store some information in your fired bullet. Later you retrieve some information from it. I have dreamed about a "tag" member variable or so in my fired bullets.
+<p>
+This involves some encoding/decoding schemes.
+<p>
+<H3>Example</H3>
+
+<pre>
+//fires at random
+double bearingOffset = Math.signum(e.getVelocity()) * (Math.random() * 10 - 2) / 11.0 * Math.sin(e.getHeadingRadians() - enemyAbsoluteBearing);
+setTurnGunRightRadians(Utils.normalRelativeAngle(enemyAbsoluteBearing - getGunHeadingRadians() + bearingOffset));
+setFire(2 + bearingOffset);
+
+..
+
+	public void onBulletHit(BulletHitEvent e) {
+		double visitedBearingOffset = e.getBullet().getPower() - 2;
+		out.println("hit: " + visitedBearingOffset);
+	}
+
+</pre>
+I once encoded bearingOffset like this: <pre>setFire(bearingOffset * 100);</pre> But it varied <a href="robowiki?BulletTravelTime" class=wikipagelink>BulletTravelTime</a>.
+You can encode informations whatever you want like this way. e.g. using truncation, fraction digit range x-y is velocity, x2-y2 is heading, etc. 
+Tricky!! Hahaha! But after some test, this method is proved unuseful by me at the moment. This is sort of ActualBullets<a href="robowiki?action=edit&id=ActualBullets" class=wikipageedit>?</a> (contrary to <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>) and slow learing.
+<p>
+You can minimize side effects by reducing magnitude of the data. For example, instead of <pre>setFire(2 + bearingOffset);</pre>, <pre>setFire(2 + bearingOffset / 100);</pre> And when retrieving, <pre>visitedBearingOffset = (e.getBullet().getPower() - 2) * 100;</pre>
+<p>
+-- <a href="robowiki?Stelokim" class=wikipagelink>Stelokim</a>
+<p>
+That would limit you to about 30 or so angles, as bullet power is stored as a number with a single decimal place between 0.1 and 3. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Not really. Bullet power has not only a single decimal place. Its minimum is 0.1 but it has type <code>double</code>'s precision. Also check out <a href="robowiki?MaxEscapeAngle" class=wikipagelink>MaxEscapeAngle</a>. And use divisor 1000, 10000, or 100000, etc. No hard limit!! -- <a href="robowiki?Stelokim" class=wikipagelink>Stelokim</a>
+<p>
+Then why don't you start with an integer and use binary to store all the data you need into it, and then cast it toa  double and set it as below the decil line. such that if it was 65535, you do (double)65535/1000000d = 0.065535, then you can still have your power management. Look in <a href="robowiki?FoldedPatternMatcher" class=wikipagelink>FoldedPatternMatcher</a> for implimentation (it turns it into a symbol). You can look <a rel="nofollow" href="http://www.eskimo.com/~scs/cclass/int/sx4ab.html">[here]</a> for more information on bitwise operators. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Thank you for good information. -- <a href="robowiki?Stelokim" class=wikipagelink>Stelokim</a>
+<p>
+Just gotta figure out a way to store the origin, time fired and direction. You could just chop and place it, isntead of using complex binary operations(though, they might be more exact.
+<p>
+Lets see a double can store a value of this many values X.XXXXXXXXXXXXXXX, thus that leaves you with 0.0XXXXXXXXXXXXXX, or 14 places to deal with, I would mully that down to 12 to try and make up for java rounding errors.
+<p>
+Thus 0.0XXXXXXXXXXXX00, so you take your data and cut it maybe like so.
+<pre>
+[000][000][00000][0]
+  X    Y   fired  direction
+</pre>
+<p>
+for the x and y is just a integer of the x and y position, fired is the time the bullet was fired, and the direction is the direction of movement+1 (0 meaning counterclockwise and 2 meaning clockwise). Then you can calculate the maxEcape angle and so on.
+<p>
+--<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Here is some code to do this: 
+<pre>
+public double encodeBulletPower(double power, double x, double y,
+		long time, double direction) {
+	power = getPure(power);
+	power += Math.round(x)/1e4 + Math.round(y)/1e7;
+	power += Math.round(time)/1e12;
+	power += (direction &gt; 0) ? 1e-13 : 0; 
+	return power;
+}
+public double getPure(double p) {
+	return Math.round(p*10.0)/10.0;
+}
+public String getEncodedString(double p) {
+	return String.valueOf((p-getPure(p))*1e13);
+}
+public double getSourceX(Bullet b) {
+	String power = getEncodedString(b.getPower());
+	return (int)(Double.valueOf(power.substring(0,4))*100.0);
+}
+public double getSourceY(Bullet b) {
+	String power = getEncodedString(b.getPower());
+	return Double.valueOf(power.substring(4,7)).intValue();
+}
+public long getShotTime(Bullet b) {
+	String power = getEncodedString(b.getPower());
+	return Double.valueOf(power.substring(7,12)).longValue();
+}
+public int getDirection(Bullet b) {
+	String power = getEncodedString(b.getPower());
+	return (Double.valueOf(power.substring(12,13))==0?-1:1);
+}
+public double getEscapeAngle(Bullet b) {
+	return Math.asin(8/b.getVelocity())*getDirection(b);
+}
+public double getDistanceTraveled(Bullet b) {
+	return Point2D.distance(b.getX(), b.getY(), getSourceX(b), getSourceY(b));
+}
+public double getDistanceTravelTime(Bullet b, long time) {
+	return b.getVelocity()*(time-getShotTime(b));
+}
+</pre>
+I think those work, tell me if I got something wrong (and please test it first, just don't eyeball it)) --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=DataBullet" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=DataBullet">View other revisions</a><br>Last edited February 2, 2007 2:54 EST by <a href="robowiki?Chase-san" title="ID 7749 from ppp103.tc-4.kal-ch.mi.localnet.com">Chase-san</a> <a href="robowiki?action=browse&diff=1&id=DataBullet">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

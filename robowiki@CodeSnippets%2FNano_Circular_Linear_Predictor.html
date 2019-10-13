@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>CodeSnippets/Nano Circular Linear Predictor - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Code, Snippets, Nano, Circular, Linear, Predictor'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Nano+Circular+Linear+Predictor">CodeSnippets/Nano Circular Linear Predictor</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?CodeSnippets" class=wikipagelink>CodeSnippets</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Hereunder is the source-code from my bot Nano_Circular_Linear_Predictor, a bot I built just to prove that a circular predictor fits into a <a href="robowiki?NanoBot" class=wikipagelink>NanoBot</a>. :-)
+<p>
+<hr noshade class=wikiline size=1><pre>
+public class Nano_Circular_Linear_Predictor extends AdvancedRobot
+{
+	static double lastEnemyHeading;
+	static double radarturn=1;
+	
+	public void run()
+	{
+		do
+		{
+			setAhead(20*Math.sin(getTime()/10));
+			setTurnRadarRightRadians(radarturn);	
+			fire(3);
+		}while(true);
+	}
+	
+	public void onScannedRobot(ScannedRobotEvent e)
+	{
+		radarturn=-radarturn;
+		double w=e.getHeadingRadians()-lastEnemyHeading;
+		lastEnemyHeading=e.getHeadingRadians();
+		double absbearing=e.getBearingRadians()+getHeadingRadians();
+		double eX=e.getDistance()*Math.sin(absbearing);
+		double eY=e.getDistance()*Math.cos(absbearing);
+
+		double db=0;
+		double ww=lastEnemyHeading;  // enemy's starting heading
+		do
+		{
+			db+=11; //11 is the velocity of a fire(3) bullet.
+			double dx=e.getVelocity()*Math.sin(ww);
+			double dy=e.getVelocity()*Math.cos(ww);
+			ww+=w;  // turn w radians for next step
+			eX+=dx;
+			eY+=dy;
+		}while (db&lt; Point2D.distance(0,0,eX,eY));	// The bullet travelled far enough to hit
+								// our target!
+		
+		setTurnGunRightRadians(Math.asin(Math.sin(Math.atan2(eX, eY) - getGunHeadingRadians())));
+		setTurnRightRadians(e.getBearingRadians() + .5*Math.PI);
+	}
+}</pre>
+<p>
+<hr noshade class=wikiline size=1>
+<strong>Smaller code</strong>
+<UL >
+<li> Removed the variable w.
+<li> Put lastEnemyHeading<a href="robowiki?action=edit&id=EnemyHeading" class=wikipageedit>?</a> after the loop.
+<li> Added dx and dy directly, instead of declaring variables first
+<li> Replace the asin/sin with normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>
+</UL>
+<pre>
+		double enemyAbsoluteBearing=e.getBearingRadians()+getHeadingRadians();
+		double eX=e.getDistance()*Math.sin(enemyAbsoluteBearing);
+		double eY=e.getDistance()*Math.cos(enemyAbsoluteBearing);
+				
+		double db=0;
+		double ww=lastEnemyHeading;  // enemy's starting heading
+							
+		do
+		{
+			db+=11; //11 is the velocity of a fire(3) bullet.
+			//db += (20.0 - 3.0 * bulletPower);
+			//double dx=e.getVelocity()*Math.sin(ww);
+			//double dy=e.getVelocity()*Math.cos(ww);
+			//ww+=w;  // turn w radians for next step
+			ww += e.getHeadingRadians()-lastEnemyHeading;
+			eX+=e.getVelocity()*Math.sin(ww);//dx;
+			eY+=e.getVelocity()*Math.cos(ww);//dy;
+		} while (db &lt; Point2D.distance(0,0,eX,eY));	// The bullet travelled far enough to hit our target!
+
+		lastEnemyHeading=e.getHeadingRadians();
+				
+		setTurnGunRightRadians(Utils.normalRelativeAngle(Math.atan2(eX, eY) - getGunHeadingRadians()));
+
+</pre>
+<p>
+-- <a href="robowiki?Stelokim" class=wikipagelink>Stelokim</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+To make the code smaller, set variables inside another line:
+<pre>
+double enemyAbsoluteBearing;
+double eX = e.getDistance() + Math.sin(enemyAbsoluteBearing = e.getBearingRadians() + getHeadingRadians());
+double eY = e.getDistance() + Math.sin(enemyAbsoluteBearing);
+</pre>
+-- <a href="robowiki?Kinsen" class=wikipagelink>Kinsen</a>
+<p>
+Don't you mean
+<pre>
+double eX = getX() + Math.sin...
+double eY = getY() + Math.cos...
+</pre>
+-- <a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+No, in this example, eX and eY represent the enemy Position relative to yours --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<p>
+btw, I'm not sure that putting "lastenemyHeading = e.get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>()" after the loop is a good idea, because before the loop, "ww=lastenemyHeading" will get an incorrect value. (though I haven't tested this, I haven't played with <a href="robowiki?RoboCode" class=wikipagelink>RoboCode</a> for years now :-p) -- <a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<p>
+I don't think it would make much of a difference, though.  The first tick of the round it would be wrong, but no one can fire the first tick anyway, so it should be irrelevant.  I think so, at least.  I'm in no way an expert on this, all I know about Java is what I've figured out and what people have told me here at the wiki.  --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+Well, the thing is that ww needs to start at the enemies current heading. If you put "lastenemyHeading = ..." after the assignment to ww, you'll be using the enemy heading of the previous scan, and the circular prediction will be a slightly less accurate. This will be even more of a problem if you're not scanning your target every tick, which may be the case during melee. --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<p>
+Oh wow, this is gonna sound really retarded, but, couldn't you do something like this? Its probably bigger, but I dislike loops.
+<pre>
+package chase.nano;
+
+import static java.lang.Math.*;
+import robocode.*;
+
+public class NanoCircle extends AdvancedRobot {
+	public static double lastX, lastY, lastHeading;
+	
+	public void run() {
+		lastX = lastY = 0;
+		while(true) {
+			setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
+		}
+	}
+	
+	public void onScannedRobot(ScannedRobotEvent e) {
+		double absAngle, x, y, heading;
+		
+		absAngle = e.getBearingRadians() + getHeadingRadians();
+		x = getX() + sin(absAngle) * e.getDistance();
+		y = getY() + cos(absAngle) * e.getDistance();
+		heading = e.getHeadingRadians();
+		
+		if(lastX != 0) {
+			//the lines, unmutilated
+			//b=-tan(heading + PI/2)*x+y
+			//lastB=-tan(lastHeading + PI/2)*lastX+lastY
+			double m1,m2,b1,r, circleX;;
+			double circleY = (circleX = ((m2=-tan(heading + PI/2))*x+y - 
+					(b1=(m1=-tan(lastHeading + PI/2))*lastX+lastY))
+					/ (m1 - m2))*m1+b1;
+			//the radius, fyi
+			r = sqrt((circleX-x)*(circleX-x)+(circleY-y)*(circleY-y));
+			
+			//yay, I found the center, now to project along it
+			//.. I kinda got lost here, but I would think find
+			//where the bullet can intercept the robot
+		}
+		
+		lastX = x;
+		lastY = y;
+		lastHeading = heading;
+		
+		setTurnRadarLeftRadians(getRadarTurnRemainingRadians());
+	}
+}
+</pre>
+<p>
+--<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?CodeSnippets" class=wikipagelink>CodeSnippets</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=CodeSnippets/Nano_Circular_Linear_Predictor" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=CodeSnippets/Nano_Circular_Linear_Predictor">View other revisions</a><br>Last edited December 7, 2007 22:12 EST by <a href="robowiki?Chase-san" title="ID 12394 from emcnair-78-215.resnet.mtu.edu">Chase-san</a> <a href="robowiki?action=browse&diff=1&id=CodeSnippets/Nano_Circular_Linear_Predictor">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

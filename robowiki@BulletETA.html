@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>BulletETA - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Bullet, ETA'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=BulletETA">BulletETA</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Just to verify if I have this correct, since I'm no math expert:
+<p>
+<a href="robowiki?BulletETA" class=wikipagelink>BulletETA</a> is the estimated time of arrival of a fired bullet.
+<p>
+It does NOT originate from the center of the firing robot, but bulletvelocity V = 20-power*3 away in the direction fired. That means that you have to substract that from the distance D when calculating the <a href="robowiki?BulletETA" class=wikipagelink>BulletETA</a>.
+<p>
+Robocode is a discrete system where time is always a whole number, meaning you'll have to round off your calculated ETA.
+If you assume that your wave hits the enemy at or beyond its center then you have to round to the next whole number (Math.ceil()).
+If you assume that your wave hits when it's as close as possible to the opponent's center then you have to round in the regular way (Math.round)).
+<p>
+so, the formula for calculating ETA with a given distance D and bulletvelocity V is:
+<p>
+<pre>ETA = Math.ceil((D - V) / V)</pre>
+or
+<pre>ETA = Math.round((D - V) / V)</pre>
+<p>
+<p>
+right?
+<p>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+While implementing <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> i was in need of a very precise calculation of the ETA and my tests revealed that there is a chance the bullet travels up to 2 * V in the tick of impact. I know that this sounds rather strange, so i tested several times. There is a function set<a href="robowiki?FireBullet" class=wikipagelink>FireBullet</a> in <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>, that returns the bullet that was fired. So i wrote a stationary bot that shot with set<a href="robowiki?FireBullet" class=wikipagelink>FireBullet</a> at <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a>, and logged the position of the bullet for each tick until impact. The result:
+<p>
+<OL >
+<li> the bullet is created immediatly upon a call to set<a href="robowiki?FireBullet" class=wikipagelink>FireBullet</a> at the exact position of the shooting bot, and is advanced one tick after a call to execute
+<li> any tick before impact the bullet travels distance V ( = 20 - 3 * power)
+<li> the last tick (the tick the bullet arrives) one would expect that the bullet travels a distance less or equal to V. But in these tests there were also situations where it travelled more than V but less then 2 * V. Sure, the easier explanation would be a bug in my test robot, but i couldn't find one. So it looks like a bug in Robocode to me.
+</OL>
+<p>
+All in all that leads to: <pre> Math.ceil((D - V) / V) &lt;= ETA &lt;= Math.ceil(D / V) </pre>
+where D is the distance at shoot time, and V is the bullets velocity
+<p>
+--<a href="robowiki?Mue" class=wikipagelink>Mue</a>
+<p>
+Thanx <a href="robowiki?Mue" class=wikipagelink>Mue</a>, basically it seems you came up with the same formula I did, only I did not observe this bug you mentioned. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+(edit conflict)
+Yep, i just wondered whether this 'the bullet is advanced immediatly one tick'-opinion (which i read alot while looking into WaverSurfing<a href="robowiki?action=edit&id=WaverSurfing" class=wikipageedit>?</a> on the wiki) is just to compensate this bug, or how people got this idea. My test seems to show that the bullet is not advanced immediatly on firing, and just the bug during impact sometimes let it look as if it were. --<a href="robowiki?Mue" class=wikipagelink>Mue</a>
+<p>
+Well, I do use that 'the bullet is advanced immediatly one tick'-opinion and it seems to be perfect 100% of the time. I could not reproduce your bug. Maybe someone else has a good observation on this? --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<hr noshade class=wikiline size=1>
+<p>
+My ETA (calculated at firing time) now is equal to the ATA (ActualTimeofArrival<a href="robowiki?action=edit&id=ActualTimeofArrival" class=wikipageedit>?</a>), measured as the waves hits the opponent, 100% of the time. I tested against <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a> firing random power bullets both when my bot is moving and when it is stationary.
+<p>
+<pre>ETA = Math.round((D - V) / V)</pre>
+<p>
+This is how I determine when a wave hits:
+<pre>wave hit when: (D - Radius) &lt;= (V / 2);</pre>
+<p>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Well, if you measure the time until you wave hits, i'm not surprised you can calculate the exact ATA :-), since you youself wrote the code that advances the wave. I was actually talking about the time of the corresponding onBulletHit<a href="robowiki?action=edit&id=BulletHit" class=wikipageedit>?</a>-event... --<a href="robowiki?Mue" class=wikipagelink>Mue</a>
+<p>
+I did not write the above paragraph to surprise anyone with my brilliant ATA calculation, but rather to help newbies or the mathematically challenged like myself not to make these mistakes :-) It's actually very easy to make mistakes in both calculating ETA and measuring ATA. In the ETA case I found I was simply using ETA = D / V. I would not be surprised if a lot of people actually do that.<br>
+In the ATA case, I had misaligned my waves by advancing the bullet immediately by the robot radius (=18), instead of 20-3*Power. That radius thing was something I read about on this Wiki a long time ago. After correcting this I could visually confirm (using <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a>) that the waves were perfectly aligned with the actual bullet.<br>
+<p>
+You are right aligning to an onBulletHit<a href="robowiki?action=edit&id=BulletHit" class=wikipageedit>?</a> event is a different story. That's why I couldn't reproduce that bug you mentioned. If I recall correctly, I also had problems with aligning onBulletHit<a href="robowiki?action=edit&id=BulletHit" class=wikipageedit>?</a> events with my previous bot <a href="robowiki?Ender" class=wikipagelink>Ender</a>. 
+<p>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=BulletETA" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=BulletETA">View other revisions</a><br>Last edited May 31, 2004 13:10 EST by <a href="robowiki?Vic_Stewart" title="ID 2928 from 212.54.60.xxx">Vic Stewart</a> <a href="robowiki?action=browse&diff=1&id=BulletETA">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

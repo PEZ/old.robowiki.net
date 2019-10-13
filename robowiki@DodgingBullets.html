@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>DodgingBullets - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Dodging, Bullets'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=DodgingBullets">DodgingBullets</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Bullet dodging is one case of <a href="robowiki?Movement" class=wikipagelink>Movement</a>. Dodging can be used to trigger your movement or a change in the movement.
+<p>
+Below is described dodging that is triggered by the enemy's probable firing of a bullet.
+<p>
+A better way may be to delay your dodging move until the bullet is about to hit.
+<p>
+Another way is to use <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> for <a href="robowiki?ShrapnelDodging" class=wikipagelink>ShrapnelDodging</a>.
+<hr noshade class=wikiline size=1>
+<strong>Visibility.</strong> The only way I know of to "see" enemy bullets is to give attention to changes in the enemy's energy level. According to the <a rel="nofollow" href="http://robocode.alphaworks.ibm.com/help/robocode.faq.txt">[Robocode FAQ]</a> bullets get their energy from the robot, and the bullet power can be between 0.1 and 3.0. --<a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+<strong>Dodging.</strong>  Once fired at your robot has to decide where to go. One suggested strategy I've seen is to stand still until fired at and then move. This will trick the aiming methods of many enemy bots. You could also consider changing direction and/or velocity. --<a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+Bullet dodgers detect when an enemy fired a bullet, and react accordingly trying to change its path to fool the enemy targeting. This tactic is really good against linear and circular targeters, but you must be careful against more advanced targeting systems, because dodgers tend to get stuck into easily recognizable patterns. A good way to make your bot a little bit more effective is to combine dodging and oscillations in some random way.
+<p>
+Usually, you start from an <a href="robowiki?Oscillators" class=wikipagelink>oscillator</a> to implement your dodger, but it is not strictly necessary.
+<p>
+Here it goes an example from <a href="robowiki?MicroAspid" class=wikipagelink>MicroAspid</a> 1.2 (feel free to use it).
+<p>
+<pre>
+b = eenergy - e.getEnergy(); 
+eenergy = e.getEnergy();
+//MOVE
+if (b &gt; 0 &amp;&amp; b &lt;= 3) { 
+ 	firetime = (int) (10+2*b);
+ 	setMaxVelocity(8);
+ 	if (Math.random() &lt; 0.5) FORWARD = -FORWARD; 
+	setAhead(185 * FORWARD); 
+}
+if (getDistanceRemaining() == 0) { FORWARD = -FORWARD; setAhead(185 * FORWARD); }
+if (--firetime == 3 &amp;&amp; Math.random() &lt;0.5) setMaxVelocity(4); 
+setTurnRightRadians(e.getBearingRadians() + Math.PI/2 - 0.5236 * FORWARD * (e.getDistance() &gt; 200 ? 1 : -1));
+</pre>
+As you can see, you can detect when the enemy fired by monitoring its energy levels. Realize that the previous code combines oscillations and avoiding by making some random decisions (To be honest, I don't know which one was taking precedence, but the movement was working against many enemies).
+<p>
+<a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<hr noshade class=wikiline size=1>
+I just found this loaded page about dodging: <a rel="nofollow" href="http://www.ug.cs.usyd.edu.au/~csled/biwf/robocode/bullet.html">http://www.ug.cs.usyd.edu.au/~csled/biwf/robocode/bullet.html</a> -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Questions anyone?</H4>
+
+I have no current plans to make one, but a lot of people seem to be making <a href="robowiki?PerceptualBots" class=wikipagelink>PerceptualBots</a>.  Does anyone know a way to get these bots to dodge?  I can't see how they can tell when a bot has fired. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+They can't --<a href="robowiki?Tobe" class=wikipagelink>tobe</a>
+<p>
+On the other hand it's arguable whether dodging gives any advantages anyway so this is probably one of the very minor disadvantages <a href="robowiki?PerceptualBots" class=wikipagelink>PerceptualBots</a> have against other bots. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+When <a href="robowiki?Nano" class=wikipagelink>Nano</a> challenged us with <a href="robowiki?PerceptBot" class=wikipagelink>PerceptBot</a>, I wrote <a rel="nofollow"  href="http://robocoderepository.com/BotDetail.jsp?id=1083">Clock</a> as a joke. Clock didn't store any information in variables, and could dodge. Clock was <i>almost</i> perceptual. ;-) --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<p>
+It was just as perceptual as SandBoxDT<a href="robowiki?action=edit&id=SandBoxDT" class=wikipageedit>?</a>, almost doesn't mean anything when it comes to perceptualness (that probably isn't a word...) ;-) -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Perceptual bots are kind of stale. Nice idea though but you cant really do anything except randomizing and make it move and shoot according to a pre-decided pattern. --<a href="robowiki?Jimpa" class=wikipagelink>Jimpa</a>
+<p>
+I actually figured out how to make a "perceptual bullet-dodger" sort of, in the sense that you usually change direction when your opponent fires.  I used it in the first <a href="robowiki?FunkyChicken" class=wikipagelink>FunkyChicken</a>.  All I did was make the direction of movement a function of my enemy's energy, and coincidentally picked one that tends to flip its sign most of the time when the input is changed by 2 or 3.  The main advantage of this movement (particularly in a nano) is that random lead isn't helpful. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I really hate to point this out, though if the bot works like you said it isn't perceptual. why? perceptual bots aren't allowed to store any information between ticks. Thus there is no way you can know if your opponents energy level has dropped since last frame. -- <a href="robowiki?Jimpa" class=wikipagelink>Jimpa</a>
+<p>
+You misunderstand. He says he has the movement directly linked to the CURRENT energy, so when the energy changes, the movement will change.  He does not remember the old energy in any way. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+That's right.  The perceptual bullet-dodger code was simply setAhead(Math.tan(e.getEnergy()*5)*100);.  No storing data at all, it just coincidentally tends to change direction when my enemy fires. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+AhA<a href="robowiki?action=edit&id=AhA" class=wikipageedit>?</a>!!!! :P That would be really nice to work with! You could build a really good bullet dodger (measured agaisnt other perceptual bots) with that line of code. -- <a href="robowiki?Jimpa" class=wikipagelink>Jimpa</a>
+<p>
+A way to dodge all those new nifty <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> and <a href="robowiki?SegmentedData" class=wikipagelink>SegmentedData</a> is using both a <a href="robowiki?RollingAverage" class=wikipagelink>RollingAverage</a> for your bots movement and also feinting movements to fool those <a href="robowiki?SegmentedData" class=wikipagelink>SegmentedData</a> targeting algorithms. I'll try to describe a way of doing it here, calling it <a href="robowiki?RollingAverageDodging" class=wikipagelink>RollingAverageDodging</a>. As I've always said, its easier to dodge than to aim. ;) --<a href="robowiki?Jimpa" class=wikipagelink>Jimpa</a>
+<p>
+That must be the least true statement on this wiki! =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Ok... so is dodging more effective in 1vs1 than melee?  In melee should you react anytime another bot fires a shot?  How do you know that they are firing at you and not another bot? -- Dagger
+<p>
+You don't know.  That's really the only reason one would say you shouldn't react to bullet fire in melee.  The other thing is that there are technically other things that could look like a shot that are harder to track in melee (like them being hit by low-power shots, or the sum of several things like making a hit and getting hit between two scans - you probably don't see them every turn, which makes such things more likely to be a false alarm).  Basically what I'm saying is that it's easier in 1-on-1 than in melee.
+<p>
+That having been said, you can have a reasonably good idea who's shooting at you in a melee battle against the best bots.  For instance, if you're closer to a bot than any other bot is, they're a good chance they're firing at you.  Some melee bots will also remember who has shot them recently and make sure they don't continue getting hit by that robot.  It also may be good to get out of the way of enemies who you've fired at recently.  -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Do you think combining those observations with an anti-grav system might prove useful in melee? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+All <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a> does is combine these observations with a <a href="robowiki?MinimumRiskMovement" class=wikipagelink>MinimumRiskMovement</a>, so it could work.  Of course, the objective of <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a> would be to not be targeted at all, so maybe running away from someone who's already shooting at you isn't as effective.  On the other hand, good melee robots tend to be fairly deterministic when it comes to changing targets.  At any rate, I'd be surprised if it hasn't been done. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+As I already said, my experience is stronger in melee (failing miserably to adapt my bot to duel). I think that the key to melee is to live longer(Duhh!), the best way to do this is by staying away from other bots (they tend to fire more at bots near), and away from cross-fires. An anti-grav component in your move is essential to keep you far from other bots, and the easiest way to avoid being caught in a cross-fire is to stay near the walls -preferably in a corner. I don't use any dodging in melee, since it's very hard to track who is firing at me, (the targeted bot can change faster than i can track it) but if you intent to do this, probably you can use something like dodging your present target bullets, (better if your radar do something like staying at him the most of the time - by the way, I think that it's the best radar aproach for melee) if you are firing at him, he probably will be close to you, and if he is not yet firing at you, he probably will when you hit him. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Has anyone tried using something like the Brachistochrone problem to implement dodging? --<a href="robowiki?MightyMoose" class=wikipagelink>MightyMoose</a>
+<p>
+I don't think so; it's a pretty complicated way of doing a simple thing.  The robocode physics model wouldn't fit that well with the calculations either, being discrete and putting artificial limits on how fast you can turn.  Be interesting to see someone give it a go though, it would certainly be an interesting calculus exercise to rework the equations. :-) -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=DodgingBullets" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=DodgingBullets">View other revisions</a><br>Last edited July 12, 2007 9:00 EST by 193.1.97.38 <a href="robowiki?action=browse&diff=1&id=DodgingBullets">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

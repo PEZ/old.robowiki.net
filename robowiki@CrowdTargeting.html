@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>CrowdTargeting - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Crowd, Targeting'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=CrowdTargeting">CrowdTargeting</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H2><a href="robowiki?CrowdTargeting" class=wikipagelink>CrowdTargeting</a></H2>
+
+A <a href="robowiki?Targeting" class=wikipagelink>Targeting</a> strategy. Tap into the Wisdom of the Crowd. Inspired by
+<UL >
+<li> <a rel="nofollow" href="http://www.randomhouse.com/features/wisdomofcrowds/">[The Wisdom of Crowds, by James Surowiecki]</a>
+</UL>
+The book says to stop hunt for the expert and instead tap into the collective wisdom of the group. Even if the group consists of mainly non-experts, in the long run they will outperform the expert as long as some conditions are met. 
+The conditions are (from <a rel="nofollow" href="http://en.wikipedia.org/wiki/The_Wisdom_of_Crowds">http://en.wikipedia.org/wiki/The_Wisdom_of_Crowds</a>):
+<UL >
+<li><strong>Diversity of opinion</strong> - Each person should have private information even if it's just an eccentric interpretation of the known facts.
+<li><strong>Independence</strong> - People's opinions aren't determined by the opinions of those around them.
+<li><strong>Decentralization</strong> - People are able to specialize and draw on local knowledge.
+<li><strong>Aggregation</strong> - Some mechanism exists for turning private judgments into a collective decision. 
+</UL>
+<p>
+The magic works through a mathematical truism stating that the error margin shrinks with each added sample. Each answer consists of part information, part error. The more answers the less the error gets and in theory the collective information approaches the real answer.
+<p>
+See also:
+<UL >
+<li> <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> (for which <a href="robowiki?CrowdTargeting" class=wikipagelink>CrowdTargeting</a> tries to be an alternative).
+<li> CrowdMovement<a href="robowiki?action=edit&id=CrowdMovement" class=wikipageedit>?</a>
+</UL>
+<p>
+<H3>The Targeting problem domain</H3>
+
+<a href="robowiki?CrowdTargeting" class=wikipagelink>CrowdTargeting</a>, then, tries to not focus too hard on finding the one gun that knows best where to fire. But rather tries to keep a crowd of semi-good guns and then simply averages the answer received from each gun in the crowd.
+<p>
+<H3>Used by</H3>
+
+<UL >
+<li> <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> (at least the "Swarm" versions).
+</UL>
+<p>
+<H3>Comments / Questions / Suggestions</H3>
+
+I definitely think I'm on to something here. My first slab test with <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> gained me RR@H points. I know I should have room to improve this first attempt since my Crowd of guns isn't diverse or independent enough yet. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+A very cool idea. In a way, this is similar to how a lot of wave surfers organize their data for movement (I know <a href="robowiki?WaveSerpent" class=wikipagelink>WaveSerpent</a>, <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a>, and <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> do it like this). There are many differently segmented buffers that are weighted and layered on top of each other to come up with the total risk of moving in a certain direction. -- <a href="robowiki?Kev" class=wikipagelink>Kev</a>
+<p>
+Yes, but this is not exactly like that. CrowdMovement<a href="robowiki?action=edit&id=CrowdMovement" class=wikipageedit>?</a> would layer many more buffers, and lots of them simple, on top of each other and also, in its purest form, not weigh the buffers at all. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I so wanna try this now, darn me and not saving Eclipse's installer. Seraphim surfs like this, though its base code is damaged. Actually you could do this not only with a swarm of bees, but a swarm made up of bees, wasps, dragonflys and birds. What I mean is, not only have gf guns, but pattern matchers and other types of targeting systems. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+That is certainly true, and I think it's a fundamental part of what can make the crowd diverse. However, with multiple GF buffers, you can sum them to get a rating for each bin, while with a PM gun, you only get a single firing angle; so combining the results would require some more innovation.
+<p>
+Has anyone ever read about Google's rank aggregation techniques? I'm sure it's part of a larger field of study similar to this one. They have lots of different rankings that they try to intelligently (and very, very quickly) combine into a single ranking that is what you actually see as Google's search results. I attended a talk given by a Google employee last fall on the subject and found it very interesting. (And, of course, I instantly started considering ways to implement it in Robocode. =)) There may be much better ways to combine the voices in the crowd than just summing the values in the GF bins...
+<p>
+-- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+<a rel="nofollow" href="http://www.google.com/technology/pigeonrank.html">http://www.google.com/technology/pigeonrank.html</a> You'll have to parse the technique out of the April jaws though =) -- <a href="robowiki?Nfwu" class=wikipagelink>Nfwu</a>
+<p>
+<p>
+Converting a PM angle to a GF is no problem at all. PM tends to be slow though so throwing in a few of those might create the slowest bot ever. Even so one should be ready to go far to reach the diversity. I would certainly throw in a few other types of guns if I had them. Maybe we should create a Crowd interface where all of us can add targetings and see where that brings us. Using <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> gun frame we would know that things are tuned to get optimum performance out of good guessing.
+<p>
+Google's Page rank is tapping in on the Wisdom of the Crowd, by the way. It's one of the examples taken up in the book. Sure there are other ways to utilize the crowd wisdom than just averaging GF guesses. It's about formulating the question in a way that can be accumulated and averaged. Whatever that question is.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Well, converting one angle to a GF is easy, but the PM gun doesn't give a ranking across all firing angles, it just gives you one angle. <a href="robowiki?Engineer" class=wikipagelink>Engineer</a>'s <a href="robowiki?NeuralNetwork" class=wikipagelink>NeuralNetwork</a>, for instance, yields an array of GF bins just like we have in our guns, so that would be a lot easier to integrate into the crowd. It would be quite interesting to develop a common interface for this using <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>, I'll definitely look into it when I get a chance. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+<UL >
+<li> Well, not that there's anything stopping someone else from doing so... =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+Well, the way my current crowd in CC works is that all guns get to vote for one GF. Something a PM gun could deliver just as well. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+What gets chosen?  The mean (average), the mode (most popular) or median (most moderate)?  Have you tried just adding together normalized segments (normalized meaning possibly either so that the highest bucket's rating is 1 or so that all buckets add up to 1) as <a href="robowiki?Voidious" class=wikipagelink>Voidious</a> probably assumed you were? -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Currently I chose the most popular. I'll try adding all buckets together next version. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Was the repetition of the top part intentional? I am deleting the top part --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+How about using <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a> for choosing the angle? This could improve the close range performance, I would think. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Hmm... actually, this reminds me somewhat of some of my ideas in <a href="robowiki?Rednaxela/MultiplePlaneRegressionClustering" class=wikipagelink>Rednaxela/MultiplePlaneRegressionClustering</a>, because that is essentially using a 'crowd' of function approximators (i.e. linear regression or neural nets) and using a k-means type method to nudge them to "diversity" and "decentralization", and then "aggregates" by having each function approximator reposition logs entries that it 'specialized' based on what it expects in the current situation. So really, I'd consider that idea I had there to be a specialized form of "<a href="robowiki?CrowdTargeting" class=wikipagelink>CrowdTargeting</a>" though of a different variety than most ones considered here. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Indeed. Even just <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> fits the <a href="robowiki?CrowdTargeting" class=wikipagelink>CrowdTargeting</a> category I think. The reason I get so excited about the idea is that I spent so much time on trying to figure out which of my <a href="robowiki?Targeting" class=wikipagelink>Targeting</a> strategies that was the best for a specific enemy and then I realized that it was much better to just tap into the crowd wisdom. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li> Indeed, I now feel 100% certain that tapping into crowd wisdom is better than trying to figure out a "best" strategy, because just recently I've successfully combined a <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> gun and <a href="robowiki?PatternMatcher" class=wikipagelink>PatternMatcher</a> in a <a href="robowiki?CrowdTargeting" class=wikipagelink>CrowdTargeting</a>-style way that notably outperforms either gun alone or in <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a>, even against random movers and such things that the <a href="robowiki?PatternMatcher" class=wikipagelink>PatternMatcher</a> can't get strong matches on! -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</UL>
+<p>
+<a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, I don't know if you've been keeping track, but <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a>, which arguably has the strongest movement in the rumble, uses my own definition of <a href="robowiki?CrowdTargeting" class=wikipagelink>CrowdTargeting</a>. I have 100 randomly generated buffers for the surfing, each with different combinations of segments, both different attributes and different slices. It gives incredibly quick learning, which I blame for <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a>'s strong movement. It was this page that inspired me to give this idea a try. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+No, I haven't been keeping track. Wish I had! Entirely awesome work with <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a>. Inspiring! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=CrowdTargeting" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=CrowdTargeting">View other revisions</a><br>Last edited May 29, 2008 5:50 EST by <a href="robowiki?Rednaxela" title="ID 13292 from d198-53-128-24.abhsia.telus.net">Rednaxela</a> <a href="robowiki?action=browse&diff=1&id=CrowdTargeting">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

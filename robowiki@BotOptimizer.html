@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>BotOptimizer - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Bot, Optimizer'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=BotOptimizer">BotOptimizer</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><b>News</b><br>
+[UPDATE: 11 October 2003] After a busy month I've finally updated my botoptimizer program: it's still in dev stage, and it's not doing anything interesting, but now it can edit optimization configuration and save and load from XML file.
+Hope to develope something interesting soon :-) -- <a href="robowiki?Simonech" class=wikipagelink>Simonech</a>
+<p>
+[UPDATE: 11 September 2003] I've just posted a few classes on sf.net CVS server. Not working at the moment and with many outdated classes... the only new thing is the plugin framework  -- <a href="robowiki?Simonech" class=wikipagelink>Simonech</a>
+<p>
+<b>Description</b><br>
+I'm in the process of developing, both for the utility of the tool itself and also to learn Java Programming better (and more specifically standalone apps programming and Swing), a program to, as the name itself says, optimize your Bot, or better, let you optimize parameters inside your bot code.
+<p>
+A problem with my bot, but I think with almost all bots, is that algoritm are ok (more or less) but their effectivness is compromized by wrong or not-so-good paramters.
+For example I've a costant for bulletPower (bulletPower=distance/BULLET_POWER_CONSTANT) and now I use BULLET_POWER_CONSTANT=300, but maybe it would be better (gives a better overall results) a BULLET_POWER_CONSTANT=250 or BULLET_POWER_CONSTANT=400.
+<p>
+If you have just one costant you can change the code, recompile the bot and test again, but if u have 20 constants, all with a range of 10 possible values you would have 10E20 possible parameter set and doing this tuning by hand will be very very long and very boring.
+<p>
+Mainly the program will work that way: 
+<UL >
+<li> first you have to set:
+<UL >
+<li> which parameter to test
+<li> which bots to test against
+<li> how many battle run for each parameter configuration
+<li> how many round per battle
+<li> and all normal configurations like fieldSize, inactivityTime and gunCoolingRate<a href="robowiki?action=edit&id=CoolingRate" class=wikipageedit>?</a>
+</UL>
+<li> choose which optimization routine to use (and maybe its settings)
+<li> let the optimizer run for the required time
+<li> have the the bot optimized compete in real world :-)
+</UL>
+<p>
+Since I cannot decide which optimization routine is better I've decided that I'll develop the program to be easyly extendable with a plugin-like pattern...
+I'm developing an interface that the optimization routine class must implement to be plugged into the main engine.
+<p>
+Some possible routines are:
+<UL >
+<li> fix all constants except one, then I decide the best value for this one, and then fix this one and change another one, and so on... (will work good if all parameters are unrelated)
+<li> define a set of dependent constants and then evaluate mutual interaction
+<li> use a sort of genetic algorithm that reduce computation time
+<UL >
+<li> a - Create an initial group of random sets of parameters { S1, S2, ... Sn }.
+<li> b - Run the battles for every set and calculate the "goodness" of each set of parameters (pe. the score of the bot for a given set.
+<li> c - Eliminate the worst sets, keep the better ones (pe. best 33%), "mutate" the remaining sets by changing some parameters up or down a little bit and add the mutated sets to the group (pe. two mutated sets for every initial one - 33% + 2* 33% = 100%).
+<li> Go to (b) and keep doing the same operation for a while.
+<li> You can run a fixed number of iterations, or you can set up some stopping criteria (pe. no significant improvement in total score from iteration to iteration)
+</UL>
+</UL>
+<p>
+Hope to have enough time to develop this tool. --<a href="robowiki?Simonech" class=wikipagelink>Simonech</a>
+<p>
+<hr noshade class=wikiline size=1>
+COMMENTS:
+<p>
+This sounds really interesting! Hope you get it to work :-) -- <a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+What about parameters that are not linear? For instance it might be better to have firepower 3 at 100, 200, but firepower 1 at 300??  -- <a href="robowiki?Wolfman" class=wikipagelink>wolfman</a>
+<p>
+<UL >
+<li>Parameters that are not linear cannot be optimized that way, you have to implement your parameter using some constant parameters  -- <a href="robowiki?Simonech" class=wikipagelink>Simonech</a>
+</UL>
+<p>
+You can non-linearise after just do :
+<p>
+<code>if(GeneticParameter&lt;0.5) parameter=1;
+else if(GeneticParameter&lt;0.75) parameter=2;
+and so on;</code>
+<p>
+I suggest you to use different genetic algorithm like
+<UL >
+<li>Keep 33% for each if(Math.random()&lt;MUTATION_PROBABILITY)keeped.mute();
+<li>Cross over 33%
+<li>Generate new 33%
+<li>Keep a trace of the best found set of parameter (since it can be muted)
+</UL>
+I don't think setting one parameter at a time since there's no independent parameter.--<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<p>
+I've been working on an optimizer based on Evolutionary Programming (similar to a Genetic Algorithm), and I've found that Robocode scores are a horrible way to judge an individual's fitness.  The results are just too random to be useful, and my own fitness function destroys my population from generation to generation because the best bots don't necessarily go on.  In order to get evolutionary algorithms to work, the fitness function has to be consistent (that is, give the same value for the same individual over multiple tests), and so it is necessary to come up with alternative way to judge a bot's fitness other than his score.  For instance, I am now using a function that calculates the flatness of my bot's curve to tune my movement, and though there is still randomness involved, it is a better function than score by far.
+<p>
+-- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+In the sense of flatness and maybe even predictability, I have a tool that can tell me what the most predictable/least flat segments are for any bot against <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>.  Given a good number of rounds (couple thousand?) it will be able to see the trends in almost any segment and tell you which ones are particularly weak.  It can also be limited to a range of segments you particularly care about.  If I made a similar tool for a gun that doesn't take such shortcuts (like <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a>), it could be a useful rating test, as well. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I can only add that I tried this approach with a genetic algorithm and Robocode scores after a thousand battles agains a few bots, but failed miserably. The bots got better, but only a percent or two before they stabilized, while it took ages to evaluate a single generation. Maybe I should've tried harder with other evaluation functions and/or more patience, but in the end I discovered it is more fun, satisfying and efficient to simply add and try out new ideas. Anyway, don't let my bad experience stop you, and lots of luck :) -- <a href="robowiki?FnH" class=wikipagelink>FnH</a>
+<p>
+To show other people how far I'm going with the development of the optimizer I've posted my project on SourceForce<a href="robowiki?action=edit&id=SourceForce" class=wikipageedit>?</a>: you can see docs, news, file relase, post forum messages, browse the cvs tree and so on under the <a rel="nofollow" href="http://sourceforge.net/projects/botoptimizer">http://sourceforge.net/projects/botoptimizer</a> botoptimizer page -- <a href="robowiki?Simonech" class=wikipagelink>Simonech</a>
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=BotOptimizer" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=BotOptimizer">View other revisions</a><br>Last edited October 11, 2003 11:09 EST by <a href="robowiki?Simonech" title="ID 1550 from 62-101-126-224.fastres.net">Simonech</a> <a href="robowiki?action=browse&diff=1&id=BotOptimizer">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

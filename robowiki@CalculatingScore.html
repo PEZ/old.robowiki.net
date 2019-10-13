@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>CalculatingScore - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Calculating, Score'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=CalculatingScore">CalculatingScore</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?Vuen" class=wikipagelink>Vuen</a>, can you post the code for calculating score you mention <a href="robowiki?Fractal" class=wikipagelink>Fractal</a> uses? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Sure.
+<p>
+<pre>package &lt;yourpackage&gt;;
+import robocode.*;
+import java.util.*;
+
+
+/**
+This is the Score class for duels. This code is
+basically what is included in Fractal and Cake to keep
+score.
+
+Instantiate this once on match start, and at the top
+of all the needed events just pass them to the instance.
+Call printScore at any time to print the scores to
+the console. Call getScore(id) at any time to get the
+score of the requested robot (0 = self, 1 = enemy).
+
+If you'd like to use this in your robot, feel free to,
+but give credit! -- Vuen
+*/
+public class Score {
+    
+    Robot robot;
+    
+    public Score(Robot robot) {
+        this.robot = robot;
+    }
+    
+    
+    
+    public double enemyEnergy;
+    public double myEnergy;
+    public String enemyName;
+    
+    public double[] bullet = new double[2];
+    public double[] curbullet = new double[2];
+    public double[] survival = new double[2];
+    
+    
+    
+    public void onScannedRobot(ScannedRobotEvent e) {
+        myEnergy = robot.getEnergy();
+        enemyEnergy = e.getEnergy();
+        if (enemyName == null) enemyName = e.getName();
+    }
+    
+    public void onBulletHit(BulletHitEvent e) {
+        if (e.getEnergy() &lt; 0.001) return; //ignore if enemy dead
+
+        curbullet[0] += 4 * e.getBullet().getPower() + 2 * Math.max(e.getBullet().getPower() - 1, 0);
+    }
+    
+    public void onHitByBullet(HitByBulletEvent e) {
+        if (e.getPower() * 4 + Math.max(0, e.getPower() - 1) * 2 &gt; myEnergy) return; //ignore if self dead
+            //this works regardless of order of hitbybullet and scan
+
+        curbullet[1] += 4 * e.getBullet().getPower() + 2 * Math.max(e.getBullet().getPower() - 1, 0);
+    }
+    
+    public void onWin(WinEvent e) {
+        survival[0] += 60;
+        
+        curbullet[0] += enemyEnergy;
+        
+        bullet[0] += curbullet[0] * 1.2;
+        bullet[1] += curbullet[1];
+        
+        curbullet[0] = 0; curbullet[1] = 0;
+    }
+    
+    public void onDeath(DeathEvent e) {
+        survival[1] += 60;
+        
+        curbullet[1] += myEnergy;
+        
+        bullet[0] += curbullet[0];
+        bullet[1] += curbullet[1] * 1.2;
+        
+        curbullet[0] = 0; curbullet[1] = 0;
+    }
+    
+    
+    
+    /** returns the score of the requested robot: 0=self, 1=enemy */
+    public int getScore(int id) {
+        return (int)Math.round(bullet[id] + curbullet[id] + survival[id]);
+    }
+    
+    /** prints the scorecard to the console */
+    public void printScore() {
+        if (enemyName == null) return;
+
+        System.out.println("  ***********SCORECARD***********");
+        System.out.print("  ");
+        for (int i = 0; i &lt; Math.max(robot.getName().length(), enemyName.length()); i++) System.out.print(" ");
+        System.out.println(" Total Survival Bullet");
+        
+        String p0 = "  " + robot.getName();
+        String p1 = "  " + enemyName;
+        
+        String pTemp = " " + Math.round(bullet[0] + survival[0] + curbullet[0]);
+        for (int i = robot.getName().length(); i &lt; Math.max(robot.getName().length(), enemyName.length()) + 7 - pTemp.length(); i++) p0 += " ";
+        
+        pTemp = (" " + Math.round(bullet[1] + survival[1] + curbullet[1]));
+        for (int i = enemyName.length(); i &lt; Math.max(robot.getName().length(), enemyName.length()) + 7 - pTemp.length(); i++) p1 += " ";
+        
+        p0 += Math.round(bullet[0] + survival[0] + curbullet[0]) + "  ";
+        p1 += Math.round(bullet[1] + survival[1] + curbullet[1]) + "  ";
+        pTemp = (" " + Math.round(survival[0]));
+        for (int i = 0; i &lt; 8 - pTemp.length(); i++) p0 += " ";
+        pTemp = (" " + Math.round(survival[1]));
+        for (int i = 0; i &lt; 8 - pTemp.length(); i++) p1 += " ";
+        
+        p0 += Math.round(survival[0]) + "  ";
+        p1 += Math.round(survival[1]) + "  ";
+        pTemp = (" " + Math.round(bullet[0] + curbullet[0]));
+        for (int i = 0; i &lt; 6 - pTemp.length(); i++) p0 += " ";
+
+        pTemp = (" " + Math.round(bullet[1] + curbullet[1]));
+        for (int i = 0; i &lt; 6 - pTemp.length(); i++) p1 += " ";
+        
+        p0 += Math.round(bullet[0] + curbullet[0]);
+        p1 += Math.round(bullet[1] + curbullet[1]);
+        
+        if (bullet[0] + survival[0] + curbullet[0] &gt;= bullet[1] + survival[1] + curbullet[1]) {
+            System.out.println(p0); System.out.println(p1);
+        } else {
+            System.out.println(p1); System.out.println(p0);
+        }
+    }
+    
+}
+</pre>
+<p>
+-- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+I was just talking with <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a> and he mentioned that this code could be used for deciding whether or not data should be saved on an enemy. It never really occured to me that this could be a use of this code. For this reason, I just added a little getScore method to simplify how the score is stored. You can call getScore at any point in time to get the realtime score of the robot you want. I haven't actually compiled it though, but that's pretty much what my ScoreGL<a href="robowiki?action=edit&id=ScoreGL" class=wikipageedit>?</a> code does so it should work :D. Using this for actual competitive algorithms rather than just for the sake of having a realtime score seems like a good idea, and so if anybody'd like to use this code for it, feel free, but give credit somewhere : ). -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+Thanks. It was for descision making purposes I asked you to publish the code. What better  to base descisions on than yours and your enemy's score? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Changed a few things. Fixed it up a bit. Simplified it a bit. Looks better now. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+It's interesting that quite a few people are interested in this scoring code all of a sudden; this code is from Cake, which has been open source for well over a year (since the Rumble).  -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+Okay. I made a few changes to get rid of both the name stuff and the getPacketOffset<a href="robowiki?action=edit&id=PacketOffset" class=wikipageedit>?</a> stuff; it should just work on its own now. You now also have to pass it scan events. I also have not compiled it and just changed it here in the wiki window, so I have no clue if it works. Hopefully it'l compile :D; if it doesn't or if it has any bugs, please fix them or let me know! -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+I'll try to plug this class into <a href="robowiki?Swiffer" class=wikipagelink>Swiffer</a> now. Swiffer is <a href="robowiki?RWPCL" class=wikipagelink>RWPCL</a>. Would you consider placing this class under the same license? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Or, that might be too constraining. What about <a href="robowiki?RWLPCL" class=wikipagelink>RWLPCL</a>? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Um, I'm not a big fan of licensing, so I don't really mind what happens to it. You can pick a license if you like, and put it under it. It doesn't really matter to me : ). Does anybody want me to make a sample bot that uses this code? -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+Bugfix... Should be slightly more accurate now. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+Can someone tell me how to print data in Robocode.I get such an error "Error: The return type of method "java.io.PrintStream<a href="robowiki?action=edit&id=PrintStream" class=wikipageedit>?</a> append(java.lang.CharSequence<a href="robowiki?action=edit&id=CharSequence" class=wikipageedit>?</a> $1);" does not match the return type of method "java.lang.Appendable append(java.lang.CharSequence<a href="robowiki?action=edit&id=CharSequence" class=wikipageedit>?</a> $1) throws java.io.IOException;" inherited from type "java/lang/Appendable<a href="robowiki?action=edit&id=CalculatingScore/Appendable" class=wikipageedit>?</a>".
+<p>
+<p>
+Try installing Java Developer Kit (JDK), this should help. -- remiq
+<p>
+Hi, I'm interested in having a more simple function for the score... is there a source you used to come up with this code, or is it just from experience, and it's kind of common knowledge for experienced people?  I will try to distill the code down to a formula myself if I can find a better source.  -- <a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<p>
+Robocode is open source, just take a peek at the code, if you really wanna know how. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+That's a pretty good source I guess.  :)  Thanks. --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<p>
+<p>
+Does a robot get credit for a bullet that hits an enemy after the shooter has already blown up? Anybody know? --<a href="robowiki?RobertWalker" class=wikipagelink>RobertWalker</a>
+<p>
+I think it does --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Yes, and you may even get the kill bonus for damage done, but you won't get the survival bonus even if you snuff him.  One of the speed optimizations I've noticed in FNL's versions of Robocode has been to chop the rounds short when there is one tank left standing.  I've seen many rounds where bullets were on a collision course with a tank and the next round starts prematurely.  -- Martin
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=CalculatingScore" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=CalculatingScore">View other revisions</a><br>Last edited September 14, 2007 3:36 EST by <a href="robowiki?Martin_Alan_Pedersen" title="ID 11949 from c-76-114-14-43.hsd1.ca.comcast.net">Martin Alan Pedersen</a> <a href="robowiki?action=browse&diff=1&id=CalculatingScore">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

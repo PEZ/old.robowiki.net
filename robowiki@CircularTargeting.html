@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>CircularTargeting - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Circular, Targeting'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=CircularTargeting">CircularTargeting</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><OL >
+<OL >
+<li>REDIRECT <a href="robowiki?FastTargeting#CircularTargeting" class=wikipagelink>FastTargeting#CircularTargeting</a>
+</OL>
+</OL>
+Circular <a href="robowiki?Targeting" class=wikipagelink>Targeting</a> is used to hit bots that often move in circles or large arcs. The first step is to measure the turnrate of your target bot by subtracting it's current heading with it's previous one. If you do not get a fresh scan of your target, you need to divide this by the time between current scan and your last scan to obtain an average turnrate:
+<pre>
+public void onScannedRobot(ScannedRobotEvent e)
+{
+	double turnrate=(e.getHeadingRadians()-lastEnemyHeading)/(getTime()-scantime);
+	scantime=getTime();
+	lastEnemyHeading=e.getHeadingRadians();
+	...
+	...
+	...
+}</pre>
+<p>
+Now we need to know the current position of the target bot. To keep things easy, we only calculate the position of your target relative to your position. Keep in mind that in Robocode,  "north" is zero degrees(radians) and clockwise is a positive angle. This is exactly the inverse of unit-circle math, where the x-axis is zero degrees and anti-clockwise is a positive angle.
+<pre>
+	absoluteBearing = e.getBearingRadians() + getHeadingRadians();
+	double relativeX = e.getDistance()*Math.sin(absoluteBearing);
+	double relativeY = e.getDistance()*Math.cos(absoluteBearing);
+</pre>
+<p>
+Since we <u>assume</u> the target will keep turning at the same turnrate every turn, we can predict it's position at any time by calculating a new velocity-vector, and add that to it's position. If we call the time that you scanned the target t=0, then it's position at t=1 will be:
+<p>
+<PRE >
+ (this is not a java code snippet)
+ ( 1 )	newX(1) = relativeX + enemyVelocity*sin(initialHeading + turnrate)
+ ( 2 )	newY(1) = relativeX + enemyVelocity*cos(initialHeading + turnrate)
+</PRE>
+<p>
+at time t=2, it will be
+<p>
+<PRE >
+ (this is not a java code snippet)
+ ( 3 )	newX(2) = relativeX + enemyVelocity*sin(initialHeading + turnrate) + enemyVelocity*sin(initialHeading + turnrate + turnrate)
+ ( 4 )	newY(2) = relativeX + enemyVelocity*cos(initialHeading + turnrate) + enemyVelocity*cos(initialHeading + turnrate + turnrate)
+</PRE>
+<p>
+You can see that you can calculate the new (relative) X/Y position at t=T by adding a newly calculated velocity-vector to its position on every t.
+<p>
+<PRE >
+ (this is not a java code snippet)
+ ( 5 )	newX(T) = relativeX + <img src="http://kcl.kwokkie.net/klli87/images/_sum.gif"> enemyVelocity*sin(initialHeading + t*turnrate)
+ ( 6 )	newY(T) = relativeY + <img src="http://kcl.kwokkie.net/klli87/images/_sum.gif"> enemyVelocity*cos(initialHeading + t*turnrate)
+</PRE>
+<p>
+<p>
+Space and time is not continuous in Robocode, but the discreet steps are small enough, that we can approximate the above summation with an integral:
+<p>
+<PRE >
+ (this is not a java code snippet)
+ ( 7 )	newX(T) = relativeX + enemyVelocity * <img src="http://kcl.kwokkie.net/klli87/images/_integral.gif"> sin(initialHeading + t*turnrate) dt
+ ( 8 )	newY(T) = relativeY + enemyVelocity * <img src="http://kcl.kwokkie.net/klli87/images/_integral.gif"> cos(initialHeading + t*turnrate) dt
+</PRE>
+<p>
+<p>
+integrating from t=0 to t=T wich results in: (<u>watch the +/- signs!! and where you need cosine and sine</u>)
+<PRE >
+ (this is not a java code snippet)
+ ( 9 )	newX(T) = relativeX - (enemyVelocity/turnrate) * (cos(initialHeading + T*turnrate) - cos(initialHeading))
+ ( 10 )	newY(T) = relativeY + (enemyVelocity/turnrate) * (sin(initialHeading + T*turnrate) - sin(initialHeading))
+</PRE>
+<p>
+<p>
+Just fill in T in the above and you can predict your circular-moving target's position at time T!
+Now to predict at wich time your bullet is going to hit your target. The time it would take for your bullet to travel to the target's <i>current</i> position is a good guess to start with. So your first guess would be T = enemyDistance/bulletSpeed. If we plug this T in formulae (9) and (10), we have a prediction of the target's new (relative) position at time T. But since the target will be moving around, rather than playing sittingDuck, this is a rather poor approximation of the time T we are after. We can improve our approximation by calculating the time it would take for your bullet to reach the <u>previously predicted</u> position. This new T can then in turn be used to calculate a better predicted position, wich, in turn, can be used to calculate an even better approximation of the actual time T, etc...etc...  I myself have never used this iteration technique, but I remember reading somewhere(RoboCodeRepository<a href="robowiki?action=edit&id=RoboCodeRepository" class=wikipageedit>?</a> forums?) that 4 or 5 of these iterations should be good enough. Alisdair Owens, the author of Nicator and the <a href="robowiki?OtherPeoplesRobots" class=wikipagelink>[SnippetBot tutorial]</a>, wrote an article for "Secrets of the Robocode master" about circular targeting with iteration. You can find it here: <a rel="nofollow" href="http://www-106.ibm.com/developerworks/library/j-circular/">http://www-106.ibm.com/developerworks/library/j-circular/</a>
+<p>
+Another method is to start at T=0, and keep increasing with T with 1. Every time you increase your T, compare the distance your bullet would travel in T timeframes, with the distance between you and the predicted position of your target at time T. Stop when your bullet reaches your target, and you'll have a predicted position! Because the position of the target is calculated step-by-step anyway, we don't need formulae (9) and (10) and will be performing the summations (5) and (6) step by step as well. 
+You can find an example from this in  <a href="robowiki?CodeSnippets" class=wikipagelink>CodeSnippets</a> section. It's the source-code from my bot <a href="robowiki?CodeSnippets/Nano_Circular_Linear_Predictor" class=wikipagelink>Nano Circular Linear Predictor</a>, a bot I built just to prove that a circular predictor fits into a <a href="robowiki?NanoBot" class=wikipagelink>NanoBot</a>. :-)
+Note that the step-by-step method can be used for both <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> and <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a>, whereas the integrated formulae (9) and (10) are not suited for linear targeting. (Linear targeting means turnrate = 0)
+<p>
+--- <a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<p>
+<p>
+<b><u>Related Links:</u></b>
+<UL >
+<li> <a href="robowiki?CodeSnippets/Nano_Circular_Linear_Predictor" class=wikipagelink>Circular targeting example-code</a>
+<li> Alisdair Owen's <a rel="nofollow" href="http://www-106.ibm.com/developerworks/library/j-circular/">[circular targeting tutorial]</a> with iteration
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<strong>Comments</strong>
+<p>
+Does anyone have a good way to put the iterative predicitive stuff (ala the NCLP) into an <a href="robowiki?ExtendsRobot" class=wikipagelink>ExtendsRobot</a> bot? --<a href="robowiki?Alphax" class=wikipagelink>Alphax</a>
+<p>
+FOR loops --<a href="robowiki?UnderDark" class=wikipagelink>UnderDark</a>
+<p>
+Thank you, Captain Obvious.
+<p>
+The problem is that it's useful to have scans on consecutive ticks for that.  You could either stop your bot and try and get two consecutive scans, or if the other bot is really moving in a roughly even curve, you can find the change in heading and divide it by the number of ticks between observations.
+<p>
+Of course, you should probably just use an <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>, or not do circular targeting - if you're trying to enter it into a competition where only <a href="robowiki?ExtendsRobot" class=wikipagelink>ExtendsRobot</a> is allowed, none of your opponents will be moving in curves. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+<pre>double TurnRate = (Math.abs(Heading1-Heading2))/(Math.abs(TimeOfHeading1-TimeOfHeading2));</pre>
+Hope this helps --<a href="robowiki?UnderDark" class=wikipagelink>UnderDark</a>
+<p>
+Here is a play on Circular Targeting, it uses math only, its the Orbit gun from my nanobot Orbit (expanded of course, which wasn't an easy task). This piece of code could maybe be changed into a circle gun by putting something into the aimAngle calculation. (and calculating where that center is).
+<p>
+Orbit's Gun
+<pre>
+double absoluteBearing = e.getBearingRadians() + getHeadingRadians();
+double lateralVelocity = e.getVelocity() * Math.sin(e.getHeadingRadians() - absoluteBearing);
+double bulletSpeed = (20 - 3 * bulletPower);
+double distance = e.getDistance();
+double circularTravel = absoluteBearing + lateralVelocity / bulletSpeed;
+double aimAngle = Math.atan2(distance * Math.sin(circularTravel), distance * Math.cos(circularTravel));
+turnGunRightRadians(Utils.normalRelativeAngle(-getGunHeadingRadians() + aimAngle));
+</pre>
+<p>
+<UL >
+<li> I'm pretty sure this is just linear targeting.  In this equation, aimAngle will always equal circularTravel.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> Hrm dang, I reversed a equation of a circle to help get that. There must be a way to deloop the loop in a circle gun, its just math! But again simonton is far better at delooping things then I am. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<UL >
+<li> Starting to deloop it...I'll explain everything later, as this is simply replacing variables such as "turnCircleRadius<a href="robowiki?action=edit&id=CircleRadius" class=wikipageedit>?</a>" with the actual formula (I'll post y later), although this requires a VERY accurate bullet travel time formula.
+</UL>
+</UL>
+</UL>
+<pre>
+x=(enemyX-(((Math.abs(enemyVelocity) * 360.0 / (10.0 - .75 * Math.abs(enemyVelocity))) / (2.0 * Math.PI))*Math.sin((enemyHeading+(Math.PI/2))%Math.PI))) + (Math.sin((((8/((Math.abs(enemyVelocity) * 360.0 / (10.0 - .75 * Math.abs(enemyVelocity))) / (2.0 * Math.PI))) * bulletTravelTime) % (2.0 * Math.PI)) * ((Math.abs(v) * 360.0 / (10.0 - .75 * Math.abs(v))) / (2.0 * Math.PI)));
+</pre>
+<p>
+<p>---</p>
+The loop is only necessary to work out the time <code>t</code> when the bullet will hit the robot. If you can guess <code>t</code> beforehand, you can avoid the looping and just shoot at where the enemy will be at time <code>t</code>. A working estimate for <code>t</code> is the time it takes to shoot a bullet into the centre of the enemy's movement:
+<PRE >
+ double t = Math.sqrt(Math.pow(getX() - movementCentreX<a href="robowiki?action=edit&id=CentreX" class=wikipageedit>?</a>, 2) + Math.pow(getY() - movementCentreY<a href="robowiki?action=edit&id=CentreY" class=wikipageedit>?</a>, 2))/bulletSpeed;
+</PRE>
+<p>
+Plug this into equations (9) and (10) above and you have co-ordinates to shoot at.
+<p>
+This might not give you the smallest possible value of <code>t</code> for a given bullet speed (I haven't checked, but the code seems to do rather poorly against sample.Corners), but it'll give you a value that works. The only way I know to get a smaller value of <code>t</code> will require iteration as you're essentially backing out roots from a trig function.
+<p>
+Of course, it goes without saying that a delooped circular targeting gun will be useless against anything that doesn't move in great arcs. If you want to hit those robots, you're better off sticking with the iterative method. But since a delooped circular targeting gun runs in constant time, it can form part of a virtual guns system without causing you to skip turns on massive battlefields. --duyn
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=CircularTargeting" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=CircularTargeting">View other revisions</a><br>Last edited January 15, 2009 20:00 EST by <a href="robowiki?Dummy" title="ID 6977 from 53540529.cable.casema.nl">Dummy</a> <a href="robowiki?action=browse&diff=1&id=CircularTargeting">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>DarkHallow/Gunnery - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Dark, Hallow, Gunnery'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Gunnery">DarkHallow/Gunnery</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?DarkHallow" class=wikipagelink>DarkHallow</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>OK. Here's the problem: my gun completely sucks. What I can not seem to figure out is if this is a bug or a mathematical problem. I have seemingly worked out surfing and yet can not shoot straight. I am clearly missig something so in the hope that some one else out there can thwack me in the old noodle I am going to put this out and see if someone else can see it. Whats in it for you? Well the knowledge that figuring this out might just out this bot over 2K and you can say you were part of it. If thats not enough, well I really do not have anything else to offer except my thanks =^&gt; 
+<p>
+Now I am not all that interested in good segment / bad segment comments. While they would be helpful, what I am really looking to find is if the math is correct. I suspect that it is not and I can not figure it out. Thanks for taking the time to look -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<pre>
+/*
+ * Created on Aug 4, 2003
+ *
+ */
+package jekl.gunnery;
+
+import robocode.*;
+import robocode.util.Utils;
+import java.awt.geom.*;
+import java.awt.Color;
+import java.util.*;
+import jekl.utils.*;
+import jekl.*;
+
+/**
+ * @author jbishop
+ *
+ */
+
+public class WaveGun implements Constants,Gun {
+	private Point2D.Double myLocation;
+	private Enemy target;
+        private static float [][][][][][] statBuffer;
+        private static float [] fastStatBuf;
+        private int lastLatVelIndex, enemyWaveCount, lastDecelTime = 0;
+	private static int waveID = 0;
+	private DarkHallow ar;
+	private ArrayList waves;
+	
+	public WaveGun(DarkHallow _ar) {
+		this.ar = _ar;
+		this.waves = new ArrayList();
+		this.myLocation = new Point2D.Double();
+		if (statBuffer == null) {
+			//[getOutIndex()][timeSinceDecel][lastLatVelIndex][latVelIndex][distanceIndex];
+			statBuffer = new float[3][5][5][5][5][(int) GUESS_FACTORS];
+		}
+
+		if (fastStatBuf == null) {
+			fastStatBuf = new float[(int) GUESS_FACTORS];
+		}
+	}
+
+    public void onScannedRobot(ScannedRobotEvent e) {
+		target = ar.getTarget();
+		
+		doStats();
+        myLocation.setLocation(ar.getX(), ar.getY());
+
+        if (Math.abs(target.getLatVel()) - Math.abs(target.getLastLatVel()) &lt; 0) {
+        	lastDecelTime = (int) ar.getTime();
+        }
+
+		double firePower = 3.0;
+
+		//Retrieve the current stat segment to use
+		//[getOutIndex()][timeSinceDecel][lastLatVelIndex][latVelIndex][distanceIndex];
+		float[] stats = statBuffer[JeklUtils.getOutIndex(target.getLocation(),target.getHeading(),target.getDirection())][Math.min(4,(lastDecelTime / 10))][(int)Math.abs(target.getLastLatVel())/2][(int)Math.abs(target.getLatVel())/2][JeklUtils.getDistanceIndex(target)];
+        //float[] stats = statBuffer[JeklUtils.getOutIndex(target.getLocation(),target.getHeading(),target.getDirection())][Math.min(4, (lastDecelTime / 10))][target.getAccellIndex()][(int)Math.abs(target.getLatVel())/2][JeklUtils.getDistanceIndex(target)];
+        float[] fast = fastStatBuf;
+
+        //Aim the gun and fire
+		ar.setTurnGunRightRadians(Utils.normalRelativeAngle(target.getAbsBearing() - ar.getGunHeadingRadians() + 
+        	getGuessAngle(getIndex(stats), firePower, target.getDirection())));
+
+		ar.setFire(firePower);
+        if (firePower &gt;= 1) {
+	        addWave(firePower, 
+	        	stats, fast, true, 
+	        	myLocation, 
+	        	target.getLocation(), 1, target.getDirection(), 
+	        	Color.RED
+	        );
+        }
+    }
+    
+    //--------------------------------------- Helpers ------------------------------------------------------
+    
+    //Adds a wave.
+    private void addWave(double firePower, float[] stats, float[] fastBuffer, boolean myShot, Point2D.Double origin, 
+    		Point2D.Double target, int ticks, int shotDir, Color color) {
+        Wave w = new Wave(ar);
+        w.guessFactors = stats;
+        w.fastBuff = fastBuffer;
+        w.wDirection = shotDir;
+        w.shotPower = firePower;
+        w.bulletVel = JeklUtils.bulletV(firePower);
+        w.dist += (w.bulletVel * ticks);
+        w.shotOrigin = new Point2D.Double(origin.x, origin.y);
+        w.targetLoc = target;
+	w.startingAbsTargetBearing = JeklUtils.getAbsBearing(origin, target);
+        w.maxAnglePossible = Math.asin(8.0 / w.bulletVel);
+        w.myShot = myShot;
+        w.color = color;
+        w.id = ++waveID;
+        waves.add(w);
+    }
+    
+	private void doStats() {
+		Iterator it = waves.iterator();		
+		while(it.hasNext()) {
+			Wave w = (Wave)it.next();
+			if ((w.dist += w.bulletVel) &gt;= w.shotOrigin.distance(w.targetLoc) - 18) {
+				if (w.myShot &amp;&amp; w.shotPower &gt; 1.0) {
+					w.incrementHits();
+				} else {
+					enemyWaveCount--;
+				}
+				it.remove();
+			}
+		}
+	}
+	
+	/** Get the current best Guess Factor to shoot at */
+	private int getIndex(float[] stats) {
+		int bestIndex = (int) MIDDLE_FACTOR;
+
+		for (int i = 1; i &lt; stats.length; i++) {
+			if (stats[i] &gt; stats[bestIndex]) {
+				bestIndex = i;
+			}
+		}
+		return bestIndex;
+	}
+
+	public double getGuessAngle(int guessIndex, double firePower, int eDirection) {
+		return (guessIndex - ((double) (GUESS_FACTORS - 1) / 2)) / ((GUESS_FACTORS - 1) / 2) * Math.asin(8.0 / JeklUtils.bulletV(firePower)) * eDirection;
+	}
+}
+</pre>
+Here is the wave code. I took out the movement related code to aid clarity some.
+<pre>
+/*
+ * Created on Jun 14, 2004
+ *
+ * To change the template for this generated file go to
+ * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ */
+package jekl.utils;
+
+import robocode.util.Utils;
+import java.awt.geom.*;
+import jekl.paint.WavePainter;
+import jekl.*;
+
+/**
+ * @author Jim
+ */
+public class Wave implements Constants {
+	public WavePainter p;
+	public Point2D.Double shotOrigin;
+	public Point2D.Double targetLoc;
+	Enemy target;
+	public double shotPower;
+	public double bulletVel;
+	public double dist;
+	public double startingAbsTargetBearing;
+	public double maxAnglePossible;
+	public float[] guessFactors;
+	public float[] fastBuff;
+	public int wDirection;
+	public boolean myShot;
+	public double botWidth;
+	public java.awt.Color color;
+	private JeklUtils u;
+	public int id;
+	private DarkHallow ar;
+        
+	public Wave(DarkHallow _ar) {
+		this.ar = _ar;
+		if (DRAW)
+			p = new WavePainter(this);
+	}
+
+	//Returns the successful guess factor
+	public int getGuessFactor() {
+		double currentAbsBearingFromShotOrigin = JeklUtils.getAbsBearing(shotOrigin, targetLoc);
+		return (int) Math.max(0,Math.min((GUESS_FACTORS - 1),(int) Math.round(((((Utils.normalRelativeAngle(JeklUtils.getAbsBearing(shotOrigin, targetLoc) - startingAbsTargetBearing) * wDirection) / maxAnglePossible) * MIDDLE_FACTOR) + MIDDLE_FACTOR))));
+	}
+
+	public void incrementHits() {
+		guessFactors[0]++;
+		fastBuff[0]++;
+		
+		for(int i=1; i&lt;guessFactors.length; i++){
+			fastBuff[i]*=0.98f;
+			guessFactors[i]*=0.98f;
+		}
+		guessFactors[getGuessFactor()] += 0.01f;
+		fastBuff[getGuessFactor()] += 0.01f;
+		//Andrew's cool way
+		if(getGuessFactor() + 1 &lt;= (GUESS_FACTORS - 1)) {
+			fastBuff[getGuessFactor() + 1] += 0.006f;
+			guessFactors[getGuessFactor() + 1] += 0.006f;
+		}
+		if(getGuessFactor() - 1 &gt;= 1) {
+			fastBuff[getGuessFactor() - 1] += 0.006f;
+			guessFactors[getGuessFactor() - 1] += 0.006f;
+		}
+	}
+
+	
+	public void drawWave() {
+		p.drawWave(color, wDirection);
+	}
+	
+	public void removeWave() {
+		p.remove();
+	}
+	
+	public void debug () {
+		System.out.println("Shot Power: " + shotPower);
+		System.out.println("Velocity: " + bulletVel);
+		System.out.println("Dist: " + dist);
+		System.out.println("SABS: " + startingAbsTargetBearing);
+		System.out.println("MAP: " + maxAnglePossible);
+		System.out.println("AIA: " + JeklUtils.getAbsBearing(shotOrigin, targetLoc));
+		System.out.println("WDIR: " + wDirection);
+	}
+}
+</pre>
+<hr noshade class=wikiline size=1>
+Man this is frustrating work. I have found a segment that was not working and I am scoring a bit better now than before. I am still not that great at targeting but I am getting better. Of course my big fear is that I will break my surfing. Hopefully tomorrow I will have the next release ready. Maybe the next day. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+I have compared my gun code with several other open source guns line for line. I am missing something obvious. I see not differences in the logic or the math. The segments differ some, but when I use identical segments as the comparison gun I get significantly different results. I am about to give up and use an old robocode idea and "steal" someone elses. =^&gt; -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+I think you'll need to publish your wave code too for us to be able to follow along. I see one strange thing immediately though, "enemyWaveCount<a href="robowiki?action=edit&id=WaveCount" class=wikipageedit>?</a>--", but it probably is a naming issue. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li> enemyWaveCount<a href="robowiki?action=edit&id=WaveCount" class=wikipageedit>?</a> is used in surfing. It is my way of knowing how many waves are in the air at any one time. If enemWaveCount<a href="robowiki?action=edit&id=WaveCount" class=wikipageedit>?</a> == 0 &amp;&amp; I am close to the enemy, I search for the farthest point from my enemy to look for space. It ihas nothing to do with targeting. Sorry for the confusion. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+</UL>
+<p>
+If it's got nothing to do with gunnery, then what is it doing in the code above? You might need to disentangle your gun and your movement some. My daughter wants this computer now. I'll try to get some time later to read your code more carefully. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I took a look at your code and didnt notice any errors in the math. Perhaps your gun isnt broken at all, after all <a href="robowiki?DarkHallow" class=wikipagelink>DarkHallow</a> is still a top 10 bot (ok currently 11th, but i'm sure i have seen it in the top 10 before), and i dont think any of these bots has a 'broken' gun. Anyway i wondered about some things in the code above:
+<UL >
+<li> Do you use only power 3 bullets? Maybe using power 2 is worth a try (at least when the target isnt close); that works considerably better for me.
+<UL >
+<li> I use 1.9 at ranges greater than 360.
+</UL>
+<li> You have an unsegmented fast learning buffer, but somehow i missed the line where you use the data from it. I weigh both buffers together, with a weight depending on how many hits the segemented buffer has recorded.
+<UL >
+<li> It is not used yet. I do use a fast buffer in my surfing. Since they share a common Wave Class, and I eventually will use a fast buffer, I have a placeholder for it here.
+</UL>
+<li> When updating the guess factor array you change the bucket corresponding to the guess factor that would have hit and its two neighbours. Perhaps it pays to calculate exactly which buckets to increment. Especially when the target is close this may make you gun see spikes that it fails to see now.
+</UL>
+On the other hand i'm probably not the best advisor in this matter, since i have problems creating a good gun too. But i'm not yet done trying :-). I'll probably enter the <a href="robowiki?RRGunChallenge" class=wikipagelink>RRGunChallenge</a> soon to see how my gun compares to other guns. --<a href="robowiki?Mue" class=wikipagelink>Mue</a>
+<p>
+Top-10 is fully reachable with a broken gun. I would try to simplify the gun before adding complexety such as fast learning buffers and neighbouring bin updates (after all, <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> manages quite well without any of those tricks). -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+@<a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, now that it is not 5:00AM I can more fully respond as I am at least fully awake now =^&gt;. enemyWaveCount<a href="robowiki?action=edit&id=WaveCount" class=wikipageedit>?</a> is an artifact of when my gun and movement were fully entangled. It does not belong here and actually never gets used. It should be (and has) been removed. Thanks for catching that.
+@<a href="robowiki?Mue" class=wikipagelink>Mue</a>, As <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> said, top 10 is possible with a broken gun. Top 5 is not I think. In targeting challenges I score some where in the mid 80's. Against DT over 500 rounds I score somewhere near 65%. Considering top guns get somewhere near 85% my gun is clearly not optimal. I am also some 5 - 10% below other guns in performance vs. all other bots. The good news is that I learn quickly and do not seem to suffer than much of a degradation in performance in fast runs. You are also correct that the fast learning buffer is not in there yet. I have toyed with it but unless I can find the otherwise subtle bug that persists, fast learning only makes things worse. I have also used bot width as a means of determining which bins actually hit, but doing so seems to adversly affect my surfing (they both currently use the same all purpose wave) so I have avoided that so far.
+@Everybody, I appreciate the time it takes to look at this. Keep the ideas coming. I know someone will eventually see it. I am just too familiar with the code. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+Run the bot without the neighbouring bin updates, how much of a TC score change is that? You definitely may be smoothing bins over poorly. It may also be worth it to check tiny things like to make sure JeklUtils<a href="robowiki?action=edit&id=JeklUtils" class=wikipageedit>?</a>.bulletV(firePower) returns 20 - 3 * firePower, or that eDirection is calculated as the sign of velocity times the clock direction you're facing. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Both excellent suggestions. I have checked and the fire power is correct. I use the following: 
+<pre>		target.setLatVel(target.getVelocity() * Math.sin(target.getHeading() - target.getAbsBearing()));
+		if (target.getLatVel() != 0) {
+			target.setDirection((int)(Math.abs(target.getLatVel()) / target.getLatVel()));
+		}
+</pre>
+as direction code. I think the calculation is correct but there is room for the implementation to be poorly executed. I have never come up with a good way to handle velocity zero shots. I have tried, at various times, to flip the sign when the velocity is zero guess that a target was reversing. I know of no elegant way to make that work. Thanks <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>!! -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+The calculations look right. Did removing the smoother change the accuracy at all, or was it insignificant? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<UL >
+<li> Sorry I have not done that part yet. I am preparing dinner and will run the tests later this evening. Anecdotally, the gun was an int based gun with no smoothing until about 3 weeks ago and there was no discernible difference between them. I think the error is a very subtle pointing error or a conversion/rounding error that throws me off bt 1/2 a botwidth or so as it often seems I am in the "neighborhood" of a hit but not quite there. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+</UL>
+<p>
+1/2 a bot width or even one bot with off shouldn't matter much I think. The bot and the bullet moves in a way that even a half miss becomse a hit (and sometimes a half hit scores nil). Another thing though. Have you written down the order of things as you expect them to happen and looked if your code actually follows along? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li> I have not done this either. This is another good suggestion. I will do this after my daughters go to bed tonight. Thanks <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>.
+<UL >
+<li>PS: I have some of that Black Choclate Stout in my refrigerator chilling for later this evening. I also picked up some of the Octoberfest brew as I like most late season brews. 
+<li>Ahhgh. I'd kill for one of those Chocolate Stouts! If you like pure chocolate (99% is where I start) I can tell you that that beer fits very well with it. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</UL>
+</UL>
+<p>
+Short question even if it doesnt fit here, but in code snipped above i saw @author jbishop . It might sound strange, but i have seen this before: i read a book about jave written by judith bishop, that was the german translation of 'Jave gently'. Is it your nick, too, or did u use a template ....   --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+Pretty cool. <a href="robowiki?Jim" class=wikipagelink>Jim</a>'s surname is Bishop, so it's just a coincidence. Maybe Bishop is a very common name. First names starting with J are pretty common, that much I know. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li> <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> is correct. My surname is Bishop. It is not all that common in the US but it is not that rare either. As far as I know there is no relationship either. I certainly know I have not learned Java all the gently either =^&gt; -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+Targeting Update: Well all of the suggestions here were good but it seems the one I thought least likely is the one that makes the difference. At <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>'s suggestion I removed the smoothing and made all additions a simple ++. That instantly jumped my hit rate to 89% in the TC. It appears that there is some correlation there =^&gt;. The question now becomes one of trying to find a way to roll those averages in such a way that I am not killed by surfers. Using simple accumulated stats would get creamed there. That can not be good. More testing to come. Thanks <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>. Once again you have pulled me off the ledge. Also thanks to <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> for talking it through with me and for sending me some code to verify my gun against. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+You just never hesitate to complicate things. =) Seriously you'll have to roll your stats super fast to keep up with the surfers. In the process you'll lose tons of rating points against the rest. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Maybe so, but look at my ratings page vs. Surfers with this version and last. I am below 25% or so for almost all of the upper echelon bots. So how do you hit them and still manage to hit the rest of the rumble. Remember jim's mantra: "first beat everyone else as bad as they do, and then beat them." I quickly approaching the second half of that statement. =^&gt; -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+I'd say you have some milage still to cover. Neither <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a> nor <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> use rolling stats for their guns. Still they manage pretty well against the surfers. It's a matter of improving your gun rather than to specialize it I think. Besides, it's simple math really; Improve your score against a surfer with 15% or against a low-ranked bot with 5% and you'll earn much more rating points by the latter. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+In my experience nailing the surfers usually only requires a good wall segment to get close. Going over the top is another matter, but it's not something I'd worry about yet if I were you. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+All right. Color me sceptical. And my mantra still holds. If you are on top, you are officially on notice: I want the #1 spot and I am to get it. No pun intended =^P -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?DarkHallow" class=wikipagelink>DarkHallow</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=DarkHallow/Gunnery" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=DarkHallow/Gunnery">View other revisions</a><br>Last edited July 1, 2004 0:19 EST by <a href="robowiki?Sparafucil3" title="ID 2774 from ip68-101-39-12.dc.dc.cox.net">Sparafucil3</a> <a href="robowiki?action=browse&diff=1&id=DarkHallow/Gunnery">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

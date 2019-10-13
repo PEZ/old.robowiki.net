@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>DCBot - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='DCBot'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=DCBot">DCBot</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Opensource version of the gun used in <a href="robowiki?Shadow" class=wikipagelink>Shadow</a> and <a href="robowiki?Tron" class=wikipagelink>Tron</a>. Movement and radar come form <a href="robowiki?RandomMovementBot" class=wikipagelink>RandomMovementBot</a>. I made the gun a single (pluggable) class, removed the melee and multiple enemies part and changed the dimensions a bit. I hope it's clear enough for anybody to understand, keep in mind that it's code that evolved along the years.
+<p>
+Version 1.0 is an anti-<a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a> optimised version, it scores over 90% against it in the TC. I didn't run a full TC2k6 yet, but my guess is it will score around 85%.
+<p>
+In Version 1.01 I changed the number of samples and added a very simple wavesurfer detection code (if hitrate &lt; 12%). It is even better at hitting Cigaret, and scores better against wavesurfers (CC) too. 84.96% in the TC2K6.
+<p>
+v1.0 : <a rel="nofollow" href="http://robocode.aclsi.pt/abc.wiki.DCBot_1.0.jar">http://robocode.aclsi.pt/abc.wiki.DCBot_1.0.jar</a>
+v1.01: <a rel="nofollow" href="http://robocode.aclsi.pt/abc.wiki.DCBot_1.01.jar">http://robocode.aclsi.pt/abc.wiki.DCBot_1.01.jar</a>
+<p>
+-- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+By the way, is this released under <a href="robowiki?RWPCL" class=wikipagelink>RWPCL</a>? Seems like a pretty major source code release, so I thought you might want to specify that. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+No license needed, use it and abuse it. :) -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Thanks for sharing, maybe I will find some ideas to speed up my gun. -- <a href="robowiki?Florent" class=wikipagelink>Florent</a>
+<p>
+I found one! I will use your <code>sqr</code> function instead of <code>Math.pow</code>, it seems to realy speed up my gun, thanks again. -- <a href="robowiki?Florent" class=wikipagelink>Florent</a> 
+<p>
+You should look closely at the code inside the log traversal loop, that code is being executed 30000+ times (in my case) per firing tick, after the log is full. The top N scans selection method is also important speedwise, I remember trying 2 or 3 different approaches before settling with one I use now. Another speed optimisation change I remember doing is the enemy path retrace, instead of tracing it step by step I use an iterative method. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+I looked at your enemy path retrace method,I am not using an iterative method like you but I am tracing it step by step. This way I can check if all the movement is inside the battle field, not only the end point, but I am not sure if this loss in speed is worth the performance (in terms of rating). -- <a href="robowiki?Florent" class=wikipagelink>Florent</a>
+<p>
+Yep, that's a disadvantage of my current method. I don't know it's impact in terms of rating either, I was looking for ways to reduce testing times when I switched to it, but it must not be a big loss or I wouldn't have kept it. Maybe I'll do some tests... -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+I'm trying to wrap my head around you iterative method for playing the enemy movement forward, it just doesn't seem to make sense to me. I understand the step-by-step (ie. standard pattern matcher) method, but your iterative one has me completely stumped. Could you elaborate? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+It's like a binary search:
+1.Check where the enemy will be when the bullet reaches it's current position
+2.Check where it will be when the bullet reaches the position predicted in 1.
+Repeat a pre-set number of times or until the position change becomes minimal.
+<p>
+I've recently replaced this method in Shadow's gun with a step-by-step method, maybe I'll update DCBot one of these days. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Ah...sudden click, and the entire paragraph I wrote no longer is necessary =). Lets see if I understand...you check where the enemy was 1 BFT forward last time <em>from where they originated last time</em> (this was the part I didn't get), and then you see what the new BFT is, and you repeat, until the last co-ordinate was close enough to the current coordinate. You then see what the total translation was in terms of x and y, and rotate that to whatever angle you're trying to work with, to rebuild the firing angle. I'm wondering if it wouldn't be possible to reconstruct a diagonal/rectangular battlefield to check whether any of the x/y values in between are out of bounds, so you can throw out this result. Very cool method, BTW, using the absolute coordinates of last time and then seeing what the changes were. It reminds me of the nano PM guns that use a running total of the lateral velocities, and just check the difference between two points in the array to see what the total lateral velocity over any sequence in time was. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Yes, but that description is a mix of DCBot's and Shadow's current method. In DCBot I used the "iterative search" to speed up the trig needed to convert the enemy's past position to the position it would be in the current situation. Doing that step by step is slow, like you mentioned. But then I remembered I could just convert my relative position to the enemy once at the beginning and then the play-back of the enemy movement becomes just additions of dx/dy. And the final firing angle conversion is just 1 addition. It's so simple! I don't know how I didn't come up with it earlier. Now that I think of it, I can probably compare squared distances and save a sqrt per step. About the rotated battlefield, I thought about that, but that would reintroduce the trig complexity and would probably end up slower than the original method. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+No, no need to introduce trig with a rotated battlefield. You have, instead of your typical <code>if(x &lt; 0 || x &gt; width || y &lt; 0 || y &gt; height)</code> bounds checking, something like <code>if( m*x - y/m  + k &lt; 0 || m*x - y/m  + k &gt; width || </code>... I doubt the math is right, but what I'm saying is having a rotated battlefield, instead of translating the point to check a standard battlefield each time. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=DCBot" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=DCBot">View other revisions</a><br>Last edited December 5, 2007 6:41 EST by <a href="robowiki?Skilgannon" title="ID 12382 from ctb-cache4-vif1.saix.net">Skilgannon</a> <a href="robowiki?action=browse&diff=1&id=DCBot">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

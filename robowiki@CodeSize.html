@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>CodeSize - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Code, Size'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=CodeSize">CodeSize</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Codesize is a Java™ utility application. It retrieves the effective code size (amount of Java byte code) from .class files. 
+You can download Christian Schnell's Codesize tool here:
+<p>
+<a rel="nofollow" href="http://user.cs.tu-berlin.de/~lulli/codesize/">http://user.cs.tu-berlin.de/~lulli/codesize/</a>
+<p>
+<a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> is used to define the <a href="robowiki?WeightClass" class=wikipagelink>WeightClass</a> for <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> teams, <a href="robowiki?MiniBots" class=wikipagelink>MiniBots</a>, <a href="robowiki?MicroBots" class=wikipagelink>MicroBots</a>, and <a href="robowiki?NanoBots" class=wikipagelink>NanoBots</a>. <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> teams are 1999 bytes or less, <a href="robowiki?MiniBots" class=wikipagelink>MiniBots</a> are 1499 bytes or less, <a href="robowiki?MicroBots" class=wikipagelink>MicroBots</a> are 749 bytes or less, and <a href="robowiki?NanoBots" class=wikipagelink>NanoBots</a> are 249 bytes or less. See the <a href="robowiki?CodeSize/WritingSmallCode" class=wikipagelink>/WritingSmallCode</a> section for suggestions on how to reduce the codesize of your bot. 
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+See also <a href="robowiki?BotCategories" class=wikipagelink>BotCategories</a>
+<p>
+To minimize codesize you have to minimize your intentions. Work with clear, simple ideas. One at the time. Depending on what category you are aiming at, different advice apply. If you're doing a nano you almost have to decide if you should work with movement or targeting. I find that that's true with micros too. (Though expert micro developers prove that it depends on the coders' mind.)
+<p>
+Working with minis you gain a lot by keeping your code clear and ready for change. Optimizing for size in one end can keep you from doing it somewhere else. Don't be afraid to capture yor intentions with a snippet of code in a function or a variable. Read your entire code often. Question everything. Even though a mini can fit 10 or more ideas, I stress that you should work with one idea at a time. Then optimize it carefully, keeping your code readable at all cost. Then next idea. See if you can refactor some of the infrastructure that builds up your previous ideas to support your current one. Run the codesize utility often. What you thought would shrink or grow the codesize might do the opposite. It often does in my experience.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+After havingworked with micros a while I must add that the statement that you "have to decide if you should work with movement or targeting" doesn't necessarily apply to micros. It's fully possible to fit both good targeting, even excellent, and good movement. So far I think it might be hard to produce something excellent in both categories. <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> probably takes up it share of code size and you'll end up having to reduce your taregting accuracy. That's so far, mind you. I have learnt that about anything is possible in this game. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+To get rapid feedback on what shrinks codesize and not I often use my Makefile to measure it for me. For <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a> it looks like so:
+<pre>
+ROBOCODE_DIR = ../../..
+CLASSPATH = /System/Library/Frameworks/JavaVM.framework/Versions/1.4.1/Classes/classes.jar:${ROBOCODE_DIR}/robocode.jar:${ROBOCODE_DIR}/robots
+
+all: macbot
+
+macbot:
+	/usr/bin/jikes -g -deprecation -Xstdout -classpath ${CLASSPATH} *.java
+
+winbot:
+	${ROBOCODE_DIR}/jikes-1.16/bin/jikes -g -deprecation -Xstdout -classpath "C:\Program\Java\j2re1.4.1_05\lib\rt.jar;${ROBOCODE_DIR}/robocode.jar;${ROBOCODE_DIR}/robots" *.java
+
+winbot2:
+	/cygdrive/c/Program/Java/j2sdk_nb/j2sdk1.4.2/bin/javac -classpath "C:\Program\Java\j2re1.4.1_05\lib\rt.jar;${ROBOCODE_DIR}/robocode.jar;${ROBOCODE_DIR}/robots" *.java
+	
+linuxbot:
+	${ROBOCODE_DIR}/jikes-1.16/bin/jikes -g -deprecation -Xstdout +T4 -classpath ${JAVA_HOME}/jre/lib/rt.jar:${ROBOCODE_DIR}/robocode.jar:${ROBOCODE_DIR}/robots *.java
+	
+cleanall: clean cleantildes
+
+clean:
+	rm -f *.class
+
+cleantildes:
+	rm -f *~
+
+pugilist: winbot
+	java -jar ${ROBOCODE_DIR}/codesize.jar Pugilist.class Wave.class EnemyWave.class WaveSurfer.class | awk '/^[0-9]/ { print; size += $$2 } END { print "size: " size ", left = " 1499 - size }'
+</pre>
+Never mind that it's untidy. I have never really bothered with getting it tidy. I work with my bots on several machines and hardcode several targets for it. The target of interest here is "pugilist" of course. It first runs target "winbot" since I am sitting by my Windows box at the moment. Then it runs the codesize utility and filters the output through a little awk-script that prints the gist and also summarizes it for me so I know how many bytes I have left. The outputcan look like this when used from VIM (the best code editor <strong>ever</strong>):
+<p>
+<img src="http:/robocode/uploads/pez/VimMakePugilist.png">
+<p>
+Now that's neat, in'it? If you don't have awk you'll have to either install it or use some other tool for the summary part. Since I'm often on Mac OS X and Linux this comes with the OS. And on Windows I have installed Cygwin which comes with about all Unix command line tools I need and then some. Without Cygwin, Windows would be completely unbearable for me. I'm addicted to Unix.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<hr noshade class=wikiline size=1>
+It has been known a while, but a recent test makes me want to stress this. Different compilers produce different codesize for many sources. Current Pugilist (1.3.4) is codesize 1482 compiled with jikes-1.16 (the compiler bundled with Robocode) and 1511 bytes compiled with javac. You do the math! (I'm not sure which javac is running on my box at the moment. I have 8 or so different SDK's...). -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=CodeSize" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=CodeSize">View other revisions</a><br>Last edited September 25, 2006 16:12 EST by <a href="robowiki?David_Alves" title="ID 7143 from adsl-71-146-29-6.dsl.pltn13.sbcglobal.net">David Alves</a> <a href="robowiki?action=browse&diff=1&id=CodeSize">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

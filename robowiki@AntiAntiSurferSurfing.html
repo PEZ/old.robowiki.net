@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>AntiAntiSurferSurfing - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Anti, Anti, Surfer, Surfing'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=AntiAntiSurferSurfing">AntiAntiSurferSurfing</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Well, in my latest version of my development bot, I changed the segmentations around, and I noticed that despite overall increases in performance nearly all around, there was one spot where I had a significant performance drop: The very top advanced bots. I then ran some test battles against such bots, and watched their debugging consoles. So what did I find? They suddenly started getting their <a href="robowiki?AntiSurferTargeting" class=wikipagelink>AntiSurferTargeting</a> accurate on me (before they were often indecisive about which gun to use). So what segmentation change caused this? Well I'm not completely certain yet, however I believe the fact that I removed a weak segment on time (and in <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a>, a time segment is basically the same as a rolling average effect) was the cause. So I suppose why I was fooling <a href="robowiki?AntiSurferTargeting" class=wikipagelink>AntiSurferTargeting</a> before was because I was rolling my stats just as they roll their stats over time.
+<p>
+So what I call <a href="robowiki?AntiAntiSurferSurfing" class=wikipagelink>AntiAntiSurferSurfing</a> (nice name huh :)), is an extension of flattening that came to mind in response to noticing the effect of rolling surfing stats against <a href="robowiki?AntiSurferTargeting" class=wikipagelink>AntiSurferTargeting</a> guns. To start, I'll break down one way of looking at other movements:
+<UL >
+<li> Traditional <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>: <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> based learning of non-adaptive targeting (that it works on adaptive targeting too is a side effect)
+<li> <a href="robowiki?WaveSurfer" class=wikipagelink>WaveSurfer</a> Flattening: Basically a <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> gun flipped in reverse
+<li> <a href="robowiki?AntiPatternMatching" class=wikipagelink>AntiPatternMatching</a>: Basically a <a href="robowiki?PatternMatcher" class=wikipagelink>PatternMatcher</a> gun flipped in reverse
+</UL>
+So, logically, wouldn't a good way to counter <a href="robowiki?AntiSurferTargeting" class=wikipagelink>AntiSurferTargeting</a> be to basically flip one of those guns in reverse? Well, what characteristics do the common <a href="robowiki?AntiSurferTargeting" class=wikipagelink>AntiSurferTargeting</a> guns have? Well...
+<UL >
+<li> Based on a normal <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> gun
+<li> Quickly rolling all stats
+<li> Often decrement the probability of aiming somewhere after there's an actual hit there
+</UL>
+So for <a href="robowiki?AntiAntiSurferSurfing" class=wikipagelink>AntiAntiSurferSurfing</a> what do we want to do? Well I think:
+<UL >
+<li> Based on normal <a href="robowiki?WaveSurfer" class=wikipagelink>WaveSurfer</a> flattening
+<li> Quickly rolling all stats
+<li> Slightly increment the probability of going somewhere when hit there
+</UL>
+The last point in particular I think is somewhat counter-intuitive with normal Robocode thought, and indeed that last quality would be a weakness to Non-<a href="robowiki?AntiSurferTargeting" class=wikipagelink>AntiSurferTargeting</a>, however I don't think that would really be too big an issue when the flattening is the dominant factor (just as decrementing on hit is NOT a particularly strong factor in <a href="robowiki?AntiSurferTargeting" class=wikipagelink>AntiSurferTargeting</a>). I think something like this is probably the best way to counter <a href="robowiki?AntiSurferTargeting" class=wikipagelink>AntiSurferTargeting</a>, however it's biggest weakness is probably against plain <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> targeting, and thus for this to be of any use, the real key would be knowing when to use it. I think what would be a real breakthrough, would be if someone found a nice way to try to estimate how quickly the enemy is currently rolling stats, and estimate if they're decrementing places they hit. A <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a>-like <a href="robowiki?MultiMode" class=wikipagelink>MultiMode</a> movement could do the trick for knowing when to use this to some degree, but in order to deal with how suddenly the enemy may switch guns you would need to have rolling stats on which movement is better, and I'm not sure if there would be enough information to learn which to use quickly enough. What are some other people's thoughts on countering things like <a href="robowiki?AntiSurferTargeting" class=wikipagelink>AntiSurferTargeting</a>? :)
+<p>
+-- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Hi Rednexela, which bot does this? I think I implements this in very buggy way of very-buggy <a href="robowiki?BlackHole" class=wikipagelink>BlackHole</a> 0.1.11, but it screw up with normal stats and getting flat stats instead :-) Perhaps I need to do some Crowd Movement. --<a href="robowiki?Nat" class=wikipagelink>Nat</a>
+<p>
+No bot does this to my knowledge, just a random idea... :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Was just thinking how hard it could be to test this, as any bot with an AS gun surely uses <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a>, so thought I'd mention it's really easy to disable Dooki's regular gun to test against his AS gun. Just comment out <code>_gunManager.addGun(_mainGun);</code> in dgun/DookiLightning.java / <code>initializeGuns()</code>. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=AntiAntiSurferSurfing" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=AntiAntiSurferSurfing">View other revisions</a><br>Last edited April 16, 2009 14:42 EST by <a href="robowiki?Voidious" title="ID 18280 from bi-01.bluebird.ibm.com">Voidious</a> <a href="robowiki?action=browse&diff=1&id=AntiAntiSurferSurfing">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

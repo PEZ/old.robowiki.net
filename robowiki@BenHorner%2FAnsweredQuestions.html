@@ -1,0 +1,268 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>BenHorner/AnsweredQuestions - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Ben, Horner, Answered, Questions'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/AnsweredQuestions">BenHorner/AnsweredQuestions</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><hr noshade class=wikiline size=1>
+<p>
+Is it possible that two event handlers are running simultaneously?  I'm not 100% on how the threading stuff works...  In an <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>, you tell it the stuff to do, then call execute(), and your thread is blocked, but events still get kicked off right?  So those events are running in a different thread than your run() method right?  If so, does that mean that they could each be running in their own threads, and might be running at the same time?  I'm particularly curious about on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>() in melee, when multiple robots might be scanned in a single turn, do I need to be careful about updating state?  --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<p>
+In melee, on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> will be called once per robot that you scanned, in order of distance from you. The closest robot will be the first call while the farthest will be the last call. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Ok, does the second call wait until the first is complete before it starts?  If so, does that count against the amount of processing time your bot is allotted each turn? --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<p>
+Yes and yes. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Thanks. --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<p>
+<hr noshade class=wikiline size=1>
+If two robots are moving in the same direction (and both forward), but the one in front is moving more slowly, and the one behind hits it, is that counted as a ram for both of them? --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<UL >
+<li> Yip! Otherwise my bots wouldn't get any ram damage against those pesky rambots! =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> It looks to me like the rammer will take 0.6 damage and the rammed will take 1.8 (0.6 + 1.2 bonus).  So the rammer delivers 3x the damage, but still takes damage.  If two bots ram each other head on each will take 2.4 damage per tick from the two ram events.  -- Martin (I have not tested this .. just inferring from the Rules class above)
+</UL>
+<p>
+This is from the [<a rel="nofollow" href="http://robocode.sourceforge.net/help/robocode.faq.txt">[Robocode FAQ]</a>]:
+<pre>
+Q: What happens when a my robot hits another robot?
+A: If your robot was moving towards the other robot when hitting it (i.e. ramming), your robot's move is marked as
+   complete, and your robot receives 1.2 score points.   Both robots takes a constant 0.6 damage.
+</pre>
+I don't know why I was considering to be a better source of information than the javadoc comments...  Just because I read it before I knew the javadocs existed I guess.  =)  Now I will have to test it to find out which is right! --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<UL >
+<li>And I think the FAQ is right. A non-moving, non-firing bot and a non-firing rambot go down on energy at the same rate. The only thing is that the rammer gets the <em>scoring</em> bonus and used to win the battle (as source of the ramdamage, until the latest robocode version). No test done though, just digged in my memory how the behaviour of <a href="robowiki?GrubbmThree" class=wikipagelink>GrubbmThree</a> and opponents was during its development.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</UL>
+<p>
+Ok, I just did a test, I rammed <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a> to death with Interactive before the countdown started...  Interactive was disabled at the end (both received 0.6 damage per ram) and it scored 290.
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'><em>Category</em></td><td colspan="0.5"><em>Score</em></td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Total Score </td><td colspan="0.5">290 </td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'>Survival  </td><td align="left" colspan="0.5">50</td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'>Surv Bonus</td><td align="left" colspan="0.5">10</td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'>Bullet Dmg</td><td align="left" colspan="0.5">0 </td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Bullet Bonus</td><td align="left" colspan="0.5">0 </td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Ram Dmg * 2 </td><td colspan="0.5">200 </td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'>Ram Bonus </td><td align="left" colspan="0.5">30</td><td colspan="0.5"></td></TR>
+</TABLE>
+I'm thinking the non survival score 230 = 290 - 50 - 10 comes from: 30% bonus for the 100 actual damage done, and then 2 score points for each point of damage.  So ram damage is the same for rammer and rammee, and <strike>I think the multiplier for score has changed from 1.2 to 2 since the FAQ was written...</strike>  each point of ram damage is worth 2 score points (as opposed to the 1 for 1 ratio on bullet damage), so for a single ram of 0.6 damage, you get 1.2 score points. --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<p>
+Read carefully, per ram you get 0.6 damage and 1.2 scoring 'bonus'. That is a factor 2. Totally you ram 100 damage and thus get a 200 scoring points.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Cool, thanks, a little bad math on my part.  In fact, I think I'll edit it out right now so it doesn't confuse anyone else. --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Has anyone noticed a "half turn advantage" in 1v1 matches?  I was just going to try to do a modified <a href="robowiki?RamFire" class=wikipagelink>RamFire</a> to get something in the Rumble, because what I want to end up with seems so far away...  So I have a "new" bot which is a copy of <a href="robowiki?RamFire" class=wikipagelink>RamFire</a>, going up against <a href="robowiki?RamFire" class=wikipagelink>RamFire</a>, I expected them to split pretty much 50-50, strangely though it seems like whoever I enter in the list first ends up winning about 2-1 (very consistently).  Is that screen where you pick the bots also defining some kind of initiative (who gets to do their stuff first each turn)?  If so, does the Rumble account for that?  (I know I could look this up in the source code myself, and if no one knows off the top of their head, I probably will eventually) --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<p>
+<UL >
+<li> I'm pretty sure that there is "technically" no advantage. The way scan data and such is executed, everything happens simultaneously (i.e., one bot doesn't get to see next turn a  turn earlier or anything - both bots get scan data, then both bots move), so nobody should have an advantage in that way. I do remember something a while ago that the bot listed first will skip less turns, but since most bots (and especially sample bots) won't skip turns anyway, that's kinda moot. But if you can reproduce it consistently, obviously there's something up, at least with those bots! -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+<UL >
+<UL >
+<li> Well, I was changing very small things, but I always selected my slightly modified bot into the list first... so even when I made a change that hardly meant anything, I noticed that it would give me about a 2-1 advantage.  So I backed it of to zero changes, identical code, the only difference being who was listed first, and the 2-1 advantage remained.  I ran 30 rounds about 6 times, and the survival differences ranged from about 18-12, to 22-8.  I have yet to <strike>see</strike> <em>notice</em> a battle where both bots kill each other at the exact same moment... which should be happening now and then with identical simple bots like <a href="robowiki?RamFire" class=wikipagelink>RamFire</a>.  I thought it must be due to one bot's bullet collisions always registering first or something (on the turn when they should be killing each other). --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<UL >
+<li> Yeah, there's a big advantage. This has been supposedly fixed in the latest version. But suppose There are two identical bots that are firing away at each other. Toward the end of the battle, they each have 2 life left, and they each fire a .5 power bullet. Now they each have 1.5 energy and the bullets are in the air. The first bot in the list (A) will have his bullet hit processed first, so he hits the second one (B) for 2 damage, which kills B. He gains back 1.5 energy for the hit, so when the game processes B's bullet, he has 3 energy and does not get killed. Supposedly this is fixed now, but that's how it worked historically. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+</UL>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<UL >
+<UL >
+<li> The difference in the latest version is that the robots are now processed in a random order, meaning that in the situation you describe, bot B is just as likely to kill bot A as the other way around. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+</UL>
+</UL>
+</UL>
+</UL>
+<p>
+For a while, I had myself quite convinced that a bot in a JAR file will win against the same bot compiled from source. Look at this list of 50 randomly generated coin flips, from <a rel="nofollow" href="http://shazam.econ.ubc.ca/flip/index.cgi?50">http://shazam.econ.ubc.ca/flip/index.cgi?50</a>:
+<PRE >
+ T H T H H H H H H H T T H H T H T H T T T T H T H H T H H T H T T T H H H H H T H T T T T T H T T T
+</PRE>
+Does it seem like there are more heads or tails? Actually, there are exactly the same number of each. As it turns out, most of the oddities in scoring results are simply random fluctuations (i.e. the run of seven heads near the beginning, and the result of exactly 25 heads and 25 tails, are both highly improbable as individual events yet still occur when looking at a large enough sample). It sounds like the placebo effect has struck again. 
+<p>
+P.S. It's probably a good idea to write a program that will run battles and score results for you. Whenever I run the battles myself I am convinced that the latest version of my bot is the top performer.
+<p>
+-- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<p>
+Yeah, I hear you, I <em>try</em> to be scientific about things, not always successful but... I just ran two battles of 1000 rounds each, the first with <a href="robowiki?RamFire" class=wikipagelink>RamFire</a> selected first, the second with RamFireCopy<a href="robowiki?action=edit&id=RamFireCopy" class=wikipageedit>?</a> selected first.  Even if I did mess up in the copying... or if inside or outside a jar mattered, and one bot won more often, shouldn't it at least be the same one?  My results were that the first one in the list won 666-334 the first time, and 643-357 the second time.
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'> battle </td><td colspan="0.5"> selected </td><td colspan="0.5"> order selected </td><td colspan="0.5"> 1sts </td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> 1    </td><td align="left" colspan="0.5"> 1      </td><td align="left" colspan="0.5"> RamFireCopy<a href="robowiki?action=edit&id=RamFireCopy" class=wikipageedit>?</a>  </td><td colspan="0.5"> 666  </td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> 1    </td><td align="left" colspan="0.5"> 2      </td><td align="left" colspan="0.5"> <a href="robowiki?RamFire" class=wikipagelink>RamFire</a>      </td><td colspan="0.5"> 334  </td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> 2    </td><td align="left" colspan="0.5"> 1      </td><td align="left" colspan="0.5"> <a href="robowiki?RamFire" class=wikipagelink>RamFire</a>      </td><td colspan="0.5"> 643  </td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> 2    </td><td align="left" colspan="0.5"> 2      </td><td align="left" colspan="0.5"> RamFireCopy<a href="robowiki?action=edit&id=RamFireCopy" class=wikipageedit>?</a>  </td><td colspan="0.5"> 357  </td></TR>
+</TABLE>
+<p>
+<p>
+Well, it appears you found a bug - in the ramming code! Check out these results from 500 rounds:
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> Robot Name       </td><td colspan="0.5"> Total Score </td><td colspan="0.5"> 1sts</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> sample.<a href="robowiki?RamFire" class=wikipagelink>RamFire</a> (1) </td><td align="left" colspan="0.5"> 93705     </td><td colspan="0.5"> 315</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> sample.<a href="robowiki?RamFire" class=wikipagelink>RamFire</a> (2) </td><td align="left" colspan="0.5"> 82440     </td><td colspan="0.5"> 185</td></TR>
+</TABLE>
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> Robot Name       </td><td colspan="0.5"> Total Score </td><td colspan="0.5"> 1sts</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> sample.<a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> (1) </td><td align="left" colspan="0.5"> 41077     </td><td colspan="0.5"> 257</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> sample.<a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> (2) </td><td align="left" colspan="0.5"> 40444     </td><td colspan="0.5"> 254</td></TR>
+</TABLE>
+<p>
+So the first RamFire outperforms the second by a huge margin, but the non-ramming SpinBots have an almost even score. I guess I'll file a bug report with <a href="robowiki?Fnl" class=wikipagelink>Fnl</a>.
+<p>
+-- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<p>
+Yeah, the SpinBots<a href="robowiki?action=edit&id=SpinBots" class=wikipageedit>?</a> would have a lot more chance thrown in, two RamFires<a href="robowiki?action=edit&id=RamFires" class=wikipageedit>?</a> vs each other can't really miss, so every shot counts, so there should be some ties, but aren't.  The <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> thing is consistent with the selection order also defining bullet evaluation order or something...  I'm glad you saw it on your system as well!  --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<p>
+This behaviour is already present in the (ancient) version 1.0.6. My experience is that the bot listed first most of the time has a slight advantage (up to 2%). In the rumble this does not matter, as it will even out over the battles fought. The reason I think that it is so obvious to see with rambots, it that they probably die the same tick or maybe one tick apart. The bullet of the first bot is handled first, causing the second bot to die, while in the same time (tick) the bullet of the second (killed) tank destroys the 'winner' tank 1. This is no 'bug' in the ramming code, it is just the way Robocode handles things. It is not very important, but you should keep it in mind when testing things.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+This has been fixed.  Wow, this is a very alive opensource project!  --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<p>
+Yes, <a href="robowiki?Fnl" class=wikipagelink>Fnl</a> is quite active solving things and extending robocode. On the other hand, you are just stirring things up with all your questions about things we were just taking for granted. ;-)  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+The bugfix is confirmed (same test, 500 rounds):
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> Robot Name       </td><td colspan="0.5"> Total Score </td><td colspan="0.5"> 1sts</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> sample.<a href="robowiki?RamFire" class=wikipagelink>RamFire</a> (2) </td><td align="left" colspan="0.5"> 88504     </td><td colspan="0.5"> 251</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> sample.<a href="robowiki?RamFire" class=wikipagelink>RamFire</a> (1) </td><td align="left" colspan="0.5"> 88059     </td><td colspan="0.5"> 249</td></TR>
+</TABLE>
+<p>
+-- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+I just wanted a little confirmation, from some tests I did with the Interactive and <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a> sample bots, it seems that you get credited with a ram whether you are moving backwards or forwards.  Are there any differences whatsoever between moving backwards or forwards?  (Aside from the method you call to go that direction...) --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<UL >
+<li> Your movement direction does not matter, as long as you move towards the other bot. In robocode there are no differences in moving forward or backward.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<li> The only difference is that when you are in reverse, your heading is the opposite of the direction that you are moving.  That has the potential to complicate calculations. -- Martin
+<li> Ok, thanks guys! --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+</UL>
+<hr noshade class=wikiline size=1>
+<p>
+I have just discovered a way to accelerate more than 1 pixel in a single turn...  ;) just curious, how common is this knowledge, and is it a bug?  --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<UL >
+<li> It's common knowlege that if you are decellerating past 0 you will be accelerating faster than 1 in the opposite direction. -- Martin
+<UL >
+<li> Ok, I don't know how I could think that I found something everyone didn't already know about I guess.  So in a situation where it's appropriate to stop, do most people actually coast at a speed that is very close to zero?  In order to gain an extra pixel of acceleration when they move? --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<li> Not that I know of. Not on purpose, at least =). <a href="robowiki?PerformanceEnhancingBugs" class=wikipagelink>PerformanceEnhancingBugs</a> are never nice. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> That, I guess, is why I was asking if it was a bug, if it was widely known and used, I thought I would be behind the game if I didn't also use it... but if it's going to be changed, I would be behind the game if I <em>did</em> use it...  So I take it that it <em>is</em> a bug? --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<li> No, it's not a bug, but it is an exploitable feature of the <a href="robowiki?GamePhysics" class=wikipagelink>GamePhysics</a>. I just don't really see how that 1 pixel will help, most of the time. And a lot of the time you won't be able to exploit it. You definitely won't be behind by not using this =). -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> It's not really 1 pixel, it is up to 7 pixels, which is about a 3rd of the bot's profile.  It's not a bug in the sense of something that will be fixed or that is unethical to take advantage of.  It's a part of the reality of Robocode.  The physics aren't terribly realistic. -- Martin
+<li> Yeah, that's what I was thinking, within 6 turns it turns into a 7 pixel advantage...  I will be sure to keep this in mind. --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+</UL>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Is there anything that happens only once per round?  I'm interested in initializing some things at the beginning of each round, but I don't see an onRoundStart<a href="robowiki?action=edit&id=RoundStart" class=wikipageedit>?</a>() event handler or anything...  If there's nothing like that, I'll have to initialize a variable, and then change it in run(), but I'd rather not be checking it every time through the event loop... --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<UL >
+<li> The run() method will be called once at the beginning of every round, before anything happens in the game. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+Check me on this...  Hitting a bot with a bullet of power bp, where bp &lt;= 1, causes a 7 * bp swing in the energy tug of war, right?
+Does that mean that if you can guarantee a hit within six shots, you should take those shots every time?  Unless the other bot is doing something that is causing a bigger swing, that you have to make up for... like hitting you with higher power bullets...
+<p>
+<UL >
+<li> Another thing to consider is that survival is not what matters most, though it does matter (and a lot in melee). You might be able to out-survive someone (the energy tug of war) by never firing, but you may lose the battle because bullet damage counts so much more than survival. (Seems counter-intuitive - at least it did to me - but it's just how the scoring works. =)) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+<UL >
+<UL >
+<li> Whoah... so I could be the one alive at the end, but still lose?  Or I could be the one to get killed, but still win?  I guess I need to go find the formulas that tell what things are worth what points towards winning the battle.  I guess I need to optimize a different function than I thought!
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<UL >
+<li> Correct. Personally, I kinda like <a href="robowiki?Survivalist" class=wikipagelink>Survivalist</a> scoring, which is one reason I suggested it for the <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a>. But yes, the scoring formula has factors for bullet damage, ram damage, how many bots you outlive (not just being last one standing), and bonuses for being the one to actually kill an enemy (which is related to how much damage you've done to that enemy). Here's a page that might be helpful to you: <a href="robowiki?CalculatingScore" class=wikipagelink>CalculatingScore</a>, though there is likely a more readable formula somewhere on this wiki... And just FYI, a whole lot of 1v1 bots use 1.9 or 2.0 as default bullet power. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<UL >
+<UL >
+<li> I found the info, and posted a summary [<a href="robowiki?BenHorner/Calculations#Scoring" class=wikipagelink>[here]</a>] -- <a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+</UL>
+</UL>
+</UL>
+</UL>
+<hr noshade class=wikiline size=1>
+Is the radar accuracy (likelihood of tripping an on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>() event) related to it's "speed", by which I mean, the number of degrees per turn that it is spinning at...?  Ok, simply:  If I spin the radar faster, am I less likely to see opponents?
+<p>
+<UL >
+<li> There is no likelihood involved, you should get the event every time.  I thought that I was not getting it because I was using firing a bullet to signal me that the event had occurred, there are more rules around firing a bullet though, my gun was hot, so it wasn't firing, I misinterpreted this as not getting the event.  A much better way to check things like this is to use System.out.println() and check the robot console (the console that pops up when you click the robot name during a battle). -- <a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a> (thanks to <a href="robowiki?Simonton" class=wikipagelink>Simonton</a> for this answer!)
+</UL>
+<hr noshade class=wikiline size=1>
+I notice that on the <a href="robowiki?Radar" class=wikipagelink>Radar</a> page, many people like to use turnRadarRight<a href="robowiki?action=edit&id=RadarRight" class=wikipageedit>?</a>(Double.POSITIVE_INFINITY), is this better in any way than turnRadarRight<a href="robowiki?action=edit&id=RadarRight" class=wikipageedit>?</a>(45)?
+<p>
+<UL >
+<li> It makes it keep spinning forever. If you only tell it to turn 45, it will turn 45 this turn, but nothing next turn. Using the 'infinity lock' is another nice side effect. Once you scan a bot you tell the radar to turn *left* the amount of turn remaining. This makes it turn left infinity, ie right *negative* infinity. So next time you scan a bot, and you call set<a href="robowiki?TurnRadarLeft" class=wikipagelink>TurnRadarLeft</a>(getRadarTurnRemaining<a href="robowiki?action=edit&id=RadarTurnRemaining" class=wikipageedit>?</a>()) again, the getRadarTurnRemaining<a href="robowiki?action=edit&id=RadarTurnRemaining" class=wikipageedit>?</a>() gives you negative infinity, so this time you turn 'negative left', which is right. There, try and wrap your mind around that =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<hr noshade class=wikiline size=1>
+If I turn the gun it's maximum of 20 degrees, and the radar it's maximum of 45 degrees, all in the same turn, does this allow me to scan 65 degrees in a single turn?
+<p>
+<UL >
+<li> Thats quite an intresting question! Generally its true, you can even turn your radar 75 degrees if you turn your bot too! But if you set "set<a href="robowiki?AdjustGunForRobotTurn" class=wikipagelink>AdjustGunForRobotTurn</a>(true);" and  "set<a href="robowiki?AdjustRadarForGunTurn" class=wikipagelink>AdjustRadarForGunTurn</a>(true);" this trik does not work anymore. But this feature might be quite useful in meele, where you have problems to get enougth enemy information. I talked with Gorded about this theme some time ago, he discovered the trick(Or does anyone use it already?). --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+</UL>
+<p>
+<UL >
+<UL >
+<li> Thanks, I just saw today that this info is also on the [<a rel="nofollow" href="http://robocode.sourceforge.net/help/robocode.faq.txt">[Robocode FAQ]</a>]
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<li> I have some old melee bot lying around that uses that.  I made it during the time before I did any sort of robowiki-ing or roborumble-ing.  If I ever get into the unlimited <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> melee league, it will certainly use that fact when it can.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+</UL>
+<hr noshade class=wikiline size=1>
+Turns, how is this actually turn based?
+<p>
+<UL >
+<li> see definition of <em>turn</em> in [<a rel="nofollow" href="http://robowiki.net/cgi-bin/robowiki?BenHorner/DefinedTerms">[Defined Terms]</a>]
+</UL>
+<hr noshade class=wikiline size=1>
+Drawing on the screen for debugging purposes...  It looks like in the code of the Interactive robot that it should be drawing a red 'x' and / or oval on the battlefield, but I don't see any such graphic...  Do some people actually see these drawn graphics?
+<p>
+<UL >
+<li> Yes, you have to open the robot console for your bot (by pressing the button with your bot's name on it during a battle), then click the "Paint" button. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+<UL >
+<UL >
+<li> Thank you very much for the tip!  Is this something you learned over time, or is there a place I could have found that info? -- <a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+</UL>
+</UL>
+<p>
+<UL >
+<li> Another useful tip: check out <a href="robowiki?DrawingBot" class=wikipagelink>DrawingBot</a>, by <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>. It's a nice base of code for making debugging graphics in Robocode. Debugging graphics are an extremely useful tool in some parts of Robocode development. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<hr noshade class=wikiline size=1>
+Why are the <em>Consciousness check: </em> questions so hard?  Should I go to bed after I get one wrong 3 times in a row?
+<p>
+<UL >
+<li> Yes, yes you should. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<hr noshade class=wikiline size=1>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=BenHorner/AnsweredQuestions" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=BenHorner/AnsweredQuestions">View other revisions</a><br>Last edited October 7, 2007 4:21 EST by <a href="robowiki?BenHorner" title="ID 11928 from ip70-171-163-89.om.om.cox.net">BenHorner</a> <a href="robowiki?action=browse&diff=1&id=BenHorner/AnsweredQuestions">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>CustomQuad - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Custom, Quad'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=CustomQuad">CustomQuad</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>A quick class I whipped up so that I'll be able to out-of-bounds checking while still keeping a much quicker play-it-forward algorithm. It should work for any dimensioned quad that doesn't have any almost-vertical lines (ie. that 0.00000001 I added in causes a division by 0). I haven't tested it, but it looks right. So be warned! It's released as free code - no restrictions, as long as you don't charge money for it =). The other thing is that you can't put two diagonally opposite points as adjacent arguments when creating the quad.
+<p>
+<pre>
+    public class  CustomQuad{
+    //using the two-point formula for a straight line (Linear Equation) - from Wikipedia
+      private boolean[] modifier = new boolean[4];
+      private double[] m = new double[4];
+      private double[] x1 = new double[4];
+      private double[] y1 = new double[4];
+    
+       public CustomQuad(Point2D.Double corner1, Point2D.Double corner2, Point2D.Double corner3, Point2D.Double corner4){
+         m[0] = (corner2.y - corner1.y)/(corner2.x - corner1.x + 0.000000001);
+         m[1] = (corner3.y - corner2.y)/(corner3.x - corner2.x + 0.000000001);
+         m[2] = (corner4.y - corner3.y)/(corner4.x - corner3.x + 0.000000001);
+         m[3] = (corner1.y - corner4.y)/(corner1.x - corner4.x + 0.000000001);
+         x1[0] = corner1.x;
+         x1[1] = corner2.x;
+         x1[2] = corner3.x;
+         x1[3] = corner4.x;
+         y1[0] = corner1.y;
+         y1[1] = corner2.y;
+         y1[2] = corner3.y;
+         y1[3] = corner4.y;
+         calibrate(new Point2D.Double(
+            (corner1.x + corner2.x + corner3.x + corner4.x)/4,
+            (corner1.y + corner2.y + corner3.y + corner4.y)/4
+            ));
+      
+      }
+       private void calibrate(Point2D.Double insidePoint){
+         modifier[0] = 0 &lt; m[0]*(insidePoint.x - x1[0]) - insidePoint.y + y1[0];
+         modifier[1] = 0 &lt; m[1]*(insidePoint.x - x1[1]) - insidePoint.y + y1[1];
+         modifier[2] = 0 &lt; m[2]*(insidePoint.x - x1[2]) - insidePoint.y + y1[2];
+         modifier[3] = 0 &lt; m[3]*(insidePoint.x - x1[3]) - insidePoint.y + y1[3];
+      }
+       public boolean contains(Point2D.Double test){
+         return (modifier[0]^(0 &gt;= m[0]*(test.x - x1[0]) - test.y + y1[0]))
+            &amp;&amp; (modifier[1]^(0 &gt;= m[1]*(test.x - x1[1]) - test.y + y1[1]))
+            &amp;&amp; (modifier[2]^(0 &gt;= m[2]*(test.x - x1[2]) - test.y + y1[2]))
+            &amp;&amp; (modifier[3]^(0 &gt;= m[3]*(test.x - x1[3]) - test.y + y1[3]));
+      }
+   }
+</pre>
+<p>
+-- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=CustomQuad" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=CustomQuad">View other revisions</a><br>Last edited December 5, 2007 17:57 EST by <a href="robowiki?Skilgannon" title="ID 12382 from ctb-cache4-vif0.saix.net">Skilgannon</a> <a href="robowiki?action=browse&diff=1&id=CustomQuad">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

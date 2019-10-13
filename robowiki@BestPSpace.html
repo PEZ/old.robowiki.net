@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>BestPSpace - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Best, PSpace'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=BestPSpace">BestPSpace</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?BestPSpace" class=wikipagelink>BestPSpace</a> is the method of <a href="robowiki?Targeting" class=wikipagelink>Targeting</a> used by <a href="robowiki?LauLectrik" class=wikipagelink>LauLectrik</a> 1.2. There may be other bots that use it under other names.
+<p>
+The system tries to overcome the problems <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a>, <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>, and <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> have:
+<p>
+<UL >
+<li> Pattern matchers have trouble predicting movement when the enemy behaviour has no clear pattern, or when future behaviour is not related to previous observations. It seems to happen with many top bots, and that's why the VB method seems to work better against them.
+</UL>
+<p>
+<UL >
+<li> VB bots calculate the best relative bearing to fire at, based on previously collected data. For simple movements, this works fine. However, lately some top bots have appeared that create a movement that has a flat bearing probability function. The bearing probability function for these bots looks like:
+</UL>
+<p>
+<PRE >
+ +probability for a given distance.
+ +
+ +
+ +*********
+ +*********
+ +*********
+ ========== bearing
+</PRE>
+<p>
+<a href="robowiki?BestPSpace" class=wikipagelink>BestPSpace</a> tries to overcome it by mapping the right bearing to hit to multiple variables. It creates N probability spaces, each classified by a group of variables. For example:
+<p>
+<PRE >
+ + SPACE 1: probability for a given distance.
+ +
+ +
+ +*********
+ +*********
+ +*********
+ ========== bearing
+</PRE>
+<p>
+<PRE >
+ + SPACE 2: probability for a given accumulated time moving in a certain direction.
+ +
+ +      * 
+ +    *** 
+ +   ***** 
+ +*********
+ ========== bearing
+</PRE>
+<p>
+Note that you will have families of probability functions (defined by the variables used to classify the bearings) and many instances for each probability function. For example, one family might be defined by distance - accumulated time; the instance would be distance=500-accumulated time=20.
+<p>
+<p>
+<a href="robowiki?LauLectrik" class=wikipagelink>LauLectrik</a> uses 20 of these families, and generates around 1300 instances (this means 1300 probability functions). The number of instances depends on the enemy. Some variables it uses are: distance, target direction, target velocity, target acceleration, accumulated time moving in the same direction, relative movement direction, etc.
+<p>
+When you are going to fire, you select the instance for each family that best matches the current enemy state, and select the family with the highest probability (note that higher probability means that there is less variance in that space - the movement is more predictable).
+<p>
+The advantage of this system is that you can try to create a movement that makes a probability function flat, but it will be very difficult to make ALL functions flat, so <a href="robowiki?LauLectrik" class=wikipagelink>LauLectrik</a> should always be able to find a good criterion to use for aiming.
+<p>
+Sumarizing how it works:
+<p>
+<OL >
+<li> Calculate the right gun bearing to hit (I use the algorithm described in the <a href="robowiki?Wave" class=wikipagelink>Wave</a> page)
+<li> Calculate the current bot state for each bot family, select the right instances, and update the probability functions with the right gun bearing.
+<li> When you aim, use the current bot state to select the right instance for each family, and select the instance that shows the highest probability.
+<li> Fire!!!
+</OL>
+<p>
+The gun has some problems that need additional work:
+<p>
+<OL >
+<li> It learns quite slowly, because of the large number of buckets.
+<li> The number of families must be limited. The higher the number of families, the higher the probability of chosing the worng function, just because of variance in the observations. A system to deal with applicability of the functions should be implemented.
+<li> It uses lots of data, so when you add persistence it consumes the 200K allocated VERY fast. This makes it important to limit the number of families, which reduces the gun performance.
+</OL>
+<p>
+-- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+<p>
+<p>
+My prediction: This is the firing that the future killer bot will use. --<a href="robowiki?Tobe" class=wikipagelink>tobe</a>
+<p>
+Seems like it might have problems with learning speed, especially if the eternal rumble continues to use 10 round battles. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+So was this basically segmentation of GF targeting, or is there more to it? -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+When I read it I understood it as GF segmentation, but with segments treated separately. Maybe I was wrong ;) --<a href="robowiki?LRem" class=wikipagelink>lRem</a>
+<p>
+Seems like a good system.  The real trick to making it learn faster is to choose families that show some real relationships.  You could have many different options for families built into the code, but only store and collect the ones that show a significant correlation (thankfully, there are established ways to evaluate this).  I would be willing to bet that the biggest source of problems with this method is the fact that 90% of top bots use some form of wave surfing, so only the <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> family will show any correlation. --<a href="robowiki?Speal" class=wikipagelink>speal</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=BestPSpace" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=BestPSpace">View other revisions</a><br>Last edited May 19, 2006 9:06 EST by <a href="robowiki?Speal" title="ID 7054 from c-24-118-192-10.hsd1.mn.comcast.net">Speal</a> <a href="robowiki?action=browse&diff=1&id=BestPSpace">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

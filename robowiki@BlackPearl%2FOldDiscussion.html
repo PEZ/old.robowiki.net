@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>BlackPearl/OldDiscussion - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Black, Pearl, Old, Discussion'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/OldDiscussion">BlackPearl/OldDiscussion</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?BlackPearl" class=wikipagelink>BlackPearl</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>All of this information below pertained to Pearl when she was a <a href="robowiki?PatternMatcher" class=wikipagelink>PatternMatcher</a>. Pearl is no longer trying that voodoo. This page is only here for historical purposes and the off hand chance that someone should find anything here remotely useful. -- <a href="robowiki?Sparafucil3" class=wikipagelink>|jim</a>
+<p>
+As I have mentioned above, I seem to be off by a tick in my projection. Anyone have any hints or suggestions to provide? 
+<p>
+Check if the <a href="robowiki?RooseveltPMC" class=wikipagelink>RooseveltPMC</a> page has some hint that could help you with this. If I recall correctly it had the same troubles a while. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+For quite some time i was sure that i had a problem in my projection, but it actually turned out to be my matching. Problems i have encountered:
+<p>
+<UL >
+<li> Patterns that spill off past the scope of your history
+<li> Inadvertantly matching the recent data (and consequently using head on targetting quite often)
+<li> Searching for patterns that are so short that you don't accurately match the pattern
+<li> Forgetting that you have to start the match from the end of the matched pattern (indexOf() gives the position of the start of the match).
+</UL>
+<p>
+As hopefully a helping hand here is the code i use for my matching (it's probably not as efficient as it could be, but i'm not that fussy):
+<p>
+<pre>  public int findStartIndex()
+    {
+        if(counter &lt; MAX_SEARCH_INDEX) return -1;
+        
+        int currentVal = MAX_SEARCH_INDEX / 2;
+        int nextVal = MAX_SEARCH_INDEX / 4;
+        int bestVal = 0;
+        int bestIndex = -1;
+        int startIndex = -1;
+        
+        String search;
+        
+        while(nextVal &gt;= 1)
+        {
+            search = recentString.substring(MAX_SEARCH_INDEX - currentVal);
+            startIndex = historyString.toString().lastIndexOf(search);
+            
+            if(startIndex &gt; 0)
+            {
+                bestIndex = startIndex;
+                bestVal = currentVal;
+                currentVal += nextVal;
+            }
+            else
+            {
+                currentVal -=nextVal;
+            }
+            
+            nextVal /= 2;
+        }
+        
+        return bestIndex + bestVal;
+    }</pre>
+<p>
+it works by doing a binary search type process to find the actual length of the match. It seems to me at least to be fairly self explanatory (but i wrote it and understand my own sense of twisted logic). Feel free to use it, ignore it or laugh at it... <a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+--
+<p>
+I am having no luck so I am going to post this here in the hopes that some one else can see what I am missing. I think the error is in the projection part. I have cut out some of the movement and other parts that have no bearing on the targeting part. Cutting and pasting this into the robot editor and changing the package should result in a bot that fires (poorly). I have pretty heavily monitored the pattern creation portion and I am pretty sure that part is sound. I have also watched the pattern buffer, the match String and the projected movement String and they all seem to be OK. as far as I can tell the movement projection is good but if you pitch this bot against <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> it can not hit it very well. I guess what I am saying is that anything could be suspect.
+<p>
+Note: I know that the pattern matching as written here only matches the first instance of a found pattern in the movement buffer. I can get past this part if I can simply get it to match effectively against a simple periodic bot like <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a>. I also know that it can spill off the end of the pattern as well.
+<p>
+<pre>
+** I cut out all the code here. If you want to see it the bot has been released OpenSource.
+</pre>
+<p>
+-- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+If you initialize projX and projY to eX and eY and then change eX to projX in "projX = eX + Math.sin(baseHeading) * dist" (and the same for the Y) you'll see yourself hitting <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> in no time.  You won't see yourself BEATING <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> when standing still and firing 0.5-power bullets, though.  I also changed "if (get<a href="robowiki?GunHeat" class=wikipagelink>GunHeat</a>() &lt;= getGunCoolingRate<a href="robowiki?action=edit&id=GunCoolingRate" class=wikipageedit>?</a>())" to getGunCoolingRate<a href="robowiki?action=edit&id=GunCoolingRate" class=wikipageedit>?</a>()*2 and took out the waitFor call, and that helps against <a href="robowiki?PatternBot" class=wikipagelink>PatternBot</a> (which I assume you're trying to beat, too, since you have a stationary pattern-matcher firing 0.5-power bullets.  Of course, some of your other problems, like accounting for new rounds and stuff, are going to have to go in there to beat <a href="robowiki?PatternBot" class=wikipagelink>PatternBot</a> probably. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I think you'll find it hard to judge the projection accuracy if you only use a 10 tick match. <a href="robowiki?LeachPMC" class=wikipagelink>LeachPMC</a> used 600+ ticks. Then when you have gotten a good index against PatterBot<a href="robowiki?action=edit&id=PatterBot" class=wikipageedit>?</a> you can lower the match length since no real bots should show such predictability. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+...and few bots are doing the same thing internally for 600 ticks (except for ones called "<a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a>"). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+<a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a> You are a genious. It is so obvious once you pointed it out. Thanks for looking at it. It is not perfect in its matching vs. <a href="robowiki?PatternBot" class=wikipagelink>PatternBot</a> but it is very close now. Now to tighten up some lose ends and see if I can get over the %100 mark in the <a href="robowiki?PatternMatcherChallenge/PMCIndex" class=wikipagelink>PMCIndex</a>. <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> what I am really after is the chance to do a PM gun and more importantly see what can be done to exploit them. Starting small against predictable bots points out errors in my approach. I am hoping to learn a few things during this excercise that can translate into a <a href="robowiki?Jekyl" class=wikipagelink>Jekyl</a> that is harder for a PM bot to hit. I think I have found one thing already. More to come later. I would also like to note that Pearl can not be called a <a href="robowiki?SlowBot" class=wikipagelink>SlowBot</a> even though it is doing Pattern Matching. I am getting 1600+ FPS minimized on my trusty Think Pad 600. We will see how it goes once I start handling more than one match at a time. Even if I cut my frame rate in half I will still be more than pleased. -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+Of course, you're also catching indexing exceptions instead of preventing them.  Granted, though, you're probably not throwing nearly as many as Fhqwhgads used to. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+There's something wrong with <a href="robowiki?BlackPearl" class=wikipagelink>BlackPearl</a>'s energy management or something. Sometimes it just stops shooting. This makes it outsurvive <a href="robowiki?Gouldingi" class=wikipagelink>Gouldingi</a> with some margin since Gouldingi can't hit <a href="robowiki?BlackPearl" class=wikipagelink>BlackPearl</a> very much. But G still wins the battle because BP doesn't collect enough bullet damage points. See if you can fix that before <a href="robowiki?Tobe" class=wikipagelink>tobe</a> runs the last minibot challenge and you might have the bot that takes Gouldingi's top 10 qualifying spot. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, Do you know which version? The .50 version had a huge skipped turn problem that caused me to miss events. When you are shooting and turning your radar in an on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> event that is not good. The .51 version should address this. If it does not I will need to look further. -- jim<a href="robowiki?action=edit&id=Sparafucile" class=wikipageedit>?</a>
+<p>
+<a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, Upon further review I see it in the .51 version too. Thanks for the heads up. -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+I tracked this problem down. It looks as if I forgot to check in a change before I built the jar for upload. As I have an Ant task that does the build, including a CVS checkout, I got an old version in the upload. That means the version you are working with has a pattern buffer of over 20K chars to sift through. That makes Pearl incredibly slow and skip turns badly. I am away from my CVS source right now but will upload a new version some time this afternoon (4:00PM EST). Thanks again for the catch. -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+<a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, I have uploaded .52. This should correct the non-firing problem. Unfortunately firing expends energy and survival is no longer my strong suit =^&gt; Hope it gets fixed in time for the challenge. -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+It seems to be beat my new <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> in any case. Hope I am lucky and can avoid <a href="robowiki?BlackPearl" class=wikipagelink>BlackPearl</a> in the final <a href="robowiki?MiniBotChallenge" class=wikipagelink>MiniBotChallenge</a>. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I find that encouraging. I am also happy to see that it has not made the <a href="robowiki?SlowBot" class=wikipagelink>SlowBot</a> list. =) <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?BlackPearl" class=wikipagelink>BlackPearl</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=BlackPearl/OldDiscussion" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=BlackPearl/OldDiscussion">View other revisions</a><br>Last edited December 7, 2003 5:31 EST by <a href="robowiki?Sparafucil3" title="ID 1830 from ip68-101-39-12.dc.dc.cox.net">Sparafucil3</a> <a href="robowiki?action=browse&diff=1&id=BlackPearl/OldDiscussion">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

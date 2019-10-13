@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>ClassroomRumblesUsingCVS - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Classroom, Rumbles, Using, CVS'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=ClassroomRumblesUsingCVS">ClassroomRumblesUsingCVS</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>OK, the previous discussion in yahoogroups under the heading "Managing Classroom Rumbles" got me to this page.  So now, how do I use CVS to manage a classroom rumble?  Again, there are 10 student workstations and one instructor station with an LCD projector. -- <a href="robowiki?Edwin" class=wikipagelink>Edwin</a>
+<p>
+Welcome! Are you running Windows or Linux on those computers? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+You can check anything in to a CVS repository, including binaries so I think the students can check in their robot jar files. Including source which will make the CVS repository help a little with version control as well. The setup would be something along these lines:
+<OL >
+<li> A CVS server (possibly on the same machine as the current file server, or else on the instructor machine).
+<OL >
+<li> Make a "cvs import" of the robots directory on the instructors machine.
+</OL>
+<li> For each robot that's to be included in a rumble. From the students machines
+<OL >
+<li> "cvs add robot_name.jar"
+<li> "cvs commit -m 'my killer bot, now on steroids' robot_name.jar"
+<li> Repeat the commit every time the jar is rebuilt
+</OL>
+<li> When it's rumble time. From the instructor machine in the robots directory
+<OL >
+<li> "cvs update"
+<li> Start <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a> or, if it's already running, rechose the robot file repository from the menu.
+</OL>
+</OL>
+I don't recall exactly the commands to set up the CVS repository and do the import. And I'm not sure how to do it on Windows, since I'm a Unix dude. But maybe someone else can make the above list more complete and help answering whatever questions Edwin might have? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+This might be a good start. Readable and using NT, also links to where you can download CVS for NT: <a rel="nofollow" href="http://www.flipcode.com/articles/article_cvsintro.shtml">http://www.flipcode.com/articles/article_cvsintro.shtml</a> -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=ClassroomRumblesUsingCVS" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=ClassroomRumblesUsingCVS">View other revisions</a><br>Last edited August 13, 2003 5:59 EST by <a href="robowiki?PEZ" title="ID 1052 from 192.168.0.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=ClassroomRumblesUsingCVS">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

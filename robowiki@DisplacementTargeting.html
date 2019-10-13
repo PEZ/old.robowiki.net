@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>DisplacementTargeting - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Displacement, Targeting'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=DisplacementTargeting">DisplacementTargeting</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H3><a rel="nofollow"  name="Overview"></a>Overview</H3>
+
+<em>Subset of</em>: Targeting
+<p>
+Displacement Targeting is a log based targeting method which is designed to predict the future location of an enemy based on its past movement.  The unique aspect of this technique is the use of Displacement Vectors (of the math variety, of course).  The robot stores the enemy's displacement from its initial location with respect to time, up to a designated timestep.  When aiming the robot can then reiterate through its stored displacement values and find either a mean, a mode, or perhaps chose between a bimodal or statistical distribution to find the predicted target.  Using the time scale, various distances can be used.
+<p>
+Currently my version of the algorithm segments data by velocity (so if a robot is still, we predict one displacement.  If it is moving fast we predict another)  Displacement vectors are relative to the velocity vector (this a robot moving right at speed 8 will create a perpendicular displacement vector to one moving down at seed 8, for the same distance to the target)
+<p>
+I am developing this algorithm in response to the utter failure that linear predictions have on rotating bots, like <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a>.  I think this algorithm might create an applicable gun for many competitors.
+<p>
+Some details:
+For each enemy bot I am creating a 'StatPack<a href="robowiki?action=edit&id=StatPack" class=wikipageedit>?</a>' (not sure that stat is the best word, but it'll do for now).  In it is a double array of linked lists (this could easily enough be a triple array).  The lists themselves contain actual observed displacements.  The array holds [velocities 0-8][timesteps 0-99, or whatever you like...could vary for field size].
+<p>
+For the purpose of data collection, each observed enemy location is stored along with a timestamp.  When it's been there    for more timesteps than we're storing, the positon is removed.
+<p>
+The number of displacement vectors per list is limited to avoid too much lag, and to facilitate adaptation to a change in movement (<a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> hitting a wall, for example, generates a different set of displacement vectors, and needs to be 'recognized'.  Since there is not going to be an observation every timestep, when requesting a dispacement for a given time (either sequentially or predicted... i'm doing the former but the latter would be much more efficient), if no observed data is present for the given velocity and time, other data can be interpolated to approximate the vector.
+<p>
+I should also mention that it currently uses the mode average exclusivly when finding magnitude and direction.  This may not be best. Other options will be tried in the future. -- <a href="robowiki?Franzor" class=wikipagelink>Franzor</a>
+<p>
+<hr noshade class=wikiline size=1>
+This is a form of <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a>. It looks like one anyway -- <a href="robowiki?Xero" class=wikipagelink>Xero</a>
+<hr noshade class=wikiline size=1>
+I suppose it could be considered <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a>.  I think it may generalize a bit more than conventional <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a>, but I honestly haven't had a chance to dive too deeply into <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> at this point.  In any case, I'll have a sample up and a better explanation within a few days.  Thanks for the feed back though -- <a href="robowiki?Franzor" class=wikipagelink>Franzor</a>
+<p>
+(Edit Conflict) Well, there is no pattern matching involved at all, actually; it sounds like stats are segmented the way they are in a <a href="robowiki?VisitCountStats" class=wikipagelink>VisitCountStats</a> gun (<a href="robowiki?Dookious" class=wikipagelink>Dookious</a> / <a href="robowiki?Ascendant" class=wikipagelink>Ascendant</a> / <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a>), but it's using a displacement vector instead of a <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> to figure out the future position / angle to shoot at. My initial thoughts are that it could work better against tanks that don't tend to orbit you, which is rare in 1v1, but common in melee. In fact, if you adjust the size of the displacement vector based on bullet time - which seems like a good idea - it starts looking a whole lot like <a href="robowiki?GuessFactors" class=wikipagelink>GuessFactors</a> (or GuessVectors<a href="robowiki?action=edit&id=GuessVectors" class=wikipageedit>?</a>, as I've heard <a href="robowiki?ABC" class=wikipagelink>ABC</a> say somewhere.) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I've added some details to the page to start clearing things up -- <a href="robowiki?Franzor" class=wikipagelink>Franzor</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=DisplacementTargeting" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=DisplacementTargeting">View other revisions</a><br>Last edited June 8, 2006 2:51 EST by <a href="robowiki?Franzor" title="ID 7200 from dialup-4.156.165.141.Dial1.Boston1.Level3.net">Franzor</a> <a href="robowiki?action=browse&diff=1&id=DisplacementTargeting">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

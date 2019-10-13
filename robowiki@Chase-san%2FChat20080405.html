@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Chase-san/Chat20080405 - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Chase-san, Chat20080405'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Chat20080405">Chase-san/Chat20080405</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I have a question, which of the Map functions (HashMap<a href="robowiki?action=edit&id=HashMap" class=wikipageedit>?</a>, TreeMap<a href="robowiki?action=edit&id=TreeMap" class=wikipageedit>?</a>, Hashtable, etc) is the quickest? Reason being is I need one to allow individual expanding statbuffers. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Well in the end I decided to make the Map stored in the StatBuffer<a href="robowiki?action=edit&id=StatBuffer" class=wikipageedit>?</a> a TreeMap<a href="robowiki?action=edit&id=TreeMap" class=wikipageedit>?</a> as to keep the order, because the segmentIndex I use, is just a array of doubles (double[]), and so the chaotic nature of a HashMap<a href="robowiki?action=edit&id=HashMap" class=wikipageedit>?</a> made them arrange wrong for reindexing, for the rest I use a basic Map, with the initializer being a HashMap<a href="robowiki?action=edit&id=HashMap" class=wikipageedit>?</a>. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+HashMap<a href="robowiki?action=edit&id=HashMap" class=wikipageedit>?</a> is probably the fastest, but in my opinion it's less convenient if the key type isn't a built-in Java type (like a primitive or built in class that defines equals() and hashCode()).  Hashtable is similar to HashMap<a href="robowiki?action=edit&id=HashMap" class=wikipageedit>?</a>, except that it handles synchronization/concurrency (so if you have to access it from multiple threads, it's safer), but with that comes some overhead.  Both are asymptotically faster than TreeMap<a href="robowiki?action=edit&id=TreeMap" class=wikipageedit>?</a>, but probably use a little more memory.  TreeMap<a href="robowiki?action=edit&id=TreeMap" class=wikipageedit>?</a> keeps things in order of their keys, and all you need is a comparison function (which can be built in using the Comparable interface, or can be passed into the TreeMap<a href="robowiki?action=edit&id=TreeMap" class=wikipageedit>?</a> as a Comparator). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Well there is a number of bugs in my new setup, so unless I can sort out some of the bugs in it, its not gonna be moving any time soon. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+I feel kinda dumb now, I used the same segment reference number twice, which lead to there being more buffers then segments in the TreeMap<a href="robowiki?action=edit&id=TreeMap" class=wikipageedit>?</a>. Which caused bugs, and to think I spent the last two days trying to track down the problem (abeit fixing alot of minor ones in the process). --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Meh, my new system can't get above 70 vs DT no matter what segments I use (most my others get 80+), and it can't get above 55 vs CC, which means its neither a good standard or a good anti-surfer gun, which means i'm back.. no i'm far worse then where I started. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+I'm kinda tired... I haven't been able to come up with a single solid idea for making Seraphim any better then she is now. Atleast not without any major revision (which I have attempted the last 4 times aswell). But I am a little tired of "rewriting" seraphim, not to say I haven't gotten better ideas because of it. I might attempt something later, but all I have right now is a idea on a better way of surfing multiple waves.
+<p>
+So i'm just gonna relax for a little longer and see if I get motivated enough to do anything (which means I probably won't make it into the 2000 club first between me, <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a> and Krabb). --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+I'm spiritless too. A two week break might help :) --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+I guess <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a> will probably win the race between us three, but it might still be on between me and you, our bots are highly simular in score. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+@Chase-san: There is something you can improve actually:
+<p>
+<a rel="nofollow" href="http://lrp.xm.com/lrp/chase.na.Seraphim%200.023.jpg">[chase.na.Seraphim 0.023]</a>
+<p>
+You're doing worse against simpler bots. Targeting needs impovement ;) -- <a href="robowiki?Nfwu" class=wikipagelink>Nfwu</a>
+<p>
+Actually I think its the movement thats failing against the simpler bots, it does rather well vs most GF guns. Though I admit the fact that it doing really well vs surfers was by pure accident, it was suppose to be a gun aimed to target simple bots, but somehow it destroys surfers dispite its HIGH surfing depth. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+I feel old. I am not as logically minded as I thought. I now can understand alot more then when I started robocode, but I think anyone who was here when I started saw the large waterfall of questions on the most basic of systems. At 18 I figured I was pretty young, but looking at some of the younger coders here I just feel old and dumb. But then again I just started this, I am amazed at how much in the way of programming I didn't know before I started robocoding. In fact robocoding here on this wiki, has helped me develop in many areas rather quickly.
+<p>
+The ways that Robocode has helped me:
+<UL >
+<li> In Mathematics. (Originally trig was way above my head).
+<li> In Programming. :D
+<li> Being more social!? What programming is social? Right?
+<li> In being more competetive. (you know it)
+<li> In determination. (I got put off easily from tasks before)
+<li> In getting things done. (never got anything done before)
+</UL>
+<p>
+--<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+My server is down, so if any of you are having problems downloading my bots for battles thats why. I won't release bots unless thier on my webspace, for personal reasons. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Sorry i'v been kinda, MIA lately, I had to wipe my Hdd, I decided to install Windows 2000, instead of XP again. I managed to save all my robots, but not Eclipse, so I'll get back to this in awhile after I reget Eclipse. On the up side, I'm getting DSL at the latest Tuesday. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Got it, have had it, love it. I have an Creative Writing assignment that needs be done this weekend, however if I finish that early I might get back into the swing of things. Otherwise probably the end of next week. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+I am changing my status to "semi-active". It has been apparent for while, but I wanna make it official, I'll poke around the site but i'm unlikely to be developing bots for awhile. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Seems my system had forgotten my preferences, fixed however. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+I just checked the robocode yahoogroups and noticed that you were there too...Btw, when will you start making bots again? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Making bots again, Well... Generally got bored with what i'm generally okay woth (surfer/gfgun) mixes, and Seraphim's best v code is missing. And my attemps at code shrinkage, doesn't do to hot, and my melee is horrible. I suppose whenever I get back into the mood of fiddling with a meleebot. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+In other news, i'm heading up to college on Saturday, which as I understand it is rather nearby where Simonton lives. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+<UL >
+<li> Hey cool, congrats! =) Try not to do too much Robocoding in class, eh? Hehe... <em>Do as I say, not as I do!</em>  Good luck! -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> Going into computer science, my hope is I can waltz through the first semester without alot of hard work, get accustomed to college life some.
+</UL>
+<p>
+Hey Chase, where's all the source for your bots?  I wanted to check out Seraphim ... can you send it my way? -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+I just did a 75 round <a href="robowiki?RulesP90" class=wikipagelink>RulesP90</a> with Shadow vs Dookious, and well, Shadow seems to shoot streams which are impossible to dodge and Dookious fires things all broken up which at the very least can be dodged. Could it be ABC planned for this style of play? Anyway here are the results. The cooldown was 1.0:
+<pre>
+abc.Shadow 3.75a	6614	2200	440	3469	506	0	0	44	31	0
+voidious.Dookious 1.573	3473	1550	310	1447	166	0	0	31	44	0
+</pre>
+--<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+I don't have any specific code for this style of play, if that's what you mean. I remember making some tests with it a long time ago, it's cool to watch those brutal battles. I'm glad that Shadow wins here too. :) -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<DL >
+<dt><dd>Completely agree, its fun as all heck to watch the battles, a P90 Melee battle is crazy (I mean really). --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</DL>
+Shadow aims once per shot, while Dookious aims continuously and only shoots when the gun is aimed correctly, so that makes sense. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+The latest Shadow versions aim multiple times per shot, from (gunHeat &lt;= gunCoolingRate<a href="robowiki?action=edit&id=CoolingRate" class=wikipageedit>?</a>) until the gun is aligned with the latest prediction. That change gained me some good points in the rumble. The gain in precision is worth more than the loss in firing rate. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+<hr noshade class=wikiline size=1>
+If I disappear in the next few days do not be surprised, as the fan on my graphics card is dieing! Therefor very prone to overheating, therefore prone to burning out, therefore prone to leaving my system without a way to display graphics. Yay(&lt;- sarcasim). --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Seems no one took time to look, but I have solved the problem by duct-taping a old case fan to the removable side of my case, its aligned perpendicularly to the angle of the side, allowing it to blow air directly into the card's heatsink. This was my creative solution as a few other things I tried failed. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+<hr noshade class=wikiline size=1>
+I have never asked this before here, but what do you, the other robocoders and developers here on the robowiki, think of me, in terms of personality and realtive skill reguarding well, robocode, java, and well generally, what are your opinions on me. <b>Extreme</b> Criticism is welcome. Do you see my name and think .o(oh that stupid git, eh, won't bother reading it, what does [blank] think.), if you feel that go ahead and tell me, I can't promise not to be offended by it, but I will promise not to tell you if I am (unless you request otherwise). --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Email sent. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<DL >
+<dt><dd>Thankyou for your honesty. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</DL>
+<p>
+The short version is that you appear to be trying hard to get validation through your participation in Robocode.  We all enjoy a genuine compliment, but fishing for them on the Internet is not a good way to go.  My impression from the conversations we have had, on the wiki and IM, is that you view yourself as wildly proficient at everything computer related.  As it turns out, I happen to be God of All There Is, but it is taking me some time to translate that into a competitive bot.
+This segues into another topic, that of using other people&#8217;s code in your bots.  I don&#8217;t think I&#8217;ve ever given a compliment to Voidious.  I know he&#8217;s worked hard for a long time and held the top of the Roborumble rankings for a long time.  Truly, he&#8217;s earned some respect and produced some original work in his time .. but I&#8217;ll always think of him as the guy who started with someone else&#8217;s bot and tweaked it.  A passage from Jurassic Park often comes to mind: &#8220;They stood on the backs of geniuses.. and took the next step.  They didn&#8217;t earn the knowledge themselves..&#8221;.  I didn&#8217;t mean to take a pot shot at Voidous or even to insult the open source crowd in general, but I think it is relevant because I, personally, just don&#8217;t have the same respect for people who delve into code of their opponents rather than building something original.
+Well, it turns out it&#8217;s the long version afterall.  - Martin
+<p>
+As a continuation of your comment/tirade against open-source bots, here's my stance: My aim is to further research into the capabilities of Robocode bots. I do not think I have the smarts to be able to, independently, think up what the entire community has come up with together over the course of several years. So here's what I do: I attempt to understand the purpose of the algorithms in other bots. I do not copy across code, unless the function has been published as a utility, such as Simonton's KD-Tree. If I don't understand the algorithm, I try to understand what it's meant to be doing, and then figure out my own way of doing it. Regardless, I come up with a different implementation. <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> might originally be based off of <a href="robowiki?BasicSurfer" class=wikipagelink>BasicSurfer</a>, but the shared code between <a href="robowiki?BasicSurfer" class=wikipagelink>BasicSurfer</a> and <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> is probably about 300 codesize bytes. <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> weighs in at over 14000 bytes. It's the same with my code: If you want to use it, I'm not going to stop you. However, I would prefer that you understand what every step of the code does, otherwise you'll never be able to improve on it. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Guys, please don't go that way. I consider everyone I ever met in this community a friend. Not exactly like a real life friend, but we all share a passion (obsession), and, after some time, we get to know a bit about each other, virtues and flaws, like every other human being. Some of us like to explore different things, some like to test the limits of established technics, some take pleasure from "small" achievements, others are only satisfied with the top spot. Not giving props to someone like Voidious is plain wrong, though. He, like others before him (people like Skilgannon ;)), is the kind of person that absorbs knowledge in record time, expands on it, perfects it like no other, and beats the established masters (old farts) at their own game. A deserving long lasting King. If you don't think so, prove it by beating him, not finding excuses for why he is #1 and you're not. Anyway, what we need is the rumble back, asap, this kind of discussions are pointless. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Well generally speaking I wanted to know how people thought of me, so I could either change it for the better or so on, I will make no excuses, but I know from personal recounts with others I can be very abrasive with others. But also interested in where people saw me in the big scheme of the programming/robocoding I do. In fact I only started looking at others code after I made my first gf gun (after much talking through it with Voidious), because frankly I didn't understand the way PEZ had done it, at the time I was very new to Java, also some of my bots like Pytko and its pattern matcher, I have never looked at code to create, and I have a few others. But really yes, it varies. I think that Voidious, ABC, Skilgannon, Paul, PEZ, Jamougha, David Alves (can't forget him), Kev, Corbos, and all those others who have taken the day by storm or grabbed the crown for themselves at some point are just plain and simply Elite, and deserve any props I can give them, I don't even rate my self as an Ace or a Adept, frankly i'm surprised I got as far as I have. Really aside from other projects, I have stuck to robocode longer then most things, not sure why.  --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Chase-san/Chat20080405" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Chase-san/Chat20080405">View other revisions</a><br>Last edited April 5, 2008 15:40 EST by <a href="robowiki?Chase-san" title="ID 13072 from emcnair-79-84.resnet.mtu.edu">Chase-san</a> <a href="robowiki?action=browse&diff=1&id=Chase-san/Chat20080405">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

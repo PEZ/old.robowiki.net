@@ -1,0 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Fire (bot) - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Fire, (bot)'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Fire+(bot)">Fire (bot)</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>A <a href="robowiki?SampleBot" class=wikipagelink>SampleBot</a> that sits still shooting at everything it sees.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+How come, when you have 2 <a href="robowiki?Fire" class=wikipagelink>Fire</a>s (modified so they don't move) shooting at eachother, the bullets go right through eachother? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+This is discussed elsewhere, but I'll answer it here as well.  Bullets aren't treated as a single point, but as a line segment travelling from it's endpoint from the previous tick it's new endpoint one unit of velocity distant (at the angle it was fired at).  Bullet collisions are determined by line segments intersecting one another during a tick (and line segments intersecting a tank's body scores a hit).  Ok.. so now the answer I spoke of:  Lines which are parallel do not intersect.  Bullets fired directly at one another will not (usually) collide.  I'm not saying it's right .. it's just the way it was programmed.  Frankly it would make shooting bullets out of the sky pretty simple if it were not that way.  You'd just sit still and fire at the point the enemy was last turn if you detect that he fired.  I believe that you will see bullets collide on occasion due to some imprecision with doubles when checking for the intersection of the segments.  --<a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin Alan Pedersen</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Fire_(bot)" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Fire_(bot)">View other revisions</a><br>Last edited November 28, 2005 18:38 EST by <a href="robowiki?Martin_Alan_Pedersen" title="ID 5692 from 165.79.13.191">Martin Alan Pedersen</a> <a href="robowiki?action=browse&diff=1&id=Fire_(bot)">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

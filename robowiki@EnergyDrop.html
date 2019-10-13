@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>EnergyDrop - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Energy, Drop'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=EnergyDrop">EnergyDrop</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Since robots must expend a certain portion of their energy to fire a bullet, and this portion is always between 0.1 and 3.0, detecting a drop in a robot's energy between 0.1 and 3.0 is a very good indicator they've fired a bullet.
+<p>
+Most bullet impacts cause more damage than 3.0, so this system is fairly reliable; low-power bullets and wall collisions may cause mis-detections, however. This trick is the basis of most (probably all) bullet dodging systems. This trick is (apparently) also used with gun cooling rates in <a href="robowiki?CoolMovement" class=wikipagelink>CoolMovement</a>.
+<p>
+--<a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<hr noshade class=wikiline size=1>
+<p>
+To make it more reliable, a bot can calculate the energy drop caused by a bullet hit to the enemy in the "bulletHitEvent<a href="robowiki?action=edit&id=HitEvent" class=wikipageedit>?</a>". This way the detection is more acurate, even if it will take some more code (and it is usually not worth if you are coding a Micro or a Nano). -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+NB: The bullet was in fact fired the tick before you detect it, and had moved one tick as soon as it fired, so the position it fired from is where the enemy was the tick before you detected it, and it the time it was fired is 2 ticks before you detected it.  And if that sounds complicated, it's because it is. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+to <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>:<br> 
+I remember that u once had mencioned, at wiki pages, something about using opponents gunheat to detect bullet firing. The problem is that i don't remember where... Do u remember where it was? I'm having trouble to get opps gun heat, cant find the appropriated method. I also tried to assume a gunheat for opp. when detected the energyDrop, and then try to calculate using guns coolRate each turn, but i wasn't able to figure out the relations between bullet_power &amp; gunHeat... Do u know anything about these? Thnx.<br>
+PS:I f anyone else knows anything about... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+My nanobot Freddie dodges opponents when their gunheat is less than .02. I worked out a formula for it in the bot:    <pre>       if ((heat -= 0.1) &lt;= 0.2) {		
+			heat = 1;
+		}
+		if ((last_energy -= e.getEnergy()) &lt;= 3 &amp;&amp; last_energy &gt; 0) {
+			heat = 0.2 * (last_energy - 0.1) + 0.92;
+		}</pre>
+The code gives Freddie the coolest graph in Robocode and the highest specialization index. --<a href="robowiki?Alcatraz" class=wikipagelink>Alcatraz</a>
+<p>
+Thnx,<br>
+I'm not sure that i have understood the reason for the:
+<pre>
+if ((heat -= 0.1) &lt;= 0.2) {		
+    heat = 1;
+}</pre>
+My pupose with it is to improve the bullet detection ensuring that an energy drop while heat&gt;0, won't generate a bullet detection. Something like:
+<pre>       
+if (((heat-=0.1) &lt;= 0) &amp;&amp;  (last_energy -= e.getEnergy()) &lt;= 3 &amp;&amp; last_energy &gt; 0) {
+   //enemy fired bullet!!
+   heat = 0.2 * (last_energy - 0.1) + 0.92;
+}
+</pre>
+Assuming that the formula for gunHeat is (0.2 * (last_energy - 0.1) + 0.92)... Is that correct? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Yeah, that formula is all you need. The first part was just for dodging purposes. -- <a href="robowiki?Alcatraz" class=wikipagelink>Alcatraz</a>
+<p>
+Thnx, <a href="robowiki?Alcatraz" class=wikipagelink>Alcatraz</a>! -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+The formula is firepower/5 + 1, the - 0.1 (or purely - getGunCoolingRate<a href="robowiki?action=edit&id=GunCoolingRate" class=wikipageedit>?</a>()) is required because it's already cooled one tick after you detect energydrop, I'm not sure where you get 0.92 though. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I don't know either. But it worked. -- <a href="robowiki?Alcatraz" class=wikipagelink>Alcatraz</a>
+<p>
+I'll try <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>'s formula, unfortunately <a href="robowiki?Alcatraz" class=wikipagelink>Alcatraz</a> formula isn't working for me. Tell u later... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+<a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>'s formula is correct, but maybe the variable last_energy in <a href="robowiki?Alcatraz" class=wikipagelink>Alcatraz</a> formula indicates the powerdrop and just is reused to decrease codesize. But then i still don't understand the -0.1 in this place: it seems already accounted for in the +0.92 (whis is 1-0.1 + a fudge factor?).
+I am currently also working on a nano that uses the Gun cooling rate to dodge. It works pretty well against some top nano's and hopelessly looses from others. Problem is there is not enough room left for a decent gun. I will release him soon anyway, just to see if this is a direction to go with movement. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<p>
+<a href="robowiki?Dummy" class=wikipagelink>Dummy</a> is brilliant, just look to his <a href="robowiki?TimmyTheCheerfulMonkey" class=wikipagelink>TimmyTheCheerfulMonkey</a> as proof. Inspired by that, and for all those AM systems that need something like this, here is a virtually foolproof set of <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> filter to find the bullet power fired (if any) of every <a href="robowiki?EnergyDrop" class=wikipagelink>EnergyDrop</a>:
+<p>
+First you will need to track enemy velocity, HitRobotEvent<a href="robowiki?action=edit&id=HitRobotEvent" class=wikipageedit>?</a>s, and BulletHitEvent<a href="robowiki?action=edit&id=BulletHitEvent" class=wikipageedit>?</a>s.
+<p>
+If <a href="robowiki?EnergyDrop" class=wikipagelink>EnergyDrop</a> of any amount is detected:
+<UL >
+<li>If the robot hit you, you will each take 0.6 damage. If a HitRobotEvent<a href="robowiki?action=edit&id=HitRobotEvent" class=wikipageedit>?</a> fired this turn subtract 0.6 from the <a href="robowiki?EnergyDrop" class=wikipagelink>EnergyDrop</a>.
+<li>If the absolute value of the enemy's velocity has dropped from greater than 2 to 0, and the robot did not hit you, then it hit a wall. The formula for wall damage is <pre>damage = Math.max(0, Math.abs(velocity) / 2 - 1);</pre> Subtract this amount from the <a href="robowiki?EnergyDrop" class=wikipagelink>EnergyDrop</a>. Note that velocities of less than or equal to 2 produce no damage, so checking for the velocity drop as an indicator of damage attributable to walls is foolproof.
+<li>If a BulletHitEvent<a href="robowiki?action=edit&id=BulletHitEvent" class=wikipageedit>?</a> fired this turn, use the damage formula to calculate the damage it should cause. The formula is <pre>damage = 4 * power; if (power &gt; 1) damage += 2 * (power - 1);</pre> Subtract this amount from the <a href="robowiki?EnergyDrop" class=wikipagelink>EnergyDrop</a>.
+</UL>
+<p>
+Whatever remains is the power of the bullet fired.
+<p>
+If you want to be hyper-accurate you should include one last check to see if the inactivity time has hit. If it has the bots will lose (I believe) a constant 0.1 per tick. If you are losing this, subtract that amount from your opponent's <a href="robowiki?EnergyDrop" class=wikipagelink>EnergyDrop</a> as well. Modification for <a href="robowiki?Melee" class=wikipagelink>Melee</a> is possible, but you can never be foolproof there, as opponent bullets hitting other opponents are an unknown. Comments? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+No other comments than a big THANKS for splitting this up. It might seem like small details, but when <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> you can't be too accurate. I'll see if I can fit this into <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> and will get back with questions should I stumble. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+If you want to be even more than hyper-accurate, you may want to check onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a>() and adjust enemy <a href="robowiki?EnergyDrop" class=wikipagelink>EnergyDrop</a> accordingly, as the enemy can fire a bullet, while his <u>previous</u> bullet hits you (so he gains and loses energy in the same tick). I'm not sure wether checking for RobotHits<a href="robowiki?action=edit&id=RobotHits" class=wikipageedit>?</a> is useful, though; ever seen a bot dodge at point blank range? :-p  --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a><small>, still lurking around, still needs to learn to use the 'Preview' feature while editing stuff ;) </small>
+<p>
+Heh, I knew I forgot something, yeah, energy gain. The robot hits is more to know the enemy fired than to really worry about the bullet, it can be important for collecting stats or to reset gun heat. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I've been debugging my <a href="robowiki?EnergyDrop" class=wikipagelink>EnergyDrop</a> detection (thanks for reminding me of energy gain ;)), and came to the conclusion that the energy drop resulting from a wall hit can never be precisely detected. You only know the enemy's velocity from the last tick before the wall hit, so, if he was accelerating/decelerating, your damage calculation will be off by +/-.5. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<UL >
+<li> Using the last acceleration and adding it to the last velocity should give you the current velocity, unless it hit max velocity or started a direction change. In most bots (not flood) you can detect if it hit max velocity, and probably detect what it's using as max velocity, or just assume 8. But you're right, it's always a best guess, is complicated, and if they're changing direction right as they hit the wall the calculation is wrong. Also, since deceleration rate is 2 I guess you'd be off by +0.5, 0 or -1 (not +/-0.5) just using last tick's velocity. It will usually be 0, since bots tend to spend much more time cruising than changing speeds. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<li> Yes, but I feel much safer just ignoring the energy drop/gain of the enemy if a wall hit was detected than using a best guess that can give me false enemy bullets. You could also use the gun heat as an indicator of the enemy's firing probability, but you'd still be off by up to 1 (like you said) on the bulletpower used. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+</UL>
+Out of curiousity <a href="robowiki?ABC" class=wikipagelink>ABC</a>, how much code do you have to maintain the state of an enemies energy? I am currently only looking at energy at scan time and I am sure I can gain some added benefit there but I am wondering if it is worth the effort now or if it is something for later. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+I'm not sure I understand your question. I have something very close to what Kuuran described up there, as close as I could get to a 100% acurate enemy bullet fire detection. Coupled with a more precise hit point calculation (both real and simulated) and some other small tweaks, It looks like it was worth around 5 ranking points for Shadow... -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<UL >
+<li> That was what I was interested in. It makes a difference but not that much of a difference. My gun improvements should lead to a bigger rumble improvement (I hope) so my efforts are better spent there. But I have added it to my to-do list. Thanks! -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+</UL>
+<p>
+On a different tact, is all of this is predicated on the fact that you use the default Robocode Event priorities? What happens if you set the EventPriority<a href="robowiki?action=edit&id=EventPriority" class=wikipageedit>?</a> of your scan event to 99? If I read things correctly, would that not mean that your scan event would trigger before any of the other events triggered and thus you would be able to ignore the other worries about everything but wall strikes. I have to be wrong as I do this and my surfing is far from perfect but thats the assumption I am under right now :) -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+Event priorities are just the execution order of the code you put in the handlers, they don't influence the main Robocode loop. Your code (event handlers and run method) will always be executed after every action that can influence the bot's energy has been executed for that tick. So, no matter how you set the priorities, you'll always see the opponent with the same energy in every event. There is no way to execute the scan event before the bulletHits/wallHits/bulletFire happen. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<UL >
+<li> Could you walk me through a simple example first? Say one where the enemy is at energy 50, going to fire on this tick, and is going to fire a 3.0 power bullet in this tick. I am not quite getting it. Thanks! -- jim
+</UL>
+<p>
+Sure. If the enemy only fires a 3.0 bullet it's simple, you'll see him with 47 energy anywhere on your code. But if, in this same tick, he get's hit by a bullet, he'll be at 47-energyLoss. What I'm saying is that Robocode will execute all the actions like the bots/bullets movement and collisions (and consequent energy losses/gains), and only after everything happens will it generate the events that are executed by your code. You will see the enemy with 47-energyLoss in every event handler, the execution order (priority) doesn't matter. It's like everything (movement/collisions/etc) happens _exactly_ at the same time, and in the scan you always see the end result. Changing the priorities does not influence the order of the events, just the order of execution of your code in the handlers. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<UL >
+<li> OK my understanding was broken but I now get it. This is why following an enemies energy is so important. He can shoot and hit me in the same tick and I would in theory never know it right now. Food for thought -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+</UL>
+<p>
+Does inactivity kick in for all bots at the same time?  Does it occur (default) 450 ticks after the last bullet landed, or damage was taken (e.g. wall / robot collision)?  I'm pretty sure firing bullets does not reset the inactivity timer. -- Martin
+<p>
+I think that bullets with less than 1.0 power do not count, so if both bots fire 0.1 power bullets, inactivity will kick in after 450 ticks. The energy of all bots is drained simultaniously until one dies, then the inactivity timer will be reset. If you win by inactivity timeout, you do not get a bonus.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Not having looked at the code, this is my guess based on my experience:
+<UL >
+<li>Firing 0.1 will not reset the timer, but the timer will stop after around 30-40 energy is removed.
+<li>Simply firing high powered bullets will ensure that the inactivity will not kick in.
+<li>Wall collisions do reset the timer to some extent.
+</UL>
+My guess is that the timer is never "reset" but reversed something like this: onEnergyLoss<a href="robowiki?action=edit&id=EnergyLoss" class=wikipageedit>?</a>: Timer -= energyLost * C, where C is a constant. Someone who knows more might want to confirm it though. -- <a href="robowiki?Kinsen" class=wikipagelink>Kinsen</a>
+<p>
+After some test runs i have discovered a bit more about the inactivity timer, at the begining of each round  a number from 1 to 10 is chosen this is the amount of energy loss that must take place in order for  the timer to be reset
+<p>
+<UL >
+<li> wall hits that do damage &lt; 1 do not count to total energyloss needed to reset the time
+<li> bullet under power 1 or the damage do not count to total energyloss needed to reset the time 
+<li> i have not tested ram damage, it could go either way(could not count becuase it causes &lt; 1 damage, could count becuase it gives a ram bonus)
+</UL>
+<p>
+I hope this clears some things up, and if you want a to test to see how good you energydrop detection try it out on 
+<p>
+<UL >
+<li> Sittingduck - tests your ability to detect inactivity time
+<li> Crazy - to test your ability to calculate wall damage
+<li> Walls - i dont why but sometimes on a stopNgo bot i made(regular energydrop dectection) seemed to not move for a shot or two
+</UL>
+<p>
+give these a shot, doesn't mean your perfect but pretty close - <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+<p>
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=EnergyDrop" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=EnergyDrop">View other revisions</a><br>Last edited January 7, 2007 1:56 EST by bas2-toronto47-1242398936.dsl.bell.ca <a href="robowiki?action=browse&diff=1&id=EnergyDrop">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

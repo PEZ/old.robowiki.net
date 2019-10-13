@@ -1,0 +1,284 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>CodeSize/WritingSmallCode - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Code, Size, Writing, Small, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/WritingSmallCode">CodeSize/WritingSmallCode</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>The tips on this page are specific ways you can rewrite your code to use fewer bytes, as measured by the <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> utility. Please note that <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> is not affected by the length of your method or variable names.
+<p>
+Discussion is at the bottom of this page.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<UL >
+<li> Static variables take less space than non-static ones.
+<UL >
+<li> <a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a> adds: They save 5 bytes to be exact
+</UL>
+<li> Don't initialize your number variables to zero - they're zero by default (thanks to the Java Spec)
+<li> <code> try{ ... } catch </code> is a great way to save space. For example,
+</UL>
+<pre>
+            LinkedList list;
+            try{
+                someFunction(list.getFirst());
+            } catch(Exception ex){}
+</pre>
+<DL >
+<dt><dd>is smaller than:
+</DL>
+<pre>
+            LinkedList list;
+            if(list.size() != 0){
+                someFunction(list.getFirst());
+            }
+</pre>
+<UL >
+<li> Any time you are "doing the same thing" in more than one place, try to find a way to condense it into a method and call it in each place. In some situations, this may seem obvious, but in others it is less obvious. A line from <a href="robowiki?Komarious" class=wikipagelink>Komarious</a> that makes use of a sign(double d) method where you wouldn't normally expect one:
+</UL>
+<pre>
+            _goAngle = angleFromWaveSource +
+                directedGoAngle(direction = (sign(checkDanger(-1) - checkDanger(1))));
+</pre>
+<UL >
+<li> Another somewhat similar situation: there are four places in Komarious that call wave.sourceLocation.distance(someOtherPoint). Creating a distanceToPoint(Point2D) method in the Wave class, and replacing those four calls with wave.distanceToPoint(someOtherPoint) ends up saving 3 bytes; you are getting rid of 4 references to sourceLocation in your code, but adding the size of the method itself.
+<li> Local variables cost less to reference than static ones, so it may pay to create one just to hold a static variable's value for the duration of a method.
+<li> I think I saw this somewhere else on the wiki, but:
+</UL>
+<pre>
+            int i = 1;
+            if (j &gt; 2) {
+                i = -1;
+            }
+</pre>
+<DL >
+<dt><dd>is smaller than
+</DL>
+<pre>
+            int i;
+            if (j &gt; 2) {
+                i = -1;
+            } else {
+                i = 1;
+            }
+</pre>
+<UL >
+<li> <em>Sometimes</em>
+</UL>
+<pre>
+            double a;
+            double t = (a = e.getBearing()) * getEnergy();
+</pre>
+<DL >
+<dt><dd>is smaller than
+</DL>
+<pre>
+            double a = e.getBearing();
+            double t = a * getEnergy();
+</pre>
+<UL >
+<li> If you can afford the loss of precision, integers are smaller than doubles.
+<li> <tt>String.valueOf(x).concat(" is my number")</tt> is WAY smaller than <tt>x + " is my number"</tt>.  The compiler turns the latter into something like:
+</UL>
+<pre>
+            StringBuilder s = new StringBuilder();
+            s.append(x);
+            s.append(" is my number");
+            s.toString();
+</pre>
+<UL >
+<li> The integer literals in the range <tt>[-1, 5]</tt> are one unit (byte?) smaller than the others in the range <tt>[-128, 127]</tt>, which are one byte smaller than the others in the range [-32768, 32767], which are one byte bigger than the other integers.
+<li> Be careful about promotion in your arithemic.  <tt>some_int + some_int + some_double</tt> (add two integers, promote the result to a double, add two doubles) is smaller than <tt>some_int1 + some_double + some_int2</tt> (promote some_int_1 to a double, add two doubles, promote some_int_2 to a double, add to doubles).
+<li> The double literals <tt>0, 1</tt> are one byte smaller than <tt>-1, 2, 3, 4, 5</tt>, which are one byte smaller than the rest of the doubles (including those in between the numbers listed).
+<li> <tt>if (some_int == 0)</tt> is smaller than <tt>if (some_int == 1)</tt>, but the same size as <tt>if (some_boolean)</tt>.
+<li> Declaration and initialization of static final fields are free, as long as they don't require any method calls.  They are like macros that insert literals into your code.
+<li> Arithmetic, casting and string concatenation of literals are free.
+<li> Be careful with the above rule: <tt>x + 1 + 2</tt> does not count, you must do <tt>x + (1 + 2)</tt>.
+<li> You pay for the default constructor of a class even if you don't write the empty code for it yourself, so if you have something useful to put there, go ahead and put it there.
+<li> If you initialize any static variables (that are not final), you pay one extra byte, so if you aren't saving *any* data between battles, initialize your variables in the run method or in your constructor (which you are paying for whether you want to or not).
+<li> The first 4 variables in a method represent registers, the rest represent places in memory.  I discovered this over the weekend.  I now name my first 4 variables r1i (an integer), r2d (a double), r4p (a Point2D.Double) etc.  USE THIS FACT.  All operations must work from registers, and every load from memory into a register requires an operation, as does storing from a register back to memory.  By using your first 4 variables wisely, you can save yourself a lot of load &amp; store operations (which each cost you in <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a>).  Some more notes:
+<UL >
+<li> The first variable passed to a non-static method is "this".  It uses your first register.
+<li> The next variables declared in your method are the parameters.  They use your next registers.
+<li> All types except double use up 1 register, doubles use 2 (thus the name, "double").
+<li> You can declare a double as your 4th register (which would overflow to your 5th register), and magically it still works.
+</UL>
+</UL>
+<p>
+Please add to this table as you can, and organize it if you like:
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> <strong>Operation</strong>                        </td><td align="right" colspan="0.5"><strong>Cost in <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a></strong></td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> 1st constructor                        </td><td align="right" colspan="0.5">free</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> creating a method                      </td><td align="right" colspan="0.5">free</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> returning from a method                </td><td align="right" colspan="0.5">1</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> calling a method                       </td><td align="right" colspan="0.5">3</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> storing a local (non-register) variable</td><td align="right" colspan="0.5">1</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> loading a local (non-register) variable</td><td align="right" colspan="0.5">1</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> storing a static variable              </td><td align="right" colspan="0.5">2</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> loading a static variable              </td><td align="right" colspan="0.5">2</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> loading integer literals -1 to 5       </td><td align="right" colspan="0.5">1</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> loading integer literals -128 to 127   </td><td align="right" colspan="0.5">2</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> loading integer literals -32768 to 32767 </td><td align="right" colspan="0.5">3</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> loading other integer literals         </td><td align="right" colspan="0.5">2</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> loading double literals 0, 1           </td><td align="right" colspan="0.5">1</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> loading double literals -1, 2, 3, 4, 5 </td><td align="right" colspan="0.5">2</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> loading other double literals          </td><td align="right" colspan="0.5">3</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> loading string literals                </td><td align="right" colspan="0.5">2</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> declaring a variable                   </td><td align="right" colspan="0.5">free</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> casting                                </td><td align="right" colspan="0.5">1</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> promotion                              </td><td align="right" colspan="0.5">1</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> arithmetic                             </td><td align="right" colspan="0.5">1</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> ++ and -- (register or not)            </td><td align="right" colspan="0.5">1</td></TR>
+</TABLE>
+<p>
+<p>
+<hr noshade class=wikiline size=1>
+<strong>Discussion</strong>
+<p>
+What about using ternaries? So like in your example:
+Is
+<pre>
+double rawr[] = new double[12];
+rawr[2][4] = (rawr[].length &gt; 0) ? 10 : rawr[2][4];
+</pre>
+Smaller then
+<pre>
+double rawr[] = new double[12];
+if(rawr[].length &gt; 0)
+    rawr[2][4] = 10;
+</pre>
+-- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+I would guess that they compile to the exact same thing, so there would be no gain there. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+It is universally true (in the Java universe) that uninitialized variables are 0, false, or null. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+First of all. Cool page, and which is a great inspiration. -- <a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+I am wondering if:
+<pre>
+            int i;
+            if (j &gt; 2) {
+                i = -1;
+            } else {
+                i = 1;
+            }
+</pre>
+Could be written even smaller:
+<pre>
+            int i = (j &gt; 2) ? -1 : 1;
+</pre>
+At least it should have a faster execution time! ;-) --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+<UL >
+<li> Yes, you are right.  Smaller still would be <tt>int i = (int) Math.signum(2 - j)</tt>, if you could afford the situation that i comes out to be zero.  Or, for one extra byte (still smaller, though), you can almost always afford a rare, rare situation that something like <tt>int i = (int) Math.signum(2.00000000000001 - j)</tt> would come out to zero. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+Hehe..
+<pre>
+            LinkedList list;
+            try{
+                someFunction(list.getFirst());
+            } catch(Exception ex){}
+</pre>
+..is smaller, but more expensive in execution time due to the try-catch! ;-) --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+A few of my tricks.  Remember your binary operators &amp;, |, and especially ^ (xor).  Xor is great for swapping very cheaply between 2 integer numbers for next to nothing:
+<pre>
+            variable = 64;
+...
+            variable ^= 32;
+</pre>
+is a very cheap way to swap between 64 and 96.  Just be careful of the binary math :)
+<p>
+It is almost always cheaper to directly call a method that has 2 or more lines of code than to repeat the code.  I've manually called <a href="robowiki?OnDeath" class=wikipagelink>OnDeath</a>(null) before to reinitialize variables and such.
+<p>
+In the spirit of smaller numbers, it is cheaper to divide by 5 than to multiply my 0.2.  Same for any other operator.
+<p>
+I know there is another page around here I've posted on before about this - one I started a long time ago.  I also know there is a lost thread over at the Repository than had similiar info.  I wonder if that could be recovered.
+--<a href="robowiki?Miked0801" class=wikipagelink>Miked0801</a>
+<p>
+<UL >
+<li> I'm interested by your "number swapping" trick.  Can you give an example of when this is useful?  Thanks! -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> I've used it to multi-mode between 2 movement amounts - say you do better with small movements against some and large against others, xor  between the 2 values on <a href="robowiki?OnDeath" class=wikipagelink>OnDeath</a> or whatever.  I believe the current Moebius uses this.  It also works for swapping between non similiar positive and negative numbers as well.  You can imagine where that could be useful.
+</UL>
+</UL>
+<p>
+Well, here's one little trick I found that I thought I'd share. At least with Java 6 compiling in Java 5 compatibility mode (I haven't tested other configurations), the following:
+<pre>public class Foo {
+    public Foo() {}
+
+    public static final Foo getOne() {
+        return new Foo();
+    }
+}
+
+def void doStuff() {
+    Foo a = Foo.getOne();
+    Foo b = Foo.getOne();
+    Foo c = Foo.getOne();
+}
+</pre>
+is smaller than:
+<pre>public class Foo {
+    public Foo() {}
+}
+
+def void doStuff() {
+    Foo a = new Foo();
+    Foo b = new Foo();
+    Foo c = new Foo();
+}
+</pre>
+In other words it appears that factory methods are smaller than constructors if used 3 or more times. They are the same size if used twice, but are larger if the constructor is only used once. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Lol, <code>double bulletPower = 3/2;</code> uses up less space than <code>double bulletPower = 1.5;</code> (2 bytes(?) to be exact) --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+That would be because 3/2 is integer arithmetic.... essentially equivalent to 1. Try putting 1.0 in there, it should be the same =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+In a method,
+<pre>
+if(condition){
+   foo1();
+   return;
+}
+foo2();
+</pre>
+is 2 bytes smaller than
+<pre>
+if(condition){
+    foo1();
+}else{
+    foo2();
+}
+</pre>
+--<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+I haven't tested this, but I believe that
+<pre>
+static {
+    stats=new double[BINS];
+}
+</pre>
+is smaller than
+<pre>
+public void run(){
+    if(stats==null) stats=new double[BINS]
+    .
+    .
+    .
+}
+</pre>
+(of course if the stats reset after every round then it doesn't work) --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Yep, that should be the case. Though, that should be equally small as simply going "static double[] stats = new double[BINS];" during the decleration, no reason to have the seperate static block I don't think. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+question: why does ldc take up 1 byte less than sipush (i.e. why does loading 32768 take up one byte less than loading 32767)?
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=CodeSize/WritingSmallCode" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=CodeSize/WritingSmallCode">View other revisions</a><br>Last edited April 2, 2009 1:47 EST by cpe-75-84-83-181.socal.res.rr.com <a href="robowiki?action=browse&diff=1&id=CodeSize/WritingSmallCode">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

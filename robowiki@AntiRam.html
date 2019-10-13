@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>AntiRam - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Anti, Ram'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=AntiRam">AntiRam</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Please tell <a href="robowiki?David" class=wikipagelink>David</a>. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Ask and ye shall receive.
+<p>
+Here's the ram evasion code from YALT 1.3:
+<pre>
+field variables:
+	static long ramFactor;
+	static double ramEvasionDirection = 1.0;
+
+
+
+in movement():
+	Point destination = null;
+
+	if(ramFactor &gt; getRoundNum() * 2 &amp;&amp; me.distanceTo(targetState) &lt; 100){
+		//sign(double x) returns -1 if negative, +1 if positive, and 0 if 0
+		if(getTime() % 10==0) ramEvasionDirection = sign(Math.random() - .5); 
+
+		//the third parameter to wallSmoothedDestination is a direction
+		//0 is straight at the enemy, +/- pi/2 is perpendicular, +/- pi is directly away from the enemy.
+		//for ram evasion I use +/- 1.3, we're driving almost directly away from the enemy.
+		destination = movement.wallSmoothedDestination(me, targetState, 1.3 * ramEvasionDirection);
+	} else {
+		//normal movement
+	}
+
+in onHitRobot(HitRobotEvent e):
+	ramFactor++;
+</pre>
+<p>
+So basically, if the enemy has hit us more than twice per round on average, and the enemy is within 100 of us, drive almost directly away from them. Choose randomly between evading left and evading right every 10 turns. There has been no tweaking at all to these parameters, so there may be better values. Enjoy! --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+it would probably work if you :
+when you detect that the enemy's angle to you is less than 20 or something, turn the same angle they are facing you at,and drive in the opposite direction. i think gu suggested this a while ago--<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+Like all beautyfull things, very simple, really <a href="robowiki?KISS" class=wikipagelink>KISS</a>. Thnks David! -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+I think <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> handles Rambots pretty good if they shoot at all. I tested that with a "setXXX version" of <a href="robowiki?RamFire" class=wikipagelink>RamFire</a>, and the original one, and it dodged both <a href="robowiki?RamFire" class=wikipagelink>RamFire</a> versions quite well. -- <a href="robowiki?Xero" class=wikipagelink>Xero</a>
+<p>
+The <a href="robowiki?RamBots" class=wikipagelink>RamBots</a> in the rumble do shoot, although some of them only from closer distances. My opinion is that it is not the <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> as is (dodging bullets) that performs well against rambots, but the 'keeping your distance' approach that most wavesurfers have. If you really want to test against rammers, pick some from the <a href="robowiki?RambotChallenge2K6" class=wikipagelink>RambotChallenge2K6</a>.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+I have seen a ram bot that uses linear targeting to direct its movement.  Using this, it basically locks on and it is impossible to avoid by moving to the side, and will eventually get you if you move back.  Does anybody have a good strategy to beat this? -- <a href="robowiki?King_of_Fire" class=wikipagelink>King of Fire</a>
+<p>
+When it fires change the direction you're turning, eg. clockwise to anticlockwise. You can evade pretty well by doing this. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=AntiRam" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=AntiRam">View other revisions</a><br>Last edited April 17, 2008 4:37 EST by <a href="robowiki?Skilgannon" title="ID 12382 from ctb-cache4-vif0.saix.net">Skilgannon</a> <a href="robowiki?action=browse&diff=1&id=AntiRam">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

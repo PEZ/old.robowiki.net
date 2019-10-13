@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>FastTargeting/LinearTargeting - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Fast, Targeting, Linear, Targeting'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/LinearTargeting">FastTargeting/LinearTargeting</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?FastTargeting" class=wikipagelink>FastTargeting</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><em><a href="robowiki?WaveSurfingChallenge" class=wikipagelink>WaveSurfingChallenge</a> Bot B:</em>
+<pre>
+		//This code goes in your onScannedRobot() event handler
+		
+		double bulletPower = Math.min(3.0,getEnergy());
+		double myX = getX();
+		double myY = getY();
+		double absoluteBearing = getHeadingRadians() + e.getBearingRadians();
+		double enemyX = getX() + e.getDistance() * Math.sin(absoluteBearing);
+		double enemyY = getY() + e.getDistance() * Math.cos(absoluteBearing);
+		double enemyHeading = e.getHeadingRadians();
+		double enemyVelocity = e.getVelocity();
+		
+		
+		double deltaTime = 0;
+		double battleFieldHeight = getBattleFieldHeight(), battleFieldWidth = getBattleFieldWidth();
+		double predictedX = enemyX, predictedY = enemyY;
+		while((++deltaTime) * (20.0 - 3.0 * bulletPower) &lt; Point2D.Double.distance(myX, myY, predictedX, predictedY)){		
+			predictedX += Math.sin(enemyHeading) * enemyVelocity;	
+			predictedY += Math.cos(enemyHeading) * enemyVelocity;
+			if(	predictedX &lt; 18.0 
+				|| predictedY &lt; 18.0
+				|| predictedX &gt; battleFieldWidth - 18.0
+				|| predictedY &gt; battleFieldHeight - 18.0){
+				predictedX = Math.min(Math.max(18.0, predictedX), battleFieldWidth - 18.0);	
+				predictedY = Math.min(Math.max(18.0, predictedY), battleFieldHeight - 18.0);
+				break;
+			}
+		}
+		double theta = Utils.normalAbsoluteAngle(Math.atan2(predictedX - getX(), predictedY - getY()));
+		
+		setTurnRadarRightRadians(Utils.normalRelativeAngle(absoluteBearing - getRadarHeadingRadians()));
+		setTurnGunRightRadians(Utils.normalRelativeAngle(theta - getGunHeadingRadians()));
+		fire(bulletPower);
+</pre>
+<p>
+<hr noshade class=wikiline size=1>
+The following is an implementation that I currently use:
+<pre>
+	class LT extends Gun {
+		double gunAngle(Tracker me, Tracker enemy, double bulletPower){
+			/////////////////////////////////////////////////////////////////////////////////////Important: This is enemy's bearing to me.
+			return me.absoluteAngleTo(enemy)+Math.asin(enemy.velocity/Utils.bulletVelocity(bulletPower)*Math.sin(enemy.absoluteAngleTo(me) - enemy.heading));
+		}
+	}
+</pre>
+--<a href="robowiki?Nfwu" class=wikipagelink>Nfwu</a>
+<hr noshade class=wikiline size=1>
+<H3>Buggy Implementations</H3>
+
+If anyone has time, these 2 algorithms are buggy. It would be great if someone could fix them, since they are both faster than the code I provided on the <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a> page. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+<em>Geoff Buggy Implementation:</em>
+<p>
+<pre>
+ do{	// Time it will take for a bullet to get to the current prediction	
+   double bulletTravelTime = getDistance(getX(), getY(), predictX, predictY) / bulletSpeed;
+   // Check where the enemy will be in that amount of time	
+   predictX = Enemy.getX() + (Enemy.getVelX() * bulletTravelTime);	
+   predictY = Enemy.getY() + (Enemy.getVelY() * bulletTravelTime);	
+   // Check for likely contact with a wall and adjust the prediction	
+   // accordingly	
+   if (predictX &lt; 18) predictX = 18;	
+   if (predictY &lt; 18) predictY = 18;	
+   if (predictX &gt; getBattleFieldWidth() - 18) predictX = getBattleFieldWidth() - 18;	
+   if (predictY &gt; getBattleFieldHeight() - 18) predictY = getBattleFieldHeight() - 18;
+   // The miss factor is the difference between the time it takes	
+   // for a bullet to get to the current prediction and the time it	
+   // takes for a bullet to get to the new prediction	
+   missFactor =	Math.abs(bulletTravelTime - getDistance(getX(), getY(), predictX, 
+                predictY) / bulletSpeed));	
+   bulletTravelTime = getDistance(getX(), getY(), predictX, predictY) / 14;
+ } while (missFactor &gt; 0.01);
+</pre>
+<p>
+It works fairly well, but I'm sure that I can improve the way that missFactor is calculated. The thing that I don't understand is why it doesn't work 90% of the time against Walls. I've been staring at it/tweaking it for too long to think properly now ;-p.
+<p>
+<p>
+<em>Kawigi Buggy Implementation:</em>
+<p>
+I've taken a little time to also figure out some more geometric ways of doing it- this system always hits walls if he doesn't turn (and sometimes also gets him coming out of a turn, but I wouldn't depend on it).  I don't really add it into my bots, though, because it doesn't hit anyone except walls and the guys who stand still.
+<pre>
+double bulletv = 20-3*power;		//find bullet speed
+/*
+ * all the logic isn't here, I'd need to draw a picture to give you any idea what's going on.
+ * The idea is I've constructed a triangle where you are at one corner, your opponent is on the second corner, 
+ * and your opponent will be hit by your bullet at the third corner.  I use the Law of Sines:
+ *	A/sine(a) == B/sine(b) == C/sine(c)
+ * where A is the length of the side opposite angle a, etc.  The distance he has to travel, the distance your bullet 
+ * has to travel, and the funny angle at the point where he is now (between the direction he's going and a straight line
+ * from you to him) is enough to find the angle you need to turn your gun.  The "funny angle" (I'll call it 'ang')
+ * happens to be 180+getHeading()+e.getBearing()-e.getHeading() (Except I used radians).  The distance my opponent travels
+ * is enemyv*t where enemyv is his velocity and t is the amount of time before he is hit.  The distance my bullet travels is
+ * bulletv*t where bulletv is calculated above.  I know from the above Law of Sines that:
+ *	enemyv*t/sine(theta) = bulletv*t/sine(ang)
+ *	sine(theta) = enemyv*t/(bulletv*t)*sine(ang)
+ * Notice that the time is conveniently cancelled out.  "sine" is the value of sine(theta):
+ */
+double sine = e.getVelocity()/bulletv*Math.sin(Math.PI+getHeadingRadians()+e.getBearingRadians()-e.getHeadingRadians());
+//and finally, theta is the distance I have to turn my gun:
+double theta = Math.asin(sine)+getHeadingRadians()+e.getBearingRadians()-getGunHeadingRadians();
+else if (theta &gt; 0)
+	turnGunRightRadians(theta);
+</pre>
+<p>
+Of course, the weakness here is that it doesn't check walls here.  That could also be mathematically added using the third angle/side combination in the Law of cosines.  The final angle would be 180-ang-Math.abs(theta) or something, and the length of the opposite side is e.getDistance().  From there... let me see, I haven't tried this, but I'll just wing it and maybe it works:
+<p>
+<pre>
+double finalangle = Math.PI - Math.abs(theta) - (Math.PI+getHeadingRadians()+e.getBearingRadians()-e.getHeadingRadians());
+//	distance/sine(finalangle) == enemydistance/sine(theta)
+double enemydistance = sine*e.getDistance()/Math.sin(finalangle);
+//find their current position
+double enemyStartX = getX() + e.getDistance()*Math.sin(getHeadingRadians()+e.getBearingRadians());
+double enemyStartY = getY() + e.getDistance()*Math.cos(getHeadingRadians()+e.getBearingRadians());
+//find their final destination
+double endX = enemyStartX + enemydistance*Math.sin(e.getHeadingRadians());
+double endY = enemyStartY + enemydistance*Math.cos(e.getHeadingRadians());
+//figure out if they're off the screen, using offsets like David did above
+if (endX &lt; 18 || endY &lt; 18 || endX &gt; getBattleFieldWidth()-18 || endY &gt; getBattleFieldHeight()-18)
+{
+	// now I'm going to try and find an equation for the line the opponent follows to find where it intersects with the edge.
+	// finding the slope:
+	double m = Math.atan(e.getHeadingRadians());
+	//finding the y-intercept:
+	double b = enemyStartY-enemyStartX*m;
+	//now if I went off a side wall, this part is easy...
+	if (endX &lt; 18)	//plug 18 in as x (in my equation, which is in y=mx+b form)
+	{
+		endX = 18;
+		endY = m*endX+b;
+	}
+	else if (endX &gt; getBattleFieldWidth()-18)
+	{
+		endX = getBattleFieldWidth()-18;
+		endY = m*endX+b;
+	}
+	//now for the top/bottom cases:
+	if (endY &lt; 18)
+	{
+		endY = 18;
+		//now solve for x:
+		endX = (endY-b)/m;
+	}
+	else if (endY &gt; getBattleFieldHeight()-18)
+	{
+		endY = getBattleFieldHeight()-18;
+		endX = (endY-b)/m;
+	}
+	//now adjust theta to aim at (endX, endY):
+	theta = Math.atan2(endX-getX(), endY-getY())-getGunHeadingRadians();
+}
+//now turn the gun right theta radians and you're ready to fire!
+</pre>
+<p>
+Lol, well, anyone can feel free to correct typos or math on that if there are mistakes, hope it's right, though.
+<p>
+--<a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?FastTargeting" class=wikipagelink>FastTargeting</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=FastTargeting/LinearTargeting" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=FastTargeting/LinearTargeting">View other revisions</a><br>Last edited December 29, 2006 7:53 EST by <a href="robowiki?Nfwu" title="ID 8875 from d58-106-24-13.sbr2.nsw.optusnet.com.au">Nfwu</a> <a href="robowiki?action=browse&diff=1&id=FastTargeting/LinearTargeting">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

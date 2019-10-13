@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Ebo/BucketKDTree - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Ebo, Bucket, KDTree'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/BucketKDTree">Ebo/BucketKDTree</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Ebo" class=wikipagelink>Ebo</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>The tree I use in Tahoe.
+<p>
+BucketKdTree<a href="robowiki?action=edit&id=BucketKdTree" class=wikipageedit>?</a>.java
+<pre>
+package de._4geeks.robots.guns.DC;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+public class BucketKdTree&lt;T extends Info&gt; {
+
+	private int dim;
+	private int bucketSize;
+	private int entries;
+	
+	private Bucket buckets;
+
+	public BucketKdTree(int dim, int bucketSize) {
+		this.dim = dim;
+		this.bucketSize = bucketSize;
+
+		this.buckets = new Bucket(bucketSize, 0);
+		this.entries = 0;
+	}
+
+	public void addInfo(T info) {
+		buckets.addInfo(this, info);
+		entries += 1;
+	}
+
+	public void clear() {
+		this.buckets = new Bucket(bucketSize, 0);
+		this.entries = 0;
+	}
+
+	public void balance() {
+		ArrayList&lt;T&gt; l = collect();
+		this.buckets = new Bucket(bucketSize, 0);
+		this.buckets.balance(l, this);
+	}
+	
+	public ArrayList&lt;T&gt; collect() {
+		ArrayList&lt;T&gt; l = new ArrayList&lt;T&gt;();
+		buckets.collect(l);
+		return l;
+	}
+	
+	public ArrayList&lt;T&gt; getBucket(double[] features) {
+		return buckets.getBucket(features);
+	}
+
+	class Bucket {
+		ArrayList&lt;T&gt; b;
+		int dim;
+
+		Bucket top;
+		Bucket bottom;
+		double border;
+
+		public Bucket(int bucketSize, int dim) {
+			this.dim = dim;
+			b = new ArrayList&lt;T&gt;(bucketSize);
+		}
+
+		public ArrayList&lt;T&gt; getBucket(double[] features) {
+			if (b != null) {
+				return b;
+			} else {
+				if (features[dim] &gt;= border) {
+					return top.getBucket(features);
+				} else {
+					return bottom.getBucket(features);
+				}
+			}
+		}
+
+		public void addInfo(BucketKdTree&lt;T&gt; tree, T info) {
+			if (b != null) {
+				if (b.size() &gt;= tree.bucketSize) {
+					subdivide(tree);
+					if (info.getFeature(dim) &gt;= border) {
+						top.addInfo(tree, info);
+					} else {
+						bottom.addInfo(tree, info);
+					}
+				} else {
+					b.add(info);
+				}
+			} else {
+				if (info.getFeature(dim) &gt;= border) {
+					top.addInfo(tree, info);
+				} else {
+					bottom.addInfo(tree, info);
+				}
+			}
+
+		}
+
+		private void subdivide(BucketKdTree&lt;T&gt; tree) {
+
+			// This calculates the median for the bucket.
+
+			Collections.sort(b, new InfoComparator(dim));
+			border = b.get(b.size() / 2).getFeature(dim);
+			
+			//System.out.println(String.format("Subdivide: %d %f", dim, border));
+			
+			top = new Bucket(bucketSize, (dim+1) % tree.getDim());
+			bottom = new Bucket(bucketSize, (dim+1) % tree.getDim());
+			for (T i : b) {
+				if (i.getFeature(dim) &gt;= border) {
+					top.addInfo(tree, i);
+				} else {
+					bottom.addInfo(tree, i);
+				}
+			}
+			b = null;
+
+		}
+		
+		public void collect(ArrayList&lt;T&gt; l) {
+			if(b != null) {
+				l.addAll(b);
+			} else {
+				top.collect(l);
+				bottom.collect(l);
+			}
+		}
+		
+		public void balance(ArrayList&lt;T&gt; l, BucketKdTree&lt;T&gt; tree) {
+			if(l.size() &gt;= tree.bucketSize) {
+				Collections.sort(l, new InfoComparator(dim));
+				border = l.get(l.size() / 2).getFeature(dim);
+				
+				top = new Bucket(bucketSize, (dim+1) % tree.getDim());
+				bottom = new Bucket(bucketSize, (dim+1) % tree.getDim());	
+				ArrayList&lt;T&gt; topList = new ArrayList&lt;T&gt;();
+				ArrayList&lt;T&gt; bottomList = new ArrayList&lt;T&gt;();
+				
+				for(T i : l) {
+					if (i.getFeature(dim) &gt;= border) {
+						topList.add(i);
+					} else {
+						bottomList.add(i);
+					}
+				}
+				
+				top.balance(topList, tree);
+				bottom.balance(bottomList, tree);
+				b = null;
+			} else {
+				b = l;
+			}
+				
+		}
+		
+		public int size() {
+			return b.size();
+		}
+
+		class InfoComparator implements Comparator&lt;T&gt; {
+			int i;
+
+			public InfoComparator(int i) {
+				this.i = i;
+			}
+
+			public int compare(T o1, T o2) {
+				return Double.compare(o1.getFeature(i), o2.getFeature(i));
+			}
+		}
+
+	}
+
+	public int getDim() {
+		return dim;
+	}
+
+	public int getBucketSize() {
+		return bucketSize;
+	}
+
+	public int getEntries() {
+		return entries;
+	}
+}
+</pre>
+<p>
+Info.java
+<pre>
+package de._4geeks.robots.guns.DC;
+
+public interface Info {
+	public double getFeature(int i);
+}
+</pre>
+<p>
+<a rel="nofollow" href="http://www.opensource.org/licenses/bsd-license.php">[BSD License]</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Ebo" class=wikipagelink>Ebo</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Ebo/BucketKDTree" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Ebo/BucketKDTree">View other revisions</a><br>Last edited December 6, 2007 17:57 EST by <a href="robowiki?Ebo" title="ID 12477 from p5B07ECB7.dip.t-dialin.net">Ebo</a> <a href="robowiki?action=browse&diff=1&id=Ebo/BucketKDTree">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

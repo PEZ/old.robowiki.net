@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>DrussGT/HelpRequests - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Druss, GT/Help, Requests'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/HelpRequests">DrussGT/HelpRequests</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>So I'm trying to get my play-it-forward working, and the standard method is working fine. However, when I tried to get the optimized version described by ABC working, it fails horribly. My hitrate against Spinbot is about the same as head on targeting, versus comparable to Shadow with the standard PlayItForward<a href="robowiki?action=edit&id=PlayItForward" class=wikipageedit>?</a>. I've done a bit of graphical debugging and everything looks fine. If you can spot the bug/bad assumption/whatever I'd be very grateful...I've stared at this code for over 4 hours now!
+<p>
+<p>
+<pre>
+// // // 	-- this method *should* be a lot faster, but I can't get it to hit spinbot, so until then....
+       /*double getGunOffset(Tracer enemyStart, DCRobotState rs){
+         double distance = lastScan.getDistance();
+
+         //the difference between the enemy's current heading, and their heading at the time of the recording
+         double deltaHeading = enemyStart.heading - lastScan.getHeadingRadians();
+
+         //what the absolute bearing should be once I've been translated back to the recording
+         double startAngle = rs.absBearing + deltaHeading;
+
+         //my position - should be at the same angle from the enemy's heading at that point in time i am from the enemy now, and the same distance too
+         Point2D.Double myRelativeLocation = JKDCUtils.project(enemyStart.location, startAngle + Math.PI, distance);
+
+         double bulletSpeed = 20 - 3*BULLET_POWER;
+         double bulletDistance = 0;
+
+         //a tracer is a sort of linked list, it also stores some stuff about the robot at that point in time
+         Tracer t = enemyStart;
+         do{
+            t = t.next;
+            if(t == null || t.round != enemyStart.round)
+               return Double.POSITIVE_INFINITY;
+            bulletDistance += bulletSpeed;
+         }while(JKDCUtils.sqr(bulletDistance) &lt; myRelativeLocation.distanceSq(t.location));
+            
+         //the angle i should have shot at in that point in history
+         double fireAngle = JKDCUtils.absoluteBearing(myRelativeLocation,t.location);
+
+         //the offset from the original angle that they started from - what i'm actually after
+         double offset = Utils.normalRelativeAngle(fireAngle - startAngle);
+
+         //do a bit of boundary checking....
+         if(!JKDCUtils.fieldContains(JKDCUtils.project(myLocation,rs.absBearing + offset,myRelativeLocation.distance(t.location))))
+            return Double.POSITIVE_INFINITY;
+      
+         return offset;
+      }*/
+      //// The standard PlayItForward method that works perfectly, but uses a lot more Trig...
+       double getGunOffset(Tracer enemyStart, DCRobotState rs){
+         double bulletSpeed = 20 -3*BULLET_POWER;
+         double bulletDistance = 0;
+         Tracer t = enemyStart;
+         Point2D.Double predLocation = enemyLocation;
+         double predHeading = lastScan.getHeadingRadians();
+         do{
+            
+            t = t.next;
+            bulletDistance += bulletSpeed;
+            if(!JKDCUtils.fieldContains(predLocation) || t == null || t.round != enemyStart.round)
+               return Double.POSITIVE_INFINITY;
+            predLocation = JKDCUtils.project(predLocation, predHeading += t.deltaHeading, t.velocity);
+         	
+         }while(JKDCUtils.sqr(bulletDistance) &lt; myLocation.distanceSq(predLocation));
+         double fireAngle = JKDCUtils.absoluteBearing(myLocation,predLocation);
+         return Utils.normalRelativeAngle(fireAngle - rs.absBearing);
+      
+      }
+</pre>
+<p>
+-- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+I can't see anything wrong with that code, have you tried it against Walls? I'm not very good at looking at other peoples code, sorry. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+It does pretty good against Walls (seems about the same as the other method), but the Spinbot problem really bugs me. It seems that about half the time it is shooting at positions that Spinbot never even reaches. I've added a bunch of comments, maybe that will make it easier to read. Failing that, could you turn your optimised pif method into pseudocode, so I can try a second coding attempt (from scratch)? Thanks.... -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+In pseudocode my code is exactly the same as yours... I've changed it to look as close as possible to yours, maybe you can spot the difference?
+<p>
+<pre>
+	private double getGunAngle(scanInfo predictedInfo, double nextX, double nextY) {
+		tolerance = 0;
+		scanInfo endInfo = predictedInfo;
+		double bulletSpeed = (20 - 3 * bulletPower);
+		double dist = BotUtils.distanceTo(last.x, last.y, nextX, nextY);
+		double ang = BotUtils.angleTo(last.x, last.y, nextX, nextY);
+		double angDiff = predictedInfo.d - last.d;
+		double projX = predictedInfo.x + dist * BotUtils.sinD(ang + angDiff);
+		double projY = predictedInfo.y + dist * BotUtils.cosD(ang + angDiff);
+		double bDist = 0;//bulletSpeed;
+		do {
+			endInfo = endInfo.next;
+			if (endInfo == null ||endInfo.t &lt; predictedInfo.t)
+				return (Double.POSITIVE_INFINITY);
+			bDist += bulletSpeed;
+			dist = BotUtils.distanceSqr(projX, projY, endInfo.x, endInfo.y);
+		} while (BotUtils.sqr(bDist) &lt; dist);
+		
+		ang = BotUtils.angleTo(projX, projY, endInfo.x, endInfo.y);
+		dist = Math.sqrt(dist);
+		double predx = nextX + dist * BotUtils.sinD(ang - angDiff);
+		double predy = nextY + dist * BotUtils.cosD(ang - angDiff);
+		
+		if (predx &lt; 18 || predx &gt; battleFieldWidth - 18
+			|| predy &lt; 18 || predy &gt; battleFieldHeight - 18) return (Double.POSITIVE_INFINITY);
+		tolerance = Math.toDegrees(/*Math.atan*/(toleranceWidth / dist));
+		return (ang - angDiff);
+	}
+</pre>
+<p>
+-- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Wow, full source code from Shadow! =) Our guns work on a slightly different method, yours returns the angle, whereas mine returns the offset. I'll try changing mine to use the angle, like yours, and see what happens. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+How many of these scanInfos/tracers do you keep? Don't you walk into memory issues with that? I keep the distance change relative to the firing point in my gun to check for out of bounds, but thats kind of inaccurate and of course doesnt show if that firing angle is reachable. -- <a href="robowiki?Ebo" class=wikipagelink>Ebo</a>
+<p>
+One Tracer for every tick of the game. I isn't that bad for memory. Not much stuff in it. I can even get rid of deltaHeading and velocity if i get this optimized method working.
+<pre>
+    class Tracer{
+      Tracer next;
+      Tracer previous;
+      int round;
+      int time;
+      Point2D.Double location;
+      double heading;
+      double deltaHeading, velocity;
+   }
+</pre>
+-- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+<UL >
+<li> (Edit conflict) You can pretty comfortably store many thousands of them (say 30,000 or more). The current default for JVM memory in Robocode is 512 mb, so you should be able to use half that without ever running into issues. Since a <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> battle is only 35 rounds, you'll generally only have ~25,000 ticks go by, anyway. I know that people using <a href="robowiki?KdTree/BucketPRKdTree" class=wikipagelink>KdTree/BucketPRKdTree</a> have posted results over 500 rounds storing data for every tick, which would be in the hundreds of thousands, but I'm not sure how much RAM they were using. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+Ok, thanks. I'll put that in my try-that-list ;-) -- <a href="robowiki?Ebo" class=wikipagelink>Ebo</a>
+<p>
+Same here, currently I have no limit. It will eventually explode, I know, but, until I find a way to remove the oldest entries from the <a href="robowiki?KdTree/BucketPRKdTree" class=wikipagelink>KdTree/BucketPRKdTree</a>, I'll have to leave it as is. I've tested 1on1 battles of 1000 rounds (over 300,000 ticks IIRC) and everything went fine, so it's not one of my priorities. My scanInfo class is slightly smaller than Skilgannon's:
+<p>
+<pre>
+class scanInfo {
+	public double x = 0, y = 0, d = 0;
+	public long t = 0;
+	public scanInfo previous;
+	public scanInfo next;
+}
+</pre>
+<p>
+-- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+<UL >
+<li> If you want to remove oldest entries, I would consider threading a linked list through the nodes of the tree.  Then, when you reach your max size, pop out the head.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=DrussGT/HelpRequests" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=DrussGT/HelpRequests">View other revisions</a><br>Last edited December 7, 2007 3:48 EST by <a href="robowiki?Simonton" title="ID 12045 from 24-247-40-190.dhcp.mrqt.mi.charter.com">Simonton</a> <a href="robowiki?action=browse&diff=1&id=DrussGT/HelpRequests">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

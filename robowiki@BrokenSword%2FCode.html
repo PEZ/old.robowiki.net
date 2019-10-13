@@ -1,0 +1,322 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>BrokenSword/Code - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Broken, Sword, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Code">BrokenSword/Code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?BrokenSword" class=wikipagelink>BrokenSword</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>The source code for <a href="robowiki?BrokenSword" class=wikipagelink>BrokenSword</a> 1.0. Code size is 1443.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<pre>
+package voidious.mini;
+
+import robocode.*;
+import robocode.util.Utils;
+
+import java.awt.Color;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+public class BrokenSword extends AdvancedRobot {
+    static final int GF_ZERO = 23;
+    static final int GF_ONE = 46;
+
+	protected static java.awt.geom.Rectangle2D.Double _fieldRect;
+    protected static Point2D.Double _myLocation;
+    protected static HashMap _enemyLocationsByName = new HashMap();
+    protected static double _randomDirChangeAmount;
+    protected long _timeSinceDirChangeCounter;
+    protected static double _lastHeading;
+    protected ArrayList _recentLocations;
+
+    protected double _targetRating = Double.POSITIVE_INFINITY;
+    protected static String _targetName = "";
+
+    protected static final double WAVE_BULLET_POWER = 1.99;
+    protected static final double WAVE_BULLET_VELOCITY = 14.03;
+    protected static final double WAVE_MAX_ESCAPE_ANGLE = 0.62;
+    protected static double _bulletPower;
+
+    private static int _radarDirection = 1;
+    
+	public void run() {
+        setAdjustGunForRobotTurn(true);
+        setAdjustRadarForGunTurn(true);
+		setColors(new Color(141, 220, 175), Color.white, Color.white);
+        _recentLocations = new ArrayList();
+
+    	_fieldRect = new java.awt.geom.Rectangle2D.Double(30, 30, 
+                getBattleFieldWidth() - 60, getBattleFieldHeight() - 60);
+
+		do {
+          	setFireBullet(_bulletPower);
+          	setTurnRadarRight(45 * _radarDirection);
+			move();
+			execute();
+		} while (true);
+	}
+
+    public void onScannedRobot(ScannedRobotEvent e) {
+        String eName = e.getName();
+        double eDistance = e.getDistance();
+        double eEnergy = e.getEnergy();
+        double eVelocity = e.getVelocity();
+
+        
+        ////////////////////////////////////////////////
+        // General stuff
+        ////////////////////////////////////////////////
+        
+        double enemyAbsoluteBearing = 
+        	e.getBearingRadians() + getHeadingRadians();
+
+        if (!_enemyLocationsByName.containsKey(eName)) {
+        	_enemyLocationsByName.put(eName, new EnemyData());
+        }
+        EnemyData eData = (EnemyData)_enemyLocationsByName.get(eName);
+        eData.alive = true;
+        eData.location = project(_myLocation, enemyAbsoluteBearing, eDistance);
+        double absSinRelativeHeading = Math.abs(Math.sin(e.getHeadingRadians() 
+        		- enemyAbsoluteBearing));
+        eData.energy = eEnergy;
+        
+        if (getOthers() == 1 || 
+             (_targetName.equals(eName) &amp;&amp; 
+               (eDistance &lt; 300 || (getGunHeat() &lt; .8 &amp;&amp; getOthers() &lt;= 5)))) { 
+        
+        	_radarDirection *= -1; 
+        }
+        
+        
+        ////////////////////////////////////////////////
+        // Gun wave creation
+        ////////////////////////////////////////////////
+
+        MicroWave w;
+        addCustomEvent(w = new MicroWave());
+        w.targetName = eName;
+        w.sourceLocation = _myLocation;
+        w.directAngle = enemyAbsoluteBearing;
+        w.orientation = sign((eVelocity)*Math.sin(e.getHeadingRadians() - enemyAbsoluteBearing));
+
+        w.waveGuessFactors = eData.gunStats[(int)Math.abs(eVelocity) / 3][(int)(eDistance / 300)][(int)Math.min(2, absSinRelativeHeading * 3)];
+
+        
+        ////////////////////////////////////////////////
+        // Target selection and actual firing.
+        ////////////////////////////////////////////////
+
+        double thisRating = (eEnergy * square(eDistance)); 
+        if (thisRating &lt; (_targetRating * .8) || eName.equals(_targetName)) {
+            _targetRating = thisRating;
+            _targetName = eName;
+        }
+
+        if (_targetName.equals(eName)) {
+      
+            _bulletPower = 1.99;
+            
+            if (eDistance &lt; 250 || getOthers() &gt;= 6) {
+            	_bulletPower = 3;
+            }
+            
+            if (eDistance &gt; 600 &amp;&amp; (getOthers() &lt;= 2)) {
+            	_bulletPower = 1.4;
+            }
+            
+            if (getEnergy() &lt; 30 &amp;&amp; eEnergy &gt; getEnergy()) {
+            	_bulletPower = Math.min(_bulletPower, 2 - ((33 - getEnergy()) / 15));
+            }
+            
+            int bestGF = GF_ZERO;
+            double bestGFRank = 0;
+            for (int x = 0; x &lt; GF_ONE; x++) {
+            	if (w.waveGuessFactors[x] &gt; bestGFRank) {
+            		bestGFRank = w.waveGuessFactors[x];
+            		bestGF = x;
+            	}
+            }
+                    	
+            setTurnGunRightRadians(Utils.normalRelativeAngle(
+            		enemyAbsoluteBearing - getGunHeadingRadians() +
+            		(e.getEnergy() &gt; 0 ?
+            			(w.orientation 
+            			* (maxEscapeAngle(bulletVelocity(_bulletPower)) / GF_ZERO)
+            			* (bestGF - GF_ZERO)) : 0)));        
+        }
+    }
+    
+    public void onRobotDeath(RobotDeathEvent e) {
+    	String eName = e.getName();
+    	        
+        if (_targetName.equals(eName)) {
+            _targetName = "";
+            _targetRating = Double.POSITIVE_INFINITY;
+        }
+        
+        ((EnemyData)_enemyLocationsByName.get(eName)).alive = false;
+    }
+   
+    protected void move() {
+        _myLocation = new Point2D.Double(getX(), getY());
+        
+        if (Math.random() &gt; 0.9) {
+        	_recentLocations.add(0, _myLocation);
+        }
+        
+        double bestRisk = Double.POSITIVE_INFINITY;
+        double bestAngle = 0;
+        double currentHeading =
+        		getHeadingRadians() + (getVelocity() &lt; 0?Math.PI:0);
+        
+        Object[] enemies = 
+            (_enemyLocationsByName.values().toArray());
+        
+       	_timeSinceDirChangeCounter++;
+        if (Math.abs(Utils.normalRelativeAngle(currentHeading - _lastHeading)) 
+           	&gt; Math.PI / 4) {
+        	_timeSinceDirChangeCounter = 0;
+        	_randomDirChangeAmount = (Math.random() * Math.random() * 50);
+        }
+        
+        for (double x = 0; x &lt; 2; x += .04) {
+            double testAngle = x * Math.PI;
+            Point2D.Double testPoint = project(_myLocation, testAngle, 
+                50 + Math.random() * 200);
+            
+            if (_fieldRect.contains(testPoint)) {
+                double testRisk = 0;
+                
+                for (int y = 0; y &lt; enemies.length; y++) {
+                    EnemyData eData = ((EnemyData)enemies[y]);
+                    if (eData.alive) {
+                        double distSquaredToEnemy = 
+                        	testPoint.distanceSq(eData.location);
+                        
+                        testRisk += 
+                            ((limit(0.5, (eData.energy / getEnergy()), 2)
+                            	/ distSquaredToEnemy))
+                            * (1 + square(Math.cos(absoluteBearing(
+                                _myLocation, eData.location) - testAngle)))
+                            ;
+                    }
+                }
+                                
+            	if (Math.abs(Utils.normalRelativeAngle(currentHeading 
+                    	- testAngle)) &lt; (Math.PI / 4) &amp;&amp; getOthers() &lt;= 6) {
+            		testRisk /= 2;
+            		if (_timeSinceDirChangeCounter &gt; _randomDirChangeAmount) {
+                		testRisk *= 20;
+                	}
+                }
+            	
+                try {
+             		for (int z = 0; z &lt; 4 &amp;&amp; z &lt; _recentLocations.size(); z++) {
+              			testRisk *= (1 + (((400) - (50 * z)) / (testPoint.distanceSq((Point2D.Double)_recentLocations.get(z)))));
+             		}
+                } catch (Exception e) { }
+                                
+                if (testRisk &lt; bestRisk) {
+                    bestRisk = testRisk;
+                    bestAngle = x * Math.PI;
+                }        
+            }           
+        }
+               
+        _lastHeading = currentHeading;
+
+        moveWithBackAsFront(bestAngle);
+    }
+	
+    private static double absoluteBearing(Point2D.Double source, Point2D.Double target) {
+        return Math.atan2(target.x - source.x, target.y - source.y);
+    }
+    
+    // CREDIT: code by Iiley,
+    // http://robowiki.net?BackAsFront
+    void moveWithBackAsFront(double bearing) {
+        double angle = Utils.normalRelativeAngle(bearing - getHeadingRadians());
+        double turnAngle;
+        setTurnRightRadians(turnAngle = Math.atan(Math.tan(angle)));
+        setAhead((angle == turnAngle) ? 100 : -100);
+    }
+     
+    protected static Point2D.Double project(Point2D.Double sourceLocation, double angle, double length) {
+        return new Point2D.Double(sourceLocation.x + Math.sin(angle) * length,
+            sourceLocation.y + Math.cos(angle) * length);
+    }
+    
+    private static double maxEscapeAngle(double velocity) {
+        return Math.asin(8.0/velocity);
+    }
+
+    protected static double bulletVelocity(double power) {
+        return (20.0 - (3.0*power));
+    }
+    
+    static int sign(double d) {
+        if (d &gt;= 0) return 1;
+        return-1;
+    }
+    
+    static double square(double d) {
+        return d * d;
+    }
+    
+    protected static double limit(double min, double value, double max) {
+        return Math.max(min, Math.min(value, max));
+    }
+
+    class MicroWave extends Condition {
+        String targetName;
+        Point2D.Double sourceLocation;
+        long[] waveGuessFactors;
+        double bulletVelocity, directAngle, distance;
+        int orientation;
+
+        public boolean test(){
+        	try {
+                Point2D.Double enemyLocation = 
+                    ((EnemyData)_enemyLocationsByName.get(targetName)).location;
+                if ((enemyLocation).distance(sourceLocation)
+                    &lt;= (distance+=WAVE_BULLET_VELOCITY) + (WAVE_BULLET_VELOCITY/2)) {
+                	try {
+                		double guessFactor = (Utils.normalRelativeAngle(
+                				absoluteBearing(sourceLocation, enemyLocation)
+                				- directAngle) * orientation) / WAVE_MAX_ESCAPE_ANGLE;
+                		int guessFactorIndex = (int)((guessFactor * GF_ZERO) + GF_ZERO);
+                		waveGuessFactors[guessFactorIndex]++;
+/*
+                		for (int x = GF_ONE - 1; x &gt;= 0; x--) {
+                			waveGuessFactors[x] +=
+                				(1D / (square(x - guessFactorIndex) + 1));
+//                			waveGuessFactors[x] = ((waveGuessFactors[x] * 200) +
+//                				(1D / (square(x - guessFactorIndex) + 1)))
+//                				/ 201;
+                		}
+*/
+                	} catch (Exception e) { }
+                    removeCustomEvent(this);
+                }
+        	} catch (Exception e) { }
+            return false;
+        }
+    }
+
+    class EnemyData {
+        protected long[][][][] gunStats = new long[3][5][3][GF_ONE+1];
+
+        boolean alive;
+        Point2D.Double location;
+        double energy;
+    }
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?BrokenSword" class=wikipagelink>BrokenSword</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=BrokenSword/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=BrokenSword/Code">View other revisions</a><br>Last edited November 4, 2006 4:50 EST by <a href="robowiki?Voidious" title="ID 7423 from pool-71-126-24-191.bflony.east.verizon.net">Voidious</a> <a href="robowiki?action=browse&diff=1&id=BrokenSword/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

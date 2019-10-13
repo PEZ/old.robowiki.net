@@ -1,0 +1,313 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>EnemyWave - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Enemy, Wave'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h3>(redirected from <a href="robowiki?action=edit&id=EnemyWaves" class=wikipageedit>EnemyWaves</a>)</h3><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=EnemyWave">EnemyWave</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Related concepts: <a href="robowiki?EnemyWave/MovementAdaption" class=wikipagelink>/MovementAdaption</a> - <a href="robowiki?Wave" class=wikipagelink>Wave</a> - <a href="robowiki?IntelligenceManagement" class=wikipagelink>IntelligenceManagement</a>
+<hr noshade class=wikiline size=1>
+If you want to collect data on how your enemy might see your movement profile, one way is to fire <a href="robowiki?Wave" class=wikipagelink>Wave</a>'s from your enemy. I call these <a href="robowiki?EnemyWave" class=wikipagelink>EnemyWave</a>s. In <a href="robowiki?GloomyDark" class=wikipagelink>GloomyDark</a> I have tried, and failed, to implement a self-adjusting movement with this technique. Here's an outline of how it is set up.
+<p>
+Firstly. When Gloomy has detected that it is being fired upon it registers an <a href="robowiki?EnemyWave" class=wikipagelink>EnemyWave</a> custom event. Like so:
+<pre>
+        currentMoveFactorVisits = moveFactorVisits[movePowerSegment()][moveAccelSegment()];
+        currentMoveFactor = moveFactors[movePowerSegment()][moveAccelSegment()];
+        robotMaxBearing = maxBearing(enemyFirePower);
+        if (enemyHasFired) {
+            EnemyWave ew = new EnemyWave(this, enemyFirePower, enemyLocation, robotLocation,
+                robotDeltaBearing, robotMaxBearing, currentMoveFactorVisits, currentMoveFactor);
+            addCustomEvent(ew);
+            enemyWaves.add(ew);
+        }
+</pre>
+As you can see I am segmenting the enemy's gun much the same way as I might segment my own.
+<p>
+With these enemy waves I am currently just interested in when the enemy hits me. (This is modeled after how I have understood Paul's description of his adaptive movement system.) Which means I am looking for the following event:
+<pre>
+    public void onHitByBullet(HitByBulletEvent e) {
+        updateMoveFactor(e.getPower());
+    }
+</pre>
+Since two enemy waves (with different velocity) can reach me at the same time I am using the bullet power of the bullet that hit me to select the right wave to update my factors from:
+<pre>
+    void updateMoveFactor(double power) {
+        double shortestDistance = 70;
+        EnemyWave selectedWave = null;
+        Iterator iterator = enemyWaves.iterator();
+        for (int i = 0, n = enemyWaves.size(); i &lt; n; i++) {
+            EnemyWave ew = (EnemyWave)enemyWaves.get(i);
+            if (ew.powerIsEqual(power) &amp;&amp; ew.shortestDistance() &lt; shortestDistance) {
+                selectedWave = ew;
+                shortestDistance = ew.shortestDistance();
+            }
+        }
+        if (selectedWave != null) {
+            selectedWave.updateStats();
+            selectedWave.updateMoveFactor();
+        }
+    }
+</pre>
+What happens here is that I iterate among the currently active enemy waves to find the closest one, with the correct bullet power, that possibly could have hit me. Then I use this wave to update my movement profile (or rather my view of where the enemy is firing to try to hit me) and my magic flattener factor.
+<p>
+A Wave is a Wave is a Wave. Thus <a href="robowiki?GloomyDark" class=wikipagelink>GloomyDark</a> uses the same abstract Wave class as a superclass to both the waves it fires itself and the enemy's waves:
+<pre>
+package pez.gloom.intel;
+import pez.gloom.Bot;
+import robocode.util.Utils;
+import robocode.*;
+import java.awt.geom.*;
+
+// This code is released under the RoboWiki Public Code Licence (RWPCL), datailed on:
+// http://robowiki.dyndns.org/?RWPCL
+//
+// $Id: Wave.java,v 1.1 2003/10/15 21:13:18 peter Exp $
+public abstract class Wave extends Condition {
+    Bot robot;
+    double time;
+    double bulletPower;
+    double bulletVelocity;
+    double deltaBearing;
+    double maxBearing;
+    Point2D gunLocation = new Point2D.Double();
+    Point2D targetLocation = new Point2D.Double();
+    Point2D currentTargetLocation;
+    int[] factorVisits;
+    double triggerDistanceDelta;
+    int visitedIndex = -1;
+
+    public Wave(Bot robot, double bulletPower, Point2D gunLocation, Point2D targetLocation,
+                double targetDeltaBearing, double targetMaxBearing, int[] currentFactorVisits) {
+
+        this.robot = robot;
+        this.time = robot.getTime();
+        this.bulletPower = bulletPower;
+        this.bulletVelocity = Bot.bulletVelocity(bulletPower);
+        this.deltaBearing = targetDeltaBearing;
+        this.gunLocation.setLocation(gunLocation);
+        this.currentTargetLocation = targetLocation;
+        this.targetLocation.setLocation(targetLocation);
+        this.maxBearing = targetMaxBearing;
+        this.factorVisits = currentFactorVisits;
+    }
+
+    public boolean test() {
+        if (triggerTest(triggerDistanceDelta)) {
+            robot.removeCustomEvent(this);
+            return true;
+        }
+        return false;
+    }
+
+    public void updateStats() {
+        double bearingDiff = Utils.normalRelativeAngle(Bot.absoluteBearing(gunLocation, currentTargetLocation) -
+            Bot.absoluteBearing(gunLocation, targetLocation));
+        setVisitedIndex(bearingDiff);
+        robot.registerFactorVisit(factorVisits, visitedIndex);
+    }
+
+    double distance() {
+        return bulletVelocity * (double)(robot.getTime() - time);
+    }
+
+    boolean triggerTest(double distanceDelta) {
+        return distance() &gt; gunLocation.distance(currentTargetLocation) + distanceDelta;
+    }
+
+    void setVisitedIndex(double bearingDiff) {
+        int numFactors = factorVisits.length;
+        visitedIndex = (int)Math.round((((double)Bot.sign(deltaBearing) * bearingDiff) / maxBearing) * (numFactors - 1) / 2D + (numFactors - 1) / 2D);
+        visitedIndex = Math.max(visitedIndex, 0);
+        visitedIndex = Math.min(visitedIndex, (numFactors - 1));
+    }
+}
+</pre>
+And the concrete <a href="robowiki?EnemyWave" class=wikipagelink>EnemyWave</a> class looks like this:
+<pre>
+package pez.gloom.intel;
+import pez.gloom.Bot;
+import java.awt.geom.*;
+
+// This code is released under the RoboWiki Public Code Licence (RWPCL), datailed on:
+// http://robowiki.dyndns.org/?RWPCL
+//
+// $Id: EnemyWave.java,v 1.1 2003/10/15 21:13:17 peter Exp $
+
+public class EnemyWave extends Wave {
+    float[] moveFactor;
+
+    public EnemyWave(Bot robot, double bulletPower, Point2D gunLocation, Point2D targetLocation,
+                double targetDeltaBearing, double targetMaxBearing, int[] currentFactorVisits, float[] moveFactor) {
+
+        super(robot, bulletPower, gunLocation, targetLocation, targetDeltaBearing, targetMaxBearing, currentFactorVisits);
+        this.moveFactor = moveFactor;
+        this.triggerDistanceDelta = 80;
+    }
+
+    public boolean powerIsEqual(double power) {
+        return (int)Math.round(power * 1000) == (int)Math.round(bulletPower * 1000);
+    }
+
+    public double shortestDistance() {
+        return Math.abs(gunLocation.distance(currentTargetLocation) - distance());
+    }
+
+    public void updateMoveFactor() {
+        double visitedFactor = Math.abs(Bot.visitIndexToFactor(visitedIndex, factorVisits.length));
+        int mostVisitedIndex = Bot.mostVisitedIndex(factorVisits);
+        double mostVisitedFactor = Math.abs(Bot.visitIndexToFactor(mostVisitedIndex, factorVisits.length));
+        if (visitedFactor &gt;= 0.9) {
+            moveFactor[0] *= (float)(1.01);
+        }
+        else if (Math.random() &lt; 0.05) {
+            moveFactor[0] *= (float)(0.99);
+        }
+    }
+}
+</pre>
+There. The only problem with this is that it doesn't really work. I often fail to find the corresponding wave when I am hit. So this is both a way for me to share this technique together with some implementation details and request some help in finding whatever bug is lurking there causing the missed waves or maybe spot where I am thinking wrongly with this.
+<p>
+Since I have not got the infrastructure quite right yet, I am not sure if I am on the right track with my movement adjustment either. Please share your views on that too. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+Can't you do everything exactly the same as you do with your own waves?  Whenever a wave has travelled the required distance to have possibly hit you (it doesn't matter if it hit or missed) you update the curve exactly the same way you would with your profile of the enemy, and then whenever you find peaks and troughs you try to level them out. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Yes, that's one way to do it. But I'm trying to avoid resorting to that since I think that what's really important is avoiding where the enemy is firing, rather than where it should be firing. Consider a bot firing at the same guess factor all the time (quite a few bots do this, guess factor 0.0, i.e. head-on). Keeping a flat curve almost rewards this, while avoiding that guess factor successfully would make it miss almost all the time. Paul mentioned "keeping a flat profile regardless of enemy firing strategy" (or something along those lines). This is about that rather than being flat against guess factor targeters alone. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Prehaps you could get a profile of your own movement in the way i described, and also do some pattern matching on yourself, and then sacrifice yourself a little and go to exactly the points the curve, the PM, head-on, linear, circular, etc. predict, and if you get hit at one of them, avoid it in the future.  To get accruate results, however, you may well have to get hit by enough bullets that you will be dead... as long as the enemy doesn't use virtual guns, you can use the info in future battles without the sacrifice, so that will be ok.  Virtual guns are a bit of a problem...  I guess once you have decided what to avoid, you switch to going to all the other places, and wait until you start getting hit in that one, and then you know the gun has changed, so you start avoiding that one.  Might be a little complicated... -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I try to avoid complicated stuff and that surely sounds a bit on the complicated side of things. =) Though I don't worry too much about <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> enemies. No one but Paul and myself seem to think they are a very good idea anyway. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Remind me, who's bot is no. 1 at the moment? ;-) -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I think it's one using the guess factors where it is hit to adapt it's movement. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I've been tinkering around with a bot called FloodAGF<a href="robowiki?action=edit&id=FloodAGF" class=wikipageedit>?</a> for the last week or so which does this and attempts to dodge himself.  If he DOES get hit, he adds enough to that bucket for it to be the new highest guess factor.  The cool thing about this is that once it works, it will theoretically be able to 'learn' to dodge head-on aim perfectly, as well as some other simple aiming algorithms. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Yeah! That's maybe the way I should go about this. Do you use the enemy's bullets for the waves or do you just fire power three waves from the enemy constantly or some such? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Well, I'm already detecting when they fire, so I'm using the enemy's bullets at the powers I'm seeing them fire at me.  I actually took <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>'s gun and 'modularized' it to do this, and just feed the enemy's 'gun' with a re-polarized <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> I create. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Hey hey! <a rel="nofollow" href="http://robocoderepository.com/BotDetail.jsp?id=897">[Timmy_The_Cheerful_Monkey]</a> uses <a href="robowiki?EnemyWave" class=wikipagelink>EnemyWave</a>s for dodging! :-) --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<p>
+And can you outline how it Timmy does it here please? Or if you can see where things go wrong in Gloomy... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Timmy only tracks one enemy bullet at a time. Timmy tries to dodge a couple of ticks (either 8 or 14 IIRC) before impact of that Wave. Timmy didn't always dodge, though. There was either a 80% or 30% (IIRC) chance that Timmy reverses direction every time a Wave approaches. Every time Timmy is hit by a bullet, Timmy switches between 80% and 30%, and between 8 and 14 ticks before impact. Didn't really work that well... (It was a <a href="robowiki?JustForFun" class=wikipagelink>JustForFun</a> Robot ;-) ) --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<p>
+<hr noshade class=wikiline size=1>
+OK <a href="robowiki?Vuen" class=wikipagelink>Vuen</a> now please tell me how you accurately catch those enemy waves in <a href="robowiki?Fractal" class=wikipagelink>Fractal</a> when you are hit. I really need a break on that area... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Um, I never actually made that part of <a href="robowiki?Fractal" class=wikipagelink>Fractal</a> either; it does make the waves line up exactly with the bullets, but it doesn't yet actually make the connection between getting hit by a bullet and its associated wave. However, this is the way I would do it: when a bullet hits you, you now have the XY coordinates of the bullet. You'll have to look through each wave and convert the bullet's position to polar relative to the center of that wave, then ignore the angle and compare the radial component. In other words, for each wave, calculate the distance from the bullet to the center of the wave. If the difference between this distance and the wave's radius is less than, say, 0.1, you've found the wave associated with that bullet. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+My tests with this unfortunately seem to have a bug here... -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Print out the results of the differences for each wave when you get hit; I bet you'll turn up with a wave having either 1 or 2 bullet speeds off every time. Remember that when creating a wave upon detecting an enemy bullet, you have to iterate it ahead 2 ticks; when a bullet is launched, it is iterated a tick immediately upon being launched, and then is iterated an extra tick when the next frame advances. Thus when firing your own bullets, you set the launched waves as having already travelled a tick. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+Good! Now we are getting somewhere with this page. =) Does this mean I should also use the enemy's location the tick before I see the drop in energy? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I have chased this bug for two months or so. Iterating the <a href="robowiki?EnemyWave" class=wikipagelink>EnemyWave</a> two ticks and registering the gun and target locations of the last tick immediately fixed the bug. Now I can accurately catch the right waves. I don't know how to thank you <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>. I hope it is reward enough for you to know you have saved my sanity (whatever I have left anyway). =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Heh, you're welcome. I also spent months bashing my head of the desk because of this bug way back in the day when building <a href="robowiki?SineSweep" class=wikipagelink>SineSweep</a>; this was one of the bugs that caused <a href="robowiki?SineSweep" class=wikipagelink>SineSweep</a>'s intercept ratio to drop heavily. You can imagine that this seemingly slight 5 or so pixel difference had devastating effects on its intercept ratio. It took my months to track it down (and I don't think I ever got it right anyway, at least not in <a href="robowiki?SineSweep" class=wikipagelink>SineSweep</a>.) Speaking of which, I seriously need to rebuild that bot... -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<UL >
+<li> Hey, I just noticed: read the page on <a href="robowiki?SineSweep" class=wikipagelink>SineSweep</a> and see what it says on lining up waves with bullets. :D funny... -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<li> =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</UL>
+<p>
+OK. I have been playing with this whole Wave's as Custom Conditions paradigm. At first I thought they were pretty neat and saved some space. I am now of the opinion that their simplicity and smaller code size are a trap. I placed some System.out.println in each of my Event handlers telling me what order the events were being processed in to see what was going on. What I found is that if you rely on the Event Handler you are most likely to have your enemy position off by one tick because the <a href="robowiki?CustomEvent" class=wikipagelink>CustomEvent</a> will happen (be processed) before the on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> event. This means your Wave will hit the enemy and calculate a <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> from the position of the Enemy last tick. The enemy location used can be off by as many as 8 pixels. This is probably not a hugely significant thing but I have noticed in my own research that it does adversely affect my accuracy (by 2% - 3%). I tried to setEventPriority<a href="robowiki?action=edit&id=EventPriority" class=wikipageedit>?</a> of these events but this did not seem to have any effect. It is almost like the Robocode engine is serially creating them, in order of it's defined percedence and sending them to your robot. This leads me to believe that you would have to creat an Event Handler of your own for the setEventPriority<a href="robowiki?action=edit&id=EventPriority" class=wikipageedit>?</a> to work. If your match is a close thing this might be the thing that turns it over to your enemy. If code space is tight, this might be the way to go if you can afford the loss in accuracy. Comments? -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+I check all my waves manually in the on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> event, that way i know exactly what order everything is happening in, because i coded it.  Admittedly, my GF gun doesn't actually work, but... -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<hr noshade class=wikiline size=1>
+<p>
+Lately I've been toying around with <a href="robowiki?EnemyWave" class=wikipagelink>EnemyWave</a>s and <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a>s. Since I'm a practical newbie at this, I decided to do a little brainstorming here to see if someone more experienced can detect any logical error. I came to the conclusion that to simulate a perfect "inverse" segmented GF gun, you have to know your own movement data since up to 4 ticks before you detected the enemy's energy drop:
+<UL >
+<li> tick  0: energy drop
+<li> tick -1: enemy fired
+<li> tick -2: enemy decided where to fire
+<li> tick -3: used for acceleration/lateral velocity/direction change/etc calculation
+</UL>
+That is, as I see it, the only way of precisely simulating the enemy's "line of though", is it not? -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Seems robust. But why do you need to know when the enemy decides to fire? I must be missing something... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+You need 1 tick to rotate the gun... -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Still it's where the enemy fires that's important for the <a href="robowiki?EnemyWave" class=wikipagelink>EnemyWave</a> alignement, no? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+For alignement yes, but not for segmentation. To classify the bullet exactly like your enemy did, you have to use the info he had when he decided to fire. Maybe I'm just beeing too picky... -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Not at all. I just didn't know you where talking about segmentation. It's not obvious from the above code snippets, but when that code was active in <a href="robowiki?GloomyDark" class=wikipagelink>GloomyDark</a> i was segmenting the enemy waves the same way i segmented my own. I never thought about having to back away two ticks more for that. I think you have to account for the bullet being advanced a tick from the bot also when it is fired. So you need to subtract two from the time you observe the energy drop. (But still use the enemy position of tick -1.) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I said "a perfect inverse segmented gun" ;). I read about the (time - 2) trick, I'm already doing it like that. But, about the segmentation, if you classify the enemy bullet with your current data (let's say distance and speed), you can be very far off from what the enemy used for it's own segmentation. Your speed, for example, could have been 4 when he decided to fire and 0 when you detected it. You do stats[dist][0]++ and he does stats[dist][4]++.-- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Totally agreed. I just didn't think of that back when I was doing enemy waves. And probably wouldn't have thought about it ever if you hadn't shared it. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Isn't your opponent picking his final segment and firing in the same tick? His gun should already be spun in that general direction from previous observations thus finish spin + fire on the same execute()? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I've always assumed that firing is the very first thing executed by the RC-engine, before gunTurn/turn/accel/move. At least in by bots, I always reserve a tick for gunTurn and assume I'll be firing from my next xy position. I remember noticing a slight precision increase when I started doing it like that... -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+When i started write minibots i forgot all of this,now i am hat minibots a bit so i had not write minibots for a long time.;[ These days i was trying to do some PM-State gun like ABC did,but i have not got any success~;[ it did badly and skipped many turn(I just want it can ananyse 20 rounds's data) -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+<p>
+Since i've got my <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a> working (at last!), I've beeing able to synchronize my <a href="robowiki?EnemyWave" class=wikipagelink>EnemyWave</a>s correctly, and my AM bot is finally taking shape. I'm using a code based on above's <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>'s code, and obviously giving him the credits. But i'm curious about the idea: does anybody knows to whom i shall give the credits for the idea? My suspects: <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>, <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>, <a href="robowiki?Paul" class=wikipagelink>Paul</a>... The list is endless... <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+I'm probably off the list, since I have yet to take the time to get it working correctly.  I believe <a href="robowiki?Vuen" class=wikipagelink>Vuen</a> would be the person who first figured out the oddities of it all. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I think I might have been the first to use <a href="robowiki?EnemyWaves" class=wikipagelink>EnemyWaves</a> to guide movement. This was in an early version of <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a>. Some of it found its way into <a href="robowiki?Princess" class=wikipagelink>Princess</a> as well, but I don't remember if it's left there or if we finally decided on a simpler version of the movement. However I used it rather clumsily and the <a href="robowiki?AdaptiveMovement" class=wikipagelink>AdaptiveMovement</a> was reinvented by <a href="robowiki?Paul" class=wikipagelink>Paul</a> later. It was when he described it on the <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> page that I started to implement the <a href="robowiki?EnemyWave" class=wikipagelink>EnemyWave</a> code you find on this page. So I'd say we should credit <a href="robowiki?Paul" class=wikipagelink>Paul</a> the most, but also myself for exploring the <a href="robowiki?EnemyWave" class=wikipagelink>EnemyWave</a> mechanics in an <a href="robowiki?OpenSource" class=wikipagelink>OpenSource</a> way and then of course <a href="robowiki?Vuen" class=wikipagelink>Vuen</a> for helping me getting them aligned. Without <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>'s successful experiments with aiming at the bullets of the enemy who knows if I had ever gotten those <a href="robowiki?EnemyWaves" class=wikipagelink>EnemyWaves</a> to work. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+So, if everybody agee, i'll credit it to <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, <a href="robowiki?Vuen" class=wikipagelink>Vuen</a> &amp; <a href="robowiki?Paul" class=wikipagelink>Paul</a>. Is that ok to u all? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+While developing HuntedHunter<a href="robowiki?action=edit&id=HuntedHunter" class=wikipageedit>?</a> which i try to make surfing waves i wrote some graphical debugging stuff in order to see what my bot thinks. And i am drawing a circle ( of cause its an ellipse with the form of a circle ) that shows the enemy wave that is nearest to me. There i found a bug that made me shoot enemy waves with the current time when i detect an energy drop. I corrected it to firedTime of the enemy wave being current time-1 , but still the bullet i can see is more far away from the shot-position than the drawn circle that stands for that bullet.Now i dont know  if there is something wrong in my implementation or if the time a bullet is shot is really time-of-detection - 2 . Can anyone help me. hope one could understand my poor german-pupil-english????
+<p>
+Indeed, it is time of detection-2 (but the previous position, pos at time-1). -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+because pos at time-1 is real position of time-2 right??? --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+This page must be pretty cluttered because, even though it tells about this "time - 2" thingy, people seem to have to find out themselves anyway. This is why: When a bot fires a bullet it is advanced, by Robocode, one tick. And you detect the enemy's drop in energy one tick after it has fired. 1 + 1 = 2 in Robocode. Does that make sense? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+OIC sorry, but then the position where he fired the bullet must be the current position you know about him. <pre> tick  0: energy drop  tick -1: enemy fired</pre> He fired at time -1 and you detect the energy drop at time+-0. The position you think he is at time+-0 is the real position of time-1. Whats wrong??? -<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+I don't think I quite follow you here... But what <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a> does is to use the enemy's position from the last tick as the waves origin. Then I advance the wave 2 ticks. Does this answer your question? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+@<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a> Here is the best I can explain it. 
+<pre>
+tick 1: enemy fires and the bullet is automatically advanced bulletVelocity pixels on its shot bearing. 
+Shooter was at point P1, this is also the origin of the bullet, even though the bullet never physically "occupies" this point.
+
+tick 2: enemy has moved to point P2 
+bullet has moved another bulletVelocity pixels forward on it's shot bearing. 
+You detect the enemy drop in energy and now want to create a wave. 
+     To create this wave you need to use the enemies last position (P1) as the shot origin. 
+     You have to use 2X bulletVelocity for the distance the wave has traveled to accurately 
+         reflect the bullets position.
+</pre>
+If you have <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a> working this is all pretty clear if you try to display your waves. Think of the bullets flight as a ray starting from the shooters position at shot time. I think you are getting hung up on the fact that the bullet does not start at "zero" on this ray, but actually "magically" appears bulletVelocity units from the origin and proceeds forward from there. In summary, when you create enemy waves (waves that are meant to represent enemy shots fired at you), use the enemies last position and 2X bulletVelocity when initializing the wave. Hope this helps --<a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+Sorry, my misstake. I just thought that when the on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> funktion of you robot is called by robocode it gives you the values ( <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>.get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>() ... ) of the <em>LAST</em> tick but since this function is called when you scan the enemy and not one tick later at the beginning of the new tick you are right. <em>THX</em> --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+<hr noshade class=wikiline size=1>
+Another thing: Why do most Robots that are <a href="robowiki?EnemyWave" class=wikipagelink>EnemyWave</a> surfing use only onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a> and not additionally onBulletHitBullet<a href="robowiki?action=edit&id=BulletHitBullet" class=wikipageedit>?</a> to find out with which guessfactor the enemies gun shot at him??? --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+Because most of us are lazy. =) <a href="robowiki?Axe" class=wikipagelink>Axe</a> does that actually. And he might also be the best surfer around. Maybe because of that. Maybe not. I don't think it matters that much. But Axe can actually veryfy that. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Indeed i do this (don´t know if only me, it´s quite obvious actually), i had post it at <a href="robowiki?PulsarMax" class=wikipagelink>PulsarMax</a> page (iirc)... I do it because i don´t like the idea of adapting only when beeing hurt (actually i don´t like beeing hurt:). But i can´t tell how much exactly i gain with it, since i´m doing it since almost the beggining... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Hmm how would one use it? Find the wave I used to fire and the enemy wave. Then calculate the guess factor by extending that line from enemy fire loc and see what guess factor that was aimed at? Hmm seems easier now when I wrote it down, unlesss I forgot something! I like it a lot, as you say; gather just as useful stats without being hit but as if hit. -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+Yeah thats the idea. <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a> dont use this, imho. --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+It probably will next version - it's a simple optimization, I just never got around to it. :)
+<p>
+<a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a> - How are you calculating the angles for bullets which hit you at the moment?  If you use the position of your bot to do it then the results tend to be a little off; if you use the position of the enemy's bullet then you can, IIRC, get the bullet using getHitBullet<a href="robowiki?action=edit&id=HitBullet" class=wikipageedit>?</a> and feed that into your original algorithm. -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<UL >
+<li> Thanks jam, just came to the same conclusion myself when I implemented the use of the stats on BulletHitBullet<a href="robowiki?action=edit&id=BulletHitBullet" class=wikipageedit>?</a> and used the hit bullet's position there! -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+</UL>
+<p>
+Good idea. Thanks for sharing! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I use a methode onSeeEnemyBullet<a href="robowiki?action=edit&id=SeeEnemyBullet" class=wikipageedit>?</a>(Bullet b) that is invoken by onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a> and onBulletHitBullet<a href="robowiki?action=edit&id=BulletHitBullet" class=wikipageedit>?</a>. Cant wait to see the ranking of the new <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a> --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=EnemyWave" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=EnemyWave">View other revisions</a><br>Last edited June 1, 2004 13:25 EST by <a href="robowiki?PEZ" title="ID 1959 from 212.75.87.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=EnemyWave">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

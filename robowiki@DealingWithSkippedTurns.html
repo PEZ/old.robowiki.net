@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>DealingWithSkippedTurns - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Dealing, With, Skipped, Turns'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=DealingWithSkippedTurns">DealingWithSkippedTurns</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>An interesting e-mail exchange between <a href="robowiki?Tad" class=wikipagelink>Tad</a> and <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+From: Tad Boniecki
+Sent: Monday, November 18, 2002 2:11 PM
+To: David Alves
+Subject: quick question
+<p>
+Hi David,
+<p>
+Seeing you are a Robocode guru I thought I'd
+ask you a quick question.
+<p>
+My bot keeps getting missed turn events.
+<p>
+Is there a way to debug this?
+<p>
+I'm pretty sure I'm always doing something so
+it looks like I might be doing to much per tick.
+How do I find out?
+<p>
+regards
+<p>
+Tad
+<hr noshade class=wikiline size=1>
+From: David Alves
+Sent: Tuesday, 19 November 2002 9:49 AM
+To: Tad Boniecki
+Subject: RE: quick question
+<p>
+<p>
+All bots get skipped turn events. The problem is that the timer which the
+game uses is only accurate to about 15 milliseconds, so it tends to think
+your bot took either 0 milliseconds or 15 milliseconds for your turn. When
+it decides you took 15, you skip a turn. Crappy, but there's no way around
+it. I doubt you're doing to much per tick. Some of the test versions of
+Duelist did over 20 times the computation that Duelist 0.1.6 currently does,
+and they skipped the exact same percentage of turns - aroung .5%
+<p>
+If it really is a problem, one good idea is to cut down on the amount of
+code you have in your event handlers. If you skip a turn on those you can
+miss out on events. What I do is add the events to an event queue, then
+process them later. that way if I skip a turn I don't lose events - they're
+all still in the queue. You can take a look at <a href="robowiki?SquigBot" class=wikipagelink>SquigBot</a>'s source code if you
+want to see another bot that does this.
+<p>
+I don't really know if it's necessary though. I think people are too worried
+about having their bot do everything perfectly, when really you can have a
+lot error and still come out ok if your ideas are sound. For example, when I
+first wrote Duelist, I got it to beat <a href="robowiki?SandboxLump" class=wikipagelink>SandboxLump</a> *before* I realized that
+I'd forgotten to use set<a href="robowiki?AdjustGunForRobotTurn" class=wikipagelink>AdjustGunForRobotTurn</a>(true) and
+set<a href="robowiki?AdjustRadarForGunTurn" class=wikipagelink>AdjustRadarForGunTurn</a>(true). I kept wondering why my radar was going
+crazy... :-P
+<hr noshade class=wikiline size=1>
+Does this still stand? Would a skipped turn ratio of 0.5% be OK? <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> currently gets around 0.12% skipped turns and I have been very worried about it. Should I stop worrying and go do every calculation I want and then worry if the ratio goes above some limit? What limit if so? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Usually, I first make all the calculations I want, then I limit them if the bot skips turns. 0.12% skipped turns is 1/500. That should be OK. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Duelist skips a lot of turns and it's still pretty competitive. :-) I bet Cigaret/BlackSwans<a href="robowiki?action=edit&id=DealingWithSkippedTurns/BlackSwans" class=wikipageedit>?</a>/Nimrod<a href="robowiki?action=edit&id=DealingWithSkippedTurns/Nimrod" class=wikipageedit>?</a> skip even more, since they're by far the slowest bots I've ever run. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+But I wonder... <a href="robowiki?Aspid" class=wikipagelink>Aspid</a> and <a href="robowiki?Fermat" class=wikipagelink>Fermat</a> are pretty slow bots as well. About 15 times slower than <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a>. Yet Albert says Aspid doesn't skip turns. There must be more to this than slowliness. Can you avoid skipping turns by doing heavy calculations in separate threads maybe? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I have just wasted about 2 days of effort on trying to minimise skipped turns in my bot. I made some minor mods and found that version 95 became a "skipper", missing between 4.6 and 5.5 turns per round (in 10k rounds tests). I began running around in decreasing circles. Then I had another look at my stats and noted a curious correlation: the number of skipped turns is about 5 times more in the bot that starts second than in the bot that starts first. Try running your bot against itself and see whether you reproduce my results. I think there are other factors at work, but moving first is one of them. What's more strange is that sometimes I get virtually no skipped turns at all, eg 0.004 missed moves per round (again in 10k rounds). It probably depends on what else my PC is doing, how tired the java is - I have to restart Robocode every now and then - and the price of Texas crude. --<a href="robowiki?Tad" class=wikipagelink>Tad</a>
+<p>
+Trying I can't reproduce that. It seems that both Marshmallows skip almost exactly the same number of turns. Though it generally is a low skip ratio so maybe it only shows when the ratio is higher on average? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+File IO, object instantiation, and exceptions eat up lots of time.  Do any file IO at the beginning and end of battle only.  Use out.println() sparingly.  Where possible, instantiate objects in the first round of battle and keep them around for the entire battle by declaring them static.  Reuse objects where possible.  Avoid causing exceptions whenever possible.  If you are already doing these things, and have already checked your loops for efficiency, then you may want to look into separate threads for heavy tasks. -- <a href="robowiki?Ray_Vermette" class=wikipagelink>Ray Vermette</a>
+<p>
+I found that running the battles on the screen or minimizing it also has impact on the number of skipped turns. Vibora skips more turns when it runs minimized than when it runs with the battle window maximized. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+I just found out the strangest thing about skiped turns: I had the "robocode.cpu.constant.500" line in robocode.properties file set to more than 2x what robocode sets it to by default. It must have been because I've been moving the whole RC directory from computer to computer since I first got robocode. If I set it to the default for my system, <a href="robowiki?Tron" class=wikipagelink>Tron</a> skips a lot of turns per round, as opposed to almost never skipping a turn with the old setting. Luckily for me it doesn't seam to affect it's performance significantly, but it proves that Robocode's method of limiting processor time for each bot is seriously flawed...
+<p>
+I tested a bot on two PC,one is use CPU-P4 1.5G,RAM-128M Rambus,another is use CPU-Celeron 1.2G,RAM-256M SDRAM.Same bot got more skiped turns on first PC.I think this is because first's RAM is too less,so it need Virtual RAM to run programes some times,so robocode will get very different of cpu count speed between Virtual RAM is making or not.Then most time robocode will get high speed,so many skiped turns come out.I dont know how robocode count the processor's speed,this is just guess.but my testing is true.  -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+<p>
+This makes sense, since Robocode measures this when starting up, and then you haven't consumed al that much memory yet. But it eats lots of memory when running battles and also seems to leak some memory so this condition gets worse. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+When a turn is skipped, does Robocode clear the event queue?  For example, if I have this:
+<p>
+add<a href="robowiki?CustomEvent" class=wikipagelink>CustomEvent</a>(new Condition("queue",99) {public boolean test() 
+<PRE >
+			{
+				Vector v = getScannedRobotEvents<a href="robowiki?action=edit&id=ScannedRobotEvents" class=wikipageedit>?</a>();
+				return (v.size()&gt;1);
+			};
+		});
+</PRE>
+<p>
+Will any of my skipped <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> events be processed?  Is there another way for <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> to take priority over other events? -- Scoob
+<p>
+Intel processors have internal 64 bit clock cycles counter. There is Windows API to get thread's execution time in miliseconds. Something similar should be on other processors/platforms. (calculating processors' clock cycles could be somehow difficult because of timer interrupt, but interrupt flag can be cleared if code runs an ring0 (eg. system service), this would be OS-independent). Though it is possible tu calculate bot running time accurate (I just don't know if anything like this is implemented in JVM). Maybe in Robocode 2 it'll be fixed. -- <a href="robowiki?Asm" class=wikipagelink>asm</a>
+<p>
+Java currently does not support multimedia counters (like the Intel/Windows<a href="robowiki?action=edit&id=DealingWithSkippedTurns/Windows" class=wikipageedit>?</a> counter you refer to, which has much more than millisecond accuracy for modern processors, btw).  This is because many systems do not implement high-performance counters, and Java is of course meant to be cross-platform.  It is quite straightforward to write a JNI wrapper over the Windows API to use its counter, but that is not a general-purpose solution. -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+Does using Date.getTime() work as a more accurate measure of time, since it measures precise milliseconds based on the JVM and ignoring <a href="robowiki?Robocode" class=wikipagelink>Robocode</a>? The problem is that (at least AFAIK) you need to instantiate a new one every time you want the time. -- <a href="robowiki?Ninja" class=wikipagelink>ninja</a>
+<p>
+@<a href="robowiki?Ninja" class=wikipagelink>ninja</a>: Use System.currentTimeMillis<a href="robowiki?action=edit&id=TimeMillis" class=wikipageedit>?</a>() instead. Has anyone hooked up an external profiler to their bot to tell which functions are using the most time? I'd be very interested to know what's making Phoenix such a <a href="robowiki?SlowBot" class=wikipagelink>SlowBot</a>, it's skipping a lot more turns than it used to. Maybe because of this new change to the way CPU speed is calculated?--<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+<UL >
+<li>I got too frustrated trying to get several profilers to work.  I had to add a stopwatch mechanism to track elapsed time in various sections of my code.  I found that targeting was a dominant factor, so I drilled down farther into each targeting method to find a couple particularly slow ones in need of tuning. -- Martin
+</UL>
+<p>
+For what it's worth, it doesn't seem particularly slow compared to many other tanks in the Rumble. Based on experience and comments from <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a> and <a href="robowiki?ABC" class=wikipagelink>ABC</a>, I keep my CPU constants a bit higher than normal, anyway; I doubt <a href="robowiki?Phoenix" class=wikipagelink>Phoenix</a> is skipping any turns on my system. And welcome back, I hope =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=DealingWithSkippedTurns" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=DealingWithSkippedTurns">View other revisions</a><br>Last edited June 27, 2006 22:38 EST by <a href="robowiki?Martin_Alan_Pedersen" title="ID 7316 from 001.177-60-66.DIA-subnet.surewest.net">Martin Alan Pedersen</a> <a href="robowiki?action=browse&diff=1&id=DealingWithSkippedTurns">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

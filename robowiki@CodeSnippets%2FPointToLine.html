@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>CodeSnippets/PointToLine - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Code, Snippets, Point, To, Line'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/PointToLine">CodeSnippets/PointToLine</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?CodeSnippets" class=wikipagelink>CodeSnippets</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Does java have a built in way of finding the intersection point of a line and the shortest distance from a point to that line?  I've found Line2D.ptLineDistSq<a href="robowiki?action=edit&id=LineDistSq" class=wikipageedit>?</a>, which only returns the distance. -Scoob
+<p>
+Not that I know of, the one you found (well, there's also a not-squared one I think) is the closest I know about.  However, it is probably fairly trivial to find it with that distance - you could just move perpendicular from the line that distance.  Might not be that great for codesize, though.  I've found it myself without that method, too. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Here you go:
+<p>
+<PRE >
+ public double pointToLineDistance<a href="robowiki?action=edit&id=ToLineDistance" class=wikipageedit>?</a>(Point2D point, Line2D line) {
+     return Math.abs((line.getX2() - line.getX1()) * (line.getY1() - point.getY()) - (line.getX1() - point.getX()) * (line.getY2() - line.getY1())) /
+      lineLength(line);
+ }
+</PRE>
+<p>
+<PRE >
+ public double lineLength(Line2D line) {
+     return Math.sqrt(Math.pow(line.getX2() - line.getX1(), 2) + Math.pow(line.getY2() - line.getY1(), 2));
+ }
+</PRE>
+<p>
+<PRE >
+ public Point2D closestPointOnLine<a href="robowiki?action=edit&id=PointOnLine" class=wikipageedit>?</a>(Point2D point, Line2D line) {
+    double distance = pointToLineDistance<a href="robowiki?action=edit&id=ToLineDistance" class=wikipageedit>?</a>(point, line);
+    double length = lineLength(line);
+    return new Point2D.Double(point.getX() - distance * (line.getX2() - line.getX1()) / length, point.getY() + distance * (line.getY2() - line.getY1()) / length);
+ }
+</PRE>
+<p>
+That code is completely untested and unguaranteed, but it is correct to the best of my knowledge.  Please test it before using it, all I know is that it compiles. :)
+<p>
+If you are at all interested in the math, you may want to check <a rel="nofollow" href="http://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html">[this]</a> out. --<a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+The shortest distance between a line and an arbitrary point is a new line perpendicular to our first. Lets define:
+Line2D(x1,y1,x2,y2) as a line given by two colinear points (points on that line)
+Point2D(x,y) as our arbitray point
+<p>
+<pre>
+public Point2D closestPointOnLine(Point2D point, Line2D line)
+{
+    slope = ( (line.getY2() - line.getY()) / (line.getX2() - line.getX()) );
+
+    // A line perpendicular to our original line has a slope that
+    //    is the negative reciprocal of the other's slope
+    perpendicular_slope = -(1/slope); 
+
+    // This calculates the x-intersect, the equation was derived by
+    //    setting the two slope-point equations equal to themselves
+    //    and solving for x
+    x_intersect = ( point.getY() - line.getY() + ( slope * line.getY() ) - ( perpendicular_slope * point.getY() ) ) 
+                 / ( slope - perpendicular_slope );
+
+    // Get the y-intersect based upon a sigle point-slope equation
+    y_intersect = ( slope * ( x_intersect - line.getX() ) ) + line.getY();
+
+    // Return our point
+    return new Point2D.Double(x_intersect, y_intersect);
+}
+</pre>
+<p>
+This code hasn't been tested, but the formulas are correct to the best of my ability and I double checked them. I hope this helps. (Added 16:35 GMT-6 April 13, 2005) -- <a href="robowiki?Troutinator" class=wikipagelink>troutinator</a>
+<p>
+<p>
+slope = ( (line.getY2() - line.getY()) / (line.getX2() - line.getX()) ); or perpendicular_slope = -(1/slope); 
+can return a runtime error because if line.getX2() - line.getX() equals to 0 or
+if the slope is calculated to be 0 (line.getY2() - line.getY() equals to zero).
+in which case, you'd might want to use exception handling and catch those two division by zero exceptions, on the first one, set perpendicular_slope to be 0, and in the other, set it to be POSITIVE_INFINITY. -- Avihoo Ilan
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?CodeSnippets" class=wikipagelink>CodeSnippets</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=CodeSnippets/PointToLine" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=CodeSnippets/PointToLine">View other revisions</a><br>Last edited March 5, 2006 15:05 EST by 84.94.41.83.cable.012.net.il <a href="robowiki?action=browse&diff=1&id=CodeSnippets/PointToLine">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

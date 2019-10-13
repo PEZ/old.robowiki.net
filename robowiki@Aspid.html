@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Aspid - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Aspid'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Aspid">Aspid</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Aspid is the big brother of <a href="robowiki?MicroAspid" class=wikipagelink>MicroAspid</a>. I develop them in parallel, so they share many features (ie. movement for <a href="robowiki?MicroAspid" class=wikipagelink>MicroAspid</a> 1.4.5 and Aspid 1.6.5 is the same).
+<p>
+Aspid is currently (Jan 2003) 3rd in the Eternal Rumble global ranking, and 2nd in the <a href="robowiki?MiniBots" class=wikipagelink>MiniBots</a> ranking. It was 3rd in Face2face competition (Christmas ranking - <a href="robowiki?MiniBots" class=wikipagelink>MiniBots</a>) and has reached some good places in the Minibot challenge.
+<p>
+Aspid is again 3rd in the Face2face Cruel Winter ranking, mini category - Apr 07
+<p>
+Aspid is first in the <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a> Challenge - May 28
+<p>
+Aspid features a powerful pattern matcher, that is probably the best one out there right now.
+<p>
+<i>I dunno... cx.mini.<a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a>'s quite good too!</i> :-p --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<p>
+<a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a>'s and <a href="robowiki?BlackSwans" class=wikipagelink>BlackSwans</a>' pattern matchers are the same - one does better than <a href="robowiki?Aspid" class=wikipagelink>Aspid</a>, one doesn't do as well. Call it a tie. :-P --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+How do you measure this? And is it <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> only or do you count in <a href="robowiki?Melee" class=wikipagelink>Melee</a>. I wonder of course since I'd like to know how <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a>'s pattern matcher compares... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Aspid is a <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> bot, and so is its pattern matcher (it is not good at all for Melee). I don't have a structured way to test it, but you can try against some bots with more or less regular patterns and see what happens (ie. does it hit Walls more than 90% of the time? How it performs against some oscillators and avoiders - eg. Geek series?). 
+About Cigaret: I agree it has a very good targeting system (I won't dare to say Aspid's gun is clearly better) but as far as I know, Cigaret uses an advanced <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> targeting system :-) -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Cigaret uses a pattern matcher. It tracks what firing angles would have hit and looks for patterns there. The difference is that a <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> system just says "A hits more than B, so we should use A to aim from now on" whereas pattern matchers look for patterns in data. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+<p>
+Uses the same movement as <a href="robowiki?MicroAspid" class=wikipagelink>MicroAspid</a>.
+<p>
+<H4>How does it fire?</H4>
+
+<p>
+It uses a killer <a href="robowiki?PatternMatcher" class=wikipagelink>PatternMatcher</a>. I'm using velocity and angular velocity (heading change) as inputs for the pattern matcher (I think 90% of pattern matchers use it).
+<p>
+What makes Aspid's pattern matcher really effective is:
+<p>
+<UL >
+<li> Instead of fixing a length for the vector to match, it starts with a vector of length one, then takes all matching points and matches them again using a vector with length two, again with length 3, and so on. It allows the pattern matcher to use all the available information and to avoid not considering good patterns just because the selected length was too long.
+<li> Once it has a group of matching points, it calculates the correct gun bearing for each one, selects the most common bearing and fires there. Note that this strategy avoids selecting a "strange point" that will make you miss. Also, note that when the algorithm is unable to find a good set of points, it behaves in a similar way to a <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> system.
+</UL>
+<p>
+<a href="robowiki?MicroAspid" class=wikipagelink>MicroAspid</a>'s pattern matcher uses the same principles as Aspid's one but it picks a point from the selected set and uses it. 
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+<p>
+No dodging at all.
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+<p>
+Aspid is a <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> bot. It hasn`t melee strategy.
+<p>
+<H4>Where did you get the name?</H4>
+
+<p>
+See <a href="robowiki?MicroAspid" class=wikipagelink>MicroAspid</a>.
+<p>
+<H4>Can I use your code?</H4>
+
+<p>
+I'm not releasing the code, but I have no problem to share the ideas, so just ask.
+<p>
+<H4>What's next for your robot?</H4>
+
+<p>
+I'll improve its movement.
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+<p>
+Aspid and <a href="robowiki?MicroAspid" class=wikipagelink>MicroAspid</a> are closely related, they develop in parallel.
+<p>
+<hr noshade class=wikiline size=1>
+<b>Comments:</b>
+<p>
+I remember spending lots of time determining a good vector-length for my own patternmatcher. Of course this differs for each opponent. Your idea of a variable vector-length is very clever! --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<p>
+<a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> uses a randomized vector length, just to be a bit less predictive. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I notice that when I run Aspid robocode slows down considerably, especially when minimized. This, I guess, is due to some heavy iterations on Aspid's account. With Marshmallow I can't do much more calculations since I already get one or two "skipped events". Does Aspid get a load of these or has it some means to grab all that CPU and still get robocode's full attention? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Aspid makes heavy use of CPU but in general it does not get "skipped events", just because I optimized it to avoid them (under special circumstances a skipped event can happen, but it is not usual). The logical question now is: how do you optimize it? Well, no science behind it. When I develop I put a println in the skippedturnevent that says "skipped turn" and then I try to figure out the reasons. It happens that for Aspid, the major CPU usage is consumed by a very specific part of the algorithm, so I just make sure I don't use more data than Aspid can crunch... Just based on my experience: Be careful with skipped events, they tend to kill your bot, because it is not able to react. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Yes, I also print when I get skipped events, that's how I know I'm close to the limits on what I can do each turn. But still, running two Marshmallows allows my Mac (which is <strong>very</strong> slow on executing Java stuff) to produce 700+ fps when robocode is minimized. But running two Aspids it's more like 60 fps... There much be something more to this. Do you use the specialized event handlers or do you dispatch from the run loop using getAllEvents<a href="robowiki?action=edit&id=AllEvents" class=wikipageedit>?</a>() or some such? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I'm not using any kind of specialized handlers nor any special code to grab more CPU. The only thing I can think of is that I am using some java built-in functions to process the data (especially from the Collections package) - maybe it allows Aspid to use more CPU. Maybe you should check Cigaret's code (it's open source and it is *very* slow). If he is using some java built-in functions to deal with large arrays of data, then it could be the answer. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Aspid" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Aspid">View other revisions</a><br>Last edited May 4, 2006 22:03 EST by <a href="robowiki?GrubbmGait" title="ID 6861 from ip219-32-173-82.dyndsl.versatel.nl">GrubbmGait</a> <a href="robowiki?action=browse&diff=1&id=Aspid">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>FastTargeting - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Fast, Targeting'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=FastTargeting">FastTargeting</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><dl><dt> </dt><dd><dl><dt> </dt><dd><a href="robowiki?FastTargeting#HeadOnTargeting">HeadOnTargeting</a></dd>
+<dt> </dt><dd><a href="robowiki?FastTargeting#LinearTargeting">LinearTargeting</a></dd>
+<dt> </dt><dd><a href="robowiki?FastTargeting#CircularTargeting">CircularTargeting</a></dd>
+<dt> </dt><dd><a href="robowiki?FastTargeting#BearingOffsetTargeting">BearingOffsetTargeting</a></dd>
+<dt> </dt><dd><a href="robowiki?FastTargeting#RandomTargeting">RandomTargeting</a></dd>
+<dt> </dt><dd><a href="robowiki?FastTargeting#SprayTargeting">SprayTargeting</a></dd>
+<dt> </dt><dd></dd></dl>
+
+</dd></dl>
+
+
+<hr noshade class=wikiline size=1>
+Describes targeting methods which fire which achieve their potential with only 1 or 2 scans.  They typically use an algorithm to fire at, and will usually work against one type of movement much more than others.
+<p>
+<H3><a rel="nofollow"  name="HeadOnTargeting"></a><a href="robowiki?FastTargeting/HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a></H3>
+
+Shoot where the target is right now. The simplest form of targeting, and yet often effective especially in melee.
+<p>
+<H3><a rel="nofollow"  name="LinearTargeting"></a><a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a></H3>
+
+A method of <a href="robowiki?Targeting" class=wikipagelink>Targeting</a> which assumes that the target will continue in the same direction at the same speed.
+<p>
+<a href="robowiki?FastTargeting/LinearTargeting" class=wikipagelink>Implementations</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<H3><a rel="nofollow"  name="CircularTargeting"></a><a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a></H3>
+
+Circular <a href="robowiki?Targeting" class=wikipagelink>Targeting</a> is used to hit bots that often move in circles or large arcs. The first step is to measure the turnrate of your target bot by subtracting it's current heading with it's previous one. If you do not get a fresh scan of your target, you need to divide this by the time between current scan and your last scan to obtain an average turnrate:
+<pre>
+public void onScannedRobot(ScannedRobotEvent e)
+{
+	double turnrate=(e.getHeadingRadians()-lastEnemyHeading)/(getTime()-scantime);
+	scantime=getTime();
+	lastEnemyHeading=e.getHeadingRadians();
+	...
+	...
+	...
+}</pre>
+<p>
+Now we need to know the current position of the target bot. To keep things easy, we only calculate the position of your target relative to your position. Keep in mind that in Robocode,  "north" is zero degrees(radians) and clockwise is a positive angle. This is exactly the inverse of unit-circle math, where the x-axis is zero degrees and anti-clockwise is a positive angle.
+<pre>
+	absoluteBearing = e.getBearingRadians() + getHeadingRadians();
+	double relativeX = e.getDistance()*Math.sin(absoluteBearing);
+	double relativeY = e.getDistance()*Math.cos(absoluteBearing);
+</pre>
+<p>
+Since we <u>assume</u> the target will keep turning at the same turnrate every turn, we can predict it's position at any time by calculating a new velocity-vector, and add that to it's position. If we call the time that you scanned the target t=0, then it's position at t=1 will be:
+<p>
+<PRE >
+ (this is not a java code snippet)
+ ( 1 )	newX(1) = relativeX + enemyVelocity*sin(initialHeading + turnrate)
+ ( 2 )	newY(1) = relativeX + enemyVelocity*cos(initialHeading + turnrate)
+</PRE>
+<p>
+at time t=2, it will be
+<p>
+<PRE >
+ (this is not a java code snippet)
+ ( 3 )	newX(2) = relativeX + enemyVelocity*sin(initialHeading + turnrate) + enemyVelocity*sin(initialHeading + turnrate + turnrate)
+ ( 4 )	newY(2) = relativeX + enemyVelocity*cos(initialHeading + turnrate) + enemyVelocity*cos(initialHeading + turnrate + turnrate)
+</PRE>
+<p>
+You can see that you can calculate the new (relative) X/Y position at t=T by adding a newly calculated velocity-vector to its position on every t.
+<p>
+<PRE >
+ (this is not a java code snippet)
+ ( 5 )	newX(T) = relativeX + <img src="http://kcl.kwokkie.net/klli87/images/_sum.gif"> enemyVelocity*sin(initialHeading + t*turnrate)
+ ( 6 )	newY(T) = relativeY + <img src="http://kcl.kwokkie.net/klli87/images/_sum.gif"> enemyVelocity*cos(initialHeading + t*turnrate)
+</PRE>
+<p>
+<p>
+Space and time is not continuous in Robocode, but the discreet steps are small enough, that we can approximate the above summation with an integral:
+<p>
+<PRE >
+ (this is not a java code snippet)
+ ( 7 )	newX(T) = relativeX + enemyVelocity * <img src="http://kcl.kwokkie.net/klli87/images/_integral.gif"> sin(initialHeading + t*turnrate) dt
+ ( 8 )	newY(T) = relativeY + enemyVelocity * <img src="http://kcl.kwokkie.net/klli87/images/_integral.gif"> cos(initialHeading + t*turnrate) dt
+</PRE>
+<p>
+<p>
+integrating from t=0 to t=T wich results in: (<u>watch the +/- signs!! and where you need cosine and sine</u>)
+<PRE >
+ (this is not a java code snippet)
+ ( 9 )	newX(T) = relativeX - (enemyVelocity/turnrate) * (cos(initialHeading + T*turnrate) - cos(initialHeading))
+ ( 10 )	newY(T) = relativeY + (enemyVelocity/turnrate) * (sin(initialHeading + T*turnrate) - sin(initialHeading))
+</PRE>
+<p>
+<p>
+Just fill in T in the above and you can predict your circular-moving target's position at time T!
+Now to predict at wich time your bullet is going to hit your target. The time it would take for your bullet to travel to the target's <i>current</i> position is a good guess to start with. So your first guess would be T = enemyDistance/bulletSpeed. If we plug this T in formulae (9) and (10), we have a prediction of the target's new (relative) position at time T. But since the target will be moving around, rather than playing sittingDuck, this is a rather poor approximation of the time T we are after. We can improve our approximation by calculating the time it would take for your bullet to reach the <u>previously predicted</u> position. This new T can then in turn be used to calculate a better predicted position, which, in turn, can be used to calculate an even better approximation of the actual time T, etc...etc...  I myself have never used this iteration technique, but I remember reading somewhere(RoboCodeRepository<a href="robowiki?action=edit&id=RoboCodeRepository" class=wikipageedit>?</a> forums?) that 4 or 5 of these iterations should be good enough. Alisdair Owens, the author of Nicator and the <a href="robowiki?OtherPeoplesRobots" class=wikipagelink>[SnippetBot tutorial]</a>, wrote an article for "Secrets of the Robocode master" about circular targeting with iteration. You can find it here: <a rel="nofollow" href="http://www-106.ibm.com/developerworks/library/j-circular/">http://www-106.ibm.com/developerworks/library/j-circular/</a>
+<p>
+Another method is to start at T=0, and keep increasing with T with 1. Every time you increase your T, compare the distance your bullet would travel in T timeframes, with the distance between you and the predicted position of your target at time T. Stop when your bullet reaches your target, and you'll have a predicted position! Because the position of the target is calculated step-by-step anyway, we don't need formulae (9) and (10) and will be performing the summations (5) and (6) step by step as well. 
+You can find an example from this in  <a href="robowiki?CodeSnippets" class=wikipagelink>CodeSnippets</a> section. It's the source-code from my bot <a href="robowiki?CodeSnippets/Nano_Circular_Linear_Predictor" class=wikipagelink>Nano Circular Linear Predictor</a>, a bot I built just to prove that a circular predictor fits into a <a href="robowiki?NanoBot" class=wikipagelink>NanoBot</a>. :-)
+Note that the step-by-step method can be used for both <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> and <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a>, whereas the integrated formulae (9) and (10) are not suited for linear targeting. (Linear targeting means turnrate = 0)
+<p>
+--- <a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<p>
+<p>
+<b><u>Related Links:</u></b>
+<UL >
+<li> <a href="robowiki?CodeSnippets/Nano_Circular_Linear_Predictor" class=wikipagelink>Circular targeting example-code</a>
+<li> Alisdair Owen's <a rel="nofollow" href="http://www-106.ibm.com/developerworks/library/j-circular/">[circular targeting tutorial]</a> with iteration
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<H3><a rel="nofollow"  name="BearingOffsetTargeting"></a>BearingOffsetTargeting<a href="robowiki?action=edit&id=BearingOffsetTargeting" class=wikipageedit>?</a></H3>
+ - Firing at the angle that would have worked last time.
+<p>
+<H3><a rel="nofollow"  name="RandomTargeting"></a><a href="robowiki?RandomTargeting" class=wikipagelink>RandomTargeting</a></H3>
+ - Works on the assumption that the target can move a maximum of 46.6 degrees in either direction, and so fires randomly at an angle between -46.6 and 46.6. Provides an even (but low) probability of hitting, and can lead into <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> if you begin to weight more probable angles.
+<p>
+<H3><a rel="nofollow"  name="SprayTargeting"></a>SprayTargeting<a href="robowiki?action=edit&id=SprayTargeting" class=wikipageedit>?</a></H3>
+ - Also works on the assumption that the target can move a maximum of 46.6 degrees in either direction, but instead of fireing randomly you simply let your gun sweep over these angles firing bullets along the way, back and forth. Provides an uneven hit ratio since much is dependent on how your enemy moves, but you are almost guaranteed some hits.
+<p>
+<p>
+These techniques yield different percentages based on the bots you are fighting. While most give a mediocre return at best, against the right bot they can be gold (just watch <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> against <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a>).  Some techniques improve by using an averaged value rather than the current data.
+<p>
+<hr noshade class=wikiline size=1>
+Question:
+Would you prefer a brief description with a link to a more detailed page, the detailed pages on here, or a full overview with a link to implementations of it.
+The <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a> is an example of the first part, while circular targeting is an example of the second. Let me know which you prefer
+<p>
+<hr noshade class=wikiline size=1>
+Personally I prefer the first option, but I can live with the second one. By the way, is it possible to go more than two deep with subpages?  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+I wish it was, but I dont think so. I am currently toying with that third option middle ground.  Having the full description discussion etc on here and then code implementations and tutorials on a seperate page.  It will probably be closer to the first option, but with the page being a bit more focused. Check out the <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a> part to see how it would be. -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=FastTargeting" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=FastTargeting">View other revisions</a><br>Last edited January 15, 2009 19:59 EST by <a href="robowiki?Dummy" title="ID 6977 from 53540529.cable.casema.nl">Dummy</a> <a href="robowiki?action=browse&diff=1&id=FastTargeting">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

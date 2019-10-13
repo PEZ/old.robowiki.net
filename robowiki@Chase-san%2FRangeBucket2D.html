@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Chase-san/RangeBucket2D - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Chase-san, Range, Bucket2D'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/RangeBucket2D">Chase-san/RangeBucket2D</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I developed this to increase the preformance of my traditional pattern matcher Pytko. It is not yet used (I have to retrieve its source). Basically this is the same as searching linearly however it culls off entirely unused sections like a grid. Its not as complex as a kd-tree or quadtree and doesn't have thier flair, but its simple and most of all, decently small (assuming you cull unused portions).
+<p>
+This code is free to use.
+<p>
+<pre>
+package chase.util;
+
+import java.awt.geom.*;
+import java.util.*;
+
+public class RangeBucket2D&lt;K extends Point2D&gt; {
+	List&lt;K&gt; tree[][];
+	double bucketX;
+	double bucketY;
+	Rectangle2D area;
+	
+	public RangeBucket2D(Rectangle2D range, int xbucket, int ybucket) {
+		area = (Rectangle2D)range.clone();
+		bucketX = range.getWidth()/(double)xbucket;
+		bucketY = range.getHeight()/(double)ybucket;
+		
+		tree = new List[xbucket][ybucket];
+	}
+	
+	private List&lt;K&gt; getNode(K p) {
+		int x = (int)((p.getX()-area.getMinX())/bucketX);
+		int y = (int)((p.getY()-area.getMinY())/bucketY);
+		if(tree[x][y] == null) tree[x][y] = new ArrayList&lt;K&gt;();
+		//System.out.println("["+x+","+y+"]");
+		return tree[x][y];
+	}
+	
+	public void add(K p) {
+		if(area.contains(p)) {
+			//System.out.print("(" + p.getX()+", "+p.getY()+") = ");
+			getNode(p).add(p);
+		}
+		else System.out.println("Out of range");
+	}
+	
+	public boolean contains(K p) {
+		if(area.contains(p))
+			return getNode(p).contains(p);
+		return false;
+	}
+	
+	public void remove(K p) {
+		if(area.contains(p))
+			getNode(p).remove(p);
+	}
+	
+	public List&lt;K&gt; range(Rectangle2D range) {
+		if(!area.contains(range)) return null;
+		
+		//top left node
+		int xMin = (int)((range.getMinX()-area.getMinX())/bucketX);
+		int yMin = (int)((range.getMinY()-area.getMinY())/bucketY);
+		int xMax = (int)((range.getMaxX()-area.getMinX())/bucketX)+1;
+		int yMax = (int)((range.getMaxY()-area.getMinY())/bucketY)+1;
+		List&lt;K&gt; out = new ArrayList&lt;K&gt;();
+		
+		for(int x = xMin; x &lt; xMax; x++) {
+			for(int y = yMin; y &lt; yMax; y++) {
+				List&lt;K&gt; tmp = tree[x][y];
+				for(int i=0; tmp != null &amp;&amp; i &lt; tmp.size(); i++) {
+					K p = tmp.get(i);
+					if(range.contains(p)) out.add(p);
+				}
+			}
+		}
+		return out;
+	}
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Chase-san/RangeBucket2D" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Chase-san/RangeBucket2D">View other revisions</a><br>Last edited September 21, 2008 4:14 EST by <a href="robowiki?Chase" title="ID 15488 from ppp-69-214-1-115.dsl.klmzmi.ameritech.net">Chase</a> <a href="robowiki?action=browse&diff=1&id=Chase-san/RangeBucket2D">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

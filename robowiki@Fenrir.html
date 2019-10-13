@@ -1,0 +1,235 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Fenrir - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Fenrir'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Fenrir">Fenrir</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><center>
+<i><h2>Fenrir</h2>
+<img src="http://www.vikingage.com/vac/fenrir.gif">
+<p>the gigantic and terrible monster in the shape of a wolf. He is the eldest child of Loki and the giantess Angrboda. The Asgard gods learned of a prophecy which stated that the wolf and his family would one day be responsible for the destruction of the world.</p></i>
+</center>
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+It calculates a kind of potential field based on the position of other bots, the proximity of walls and an estimation of bullet position based on the assumption of head-on targetting. It then moves in the direction with the lowest potential (so essentially it is nothing else than my version of the <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a> concept).
+<p>
+<H4>How does it fire?</H4>
+
+It uses an version (with variable search depth) of <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a>'s/<a href="robowiki?Moebius" class=wikipagelink>Moebius</a> pattern matching gun, slightly adapted for melee fights.
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+Fenrir tries (see the movement description), but sometimes seems to be a bit masochistic. MiniFenrir<a href="robowiki?action=edit&id=MiniFenrir" class=wikipageedit>?</a> does not dodge bullets.
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+In <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a> it favours the centre of the battlefield, in <a href="robowiki?Melee" class=wikipagelink>melee</a> the corners.
+<p>
+<H4>How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a> ?</H4>
+
+by being opportunistic: go for the closest or the weakest.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+Target movement patterns are static and therefore saved between rounds. Statistics are saved at the end of matches.
+<p>
+<H4>Where did you get the name?</H4>
+
+Fenrir is the terrible wolf that one day will be responsible for the destruction of the world. Its the eldest child of the god Loki and the giantess Angrboda. It's my best robot sofar and certainly slashes the Asgard bots.
+<p>
+<H4>Where can i get it?</H4>
+
+<a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=1428">http://www.robocoderepository.com/BotDetail.jsp?id=1428</a> 
+<p>
+<H4>Can I use your code?</H4>
+
+Not this time, i experimented with an obfuscator called YGuard...
+<p>
+<H4>What's next for your robot?</H4>
+
+<UL >
+<li> tuning
+<li> storing data inbetween matches (i have never tried this before)
+</UL>
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+The gun is taken from <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a>/<a href="robowiki?Moebius" class=wikipagelink>Moebius</a>, enhanced to cope with melee fights, and with different enemy position prediction.
+<p>
+<hr noshade class=wikiline size=1>
+<pre>
+RR-results Fenrir
+=================
+1-vs-1
+20031005 52   bvh.fnr.Fenrir 0.23  1717.03  2202  
+20031102 53   bvh.fnr.Fenrir 0.23  1706.36  3807  
+20031207 50   bvh.fnr.Fenrir 0.23  1713.85  4958  
+20040107 58   bvh.fnr.Fenrir 0.23  1709.18  5925  
+20040204 72   bvh.fnr.Fenrir 0.280 1691.69  388  
+20040303 76   bvh.fnr.Fenrir 0.31  1712.52  594 
+20040407 82   bvh.fnr.Fenrir 0.33  1707.50  818  
+20040505 83   bvh.fnr.Fenrir 0.33  1707.76  1424  
+20040602 80   bvh.fnr.Fenrir 0.35  1721.01  979  
+20040707 82   bvh.fnr.Fenrir 0.35  1717.63  1897  
+20040804 82   bvh.fnr.Fenrir 0.35  1718.52  2499  
+20040901 85   bvh.fnr.Fenrir 0.35  1718.57  3066  
+20041009 86   bvh.fnr.Fenrir 0.35  1721.43 670 
+20041027 93   bvh.fnr.Fenrir 0.36l 1713.27 622 
+
+Melee
+20040114 37   bvh.fnr.Fenrir 0.25  1538.05  324  
+20040125 38   bvh.fnr.Fenrir 0.25  1538.29  360  
+20040128 39   bvh.fnr.Fenrir 0.25  1533.34  1708  
+20040204 30   bvh.fnr.Fenrir 0.28  1598.55  36  
+20040211 45   bvh.fnr.Fenrir 0.285 1511.91  2484  
+20040218 51   bvh.fnr.Fenrir 0.292 1498.72  1656  
+20040225 50   bvh.fnr.Fenrir 0.292 1501.11  4212 
+20040303 59   bvh.fnr.Fenrir 0.305 1485.86  162   
+20040407 59   bvh.fnr.Fenrir 0.33  1502.08  1530  
+20040505 59   bvh.fnr.Fenrir 0.33  1506.40  1800  
+20040519 59   bvh.fnr.Fenrir 0.33  1509.60  1854  
+20040922 66   bvh.fnr.Fenrir 0.35  1511.99  11541  
+
+RR-results mini.Fenrir
+======================
+1-vs-1
+20031005 85   bvh.mini.Fenrir 0.34 1657.33  2281  
+20031102 84   bvh.mini.Fenrir 0.34 1652.77  3886  
+20031207 81   bvh.mini.Fenrir 0.34 1656.61  5122  
+20040107 90   bvh.mini.Fenrir 0.34 1657.38  6223  
+20040204 98   bvh.mini.Fenrir 0.34 1655.93  7210  
+20040303 110  bvh.mini.Fenrir 0.34 1658.31  8288  
+20040407 132  bvh.mini.Fenrir 0.36 1640.70  1402  
+20040505 135  bvh.mini.Fenrir 0.36 1641.84  2107  
+20040602 138  bvh.mini.Fenrir 0.36 1643.24  2825  
+20040707 135  bvh.mini.Fenrir 0.36 1640.42  3778  
+20040804 127  bvh.mini.Fenrir 0.39 1648.56  1550  
+20040901 130  bvh.mini.Fenrir 0.39 1650.25  2141  
+20041009 136  bvh.mini.Fenrir 0.39 1647.50  875 
+20041027 138  bvh.mini.Fenrir 0.39 1646.25  1963 
+
+Melee
+20040204 39   bvh.mini.Fenrir 0.34 1554.21  144  
+20040211 42   bvh.mini.Fenrir 0.34 1530.76  2790  
+20040218 45   bvh.mini.Fenrir 0.34 1531.61  4878  
+20040225 45   bvh.mini.Fenrir 0.34 1516.71  7452  
+20040303 54   bvh.mini.Fenrir 0.34 1510.97  8424  
+20040407 60   bvh.mini.Fenrir 0.35 1498.57  72  
+20040505 61   bvh.mini.Fenrir 0.35 1498.57  72  
+20040519 62   bvh.mini.Fenrir 0.35 1498.57  72 
+20040922 65   bvh.mini.Fenrir 0.39 1513.22  7973 
+</pre>
+<hr noshade class=wikiline size=1>
+<b>Comments :</b>
+as of 2-feb-2004, the old comments can be found at <a href="robowiki?OldFenrirChat" class=wikipagelink>oldFenrirChat</a>.
+<p>
+<hr noshade class=wikiline size=1>
+Finally managed to save and retrieve my data for the patternmatcher correctly. It turned out that after the data retrieval there was a mismatch between the buffer for patternmatching and the arrays to predict a future position. So every match resulted in a faulty prediction of the enemy position.
+<p>
+Some preliminary testing against the top bots showed no improvement in the performance of Fenrir v0.192, but hey, they are top bots and Fenrir is not.
+<p>
+The code is not clean. I dislike the usage of the tempory arrays but need them to prevent that my data arrays are resised to the size of the saved arrays (this happens with the commented statements in the read-method).
+<p>
+Here is my code, maybe someone can use it --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<pre>
+/**********************************************************************
+** methods for reading/writing data arrays for the pm-gun:
+**********************************************************************/
+   private void inlezenDoelData(String naam, Doel d) {
+      // initialise arrays so they have correct=maximum size
+      d.rotatie  = new double[PATROONLENGTE]; 
+      d.snelheid = new double[PATROONLENGTE];
+
+      try {
+         String   filenaam;
+         filenaam = Utils.getFilenaam(naam);
+         ObjectInputStream in = new ObjectInputStream(
+                                   new GZIPInputStream(
+                                      new FileInputStream(
+                                         getDataFile( filenaam ))));
+
+         // use temporary arrays to store data because the commented statements reduce the array
+         // size to the size of the stored arrays instead of the maximum defined above.
+         double   temp1[]  = new double[FILE_LENGTE];
+         double   temp2[]  = new double[FILE_LENGTE];
+         temp1 = (double[])in.readObject();
+         temp2 = (double[])in.readObject();
+
+         // is there a smarter way to copy the stored data into the final arrays?
+         for (int i=0; i &lt; temp1.length ; i++) {
+            d.rotatie[i]  = temp1[i];
+            d.snelheid[i] = temp2[i];
+         }
+         // use one of the constructors to initialise StringBuffer with String
+         d.bewegingsPatroon = new StringBuffer( (String)in.readObject() );
+         // read counter as this can be smaller than max. file size for datafiles saved after short rounds.
+         d.scanTeller = in.readInt();
+         in.close();
+
+         // create separator between saved data and newly aquired data.
+         ++d.scanTeller;
+         d.rotatie[d.scanTeller%PATROONLENGTE]  = 0;
+         d.snelheid[d.scanTeller%PATROONLENGTE] = 0;
+         d.bewegingsPatroon.append((char)-99);
+      }
+      catch (Exception e) {
+         d.bewegingsPatroon = new StringBuffer(); // other arrays already initialised
+         d.scanTeller = 0;
+      }
+   }
+
+   private void opslaanDoelData(Doel d) {
+      try {
+         String   filenaam;
+         int      lengte;
+         int      startpos;
+         double   uitvoer[] = new double[lengte];
+
+         // after short rounds the counter can be smaller than the max. file size.
+         lengte   = Math.min(FILE_LENGTE, d.scanTeller);
+
+         filenaam = Utils.getFilenaam(d.naam);
+         ObjectOutputStream out = new ObjectOutputStream(
+                                     new GZIPOutputStream(
+                                        new RobocodeFileOutputStream(
+                                           getDataFile( filenaam ))));
+         // save data from end of array and ignore 'initialisation phase' of battle. As saved data is
+         // used during start of fight is may be more logical to save data from the 'initialisation
+         // phase' instead...
+         startpos = Math.min(PATROONLENGTE, d.scanTeller)-lengte;
+         System.arraycopy(d.rotatie, startpos, uitvoer, 0, lengte);
+         out.writeObject(uitvoer);
+         System.arraycopy(d.snelheid, startpos, uitvoer, 0, lengte);
+         out.writeObject(uitvoer);
+         // save StringBuffer as String from given startposition up to endposition.
+         out.writeObject((String)d.bewegingsPatroon.substring(startpos, startpos+lengte));
+         // save position of 'counter'
+         out.writeInt(lengte);
+         out.flush();
+         out.close();
+      }
+      catch (IOException e) {
+         out.close();
+      }
+   }
+</pre>
+<p>
+I changed it to a monospaced font and made it so it wouldn't try to convert your comments at the top into a bulleted list. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<UL >
+<li> thanks, i didn't knew how to get this right. I also have a problem with using an alias in a link to a webpage on the <a href="robowiki?Loki" class=wikipagelink>Loki</a>-page. Do you know how to correct that too? --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+</UL>
+<p>
+mmm, v0.3 of Fenrir is plummeting down the ranks. I must have broken something. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<UL >
+<li> v0.305 is back to it's pre-change position at rating 1713.18 (position 72). --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<UL >
+<li> :-( going down again, although v0.305 has a 20% better score, as compared with 0.292, against pez.Aristocles 0.37, pez.Tityus 0.96, pez.Pugilist 0.1 and kawigi.<a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> 1.4 --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+</UL>
+</UL>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Fenrir" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Fenrir">View other revisions</a><br>Last edited May 18, 2006 20:24 EST by <a href="robowiki?GrubbmGait" title="ID 6861 from ip195-142-172-82.dyndsl.versatel.nl">GrubbmGait</a> <a href="robowiki?action=browse&diff=1&id=Fenrir">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

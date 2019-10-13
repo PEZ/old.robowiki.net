@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Archer - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Archer'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Archer">Archer</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H4>Author: <a href="robowiki?Ph" class=wikipagelink>Ph</a></H4>
+
+<H4>How competetive is it?</H4>
+
+<a rel="nofollow" href="http://rumble.robowiki.net/servlet/RatingDetails?game=roborumble&amp;name=ph.mini.Archer%200.6.6&amp;compare=true">[Current rating at RoboRumble]</a>
+<H4>Where can I get it?</H4>
+
+Archer 0.6.6 - <a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=2326">http://www.robocoderepository.com/BotDetail.jsp?id=2326</a>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+It uses <a href="robowiki?RandomMovement" class=wikipagelink>random movement</a> based on <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>'s <a href="robowiki?RandomMovementBot" class=wikipagelink>RandomMovementBot</a>. Flattening based on <a href="robowiki?Aristocles" class=wikipagelink>Aristocles</a> by <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>.
+<H4>How does it select a target to attack in <a href="robowiki?Melee" class=wikipagelink>melee</a>?</H4>
+
+<a href="robowiki?OneOnOne" class=wikipagelink>1v1</a> bot only.
+<H4>How does it <a href="robowiki?Targeting" class=wikipagelink>fire</a>?</H4>
+
+It uses <a href="robowiki?SegmentedData" class=wikipagelink>segmented</a> <a href="robowiki?GuessFactorTargeting" class=wikipagelink>guess factor gun</a>.
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+It is an <a href="robowiki?Avoiders" class=wikipagelink>avoider</a>, still moves quickly.
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+<a href="robowiki?OneOnOne" class=wikipagelink>1v1</a> bot only.
+<H4>What does it save between rounds and matches?</H4>
+
+<UL >
+<li> Between rounds - <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GF</a> stuff.
+<li> Between matches - nothing.
+</UL>
+<H4>Can I use your code?</H4>
+
+Yes, sure! It is included in the jar package.
+<H4>What's next for your robot?</H4>
+
+Primary objective is better movement, but I will also try to tweak my <a href="robowiki?Segmentation" class=wikipagelink>segmentation</a>.
+<p>
+<hr noshade class=wikiline size=1>
+<H4>comments, questions, feedback...</H4>
+
+Ok, just a couple of things. You say you pick your enemy in melee by bullet travel time. Would it not be easier to just pick according to whoevers closest, as unless you have an elaborate firepower calculation the 2 will produce the same result. You might also want to put in some kind of buffer so you dont "thrash" between enemies. Only changing when another enemy is less that 90% of the distance to your enemy seems to work well. Also, do you avoid enemy bullet impact positions all the time, even when there are 10 bots left?? If so, you might be able to improve your melee performance by waiting until there are only say 4 bots (That's what Ray Vermette used in <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a>) remaining. As when the melee is still in its founding stages, you have no idea whether the energy drop of the opponent is due to firing or not. Either that or just avoid the spots if the enemy has hit you within a given time frame. Admittedly i havent read your code so you could be doing all of the above. Good Luck!! --<a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+Thanks, your advice applies to <a href="robowiki?Musketeer" class=wikipagelink>Musketeer</a> too (<a href="robowiki?Archer" class=wikipagelink>Archer</a> and <a href="robowiki?Musketeer" class=wikipagelink>Musketeer</a> use the same movement and target selection method). But I don't pick enemy only by bullet travel time - see <a href="robowiki?TimeToHit" class=wikipagelink>TimeToHit</a>. I take into the account gun turn time too. So I think this strategy avoids "thrashing". What do you think about my <a href="robowiki?SegmentedData" class=wikipagelink>segments</a>? I use segmentation across:
+<UL >
+<li> enemy's distance to me
+<li> enemy's distance to wall
+<li> enemy's velocity
+<li> enemy's heading (I don't know do I really need this segment)
+</UL>
+<p>
+-- <a href="robowiki?Ph" class=wikipagelink>Ph</a>
+<p>
+Why wouldn't you know if an energy drop is from an enemy firing or not when there are many enemies? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Well it applies in any case when there are more than 2 bots, but it is just more likely when there are lots. Say if in between scans an enemy doesnt fire, but is hit by a power 3 bullet its energy will drop by 12 points. If a power 3 bullet it has already fired hits another bot it will receive 9 energy points, leading to a net result of -3 energy taht makes it look like it has fired a power 3 bullet when it hasnt. Also with lots of bots collisions are more likely to occur and the resultant damage could easily be confused with shot's being fired. I've always thought that at the start of a melee it is better to concentrate of avoiding the massive scrum of bots that seems to occur rather than trying to avoid single bullet hits. That said all my Melee bots suck. As for your segments, i have no idea. You'd need to speak to one of the melee masters (Paul Evans, Rozu, ABC, Kawigi etc.) though i would have thought that the enemy absolute heading would have done nothing for you. --<a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+Enemy's heading is actually quite handy to a degree. If any enemy is moving with a very narrow profile to you (almost diving straight in and out) then they exhibit a much different set of spikes than at a wide profile (near perpendicular to you). Though absolute heading isn't too useful as the measure of that, you might want to seriously consider a relative heading where 0 is pointing straight at you. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+It seems good. With this method I should recognize bots that stay perpendicular to me. I think enemy's absolute heading can be useful too, as a kind of "movement signature". -- <a href="robowiki?Ph" class=wikipagelink>Ph</a>
+<p>
+I think all you're going to do is slow down learning. There's no real reason for a bot's behaviour to change as it's angle in the arena changes if you have no regard for position. A bot facing straight down will probably still behave the same if it's facing straight left if they're both perpendicular to you positions, the opponent itself probably won't even know there's a difference in the situation. The few small differences that may crop up (such as bots running longer when they're going the width of the arena than the height) can't possibly make up for the learning speed hit. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I recently released new version, with enemy's relative heading segmentation axis added, and it performs better (approximately 10 rating points better). What do you think about it? -- <a href="robowiki?Ph" class=wikipagelink>Ph</a>
+<p>
+There have got to be some serious issues with your bot, to be brutally honest, I also suspect the 10 point rise may be a fluke. I think that conceptually it's extremely good, with just various silly and/or implementation mistakes. I really like how you've structured the code, too, I wish I had that kind of patience.
+<p>
+Now, so far I haven't read all of your code (there is a lot of it) but I've read most of the gun code, some of the other code, and run it through the <a href="robowiki?FloodGrapher" class=wikipagelink>FloodGrapher</a> gauntlet. Here's what I've noticed:
+<p>
+<UL >
+<li> Your learning is too slow, even if you saved data your learning would be too slow. This version of Archer (0.1.3) learns a fraction over 207 times more slowly than KostyaTszyu<a href="robowiki?action=edit&id=KostyaTszyu" class=wikipageedit>?</a>, for example. You need to change your segmentation granularity, which is what regulates learning speed.
+<li> 6 segments is probably not enough for distance, you might want to use 12.
+<li> 2 segments is realistically not enough for velocity, you probably want to use 3 (0-2, 3-5, 6-8)
+<li> You might want to change your wall segment to take into account whether the enemy is within the threshold distance of a wall AND moving towards the wall (facing towards and moving forwards or facing away and moving backwards). If an enemy is just near a wall but the wall isn't affecting it's path you usually won't see the behaviour change that wall segments help you identify.
+<li> I've already given my thoughts on the heading segment, and regardless of it's usefulness it's too big. 37 segments is about 30 more than anything outside your distance segments should have.
+<li> See above for bearing segmentation size.
+<li> I didn't mean relative bearing segmentation when I said it's useful to segment on a relative measure of heading. What I meant is a segment that measures how "steep" the opponent's approach to you is. You'd only need about 3 segments, one for an opponent who is moving close to perpendicular, one for an opponent who is moving in the vicinity of 45 degrees towards or away and one for an opponent who is moving right at you. You could also differentiate between towards and away, even then you only need about 5 segments. Bearing doesn't measure this. The bearing of your bot relative to the opponent bot's heading (what they'd get from e.getBearing()) is probably what you want to use, once you have that angle you'd do something like Math.abs(angle) for angles 90 and under, and 180 - Math.abs(angle) for angles over 90, keep that if the velocity is positive or take Math.abs(180 - resulting angle) if the velocity is negative. Then that would give their angle of attack. That's off the top of my head, but I think it works. You should probably get your gun working without this segment first.
+<li> Your movement gets you stuck standing still on walls quite often. This is really getting you butchered.
+<li> Your movement shows flashes of adaptivity, but often then goes straight back to either running straight lines into a wall or standing still. You might want to experiment with your gravity point weightings, especially for walls.
+</UL>
+<p>
+Assuming you keep your current segment layout, you may want to change the segment sizes to look something like: [12][2][5][3][3][31]. That would learn about 30 times faster (which, for the number of segments, is quite quick), greatly helping your RR@H performance. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<pre>
+Fighting battle 33 ... ph.mini.Archer 0.6.6,arthord.micro.Muffin 0.6.1
+RESULT = arthord.micro.Muffin 0.6.1 wins 350 to 0
+Fighting battle 34 ... ph.mini.Archer 0.6.6,davidalves.net.DuelistNano 1.0
+RESULT = davidalves.net.DuelistNano 1.0 wins 350 to 0
+Fighting battle 35 ... ph.mini.Archer 0.6.6,jep.nano.Hotspur 0.1
+RESULT = jep.nano.Hotspur 0.1 wins 350 to 0
+Fighting battle 36 ... ph.mini.Archer 0.6.6,myl.micro.Predator 1.50
+RESULT = myl.micro.Predator 1.50 wins 350 to 0
+Fighting battle 37 ... ph.mini.Archer 0.6.6,mz.AdeptBSB 1.03
+RESULT = mz.AdeptBSB 1.03 wins 350 to 0
+Fighting battle 38 ... ph.mini.Archer 0.6.6,ntw.Sigsys 1.6
+RESULT = ntw.Sigsys 1.6 wins 350 to 0
+Fighting battle 39 ... ph.mini.Archer 0.6.6,ratosh.Wesco 1.4
+RESULT = ratosh.Wesco 1.4 wins 350 to 0
+Fighting battle 40 ... ph.mini.Archer 0.6.6,rz.Apollon 0.23
+RESULT = rz.Apollon 0.23 wins 350 to 0
+Fighting battle 41 ... ph.mini.Archer 0.6.6,strider.Festis 1.2.1
+RESULT = strider.Festis 1.2.1 wins 350 to 0
+Fighting battle 42 ... ph.mini.Archer 0.6.6,myl.nano.Kakuru 1.20
+RESULT = myl.nano.Kakuru 1.20 wins 350 to 0
+Fighting battle 43 ... ph.mini.Archer 0.6.6,myl.micro.Predator 1.50
+RESULT = myl.micro.Predator 1.50 wins 350 to 0
+Fighting battle 44 ... ph.mini.Archer 0.6.6,myl.micro.NekoNinja 1.30
+RESULT = myl.micro.NekoNinja 1.30 wins 350 to 0
+Fighting battle 45 ... ph.mini.Archer 0.6.6,kcn.percept.PerceptBot 2.3
+</pre>
+<p>
+I think you've got a bug. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+<pre>
+Executing battles ...
+Fighting battle 0 ... ph.mini.Archer 0.6.6,md.November 1.0
+RESULT = ph.mini.Archer 0.6.6 wins 3594 to 1969
+Fighting battle 1 ... ph.mini.Archer 0.6.6,lrem.Spectre 0.4.4
+RESULT = ph.mini.Archer 0.6.6 wins 3903 to 1263
+Fighting battle 2 ... ph.mini.Archer 0.6.6,dummy.micro.HummingBird 2.14
+RESULT = ph.mini.Archer 0.6.6 wins 3993 to 1928
+Fighting battle 3 ... ph.mini.Archer 0.6.6,shrub.Vapour src124
+RESULT = ph.mini.Archer 0.6.6 wins 3539 to 2121
+Fighting battle 4 ... ph.mini.Archer 0.6.6,dmp.nano.Eve 3.41
+RESULT = ph.mini.Archer 0.6.6 wins 5047 to 1067
+</pre>
+<p>
+I think it is not a bug in my code. I compiled it using JDK 5.0, so maybe it throws exceptions in your JRE. Probably I will be able to fix that quickly. --<a href="robowiki?Ph" class=wikipagelink>Ph</a>
+<p>
+I have seen that with one of my bots as well. 350 to nil... I don't think there's anything wrong with Archer. But what's wrong I don't know. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I'm using 1.4.2. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+I'll upload version compiled with -source 1.4 version soon. --<a href="robowiki?Ph" class=wikipagelink>ph</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Archer" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Archer">View other revisions</a><br>Last edited October 15, 2004 15:26 EST by <a href="robowiki?Ph" title="ID 3554 from bwv87.neoplus.adsl.tpnet.pl">Ph</a> <a href="robowiki?action=browse&diff=1&id=Archer">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

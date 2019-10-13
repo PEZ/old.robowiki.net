@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>BinSmoothing - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Bin, Smoothing'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=BinSmoothing">BinSmoothing</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Could someone point me in the direction of some information about bin smoothing? --<a href="robowiki?Andrew" class=wikipagelink>Andrew</a>
+<p>
+It seems to be scattered all over the wiki.  Could someone knowledgable on the subject post something here, please? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Just pasting from another page. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>:
+<p>
+isn't bin smoothing used to counteract the problems of not predicting correctly?--<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+I think of bin smoothing as a way to even out local dents that your bot otherwise would risk opting for. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Excuses, i heard a lot about bin smoothing, can u describe what does it means? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+<a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a> smooths the data it reads from the stat bins. Like so:
+<pre>
+    double smoothedVisits(int index) {
+	double smoothed = 0;
+	int i = 0;
+	do {
+	    smoothed += (double)visits[i] / Math.sqrt((double)(Math.abs(index - i) + 1.0));
+	    i++;
+	} while (i &lt; Pugilist.FACTORS);
+	return smoothed / Math.pow(distanceToTarget() / bulletVelocity, 1.3);
+    }
+</pre>
+That is, each bin's visits are also counted (although less so) in its neighbouring bins. This might be a source of error though since the edge bins don't have neighbours on both sides. Then they get less smoothed visits and might be tricking P to see a dent at GF1 that it tries to reach. I have had no luck with trying without smoothing and with smoothing accounting for this though so I am not sure it matters that much. The last thing happening there is my bullet travel time weighting. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Didn´t understood yet the concept behind the smoothing idea... Why would you need it? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+I mean: this can really lead you into problems reaching the edge... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a> 
+<p>
+If you think of the GFs as a valley you want to descend to get to the minimum. Then add a little noise to make it more real life. That noise creates local minimums here and there... areas where the bins to either side are higher than the bin you are in, however not at the true minimum. Smoothing flattens the entire valley. Hopefully the noise gets removed in the smoothing process and only the major features, the true minimum, survive the smoothing. -- <a href="robowiki?Paul_Ingemi" class=wikipagelink>Paul Ingemi</a>
+<p>
+This is massive smoothing there, PEZ. It might be that this is giving you some trouble with the GF ends and is taking some accuracy agains simple guns. Probably <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a> is doing it this way but anyway you could try to make this summation a little bit more locally bounded just with the thing in mind to take the size of your bot into account in relation to this bins. -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+<p>
+A less massive smoothing can be found in some versions of <a href="robowiki?PPP" class=wikipagelink>PPP</a>. From my memory:
+<pre>
+double smoothedVisits(int index) {
+    double smoothed = 0;
+    if (index &gt; 0) {
+        smoothed += visits[index - 1] / 2;
+    }
+    if (index &lt; FACTORS - 1) {
+        smoothed += visits[index + 1] / 2;
+    }
+    smoothed += visits[index];
+    return smoothed;
+}
+</pre>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<p>
+Yeah, I've done that too. I've tried lots of things. This seems to work best at the moment. I think I have a bigger problem somewhere else though and that I'll revisit the smoothing thingy when I have localized that bigger source of error. Funny though that <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> "works" even when it's broken. Quite a few bots there from #6 and down that are doing the broken <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> thingy. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yeah, I've been wondering about that. I suspect <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> when it's broken still works because the positional sensor, or stat array, or whatever, either contains essentially random noise or is being sampled (due to bad movement prediction) almost randomly, so in the end you're choosing your new destinations pretty randomly, thus making a nice flattener. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Yeah, i suspect that's exactly what my "wave surfing" is doing, just moving randomly. except that it is more flat (about 5.2) then my previous non-"wave surfing" movement--<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+I can think of one way to get around the GF1 problem: <i>just don't smooth it!</i> A reason not to is that since it has half the neighbors, it should just be left alone. -- <a href="robowiki?Nantuko_Primus" class=wikipagelink>Nantuko Primus</a>
+<p>
+But smoothing it collects at least that half of neighbours. Not smoothing it would only worsen the problem. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I was smoothing my gun statistics in <a href="robowiki?Jekyl" class=wikipagelink>Jekyl</a> with a simplified kernel density estimator. When I was doing so I had the concept of a "window" which represented the segment of my stats that I wanted to smooth (the window was based on enemy bot size at the current shot distance). I then slid this window "across" my stat array for that distance to find the highest peak and took the shot. Early implementations had a hard time hitting +1 or near +1 movers. To overcome the edge problem I added any windows that were not "covered" past the edge twice. So if I had a window size of three, when I was at GF zero, I added GF one in twice (once for +1 and once for -1). If I had a window of five, when at zero I added GF one and two in twice, when at GF one I added in one twice. Pictorialy here is the stats to be covered with the window size five: -2 -1 0 1 2 3 4 5. You have to have as many to the right as to the left from i=0 to i=3. I used some kludge for even sized windows which I can not remember off hand (I think it involved rounding down to an odd number).  Whatever it was I am sure was really clever (LOL). Seemed to work pretty well for me. Your milage may vary.
+<p>
+Also one other implementation I have seen in the shooting world is what <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a> does (or maybe did) in <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>. Again this is a shooting implementation but at some point it all comes down to <a href="robowiki?GuessFactors" class=wikipagelink>GuessFactors</a>. When figuring out which <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> to increment, <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> used Math.asin(9.0 / bulletVelocity) in it's formula for figuring <a href="robowiki?GuessFactors" class=wikipagelink>GuessFactors</a>. This created an "unreachable" bin that could still collect stats. I think when he actually shot <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a> used some formula to convert to "reachable" space. It is all a bit fuzzy now. Has anyone tried this as a possible implementation? Create "sidelobes" that are only there to contain data for smoothing purposes. When storing data, use them as a store. When shooting or <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> only use them for smoothing and use MIN_BIN +3 and MAX_BIN -3 (for instance) for everything else? Just a thought. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+I think the problem to be solved is that if you don't have anything in those edge bins that you have, the real edge bins after smoothing still look like they have less visits than everyone else, so your tendancy is to keep going forward to get to those edge bins, even though they've been over-visited. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Here is cool way to do smoothing its pretty easy to manipuates as to how spiked of flat it can make your stats
+<p>
+<PRE >
+ Math.pow(0.5, Math.abs(index - count))   --- 50% decrease
+</PRE>
+<p>
+<PRE >
+ Math.pow(0.1, Math.abs(index - count))   --- 90% decrease
+</PRE>
+<p>
+I find this method pretty usefull
+<p>
+<UL >
+<li> Well Gorded, you gotta realize that raising something to the power of 1/2 is the same as taking its square root, which is what most of us do already. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<li> Actually, he's raising .5 to the power of something, which isn't the same. I have tried a lot of formulas and never found them to make too much of a difference, but I still <em>feel</em> like it's something worth investigating. I generally use (1 / square((index - count) + 1)) these days, which I think I got from <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> and <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a>. Simple and works well for me. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<UL >
+<li> Opp, yah, I saw .5 and pow... well, blaim the brain. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</UL>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+Lot's of talk about edge protection when smoothing on this page. Yet I don't think any of the top surfers of today (October 2004) is using it. Was it all a ghost? To me it makes sense that the edges should look more attractive than they are without this protection... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I use edge protection in Shadow's surfing, the edge repeat method works best for me.-- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Cool. I think I'll try it again in <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a>. Lot's of bugs and stuff clouding the results when I tried it last time. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<hr>
+<p>
+I recently overhauled my bearing offset (guess factor) gun and in the process I didn't bother with doing bin smoothing any longer.  To make a potentially long story shorter .. my score improved slightly in the Rumble without smoothing.  Given the tediousness of the implementation and the drain on processing, I'll leave it out until I'm really tapped for new ideas to try. -- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin</a> / <a href="robowiki?Ugluk" class=wikipagelink>Ugluk</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=BinSmoothing" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=BinSmoothing">View other revisions</a><br>Last edited May 14, 2007 5:47 EST by <a href="robowiki?Chase-san" title="ID 10589 from ppp-70-229-32-101.dsl.klmzmi.ameritech.net">Chase-san</a> <a href="robowiki?action=browse&diff=1&id=BinSmoothing">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

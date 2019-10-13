@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>EANN - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='EANN'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=EANN">EANN</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>EANN(Evolving Artificial Neural Network) is a software I have written to evolve <a href="robowiki?NeuralNetwork" class=wikipagelink>NeuralNetwork</a> architecture (or design) using Genetic algorithm. Note that it's not a strictly genetic algorithm (like I don't code everything in 01001...).
+<p>
+The software was not intended to be public so the code is not commented, it's partialy in french (code and software) and there are some terrible code.
+<p>
+you can find explaination on this page <a rel="nofollow" href="http://www.geocities.com/synnalagma/">http://www.geocities.com/synnalagma/</a> and the program is on the page 
+<p>
+it use NRLIBJ and the output is the array of String to build the best found <a href="robowiki?NeuralNetwork" class=wikipagelink>NeuralNetwork</a>.
+<p>
+you must write a project file. some of the feature are experimental (all feature about memory).
+<p>
+I wrote it because i saw that there were big difference between two <a href="robowiki?NeuralNetwork" class=wikipagelink>NeuralNetwork</a> and I don't exactly understand how to design the structure. I need several <a href="robowiki?NeuralNetwork" class=wikipagelink>NeuralNetwork</a> for my next project (for movement, targetting and dodging), so it was simplier than trying many different architecture.
+<p>
+please post any comment bug, suggestion.... <a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<p>
+Sounds great! I haven't tested yet, but for what I see its a kind of external program? Or you use it directly on your robot? -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+It's an external program. It would be really great to integrate it into a bot but actually it took too much CPU (100% if possible) and too much time (on my computer like 30 minutes to obtain first usable result and much more to obtain solid result). I think that it would be possible to integrate it if the search space is reduced (here it's really big). 
+<p>
+It took a lot of thing from this article <a rel="nofollow" href="http://citeseer.nj.nec.com/230745.html">http://citeseer.nj.nec.com/230745.html</a> if you are interested in evolving neural network read it.--<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<p>
+As it's an external program you must log data before you can run the program here is the class I wrote  (so you have the right file format) :
+<p>
+<pre>
+public class Logger {
+	int size=0, round=0;
+	java.util.LinkedList in, out;
+	private static Logger single = new Logger();
+	/** Creates a new instance of Logger */
+	private Logger() {
+		this.in=new java.util.LinkedList();
+		this.out=new java.util.LinkedList();
+	}
+	public static Logger getInstance(){return single;}
+	
+	public void add(float[] input, float[] output){
+                //we only log in very different time so we have really different data and situation
+                //you can add some randomness so you're safer (here if we have a patternbot with frequence = 150 it's not good
+		if(RobotBase.monRobot.getRoundNum()==this.round){
+			if(this.size&gt;RobotBase.monRobot.getTime()) return;
+			else this.size=(int)RobotBase.monRobot.getTime()+150;
+		}
+		else{
+			this.round=RobotBase.monRobot.getRoundNum();
+			this.size=(int)RobotBase.monRobot.getTime()+150;
+		}
+		in.add(input);
+		out.add(output);
+	}
+	public void write(java.io.File f)throws java.io.IOException{
+                java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(new java.util.zip.GZipOutputStream(new robocode.RobocodeFileOutputStream(f)));
+		oos.writeObject(in);
+		oos.writeObject(out);
+                oos.close();
+	}
+	
+	
+}
+</pre>
+<p>
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=EANN" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=EANN">View other revisions</a><br>Last edited May 18, 2006 21:41 EST by <a href="robowiki?Florent" title="ID 6624 from 148.187.103-84.rev.gaoland.net">Florent</a> <a href="robowiki?action=browse&diff=1&id=EANN">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

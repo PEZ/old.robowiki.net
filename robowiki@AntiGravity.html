@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>AntiGravityMovement - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Anti, Gravity, Movement'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h3>(redirected from <a href="robowiki?action=edit&id=AntiGravity" class=wikipageedit>AntiGravity</a>)</h3><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=AntiGravityMovement">AntiGravityMovement</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>NOTE: Anti-Grav movement is not really that original, in the field of robotics this is called potential field movement. Although the implementation mentioned here is an interesting take on the idea. (Added 4/20/05) <a href="robowiki?Troutinator" class=wikipagelink>Troutinator</a>
+<p>
+Moving around, avoiding being hit (<a href="robowiki?DodgingBullets" class=wikipagelink>DodgingBullets</a>) or rammed by enemy robots as well as <a href="robowiki?WallAvoidance" class=wikipagelink>WallAvoidance</a> can be quite trickier than you'd think at first. Someone suggested using the laws of gravity for this, but reversed. Something along these lines:
+<UL >
+<li> Assign anti gravity objects of varying charge to enemies, enemy bullets (possibly <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>), walls, whatever.
+<li> Make your bot repell from those objects based on their charge.
+</UL>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a> makes for a great Melee strategy as it tends to keep your bot away from the center of the field and from large groups of other bots (who tend to annihilate each other quickly.)  Standard practice is to use the inverse square of the distance from the target you wish to repel, take that force as a vector and break it into X and Y components, then add up all the forces you currently are tracking and use this to tell your bot which direction to move.  <a href="robowiki?DustBunny" class=wikipagelink>DustBunny</a> uses a very simple <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a> routine and is a <a href="robowiki?NanoBots" class=wikipagelink>NanoBots</a> class robot so it should be very easy to understand.  For more advanced version, people put artificial antigravity points along the walls and usually 1 in the center of the field.  This gives you wall avoidance and center of the field avoidance.  Fermat, <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a>, and many of the best bots use this as their primary mode of movement as it tends to be hard for pattern matching aim to get a lock on this movement.  There are other tutorials, but I can't remember where they live at the moment.
+<p>
+-- <a href="robowiki?Miked0801" class=wikipagelink>miked0801</a>
+<p>
+The original anti-gravity code can be found in <a href="robowiki?Relativity" class=wikipagelink>Relativity</a>, version 3_7 still exists on the <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a>.
+<p>
+The idea was indeed to use the formula for gravity , mass/distance-squared, and then move away from the attraction. I have also experimented with using the square-root of the distance (reason: if a bot is 600 or 700 or 800 away, I think I care about them equally, and the square-root is less codesize in a <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a>). So far, I think the original formula is most robust.
+<p>
+see also <a href="robowiki?ShrapnelDodging" class=wikipagelink>ShrapnelDodging</a> and <a href="robowiki?FluidMovement" class=wikipagelink>FluidMovement</a>
+<p>
+-- <a href="robowiki?Tobe" class=wikipagelink>tobe</a>
+<p>
+I've made a class that encapsulates this algorithm, see <a href="robowiki?Hanji/AGravEngine" class=wikipagelink>Hanji/AGravEngine</a> and <a href="robowiki?Hanji/GravPoint" class=wikipagelink>Hanji/GravPoint</a> for details.
+<p>
+--<a href="robowiki?Hanji" class=wikipagelink>Hanji</a>
+<p>
+I'm using a variation on <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a> for my new 1v1 bot, and it seems to be working pretty well. I'm a newbie to high level Robocoding (took at stab at it 3 years back, but I've grown a lot as a coder since then), so I am open to comments/suggestions about all this. Basically, I have two other types of ForcePoints<a href="robowiki?action=edit&id=ForcePoints" class=wikipageedit>?</a>: WindPoints<a href="robowiki?action=edit&id=WindPoints" class=wikipageedit>?</a> and SwivelPoints<a href="robowiki?action=edit&id=SwivelPoints" class=wikipageedit>?</a>; more could easily be added in the future, and probably will be. The WindPoint<a href="robowiki?action=edit&id=WindPoint" class=wikipageedit>?</a> only emits a force in a particular direction, no matter what your bearing to it is. The SwivelPoint<a href="robowiki?action=edit&id=SwivelPoint" class=wikipageedit>?</a> emits a force perpendicular to your bearing to it; it randomly chooses which way, unless you're near a wall, in which case it chooses the angle closest to the bearing to center (basic wall avoidance).
+<p>
+The idea first arose because I was quite displeased with how GravityPoints<a href="robowiki?action=edit&id=GravityPoints" class=wikipageedit>?</a> functioned as wall avoidance. WindPoints<a href="robowiki?action=edit&id=WindPoints" class=wikipageedit>?</a> from the corners and wall midpoints work much better for me. The SwivelPoint<a href="robowiki?action=edit&id=SwivelPoint" class=wikipageedit>?</a> was created to add a tendency of being perpendicular to the opponent, but I have since begun using them for <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>, as well. Lastly, I allow each point to have a custom "distance factor" in the equation 1/distance^DF, which adds some additional flexibility. If you make the distance factor == zero, then the strength is the same at any distance; for <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>, I do that and make the strength 1/distance-to-wave-edge.
+<p>
+In the future, I may make PulsePoints<a href="robowiki?action=edit&id=PulsePoints" class=wikipageedit>?</a> (force pulsates with time) or RandomPoints<a href="robowiki?action=edit&id=RandomPoints" class=wikipageedit>?</a> (random force). I find this type of force sum system very easy to work with, and I haven't really found anything I couldn't do with it yet - bullet dodging, random movement, and wall avoidance I've done, and I'm working on <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> now.
+<p>
+-- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I took a shot at <a href="robowiki?Wavesurfing" class=wikipagelink>wavesurfing</a> with antigrav a while back but I never got it to work quite right. Despite all of my efforts, my bots always seemed to want to move directly away from bullets (certain death) rather than move perpendicular to them. I always thought that the idea had merit but could not get it to show. I'll be interested to see if you get it to work correctly Voidious. --<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a>
+<p>
+I tried something like that too. I had gravity lines, and gravity valleys. I used the lines for wall avoidance and the valleys to get a certain distance to the enemy. But it was not as good as my simple perpendicular movement with wall avoidance... --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+I know how anti-gravity is suppose to work in theory, I just can't figure out how to impliment it in a robot. -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+@Chase-san: maybe you could use anti-gravity with some other movement, like maybe put some anti-gravity force on other bots and walls, and a gravity force on where the movement tells you to go. An example of how anti-gravity is used is <a rel="nofollow" href="http://www-128.ibm.com/developerworks/library/j-antigrav/index.html">[here]</a>. --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Or, grab <a href="robowiki?Carruthers" class=wikipagelink>Carruthers</a> 1.2, and take a peek at /techdude/coreaddons/wheels/BlackboardMovement<a href="robowiki?action=edit&id=AntiGravityMovement/BlackboardMovement" class=wikipageedit>?</a>.java, that's my implementation of AntiGrav<a href="robowiki?action=edit&id=AntiGrav" class=wikipageedit>?</a>. --<a href="robowiki?Nfwu" class=wikipagelink>Nfwu</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=AntiGravityMovement" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=AntiGravityMovement">View other revisions</a><br>Last edited January 15, 2007 23:49 EST by <a href="robowiki?Nfwu" title="ID 8875 from d58-106-30-250.sbr2.nsw.optusnet.com.au">Nfwu</a> <a href="robowiki?action=browse&diff=1&id=AntiGravityMovement">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

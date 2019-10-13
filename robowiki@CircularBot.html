@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>CircularBot - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Circular, Bot'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=CircularBot">CircularBot</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package tango;
+import robocode.*;
+import java.util.ArrayList;
+import java.awt.geom.Point2D;
+
+/**
+ * CircularBot - a test of a circular list
+ */
+public class CircularBot extends Robot
+{
+	CircularList Route=new CircularList(new Point2D.Double(100,100), new Point2D.Double(150,100), new Point2D.Double(150,150), new Point2D.Double(100,150));
+	public void run() {
+		while(true) {
+			if (Math.random()&gt;0.5) {Route.clockwise();} else {Route.anticlockwise();}
+			goTo(Route.getCurrent());
+		}
+	}
+
+	public void goTo(Point2D Position) {
+		double AngleToMove=Math.toDegrees(Math.atan2(Position.getX()-getX(),Position.getY()-getY()));
+		AngleToMove-=getHeading();
+		while (AngleToMove&gt;180) {AngleToMove-=360;}
+		while (AngleToMove&lt;-180) {AngleToMove+=360;}
+		turnRight(AngleToMove);
+		ahead(Position.distance(getX(),getY()));
+	}
+}
+
+class CircularList {
+	Point2D[] List=new Point2D[4];
+	int Pointer=0;
+	CircularList(Point2D one, Point2D two, Point2D three, Point2D four) {
+		List[0]=one;
+		List[1]=two;
+		List[2]=three;
+		List[3]=four;
+	}
+	public Point2D getCurrent() {return this.List[Pointer];}
+	public void clockwise() {Pointer++; if (Pointer&gt;3) {Pointer=0;}}
+	public void anticlockwise() {Pointer--; if (Pointer&lt;0) {Pointer=3;}}
+	
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=CircularBot" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=CircularBot">View other revisions</a><br>Last edited December 21, 2003 14:25 EST by <a href="robowiki?Tango" title="ID 1197 from webcacheH11a.cache.pol.co.uk">Tango</a> <a href="robowiki?action=browse&diff=1&id=CircularBot">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

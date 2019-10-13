@@ -1,0 +1,204 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Chase-san/SelfOrganizingMap - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Chase-san, Self, Organizing, Map'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/SelfOrganizingMap">Chase-san/SelfOrganizingMap</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package chase.s2.net;
+
+import java.util.*;
+
+public class SelfOrganizingMap {
+	protected SelfOrganizedNode[] nodes;
+	protected SelfOrganizedNode bmu;
+	protected int[] lattice;
+	protected int statBinIndexes;
+	protected int weights;
+	protected int timeIndex = 1;
+	
+	private Queue&lt;Update&gt; updateQueue = new LinkedList&lt;Update&gt;();
+	private Update nextUpdate = null;
+
+	/**
+	 * Creates a self organizing map with a lattice size, stat indexes and
+	 * number of node weights as stated.
+	 * @param lattice - An array of integers, designating a shape of the lattice
+	 * @param statIndexes - number of indexes in output array
+	 * @param weights - the number of weights found in a node
+	 */
+	public SelfOrganizingMap(int[] lattice, int statIndexes, int weights) {
+		if(lattice.length &lt; 1)
+			throw new RuntimeException("Lattice requires atleast 1 dimension.");
+		
+		statBinIndexes = statIndexes;
+		this.lattice = lattice;
+		this.weights = weights;
+		
+		int latticeSize = 1;
+		for(int i=0; i&lt;lattice.length; i++) {
+			latticeSize *= lattice[i];
+//			if(lattice[i] &gt; maxLatticeDim) {
+//				maxLatticeDim = lattice[i];
+//			} //end if
+		} //end for
+		
+		nodes = new SelfOrganizedNode[latticeSize];
+		int[] vector = new int[lattice.length];
+		
+		for(int i=0; i&lt;latticeSize; i++) {
+			nodes[i] = new SelfOrganizedNode(vector, this);
+			
+			initialize(nodes[i], vector);
+			
+			vector[0]++;
+			for(int j=1; j&lt;lattice.length; j++) {
+				if(vector[j-1] &gt;= lattice[j-1]) {
+					vector[j-1] = 0;
+					vector[j]++;
+				} //end if
+			} //end for
+		} //end for
+	}
+	
+	//Notice: In desperate need of a better initialization!
+	private void initialize(SelfOrganizedNode n, int[] position) {
+		for(int i=0; i&lt;weights; i++)
+			n.weights[i] = Math.random();
+	}
+	
+	public void updateMap(double[] input, int index) {
+		timeIndex++;
+		bmu = getBMU(input);
+		for(int i=0; i&lt;size();i++) {
+			nodes[i].update(input, index);
+		}
+	}
+	
+	public int size() {
+		return nodes.length;
+	}
+	
+	public void addUpdate(double[] input, int index) {
+		updateQueue.offer(new Update(input,index));
+	}
+	
+	public void distributeUpdate(int num) {
+		if((nextUpdate == null || nextUpdate.startNode &gt; size())
+				&amp;&amp; !updateQueue.isEmpty()) {
+			nextUpdate = updateQueue.poll();
+			bmu = getBMU(nextUpdate.weights);
+			timeIndex++;
+		}
+		if(nextUpdate == null) return;
+		
+		for(int i=nextUpdate.startNode; i&lt;size()
+			&amp;&amp; i &lt; (nextUpdate.startNode + num); i++) {
+			nodes[i].update(nextUpdate.weights, nextUpdate.index);
+			nextUpdate.startNode++;
+		}
+	}
+	
+	public SelfOrganizedNode getBMU(double[] input) {
+		int bmu = 0;
+		double smallestDifference = Double.POSITIVE_INFINITY;
+		
+		//there is no faster way as the data in the nodes changes constantly
+		for(int i=0; i&lt;size(); i++) {
+			double difference = nodes[i].difference(input);
+			
+			//small shortcut, as we need every ounce of speed
+			if(difference &lt; 0.002) return nodes[i];
+			if(difference &lt; smallestDifference) {
+				bmu = i;
+				smallestDifference = difference;
+			}
+		}
+		
+		return nodes[bmu];
+	}
+	
+	
+	private class Update {
+		public double[] weights;
+		public int index;
+		public int startNode;
+		
+		public Update(double w[], int i) {
+			weights = w;
+			index = i;
+			startNode = 0;
+		}
+	}
+}
+
+public class SelfOrganizedNode {
+	protected SelfOrganizingMap map;
+	protected int position[];
+	protected double weights[];
+	public float statBin[];
+	
+	protected SelfOrganizedNode(int[] latticePosition, SelfOrganizingMap parent) {
+		position = latticePosition.clone();
+		map = parent;
+		statBin = new float[map.statBinIndexes];
+		weights = new double[map.weights];
+	}
+	
+	public void update(double[] input, int index) {
+		double distance = distance(map.bmu);
+		double variance = Math.min(2,Math.log(.2*map.timeIndex+1)+.25);
+		double neighborhood = Math.exp(-(variance*variance*distance*distance)/2.0);
+		//double limiter = Math.max(Math.exp(-(map.timeIndex/1000)),.75);
+		
+		if(neighborhood &lt; 0.001) return;
+		
+		for(int i=0; i &lt; map.weights; i++) {
+			weights[i] += neighborhood*(input[i] - weights[i]);
+		}
+		
+		for(int i=0; i&lt;map.statBinIndexes; i++) {
+			int diff = Math.abs(index - i);
+			float stat = (float)Math.exp(-(.7*.7*diff*diff)/2.0);
+			statBin[i] += neighborhood*stat;
+		}
+	}
+	
+	protected float distance(SelfOrganizedNode n) {
+		return distance(position, n.position);
+	}
+	
+	protected double difference(double[] input) {
+		return distance(weights, input);
+	}
+	
+	public static final float distance(int[] p, int[] q) {
+		float k, d = 0;
+		for(int i=0; i&lt;p.length; i++) {
+			d += (k=((float)p[i]-(float)q[i]))*k; 
+		}
+		return d;
+	}
+	
+	public static final double distance(double[] p, double[] q) {
+		if(p == null || q == null) return Double.POSITIVE_INFINITY;
+		double k, d = 0;
+		for(int i=0; i&lt;p.length; i++) {
+			d += (k=(p[i]-q[i]))*k; 
+		}
+		return d;
+	}
+}
+</pre>
+<p>
+<H2>Comments</H2>
+
+Yah, I realize I could do better for an example, but I really wanna see what everyone else can come up with for this, its a very basic SOM system, I have myself introduced my own distributed update and so on, this is just the data control. If you like I can add things into this, but I am not an expert programmer, and my methods are anything but pretty. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Its still not running 100% when I plug it into my old prototype gun, but mostly cause I think it uses much more well formed code. ;) --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Chase-san/SelfOrganizingMap" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Chase-san/SelfOrganizingMap">View other revisions</a><br>Last edited January 11, 2008 9:32 EST by <a href="robowiki?Chase-san" title="ID 13072 from ppp-69-216-38-6.dsl.klmzmi.ameritech.net">Chase-san</a> <a href="robowiki?action=browse&diff=1&id=Chase-san/SelfOrganizingMap">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

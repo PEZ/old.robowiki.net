@@ -1,0 +1,268 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>BeerPoet - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Beer, Poet'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=BeerPoet">BeerPoet</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?BeerPoet" class=wikipagelink>BeerPoet</a>, by <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, is yet another implementation of the "99 bottles of beer" poem in a programming language. As of this writing there are 709 published implementations:
+<p>
+<a rel="nofollow" href="http://www.99-bottles-of-beer.net/">http://www.99-bottles-of-beer.net/</a>
+<p>
+<a href="robowiki?BeerPoet" class=wikipagelink>BeerPoet</a> actually got added to the project site: <a rel="nofollow" href="http://www.99-bottles-of-beer.net/language-robocode-494.html">http://www.99-bottles-of-beer.net/language-robocode-494.html</a>
+Cool huh? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=1480">http://www.robocoderepository.com/BotDetail.jsp?id=1480</a>
+<H4>How competitive is it?</H4>
+
+Beats <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a>. In fact it's designed to beat <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a>. 99 <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a>s to be precise. In that sense it's my first competetive <a href="robowiki?Melee" class=wikipagelink>Melee</a> bot. =) While it drinks <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a> beer it sings a song that's written in the output window.
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+It doesn't.
+<H4>How does it fire?</H4>
+
+On sight, <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a>.
+<H4>Where did you get the name?</H4>
+
+It seemed like an appropriate name
+<H4>Can I use your code?</H4>
+
+Sure: Here it is:<pre>
+package wiki.beer;
+import robocode.*;
+import java.awt.geom.Point2D;
+
+// BeerPoet, one way to go about writing the 99-bottles-of-beer poem.
+// By Peter Strömberg, http://robowiki.net/?PEZ
+// For more info on the poem: http://99-bottles-of-beer.ls-la.net/
+//
+// Run this robot in Robocode.
+// Put it against 99 SittingDuck and open its output window.
+
+public class BeerPoet extends AdvancedRobot {
+    private boolean hasStarted;
+
+    public void run() {
+        turnGunRightRadians(Double.POSITIVE_INFINITY); 
+    }
+
+    public void onScannedRobot(ScannedRobotEvent e) {
+        if (!hasStarted) {
+            printBottles();
+            hasStarted = true;
+        }
+        setFire(3);
+        setTurnGunRightRadians(0 - getGunTurnRemainingRadians());
+    }
+
+    public void onRobotDeath(RobotDeathEvent e) {
+        printBottles();
+    }
+
+    private void printBottles() {
+        out.println(bottles());
+        if (getOthers() &gt; 0) {
+            out.println("Take " + (getOthers() == 1 ? "it" : "one") +
+                " down, and pass it around");
+            }
+        else {
+            out.println("Now they are all gone");
+        }
+    }
+
+    private String bottles() {
+        return bottles(getOthers()) + " on the wall, " + bottles(getOthers());
+    }
+
+    private String bottles(int bottles) {
+        return (bottles == 0 ? "No" : "" + bottles) +
+            " bottle" + (bottles == 1 ? "" : "s") + " of beer";
+    }
+}
+</pre>
+<H4>What's next for your robot?</H4>
+
+Dunno. Maybe someone else could write a <a href="robowiki?Teams" class=wikipagelink>Teams</a> solution to the problem? Or maybe a bear drinker that rams it's opponents to death and drives funnier and funnier?
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+Feel encouraged to post your variation of a beer poet here.
+<p>
+Hey! This is pretty cool! Maybe you should write one that shoots down 99xsample.Walls, this way, you can sing "99 Robocode bots on the wall" :-) --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<p>
+Yes, but <a href="robowiki?Walls" class=wikipagelink>Walls</a> is a pretty strong bot. I have yet to make a bot that I can trust takes down 99 Walls every time. Please try. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I think 99 walls would take each other out for you quite efficiently :p -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Maybe so, but the poet must outsurvive all 99 Walls. That's not easy I think. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yeah, finding an escape angle which a bullet isn't traveling along would be rather difficult, and it's far less fun if they're dying too fast for him to do his poem properly. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+A question. When I first wrote the poet I wrote it without the hasStarted boolean thingy. I simply called printBottles() from the run method. But it didn't work. It seemed like the function wasn't called at all then. Someone knows why? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+ROFL! This is hilarious. Man. I've been sitting here for a couple hours now hitting Random Page and reading whatever comes up. Maybe I should go to bed... -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+<b>Update:</b>
+<p>
+<pre>1st: wiki.beer.BeerPoet 1.0	175738	49000	8910	98228	19600	0	0	9	0	0
+2nd: sample.SittingDuck (5)	36650	36650	0	0	0	0	0	0	0	0
+3rd: sample.SittingDuck (52)	34000	34000	0	0	0	0	0	0	1	1
+5th: sample.SittingDuck (21)	33250	33250	0	0	0	0	0	1	0	1
+5th: sample.SittingDuck (23)	33250	33250	0	0	0	0	0	0	0	0
+6th: sample.SittingDuck (20)	31950	31950	0	0	0	0	0	1	1	0
+7th: sample.SittingDuck (7)	31450	31450	0	0	0	0	0	0	0	0
+8th: sample.SittingDuck (69)	30450	30450	0	0	0	0	0	0	0	0
+10th: sample.SittingDuck (31)	30150	30150	0	0	0	0	0	0	0	0
+10th: sample.SittingDuck (74)	30150	30150	0	0	0	0	0	0	0	0
+11th: sample.SittingDuck (11)	29750	29750	0	0	0	0	0	0	0	0
+12th: sample.SittingDuck (41)	29700	29700	0	0	0	0	0	0	0	0
+13th: sample.SittingDuck (32)	29650	29650	0	0	0	0	0	0	0	0
+14th: sample.SittingDuck (96)	29200	29200	0	0	0	0	0	0	0	0
+15th: sample.SittingDuck (77)	29050	29050	0	0	0	0	0	0	0	0
+16th: sample.SittingDuck (75)	29000	29000	0	0	0	0	0	0	0	0
+17th: sample.SittingDuck (10)	28950	28950	0	0	0	0	0	0	0	0
+18th: sample.SittingDuck (38)	28800	28800	0	0	0	0	0	0	0	0
+19th: sample.SittingDuck (25)	28700	28700	0	0	0	0	0	0	0	0
+20th: sample.SittingDuck (35)	28650	28650	0	0	0	0	0	0	0	1
+21st: sample.SittingDuck (49)	28250	28250	0	0	0	0	0	0	0	0
+22nd: sample.SittingDuck (89)	28200	28200	0	0	0	0	0	0	0	0
+23rd: sample.SittingDuck (33)	28150	28150	0	0	0	0	0	0	0	0
+24th: sample.SittingDuck (88)	28100	28100	0	0	0	0	0	0	0	0
+25th: sample.SittingDuck (18)	27950	27950	0	0	0	0	0	0	0	0
+26th: sample.SittingDuck (48)	27900	27900	0	0	0	0	0	0	1	1
+27th: sample.SittingDuck (66)	27800	27800	0	0	0	0	0	0	0	0
+28th: sample.SittingDuck (53)	27600	27600	0	0	0	0	0	0	0	0
+29th: sample.SittingDuck (78)	27050	27050	0	0	0	0	0	0	1	0
+30th: sample.SittingDuck (84)	26900	26900	0	0	0	0	0	0	0	0
+31st: sample.SittingDuck (39)	26650	26650	0	0	0	0	0	0	1	0
+32nd: sample.SittingDuck (70)	26550	26550	0	0	0	0	0	0	0	0
+33rd: sample.SittingDuck (95)	26500	26500	0	0	0	0	0	0	0	0
+35th: sample.SittingDuck (28)	26350	26350	0	0	0	0	0	0	0	0
+35th: sample.SittingDuck (83)	26350	26350	0	0	0	0	0	0	0	1
+36th: sample.SittingDuck (42)	26250	26250	0	0	0	0	0	0	0	0
+38th: sample.SittingDuck (4)	26150	26150	0	0	0	0	0	0	0	0
+38th: sample.SittingDuck (91)	26150	26150	0	0	0	0	0	0	0	0
+39th: sample.SittingDuck (58)	26000	26000	0	0	0	0	0	0	0	0
+40th: sample.SittingDuck (62)	25800	25800	0	0	0	0	0	0	0	0
+42nd: sample.SittingDuck (26)	25750	25750	0	0	0	0	0	1	0	0
+42nd: sample.SittingDuck (57)	25750	25750	0	0	0	0	0	0	0	0
+43rd: sample.SittingDuck (59)	25650	25650	0	0	0	0	0	0	0	0
+44th: sample.SittingDuck (98)	25550	25550	0	0	0	0	0	0	0	0
+46th: sample.SittingDuck (34)	25350	25350	0	0	0	0	0	0	0	0
+46th: sample.SittingDuck (55)	25350	25350	0	0	0	0	0	0	0	1
+47th: sample.SittingDuck (6)	25250	25250	0	0	0	0	0	0	0	0
+49th: sample.SittingDuck (37)	25000	25000	0	0	0	0	0	0	0	0
+49th: sample.SittingDuck (85)	25000	25000	0	0	0	0	0	0	1	0
+50th: sample.SittingDuck (76)	24650	24650	0	0	0	0	0	0	0	0
+51st: sample.SittingDuck (1)	24500	24500	0	0	0	0	0	0	0	0
+52nd: sample.SittingDuck (90)	24100	24100	0	0	0	0	0	0	0	0
+53rd: sample.SittingDuck (44)	24050	24050	0	0	0	0	0	0	0	0
+54th: sample.SittingDuck (46)	23950	23950	0	0	0	0	0	0	0	0
+55th: sample.SittingDuck (15)	23900	23900	0	0	0	0	0	0	0	0
+57th: sample.SittingDuck (22)	23850	23850	0	0	0	0	0	0	0	0
+57th: sample.SittingDuck (36)	23850	23850	0	0	0	0	0	0	0	0
+58th: sample.SittingDuck (80)	23750	23750	0	0	0	0	0	0	0	0
+59th: sample.SittingDuck (61)	23650	23650	0	0	0	0	0	0	0	0
+60th: sample.SittingDuck (65)	23550	23550	0	0	0	0	0	0	0	0
+64th: sample.SittingDuck (17)	23500	23500	0	0	0	0	0	0	1	0
+64th: sample.SittingDuck (67)	23500	23500	0	0	0	0	0	0	0	0
+64th: sample.SittingDuck (86)	23500	23500	0	0	0	0	0	0	0	0
+64th: sample.SittingDuck (92)	23500	23500	0	0	0	0	0	0	0	0
+65th: sample.SittingDuck (3)	23450	23450	0	0	0	0	0	0	0	1
+66th: sample.SittingDuck (14)	23400	23400	0	0	0	0	0	0	0	1
+69th: sample.SittingDuck (8)	23350	23350	0	0	0	0	0	0	0	0
+69th: sample.SittingDuck (27)	23350	23350	0	0	0	0	0	0	0	0
+69th: sample.SittingDuck (50)	23350	23350	0	0	0	0	0	0	0	0
+70th: sample.SittingDuck (54)	23250	23250	0	0	0	0	0	0	0	0
+71st: sample.SittingDuck (71)	22900	22900	0	0	0	0	0	0	0	0
+72nd: sample.SittingDuck (79)	22600	22600	0	0	0	0	0	0	0	0
+73rd: sample.SittingDuck (60)	22550	22550	0	0	0	0	0	0	0	0
+74th: sample.SittingDuck (73)	22350	22350	0	0	0	0	0	0	1	0
+75th: sample.SittingDuck (81)	22250	22250	0	0	0	0	0	0	0	0
+77th: sample.SittingDuck (43)	22200	22200	0	0	0	0	0	0	0	0
+77th: sample.SittingDuck (51)	22200	22200	0	0	0	0	0	0	0	0
+78th: sample.SittingDuck (24)	21950	21950	0	0	0	0	0	0	1	0
+80th: sample.SittingDuck (45)	21450	21450	0	0	0	0	0	0	0	0
+80th: sample.SittingDuck (94)	21450	21450	0	0	0	0	0	0	0	0
+81st: sample.SittingDuck (16)	21100	21100	0	0	0	0	0	0	0	0
+82nd: sample.SittingDuck (12)	20900	20900	0	0	0	0	0	0	0	0
+83rd: sample.SittingDuck (87)	20650	20650	0	0	0	0	0	0	0	0
+84th: sample.SittingDuck (93)	20500	20500	0	0	0	0	0	0	0	0
+86th: sample.SittingDuck (47)	20300	20300	0	0	0	0	0	0	0	0
+86th: sample.SittingDuck (56)	20300	20300	0	0	0	0	0	0	0	0
+87th: sample.SittingDuck (97)	18550	18550	0	0	0	0	0	0	0	0
+88th: sample.SittingDuck (72)	18450	18450	0	0	0	0	0	0	0	0
+89th: sample.SittingDuck (19)	18150	18150	0	0	0	0	0	0	0	0
+90th: sample.SittingDuck (99)	17950	17950	0	0	0	0	0	0	0	0
+91st: sample.SittingDuck (13)	17650	17650	0	0	0	0	0	0	0	1
+92nd: sample.SittingDuck (63)	17250	17250	0	0	0	0	0	0	0	0
+93rd: sample.SittingDuck (82)	17150	17150	0	0	0	0	0	0	0	0
+94th: sample.SittingDuck (29)	16850	16850	0	0	0	0	0	0	0	0
+95th: sample.SittingDuck (40)	16750	16750	0	0	0	0	0	0	0	0
+96th: sample.SittingDuck (68)	15700	15700	0	0	0	0	0	0	0	0
+97th: sample.SittingDuck (64)	15150	15150	0	0	0	0	0	0	0	0
+98th: sample.SittingDuck (2)	13550	13550	0	0	0	0	0	0	0	0
+99th: sample.SittingDuck (9)	13350	13350	0	0	0	0	0	0	0	0
+100th: sample.SittingDuck (30)	13200	13200	0	0	0	0	0	0	0	0</pre>
+<p>
+Just thought I'd mention. Delete this if you like :). Anybody see any of their lucky numbers? -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+What is it showing? Doesn't the poet win all the rounds? I must admit I never really tried it with 99 bottles, just 5 or 6 or so... Shame on me. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Lol, it's not really showing anything. I was just bored at the time, so I felt like showing the scores. Heh... */me slaps himself* -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+Here is my <a href="robowiki?Sonnet" class=wikipagelink>Sonnet</a> beerbot:
+<pre>
+public class BeerSonnet extends AdvancedRobot {
+	public void run() {
+		setAdjustRadarForGunTurn(true); // 1
+
+		setTurnRadarRight(Double.POSITIVE_INFINITY); // 2
+		printBottles(); // 3
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e) {
+		setTurnRadarLeft(getRadarTurnRemaining()); // 4
+
+		double absoluteBearing = getHeadingRadians() + e.getBearingRadians()
+				+ (Math.random() &lt; 0.5 ? 1 : -1)
+				* (Math.random() / getOthers()); // 5
+		turnGunRightRadians(Util.normalRelativeAngle(absoluteBearing
+				- getGunHeadingRadians())); // 6
+		fire(3); // 7
+	}
+
+	public void onRobotDeath(RobotDeathEvent e) {
+		printBottles(); // 8
+	}
+
+	private void printBottles() {
+		out.println(bottles()); // 9
+		if (getOthers() &gt; 0) {
+			out.println("Take " + (getOthers() == 1 ? "it" : "one")
+					+ " down, and pass it around"); // 10
+		} else {
+			out.println("Now they are all gone"); // 11
+		}
+	}
+
+	private String bottles() {
+		String bottleCount = bottles(getOthers()); // 12
+		return bottleCount + " on the wall, " + bottleCount; // 13
+	}
+
+	private String bottles(int bottles) {
+		return (bottles == 0 ? "No" : "" + bottles) + " bottle"
+				+ (bottles == 1 ? "" : "s") + " of beer"; // 14
+	}
+}
+</pre>
+<p>
+It gets drunk and misses near the end of the bots. --<a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=BeerPoet" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=BeerPoet">View other revisions</a><br>Last edited April 13, 2007 22:22 EST by <a href="robowiki?AaronR" title="ID 9168 from 218.162.202.68.cfl.res.rr.com">AaronR</a> <a href="robowiki?action=browse&diff=1&id=BeerPoet">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

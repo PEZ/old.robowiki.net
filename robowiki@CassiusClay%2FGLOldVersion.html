@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>CassiusClay/GLOldVersion - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Cassius, Clay, GLOld, Version'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/GLOldVersion">CassiusClay/GLOldVersion</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Sometimes when a bullet hits CCGL, and graphical debug is on, Robocode locks up for a few minutes (!). In the first frame rendered thereafter there are many big blue dots, of which the edge is very smooth, not like many )'s on top of each other. I hope it doesn't try to render a million (or so) of them? -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+Is this when a bullet hits or when a wave hits? I've noticed a flicker when the wave hits. Not that everythings stops though. But this is a problem with <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a> that if you draw too large objects, it starts eating resources. Sometimes I've managed to put my entire machine to a complete halt.... Your observation might point on a bugin CC though. Maybe the danger values get too large at close range. Thanks! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I just ran it again, but this time with statistics. RAM usage increased with over 10 MB per second! It begins to run slow when the 'real' RAM is full, particularly when a wave hits (hangs for a very short period). When a bullet hits it can hang for minutes, but ONLY if graphical debug is turned on. Strings are still drawn when it is turned off (reported twice in <a href="robowiki?RobocodeGLV014/BugReporting" class=wikipagelink>RobocodeGLV014/BugReporting</a>), so I suspect the dots. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+I suppose I could write smaller dots. Problem with that is that it's hard to see the peaks in the wave when it's at far ranges then... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Can't you just put a fixed limit on them? -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+That would make all dots exceeding that limit equally large. But maybe I can skip the bullet flight time weighting for the GL graphed dots. That would solve the issue and also make all waves "readable". -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It doesn't even need to have to do with the dot size. I mean, why would it need hundreds of megabytes (it does after after a few seconds) just to draw some bigger dots? I think there should be something else... The best way to find out is to set the limit at 1 pixel, and then watch your RAM. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+Well, I don't know why it needs tons of RAM when the dots get big. But it does. Try increasing the dot size and you'll know. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Just tried it myself. You're right. Btw, if you set the size to 0 it is even worse... -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+<a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, Are you re-using your dots in some fashion or are you initializing new dots every tick? If you are re-initializing (which is slow and what DH currently does) then perhaps you are leaving the old one out there in a fashion where they can not be reaped? I have not looked at the code (I am still in California and on a dialup 33K connnection of all things) so this is a very wild guess. When I get home I plan on releasing my RCGL version of <a href="robowiki?DarkHallow" class=wikipagelink>DarkHallow</a> too. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+I'm reusing the same dots throughout the waves travel. Just moving the dots around. It's really about the size of the dots. Write one dot large enough and it will display very badly and things slows down a lot. It's a bug in some GL layer probably. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+If you disable smooth points everything is fine... it is enabled in GLRenderer. If you want all dots to appear as non-antialiased squares, just remove that line in GLRenderer. If you want to use squares at size&gt;x, you can do that in PointGL<a href="robowiki?action=edit&id=PointGL" class=wikipageedit>?</a>. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+I'm not sure i understand... Should I hack GLRenderer? Well, good to know that option exists. But it's interesting that you edit this page today since I just put together a new GL version of CC. Which doesn't have the above problem. It's full of other irrelevant debug code though. I'll clean it up and upload it later tonight. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It isn't very hard to change the smooth points in RGL. In GLRenderer.init() you just have to remove the gl.glEnable(GL_POINT_SMOOTH); line. You can also glEnable and glDisable it in any draw() method, so you can easily disable it when size&gt;x (keep in mind that you should use <em><strong>gl.</strong></em>GL_POINT_SMOOTH there!). -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+This is what you get if you set the threshold in PointGL<a href="robowiki?action=edit&id=PointGL" class=wikipageedit>?</a> to 20:
+<p>
+<img src="http:/robocode/uploads/jonathan/dangerouswaves.png">
+<p>
+Doesn't look good, but it's better than crashing. Note that the waves which are very close to each other are caused by skipped turns (I think), which are in turn caused by rapidly pausing/resuming when a wave hits to be able to capture it without going down to 1 fps. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+I recently started playing with GL (great stuff!). The extreme memory consumption is caused by blending <em>(edit: not. I really thought I saw that making the difference...)</em>. I wrote a simple app rendering dots in a circle. It's funny that drawing 16384 smooth dots of 50 pixels (<em>size of window content: 800*800</em>/16) takes far less memory than drawing 4 such dots. You have hopefully noticed that antialiasing and performance don't get better when you draw <em><strong>7</strong></em> 50-pixel antialiased dots <em><strong>per pixel</strong></em>. ;-) -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a> (still around here... a bit)
+<p>
+I have no clue what you are talking about. But the new version of CCGL doesn't have a performance problem like this one anyway. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Still talking about large points, which are not specific to CCGL or Robocode at all, but are related to this page. ;-) -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=CassiusClay/GLOldVersion" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=CassiusClay/GLOldVersion">View other revisions</a><br>Last edited May 4, 2006 22:25 EST by <a href="robowiki?GrubbmGait" title="ID 6861 from ip219-32-173-82.dyndsl.versatel.nl">GrubbmGait</a> <a href="robowiki?action=browse&diff=1&id=CassiusClay/GLOldVersion">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

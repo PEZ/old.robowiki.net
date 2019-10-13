@@ -1,0 +1,186 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>CPUTest/Code - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='CPUTest, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Code">CPUTest/Code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?CPUTest" class=wikipagelink>CPUTest</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+public class CPUTest{
+        private final static int APPROXIMATE_CYCLES_ALLOWED = 30000;
+        private final static long TEST_PERIOD_NANOSECS = 5000000000L; // 5 seconds
+
+        public static void main(String[] args){
+                for(int i = 0; i &lt; 10000; i++){//gets the random() initialized and optimized by the jvm
+                        double d = Math.random()*Math.random();
+                }
+                double avgGran = 0;
+                int maxGran = 0;
+                int delta = 0;
+
+                // Run several times, so we find the most representative granularity
+                // Sometimes, e.g. 1 out of 100 times we get a lower granularity.
+                for (int i = 0, max = 1000; i &lt; max; i++) {
+                        long time = System.currentTimeMillis();
+
+                        while ((delta = (int) (System.currentTimeMillis() - time)) == 0);
+
+                        avgGran += delta/(double)max;
+                        maxGran = Math.max(maxGran,delta);
+                }
+                System.out.println("Average millisecond granularity: " + avgGran);
+                System.out.println("Max millisecond granularity over 1000 'granulations': " + maxGran);
+
+                avgGran = 0;
+                maxGran = 0;
+                delta = 0;
+
+                // Run several times, so we find the most representative granularity
+                // Sometimes, e.g. 1 out of 100 times we get a lower granularity.
+                for (int i = 0, max = 1000; i &lt; max; i++) {
+                        long time = System.nanoTime();
+
+                        while ((delta = (int) (System.nanoTime() - time)) == 0);
+
+                        avgGran += delta/(double)max;
+                        maxGran = Math.max(maxGran,delta);
+                }
+                System.out.println("Average nanosecond granularity: " + avgGran + " nanoseconds, " + avgGran/1000000.0 + " milliseconds");
+                System.out.println("Max nanosecond granularity over 1000 'granulations': " + maxGran + " nanoseconds, " + maxGran/1000000.0 + " milliseconds");
+
+                long start = System.nanoTime();
+                long count = 0;
+                double d = -1;
+
+                while (System.nanoTime() - start &lt; TEST_PERIOD_NANOSECS &amp;&amp; d != -d) {
+                        d += Math.atan(Math.random());
+                        count++;
+                }
+
+                long atanConstant = APPROXIMATE_CYCLES_ALLOWED * TEST_PERIOD_NANOSECS / count;
+		System.out.println("atan constant: " + atanConstant/1000000.0);
+
+                start = System.nanoTime();
+                count = 0;
+                d *= -1;
+
+                while (System.nanoTime() - start &lt; TEST_PERIOD_NANOSECS &amp;&amp; d != -d) {
+                        d += Math.sqrt(Math.random());
+                        count++;
+                }
+
+                long sqrtConstant = (long)(APPROXIMATE_CYCLES_ALLOWED * 1.3 * TEST_PERIOD_NANOSECS / count);
+		System.out.println("sqrt constant: " + sqrtConstant/1000000.0);
+
+                start = System.nanoTime();
+                count = 0;
+                d *= -1;
+
+                while (System.nanoTime() - start &lt; TEST_PERIOD_NANOSECS &amp;&amp; d != -d) {
+                        d += Math.pow(Math.random(), Math.random());
+                        count++;
+                }
+
+                long powConstant = (long)(APPROXIMATE_CYCLES_ALLOWED * 0.58 * TEST_PERIOD_NANOSECS / count);
+		System.out.println("pow constant: " + powConstant/1000000.0);
+
+		start = System.nanoTime();
+                count = 0;
+                d *= -1;
+
+                while (System.nanoTime() - start &lt; TEST_PERIOD_NANOSECS &amp;&amp; d != -d) {
+                        d += Math.hypot(Math.random(), Math.random());
+                        count++;
+                }
+
+                long hypotConstant = (long)(APPROXIMATE_CYCLES_ALLOWED * 0.4 * TEST_PERIOD_NANOSECS / count);
+		System.out.println("hypot constant: " + hypotConstant/1000000.0);
+
+		start = System.nanoTime();
+                count = 0;
+                d *= -1;
+
+                while (System.nanoTime() - start &lt; TEST_PERIOD_NANOSECS &amp;&amp; d != -d) {
+                        d += Math.random()/Math.random();
+                        count++;
+                }
+
+                long divisionConstant = (long)(APPROXIMATE_CYCLES_ALLOWED * 1.1 * TEST_PERIOD_NANOSECS / count);
+		System.out.println("division constant: " + divisionConstant/1000000.0);
+
+		start = System.nanoTime();
+                count = 0;
+                d *= -1;
+
+                while (System.nanoTime() - start &lt; TEST_PERIOD_NANOSECS &amp;&amp; d != -d) {
+                        d += Math.random()*Math.random();
+                        count++;
+                }
+
+                long multiplicationConstant = (long)(APPROXIMATE_CYCLES_ALLOWED * 1.1 * TEST_PERIOD_NANOSECS / count);
+		System.out.println("multiplication constant: " + multiplicationConstant/1000000.0);
+
+		
+		long finalConstant = Math.max(Math.max(Math.max(atanConstant,sqrtConstant),Math.max(divisionConstant,multiplicationConstant)),Math.max(powConstant,hypotConstant));
+		
+		System.out.println("Final constant: " + finalConstant + " nanoseconds, " + finalConstant/1000000.0 + " milliseconds");
+
+
+        }
+}
+</pre>
+<p>
+Here's what it gives me:
+<pre>
+Average granularity: 1.015999999999999
+Max granularity over 1000 'granulations': 15
+atan constant: 30.868783
+sqrt constant: 32.062354
+pow constant: 31.511018
+hypot constant: 32.038326
+division constant: 30.805312
+multiplication constant: 30.748685
+Final constant: 32062354 nanoseconds, 32.062354 milliseconds
+</pre>
+-- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Exactly what I did in my function time and fnl did before me for the original nanotime code, unlike me however you changed it all into constants. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+I think the most important thing that I added is to have the Math.max(all possible constants) at the end. On some JVMs, and any other JVMs in the future, certain functions may take more time than others, or the proportions may change. Because we want a bot to be able to spend it's full allocated time in any possible function, it wouldn't really be fair to average them together, since say the one function the bot uses the most happens to be the 'slow' function on that system, it will cause the bot to skip turns. I you take a look, I had to 'scale' a few functions, for example Math.hypot *0.4, otherwise it would blow the whole thing way out of proportion. I'm wondering what this same test gets on other setups. It's also interesting to note that the granularity on my system, for the most part, was 1 millisecond. There was probably only one or two instances of the 15 granularity in the whole 1000 iterations. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+I get:
+<pre>
+Average granularity: 15.625000000000085
+Max granularity over 1000 'granulations': 16
+atan constant: 19.797837
+sqrt constant: 21.673277
+pow constant: 23.702415
+hypot constant: 22.801021
+division constant: 24.405395
+multiplication constant: 24.108084
+Final constant: 24405395 nanoseconds, 24.405395 milliseconds
+</pre>
+<p>
+What could explain such a high granularity in my system? -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Try giving it another go <a href="robowiki?ABC" class=wikipagelink>ABC</a>, I'm curious if your system has a high granularity with nanoseconds as well.  I'm getting
+<pre>
+Average millisecond granularity: 1.0269999999999977
+Max millisecond granularity over 1000 'granulations': 17
+Average nanosecond granularity: 640.6067000000586 nanoseconds, 6.406067000000586E-4 milliseconds
+Max nanosecond granularity over 10000 'granulations': 14661 nanoseconds, 0.014661 milliseconds
+</pre> -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Nope, in nanoseconds I get 345,6 granularity:
+<p>
+<pre>
+Average millisecond granularity: 15.625000000000085
+Max millisecond granularity over 1000 'granulations': 16
+Average nanosecond granularity: 345.69700000000137 nanoseconds, 3.4569700000000136E-4 milliseconds
+Max nanosecond granularity over 1000 'granulations': 577 nanoseconds, 5.77E-4 milliseconds
+</pre> -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?CPUTest" class=wikipagelink>CPUTest</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=CPUTest/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=CPUTest/Code">View other revisions</a><br>Last edited February 13, 2008 8:58 EST by <a href="robowiki?ABC" title="ID 8723 from 89-180-74-205.net.novis.pt">ABC</a> <a href="robowiki?action=browse&diff=1&id=CPUTest/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

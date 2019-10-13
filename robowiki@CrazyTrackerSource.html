@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>CrazyTrackerSource - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Crazy, Tracker, Source'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=CrazyTrackerSource">CrazyTrackerSource</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package crazy;
+import robocode.*;
+import java.awt.Color;
+import java.awt.geom.Point2D;
+import robocode.util.Utils;
+
+/**
+ * CrazyTracker2 - a robot by Ben Pringle
+ */
+public class CrazyTracker2 extends AdvancedRobot
+{
+	static double FORWARD = 1;//choose forward or backward
+	static double rand = 185;//a random number that changes
+	/**
+	 * CrazyTracker2's run method
+	 */
+	public void run() {
+		setColors(Color.blue,Color.black,Color.yellow);
+		setAdjustGunForRobotTurn(true);//allow gun and radar
+		setAdjustRadarForGunTurn(true);//free movement
+		while (true)
+		{
+			turnRadarRight(360);//scan for enemies
+		}
+	}
+	/**
+	 * onScannedRobot:  We have a target.  Go get it.
+	 */
+	public void onScannedRobot(ScannedRobotEvent e) {
+//here I use an oscillating movement pattern, but
+//I use a constant "rand" that I change randomly
+//so that Patternmatchers can't lock onto me
+if (getDistanceRemaining() == 0) { FORWARD =
+	-FORWARD; setAhead(rand * FORWARD);}
+setTurnRightRadians(e.getBearingRadians()
++Math.PI/2-0.5236*FORWARD
+*(e.getDistance()&gt;200?1:-1));
+//here I get my enemy's statistics so that I can use
+//linear targeting
+		double bulletPower = Math.min(3.0,getEnergy());
+		double myX = getX();
+		double myY = getY();
+		double absoluteBearing =
+		 getHeadingRadians() + e.getBearingRadians();
+		double enemyX = getX() 
+		+ e.getDistance() * Math.sin(absoluteBearing);
+		double enemyY = getY() 
+		+ e.getDistance() * Math.cos(absoluteBearing);
+		double enemyHeading = e.getHeadingRadians();
+		double enemyVelocity = e.getVelocity();
+//now I do my calculations for linear targeting so that
+//I know where my enemy will be once my bullet gets there
+		double deltaTime = 0;
+double battleFieldHeight=
+getBattleFieldHeight(),battleFieldWidth=
+getBattleFieldWidth();
+		double predictedX = enemyX, predictedY = enemyY;
+while((++deltaTime)*(20.0
+- 3.0*bulletPower)
+&lt;Point2D.Double.distance(myX, myY, predictedX, predictedY)){
+		predictedX += Math.sin(enemyHeading) 
+		* enemyVelocity;	
+		predictedY += Math.cos(enemyHeading) 
+		* enemyVelocity;
+			if(	predictedX &lt; 18.0 
+				|| predictedY &lt; 18.0
+				|| predictedX &gt; battleFieldWidth - 18.0
+				|| predictedY &gt; battleFieldHeight - 18.0){
+predictedX = 
+Math.min(Math.max(18.0, predictedX), battleFieldWidth 
+- 18.0);	
+predictedY = 
+Math.min(Math.max(18.0, predictedY), battleFieldHeight
+- 18.0);
+				break;}}
+double theta =
+Utils.normalAbsoluteAngle(Math.atan2(predictedX
+- getX(), predictedY - getY()));
+//now I can turn my gun...
+setTurnRadarRightRadians
+(Utils.normalRelativeAngle(absoluteBearing 
+- getRadarHeadingRadians()));
+setTurnGunRightRadians(Utils.normalRelativeAngle(theta
+- getGunHeadingRadians()));
+//...and fire!
+		fire(3);
+	}
+	/**
+	 * onHitByBullet: Randomize my movement
+	 */
+	public void onHitByBullet(HitByBulletEvent e) {
+		//change my movement to throw off patternmatchers
+		rand += Math.random()*5*FORWARD;
+}
+}</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=CrazyTrackerSource" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=CrazyTrackerSource">View other revisions</a><br>Last edited December 28, 2005 21:52 EST by <a href="robowiki?Bayen" title="ID 5955 from pool-71-246-31-64.phlapa.fios.verizon.net">Bayen</a> <a href="robowiki?action=browse&diff=1&id=CrazyTrackerSource">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

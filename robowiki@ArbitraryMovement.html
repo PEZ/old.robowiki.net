@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>ArbitraryMovement - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Arbitrary, Movement'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=ArbitraryMovement">ArbitraryMovement</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>An interesting theory that I've thought about a little bit - a well-formulated and well-tweaked *arbitrary* movement pattern may be at least almost as good as a good random movement.  Your computer can't produce truly random numbers, it only creates arbitrary numbers related to your system's internal state and previous random numbers.  (I think I remember hearing about someone in Robocode pumping out a random number of random numbers at the beginning so its opponent wouldn't get the same random numbers as his robot, just in case.  That seems a bit superstitious to me, though.)  A good set of semi-arbitrary numbers can also be taken from the robocode environment to constitute movement that seems random.  For example, a development version of the first version of <a href="robowiki?FunkyChicken" class=wikipagelink>FunkyChicken</a> did something like this in on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>:
+<p>
+<pre>
+setAhead(Math.cos(e.getEnergy()*5+getEnergy()+getTime()/100)*100 + (pattern.charAt(0)-8)*10);
+</pre>
+<p>
+(pattern.charAt(0) is the last lateral velocity of my opponent plus 8.  It would be easy to sort of "mirror" an opponent using this I think)
+<p>
+The effect is a movement that is based on a function of time, my energy, my opponent's energy, my opponent's current direction of movement - things that don't directly constitute movement in most robots.  Any parameter that changes arbitrarily over time could potentially be added in here for increased effectiveness.  I added the getTime()/100 in this case just to make sure I changed direction sometimes even if the energy part of the equation was staying close to the same (which obviously isn't very likely).
+<p>
+<a href="robowiki?FunkyChicken" class=wikipagelink>FunkyChicken</a> still uses an <a href="robowiki?ArbitraryMovement" class=wikipagelink>ArbitraryMovement</a> pattern, but the one above was discarded for a much simpler one that did better against most of my test pool.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+I think the potential problem with this in comparison with random (even the rough aproximate you get from Math.random()) is that with the former it is harder to achieve an even distribution of numbers. This might make you vulnerable to good <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a>. What movement profile does <a href="robowiki?FunkyChicken" class=wikipagelink>FunkyChicken</a> show? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<a href="robowiki?FunkyChicken" class=wikipagelink>FunkyChicken</a>'s profile is weak, but varies quite a bit on distance.  If I remember right (according to StatistBot/SmogPainter<a href="robowiki?action=edit&id=StatistBot/SmogPainter" class=wikipageedit>?</a>), it has a crazy positive spike at close range, but a broad negative hump,  an insane negative spike at normal battle range, and a slightly negative skewed profile that is mostly centered at longer distances.  A negative spike is not likely in movement that doesn't react to bullet fire, but <a href="robowiki?FunkyChicken" class=wikipagelink>FunkyChicken</a> *does* react to bullet fire indirectly.  <a href="robowiki?FunkyChicken" class=wikipagelink>FunkyChicken</a>'s is also using arbitrary numbers to dis-affect head-on and pattern-matching aim.  I think if I used such numbers less often as arbitrary parameters into the Flood movement (rather than using Math.random()), it may still give an effective profile. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Yes, I think it's the coolest way to <a href="robowiki?DodgingBullets" class=wikipagelink>DodgingBullets</a> I have seen so far. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+(largely refering to PEZ's first post after that bar)
+Which isn't to say Math.random() is any useful. MicroSatan<a href="robowiki?action=edit&id=MicroSatan" class=wikipageedit>?</a> and my top-secret-won't-even-give-his-name-away (:)) <a href="robowiki?MegaBot" class=wikipagelink>MegaBot</a> both use random.nextDouble() for their random number generation. This ensures uniform distribution as part of the function, no extra work on my part. I like :) -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+For all I know Math.random() uses random.nextDouble() for returning values, so if you find Math.random() unuseful (please state why so) what makes nextDouble() useful? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+LoL<a href="robowiki?action=edit&id=LoL" class=wikipageedit>?</a>, actually, you're right, <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>.  Here's Math.random(), copied from the src.zip that ships with the jdk in Math.java:
+<pre>
+
+    public static double random() {
+        if (randomNumberGenerator == null) initRNG();
+        return randomNumberGenerator.nextDouble();
+    }
+</pre>
+-- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+<p>
+A good hash-function can make the not-so-random-distribution more uniform, but I'll keep it simple and stick with random.nextDouble() :) --<a href="robowiki?FnH" class=wikipagelink>FnH</a>
+<p>
+Heh... I think I'll keep it simpler and stick with Math.random(). :D. ArbitraryMomement<a href="robowiki?action=edit&id=ArbitraryMomement" class=wikipageedit>?</a> is also something my (sad attempts at) <a href="robowiki?NanoBot" class=wikipagelink>NanoBot</a>s use; when done with a good formula they can work very well. Look up stuff like chaotic sequences or whatever on google; I don't remember much about it from my algebra classes but you can supposedly get recursive formulas that never repeat a value. I'm not sure how evenly spread these are or whatever, but, meh. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=ArbitraryMovement" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=ArbitraryMovement">View other revisions</a><br>Last edited May 18, 2006 21:48 EST by <a href="robowiki?Florent" title="ID 6624 from 148.187.103-84.rev.gaoland.net">Florent</a> <a href="robowiki?action=browse&diff=1&id=ArbitraryMovement">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

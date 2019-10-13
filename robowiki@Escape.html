@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Escape - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Escape'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Escape">Escape</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package cx.haiku;
+
+import robocode.*;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+/**
+ * @author iiley
+ * Haiku Anti-Gravitation bot
+
+    *-Special thanks-*
+ *
+ * I would like to thank
+ * - DrLoco,Vuen, David Alves and Michael Dorgan for ideas on tiny anti-gravity code that fits in haiku bots;)
+ * - and to all other robocoders in this great community
+ */
+public class Escape extends AdvancedRobot
+{
+	Point2D.Double gravitation=new Point2D.Double(0,0),
+		closest=new Point2D.Double(Double.POSITIVE_INFINITY,0),
+		lastFireTime=new Point2D.Double(0,0);
+    public void run() {
+		while(true){
+			setAhead(180*12/Math.abs(lastFireTime.y=Math.toDegrees(robocode.util.Utils.normalRelativeAngle(Math.atan2(gravitation.x+ 1 / (getX()-2d) - 1 / ( getBattleFieldWidth() - getX()-2d),gravitation.y+ 1 / (getY()-2d) - 1 / ( getBattleFieldHeight() - getY()-2d))-getHeadingRadians()))));
+			turnRight(Math.abs(lastFireTime.y)&lt;10d ? 
+				lastFireTime.y
+				: (lastFireTime.y &gt;0d ? 10d : -10d));
+		}
+    }
+
+    public void onScannedRobot(ScannedRobotEvent e) {
+        if(
+			((gravitation.x=gravitation.x*0.8-(1/e.getDistance()*Math.sin(e.getBearingRadians()+getHeadingRadians())))+(gravitation.y=gravitation.y*0.8-(1/e.getDistance()*Math.cos(e.getBearingRadians()+getHeadingRadians())))!=0d || true) 
+			&amp;&amp; e.getDistance()&lt;closest.x+180 &amp;&amp; (closest.x=e.getDistance())&gt;0 || getTime()-lastFireTime.x&gt;36)
+			if(
+			((getEnergy()&gt;0.11d || e.getEnergy()==0d)
+			&amp;&amp; setFireBullet(Math.min(900d/e.getDistance(),Math.min(getEnergy()/5d,Math.min(3d,e.getEnergy()/6d))))!=null 
+			&amp;&amp; (lastFireTime.x=getTime())&gt;0)
+			&amp;&amp; (closest.x=Double.POSITIVE_INFINITY)&gt;0 || true
+			)
+		{
+	        setTurnGunRight(Double.POSITIVE_INFINITY);
+		}
+    }
+}
+</pre>
+<p>
+See <a href="robowiki?Escape/Comments" class=wikipagelink>Escape/Comments</a> for comments (unless you want to move it)
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Escape" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Escape">View other revisions</a><br>Last edited December 13, 2006 5:52 EST by <a href="robowiki?Starrynte" title="ID 8009 from cpe-75-84-90-36.socal.res.rr.com">Starrynte</a> <a href="robowiki?action=browse&diff=1&id=Escape">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

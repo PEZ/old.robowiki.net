@@ -1,0 +1,506 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>David Alves/Free Code - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='David, Alves, Free, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Free+Code">David Alves/Free Code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Please feel free to use any of the code on this page, with or without giving credit. If you see an bugs or make any improvements to this code, please let me know so I can post the improved version. =)
+<p>
+<p>
+<strong>Debugging graphics for Robocode 1.1+ in 3 easy steps:</strong>
+<p>
+1. Extend <a href="robowiki?DrawingBot" class=wikipagelink>DrawingBot</a>.
+<p>
+2. Call the drawing functions you want in your code, for example <code>YourRobotsName.drawText("Hello, World!, 100, 100, Color.WHITE);</code>
+<p>
+3. Run Robocode and click the "Paint" button in your robot's console to turn on graphics for your bot and you'll see the graphics appear.
+<p>
+An example of how to use this is <a href="robowiki?David_Alves/LinearTargetingBot" class=wikipagelink>/LinearTargetingBot</a>.
+<p>
+<hr noshade class=wikiline size=1>
+<strong>Data Saving</strong>
+<p>
+This is some code to lossily compress an array of floats into an array of bytes. The amount that I divide / multiply each coefficient by when converting to bytes was found experimentally by trying different values. You may need to change it for your own purposes to make sure that you don't try to store a number that won't fit into the range of a signed byte. Enjoy!
+<p>
+<p>
+<PRE >
+	/** 
+	 * Encodes a float array into byteCount bytes, using DCT.
+	 * 
+	 * @return a byte array with the encoded data
+	 */
+	public static byte[] encodeSegmentToBytes<a href="robowiki?action=edit&id=SegmentToBytes" class=wikipageedit>?</a>(float[] data, int byteCount){
+		byte[] compressed = new byte[byteCount];
+</PRE>
+<p>
+<PRE >
+		float[] dctValues = forwardDCT(data);
+</PRE>
+<p>
+<PRE >
+		for(int i = 0; i &lt; byteCount; i++){ 
+			compressed[i] = (byte) Math.min(Byte.MAX_VALUE, Math.max(Byte.MIN_VALUE, Math.round((i + 1) * 128.0 * dctValues[i])));
+			if(compressed[i] == Byte.MAX_VALUE){
+				System.out.println("Warning: max value");
+				printArray(data);
+			}
+			if(compressed[i] == Byte.MIN_VALUE){
+				System.out.println("Warning: min value");
+				printArray(data);
+			}
+		}
+</PRE>
+<p>
+<PRE >
+		return compressed;
+	}
+</PRE>
+<p>
+<PRE >
+	/**
+	 * Decodes a float array from the specified array of bytes. The parameter 
+	 * arraySize is how many floats should be in the decoded array. 
+	 * 
+	 * @param data DCT-encoded bytes
+	 * @param arraySize the size of the array
+	 * @return the decompressed array of floats
+	 */
+	public static float[] decodeSegmentFromBytes<a href="robowiki?action=edit&id=SegmentFromBytes" class=wikipageedit>?</a>(byte[] data, int arraySize){
+		return decodeSegmentFromBytes<a href="robowiki?action=edit&id=SegmentFromBytes" class=wikipageedit>?</a>(data, arraySize, data.length);
+	}
+</PRE>
+<p>
+<PRE >
+	/**
+	 * Decodes a float array from the specified array of bytes. The parameter 
+	 * arraySize is how many floats should be in the decoded array.  
+	 * 
+	 * @param useFirstNBytes<a href="robowiki?action=edit&id=FirstNBytes" class=wikipageedit>?</a> how many of the compressed bytes to use when decompressing.
+	 * @param data DCT-encoded bytes
+	 * @param arraySize the size of the array
+	 * @return the decompressed array of floats
+	 * 
+	 */
+	private static float[] decodeSegmentFromBytes<a href="robowiki?action=edit&id=SegmentFromBytes" class=wikipageedit>?</a>(byte[] data, int arraySize, int useFirstNBytes<a href="robowiki?action=edit&id=FirstNBytes" class=wikipageedit>?</a>){
+		if(useFirstNBytes<a href="robowiki?action=edit&id=FirstNBytes" class=wikipageedit>?</a> &gt; data.length) 
+			throw new RuntimeException<a href="robowiki?action=edit&id=RuntimeException" class=wikipageedit>?</a>("Invalid useFirstNBytes<a href="robowiki?action=edit&id=FirstNBytes" class=wikipageedit>?</a>, " + useFirstNBytes<a href="robowiki?action=edit&id=FirstNBytes" class=wikipageedit>?</a> + " &gt; " + data.length);
+</PRE>
+<p>
+<PRE >
+		float[] coefficients = new float[arraySize];
+		for(int i = 0; i &lt; data.length; i++){ 
+			coefficients[i] = data[i] / (128.0f * (i + 1));
+		}
+</PRE>
+<p>
+<p>
+<PRE >
+		return inverseDCT(coefficients);
+	}
+</PRE>
+<p>
+<PRE >
+	/**
+	 * Performs a forward discrete cosine transform on the provided data, and returns the coefficients
+	 * 
+	 * @param data the data to encode
+	 * @return DCT-encoded data
+	 */
+	public static float[] forwardDCT(float[] data){
+		int N = data.length;
+</PRE>
+<p>
+<PRE >
+		float[] coefficents = new float[N];
+		for(int u = 0; u &lt; N; u++){
+			float Cu;
+			if(u == 0)
+				Cu = (float) (1.0 / Math.sqrt(N));
+			else
+				Cu = (float) (Math.sqrt(2.0 / N));
+</PRE>
+<p>
+<PRE >
+			for(int x = 0; x &lt; N; x++){
+				coefficents[u]+= data[x] * Math.cos(((2.0 * x + 1.0) * Math.PI * u) / (2.0 * N));
+			}
+			coefficents[u] *= Cu;
+		}
+		return coefficents;
+	}
+</PRE>
+<p>
+<PRE >
+	/**
+	 * Performs an inverse discrete cosine transform on the provided coefficients, 
+	 * returning an approximation of the original data. 
+	 * 
+	 * @param coefficients the DCT coefficients
+	 * @return the original data, or as close to it as possible!
+	 */
+	public static float[] inverseDCT(float[] coefficients){
+		int N = coefficients.length;
+</PRE>
+<p>
+<PRE >
+		float[] data = new float[N];
+</PRE>
+<p>
+<PRE >
+		for(int x = 0; x &lt; N; x++){
+			for(int u = 0; u &lt; N; u++){
+				float Cu;
+				if(u == 0)
+					Cu = (float) (1.0 / Math.sqrt(N));
+				else
+					Cu = (float) (Math.sqrt(2.0 / N));
+</PRE>
+<p>
+<PRE >
+				data[x] += Cu * coefficients[u] * Math.cos(((2.0 * x + 1.0) * Math.PI * u) / (2.0 * N));
+			}
+		}
+		return data;
+	}
+</PRE>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<strong>Array Utilities:</strong>
+<pre>
+/*
+ * Created on Sep 29, 2004
+ *
+ */
+package davidalves.net.util;
+
+import org.junit.Test;
+
+/**
+ * @author Dave
+ *
+ */
+public class ArrayUtils {
+	public static class ArrayStatsDouble{
+		public double maxValue, minValue, mean, stdDev;
+		public int maxIndex, minIndex;
+	}
+	
+	/** Statistics for an array of floats */
+	public static class ArrayStatsFloat{
+		public float maxValue, minValue, mean, stdDev;
+		public int maxIndex, minIndex;
+	}
+	
+	/** Returns the lowest value in data[] between the indices start and end, inclusive. */
+	public static float getMin(float[] data, int start, int end){
+		float lowest = data[0];
+		for(int i = start; i &lt;= end; i++){
+			if(data[i] &lt; lowest){
+				lowest = data[i];
+			}
+		}
+		return lowest;
+	}
+	
+	/** Returns the lowest value in data[]. */
+	public static float getMin(float[] data){
+		return getMin(data, 0, data.length - 1);
+	}
+	
+	/** Returns the index of the lowest value in data from start to end, inclusive. */
+	public static int getMinIndex(float[] data, int start, int end){
+		int lowest = start;
+		for(int i = start; i &lt;= end; i++){
+			if(data[i] &lt; data[lowest]){
+				lowest = i;
+			}
+		}
+		return lowest;
+	}
+	
+	/** Returns the index of the lowest value in data[]. */
+	public static int getMinIndex(float data[]){
+		return getMinIndex(data, 0, data.length - 1);
+	}
+	
+	/** Returns the lowest value in data[] between the indices start and end, inclusive. */
+	public static float getMax(float[] data, int start, int end){
+		float highest = data[0];
+		for(int i = start; i &lt;= end; i++){
+			if(data[i] &gt; highest){
+				highest = data[i];
+			}
+		}
+		return highest;
+	}
+	
+	/** Returns the highest value in data[]. */
+	public static float getMax(float[] data){
+		return getMax(data, 0, data.length - 1);
+	}
+	
+	/** Returns the index of the lowest value in data from start to end, inclusive. */
+	public static int getMaxIndex(float[] data, int start, int end){
+		int lowest = start;
+		for(int i = start; i &lt;= end; i++){
+			if(data[i] &lt; data[lowest]){
+				lowest = i;
+			}
+		}
+		return lowest;
+	}
+	
+	/** Returns the index of the lowest value in data[]. */
+	public static int getMaxIndex(float data[]){
+		return getMaxIndex(data, 0, data.length - 1);
+	}
+	
+	/** Returns the mean of all values in data[] between start and end, inclusive. */
+	public static float getMean(float[] data, int start, int end){
+		float sum = 0.0f;
+		for(int i = start; i &lt;= end; i++){
+			sum += data[i];
+		}
+		return sum / (1.0f + (end - start));
+	}
+	
+	/** Returns the mean of all values in data[]. */
+	public static float getMean(float[] data){
+		return getMean(data, 0, data.length - 1);
+	}
+	
+	/** Returns the standard deviation of all values in data[] between start and end, inclusive. */
+	public static float getStdDev(float[] data, int start, int end){
+		if(start == end) return 0;
+		float mean = getMean(data, start, end);
+		float stdDev = 0.0f;
+		for(int i = start; i &lt;= end; i++){
+			float x = data[i] - mean;
+			stdDev += x * x;
+		}
+		return ((float)Math.sqrt(stdDev)) / (end - start); //N - 1 for sample standard deviation
+	}
+	
+	/** Returns the standard deviation of all values in data[]. */
+	public static float getStdDev(float[] data){
+		return getStdDev(data, 0, data.length - 1);
+	}
+	
+	/** 
+	 * Returns an object representing many statistics about data[]. They are:
+	 * 
+	 * min: index of lowest value
+	 * max: index of highest value
+	 * minValue: lowest value
+	 * maxValue: highest value
+	 * mean: mean of all values
+	 * stdDev: sample standard deviation of all values 
+	 */
+	public static ArrayStatsFloat getArrayStats(float[] data){
+		ArrayStatsFloat stats = new ArrayStatsFloat();
+		int minIndex = 0 , maxIndex = 0;
+		float minValue = data[0], maxValue = data[0];
+		float sum = 0;
+		for(int i = 0; i &lt; data.length; i++){
+			sum += data[i];
+			if(data[i] &lt; minValue){
+				minValue = data[i];
+				minIndex = i;
+			}
+			if(data[i] &gt; maxValue){
+				maxValue = data[i];
+				maxIndex = i;
+			}
+		}
+		stats.minIndex = minIndex;
+		stats.maxIndex = maxIndex;
+		stats.minValue = minValue;
+		stats.maxValue = maxValue;
+		stats.mean = sum / data.length;
+		stats.stdDev = getStdDev(data);
+		return stats;
+	}
+	
+	/** Returns the lowest value in data[] between start and end, inclusive. */
+	public static double getMin(double[] data, int start, int end){
+		double lowest = data[0];
+		for(int i = start; i &lt;= end; i++){
+			if(data[i] &lt; lowest){
+				lowest = data[i];
+			}
+		}
+		return lowest;
+	}
+	
+	/** Returns the lowest value in data[]. */
+	public static double getMin(double[] data){
+		return getMin(data, 0, data.length - 1);
+	}
+	
+	/** Returns the index of the lowest value in data from start to end, inclusive. */
+	public static int getMinIndex(double[] data, int start, int end){
+		int lowest = start;
+		for(int i = start; i &lt;= end; i++){
+			if(data[i] &lt; data[lowest]){
+				lowest = i;
+			}
+		}
+		return lowest;
+	}
+	
+	/** Returns the index of the lowest value in data[]. */
+	public static int getMinIndex(double data[]){
+		return getMinIndex(data, 0, data.length - 1);
+	}
+	
+	
+	/** Returns the highest value in data[] between start and end, inclusive. */
+	public static double getMax(double[] data, int start, int end){
+		double highest = data[0];
+		for(int i = start; i &lt;= end; i++){
+			if(data[i] &gt; highest){
+				highest = data[i];
+			}
+		}
+		return highest;
+	}
+	
+	/** Returns the highest value in data[]. */
+	public static double getMax(double[] data){
+		return getMax(data, 0, data.length - 1);
+	}
+	
+	/** Returns the index of the highest value in data from start to end, inclusive. */
+	public static int getMaxIndex(double[] data, int start, int end){
+		int highest = start;
+		for(int i = start; i &lt;= end; i++){
+			if(data[i] &gt; data[highest]){
+				highest = i;
+			}
+		}
+		return highest;
+	}
+	
+	/** Returns the index of the lowest value in data[]. */
+	public static int getMaxIndex(double data[]){
+		return getMaxIndex(data, 0, data.length - 1);
+	}
+	
+	/** Returns the mean of all values in data[] between start and end, inclusive. */
+	public static double getMean(double[] data, int start, int end){
+		float sum = 0.0f;
+		for(int i = start; i &lt;= end; i++){
+			sum += data[i];
+		}
+		return sum / (1.0f + (end - start));
+	}
+	
+	/** Returns the mean of all values in data[]. */
+	public static double getMean(double[] data){
+		return getMean(data, 0, data.length - 1);
+	}
+	
+	/** Returns the sample standard deviation of all values in data[] between start and end, inclusive. */
+	public static double getStdDev(double[] data, int start, int end){
+		if(start == end) return 0;
+		double mean = getMean(data, start, end);
+		double stdDev = 0.0;
+		for(int i = start; i &lt;= end; i++){
+			double x = data[i] - mean;
+			stdDev += x * x;
+		}
+		return ((float)Math.sqrt(stdDev)) / (end - start); //N - 1 for sample standard deviation
+	}
+	
+	/** Returns the sample standard deviation of all values in data[]. */
+	public static double getStdDev(double[] data){
+		return getStdDev(data, 0, data.length - 1);
+	}
+	
+	/** 
+	 * Returns an object representing many statistics about data[]. They are:
+	 * 
+	 * min: index of lowest value
+	 * max: index of highest value
+	 * minValue: lowest value
+	 * maxValue: highest value
+	 * mean: mean of all values
+	 * stdDev: sample standard deviation of all values 
+	 */
+	public static ArrayStatsDouble getArrayStats(double[] data){
+		ArrayStatsDouble stats = new ArrayStatsDouble();
+		int minIndex = 0 , maxIndex = 0;
+		double minValue = data[0], maxValue = data[0];
+		double sum = 0;
+		for(int i = 0; i &lt; data.length; i++){
+			sum += data[i];
+			if(data[i] &lt; minValue){
+				minValue = data[i];
+				minIndex = i;
+			}
+			if(data[i] &gt; maxValue){
+				maxValue = data[i];
+				maxIndex = i;
+			}
+		}
+		stats.minIndex = minIndex;
+		stats.maxIndex = maxIndex;
+		stats.minValue = minValue;
+		stats.maxValue = maxValue;
+		stats.mean = sum / data.length;
+		stats.stdDev = getStdDev(data);
+		return stats;
+	}
+	
+	/** 
+	 * Linearly interpolates a value between two indices of data[], given the
+	 * given the "index" to interpolate. For example, given data = {0, 100, 1100}, 
+	 * this function would return 20 for index = 0.2 and 800 for index = 1.7
+	 */ 
+	public static double linearInterpolation(double[] data, double index){
+		double floorVal = data[(int)Math.floor(index)];
+		double ceilVal = data[(int)Math.ceil(index)];
+		double floorFactor = Math.ceil(index) - index;
+		return floorFactor * floorVal + (1.0 - floorFactor) * ceilVal;
+	}
+	
+	/** 
+	 * Linearly interpolates a value between two indices of data[], given the
+	 * given the "index" to interpolate. For example, given data = {0, 100, 1100}, 
+	 * this function would return 20 for index = 0.2 and 800 for index = 1.7
+	 */
+	public static float linearInterpolation(float[] data, double index){
+		double floorVal = data[(int)Math.floor(index)];
+		double ceilVal = data[(int)Math.ceil(index)];
+		double floorFactor = Math.ceil(index) - index;
+		return (float) (floorFactor * floorVal + (1.0 - floorFactor) * ceilVal);
+	}
+	
+	public static void fillArrayWithValue(Object o, float v){
+		if (o instanceof float[])
+			for (int i=0; i&lt;((float[])o).length; i++)
+				((float[])o)[i] = v;
+		else
+			for (int i=0; i&lt;((Object[])o).length; i++)
+				fillArrayWithValue(((Object[])o)[i], v);
+	}
+	
+	public static void fillArrayWithValue(Object array, double value){
+		if (array instanceof double[])
+			for (int i=0; i&lt;((double[])array).length; i++)
+				((double[])array)[i] = value;
+		else
+			for (int i=0; i&lt;((Object[])array).length; i++)
+				fillArrayWithValue(((Object[])array)[i], value);
+	}
+}
+
+
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=David_Alves/Free_Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=David_Alves/Free_Code">View other revisions</a><br>Last edited November 5, 2007 3:00 EST by <a href="robowiki?David_Alves" title="ID 12048 from adsl-71-146-16-10.dsl.pltn13.sbcglobal.net">David Alves</a> <a href="robowiki?action=browse&diff=1&id=David_Alves/Free_Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

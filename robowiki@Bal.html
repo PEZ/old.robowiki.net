@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Bal - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Bal'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Bal">Bal</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Hi...
+<p>
+I've just released my first 'bot <a href="robowiki?N" class=wikipagelink>N</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+At the risk of repeating myself, welcome to the <a href="robowiki?RoboWiki" class=wikipagelink>RoboWiki</a> =) Feel free to post any questions you have, people are generally pretty helpful around here. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Thanks, I can see that you are from the comments I've read around the wiki, because I have a tendency to lurk around a forum or wiki for a few days before joining, to see the general attitude of the people there. I think this may be the only forum / wiki that may hold my interet longer than a month. I tend to get bored very easily with things, especially if I run into any difficulty whatsoever, but it is a habit that I am trying to break :) And I guess I should use the summary field when editing, eh? -- Bal
+<p>
+Welcome to <a href="robowiki?RoboWiki" class=wikipagelink>RoboWiki</a>! I'm pretty new myself only been here a little while. Trust me, its hard to get bored here! There are so much you can program its crazy. If you have any questions just ask, I would be happy to help if I know how. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Hey, welcome! Same goes for me, i'll try to answer any questions you have if I know the answer. --<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a>
+<p>
+Question guys, If i did this: <pre>
+
+    if (Random &gt;= 0.1) {...}
+    else if (Random &gt;= 0.2) {...}
+
+</pre>
+<p>
+Would that be legal robocode? If not, how would I go about doing else if statements? -- <a href="robowiki?Bal" class=wikipagelink>Bal</a>
+<p>
+Yes, that's legal Java / Robocode. (But it's not a loop. =)) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Minor technicalities aside, thanks -- <a href="robowiki?Bal" class=wikipagelink>Bal</a>
+<p>
+Oh, would it work like it should if i had one for every decimal? like 0.1, 0.2, 0.3, or would it call a different one due to &gt;=, or do I avoid that by going in order. -- <a href="robowiki?Bal" class=wikipagelink>Bal</a>
+<p>
+If you had "Math.random()" in each if statement, it would generate a new random number each time; I read what you posted thinking you meant something like "double Random = Math.random()" before the if statements. (I think that's the issue you're asking about... ?) Also, if you do &gt;= 0.1 first, it will never reach &gt;= 0.2, &gt;= 0.3, etc, because that would've matched the first one. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+So the code should be:
+<pre>
+double Random = Math.random();
+if (Random &lt;= 0.1) {...}
+else if (Random &lt;= 0.2) {...}
+...  
+</pre>
+<p>
+So it would be limited to the .X to .A range where .X is the decimal before it, if you understand, heck, if I even understand :P -- <a href="robowiki?Bal" class=wikipagelink>Bal</a>
+<p>
+Yeah, I think that would work the way you want it to =) So if you went up the scale to .9 like that (and one last "else"), you'd have 10 branches that each execute 10% of the time. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Cool, Now its time to think of a way to implement that :) -- <a href="robowiki?Bal" class=wikipagelink>Bal</a>
+<p>
+If I put the code above in my main run, or onscannedrobot, would it loop? Also, having Random = Math.random(); at the end of the command would refresh the variable for the next run through, correct? -- <a href="robowiki?Bal" class=wikipagelink>Bal</a>
+<p>
+It would loop if you put it in your loop. For example:
+<pre>
+public void run(){
+  while (true){
+    double Random = Math.random();
+    if (Random &lt;= 0.1) {...}
+    else if (Random &lt;= 0.2) {...}
+    ...
+    //other main loop code
+  }
+}
+</pre>
+-- <a href="robowiki?Nfwu" class=wikipagelink>nfwu</a>
+<p>
+The on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> event is executed each tick, while the run method is executed once at the beginning of the round, if that helps clarify things. If you declare "double Random" in the on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> event, its scope is only in that method, so doing something to it at the end will have no effect; but if you declare it as an instance variable (in the class itself), that would set it for the next time through the loop. I'd say it seems clearer to just set it to Math.random() before you use it, though. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+The answer is 'yes, that works'.  I assume you are trying to do random movement.  One thing you may find from taking a new random approach every tick is that your movement will tend to average out, either along a path of travel or even crossing back and forth between your point of origin, making you vulnerable to an averaged linear targeting or head-on targeting.  Then again it may work splendidly.  That's for you to discover.  A very minor note: you don't really need &lt;= .. you can do &lt; just as well (and in theory more precisely, though it is trivial) an it is a less costly comparison. -- Martin
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Bal" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Bal">View other revisions</a><br>Last edited February 14, 2007 18:59 EST by <a href="robowiki?Baal" title="ID 9326 from host-208-60-228-47.bhm.bellsouth.net">Baal</a> <a href="robowiki?action=browse&diff=1&id=Bal">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

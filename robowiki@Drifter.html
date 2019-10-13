@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Drifter - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Drifter'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Drifter">Drifter</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H3>Drifter</H3>
+
+<p>
+<H4>Author</H4>
+
+<p>
+<a href="robowiki?Tim_Foden" class=wikipagelink>Tim Foden</a> (tcf)
+<p>
+<H4>Extends</H4>
+
+<p>
+<a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>
+<p>
+<H4>What's special about it?</H4>
+
+<p>
+Nothing much.
+<p>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<p>
+<a rel="nofollow" href="http://www.7sun.com/robocode/robots/tcf.Drifter_20.jar">http://www.7sun.com/robocode/robots/tcf.Drifter_20.jar</a>
+<p>
+<H4>How competitive is it?</H4>
+
+<p>
+Roborumble rating: Drifter 20 -- 1965 after 2047 matches.
+<p>
+For ratings for older versions, and for results in various challenges, see the <a href="robowiki?Drifter/Results" class=wikipagelink>/Results</a> page.
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+<p>
+Before version 20, Drifter was a <a href="robowiki?Movement/GoToBot" class=wikipagelink>GoTo</a> type of bot, with <a href="robowiki?WaveSurfing/ShrapnelSurf" class=wikipagelink>Shrapnel Surfing</a> against HOT, Linear, Circular and <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> predicted bullets.
+<p>
+Version 20 changed this to remove the Shrapnel, and to directly "surf" the <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> data.  It makes up guess factor data for the HOT, Linear and Circular predicted bullets, and basically does  a simple form of <a href="robowiki?CrowdTargeting" class=wikipagelink>CrowdTargetting</a> to merge it's buffers into one.
+<p>
+The arena area is divided up with a 25 pixel grid.  The grid points are initialised by setting some of the points to 1.  These points are: the points closest to the centre of each opponent, and the points halfway between each opponent.  A flood fill algorithm is then used to set all adjacent points to 2.  This is then repeated with 3, and so on, until the whole grid is filled.  Thus this gives an idea of where on the grid is close to and where is far from all dangerous places to be (higher numbers are better.)
+<p>
+After the fill algorithm has completed, points near opponents are set to -999999, so as to avoid hitting them.
+<p>
+It then does a search for the path with the highest value.
+<p>
+It searches only 37 points from an (-8..8, -8..8) square.  The point are (successive diamond shapes where manhattan distance = {0, 4, 8, 12}, and only even points (-8, -6, -4, -2, 0, etc.)
+<p>
+Fot each point to be searched, Drifter models how the robot would move to get to this point, and adds up the grid scores for each tick.  The score for each tick also includes a negative bonus for points intersecting parts of a wave.
+<p>
+<H4>How does it fire?</H4>
+
+<p>
+A <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> gun (with 31 sectors).  The available angle ahead and behind is calculated using a simple lateral acceleration model to predict reality a little better than using the simple asin(8 / bulletSpeed).
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='1'>Version </td><td colspan="0.5"> Segmentation </td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td align="center" colspan='1'>1..3</td><td align="left" colspan="0.5">relative heading (8 segs)  </td><td colspan="0.5">distance (4 segs)</td><td colspan="1"></td></TR>
+<TR VALIGN='CENTER' ><td align="center" colspan='1'>  4 </td><td align="left" colspan="0.5">lateral velociy (5 segs)   </td><td colspan="0.5">distance (4 segs)</td><td colspan="1"></td></TR>
+<TR VALIGN='CENTER' ><td align="center" colspan='1'>  5 </td><td colspan="0.5">abs lateral velocity (3 segs)</td><td colspan="0.5">distance (6 segs)</td><td colspan="1"></td></TR>
+<TR VALIGN='CENTER' ><td align="center" colspan='1'>6..8</td><td colspan="0.5">abs lateral velocity (3 segs)</td><td colspan="0.5">distance (6 segs)</td><td colspan="0.5">lateral acceleration (3 segs)</td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td colspan='1'> 11..13 </td><td colspan="0.5">abs lateral velocity (3 segs)</td><td colspan="0.5">distance (5 segs)</td><td colspan="0.5">lateral acceleration (3 segs)</td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td colspan='1'> 14..17 </td><td colspan="0.5">abs lateral velocity (3 segs)</td><td colspan="0.5">distance (5 segs)</td><td colspan="0.5">lateral acceleration (3 segs)</td><td colspan="0.5">distance ahead</td><td colspan="0.5"></td></TR>
+</TABLE>
+<p>
+Firepower: <br>
+dist &lt;= 100 -&gt; 3 <br>
+dist &gt; 100 -&gt; 2.5 <br>
+max firepower = getEnergy() / 20
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+<p>
+See How does it Move above.
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+<p>
+No difference at this time.
+<p>
+<H4>How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a>?</H4>
+
+<p>
+Fires at closest opponent bot.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+<p>
+<a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> values are saved between rounds.
+<p>
+Nothing is saved between matches.
+<p>
+<H4>Where did you get the name?</H4>
+
+<p>
+Out of thin air.
+<p>
+<H4>Can I use your code?</H4>
+
+<p>
+Nope.  It's too embarrassing to put on public display!  :)
+<p>
+<H4>What's next for your robot?</H4>
+
+<p>
+Improvements to anything that can be improved. :)
+<p>
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+<p>
+Loads... For example (Drifter 13):
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td align="left" colspan='1'>Krabb.sliNk.Garm 0.9rb      </td><td colspan="0.5">-22.7</td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='1'>abc.Tron 2.02               </td><td colspan="0.5">-25.5</td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='1'>areb.Union 1.06             </td><td colspan="0.5">-20.3</td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='1'>chase.na.Seraphim 0.052c    </td><td colspan="0.5">-34.2 !!</td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='1'>cx.micro.Smoke_0.96         </td><td colspan="0.5">-25.5</td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='1'>intruder.<a href="robowiki?PrairieWolf" class=wikipagelink>PrairieWolf</a> 2.61   </td><td colspan="0.5">-29.7 !!</td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td colspan='1'>voidious.mini.Komarious 1.78b </td><td colspan="0.5">-20.7</td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='1'>mladjo.Grrrrr 0.9           </td><td colspan="0.5">-19.2</td><td colspan="0.5"></td></TR>
+</TABLE>
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+<p>
+None.
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+<p>
+Hey, I suggest you segment your gun slightly differently. First things to try are <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a> (3 - 5 segments) and distance ( 5-7 segments,). Next useful is probably acceleration (accelerating, constant velocity, decelerating - make sure to use absolute values of velocity! =) ), then something like time-since-deceleration or time-since-lateral-direction-change. But don't take this as gospel, you might find your own combination that works really well =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Thanks for the comment.  I'll certainly be looking into making my gun better at some point.  As you've noticed... at the moment it's pretty basic!  :)  I literally just made it the simplest thing that could learn to hit <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a>.  Since then, I've just been working on the movement.  I've got it doing pretty well on the (original -- read easy) <a href="robowiki?WaveSurfingChallenge" class=wikipagelink>WaveSurfingChallenge</a> BTW :)  I'll post some results at some point in the future.  But your suggestion will be noted well, and in fact, I can probably use it in the movement, to get my GF based avoidance working. -- <a href="robowiki?Tim_Foden" class=wikipagelink>Tim Foden</a>
+<p>
+<UL >
+<li> [update] Ok, I refactored my code a bit, so that now any changes to the <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> code works for both the gun and for the shapnel, and I changed the segmentation to use lateral velocity (for v4).  This version did better than v3 by about 40 points in the RR. -- <a href="robowiki?Tim_Foden" class=wikipagelink>Tim Foden</a>
+</UL>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Drifter" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Drifter">View other revisions</a><br>Last edited June 5, 2008 21:56 EST by <a href="robowiki?Tim_Foden" title="ID 14064 from cpc2-stev1-0-0-cust137.lutn.cable.ntl.com">Tim Foden</a> <a href="robowiki?action=browse&diff=1&id=Drifter">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>BenHorner/Calculations - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Ben, Horner, Calculations'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Calculations">BenHorner/Calculations</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><hr noshade class=wikiline size=1>
+<H3><a rel="nofollow"  name="Units_of_measure"></a>Units of measure</H3>
+
+these are the units I use throughout this page
+<hr noshade class=wikiline size=1>
+<UL >
+<li> time is measured in (t)urns (getTurn())
+<li> distance is measured in (p)ixels
+<li> angles are measured in (d)egrees or (r)adians
+<li> compound units
+<UL >
+<li> movement speed is measured in p/t (ppt)
+<li> rotational speed is measured in d/t (dpt) or r/t (rpt)
+<li> movement acceleration is measured in ppt/t (pptpt)
+<li> there is no automatic rotational acceleration
+</UL>
+</UL>
+<hr noshade class=wikiline size=1>
+<hr noshade class=wikiline size=1>
+<H3><a rel="nofollow"  name="Movement_and_Combat"></a>Movement and Combat</H3>
+
+all of this is taken from the [<a rel="nofollow" href="http://robocode.sourceforge.net/help/robocode.faq.txt">[Robocode FAQ]</a>] it's just condensed here for my easy use.
+<hr noshade class=wikiline size=1>
+<UL >
+<li> movement values determined in this order:
+<UL >
+<li> heading
+<UL >
+<li> max robot turn rate is 10 - 0.75 * getVelocity() dpt
+</UL>
+<li> acceleration
+<UL >
+<li> accelerating: 1 pptpt
+<li> decelerating: 2 pptpt
+</UL>
+<li> velocity
+<UL >
+<li> max velocity is 8 ppt
+</UL>
+<li> position
+</UL>
+</UL>
+<hr noshade class=wikiline size=1>
+<UL >
+<li> combat
+<UL >
+<li> tracking
+<UL >
+<li> radar turn rate is 45 dpt
+</UL>
+<li> targeting
+<UL >
+<li> gun turn rate is 20 dpt
+</UL>
+<li> ramming (what counts as "moving towards" when hit?)
+<UL >
+<li> both robots lose 0.6 energy
+<li> ram-er gain 1.2 score points
+</UL>
+<li> hitting the wall
+<UL >
+<li> AdvancedRobots<a href="robowiki?action=edit&id=AdvancedRobots" class=wikipageedit>?</a> lose energy max(abs(velocity) / 2 - 1, 0);
+</UL>
+<li> firing bullets
+<UL >
+<li> 0.1 &lt;= bullet power (bp) &lt;= 3.0
+<li> firing drains bp energy from firer
+<li> if (bp &lt;= 1) struck robot loses 4 * bp energy
+<li> if (bp &gt; 1) struck robot loses 6 * bp - 2 energy
+<li> firer gains 3 * bp energy when bullet hits
+<li> bullet speed is 20 - 3 * bp
+<li> gun heat (gh)
+<UL >
+<li> bullets cannot be fired when gh &gt; 0
+<li> gh increases 1 + (bp / 5) when a bullet is fired
+<li> gh drops 0.1/turn (by default, can be changed in interface)
+</UL>
+</UL>
+</UL>
+</UL>
+<hr noshade class=wikiline size=1>
+<hr noshade class=wikiline size=1>
+<H3><a rel="nofollow"  name="Scoring"></a>Scoring</H3>
+
+this part is from [<a rel="nofollow" href="http://robocode.sourceforge.net/help/scoring/scoring.html">[The Robocode Help]</a>]
+<hr noshade class=wikiline size=1>
+<UL >
+<li> the battle score is the sum of these:
+<UL >
+<li> survival score, 50 points for every robot that died before you
+<UL >
+<li> bonus: if you're last, 10 additional points for each robot that died
+</UL>
+<li> bullet damage, total amount of damage inflicted (including ramming?)
+<UL >
+<li> bonus: if you kill an enemy, 20% of the damage you did to that enemy
+</UL>
+<li> ram damage, 2 time the total amount of damage inflicted by ramming
+<UL >
+<li> bonus: if you kill an enemy by ramming, 30% of the damage you did to that enemy
+</UL>
+</UL>
+</UL>
+<hr noshade class=wikiline size=1>
+<hr noshade class=wikiline size=1>
+<H3><a rel="nofollow"  name="Anatomy_of_a_turn"></a>Anatomy of a turn</H3>
+
+this is from [<a rel="nofollow" href="http://robocode.sourceforge.net/help/">[The Robocode Help]</a>]
+(altered so that everything happens with the same time value)
+<hr noshade class=wikiline size=1>
+each turn these things happen in order:
+(cycled so that everything happens with the same time value)
+<UL >
+<li> time is incremented
+<li> bullets move and check for collisions
+<li> robots move
+<UL >
+<li> adjust heading
+<li> adjust acceleration
+<li> adjust velocity
+<li> adjust position
+</UL>
+<li> scans are made
+<li> robots execute their code until their thread is blocked (through action, or time out)
+</UL>
+<hr noshade class=wikiline size=1>
+<hr noshade class=wikiline size=1>
+calculations:
+<p>
+maximize: bppt = bp / ((1+(bp/5))/(cool rate))
+<PRE >
+               = bp * (cool rate) / ((5+bp)/5)
+               = 5 * bp * (cool rate) / (5 + bp)
+</PRE>
+<p>
+<hr noshade class=wikiline size=1>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=BenHorner/Calculations" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=BenHorner/Calculations">View other revisions</a><br>Last edited September 23, 2007 3:31 EST by <a href="robowiki?BenHorner" title="ID 11928 from ip70-171-163-89.om.om.cox.net">BenHorner</a> <a href="robowiki?action=browse&diff=1&id=BenHorner/Calculations">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

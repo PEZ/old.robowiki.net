@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Falcon/WithoutShrinkingTricks - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Falcon, Without, Shrinking, Tricks'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/WithoutShrinkingTricks">Falcon/WithoutShrinkingTricks</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Falcon" class=wikipagelink>Falcon</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H4>Attempt 1</H4>
+
+This is the gist of <a href="robowiki?Aristocles" class=wikipagelink>Aristocles</a> GF gun, though unsegmented. Maybe it can be used to understand <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<strong><a href="robowiki?TargetingChallenge/ResultsFastLearning" class=wikipagelink>TargetingChallenge/ResultsFastLearning</a></strong>
+<p>
+78.26
+<p>
+<strong><a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a></strong>
+<pre>
+$ java -jar /roboleague/codesize.jar -v .
+Falcon$Wave.class code size: 102
+Falcon.class code size: 231
+        Code    Class   Class
+Nr      size    size    files   Location
+-------------------------------------------
+1       333     3169    2       .
+</pre>
+<p>
+<strong>The code</strong>
+<pre>
+package pez.tiny;
+import robocode.*;
+import robocode.util.Utils;
+import java.awt.geom.*;
+
+// This code is released under the RoboWiki Public Code Licence (RWPCL), datailed on:
+// http://robowiki.net/?RWPCL
+//
+// Falcon, by PEZ. How small can I get a GF gunning bot?
+// $Id: Falcon.java,v 1.4 2004/02/16 23:35:12 peter Exp $
+
+public class Falcon extends AdvancedRobot {
+    static final double BULLET_POWER = 3.0;
+    static final double BULLET_VELOCITY = 20 - 3 * BULLET_POWER;
+
+    static final int AIM_FACTORS = 25;
+    static final int MIDDLE_FACTOR = (AIM_FACTORS - 1) / 2;
+
+    static double enemyX;
+    static double enemyY;
+    static int[] aimFactors = new int[AIM_FACTORS];
+
+    public void run() {
+        setAdjustRadarForGunTurn(true);
+	do {
+	    turnRadarRightRadians(Double.POSITIVE_INFINITY); 
+	} while(true);
+    }
+
+    public void onScannedRobot(ScannedRobotEvent e) {
+	Wave wave;
+	addCustomEvent(wave = new Wave());
+	wave.wGunX = getX();
+	wave.wGunY = getY();
+        double enemyAbsoluteBearing = getHeadingRadians() + e.getBearingRadians();
+	enemyX = wave.wGunX + Math.sin(enemyAbsoluteBearing) * e.getDistance();
+	enemyY = wave.wGunY + Math.cos(enemyAbsoluteBearing) * e.getDistance();
+
+	wave.wBearingDirection = (e.getVelocity() * Math.sin(e.getHeadingRadians() - enemyAbsoluteBearing) &lt; 0 ? -1 : 1) * 0.8 / (double)MIDDLE_FACTOR;
+	wave.wBearing = enemyAbsoluteBearing;
+
+	int mostVisited = MIDDLE_FACTOR;
+	for (int i = 0; i &lt; AIM_FACTORS; i++) {
+	    if (aimFactors[i] &gt; aimFactors[mostVisited]) {
+		mostVisited = i;
+	    }
+	}
+	setTurnGunRightRadians(Utils.normalRelativeAngle(enemyAbsoluteBearing - getGunHeadingRadians() +
+	    wave.wBearingDirection * (mostVisited - MIDDLE_FACTOR)));
+
+	setFire(BULLET_POWER);
+
+        setTurnRadarRightRadians(Utils.normalRelativeAngle(enemyAbsoluteBearing - getRadarHeadingRadians()) * 2);
+    }
+
+    class Wave extends Condition {
+	double wGunX;
+	double wGunY;
+	double wBearing;
+	double wBearingDirection;
+	double wDistance;
+
+	public boolean test() {
+	    if ((wDistance += BULLET_VELOCITY) &gt; Point2D.distance(wGunX, wGunY, enemyX, enemyY)) {
+		try {
+		    aimFactors[(int)((Utils.normalRelativeAngle(Math.atan2(enemyX - wGunX, enemyY - wGunY) - wBearing)) /
+				wBearingDirection) + MIDDLE_FACTOR]++;
+		}
+		catch (Exception e) {
+		}
+		removeCustomEvent(this);
+	    }
+	    return false;
+	}
+    }
+}
+</pre>
+<hr noshade class=wikiline size=1>
+<p>
+Shouldn't it be <tt>Math.atan2(enemyX - wGunX<a href="robowiki?action=edit&id=GunX" class=wikipageedit>?</a>, enemyY - wGunY<a href="robowiki?action=edit&id=GunY" class=wikipageedit>?</a>)</tt> in the Wave class to find the angle?  And this all compiles to 331 bytes for me (jikes / windows), the Wave class comes out to 102 bytes. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Indeed. Sloppy me. Thanks for telling! Now wait a few minutes for the new TCFast results. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+so what does the new code look like? why do you make the new wave with a custom event?--<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+Now it's the new code up there. I installed the 2-byte radar protection loop as well, since i suspect the radar slipped now and then. The <a href="robowiki?Wave" class=wikipagelink>Wave</a> is implemented with a custom event because I like to follow the flow of the environment I code in. Robocode has this neat custom event feature which can check my Waves for me, so I let it. And, it gets me pretty small code. See <a href="robowiki?VirtualBullets/VirtualBulletsBot" class=wikipagelink>VirtualBullets/VirtualBulletsBot</a> for some discussion on the matter. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+You might want to wait a while longer before you use the above code. I know from the results that there's something wrong with it. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Shouldn't the middle factor be (Factors+1)/2? --<a href="robowiki?Scoob" class=wikipagelink>Scoob</a>
+<p>
+Nope. The middle factor is factor #12. I'm not so sure the bugs in the code are that huge any longer. The low results against Tron is because I can't stop Tron from shooting! .. But Falcon behaves quite arbritrary against <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a>. Sometimes it gets 100%, but now and then it gets around 50... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+how does this work? : aimFactors[(int)((Utils.normalRelativeAngle(Math.atan2(enemyX - wGunX, enemyY - wGunY) - wBearing)) / wBearingDirection) + MIDDLE_FACTOR]++;  --<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+When the wave is registrered this is done:
+<pre>
+	wave.wBearingDirection = (e.getVelocity() * Math.sin(e.getHeadingRadians() - enemyAbsoluteBearing) &lt; 0 ? -1 : 1) * 0.8 / (double)MIDDLE_FACTOR;
+</pre>
+Which takes the sign of the bearing change from the last scan and multiplies it with 0.8 / MIDDLE_FACTOR. The expression:
+<pre>
+(int)((Utils.normalRelativeAngle(Math.atan2(enemyX - wGunX, enemyY - wGunY) - wBearing)) / wBearingDirection) + MIDDLE_FACTOR
+</pre>
+is basically the reverse of that. Does that make sense?
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+OK, so the TC index is a bit better with a behaving Tron TC. But there are strange things going on still. The results against TAOW varies between 56 and 100. Some battles Falcon can't seem to hit TAOW with a single shot... Yet other times it hits it on par with any other gun I've tested... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<p>
+falcon doesn't hit walls. is that bad?--<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+Would it be bad to use the infinite radar lock?  i.e. - &lt;/tt&gt;set<a href="robowiki?TurnRadarRight" class=wikipagelink>TurnRadarRight</a>(Double.POSITIVE_INFINITY)&lt;/tt&gt; in the run method (with no loop) and <tt>set<a href="robowiki?TurnRadarLeft" class=wikipagelink>TurnRadarLeft</a>(getRadarTurnRemaining<a href="robowiki?action=edit&id=RadarTurnRemaining" class=wikipageedit>?</a>())</tt> in <tt>on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a></tt>?  A lot of my bots use this simply because I'm too lazy to put in more radar code.  And you could probably get away with not having <tt>adjustRadarForGunTurn<a href="robowiki?action=edit&id=RadarForGunTurn" class=wikipageedit>?</a></tt> in there, and if that whole 0.8 / (double) MIDDLE_FACTOR isn't some kind of shrinking trick, then surely using a do-while loop instead of a for loop wouldn't be, either... do those things, and you end up with 315 bytes total.  Another idea - I'm gathering that .8 is what you're using as a max escape angle?  What if you just used 1 instead?   At least one less multiply there I think.  And, if you do that, you can probably get away with not handling the exception in the wave class, and if you don't do it, at least change the conditional statement to set wBearingDirection<a href="robowiki?action=edit&id=BearingDirection" class=wikipageedit>?</a> to -0.8/MIDDLE_FACTOR : 0.8/MIDDLE_FACTOR instead of unnecessarily multiplying.  Then you're around 310 bytes I think.  I guess I'll go away and post it with those and a few more changes to get it under 300 bytes on the <em>other</em> Falcon code page. 
+<p>
+And while I didn't test the old version with Walls, this version I can tell DOES hit Walls, as accurately as you'd expect a completely unsegmented GF gun to hit Walls, probably.  Of course, that doesn't mean it <em>beats</em> Walls while it's stationary. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+yeah...it can hit walls -- <a href="robowiki?JohnDoe" class=wikipagelink>JohnDoe</a>
+<p>
+The exception handling doesn't cost any bytes, does it? I have tried with some different radars but think the 2 bytes the loop costs are worth it. I think you can move your version to the no-shrinking-tricks page if you just remove those events you register. Paste it under the first version. Some of your "tricks" I have already done myself. =) But certainly not all. Amazing how many bytes are lurking there. I can live with the while loop, even if I am a huge fan of for loops. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+What is "Condition"? --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+Condition is a class used to trigger an event when a specific set of circumstances is met. Each of the events that your robot recieves (such as <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>) is triggered by a Condition. I don't any custom conditions in my bots, so maybe someone else can help you out more. --<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Falcon" class=wikipagelink>Falcon</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Falcon/WithoutShrinkingTricks" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Falcon/WithoutShrinkingTricks">View other revisions</a><br>Last edited January 11, 2006 22:21 EST by <a href="robowiki?Wcsv" title="ID 6034 from pool-68-236-57-173.phil.east.verizon.net">Wcsv</a> <a href="robowiki?action=browse&diff=1&id=Falcon/WithoutShrinkingTricks">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

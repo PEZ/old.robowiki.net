@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>DarkHallow/Questions - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Dark, Hallow, Questions'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Questions">DarkHallow/Questions</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?DarkHallow" class=wikipagelink>DarkHallow</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I have a different question now. I have recently tried some experiments in surfing the closest wave only. I wanted to see if this would perhaps make my movement better. Adding code to get the closest wave was straight forward. I modified the danger calculation section so that I only used the selected wave instead of iterating through all the waves. Once that was all set up I went at it with my current favorite test bot <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a>. Then an interesting thing happened. I started to oscilate in place. I was being repeatedly hit at <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> 10 +/- 1 (I use 23 <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a>s in the current version of <a href="robowiki?DarkHallow" class=wikipagelink>DarkHallow</a>). I find this strange. I should be avoiding that <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> like the plauge yet I continue to reverse right to it. So todays question is why? I suspect it has something to do with laying down the direction of the incoming Wave (that which tracks enemy fire) incorrectly. The other option is my projection mechanism is backwards. Anyone have any ideas? -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+Perhaps you're getting caught in a <a rel="nofollow" href="http://www.shef.ac.uk/psychology/gurney/notes/l4/section3_5.html">[local minima]</a> due to not projecting your position when the next wave impacts far enough forward / backward. Are you using <a href="robowiki?RobocodeGL" class=wikipagelink>RobocodeGL</a> to graph your surfing? --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+I have used RCGL to check it and I think it is OK. I should give that a try I suppose. It is a PITA to do though. RCGL is not the fastest thing in the world :( -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+Found it. Anyone notice anything wrong with this code? 
+<pre>
+private Wave getClosetWave() {
+	double nearestDist = 10000;
+	Wave retVal = null;
+	Iterator it = waves.iterator();
+	while (it.hasNext()) {
+		Wave w = (Wave)it.next();
+		if (w.shotOrigin.distance(w.targetLoc) - w.dist &lt; nearestDist) {
+			retVal = w;
+		}
+	}
+	return retVal;
+}
+</pre>
+<p>
+It's tough enough to fight <a href="robowiki?WaveSuffering" class=wikipagelink>WaveSuffering</a> but fighting against yourself too makes it even tougher. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+=) Yeah. A Comparator would fit the bill here I think. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I had though about a comparator. I just have never been a big fan. Ah well. It does not seem to make me much better but I need to pass it to the <a href="robowiki?RoboRumble" class=wikipagelink>[ultimate abitor]</a> to verify. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?DarkHallow" class=wikipagelink>DarkHallow</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=DarkHallow/Questions" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=DarkHallow/Questions">View other revisions</a><br>Last edited November 14, 2004 18:49 EST by <a href="robowiki?Jim" title="ID 3821 from ip68-101-39-12.dc.dc.cox.net">Jim</a> <a href="robowiki?action=browse&diff=1&id=DarkHallow/Questions">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Ender - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Ender'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Ender">Ender</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?Ender/Tests" class=wikipagelink>/Tests</a>
+<p>
+Ender is purely a 1-on-1 fighter (don't even try a melee :-). It is multimode by nature. It keeps statistics for the best methods of aiming, gunloading, dodging and moving. 
+Ender is also an exercise in Extreme Programming. During its development I will use CRC cards, unit testing, acceptance testing, merciless refactoring, release planning and jit (just in time) iteration planning. For the acceptance tests I use qohnils 1v1 ranking of aug 4 2002. For each iteration the goal is to defeat all bots in a certain range in that ranking. 
+<p>
+<a href="robowiki?Vic_Stewart" class=wikipagelink>Vic Stewart</a>
+<p>
+I guess you'll find it hard to follow two of ExtremeProgramming<a href="robowiki?action=edit&id=ExtremeProgramming" class=wikipageedit>?</a>; pair programming and 40-hour week. =) My current acceptance test for <a href="robowiki?Mako" class=wikipagelink>Mako</a> is a 5000 round match against <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a>. And while I don't win it <a href="robowiki?Mako" class=wikipagelink>Mako</a> gets reworked and tuned again and again. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<UL >
+<li>ha ha, yes indeed :-) Actually i'd love to give pair programming a try! -- <a href="robowiki?Vic_Stewart" class=wikipagelink>Vic Stewart</a>
+</UL>
+<p>
+If you develop mock objects or framework for youre unit testing please let me/us know! I have only tried a simple mock object of my robot and i think that's a good start but it would bee more intresting if you where able to simulate the hole robocode environment! /<a href="robowiki?Crippa" class=wikipagelink>crippa</a>
+<p>
+<UL >
+<li>No i don't simulate the whole environment. I use JUnit in which i setup specific environments for each class on trial. Actually, i find this the most difficult aspect of XP. Writing the test before the code is not easy! -- <a href="robowiki?Vic_Stewart" class=wikipagelink>Vic Stewart</a>
+</UL>
+<p>
+<UL >
+<li>Amen to that! /<a href="robowiki?Crippa" class=wikipagelink>crippa</a>
+</UL>
+<p>
+I have to learn about all that kind of stuff for my course, however when it come to robocode i use what i call "BP" or BodgeProgramming<a href="robowiki?action=edit&id=BodgeProgramming" class=wikipageedit>?</a> where i just poke around until it seems to work. I really wish i could be bothered to structure it properly, as it may prevent the constant code overhauling that i have to do... -- <a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+<UL >
+<li>With my first robot Intellibot i also used BP as you call it :-) The problem for me was that the code spun out of control after a while. The more i worked on it, the bigger the file, the harder each consecutive programming effort, the less fun i had. After a while i threw Intellibot in the attic :-) -- <a href="robowiki?Vic_Stewart" class=wikipagelink>Vic Stewart</a>
+</UL>
+<p>
+I find that every so often i have to completely re-factor my code in order to make it legible. Recently i've been trying to completely modularise the different areas of my bot (movement, gun etc.) so i dont have to do this as often. My problem is that although i know roughly what i want to do i am never sure how to do it. And i end up with some of the cruftiest code the world has ever seen.  I blame this for my lack of productivity (ie. why i havent actually released anything yet) -- <a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+<hr noshade class=wikiline size=1>
+The story of Ender.
+<p>
+<p>
+Ender was not created by letting it fight against top bots from the start. 
+As i wanted to practise Extreme Programming i needed to make a release plan.
+I decided to simulate user stories like this: 
+<p>
+<PRE >
+            client: I want Ender to be able to beat ....
+            me: Sure, we will implement that in release number xxxx
+</PRE>
+<p>
+The first release of Ender obviously should be able to defeat the sample bots :-)            
+I took an existing 1-v-1 ranking and planned my second release to be the bottom ten bots from this ranking. 
+After that release the next 10 bots where required to be beaten etc. etc.
+Each release had a simple Acceptance Test: using roboleague i could test that Ender was able to beat the robots required for that release.
+<p>
+During development i encountered some bots that proved to be a real challenge:
+<p>
+Walls (of course :-)
+Everyone has to get past this first hurdle
+<p>
+Battlefortress 2.5 (rank 206):
+The first hurdle after the sample robots. Battlefortress (BF) has very rapid firing which Ender had trouble keeping up with. At that time I found it incredible that BF was so low on the ranking! BF tought Ender how to fire rapid and how to take advantage when the opponent is heading towards you (it takes the Enemy more time to get out of a bullet's path). Also Strafing seemed like a good idea at this time :-)
+Ender had to learn to not get stuck in corners as a result of Strafing.
+Battlefortress took me days!
+<p>
+Rand 1.0 (rank 180):
+Until now, Ender only reacted to the enemy. But Rand was so hard to hit from the distance it kept that Ender had to get closer. I added a movement mode that would try an keep a constant distance to the enemy. This worked :-) Eventually this new mode would become obsolete and would be removed.
+<p>
+Robotron (rank 166):
+Robotron moved so fast that Ender couldn't keep up. It turned out that a bug in my thread baseclass made Ender 2 ticks slower in reaction time than in could be.
+<p>
+RunAround<a href="robowiki?action=edit&id=RunAround" class=wikipageedit>?</a> 1.1 (rank 147):
+Ender could not hit Runaround. Period. But he's got circular aiming, and Spinbot get's bashed! So what's the difference? Well... Runaround moves counterclockwise and a bug caused Ender to miss CCW movement completely. Shame that these things can take up hours of ones time...
+<p>
+R52 1.34 (rank 144):
+"What the f*&amp;^%!" That was my initial reaction when R52 rammed into Ender. Suddenly Ender seemed helpless. I don't know what Ender was doing, but it wasn't pretty... After adding an Anti-Ramming mode R52 never had a chance.
+<p>
+Pasta 2.0 (rank 117):
+Pasta was almost impossible to hit and frustrated me for days. Tweeking and nitpicking ... to no avail ... hmm it was time for a Pattern Analyzer. Inspired by Albert's symbolic pattern codec I went at it. What fun it was to see Ender predict exactly how Walls would take the corners! A shame that Pasta was not that predictable :-( But anyway, the Pattern Analyzer was JUST good enough to beat it consistently, together with the new -extremely complex!- loading algorithm (always shoot a 3.0 bullet :-p )
+<p>
+After defeating Pasta Ender breezed through the ranks...until:
+<p>
+Egotrip 1.3 (rank 64):
+Ender and Egotrip were a good match at this junction. About 50/50 matched. The PATTERN ANALYZER failed completely with this bot. It hit me 30% of the time, while Ender hit it only 15% of the time. Fortunately Ender fires 3.0 and Egotrip fires 1 or 2 so that kept the balance.
+First of all, I tweaked the pattern analyzer and general aiming accuracy: the PA now got 20-30%. Should be enough.
+Also, the aiming and moving stats conversion was too irratic. Ender sometimes had a bad spell at aiming or evasive action which resulted in a dramatic drop in the stats ladder which would then take way too many rounds to recover from (during which time worse algorithms could reap havoc). I dampened this stats behavior and Ender became much more reliable.
+But still Ender had bad spells that could last even 10-15 matches! It turned out that sometimes the right algorithms just didn't surface with the current stats engine.
+Since getting hit 30% of the time == NOT good I also completely rewrote the movement and evasive stats engines. Using EnemyVirtualBullets<a href="robowiki?action=edit&id=EnemyVirtualBullets" class=wikipageedit>?</a> i could detect when the enemy fails hitting Ender and i used this for the new stats algo.
+I improved the evasive manouvers and finally added a RAM mode. BINGO! EgoTrip<a href="robowiki?action=edit&id=EgoTrip" class=wikipageedit>?</a> could not deal with ramming.
+Until now this has been the most difficult bot to beat! It has taken me many days...
+<p>
+Again a jump in the rankings...and YEAAHHHH !! Ender now beats the s*&amp;t out of Rapture :-) Rapture was the white whale of my first robot (intellibot).
+<p>
+Predator 1.8 (rank 34):
+Predator has a pretty good gun and could hit me way too easily. I decided it was time for a serious movement algorithm.
+First of all i tried an idea based on the observation that a bot is smaller when you look at it from one of it's axes. Unfortunately this didn't help against Predator because it often oscillates in a corner, resulting in Ender being too much in the same spot. Hopefully it will be the movement of choice against some enemy someday :-)
+I went on to make a <a href="robowiki?SandboxFlattener" class=wikipagelink>SandboxFlattener</a> movement algo. I had an idea that flattened Ender's movement, AND would incorporate the first idea. It took me about a day to figure out the trig (with help of some nice people at the robocode wiki) and a day to implement it. The first results were disappointing :-( The profile was nowhere near flat enough. It took another day or so to improve and tweak until i could consistently beat Predator. However, the algorithm is not yet perfected and i know exactly what still needs to be done. But in XP you always do that which is necessary and nothing more :-)
+Bummer: The acceptance test failed miserably the first time! It turned out that at high frame rates Ender got loads of skipped turns. 
+I began to realize that the multithreaded structure was causing all kinds of problems here. Also i got a report from Loki that Ender crashes robocode in certain circumstances.
+Ok. I decided to get rid of the threads. Ender would become single threaded again :-) It took me a while but i got there.....It solved the skipped turn problem and i could now consistently defeat Predator.
+<p>
+Next <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>:
+<p>
+Nicator 2.4 (rank 25):
+Nicator slowly creeps nearer and Ender is weak at close range. Why? Because Ender uses the same optimal algorithm for all distances. It's time for <a href="robowiki?DynamicDistancing" class=wikipagelink>DynamicDistancing</a>. 
+Also Ender has no <a href="robowiki?OpeningGame" class=wikipagelink>OpeningGame</a>. That means that Ender idles until he's detected the enemy and sometimes even until the enemy has fired for the first time. I hope i can get Ender to get far enough away from Nicator to tip the balance in Ender's favour.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Out of curiosity, where are the rankings coming from? -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+qohnil's 1v1 ranking of aug 4 2002<br>
+I will publish the 1.0 release when Ender beats that list's no 1: <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a> 1.2<br>
+In reality of course this means that Ender 1.0 will eventually be around #44 in the current Eternal Rumble 1-v-1 ranking.
+Then it's on to Ender 2.0 :-)
+<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+It would bee interesting to have a look at your unitTests if you wouldn't mind charing! Maby you could package a version of Ender including the tests? --<a href="robowiki?Crippa" class=wikipagelink>Crippa</a>
+<p>
+You would be dissappointed to see how boring the JUnit unit tests are ... but i'll include some in Ender's next release if you insist :-) <a href="robowiki?PatternBot" class=wikipagelink>PatternBot</a> is a much more interesting unit test i think... -- <a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Where can I download Ender?  I would like to see it in action.  --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+This is the link according to Google, but I can't get to it right now:
+<p>
+<a rel="nofollow" href="http://robocoderepository.com/BotDetail.jsp?id=1268">http://robocoderepository.com/BotDetail.jsp?id=1268</a> -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Well, I downloaded the robot (thanks, <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>) and I made a team of Buggers (with one hive queen and 4 dependant workers) that defeat Ender (bwa ha ha).  Download the team here: <a rel="nofollow" href="http://www.freewebs.com/bengame/CrazyTracker.zip">http://www.freewebs.com/bengame/CrazyTracker.zip</a> (its in the zipped file along with <a href="robowiki?CrazyTracker" class=wikipagelink>CrazyTracker</a>).  My challenge is to (1) make Ender so it beats the buggers, or (2) make a robot called "Bean" that allies with Ender to defeat the buggers.  Can you do it? --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+some people have not read the book, but i personally think that that idea is hilarious.
+--jeremybub<a href="robowiki?action=edit&id=Jeremybub" class=wikipageedit>?</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Ender" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Ender">View other revisions</a><br>Last edited June 22, 2006 2:24 EST by 70.109.230.210 <a href="robowiki?action=browse&diff=1&id=Ender">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

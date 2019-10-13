@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>BulletDoubling - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Bullet, Doubling'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=BulletDoubling">BulletDoubling</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H4>What is it?</H4>
+
+<p>
+<a href="robowiki?BulletDoubling" class=wikipagelink>BulletDoubling</a> is a system by which multiple bullets are fired so that they will reach the distance of the enemy robot simultaneously, thereby hopefully increasing the chance to hit, adding to the damage done, or confusing the enemy's movement. -- <a href="robowiki?Greywhind" class=wikipagelink>Greywhind</a>
+<p>
+<H4>Robots using it:</H4>
+
+<p>
+<UL >
+<li>An unnamed test bot by Greywhind.
+</UL>
+<p>
+<H4>How is it done?</H4>
+
+<p>
+As I was thinking about interesting ways to improve a robot, I wondered if I could fire two bullets that would arrive at the same time. After some solving of equations, I came up with:
+<pre>
+hitTime = distance / (20 - 3 * power) + currentTime
+</pre>
+to estimate a bullet's hit time (in time since the beginning of the round), and:
+<pre>
+power = (20 - (distance / hitTime - currentTime)) / 3
+</pre>
+to calculate the power required for any bullet to arrive at a certain point in time.
+<p>
+To use this in a robot, one must set up a system where each bullet fired is tested to see if it can catch up to the previous bullet by the time it would reach the enemy robot - then if it can, it should be fired at the correct power to do so, otherwise it should be fired as a power 3 bullet. My code is the following, where trackingFire is equal to either -1 or the round on which the previous bullet should hit:
+<p>
+<pre>
+if (trackingFire != -1) {
+    if (getGunHeat() &lt;= .1 &amp;&amp; getEnergy() &gt;= .1) {
+	  // figure out power here.
+	  double power = (20 - Math.abs(eDist) / (trackingFire - getTime())) / 3;
+	  if (power &lt; .1 || power &gt; 3) {
+		trackingFire = -1;
+	  } else {
+                setFireBullet(power);
+	  }
+     }
+}
+			
+if (getTime() &gt; trackingFire) {
+	trackingFire = -1;
+}
+			
+if (trackingFire == -1) {
+	if (getGunHeat() &lt;= .1 &amp;&amp; getEnergy() &gt;= .1) {
+		double power = Math.min(3, eEnergy/4);
+		setFireBullet(power);
+		// figure out time until hit.
+		trackingFire = (int)(Math.abs(eDist) / (20 - 3 * power) + getTime());
+	}
+}
+</pre>
+<p>
+This code requires a separate system of aiming the gun - it only fires bullets. It also needs a separate method to keep track of enemy's energy, distance, etc. and store them in the correct variables.
+<p>
+Also note that this firing will fire power 3 bullets exclusively (just as if this method didn't exist) when the enemy is too close to hit with two bullets at the same time. -- <a href="robowiki?Greywhind" class=wikipagelink>Greywhind</a>
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions?</H4>
+
+<p>
+This method is currently in use in a bot of mine that doesn't move and only fires head on, similar to <a href="robowiki?WSCBotA" class=wikipagelink>WSCBotA</a> essentially. When I fought it against <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> 1.9996bdTC and compared its score to <a href="robowiki?WSCBotA" class=wikipagelink>WSCBotA</a>, it got 567 bullet damage instead of 79. I'd say that's an improvement... probably even more so in an advanced targeting system using it to fire at the top two likely enemy locations simultaneously. -- <a href="robowiki?Greywhind" class=wikipagelink>Greywhind</a>
+<p>
+An interesting idea, especially if you can get the second bullet 1 tick earlier in place. The more simpler <a href="robowiki?WaveSurfers" class=wikipagelink>WaveSurfers</a> would then ignore the full power bullet. <a href="robowiki?Wolverine" class=wikipagelink>Wolverine</a> has this behaviour only in its <a href="robowiki?VictoryDance" class=wikipagelink>VictoryDance</a> where it shoots three bullets that will hit a disabled target at the same time. My CT-gun does bulletpower adaption to try to intercept the enemy near walls. Just watch <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> against <a href="robowiki?Walls" class=wikipagelink>Walls</a> and you see the same behaviour although with another intention. It is certainly something to investigate.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+It has actually been done before, though I don't have a link for it handy.  I see if I can find it (where you may get some more ideas). -- Martin
+Gah.. can't find the topic it was in.  Maybe someone else rememebers.. -- Martin
+<p>
+This sounds a bit like <a href="robowiki?ChaseBullets" class=wikipagelink>ChaseBullets</a>. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It is like <a href="robowiki?ChaseBullets" class=wikipagelink>ChaseBullets</a>, I see - hadn't seen that page. But it could be a more useful technique combined with, say, GF targeting firing at two likely enemy locations... If you'd like, move this to that page. Too bad - I thought I had something a bit original for once. -- <a href="robowiki?Greywhind" class=wikipagelink>Greywhind</a>
+<p>
+It is very hard to do something original that is also competitive. Sometimes you can pick up an already existing idea and refine it until it actually pays off. Most of the time you will be just busy with your own implementation of the mainstream ideas. But it is still fun!  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Yeah, don't worry about double pages. Lots of stuff s hidden on this site. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=BulletDoubling" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=BulletDoubling">View other revisions</a><br>Last edited February 18, 2006 22:04 EST by <a href="robowiki?PEZ" title="ID 6286 from 1-1-7-24a.dre.sth.bostream.se">PEZ</a> <a href="robowiki?action=browse&diff=1&id=BulletDoubling">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

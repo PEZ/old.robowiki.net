@@ -1,0 +1,317 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Chase-san/PatternBot - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Chase-san, Pattern, Bot'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/PatternBot">Chase-san/PatternBot</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package chase.pm;
+
+import robocode.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+
+import static java.lang.Math.*;
+import static robocode.util.Utils.*;
+
+/**
+ * A simple demonstration of a one on one
+ * pattern matching robot.
+ * 
+ * @author Chase
+ */
+public class PatternBot extends AdvancedRobot {
+	//the deepest backward trace to determine the best match
+	private static final int MAX_MATCH_LENGTH = 500;
+	//Limit the size of the pattern, so that it doesn't get to slow
+	private static final int MAX_PATTERN_LENGTH = 100000;
+	//the maximum angle difference between heading delta's to be considered a match
+	private static final double MAX_ANGLE_DIFF = PI/128; //== 1.40625 degrees
+	//the maximum velocity difference between velocity delta's to be considered a match
+	private static final double MAX_VELOCITY_DIFF = .25;
+	private static int patternLength = 0;
+	private static Rectangle2D.Double battlefield; 
+	private static State head, tail;
+	private double lastHeading, lastVelocity;
+	private Point2D.Double nextPredicted;
+	private ArrayList&lt;Point2D.Double&gt; bestList;
+	
+	public void run() {
+		//adjust for all the turns, by way of hierarchy
+		//this adjusts the radar for robot turn aswell
+		setAdjustGunForRobotTurn(true);
+		setAdjustRadarForGunTurn(true);
+		
+		//some nice flamy red colors
+		setColors(Color.red, Color.red, Color.red);
+		
+		//Add a break to the pattern, so that we don't
+		//track patterns that never happened
+		addBreak();
+		lastVelocity = 100;
+		
+		//setup the battlefield for later
+		if(battlefield == null) {
+			battlefield = new Rectangle2D.Double(17,17,
+					getBattleFieldWidth()-34,
+					getBattleFieldHeight()-34);
+		}
+		
+		//spin the radar
+		do {
+			turnRadarRightRadians(Double.POSITIVE_INFINITY);
+		} while(true);
+	}
+	
+	public void onScannedRobot(ScannedRobotEvent e) {
+		//This is the direct angle to the enemy
+		double eAbsoluteBearing = getHeadingRadians() + e.getBearingRadians();
+		
+		if(getEnergy() &lt; 0.09) return;
+		
+		//since this is one on one robot, reset the radar
+		//we do this first as the lag may cause the robot
+		//to skip a turn, this way we don't have broken scans
+		
+		//this is an advanced no-slip one on one radar
+		double radar = normalRelativeAngle(eAbsoluteBearing - getRadarHeadingRadians());
+		double arcToScan = atan(36.0 / e.getDistance());
+		radar += (radar &lt; 0) ? -arcToScan : arcToScan;
+		setTurnRadarRightRadians(radar);
+		
+		//Initialize some more variable
+		double eHeading = e.getHeadingRadians();
+		double eVelocity = e.getVelocity();
+		double eDistance = e.getDistance();
+		Point2D.Double myLocation = new Point2D.Double(getX(), getY());
+		Point2D.Double eLocation = project(myLocation,eAbsoluteBearing,eDistance);
+		
+		if(lastVelocity == 100) {
+			lastHeading = eHeading;
+			lastVelocity = eVelocity;
+			return;
+		}
+		
+		//record the latest data into the pattern
+		addState(eHeading, eVelocity);
+		
+		//check and eliminate extra states over the limit
+		while(patternLength &gt; MAX_PATTERN_LENGTH) pruneTail();
+		
+		//update the last heading and velocity
+		lastHeading = eHeading;
+		lastVelocity = eVelocity;
+		
+		//check to see if we need to fire this tick
+		if (getGunHeat()/getGunCoolingRate() &lt; 5 &amp;&amp; patternLength &gt; 3) {
+			//determine the bullet power and speed
+			double bulletPower = 3;
+			double bulletSpeed = 20-3*bulletPower;
+			
+			//now for the meat of the gun, we scan from the head
+			State state = head.reverse.reverse; //atleast 2 back
+			int deepestDepth = 2; //to save time
+			Point2D.Double predictedLocation = null;
+			while(state.reverse != null) {
+				if(!state.isBreak &amp;&amp; matchState(state, head)) {
+					State state2 = state.reverse;
+					State recent = head.reverse;
+					int depth = 1; //could be 0 aswell
+					//check to see if the state is a match for the current state
+					while(matchState(state2,recent) &amp;&amp; depth &lt;= MAX_MATCH_LENGTH
+							&amp;&amp; !state2.isBreak &amp;&amp; !recent.isBreak) {
+						depth++;
+						state2 = state2.reverse;
+						recent = recent.reverse;
+					}
+					//now play it forward to determine where to aim, but
+					//only if the depth was deeper then the deepest
+					if(depth &gt; deepestDepth) {
+						state2 = state.forward;
+						Point2D.Double predict = eLocation;
+						int predictTime = -1;
+						double heading = eHeading;
+						double velocity = eVelocity;
+						ArrayList&lt;Point2D.Double&gt; list = new ArrayList&lt;Point2D.Double&gt;();
+						while(battlefield.contains(predict)
+							&amp;&amp; predictTime++ &lt; predict.distance(myLocation)/bulletSpeed
+							&amp;&amp; state2 != null &amp;&amp; !state2.isBreak) {
+							heading = normalRelativeAngle(heading + state2.headingDelta);
+							velocity = max(-8, min(8,velocity + state2.velocityDelta));
+							predict = project(predict,heading,velocity);
+							list.add(predict);
+							state2 = state2.forward;
+						}
+						if(battlefield.contains(predict)
+						&amp;&amp; predictTime &gt; predict.distance(myLocation)/bulletSpeed) {
+							bestList = list;
+							deepestDepth = depth;
+							predictedLocation = predict;
+						}
+					}
+				}
+				state = state.reverse;
+			}
+			
+			nextPredicted = predictedLocation;
+			
+			if(getGunTurnRemaining() &lt; .5 &amp;&amp;
+				nextPredicted != null) setFire(bulletPower);
+			
+			double aimAngle = eAbsoluteBearing;
+			if(predictedLocation != null)
+				aimAngle = absoluteAngle(myLocation, predictedLocation);
+			double angle = normalRelativeAngle(aimAngle-getGunHeadingRadians());
+			setTurnGunRightRadians(angle);
+	}
+	
+	public void onPaint(Graphics2D g) {
+		g.setColor(Color.white);
+		if(bestList != null) {
+			Point2D.Double last = null;
+			for(int i=0;i&lt;bestList.size();i++) {
+				Point2D.Double c = bestList.get(i);
+				if(last == null) {
+					g.setColor(Color.red);
+					g.fillOval((int)c.x-4, (int)c.y-4, 8, 8);
+					g.setColor(Color.white);
+				} else {
+					g.drawLine((int)last.x, (int)last.y, (int)c.x, (int)c.y);
+				}
+				last = c;
+			}
+		}
+		if(nextPredicted != null) {
+			g.drawString("Next Point: ("+(float)nextPredicted.x
+				+","+(float)nextPredicted.y+")", 0, 5);
+			g.setColor(Color.GREEN);
+			g.fillOval((int)nextPredicted.x-4,
+					(int)nextPredicted.y-4, 8, 8);
+		} else {
+			g.drawString("Next Point: null", 0, 5);
+		}
+		g.setColor(Color.white);
+		g.drawString("Pattern Length: " + patternLength, 0, 20);
+	}
+	
+	public boolean matchState(State s1, State s2) {
+		if(s1 != null &amp;&amp; s2 != null &amp;&amp;
+			abs(s1.headingDelta - s2.headingDelta) &lt;= MAX_ANGLE_DIFF
+		&amp;&amp; abs(s1.velocityDelta - s2.velocityDelta) &lt;= MAX_VELOCITY_DIFF) {
+			return true;
+		}
+		return false;
+	}
+	
+	public void pruneTail() {
+		State temp = tail;
+		tail = tail.forward;
+		tail.reverse = null;
+		temp.forward = null;
+		patternLength--;
+	}
+	
+	public void addState(double heading, double velocity) {
+		patternLength++;
+		State s = new State();
+		s.headingDelta = normalRelativeAngle(heading - lastHeading);
+		s.velocityDelta = velocity - lastVelocity;
+
+		_addState(s);
+	}
+	
+	public void addBreak() {
+		patternLength++;
+		State s = new State();
+		s.isBreak = true;
+		
+		if(head == null) {
+			head = s;
+		} else {
+			_addState(s);
+		}
+	}
+	
+	private void _addState(State s) {
+		State tmp = head;
+		head = s;
+		head.reverse = tmp;
+		tmp.forward = head;
+		if(tail == null) {
+			tail = tmp;
+		}
+	}
+	
+	public static final Point2D.Double project(Point2D.Double l, double a, double d){
+		return new Point2D.Double(l.x + d*Math.sin(a), l.y + d*Math.cos(a));
+	}
+	public static final double absoluteAngle(Point2D source, Point2D target) {
+		return Math.atan2(target.getX() - source.getX(), target.getY() - source.getY());
+	}
+}
+
+//only in the same file for completeness
+class State {
+	double headingDelta, velocityDelta;
+	boolean isBreak;
+	State reverse, forward;
+	
+	public State() {
+		isBreak = false;
+	}
+}
+</pre>
+<p>
+<H3>Comments</H3>
+
+I made this bot for three reasons, one to jumpstart my creation of a decent pattern matching robot (probably folding), to gain more advanced knowledge of the nicities surrounding pattern matcher design, and to make a very well commented base bot for people who do not yet understand pattern-matchers (like me) and wanna try to learn. While the comments are a little flaky (as am I), I post it here for the world (or atleast the other members of the wiki) to edit and allow correct all my horrible programming mistakes and shabby commenting (even though CommentsAreBad<a href="robowiki?action=edit&id=CommentsAreBad" class=wikipageedit>?</a>). 
+<p>
+I'll post some challenge scores for it in a bit. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Also if someone can tell me while it sometimes misses <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> when it aims at a left or right edge (relatively) of SpinBots<a href="robowiki?action=edit&id=SpinBots" class=wikipageedit>?</a> circle, that the bullets just misses as <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> drives away (dispite a hour of debugging I couldn't come up with a solution). --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+It sounds like it might be a 1-off problem. But to me your movement-rebuilding code seems horribly, and unnecessarily complex. Take a look in <a href="robowiki?Waylander" class=wikipagelink>Waylander</a> for a REALLY simple way to rebuild the movement. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+<DL >
+<dt><dd> What can I say, I haven't made many <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatchers</a>, the rebuild step is based off foggy ememories of what I saw in early editions of chalk. But i'll take a look at waylander. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<dt><dd> You must also remember this is not a symbolic or folded pattern matcher, this is one of the original kind that (I like to think, but not so nicely) and its supoose to be simple. While the point2d project is a tad more complex then yours, they two different styles do more or less the same thing, mine isn't fast, because its not suppose to be, it is complex, only because it is suppose to be simple. Overally I see no trick in yours that would easily translatable to the code above in the rebuild step, as they are both about the same in that. Thought it is true I am disabled, so if I missed something obvious in your code that would simplify this (and thats not symbolic or folded in nature), I would be glad to have it explained. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</DL>
+<p>
+I just took a thorough look through your rebuilding code, and I can see the problem. Rather than seeing whether the bullet would have traveled as far as the enemy in that amount of time, you presume that the enemy will be at the same distance as they are currently, and then subtract from that. What this doesn't factor in is if the enemy is moving away or towards you, that this will change the bullet flight time. So rather than subtracting from bulletDistance, initialize it to zero, and add to it each time. When the distance from your current location to the predicted enemy location is smaller than the bulletDistance, then break the loop. Another point: it would probably be quicker to find the longest match, and only then rebuild the movement. Otherwise you will rebuild a movement every single time you find a longer match than you had before.  -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+<UL >
+<li> However if you do that then there is no guarantee that the longest match can be rebuilt without a end game break or going off the field. Also I fixed the code to correct that problem, it now easily destroys <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> as it should. (most predictable pattern in existance, even hitting walls) --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</UL>
+<p>
+<UL >
+<li> What I would do is create an array of Match objects, and sort them by length. Then rebuild from longest to shortest, until you have one that stays in the field and doesn't go into another round. But I am a bit of a perfectionist with regard to implementations =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+<UL >
+<UL >
+<li> I think this way is a tad simpler in the way that its all togeather in one place, I was trying to make it simple as a start point. But it is still true I am new to pattern matchers, but to just see one work is amazing (this one especially as it maps out the path in the graphics) --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<li> The only reason I say that is because speed is usually an issue for pattern matchers. Yep, that is pretty cool, isn't it =). Have you tried it in the PMC yet? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<UL >
+<li> Yah there you go, some results for yah, old fashioned pm gun. Nothing fancy, just what you see here. I updated the gun above to the configuration I used in the PMC, except for the bulletPower. I didn't skip a round during the whole PMC so I figure its pretty decent. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</UL>
+</UL>
+</UL>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Chase-san/PatternBot" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Chase-san/PatternBot">View other revisions</a><br>Last edited January 11, 2008 6:56 EST by <a href="robowiki?Chase-san" title="ID 13072 from ppp-69-216-38-6.dsl.klmzmi.ameritech.net">Chase-san</a> <a href="robowiki?action=browse&diff=1&id=Chase-san/PatternBot">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

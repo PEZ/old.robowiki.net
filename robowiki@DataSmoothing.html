@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>DataSmoothing - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Data, Smoothing'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=DataSmoothing">DataSmoothing</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Many bots collect data on their opponents to base decissions on. Sometimes raw data is used, sometimes the data is processed.
+<p>
+This page presents a discussion on <a href="robowiki?DataSmoothing" class=wikipagelink>DataSmoothing</a> and DataWindowing<a href="robowiki?action=edit&id=DataWindowing" class=wikipageedit>?</a> that was originally held on different pages on this wiki. It's not really structured yet, but at least the information can be found on one page.
+<p>
+Related topics/pages:
+<UL >
+<li> <a href="robowiki?BinSmoothing" class=wikipagelink>BinSmoothing</a>
+</UL>
+<hr noshade class=wikiline size=1>
+from the <a href="robowiki?SilverSurfer/History" class=wikipagelink>SilverSurfer/History</a>'s page:<br>
+About smoothing in the gun or not. You're right, neither <a href="robowiki?Jam" class=wikipagelink>Jam</a> nor I have gotten it to work better than unsmoothed updates and reads from the stat buffers. That's not to say that it doesn't work though. After all <a href="robowiki?Jam" class=wikipagelink>Jam</a>'s and my GF guns are all based on <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> and from there they followed almost the same evolutionary path. I think <a href="robowiki?Mue" class=wikipagelink>Mue</a>'s gun works best when smoothing the data. Mue can correct this or give more info. That said, I fail to see why smoothing should be needed. What's wrong with firing at the GF where you've seen the enemy most often? (Not regarding surfers here of course.) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Well, in my gun i update all guess factor bins covered by the target bot when a wave hits. And when selecting the guess factor to fire at i also take bot width into account. I'm not sure whether this qualifies as smoothing. But still the Bee gun is better than mine, so you are probably better of with listening to <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> :-). --<a href="robowiki?Mue" class=wikipagelink>Mue</a>
+<p>
+What makes you say Bee is better than Ascendant's gun? Have you tested the latest version in the <a href="robowiki?RRGunChallenge" class=wikipagelink>RRGunChallenge</a>? My guess is that your gun is stronger than mine. And, no, I wouldn't call what you are doing "smoothing". -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I call it "windowing". It has a 'smoothing'-like effect ofcourse. It 'transforms' your max<a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> wide array into a smaller array.
+<p>
+Suppose you originally have something like (with only 9 bins):
+<pre>0 3 4 1 1 0 0 6 0</pre>
+In this case you would shoot at gf 8. Suppose at (very) close range the relative width of the opponent is 3 bins. Windowing results in:
+<pre>7 2 6</pre>
+this time you would shoot at a negative gf instead of the positive gf. It gained me about 5 points in the rankings. my 2 cts. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<p>
+And do you do this windowing on reading the stats only or do you do it when registrering the hits too? 5 ranking points would make me King again! =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li> only when i read the stats (so just before selecting the best GF). I keep the original data untouched, except when i apply aging. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+</UL>
+<p>
+I dont really reduce the size of my guess factor array. My kind of 'windowing' would result in:
+<pre>x 7 8 6 2 1 6 6 x</pre>
+(the x mark the borders where special treatment is required) in other word the windows i use overlap each other. Then the third bin (counting from left) would be chosen.
+<p>
+@<a href="robowiki?PEZ" class=wikipagelink>PEZ</a> Then i'll release a new AscendantRRGC<a href="robowiki?action=edit&id=AscendantRRGC" class=wikipageedit>?</a> soon, so that we get a definite answer. --<a href="robowiki?Mue" class=wikipagelink>Mue</a>
+<UL >
+<li> this is a diiferent approach but you still reduce the effects of single peaks and would also shoot at a negative gf like i would. My idea of reducing bins is because it doesn't matter if you hit him at the center or the sides. But this probably works equally well and with the same gf-to-angle routine, while i have to adjust for reducing the maximum<a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a>.<br>
+</UL>
+succes to both of you in this head-to-head race for the top. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<p>
+<UL >
+<li> Thanks! This is an endless run... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+</UL>
+<p>
+About the smoothing, seems that it is needed at least for me... About Loki´s windowing, isn´t it almost the same as a smoothing by 1/(n^2)? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Congrats on making 2057 Axe! Your gun is shaping up at last. =)
+<p>
+I think your smoothing is more like Mue's windowing than Loki's. But it's not the same. Windowingworks on bot width which means there's no "smoothing" at all at distances where we have only 1 bin / bot_width. While at close distances we have massive "smoothing". I've now released a CC .49 which uses something like Mue's overlapping windowing I think. Like so:
+<pre>
+	for (int i = 1; i &lt; FACTORS; i++) {
+	    double visits = 0;
+	    for (int j = Math.max(1, i - botWidth / 2); j &lt; Math.min(i + botWidth / 2, FACTORS - 1); j++) {
+		visits += visits[j];
+	    }
+            ...
+        }
+</pre>
+Does that look like it should work? Intutively it seems like I would need some edge protection, but trying to apply it it seemed like it lowered the performance...
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li> seems like this topic has been 'finalised'. But just to add my last question: am i the only one who uses the relative botwidth to determine the maximum GF? --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+</UL>
+<p>
+Well in the code above the edges will be chosen less often than the middle bins. Thats why i compute the average instead of the sum of the bins in a window. This makes no difference when comparing windows with the same size, but smaller windows are no longer at a disadvantage (thats my reasoning at least). I have to admit though that i never tried without that protection. 
+<p>
+BTW: The Bee gun rates 7 points higher than <a href="robowiki?Ascendant" class=wikipagelink>Ascendants</a> current gun in the <a href="robowiki?RRGunChallenge" class=wikipagelink>RRGunChallenge</a>. q.e.d. :-) --<a href="robowiki?Mue" class=wikipagelink>Mue</a>
+<p>
+Yeah, and maybe I lose 7 points by applying windowing. =) Averaging each window, great idea! I'll try that next. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Using the average for each window in my dev version now, looks good in my first tests. Stay tuned. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Thanks, <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>... Actually most of the points i gain in gun came from your 1.9 power bullets (Thanks, man!) idea. These last ~6 pts, came only from movement (the DinamicDistancing<a href="robowiki?action=edit&id=DinamicDistancing" class=wikipageedit>?</a>, see History)! The good news is that i´m fullfilled with ideas to try myself a crown-strike... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Against <a href="robowiki?Quest" class=wikipagelink>Quest</a> my windowing implementation works increadibly well. But over all in the rumble I lose 15+ points. My first implementation without averaging lost me "only" 7 points. I guess gun smoothing of any kind is not for Bee. Yet. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<hr noshade class=wikiline size=1>
+from <a href="robowiki?Tron" class=wikipagelink>Tron</a>'s page:<br>
+Like I said, I tried countless wavesurfing variants. The 2.48 to 2.49 jump (that put me in the 2kclub) consisted in the removal of the flattener. Shadow 2.49 surfs hits only, segmented by distance (9), acceleration (3), speed (3), and using 19 bins. I also increased the data smoothing (adapting speed) a lot, smoothing the data not only across bins but also across segments. That way Shadow only needs to take 1 hit from a <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a> bot to instantly dodge it "perfectly". And that's where, imo, most of the ranking points come from. -- ABC 
+<p>
+YES! That's how to do it! Thanks for sharing! -- PEZ 
+<p>
+Bloody brilliant. That way you can have more segments, without "paying the cost" for it. Now it makes a lot of sense the zero diff without saving. Highly adaptive. Congratulations, and thanks for sharing... -- Axe 
+<p>
+..Snip..<br>
+<p>
+An implementation question for you. I don't know if you have noticed the problems I had with smoothing the edge bins? (The edge bins don't have neighbours on boths sides so they presumably get a too low smoothed count.) Do you think this is a real problem? And if you do, what strategy do you have for countering it? If it is a real problem I guess it get even more important to deal with it when smoothing across segments. -- PEZ 
+<p>
+OK, there's no way I can fit segment smoothing. But I now try with using two sets of visit counts. One unsegmented and one segmented (5 distance, 3 bullet power) using the unsegmented one when the segmented one is unvisited. I doubt this will make a huge rating difference, since P already avoids head on fire as perfect as it can while still wall bouncing as much as it does. -- PEZ 
+<p>
+I don't have a definitive answer for the edge smoothing problem... I thought a lot about it, but I don't remember how (if) I solved it. How do you deal with it in your GF gun? 
+<p>
+Another kind of solution for the learning speed problem I used in some versions of Shadow is to compute the danger of each set of possible segmentations by either using multiple sets of visit counts or just summing the sub-segments. It also worked very well, I did something like this: 
+<p>
+gfDanger = danger2 * dists * acels + danger1 * dists + danger0
+where danger2 is the most segmented visit count, and danger0 is the sum of every visit to the current bin (no segmentation). With this kind of solution you only need bin smoothing to garantee the fastest possible learning rate against simple guns. 
+I would expect veteran GF gun coders to know how to solve these problems better than me. :) 
+<p>
+-- ABC 
+<p>
+I don't smooth my gun GFs. Not that I haven't tried. I have tried it in at least five different ways. But I have never seen it result in better performance. I have now removed the edge smoothing in Pugilist. It doesn't seem to make a difference against my fav test bot (Lacrimas). 
+<p>
+Your suggestion for learning speed improvements is about what I ended up doing. Well, as much of it as I could fit in 35 bytes that is. =) 
+<p>
+-- PEZ 
+<p>
+<hr noshade class=wikiline size=1>
+from the <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>'s page:<br>
+(originally from the <a href="robowiki?RoboRumble/RankingChat" class=wikipagelink>RoboRumble/RankingChat</a> discussion) 
+<p>
+As for weighting the bins in a GF gun... When I was first building my GF gun, I tried coming up with a good concept of picking the angle to shoot at. (This isn't really the same as what you were mentioning, but it kindof applies.) Anyway, at the time, just shooting at the highest bin seemed a little too simple to me to actually work properly (the KISS principle usually hates me (that sounds wrong on multiple levels... lol)). Anyway, so I figured, how about I pick, say, the top 3 peaks in the graph, then do a weighted random selection of the 3. Of course, this is of no real use. Say you have 5 angle bins (I know it's more like 30, but bear with me). 3 of these are empty, bin 'a' has 20 hits, and bin 'b' has 10 hits. Thus 2/3 of the time, the enemy is found at 'a', and 1/3 of the time the enemy is found at 'b'. With a weighted randomization, 2/3 of the time it chooses the 'a' bin, and 1/3 of the time it chooses the 'b' bin. Mathematically, this adds up to 1/2 (or 5/9, I forget) chance of hitting. But just shooting at the highest bin gives you a 2/3 chance of hitting! After more work I ended up just assuming that, provided the distribution of angles is consistent, your probability of hitting the enemy cannot exceed the probability of hitting by always firing at the highest bin. There's my obvious conjecture about GF guns : ). I'm sure there's a mathematical proof for it, but I'm really quite sick of math for a while. There's my blurb on GF guns. I'm going to bed : ) -- Vuen 
+<p>
+Shooting at the highest bin might work very well. But I think there are situations where it can be wiser to shoot at the densest part of the curve rather than at the peak. This is what <a href="robowiki?VisitCountStats/Dynamic" class=wikipagelink>VisitCountStats/Dynamic</a> is about. I have yet to prove that it works though since I have this bug in <a href="robowiki?GloomyDark" class=wikipagelink>GloomyDark</a>... -- PEZ 
+<p>
+Jekyl use's a simplified kernel density estimator to find the "densest" part of the curve. My implementation of the estimator (called a nieve estimator) buckets a guess factor with some number of neighboring bins that surround it (left and right). I then count all occurances that happen with that range and compare this with all other such "windows" to arrive at the window with the highest probability of occurance. I have implemented it in such a way that I can dynamically adjust the window size on the fly. Currently I use a large window for close range (where it is possible for guess factors to overlap) and a smaller window at longer ranges (where they are less likely to overlap). One un-intended side effect of this is that you need to come up with some algorithm for handling the edges and near edges (-1, +1) as they have no||few left||right neighbors. This tends to concentrate your fire more toward the center. Now that I type this I wonder if this was the reason for <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> 1.91 and lower to default firing at +1/-1 when a target was beyond some set distance. Paul, care to share? A yes or no answer (addressing the +1/-1 statement) is enough for me. -- jim 
+<p>
+I believe DT fired at +1.0 when the distance array was out of bounds - in normal battles this never happened because I measure distance as bullet flight time, and over long distances I used fast bullets or no bullets at all. Then the movement challenges came requiring DT to fire 3.0 bullets, and the bug was discovered. -- Paul 
+<p>
+Can I suggest you change the window size basd on the number of sampled points you have rather than the distance - with more sample points you have a better chance to find small and thin peaks and reduce the effect of the edges. However I would not reduce the window size to smaller than the apparent width of the bot (you will need to convert your data into guess factor ranges for this. -- Paul Evans 
+<p>
+Thats one method that I had not thought to try. I will have to give this a shot (no pun intended) soon. -- jim 
+<p>
+Interesting. Now I'm tempted to move Fractal's smoothing functions to make it gather all data normally and smooth on the fly instead of smoothing as it puts it in the bins. However I'm not sure if it will make much difference. I had originally thought of setting the gaussian smooth's deviation factor as a function of distance (i.e. smoothing across the angles that make up the width of the bot), but I guess I never got around to doing it. This does sound like a good idea though. Maybe I'll try that too sometime when I find some time to burn on Fractal. Let me know how varying the window size works for you jim :) and good luck with it! -- Vuen 
+<p>
+There are 2 things which need to work together. First is updating all bins where hits for a wave can happen, maybe with different factors varying by how big is the part of bot in that bin. For this part of collecting data one should use fixed bots size of 36 in each direction. You may also try to keep your wave flying for a few ticks after the hit, just to update all possibly successful bins. Then there is another thing when selecting best shooting offset. Here you should adjust for actual bots size as visible by bullet form its angle. I think that is what Paul mean by 'apparent width'. I am doing this, but only for distances less then 300 (I have 30 bins). For larger distances it somehow don't work here. -- Frakir 
+<p>
+Vuen FYI DT does it's smoothing whilst it is putting data in the bins. Doing it on the fly would make it very slow indeed. -- Paul Evans 
+<p>
+Frakir you are a genious! I wish I had a bugfree gun that I could test that idea with keeping the wave updating all possible bins. Right now I am registering the "hit" when the wave is some 20 pixels from reaching the enemy. I would really need some pseudo code for the part with "factors varying by how big is the part of bot in that bin" though. I somehow have trouble wrappingmy mind around the problem. (Maybe that is because I am up really, really early today...) -- PEZ 
+<p>
+I've tried doing this a couple different ways - one is just incrementing buckets every tick a wave would hit an enemy (might make it a circle enemy to make it easier), and not removing it until it has passed all the way through. The other option is to keep an array of booleans and set the ones that hit at any point in time to true (then increment the true buckets after the wave has already passed through). The latter is what I suspect DT does, or did when it first started using waves, because Paul said it was functionally equivalent to the original VB system, and that would basically be the way to do that (treating each wave as an array of VB's, so to speak). -- Kawigi 
+<p>
+Ah, thanks Paul. I'll change its smoothing now to set the standard deviation to the width of the tank, and test it out; I may also switch to just using a boolean array finding everywhere it hits, like Frakir suggests, and compare it to the other way. -- Vuen 
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=DataSmoothing" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=DataSmoothing">View other revisions</a><br>Last edited December 22, 2007 0:29 EST by <a href="robowiki?AaronR" title="ID 12875 from 28.173.33.65.cfl.res.rr.com">AaronR</a> <a href="robowiki?action=browse&diff=1&id=DataSmoothing">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

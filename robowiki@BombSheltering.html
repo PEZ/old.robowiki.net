@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>BombSheltering - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Bomb, Sheltering'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=BombSheltering">BombSheltering</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>(Original post by <a href="robowiki?Scarpia" class=wikipagelink>Scarpia</a>)
+<p>
+Something equivalent was mentioned by <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> <a href="robowiki?WantedTerrain" class=wikipagelink>elsewhere</a>, but I thought the strategy deserved a page and a discussion of its own. I sketched this idea for my first series of bots, although I never implemented it. It is basically a <a href="robowiki?Movement" class=wikipagelink>Movement</a> technique of hiding behind weak bots to avoid being hit in <a href="robowiki?Melee" class=wikipagelink>melee</a> battles.
+<p>
+When hit by a bullet, we create a Line2D through the centers of the attacking bot and the weakest bot we can find. This bot is our bomb shelter. We then determine a point on the line that is 'behind' the bomb shelter (ie. the distance to the attacker is greater than the range between the attacker and the bomb shelter) and go to that point. After that, we stay on the line behind our shelter.
+<p>
+Once the shelter's energy level drops too far, we find a new bomb shelter to hide behind.
+<p>
+Also, an obvious strategy would include monitoring both of the two robot's energy levels, and determining when one of the attacker's bullets has hit the bomb shelter, then jumping out of hiding just long enough to fire a bullet at the attacker.
+<p>
+This is all just a thought; as I said I didn't implement it because I went on to 1v1 bots, but could it be done?
+<p>
+Main issues I can think of:
+<UL >
+<li> In melee, many bots sit in corners to avoid ending in crossfire. Trying to hide behind a bot is not possible if everyone else is in a corner.
+<li> The attacking bot could adapt a <a href="robowiki?Targeting" class=wikipagelink>Targeting</a> system to counter this; aim to one side of the bomb shelter and then turn in the opposite direction to force the hiding bot into the line of fire at just the right time.
+<UL >
+<li> On the other hand, this is only really feasible if the bomb shelter has really really simple movement.
+</UL>
+<li> Staying fixed on a line behind a bot with poor movement could easily make you a sitting duck to bots on either side. Only use <a href="robowiki?BombSheltering" class=wikipagelink>BombSheltering</a> when getOthers() == 2.
+</UL>
+<p>
+But what do you think?
+<hr noshade class=wikiline size=1>
+<p>
+It seems like most of the best melee bots are targeting the closest enemy, so if the <a href="robowiki?BombShelter" class=wikipagelink>BombShelter</a> is between you and the other bot, the other bot probably isn't even aiming at you, and by being behind him, you're biggest threat is being hit by bullets that missed him.  Of course, if you stay on the ray that the bomb shelter has filtered the bullets from, you're probably OK - but remember two things - first, your bomb shelter in practice is not stationary, and second - the one you're trying to be sheltered from probably didn't fire at him as if he was stationary.  But you can depend on there not being a bullet at the angle the shelter would have been hit at, so you can go there and be pretty safe at least from that other bot.  Meanwhile, don't get shot at or rammed by the shelter. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+It seems that you could implement a simple type of <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> using this technique. You simply set the risk at the point of the wave that touches the shelterbot to 0, and everywhere else 1. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+The only problem i foresee is if both bots 'team up' on you (enemy1 targets enemy2, enemy2 dodges enemy1's bullet, enemy1's bullet hits *you*, and enemy2 targets you). (This is not related to your comment <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>) --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Yes, it seems another prerequisite would be to stay further from the shelter than the attacker is, so that the shelter goes for the attacker and not you. If someone has already said this, apologies =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=BombSheltering" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=BombSheltering">View other revisions</a><br>Last edited July 20, 2007 21:06 EST by <a href="robowiki?Skillgannnon" title="ID 11191 from ctb-cache4-vif1.saix.net">Skillgannnon</a> <a href="robowiki?action=browse&diff=1&id=BombSheltering">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

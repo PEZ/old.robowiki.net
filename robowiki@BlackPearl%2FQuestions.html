@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>BlackPearl/Questions - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Black, Pearl, Questions'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Questions">BlackPearl/Questions</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?BlackPearl" class=wikipagelink>BlackPearl</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Can some one explain this to me. I came across this snippet of code and did not know what it does. I spoke to <a href="robowiki?Nano" class=wikipagelink>nano</a> who told me that it limits the angle to +/-90 degrees. I thought this was excellent. It solves one of <a href="robowiki?BlackPearl" class=wikipagelink>BlackPearl</a>'s problems (it some times circles off the wall). When I installed it though it has a side effect of slowly closing the distance to my enemy which is not the desired result. As I do not completely understand whats happening I can not correct it. Can some one clue me in here? Here is the relevant code:
+<pre>
+{...
+setTurnRightRadians(Math.atan(Math.tan(getTurnAngle())));
+...}
+
+private double getTurnAngle() {
+   return (eBearing + (Math.PI / 2) + (.2618 * direction * ((eDistance &gt; MAX_STAND_OFF_DISTANCE || wallDist(getX(), getY()) &lt; 20 || cornered()) ?            CLOSE_IN : (eDistance &lt; MIN_STAND_OFF_DISTANCE ? BACK_OFF : 0))));
+}
+</pre>
+I have tried several different ways to correct it but I have had no luck. It almost seems as if my direction is off by 180 for some reason. -- jim
+<p>
+The atan/tan method is rather crude... I suggest using the built in one robocode.util.Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(angle) (in radians).  Did you copy across all the constants the same, because they may not work correctly with the rest of your code. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I have copied across all everything just as it appears in the code (minus all the commented out attempts). I have used the built in one but I still circle off the walls sometimes and it is very frustrating. Very predictable too. The method here seems to alleviate that. At least I know the intent of the snippet is equivelant to normalizing the angle. -- jim
+<p>
+The difference is that it normalizes the angle to -90 to 90 space, doesn't it? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a> is -180 to 180, the atan(tan()) method is -90 to 90. The problem is likely that you aren't accounting for the direction change that is sometimes needed here. Example: You need to turn 92 degrees, plug this code in, and get that -88 degrees is a faster turn. The difference? Turning -88 puts you facing in the opposite direction as +92 does, though the movement axis of the bot is along the same line. So when you actually do this normalization you need to change direction if it affects the angle. Try something like the <a href="robowiki?BackAsFront" class=wikipagelink>BackAsFront</a> functionality in the GotoBot<a href="robowiki?action=edit&id=GotoBot" class=wikipageedit>?</a> snippets. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Yeah, here's the relevant part of it:
+<pre>
+	double turnAngle = Math.atan(Math.tan(angle));
+        setTurnRightRadians(turnAngle);
+        setAhead(robotLocation.distance(destination) * (angle == turnAngle ? 1 : -1));
+</pre>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I thought it would be something silly like that. I shall give it a try and let you know. Getting stronger all the time. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?BlackPearl" class=wikipagelink>BlackPearl</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=BlackPearl/Questions" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=BlackPearl/Questions">View other revisions</a><br>Last edited February 15, 2004 23:26 EST by <a href="robowiki?Sparafucil3" title="ID 2233 from ip68-101-39-12.dc.dc.cox.net">Sparafucil3</a> <a href="robowiki?action=browse&diff=1&id=BlackPearl/Questions">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

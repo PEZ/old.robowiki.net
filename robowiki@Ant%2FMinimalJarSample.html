@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Ant/MinimalJarSample - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Ant, Minimal, Jar, Sample'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/MinimalJarSample">Ant/MinimalJarSample</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Ant" class=wikipagelink>Ant</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>You can get the &lt;pack&gt; task here: <a rel="nofollow" href="http://sadun-util.sourceforge.net/pack.html">http://sadun-util.sourceforge.net/pack.html</a>
+<p>
+You can get yguard, a free obfuscator, here: <a rel="nofollow" href="http://www.yworks.com/en/products_yguard_about.htm">http://www.yworks.com/en/products_yguard_about.htm</a>
+<p>
+Using both will shrink your Jar file by quite a bit. Even if you're including source code with your bot, obfuscating your robot will make your .class files much smaller. The only downside is that if your robot throws an exception, the stack traces are giberish, like <a href="robowiki?NullPointerException" class=wikipagelink>NullPointerException</a> in class davidalves/A/B/A.class (unknown source)
+<p>
+--<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<pre>
+&lt;?xml version="1.0"?&gt;
+&lt;!-- ====================================================================== 
+
+     Phoenix
+                   
+     by David Alves                                                                
+
+     ====================================================================== --&gt;
+
+
+&lt;project name="Phoenix" default="Phoenix"&gt;
+	
+	&lt;taskdef name="obfuscate" 
+		classname="com.yworks.yguard.ObfuscatorTask" 
+		classpath="yguard.jar"/&gt;
+	&lt;taskdef name="pack"
+		classname="org.sadun.util.ant.Pack"
+		classpath="pack.jar"/&gt;
+	
+	&lt;description&gt;Phoenix&lt;/description&gt;
+	
+	&lt;target name="Phoenix" description="Make Phoenix jar"&gt;
+		&lt;delete file="phoenix.jar" /&gt;
+		&lt;delete file="phoenix-obf.jar" /&gt;
+		
+		&lt;pack classes="davidalves.Phoenix" targetjar="phoenix.jar" excludepkg="java,javax,sun,robocode"&gt;
+			&lt;classpath path="c:/phoenix"/&gt;
+			&lt;classpath location="c:/robocode/clean_install/robocode.jar"/&gt;
+			&lt;resource name="davidalves/Phoenix.properties"/&gt;
+		&lt;/pack&gt;
+		
+		&lt;java fork="yes" jar="/robocode/codesize.jar"&gt;
+			&lt;arg value="c:/phoenix/phoenix.jar" /&gt;
+		&lt;/java&gt;
+		
+		&lt;obfuscate replaceclassnamestrings="true" logfile="obf.txt"&gt;
+			&lt;inoutpair in="phoenix.jar" out="phoenix-obf.jar"/&gt;
+			&lt;expose&gt;
+				&lt;class name="davidalves.Phoenix" methods="public" fields="none" /&gt;
+			&lt;/expose&gt;
+			&lt;externalclasses&gt;
+				&lt;pathelement location="/robocode/clean_install/robocode.jar"/&gt;
+			&lt;/externalclasses&gt;
+		&lt;/obfuscate&gt;
+	&lt;/target&gt;
+	
+	&lt;target name="backup" description="full backup"&gt;
+		&lt;tstamp/&gt;
+		&lt;jar compress="true" destfile="phoenix-backup${DSTAMP}-${TSTAMP}.jar" manifest="MANIFEST.MF"&gt;
+			&lt;fileset dir="."&gt;
+				&lt;include name="davidalves/**/*.*"/&gt;
+			&lt;/fileset&gt;
+		&lt;/jar&gt;
+	&lt;/target&gt;
+&lt;/project&gt;
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Ant" class=wikipagelink>Ant</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Ant/MinimalJarSample" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Ant/MinimalJarSample">View other revisions</a><br>Last edited July 11, 2006 22:45 EST by <a href="robowiki?David_Alves" title="ID 7240 from c-71-202-96-238.hsd1.ca.comcast.net">David Alves</a> <a href="robowiki?action=browse&diff=1&id=Ant/MinimalJarSample">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

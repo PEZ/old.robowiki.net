@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Bz - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Bz'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Bz">Bz</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Restart working on my bot "Melody" after a long time
+<UL >
+<li> 2006-07-12: 1.3.1 released. Implemented basic <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> and <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>. 
+</UL><DL>
+<dt><dd>Part of the movement code is borrowed from <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>'s <a href="robowiki?WaveSurfing/Tutorial" class=wikipagelink>WaveSurfing/Tutorial</a>
+</DL><UL>
+<li> 2006-07-14: some minor fixes to the targeting algorithm, but it is still very simple. My plan is to implement a Bayesian GF targeting, something like <a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a> but in a different way. Since the <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> targeting can be viewed as a classfication problem of N bins. So let S be the random variable of the bin index, and O be the observed features (e.g., velocity, distance, accelaration, etc). What we want to do is to pick bin i such that:
+</UL><DL>
+<dt><dd>i = argmax_i P( S = i | O )
+</DL>
+<p>
+<DL >
+<dt><dd>which, according to Bayesian rule, is equivalent to 
+</DL>
+<p>
+<DL >
+<dt><dd>i = argmax_i P( O | S = i ) P( S = i )
+</DL>
+<p>
+<DL >
+<dt><dd>Note that P ( S = i ) can be estimated easily, and is alway done by any basic GF targeting algorithms. The first factor may be calculated in many ways. If we do VQ in the feature space, O will become a discrete random variable, and the statistics can be collected via counting. In that case, it would be equivalent to many Segmentation algorithms. It is also possible, though I'm not sure whether it will be better, that P ( O | S = i ) is modeled using continuous distributions. In the simpliest case, this conditional probability can be just ignored, which gives a basic GF gun. This flexiblity might be useful when data is not sufficient, or when we're not confident enough about the first factor. 
+</DL>
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+You pushed me (<a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a>) out of the top-50!! When I can find the time to work on the movement of my new bot, I will beat you again ;-)  Quite a nice entry for basic GF-targeting and basic <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Bz" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Bz">View other revisions</a><br>Last edited July 14, 2006 11:58 EST by <a href="robowiki?GrubbmGait" title="ID 6675 from 161.85.127.153">GrubbmGait</a> <a href="robowiki?action=browse&diff=1&id=Bz">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

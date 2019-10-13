@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>BeeWT - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Bee, WT'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=BeeWT">BeeWT</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?PEZ" class=wikipagelink>PEZ</a>'s Bee gun with data saving and loading.
+<p>
+The result of the discussion on the <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a> page.
+<p>
+<UL >
+<li><a href="robowiki?BeeWT" class=wikipagelink>BeeWT</a> 1.0 saves data into a textfile which can be imported into for instance EXCEL for analysis.
+<li><a href="robowiki?BeeWT" class=wikipagelink>BeeWT</a> 1.1 is capable of loading and saving 350 <a href="robowiki?SuperNodes" class=wikipagelink>SuperNodes</a>.
+<li><a href="robowiki?BeeWT" class=wikipagelink>BeeWT</a> 1.2 is packed with 300 data files with 200 <a href="robowiki?SuperNodes" class=wikipagelink>SuperNodes</a> each. It scores 1904 in the <a href="robowiki?RRGunChallenge" class=wikipagelink>RRGunChallenge</a>. This makes it the strongest gun to date.
+</UL>
+<p>
+To take full advantage of <a href="robowiki?BeeWT" class=wikipagelink>BeeWT</a> 1.1's data saving, clear the data file before running a long (100+) match.
+<p>
+<a href="robowiki?BeeWT" class=wikipagelink>BeeWT</a>'s 1.0 and 1.1 can be found at the Repository.
+1.2 can be found at <a rel="nofollow" href="http://www.ginnezeek.nl/robocode/wiki.rrgc.BeeRRGC_WT1.2.jar">http://www.ginnezeek.nl/robocode/wiki.rrgc.BeeRRGC_WT1.2.jar</a> because it's too big a file for the repository :-)
+<p>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+My first tests suggest that it works. I ran lots of 35 round matches without data, and the same amount with saved data (data gathered in 100 round matches) and on average there was an increase in score of 2 to 3%. I am curious what it will do in the "real world" of the RR. But that means first <a href="robowiki?BeeWT" class=wikipagelink>BeeWT</a> has to be equipped with data from all RR participants..... volunteers? ;-) --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+I can do it. Will take a day or two to do 100 rounds against each. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Hmmm. 100 rounds worth of data for all RR bots won't fit the 200K limit, would it? The files are 1k each.. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Well, as you should easily beat all the HOT bots (due to your movement) an ugly hack to use for testing would just be to manually populate a Vector with all the HOT bots (or enough to go beneath the 200 bots limit you have) and not save any data on these bots. Not good in the long run, but should work for testing purposes... --<a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+What <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> does is to only save movement data on bots that are easily tricked. Maybe <a href="robowiki?BeeWT" class=wikipagelink>BeeWT</a> could do something like it, but the opposite (like Brain suggests, only a bit less hard coded). Welcome back btw Brain! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Gah! After 60 bots I did something to the repository (maybe it was packaging a new CC) that made all the data files in <a href="robowiki?BeeWT" class=wikipagelink>BeeWT</a>'s data dir be reset to the ones shipped with the jar file... Well. Since it won't fit data for all particpants anyway, I'll wait with starting it all over again until we have figured out how to best use those 200k. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> 
+<p>
+Are there already so many participants?? Maybe we should consider thinning out that population.... But anyway, there are now about 300 participants in 1-v-1. So that means the filesize has to shrink even further to about 667 bytes. That's a f@#$ing small filesize! As a quick fix I have decreased the number of <a href="robowiki?SuperNodes" class=wikipagelink>SuperNodes</a> saved to 200. I'm running <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a> right now to get the data files.
+<p>
+In the mean time we could try to find a solution for saving the data more efficiently. Currently, I'm using <a href="robowiki?Mue" class=wikipagelink>Mue</a>'s suggestion of saving in index-value pairs where the index gets 16 bits, the value gets 8 bits. I'm using DataOutputStream<a href="robowiki?action=edit&id=DataOutputStream" class=wikipageedit>?</a> and DataInputStream<a href="robowiki?action=edit&id=DataInputStream" class=wikipageedit>?</a>, and of course the streams get (un)zipped, although I don't think zip does much to make these files smaller. The mentioned 16+8=24 bits are actually too much. As I suggested before on the <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a> page 14+5=19 bits are enough.
+<p>
+So, does anyone know how to save/load an int in 14 or 5 bits? What in/outputstream should be used? etc.. 
+<p>
+Any other ideas to save <a href="robowiki?SuperNodes" class=wikipagelink>SuperNodes</a> in tiny files?
+<p>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Thinning out the RR population? No way! Doubling it, yes. Trippling it, yes. Shrinking it, no. =) Maybe if we place all files in the same zip-file things will get smaller. Zip will have a chance to shrink things when two bots have the same movement. And there'll not be that zip overhead on each file (not that i have a clue how big/small that overhead is). Normalizing all int data down to byte size might help to? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+So how do you find the right data file in one Zipfile? The ZipInputStream<a href="robowiki?action=edit&id=ZipInputStream" class=wikipageedit>?</a> does not work in a random access manner afaik. I don't quite understand what you mean by normalizing int down to byte size. Maybe I already do that. I save the index using writeShort(int i), and the value using writeByte(int i). Is that what you mean? If so, that's still a total of 24 bytes, where we only need 19. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+I'm not completely sure how to write multiple files in one zip file. I would think it's about <code>getNextEntry()</code> and such. I'm not sure what writeShort() and writeByte() does. I thought like maybe dividing all values by the ratio of sizeof_int / sizeof_byte before writing them. That should make all values fit in a byte (shouldn't it?). An index needs 5 bits doesn't it? Using some bit shifting tricks and such it should be possible to write out all indexes in a row. And then all values in a row. This is just random babbling. You might have thought about this and disregarded it long ago. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I think the functions (from DataOutputStream<a href="robowiki?action=edit&id=DataOutputStream" class=wikipageedit>?</a>) I use do something similar to what you say. Your other solution should work I think. It will be quite a lot of work though. I envision numerous new classes to be written :-) Maybe we should implement something like that when <a href="robowiki?BeeWT" class=wikipagelink>BeeWT</a> 1.2 proves that this data saving thing works at all. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+I've managed to cram data on all participants (and a few more) into WT's data directory. Unfortunately the repository does not accept <a href="robowiki?BeeWT" class=wikipagelink>BeeWT</a> because its size is now too big. :-( It is available here: <a rel="nofollow" href="http://www.ginnezeek.nl/robocode/wiki.rrgc.BeeRRGC_WT1.2.jar">http://www.ginnezeek.nl/robocode/wiki.rrgc.BeeRRGC_WT1.2.jar</a>
+<p>
+Version 1.2 does not save data for stability reasons. You'll have to use version 1.1 to create the data files.
+<p>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+"Maybe ... when <a href="robowiki?BeeWT" class=wikipagelink>BeeWT</a> 1.2 proves that this data saving thing works at all.". If 27 points doesn't prove it, then what does? =) Insaneley good work man! Expect a CC 1.9.9.00WT tonight. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Thanx! I didn't expect it to do THAT good with only 200 <a href="robowiki?SuperNodes" class=wikipagelink>SuperNodes</a> saved. I guess this definitely proves that <a href="robowiki?SuperNodes" class=wikipagelink>SuperNodes</a> exist. If you need any help porting the serializing code, just shout. I'm right here behind my computer (designing my new movement scheme actually). --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+I'm off to bed! We may have a new king tomorrow..... I'll leave my RR client running. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+It's out now. I only copied the load() function from <a href="robowiki?BeeWT" class=wikipagelink>BeeWT</a> and about 200 of the data files. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+A disappointing result... there must be a bug in there. Or maybe you can't just use the same data files with a different movement: in a way, enemies react to your movement too. But I'm not sure about this. Any clues, <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>? --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+That WT data wasn´t acquired with CCWT? If so, i think that <a href="robowiki?Vic" class=wikipagelink>Vic</a> has a good point here... Most bots move reacting to the enemy´s moving, and not to enemy´s gun. Excepting, maybe (and that´s a great maybe), <a href="robowiki?WaveSurfers" class=wikipagelink>WaveSurfers</a> that reacts mostly to enemy´s gun.... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+<p>
+I think I know what it is. I use the latest <a href="robowiki?Bee" class=wikipagelink>Bee</a> and loading data from an older version. I checked the segment widths and they were the same. Which means the data loads without comlains. But I also drew the conclusion that this meant I used the same segmentations. Which I don't. I have changed velocity segmentation in a way that I think can explain the whole difference between 2063 (which was what I hoped for) and 2047 points. What we need to do is either:
+<OL >
+<li> Reset current Bee's velocity segmentation (which I'm a bit reluctant to do, since I do think my current one (which is <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>'s improvement on my velocity segmentation theory) is better.
+<li> Use the latest Bee in <a href="robowiki?BeeWT" class=wikipagelink>BeeWT</a>. Which might be more work, but would be safer since I might have forgotten some othe small or big change...
+</OL>
+Then when this is done, next step is <a href="robowiki?SilverFist" class=wikipagelink>SilverFist</a> WT. Just imagine!
+<p>
+I can't believe that both of you <a href="robowiki?Vic" class=wikipagelink>Vic</a> and <a href="robowiki?Axe" class=wikipagelink>Axe</a> are starting that crap movement-influsences-targeting thingy on the first little setback! I don't buy that at all. Especieally not when the <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> movement  and <a href="robowiki?Butterfly" class=wikipagelink>Butterfly</a> are so similar from a distancing / orbiting / <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> point of view.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Well, your last phrase admits that u at least are considering that possibility, right? Taking a extreme (VERY EXTREME, i know!) case: imagine if the data acquired came from a rammer bot...<br>
+Anyway, i ain´t a WT expert (not even close, u know), but i´m not getting this: why don´t u use CCWT to acquire that data? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>  
+<p>
+Ummm, because I don't want to spend four weeks on figuring out how? =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Ah. That changed segmentation is probably the bug. If you don't want to reset your current segmentation then, as <a href="robowiki?Axe" class=wikipagelink>Axe</a> suggested, you should acquire the data with CCWT. Which is basically the same as your own second solution, because that will result in a new <a href="robowiki?BeeWT" class=wikipagelink>BeeWT</a>. As I said earlier, I'm more than willing to help you with that. I am VERY curious where that would take CC, and also SilverfistWT<a href="robowiki?action=edit&id=SilverfistWT" class=wikipageedit>?</a>! Those bots will ROCK! --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Actually the most interesting bot right now is <a href="robowiki?SilverFist" class=wikipagelink>SilverFist</a> WT. That bot could use the <a href="robowiki?BeeWT" class=wikipagelink>BeeWT</a> 1.2 gun and data as it is. And I won't have to maintain two branches of CC guns. =) <a href="robowiki?Axe" class=wikipagelink>Axe</a>, check the <a href="robowiki?BeeWT" class=wikipagelink>BeeWT</a> source and you'll see how to plug in that gun instead of the current Bee. It's pretty similar setup, just a little bit more entangled. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Quick question-if you were to use the serialize() method above that <a href="robowiki?Vic" class=wikipagelink>Vic</a> posted how would you get the data from it AND put them in the correct segment? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Where is that serialize() method? ...in <a href="robowiki?BeeWT" class=wikipagelink>BeeWT</a>? Anyway, you'd need to have the same exact data structure (same segments in the same array) as that version of Bee had, then taking Bee's code for loading the data should be pretty straightforward. You'd probably want to generate your own data unless you want to be stuck with Bee's segments. <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> also has pretty clean code for saving / loading <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a> data in its gun - that might be easier to use to build your own. I can give you more specific pointers on finding, using, and/or just understanding that code, if you'd like. =) Let me know. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<UL >
+<li> Oops, i meant to post this on <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a>...i meant the serialize() on <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a> not here... --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+</UL>
+<p>
+Ah... The code on the <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a> can't be read back in, unless I'm missing something. I think its only purpose was for diagnostics - to see how many nodes were being used and print some data about them. It also uses a very lengthy ASCII format that you don't need; in Dooki, I use 3 or 4 bytes (can't remember) for each record and write out in binary, while each ASCII character would be a whole byte. To read / write <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a> data, you need to:
+<p>
+<UL >
+<li> Read and write with (a copy of) the same loop - the same segments in the same order. This way, e.g., the 995th segment in the loop both times is the same segment in your stats.
+<li> For the nodes that you do write out to disk (which is not all of them), write out the segment index as part of the record. When you read back in, you will know where to put it.
+</UL>
+<p>
+A good example of this is in <code>dgun/MainGunHighBuffer.java</code> in <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>' source code, if you want to take a look. (Parts of it will greatly resemble that <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a> method.) 
+<p>
+-- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=BeeWT" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=BeeWT">View other revisions</a><br>Last edited August 23, 2007 2:24 EST by <a href="robowiki?Voidious" title="ID 8561 from cpe-204-210-154-119.hvc.res.rr.com">Voidious</a> <a href="robowiki?action=browse&diff=1&id=BeeWT">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

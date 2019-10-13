@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>DaRula/code - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Da, Rula/code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/code">DaRula/code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?DaRula" class=wikipagelink>DaRula</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Here's the code..feel free to add comments in it. I will add some too so that you can understand it better.
+<p>
+<p>
+<b>Outdated code</b>
+<pre>
+package gez;
+import robocode.*;
+import tools.*; //my own tools library because i had to have something like
+                //normalRelativeAngle() wich didn't work here for any reason
+
+public class DaRula extends AdvancedRobot
+{
+	static boolean target = false; //this is true if I have a target
+	static double dir; //this is the absolute direction of my target
+	static double rDir = 10.0; //this is a variable for radarLock
+	static String name; //of course the target's name
+	static int time = 0; //I use this for timing-out my target
+	                     //if I can't scan it for any reason
+	static double mov = 90.0; //used for moving ahead because I have to define
+	                          //globally if my robot goes forward or backward
+	static double hp; //my targets energy to notice changes for supposing a shot
+	
+	public void run() {
+		while(true) {
+			if(target){
+				time++;
+				if(time &gt; 5)
+					target = false; //if I can't see my target for more than 5 frames
+					                //for any reason I will dismiss it
+				rDir = -rDir; //radar oscillation
+				//Utils.normal() is functionally equal to normalRelativeAngle()
+				//but it works also with my bots.. :S
+				setTurnRadarRight(Utils.normal( dir - getRadarHeading() + rDir ));
+				setTurnGunRight(Utils.normal(dir - getGunHeading()));
+				setTurnRight(Utils.normal(dir - getHeading()+90.0));
+				setAhead(mov);
+				setFire(2.0);
+			} else{
+				setTurnRadarRight(mov); //I'm using mov because it doesn't matter
+				                        //in wich direction my radar goes if it
+										//scans for a target.
+			}
+			execute();
+		}
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e) {
+		if( !target ){
+			name = e.getName();
+			target = true;
+		}
+		
+		if( name == e.getName() ){
+			dir = e.getBearing() + getHeading();
+			time = 0; //here i'm reseting my target timer just because i'm scanning
+			          //my target right now ;-)
+			double diff = (hp-e.getEnergy()); //here's the heart of the movement. :D
+			if( diff &gt; 0.0 &amp;&amp; diff &lt;= 3.0 )   //it's basically just a radnomizer
+				if( Math.random() &gt; 0.4 )     //to dodge bullets
+					mov = -mov;
+			hp = e.getEnergy();
+		}
+	}
+	
+	public void onHitWall( HitWallEvent e ){
+		mov = -mov; //i don't want to be a mule :)
+	}
+}
+</pre>
+<p>
+<p>
+Ok now it's smaller than 250 <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a>. But I'm glad to hear optimizations. -- <a href="robowiki?Gez" class=wikipagelink>gez</a>
+<hr noshade class=wikiline size=1>
+<H4>Comments:</H4>
+
+<p>
+If you aren't going to use him in melee battles you can ditch the name and logic based on it. -- Maritn
+<p>
+What exactly does melee battle mean? I tried it against some <a href="robowiki?MiniBots" class=wikipagelink>MiniBots</a> and even against [Rapture 2.13]<a href="robowiki?action=edit&id=Rapture_2.13" class=wikipageedit>?</a>. It does well against those bots on a battlefield of 800x600. -- <a href="robowiki?Gez" class=wikipagelink>gez</a>
+<p>
+Melee battles (in the Roborumble) are 10 way fights, every bot for himself.  It takes a more complex bot design to take into account multiple opponents.  At least larger bots are designed with more complexity to handle it.  The smaller bots may just do the best they can with minimal accomodations.  I wouldn't know. -- Martin
+<p>
+I don't want to use it in melee battles. It's designed for <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> only.  -- <a href="robowiki?Gez" class=wikipagelink>gez</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?DaRula" class=wikipagelink>DaRula</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=DaRula/code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=DaRula/code">View other revisions</a><br>Last edited November 28, 2007 16:54 EST by <a href="robowiki?Gez" title="ID 12665 from dslb-088-070-169-237.pools.arcor-ip.net">Gez</a> <a href="robowiki?action=browse&diff=1&id=DaRula/code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>CoordinateMirrorMovement - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Coordinate, Mirror, Movement'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=CoordinateMirrorMovement">CoordinateMirrorMovement</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>A type of <a href="robowiki?MirrorMovement" class=wikipagelink>MirrorMovement</a> where you copy the coordinate of your opponent.
+<p>
+Bots using this <a href="robowiki?Movement" class=wikipagelink>Movement</a>:
+<UL >
+<li> dummy.<a href="robowiki?Parakeet" class=wikipagelink>Parakeet</a>
+<li> stelo.<a href="robowiki?Mirror" class=wikipagelink>Mirror</a> 1.0, 1.1
+<li> stelo.<a href="robowiki?MirrorMicro" class=wikipagelink>MirrorMicro</a> 1.0
+<li> stelo.<a href="robowiki?MirrorNano" class=wikipagelink>MirrorNano</a> 1.0, 1.1
+</UL>
+<p>
+Sample code(stelo.<a href="robowiki?MirrorNano" class=wikipagelink>MirrorNano</a> 1.1's):
+<pre>
+// MirrorNano
+// codesize 247
+// author Stelokim
+package stelo;
+import robocode.*;
+//import java.awt.Color;
+import robocode.util.Utils;
+import java.util.*;
+import java.awt.geom.*;
+
+// mirror movement
+public class MirrorNano extends AdvancedRobot
+{
+	static double centerX, centerY;
+	//Point2D robotLocation;
+    //Point2D enemyLocation;
+    static double enemyAbsoluteBearing;
+	static double lastEnemyAbsoluteBearing;
+	static double enemyEnergy;
+		
+	public void run() {
+		// After trying out your robot, try uncommenting the import at the top,
+		// and the next line:
+		//setColors(Color.red,Color.blue,Color.green);
+		centerX = getBattleFieldWidth() / 2.0;
+		centerY = getBattleFieldHeight() / 2.0;
+		//enemyLocation = new Point2D.Double();
+		
+		//while(true) {
+            turnRadarRightRadians(Double.POSITIVE_INFINITY); 
+		//}
+	}
+
+	/**
+	 * onScannedRobot: What to do when you see another robot
+	 */
+	
+	public void onScannedRobot(ScannedRobotEvent e) {
+		double enemyX, enemyY;
+			
+        //robotLocation = new Point2D.Double(myX, myY);
+        enemyAbsoluteBearing = getHeadingRadians() + e.getBearingRadians();
+        //enemyLocation = vectorToLocation(enemyAbsoluteBearing, enemyDistance, robotLocation);
+
+		enemyX = getX() + Math.sin(enemyAbsoluteBearing) * e.getDistance();
+		enemyY = getY() + Math.cos(enemyAbsoluteBearing) * e.getDistance();
+				
+		// attack
+		// HeadOnTargeting
+		//setTurnGunRightRadians(Utils.normalRelativeAngle(enemyAbsoluteBearing - getGunHeadingRadians()));
+		// AngularTargeting
+		setTurnGunRightRadians(Utils.normalRelativeAngle(enemyAbsoluteBearing - getGunHeadingRadians() + 2.0 * (enemyAbsoluteBearing - lastEnemyAbsoluteBearing)));
+		
+		//fire(getEnergy() * 25.0 / e.getDistance());
+		fire(getEnergy() * 10.0 / e.getDistance());
+		//fire(getEnergy() * 2000.0 / e.getDistance() / e.getDistance());
+		lastEnemyAbsoluteBearing = enemyAbsoluteBearing;
+		
+		// move (StopNMirror)
+		if (enemyEnergy &gt; (enemyEnergy = e.getEnergy())) {
+			//goTo(new Point2D.Double(2.0 * centerX - enemyLocation.getX(), 2.0 * centerY - enemyLocation.getY()));
+			double destinationX, destinationY;
+
+			//destinationX = 2.0 * centerX - enemyX;
+			//destinationY = 2.0 * centerY - enemyY;
+		
+			// slightly closer to the enemy to avoid wall collision
+			destinationX = 1.8 * centerX - 0.8 * enemyX;
+			destinationY = 1.8 * centerY - 0.8 * enemyY;
+						
+	        double angle = Utils.normalRelativeAngle(Math.atan2(destinationX - getX(), destinationY - getY()) - getHeadingRadians());
+		double turnAngle = Math.atan(Math.tan(angle));
+	        setTurnRightRadians(turnAngle);
+	
+	        //setAhead(Math.sqrt((getX() - destinationX) * (getX() - destinationX) + (getY() - destinationY) * (getY() - destinationY)) * (angle == turnAngle ? 1 : -1));
+	        setAhead((angle == turnAngle ? 50 : -50)); // due to code size
+		}
+		// Lock Radar Infinite style.  About a 99% lock rate - plus good melee coverage.
+		setTurnRadarLeftRadians(getRadarTurnRemaining());			
+	}
+}
+</pre>
+This bot moves such a way symmetric with respect to the battle field center point.
+<p>
+-- <a href="robowiki?Stelokim" class=wikipagelink>Stelokim</a>
+<hr noshade class=wikiline size=1>
+<p>
+An early version of Beowulf used this type of movement, but I added something that every 500 or so rounds my bot flipped copied coordiantes(never the same as the enemy though that would make a decent rammer), sometimes mirrored over X or sometimes over Y and sometimes both. It was rather effective vs anti-mirror as it picked which kind of mirror at random (though you could do something like a virtual gun, e.g. virtual movement to pick the best ways to copy and rank em or what not), I also added something that made it so my bot would flow around the enemy if it was within 20 distance. I was going to add wall smoothing(and wall advoidance of course) but by that time I had dropped the idea. (Note: its better against an anti-mirror gun, but said gun is still gonna pick it apart) --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=CoordinateMirrorMovement" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=CoordinateMirrorMovement">View other revisions</a><br>Last edited October 17, 2006 17:51 EST by svr2.pace.k12.mi.us <a href="robowiki?action=browse&diff=1&id=CoordinateMirrorMovement">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

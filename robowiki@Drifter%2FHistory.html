@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Drifter/History - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Drifter, History'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/History">Drifter/History</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Drifter" class=wikipagelink>Drifter</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><i>Version 1</i>:
+<p>
+Its a <a href="robowiki?Movement/GoToBot" class=wikipagelink>GoTo</a> type of bot, with <a href="robowiki?WaveSurfing/ShrapnelSurf" class=wikipagelink>Shrapnel Surfing</a> against HOT and Linear predicted bullets.  Both bullets are avoided, and there is no learning to find if it's better to dodge one or the other.
+<p>
+The arena area is divided up with a 25 pixel grid.  The grid points closest to the centre of all opponents are initialised with a value of 1.  A flood fill algorithm is then used to set all adjacent points to 2.  This is then repeated with 3, and so on, until the whole grid is filled.  Thus this gives an idea of where on the grid is close to and where is far from all opponents.
+<p>
+It also models the predicted bullets as points to avoid on the grid (initialised to 1), as well as the points half way between each of the opponents.
+<p>
+Points near opponents are set to -99999999, so as to avoid hitting them.  Points near bullets are set to -10000, but these are dynamic... i.e. They move depending on the simulation time in the search.
+<p>
+It then does a search for the path with the highest value.  This search basically tries each valid destination (-8..8, -8..8) around Drifter, models how the robot would move to get to this point, and adds up the grid scores for each tick.  This search process is what makes this version such a <a href="robowiki?SlowBot" class=wikipagelink>SlowBot</a>.
+<p>
+<i>Version 2</i>:
+<p>
+This version adds learning to the bullet types to dodge.  It only dodges the bullet
+type with the highest weighting.  This is in preparation to introducing a GF based opponent bullet.
+<p>
+Also, instead of searching a 17x17 square (329 points) it searches only 25 points from that square (successive diamond shapes where manhattan distance = {0, 4, 8}, and only even points (-8, -6, -4, -2, 0, etc.)  This makes the search only slightly worse (I suspect this only shows for opponents that like to get close up -- Drifter has trouble running away.)
+<p>
+This results in the increased the efficiency of the path search algorithm for this version, so it's now not quite such a <a href="robowiki?SlowBot" class=wikipagelink>SlowBot</a>.
+<p>
+<i>Version 3:</i>:
+<p>
+Added a <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> bullet type to dodge... but the GF gun used doesn't yet learn.
+<p>
+Fixed a big bug in the learning of which gun to dodge (had a y where it should have been an x... doh!)
+<p>
+Added manhatten dist 12 to diamond shapes for path search (now searches 37 different paths).
+<p>
+Removed code to make sure the bot doesn't just stay where it is.
+<p>
+Probably a couple of other tweaks that I can't remember.
+<p>
+<i>Version 4</i>:
+<p>
+Made changes to the <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> implementation to easily allow it to be used for both Drifter targetting opponents and for opponents targetting Drifter.  The GF gun that is used to provide a piece of shrapnel now learns in exactly the same way as Drifters real GF gun.  I refactored a lot of code to perform this change.
+<p>
+Changed firepower for distance &gt; 100 from 2.3 to 2.0.  (don't know why I did this, but I changed it again in Drifter 5)
+<p>
+Changed GF gun to use lateral velocity rather than relative heading.
+<p>
+<i>Version 5</i>:
+<p>
+Changed GF segmentation to use abs lateral velocity (3 segs), rather then lateral velocity (5 segs).  Also changed the range of the GF value from -0.125..1.125, to 0.0..1.0.  The guess factors at the ends were hardly ever being used, and I thought this change would help with the accuracy (more bins in given spread of angles).
+<p>
+Changed firepower for distance &gt; 100 from 2.0 to 2.5.
+<p>
+<i>Version 6</i>:
+<p>
+Changed firepower for distance &gt; 100 back to 2.0.  This was the only change for this version.
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Drifter" class=wikipagelink>Drifter</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Drifter/History" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Drifter/History">View other revisions</a><br>Last edited April 29, 2008 6:36 EST by <a href="robowiki?Tim_Foden" title="ID 14064 from cpc2-stev1-0-0-cust137.lutn.cable.ntl.com">Tim Foden</a> <a href="robowiki?action=browse&diff=1&id=Drifter/History">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>David Alves/DrawingBot - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='David, Alves, Drawing, Bot'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/DrawingBot">David Alves/DrawingBot</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><strong>Debugging graphics for Robocode 1.1+ in 3 easy steps:</strong>
+<p>
+1. Extend <a href="robowiki?DrawingBot" class=wikipagelink>DrawingBot</a>.
+<p>
+2. Call the drawing functions you want in your code, for example <code>YourRobotsName.drawText("Hello, World!, 100, 100, Color.WHITE);</code>
+<p>
+3. Run Robocode and click the "Paint" button in your robot's console to turn on graphics for your bot and you'll see the graphics appear.
+<p>
+An example of how to use this is <a href="robowiki?David_Alves/LinearTargetingBot" class=wikipagelink>/LinearTargetingBot</a>.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<pre>
+package davidalves.sample;
+
+import robocode.*;
+import java.util.*;
+import java.awt.*;
+import java.awt.geom.Point2D;
+import java.io.*;
+
+public class DrawingBot extends TeamRobot{
+	public DrawingBot(){
+		renderables = new Vector();
+	}
+	
+	private static abstract class Renderable{
+	public abstract void render(Graphics2D g);
+	
+	private static class Circle extends Renderable{
+		Point2D.Double center;
+		double radius;
+		Color color;
+		public Circle(Point2D.Double center, double radius, Color color){
+			this.center = center;
+			this.radius = radius;
+			this.color = color;
+		}
+		public void render(Graphics2D g) {
+			g.setColor(color);
+			g.drawOval(	(int)Math.round(center.x - radius),
+						(int)Math.round(center.y - radius),
+						(int)Math.round(2 * radius),
+						(int)Math.round(2 * radius));
+		}
+	}
+	
+	private static class Dot extends Renderable{
+		Point2D.Double point;
+		double radius;
+		Color color;
+		public Dot(Point2D.Double point, Color color){
+			this.point = point;
+			this.radius = 2;
+			this.color = color;
+		}
+		public void render(Graphics2D g) {
+			g.setColor(color);
+			g.fillOval(	(int)Math.round(point.x - radius),
+						(int)Math.round(point.y - radius),
+						(int)Math.round(2 * radius),
+						(int)Math.round(2 * radius));
+		}
+	}
+	
+	private static class Line extends Renderable{
+		Point2D.Double p1, p2;
+		Color color;
+		
+		double radius;
+		public Line(Point2D.Double p1, Point2D.Double p2, Color color){
+			this.p1 = p1;
+			this.p2 = p2;
+			this.color = color;
+		}
+		public void render(Graphics2D g) {
+			g.setColor(color);
+			g.drawLine(	(int)Math.round(p1.x),
+						(int)Math.round(p1.y),
+						(int)Math.round(p2.x),
+						(int)Math.round(p2.y));
+		}
+	}
+	
+	private static class Text extends Renderable{
+		String text;
+		double x, y;
+		Color color;
+		
+		double radius;
+		public Text(String text, double x, double y, Color color){
+			this.text = text;
+			this.x = x;
+			this.y = y;
+			this.color = color;
+		}
+		public void render(Graphics2D g) {
+			g.setColor(color);
+			g.drawString(text, (float)x, (float)y);
+		}
+	}
+	}
+	
+	
+	
+	public static Vector renderables;
+	
+	
+	public void onPaint(Graphics2D g){
+		Iterator i = renderables.iterator();
+		while(i.hasNext()){
+			Renderable r = (Renderable) i.next();
+			r.render(g);
+		}
+		renderables.clear();
+	}
+	
+	public static void drawLine(Point2D.Double p1, Point2D.Double p2, Color color){
+		renderables.add(new Renderable.Line(p1, p2, color));
+	}
+	
+	public static void drawCircle(Point2D.Double center, double radius, Color color){
+		renderables.add(new Renderable.Circle(center, radius, color));
+	}
+	
+	public static void drawPoint(Point2D.Double p1, Color color){
+		renderables.add(new Renderable.Dot(p1, color));
+	}
+	
+	public static void drawText(String text, double x, double y, Color color){
+		renderables.add(new Renderable.Text(text, x, y, color));
+	}
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=David_Alves/DrawingBot" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=David_Alves/DrawingBot">View other revisions</a><br>Last edited November 11, 2006 9:08 EST by <a href="robowiki?David_Alves" title="ID 7143 from adsl-75-2-192-30.dsl.pltn13.sbcglobal.net">David Alves</a> <a href="robowiki?action=browse&diff=1&id=David_Alves/DrawingBot">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,722 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>DrussGT/VersionHistory - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Druss, GT/Version, History'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/VersionHistory">DrussGT/VersionHistory</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>1.3.2
+<UL >
+<li>Add a virtual gun with Waylander's gun (and did a bit of refactoring to allow more virtual guns to be easily added inside the wave code)
+<UL >
+<li> Mostly just a proof of concept, I don't think it will do much to help my score - next in line will be developing a dedicated <a href="robowiki?AntiSurfer" class=wikipagelink>AntiSurfer</a> gun
+</UL>
+<li> Also added Rednaxela's FastTrig<a href="robowiki?action=edit&id=FastTrig" class=wikipageedit>?</a>. Not sure how much it will help, as my sin/cosine use is fairly limited. A sqrt/acos version would probably speed <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> up the most...
+</UL>
+<p>
+1.3.1
+<UL >
+<li> Change the gun time-based attributes to use the forumula <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a> used, ie. position = 1/(1 + k*time)
+</UL>
+<p>
+1.3.0
+<UL >
+<li> Revert movement back to 1.2.1 in hopes of getting rid of that HOF bug
+<UL >
+<li> Re-apply some speedups and bugfixes
+</UL>
+<li> The points-creation precise prediction rotates around a linear projection of the enemy's movement, n ticks forward
+</UL>
+<p>
+1.2.7
+<UL >
+<li> Fixed a bug in the 'second wave' surfing which definately affected the debugging, and possibly affected the surfing. Had to do with pointer assignments vs. object cloning...
+<li> Leave out the botwidth being dependant on the angle in the movement. This cures the movement's "skipping turns" problem, hopefully permanently.
+</UL>
+<p>
+1.2.6TC
+<UL >
+<li> Change the distancer to a 'Multiplicative Manhatten' type, ie. distance = (1 + abs(a1 - a2))*(1 + abs(b1 - b2))* etc... 
+<li> Seems to work well =) Maybe try 'Multiplicative Squared Euclidean' or play with the weightings? Interesting stuff.
+</UL>
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <strong>Aspd</strong> </td><td colspan="0.5"> <strong>Sprw</strong> </td><td colspan="0.5"> <strong>Fhqw</strong> </td><td colspan="0.5"> <strong>Yngw</strong> </td><td colspan="0.5"> <strong>FlMn</strong> </td><td colspan="0.5"> <strong>EASY</strong> </td><td colspan="0.5"> <strong>Tron</strong> </td><td colspan="0.5"> <strong>HTTC</strong> </td><td colspan="0.5"> <strong>RnMB</strong> </td><td colspan="0.5"> <strong>DlMc</strong> </td><td colspan="0.5"> <strong>Grbb</strong> </td><td colspan="0.5"> <strong>MEDIUM</strong> </td><td colspan="0.5"> <strong>SnDT</strong> </td><td colspan="0.5"> <strong>Cgrt</strong> </td><td colspan="0.5"> <strong>Frtn</strong> </td><td colspan="0.5"> <strong>WkOb</strong> </td><td colspan="0.5"> <strong>RkMc</strong> </td><td colspan="0.5"> <strong>HARD</strong> </td><td colspan="0.5"> <strong>TOTAL</strong> </td><td colspan="0.5"> <strong>Comments</strong></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 94.94 </td><td colspan="0.5"> 99.13 </td><td colspan="0.5"> 98.15 </td><td colspan="0.5"> 98.23 </td><td colspan="0.5"> 94.57 </td><td colspan="0.5"> <strong>97.00</strong> </td><td colspan="0.5"> 90.71 </td><td colspan="0.5"> 87.85 </td><td colspan="0.5"> 91.53 </td><td colspan="0.5"> 88.80 </td><td colspan="0.5"> 88.79 </td><td colspan="0.5"> <strong>89.53</strong> </td><td colspan="0.5"> 88.09 </td><td colspan="0.5"> 85.24 </td><td colspan="0.5"> 81.71 </td><td colspan="0.5"> 88.13 </td><td colspan="0.5"> 81.93 </td><td colspan="0.5"> <strong>85.02</strong> </td><td colspan="0.5"> <strong>90.52</strong> </td><td colspan="0.5"> 80.0 seasons</td></TR>
+</TABLE>
+<p>
+<UL >
+<UL >
+<li> Hurts the score against surfers quite a bit. So I've gone back to the Manhattan distance.
+</UL>
+</UL>
+<p>
+<br>
+1.2.5TC
+<UL >
+<li> Remove the Singularity stuff (commented out +-10 lines)
+<li> So effective diff between 1.2.2 and 1.2.5 is just the Squared Euclidean/Manhattan distancer swap (although there was a tiny bit of refactoring to accommodate Singularity)
+</UL>
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <strong>Aspd</strong> </td><td colspan="0.5"> <strong>Sprw</strong> </td><td colspan="0.5"> <strong>Fhqw</strong> </td><td colspan="0.5"> <strong>Yngw</strong> </td><td colspan="0.5"> <strong>FlMn</strong> </td><td colspan="0.5"> <strong>EASY</strong> </td><td colspan="0.5"> <strong>Tron</strong> </td><td colspan="0.5"> <strong>HTTC</strong> </td><td colspan="0.5"> <strong>RnMB</strong> </td><td colspan="0.5"> <strong>DlMc</strong> </td><td colspan="0.5"> <strong>Grbb</strong> </td><td colspan="0.5"> <strong>MEDIUM</strong> </td><td colspan="0.5"> <strong>SnDT</strong> </td><td colspan="0.5"> <strong>Cgrt</strong> </td><td colspan="0.5"> <strong>Frtn</strong> </td><td colspan="0.5"> <strong>WkOb</strong> </td><td colspan="0.5"> <strong>RkMc</strong> </td><td colspan="0.5"> <strong>HARD</strong> </td><td colspan="0.5"> <strong>TOTAL</strong> </td><td colspan="0.5"> <strong>Comments</strong></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 95.14 </td><td colspan="0.5"> 98.96 </td><td colspan="0.5"> 97.90 </td><td colspan="0.5"> 98.49 </td><td colspan="0.5"> 93.60 </td><td colspan="0.5"> <strong>96.82</strong> </td><td colspan="0.5"> 90.64 </td><td colspan="0.5"> 86.53 </td><td colspan="0.5"> 91.31 </td><td colspan="0.5"> 87.81 </td><td colspan="0.5"> 87.61 </td><td colspan="0.5"> <strong>88.78</strong> </td><td colspan="0.5"> 87.00 </td><td colspan="0.5"> 84.58 </td><td colspan="0.5"> 82.03 </td><td colspan="0.5"> 87.84 </td><td colspan="0.5"> 82.09 </td><td colspan="0.5"> <strong>84.71</strong> </td><td colspan="0.5"> <strong>90.10</strong> </td><td colspan="0.5"> 80.0 seasons</td></TR>
+</TABLE>
+<p>
+<br>
+<p>
+<p>
+1.2.4TC
+<UL >
+<li> Revert to 1.2.2
+<li> Attempt to merge in some <a href="robowiki?Rednaxela/SingularityGun" class=wikipagelink>Singularity</a> ideas
+<li> Make the DC distancer use squared Euclidean distances (avoid slow sqrt) instead of Manhattan distances (should be similar speeds)
+</UL>
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <strong>Aspd</strong> </td><td colspan="0.5"> <strong>Sprw</strong> </td><td colspan="0.5"> <strong>Fhqw</strong> </td><td colspan="0.5"> <strong>Yngw</strong> </td><td colspan="0.5"> <strong>FlMn</strong> </td><td colspan="0.5"> <strong>EASY</strong> </td><td colspan="0.5"> <strong>Tron</strong> </td><td colspan="0.5"> <strong>HTTC</strong> </td><td colspan="0.5"> <strong>RnMB</strong> </td><td colspan="0.5"> <strong>DlMc</strong> </td><td colspan="0.5"> <strong>Grbb</strong> </td><td colspan="0.5"> <strong>MEDIUM</strong> </td><td colspan="0.5"> <strong>SnDT</strong> </td><td colspan="0.5"> <strong>Cgrt</strong> </td><td colspan="0.5"> <strong>Frtn</strong> </td><td colspan="0.5"> <strong>WkOb</strong> </td><td colspan="0.5"> <strong>RkMc</strong> </td><td colspan="0.5"> <strong>HARD</strong> </td><td colspan="0.5"> <strong>TOTAL</strong> </td><td colspan="0.5"> <strong>Comments</strong></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 95.15 </td><td colspan="0.5"> 99.17 </td><td colspan="0.5"> 97.57 </td><td colspan="0.5"> 98.20 </td><td colspan="0.5"> 94.64 </td><td colspan="0.5"> <strong>96.95</strong> </td><td colspan="0.5"> 90.31 </td><td colspan="0.5"> 86.74 </td><td colspan="0.5"> 90.47 </td><td colspan="0.5"> 88.23 </td><td colspan="0.5"> 88.13 </td><td colspan="0.5"> <strong>88.78</strong> </td><td colspan="0.5"> 87.21 </td><td colspan="0.5"> 84.53 </td><td colspan="0.5"> 82.12 </td><td colspan="0.5"> 86.55 </td><td colspan="0.5"> 82.14 </td><td colspan="0.5"> <strong>84.51</strong> </td><td colspan="0.5"> <strong>90.08</strong> </td><td colspan="0.5"> 80.0 seasons</td></TR>
+</TABLE>
+<p>
+<br>
+<p>
+<p>
+1.2.3TC
+<UL >
+<li> Aim for next tick so the enemy is at their 'next' position
+</UL>
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <strong>Aspd</strong> </td><td colspan="0.5"> <strong>Sprw</strong> </td><td colspan="0.5"> <strong>Fhqw</strong> </td><td colspan="0.5"> <strong>Yngw</strong> </td><td colspan="0.5"> <strong>FlMn</strong> </td><td colspan="0.5"> <strong>EASY</strong> </td><td colspan="0.5"> <strong>Tron</strong> </td><td colspan="0.5"> <strong>HTTC</strong> </td><td colspan="0.5"> <strong>RnMB</strong> </td><td colspan="0.5"> <strong>DlMc</strong> </td><td colspan="0.5"> <strong>Grbb</strong> </td><td colspan="0.5"> <strong>MEDIUM</strong> </td><td colspan="0.5"> <strong>SnDT</strong> </td><td colspan="0.5"> <strong>Cgrt</strong> </td><td colspan="0.5"> <strong>Frtn</strong> </td><td colspan="0.5"> <strong>WkOb</strong> </td><td colspan="0.5"> <strong>RkMc</strong> </td><td colspan="0.5"> <strong>HARD</strong> </td><td colspan="0.5"> <strong>TOTAL</strong> </td><td colspan="0.5"> <strong>Comments</strong></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 95.03 </td><td colspan="0.5"> 99.09 </td><td colspan="0.5"> 97.48 </td><td colspan="0.5"> 98.44 </td><td colspan="0.5"> 93.90 </td><td colspan="0.5"> <strong>96.79</strong> </td><td colspan="0.5"> 90.70 </td><td colspan="0.5"> 87.27 </td><td colspan="0.5"> 90.98 </td><td colspan="0.5"> 88.79 </td><td colspan="0.5"> 87.97 </td><td colspan="0.5"> <strong>89.14</strong> </td><td colspan="0.5"> 87.99 </td><td colspan="0.5"> 85.74 </td><td colspan="0.5"> 81.54 </td><td colspan="0.5"> 86.84 </td><td colspan="0.5"> 81.80 </td><td colspan="0.5"> <strong>84.78</strong> </td><td colspan="0.5"> <strong>90.24</strong> </td><td colspan="0.5"> 71.7 seasons</td></TR>
+</TABLE>
+<p>
+<br>
+1.2.2 - 2177 (Dookious + 16)
+<UL >
+<li> Gun no longer uses the 'smoothing' method for aiming, instead firing purely at the highest overlap of precise ranges.
+</UL>
+<p>
+1.2.1 - unreleased
+<UL >
+<li> Fixed bug where the gun 'aiming' code was called twice, causing the same cluster to be extracted twice from the tree, and then the same angle to be found from the cluster. Gun should be much faster now.
+<li> Fixed movement bug where the single HOT hit that was pre-logged wasn't logged to an unsegmented buffer. In fact, there was no unsegmented buffer.
+<li> Fixed minor bug in precise-prediction movement code that would corrupt the movement prediction if the bot 'overshot' the point it was going to.
+</UL>
+<p>
+1.2.0 - results corrupted
+<UL >
+<li> Gun:
+<UL >
+<li> All recorded GF's are now calculated precisely, as a range
+<li> If the cluster is bigger than 30 (ie. tree is bigger than 900), fire halfway across the sub-range where the most recorded ranges overlap, otherwise use old 'smoothed' method (using center of each range as recorded GF)
+<li> No longer use Event based waves, instead process them in a loop every tick
+</UL>
+<li> Movement:
+<UL >
+<li> Complete rework of buffer code to speed up retrieval of buffers. Instead of calculating the index for every segment for every buffer, I keep a set of "Slice Retrival Indexes" for each buffer. I calculate the index for each set of slices, and then simply 'retrieve' them for each combination the buffer may have.
+<li> Only use the 'deadline goto' if the flattener is enabled.
+<li> Don't rebuild all the waves' dangers after logging a flattener hit. (They can't change the bullets in the air)
+<li> Add Advancing Velocity segment
+</UL>
+</UL>
+<p>
+1.1.5 - 2157 - Dookious + 4
+<UL >
+<li> Cleaned up the buffer loading code
+<li> Doesn't go to a point immediately if it will be waiting there afterwards - prevents giving away early clues to strong guns
+</UL>
+<p>
+1.1.4 - 2161 - Dookious + 9
+<UL >
+<li> Added another attribute to the gun, one that I think most surfers *don't* have, in a hope of improving my antisurfer targeting. Attribute is 'last recorded GF logged'
+<li> Weight each buffer on how effective it is against BulletHitBullet<a href="robowiki?action=edit&id=BulletHitBullet" class=wikipageedit>?</a> event logs. Weights are rolled very slowly (depth of 50 for main buffer, 20 for flattener)
+</UL>
+<p>
+1.1.3 - 2158 - Dookious + 7
+<UL >
+<li> Changed the gun back to the old 'based off of guessfactors' one
+<li> Cleaned up a bunch of the movement internals to use methods and loops instead of recursive functions that did more than they were originally intended to =)
+<UL >
+<li> possibly fixed a few bugs/surfing details during the cleanup - it helps when you can actually follow the logic instead of just trial-and-error for which is correct =)
+</UL>
+<li> Normalize the surfing data on the area instead of the height (I was thinking of doing this a long time ago but never got around to it - thanks to <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a> for the reminder =) ) - might make the flattener act a bit differently
+</UL>
+<p>
+1.1.2 - 2142 - Dookious - 11
+<UL >
+<li> Actually fixed the 2-extra-turn problem to line up with the other wave correctly, it was created at the right time but with the wrong firetime
+<li> Changed the gun to use Play-It-Forward instead of <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a>s. Improves the score against <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> tremendously =)
+</UL>
+<p>
+1.1.1 - 2159 - Dookious + 6
+<UL >
+<li> Fixed the 2-extra-turn to actually do 2-extra-turns, not 1. So I actually wasn't even getting the 1 turn advantage, because I was surfing the wrong tick. No wonder it didn't help.
+<li> Went back to the old attack/retreat angles that I realised I changed in 1.1.0 - copied them in from 1.0.20NVBW
+</UL>
+<p>
+1.1.0NE2T - about Dookious - 20? I can't remember, but it wasn't good
+<UL >
+<li> No Extra 2 Ticks =)
+</UL>
+<p>
+1.1.0NDC - 2154 - Dookious + 3.5
+<UL >
+<li> No <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> in the movement
+</UL>
+<p>
+Lets see which of those features needs work...or if I broke something else in the process of adding them.
+<UL >
+<li> It seems they were both a bit of a problem, although the DC was much worse
+</UL>
+<p>
+1.1.0 - 2140
+<UL >
+<li> Now surfs an 'imaginary' wave for 2 ticks starting when the enemy's gunheat is 0, inspired by the work on <a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a>
+<li> Accounts for the energy-diff due to robot-robot collisions - dunno how I had my good rambot scores without this. I still need to account for wall collisions, next release, I've got enough new stuff in here.
+<li> Most importantly, it merges in Stormrider: there are 2 new sets of data for the movement, for bot visits and hits, kept for <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a>. Parallel to both the normal surfing stats and the flattener is a <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> set of stats. Hopefully this will improve the surfing against <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> guns, as well as the random assorted bots that Stormrider did better against. Surfing 2 guns... even further in the <a href="robowiki?CrowdTargeting" class=wikipagelink>CrowdTargeting</a> direction!
+</UL>
+<p>
+1.0.20NVBW - 2151 (Dookious + 5)
+<UL >
+<li> No variable bot width =)
+</UL>
+<p>
+1.0.20 - 2143
+<UL >
+<li> Revert to 1.0.17
+<li> Extended the maximum distance a goto point will be considered so that <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> predicts moving the whole time when the wave passes over.
+</UL>
+<p>
+1.0.19 - 2146 (Dookious + 1)
+<UL >
+<li> 1.0.18 introduced a bug where the retreat angle was introduced and the sin of that angle was used to reduce the reachable GF even when an absolute angle was used. Now the retreat angle only affects the botwidth, not the reachable GF.
+</UL>
+<p>
+1.0.18 - 2146 (Dookious + 1)
+<UL >
+<li> Fixed some assumptions in the precise botwidth calculations - could still be improved I guess, but not much
+</UL>
+<p>
+1.0.17NVBW - 2151 (Dookious + 6)
+<UL >
+<li> No variable bot width in surfing - ie. botwidth doesn't depend on speed when the wave hits.
+</UL>
+<p>
+1.0.17 -  2145 (Dookious + 1)
+<UL >
+<li> Doesn't wait to fire
+</UL>
+<p>
+1.0.16 - 2134 (Dookious - 7)
+<UL >
+<li> Aims from the next point (actually, this time).
+<li> Waits to fire until the gunturn of aiming from *this* point is less than 18/distance
+</UL>
+<p>
+1.0.15 - 2138 (Dookious - 3)
+<UL >
+<li> Made the cluster bigger min(100,sqrt(scans))
+<li> Chooses the other aim method if the cluster size is 100
+<li> Doesn't wait until the gun is aimed before firing, but still starts aiming MEA/(PI/18) ticks before firing
+</UL>
+<p>
+1.0.14 - 2133 (Dookious - 7)
+<UL >
+<li> Both aims and fires waves from the precisely predicted *next* location
+<li> Uses a different angle-choosing method (similar to DCBot) if there is a large enough cluster (50*50*50)
+<UL >
+<li> Which never gets reached in a 30 round battle....duh....
+</UL>
+<li> Smaller cluster extracted from tree min(100,cbrt(scans)) instead of min(100,sqrt(scans))
+</UL>
+<p>
+1.0.13 - 2129 (Dookious - 11) - rating drift is killer ATM.....
+<UL >
+<li> Reverted to 1.0.10
+<li> Now waits until the gun is aimed within 18/distance radians of this aim before shooting
+<li> Fires 3 power bullets if the hitrate is above 33%
+</UL>
+<p>
+1.0.12 - 2131 - (Dookious-6)
+<UL >
+<li> Reverted to 1.0.10
+<li> The gun now fires from a rough estimate of where it will be next turn. This has a maximum inaccuracy of 2 pixels, whereas leaving this out has a maximum inaccuracy of 8 pixels.
+</UL>
+<p>
+1.0.11 - 2127
+<UL >
+<li> The gun is now clustering on gunheat, (or distance from gunheat being zero), weighted same as accel and lateral velocity (ie. maximum the tree allows)
+</UL>
+<p>
+1.0.10 - 2132 to 2130 after the crash
+<UL >
+<li> Another attempt at fixing that logical bug...this time it should be slightly more effecient, and should be functionally identical
+</UL>
+<p>
+1.0.9 - 2129.6 after 1798 battles
+<UL >
+<li> Fixed a minor logical bug where "PredictionStatus<a href="robowiki?action=edit&id=PredictionStatus" class=wikipageedit>?</a>" objects were not cleared from points which <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> was able to reach and stop on, resulting in them possibly 1) seeming more dangerous due to still moving, and thus a larger botwidth, 2) not being exactly where they should be, due to the prediction thinking they needed to be projected back to where was actually reachable and 3) probably being slightly slower than otherwise. Note: this only influenced the second wave, so should have little impact due to the second wave's low weighting.
+<UL >
+<li> Grr.....darn <a href="robowiki?PerformanceEnhancingBug" class=wikipagelink>PerformanceEnhancingBug</a>s
+<UL >
+<li> Or maybe it would have helped if that was the only change I'd made....messing with the surfing nitty-gritty is not a good idea when everything else is tweaked depending on it
+</UL>
+</UL>
+</UL>
+<p>
+1.0.8 - 2133 - 3 points below <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>!
+<UL >
+<li> Revert to 1.0.5
+<li> Change the movement danger bins to use floats instead of doubles
+<li> Fixed a bug that made <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> still use 151 bins worth of memory, while only utilizing 101 of them
+</UL>
+<p>
+1.0.7 - corrupted
+<UL >
+<li> Increased flattener threshold again
+</UL>
+<p>
+1.0.6 - 2117 - corrupted
+<UL >
+<li> Minor tweaks to the bot-depth, so it predicts surfing the wave for slightly longer
+<li> Caches the dangers on the second wave for when the velocity is 0
+<li> Decreased flattener threshold slightly
+</UL>
+<p>
+1.0.5 - 2132
+<UL >
+<li> Reverted the segmentation changes
+<li> The second wave now also enjoys the no-stop option to reach maximum GFs, and accounts for the increased botwidth associated with continued motion precisely
+<li> The botwidth is dependent on the angle the enemy fires from
+<li> Unfortunately I had to remove the danger caching on the second wave because of these...so 1.0.5 is quite a bit slower :-(
+<UL >
+<li> The re-release 1.0.5b might have had some small changes...I didn't just edit the .jar to reflect the version number, but instead re-packaged
+</UL>
+</UL>
+<p>
+1.0.4 - 2111.73 after 486 battles
+<UL >
+<li> Revert to 1.0.1
+<li> Made Druss consider the points on the end that would make him have to keep moving, instead of slowing down
+<li> Made the bot-width and position change, based on what the speed is when the wave hits, in the danger calculation
+<UL >
+<li> Buggy, the bot-width increased twice as much as it should have, resulting in <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> stopping completely for every single wave
+</UL>
+<li> Fixed the bin-width bug I found in 1.0.3
+<UL >
+<li> Accidentally made some changes to the segmentation when I was fooling around
+</UL>
+</UL>
+<p>
+1.0.3
+<UL >
+<li> Weighting waves as /time-to-arrive, or /sqr(time-to-arrive) if the hitrate is below 3%
+<li> Gone back to 1.0.1 segmentation
+<li> Fixed bug where one bin did not get covered (the highest GF bin), and I'm now projecting the point I am aiming at back to where I can actually get to to make it not a <a href="robowiki?PerformanceEnhancingBug" class=wikipagelink>PerformanceEnhancingBug</a>
+<li> Decreased the botwidth slightly to make up for the above bugfix
+</UL>
+<p>
+1.0.2 - 2114 after ~1800 battles
+<UL >
+<li> Reverted my movement segmentation change to using 20 ticks instead, but kept the absolute value of the sum of the signed lateral velocities.
+<li> A slightly different danger calculation, using danger/cbrt(dist) instead of danger/sqrt(dist), and the danger of each covered bin is squared before it is added.
+</UL>
+<p>
+1.0.1 - 2117.91 after 1509 battles
+<UL >
+<li> Found a bug in the attempt at pixel-perfect, which made the second-wave surfing think it had to turn more than it actually did.
+<li> Updated the wave-hit-time for when the bot is not able to reach a point, to the point it actually reaches. The second wave was already surfed from this point.
+<li> Waves weighted as pow(0.88, time-to-arrive) at each point
+<li> Fires a wave at min(the last seen bullet power, energy-left-before-bullet-hit) if the enemy is killed by my bullet when their gunheat was 0.
+<UL >
+<li> Somehow a movement segment that I was testing slipped into this release...I think it might be to blame for my amazing <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> score. It replaced "sum of the absolute values of the lateral velocities of the last 20 ticks" with "absolute value of the sum of the signed lateral velocities of the last 8 ticks".
+</UL>
+</UL>
+<p>
+0.9.9 - 2119.61 after 1703 battles
+<UL >
+<li> Reverted to 0.9.6, fixed the 2 bugs of 0.9.7 and 0.9.8, and found another one in future-prediction code
+</UL>
+<p>
+0.9.8 - 2100
+<UL >
+<li> Fixed a bug in the so-called pixel-perfect, which was only pixel-perfect if the velocity was positive =)
+<li> Now that the secondary wave is much more accurate, I'm weighting it much higher ( pow(0.92, time-to-arrive) vs pow(0.85, time-to-arrive) )
+<UL >
+<li> had a late night bug that I was too tired to remember...
+</UL>
+</UL>
+<p>
+0.9.7
+<UL >
+<li> 0.9.6 accidentally weighted the flattener twice what the regular buffer was weighted, sorry 'bout that...
+</UL>
+<p>
+0.9.6
+<UL >
+<li> Removed an old assumption with my second-wave surfing that could allow an inaccuracy of up to 6 pixels. It now surfs the second-wave pixel-perfect, without predicting the movement using co-ordinates =) Might be slightly slower...but not much.
+</UL>
+<p>
+0.9.5 - 2115.84 after 1669 battles
+<UL >
+<li> Changed the non-surfing movement so that it checks both directions, and moves to the one that passes furthest from the enemy
+<li> Added a flattener, using a section of the random buffers, weighted 50/50 with the regular buffers when enabled at a 10% (weighted) hitrate, after the second round. Tuned to <em>only just</em> enable for <a href="robowiki?Ascendant" class=wikipagelink>Ascendant</a>, who beats me over 35 rounds, but who I beat over 100.
+<li> Reduced the number of bins in the movement from 151 to 101, to reduce memory, and allow the use of a flattener and its increased buffer requirements
+</UL>
+<p>
+0.9.4 - 2111
+<UL >
+<li> Changed the gun back to using advancing velocity instead of offset
+<li> Changed movement and gun to use BFT instead of distance
+<li> Changed the lateral-velocity in the movement to use doubles instead of integers - this should make the accel and time-since-decel more accurate
+<li> Fixed a bug which would prevent it from regenerating points on the main wave when detecting a new wave - possibly making the reverse option harder to access
+</UL>
+<p>
+0.9.3 - 2108
+<UL >
+<li> Some small tweaks to the gun segmentation - using offset instead of advancing velocity
+</UL>
+<p>
+0.9.2 - 2111
+<UL >
+<li> A test, reverting all the way back to 0.7.23
+</UL>
+<p>
+0.9.1 - 2106
+<UL >
+<li> Reverting the gun segmentation back to 0.8.7 - it must have been lucky when testing it.
+<li> Changed the way it chooses an angle to fire at: no longer smoothes all the angles to a set of bins, instead checks which angle has the most other angles within a certain tolerance (12/current_distance). It also fires directly at the angle, instead of at a bin, making it slightly more accurate.
+<li> Fixed a bug in the gun where it set the enemy location in the wrong class - I actually don't know how the gun was working at all.
+</UL>
+<p>
+0.9.0
+<UL >
+<li> A bit of refactoring in the movement - I fixed one minor logical flaw, and also made part of the algorithm linear. It should be faster due to 250000+ less decisions for every wave it surfs.
+<li> Added my new top-secret dimension to my gun, replacing distance-last-20. It seems to really help against <a href="robowiki?RandomMovement" class=wikipagelink>RandomMovement</a>
+<UL >
+<li> or maybe not...
+</UL>
+</UL>
+<p>
+0.8.7
+<UL >
+<li> Now using the precise-predicted maximum forward and reverse GFs to 'weed out' any GFs that aren't actually reachable, instead of scaling them to fit
+</UL>
+<p>
+0.8.6 - 2108
+<UL >
+<li> Fixed bug in gun, so now time-since-lateral-dir-change <em>actually works</em> - I'm not sure how long it's been like this
+<li> Weighting movement buffers by sqrt of number of segments, instead of number of segments
+<li> Added 'Shakespearean Insulter' - inspired by the quotes in Dookious =)
+</UL>
+<p>
+0.8.5 - 2106
+<UL >
+<li> Fixed bug in calculating offset for gun
+<li> Fixed bug in lateral acceleration in movement - it was being rounded, so would be able to trip the &gt; 0.6 even if it shouldn't have.
+<li> Using precise MEA as attribute instead of average of MEA and walldistance in gun
+<li> Fixed bug in calculating MEA in gun, where 1.9 was always used, instead of actual bullet power
+</UL>
+<p>
+0.8.4 - 2105
+<UL >
+<li> Finally fixed the Java 5 issue (I hope)
+<li> Using offset instead of advancing velocity in the gun
+<li> Using dist-last-8 with dist-last-8 slices instead of the (buggy) dist-last-8 with dist-last-10 slices for the movement
+<li> Now accepts bullet-hit-bullet for the first piece of data IF the wave has traveled at least 2 ticks (otherwise there are sometimes bad readings for HOT bots)
+<li> If the absolute acceleration is 0, segment on if the lateral acceleration is greater than 0.6 (both gun and movement)
+</UL>
+<p>
+0.8.3 - 2107
+<UL >
+<li> A failed attempt at Java-5 compatibility
+</UL>
+<p>
+0.8.2 - unreleased
+<UL >
+<li> Tweaking the gun a bit
+</UL>
+<p>
+0.8.1 - pulled
+<UL >
+<li> fixed bug in gun - when converting GFs to angles the forward/reverse wall MEA was chosen on lateral direction instead of GF
+<UL >
+<li> It seems something still isn't right....
+</UL>
+</UL>
+<p>
+0.8.0 - pulled
+<UL >
+<li> in movement:
+<UL >
+<li> reduced bins from 151 to 47 - mostly for speed, no noticeable performance change
+<li> reduced binsmoothing width to match new # of bins
+<li> fixed minor bug in dist-last-10 calculation, was 1 tick off
+<li> removed all (random) buffers that did not include velocity as a segment - hope this will help my surfing against simple targeters
+</UL>
+<li> in gun:
+<UL >
+<li> calculates precise MEA
+<li> uses the (precise MEA)/asin(8/bulletVel) as an attribute, instead of standard arc wall distance
+<li> uses BFT instead of distance as an attribute
+<li> reduced bins (for choosing angle) from 151 to 47
+<li> reduced binsmoothing width to match new # of bins
+</UL>
+</UL>
+<p>
+0.7.25 - 2109
+<UL >
+<li> -- all movement changes
+<li> Fixed to segment on time-since-decel instead of time-since-accel
+<li> Accel and time-since-decel are now calculated using the absolute velocity, instead of lateral velocity
+<li> Changed the segment lateral-distance-last-20 into actual-distance-last-10
+</UL>
+<p>
+0.7.24 - 2108 after 1200 battles
+<UL >
+<li> Trying out a preferred distance of 450 instead of 500
+</UL>
+<p>
+0.7.23 - 2108
+<UL >
+<li> Lots of tweaks, now weighting different attributes in the gun
+</UL>
+<p>
+0.7.10
+<UL >
+<li> MAJOR bugfixes in the gun:
+<UL >
+<li> For some reason, I wasn't clustering on acceleration 
+<li> Accidentally taking the absolute value of advancing velocity.
+</UL>
+<li> Bug introduced: I was moving in the TC...whoops!
+</UL>
+<p>
+0.7.6 - 0.7.9
+<UL >
+<li> Unreleased
+<li> Tested out several things, including weighting the segments and precisely predicted max-escape-angles. Neither worked.
+</UL>
+<p>
+0.7.5 - 2105
+<UL >
+<li> Functionally equivalent to 0.7.4, but has 150000 less calls to Math.pow with each time it aims, or each time it sees a new wave. Replaced the Math.pow(x,2) with my own sqr(x) function.
+</UL>
+<p>
+0.7.4 - <em>above 2100!!!</em> - 2105
+<UL >
+<li> Using the gun from Stormrider, after seeing what an improvement it was on my earlier attempts.
+</UL>
+<p>
+0.7.2
+<UL >
+<li> Fixed a minor bug in the gun - probably didn't do anything
+<li> Cluster size is sqrt of log size
+<li> Added a max 'distance' cutoff
+<li> Instead of squaring the distance, use power 4
+<li> Increase log size to 50000
+<li> Added gunheat attribute - although weighted fairly low
+</UL>
+<p>
+0.7.1
+<UL >
+<li> Increased the log size ( A lot!)
+<li> Increased the cluster size from 50 to 125
+<li> Added in distance last {10,20,30} attributes, although weighted lightly
+</UL>
+<p>
+0.7.0 - 2083
+<UL >
+<li> Using <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> for the gun
+<li> Has a fairly small log size, a medium between surfer-killer and lowbot-thrasher
+</UL>
+<p>
+0.6.0 - 0.6.3
+<UL >
+<li> Some experiments I was doing with DC for the movement - I think I learned some things, and this will be continued soon.
+</UL>
+<p>
+<p>
+0.5.10
+<UL >
+<li>That random selection of buffers really worked well, so I've tuned it a bit, weighting forward wall distance and distance as having a higher chance of being chosen. Pushed me above 70 in the MC2K7!
+</UL>
+<p>
+0.5.9 - 2082
+<UL >
+<li> Added <a href="robowiki?WallDistance" class=wikipagelink>WallDistance</a> segmentation (forward and reverse)
+<li> I got lazy trying to figure out which buffers to add wall segments to, so I wrote a quick program that prints out 100 buffers with randomly chosen segments, and used those. Each segment has 1-4 randomly chosen attributes, with velocity having a much higher chance of being chosen than any of the others. Also, because of the maximum of 4 dimensions at a time, it has low memory usage (compared to what it used before). I could probably even increase the number of buffers (and/or the number of attributes) without using that much more memory. I feel that this is an extension of PEZ's <a href="robowiki?CrowdTargeting" class=wikipagelink>CrowdTargeting</a>, and it looks very promising, especially against top bots.
+</UL>
+<p>
+0.5.8
+<UL >
+<li> Distance up again to 500
+<li> Tuned max advancing/retreating angle (for both surfing and non-surfing) to be best against <a href="robowiki?RamBots" class=wikipagelink>RamBots</a>
+<li> Dangers at the points on the second wave are cached, because each one gets referenced many times, and several trig calls are involved in checking the danger
+<li> The danger weight of each wave is cached, this eliminates the need to recalculate it for each point on that wave
+</UL>
+<p>
+<p>
+0.5.7
+<UL >
+<li> Default distance back to 400
+<UL >
+<li> Being closer is stronger against bottom bots, for some reason
+</UL>
+</UL>
+<p>
+0.5.6
+<UL >
+<li> I think I finally got most of the bugs out...
+<li> Increased the default distance to 500 (from 400)
+</UL>
+<p>
+0.5.1 - 0.5.5
+<UL >
+<li> LOTS of <a href="robowiki?WaveSuffering" class=wikipagelink>WaveSuffering</a>
+</UL>
+<p>
+0.5.0
+<UL >
+<li> As of 0.5, <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> now surfs 2 waves, using <a href="robowiki?PrecisePrediction" class=wikipagelink>PrecisePrediction</a>!
+</UL>
+<p>
+0.4.4
+<UL >
+<li> Using 0.3.10's movement
+<li> Fixed a major bug in the gun, which made accel/decel and time-since-decel random noise
+</UL>
+<p>
+0.4.0Vyper - 2075
+<UL >
+<li>A test version using Vyper's gun
+</UL>
+<p>
+0.4.0 - 2045
+<UL >
+<li> 0.3.10's movement
+<li> Uses a highly modified version of <a href="robowiki?GFTargetingBot" class=wikipagelink>GFTargetingBot</a>'s gun 
+<UL >
+<li> Wall segmentation
+<li> Time since decel
+<li> Some structure in place for expansion of segments
+</UL>
+</UL>
+<p>
+0.3.17
+<UL >
+<li> Revert to 0.3.10
+<li> Weight later waves higher
+<li> Move around enemy, not fire location
+</UL>
+<p>
+0.3.13 - 2064 - it seems that <a href="robowiki?ImperfectPerfection" class=wikipagelink>ImperfectPerfection</a> does very little for your score
+<UL >
+<li> Disabled the flattener
+</UL>
+<p>
+0.3.12 - 2058
+<UL >
+<li> Added back the 'fine' segments
+<li> Added a simple flattener - logs every wave as a hit (weighted 0.5) if enemy gets more than 40 damage per round
+<li> Added <a href="robowiki?ImperfectPerfection" class=wikipagelink>ImperfectPerfection</a>
+</UL>
+<p>
+0.3.11 - 2062
+<UL >
+<li> Getting rid of all the 'fine' segments
+</UL>
+<p>
+0.3.10 - 2064
+<UL >
+<li> 0.3.10PM with Raiko's gun instead
+</UL>
+<p>
+0.3.10PM - 2033
+<UL >
+<li> Now also using distance-last-20-ticks and time-since-decel
+</UL>
+<p>
+0.3.9PM - 2028
+<UL >
+<li> Waylander's gun is now 0.3.2's gun (it was set to be too picky on the delta-heading)
+<li> Movement segments are optimized vs Shadow
+</UL>
+<p>
+0.3.4PM1 - 2026
+<UL >
+<li> Shooting regular sized bullets =)
+</UL>
+<p>
+0.3.4PM
+<UL >
+<li> A test version using Waylander's gun instead of Raiko's
+<UL >
+<li> What's more, it shoots 0.1 power bullets. Whoops =)
+</UL>
+</UL>
+<p>
+0.3.8 - 2055 
+<UL >
+<li> Trying the old method for generating goto points - as per <a href="robowiki?BasicGTSurfer" class=wikipagelink>BasicGTSurfer</a>
+<UL >
+<UL >
+<li> I didn't think that this segment (time since decel) would help, it pulled the mc2k7 scores way down.
+<li> I'm going to use 0.3.4 movement for my gun release (which will hopefully be soon)
+</UL>
+</UL>
+</UL>
+<p>
+0.3.7 - 2047
+<UL >
+<li> 0.3.6, with the bug fixed
+</UL>
+<p>
+0.3.6 - 1927
+<UL >
+<li> Giving the time-since-decel segment a try in the rumble
+<li> Moves relative to the enemy again
+<li> Slightly more accurate deceleration for precise prediction
+<li> Uses a new method to generate goto points - should follow the <a href="robowiki?PrecisePrediction" class=wikipagelink>PrecisePrediction</a> better
+<UL >
+<li> had a major bug in the goto method - wouldn't try to turn if it was going backwards
+</UL>
+</UL>
+<p>
+0.3.4 - 2061
+<UL >
+<li> segmentation tweaks (time-since-decel is disabled)
+<li> Moves relative to fire location, not enemy location
+</UL>
+<p>
+0.3.3 (not released)
+<UL >
+<li> Trying a time-since-decel segment
+<UL >
+<li> It didn't help against anyone except the pattern matchers, and made me more susceptible to Ascendant's anti-surfer gun.
+</UL>
+</UL>
+<p>
+<p>
+0.3.1 - 2058
+<UL >
+<li> Now using an easily extended buffer system
+<li> Using lots more slices for each dimension
+</UL>
+<p>
+0.2.5
+<UL >
+<li> Added more buffers
+</UL>
+<p>
+0.1.4
+<UL >
+<li> Fixed a <a href="robowiki?PrecisePrediction" class=wikipagelink>PrecisePrediction</a> bug
+<li> Above 2000!
+</UL>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=DrussGT/VersionHistory" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=DrussGT/VersionHistory">View other revisions</a><br>Last edited March 11, 2009 20:22 EST by <a href="robowiki?Skilgannon" title="ID 16995 from bc2-rba-1-0.cache.isnet.net">Skilgannon</a> <a href="robowiki?action=browse&diff=1&id=DrussGT/VersionHistory">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

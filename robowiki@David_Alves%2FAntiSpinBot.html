@@ -1,0 +1,401 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>David Alves/AntiSpinBot - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='David, Alves, Anti, Spin, Bot'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/AntiSpinBot">David Alves/AntiSpinBot</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>My entry in the <a href="robowiki?SpinBotChallenge" class=wikipagelink>SpinBotChallenge</a>. Attempts to get a perfect score against <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a>.
+<p>
+Please do not enter modified versions of this bot in the <a href="robowiki?SpinBotChallenge" class=wikipagelink>SpinBotChallenge</a>, although you are welcome to use my ideas in your own bot for the challenge.
+<p>
+<hr noshade class=wikiline size=1>
+<pre>
+
+/*  Created on Oct 13, 2004
+
+David Alves presents
+   _____             __   .__   _________        .__         __________           __
+  /  _  \    ____  _/  |_ |__| /   _____/______  |__|  ____  \______   \  ____  _/  |_
+ /  /_\  \  /    \ \   __\|  | \_____  \ \____ \ |  | /    \  |    |  _/ /  _ \ \   __\  .
+/    |    \|   |  \ |  |  |  | /        \|  |_&gt; &gt;|  ||   |  \ |    |   \(  &lt;_&gt; ) |  |
+\____|__  /|___|  / |__|  |__|/_______  /|   __/ |__||___|  / |______  / \____/  |__|
+        \/      \/                    \/ |__|             \/         \/         
+                                                     ____        ______ 
+                                                    |_   |      |      |
+                                                     _|  |_  __ |  --  |
+                                                    |______||__||______|
+*/
+package davidalves.robot;
+
+
+import java.awt.Color;
+import java.awt.geom.*;
+
+import robocode.*;
+
+/**
+ * @author David Alves
+ *
+ */
+public class AntiSpinBot extends Robot{
+    
+    static final boolean firingEnabled = true;
+    static final boolean movingEnabled = true;
+    
+    static final int ENEMY_FIREPOWER = 3;
+    static final int ENEMY_BULLET_SPEED = 20 - 3 * ENEMY_FIREPOWER;
+    
+    //Time SpinBot takes to drive a complete circle.
+    static final int ENEMY_CIRCLE_TIME = 58;
+    
+    //SpinBot fires once per revolution
+    static final int ENEMY_FIRE_FREQUENCY = ENEMY_CIRCLE_TIME;
+    
+    //Size of the circle that SpinBot drives in
+    static final int ENEMY_TURN_CIRCLE_RADIUS = 46;
+      
+    //We stay at less than this distance to ensure that there will only be one enemy bullet in the air at a time
+    static final int MAX_DISTANCE = (ENEMY_FIRE_FREQUENCY - 12) * ENEMY_BULLET_SPEED;
+    
+    //We need at least 30 ticks to dodge safely
+    static final int MIN_DISTANCE = 30 * ENEMY_BULLET_SPEED;
+    
+    //If we only have 24 ticks or less to dodge each bullet,
+    //forget about dodging and just drive far away 
+    static final int PANIC_DISTANCE = 19 * ENEMY_BULLET_SPEED;
+    
+    //try to maintain this distance
+    static final int IDEAL_DISTANCE = (MAX_DISTANCE + MIN_DISTANCE) / 2;
+    
+    static Rectangle2D field;
+    
+    static double enemyEnergy;
+    static long lastScanTime = 0;
+    static long lastFireTime = 0;
+    static long nextFireTime;
+    static double fireRange;
+    
+    static boolean lastDirectionWasClockwise;
+    
+    static double enemyHeadingAtMoveStart;
+    static double enemyHeadingDegrees;
+    static double enemyAngleDegrees;
+    Point2D.Double enemy, circleCenter, fire;
+    
+    //A "death hop" is a dodge made after spinbot dies... in case he fired right before dying and we didn't notice
+    //This variable ensures we only do one death hop per round.
+    static boolean okToDeathHop = true;
+    
+    
+    //stats
+    static int skippedTurns;
+    static int damageTaken;
+    static int ramCount;
+    
+    static String state = "";
+    
+    public void run(){
+        //My colors, used on all my bots
+        setColors(Color.darkGray, Color.darkGray, Color.cyan);
+        
+        enemyHeadingAtMoveStart = Double.NaN;
+        enemyHeadingDegrees = Double.NaN;
+        okToDeathHop = true;
+        fireRange = 0;
+        enemyEnergy = 100;
+        lastFireTime = -100;
+        nextFireTime = 30;
+        lastScanTime = -100;
+        enemy = null;
+        circleCenter = null;
+        fire = null;
+        enemyAngleDegrees = Double.NaN;
+        setAdjustGunForRobotTurn(true);
+        setAdjustRadarForGunTurn(true);
+        setAdjustRadarForRobotTurn(true);
+        
+        field = new Rectangle2D.Double(18,18, getBattleFieldWidth() - 36, getBattleFieldHeight() - 36);
+        
+        do{
+            
+            //First find SpinBot
+            state = "find SpinBot";
+            findSpinBot();
+            
+            //Sit still until enemy fires, then we dodge. If moving is disabled we never leave this loop,
+            //and therefore never dodge.
+            while(movingEnabled == false || getTime() - lastFireTime &gt; 10){
+                
+                //Sit still and sweep radar back and forth across enemy. Fire if gun is cool.
+                state = "sit still";
+                sitStill();
+                
+                //If enemy is very close to us, retreat to bullet-dodging range.
+                if(circleCenter != null &amp;&amp; circleCenter.distance(getX(), getY()) &lt; PANIC_DISTANCE){
+                    print("SpinBot is too close... retreating");
+                    break;
+                }
+                
+                Point2D.Double me = new Point2D.Double(getX(), getY());
+                if(    normalRelativeAngle(enemyHeadingAtMoveStart - absoluteBearing(enemy, me)) &lt; 0 &amp;&amp;
+                    normalRelativeAngle(enemyHeadingDegrees - absoluteBearing(enemy, me)) &gt; 0){
+                        long detectedTime = Math.round(getTime() - normalRelativeAngle(enemyHeadingDegrees - absoluteBearing(enemy, me)) / (360.0 / ENEMY_CIRCLE_TIME) );
+                        if(Math.abs(detectedTime - lastFireTime) &gt; 10){
+                            print("SpinBot fired while I was moving!! estimated time: " + detectedTime);
+                            break;
+                        }
+                }
+            }
+            enemyHeadingAtMoveStart = enemyHeadingDegrees;
+            
+            //Dodge
+            goTo(getDodgePoint());
+        }while(true);
+    }
+    
+    public void onScannedRobot(ScannedRobotEvent e) {
+        double enemyAngleRadians = Math.toRadians(getHeading()) + e.getBearingRadians();
+        enemyAngleDegrees = Math.toDegrees(enemyAngleRadians);
+        double distance = e.getDistance();
+        
+        
+        
+        enemy = new Point2D.Double( getX() + Math.sin(enemyAngleRadians) * distance,
+                                    getY() + Math.cos(enemyAngleRadians) * distance);
+        enemyHeadingDegrees = e.getHeading();
+        
+        boolean enemyHeadingIndicatesFired = Math.abs(normalRelativeAngle(absoluteBearing(enemy, new Point2D.Double(getX(), getY())) - e.getHeading())) &lt; 10;
+        boolean enemyEnergyIndicatesFiredAtStartOfRound = lastScanTime == -100 &amp;&amp; e.getEnergy() &lt;= 97.0;
+        boolean fired = enemyEnergyIndicatesFiredAtStartOfRound || enemyHeadingIndicatesFired;
+        if(fired){
+            fire = new Point2D.Double(enemy.x, enemy.y);
+            lastFireTime = getTime();
+            print("Enemy fired at range " + distance);
+            fireRange = distance;
+        }
+        
+        enemyEnergy = e.getEnergy();
+        
+        //The point that SpinBot is orbiting
+        circleCenter = project(enemy, ENEMY_TURN_CIRCLE_RADIUS, e.getHeading() + 90);
+        
+        lastScanTime = e.getTime();
+    }
+    
+    private Point2D getDodgePoint(){
+        Point2D.Double enemyCircleCenter = circleCenter;
+        double angleOffset;
+        double dodgeDistance;
+        double distance = enemyCircleCenter.distance(getX(), getY());
+        
+        if(distance &lt; PANIC_DISTANCE) {
+            //out.println("&lt; min");
+            state = "panic move - " + distance;
+            angleOffset = 140;
+            dodgeDistance = 170;
+        } else if(distance &lt; MIN_DISTANCE) {
+            state = "min move - " + distance;
+            //out.println("&lt; min");
+            angleOffset = 140;
+            dodgeDistance = 120;
+        } else if(distance &lt; IDEAL_DISTANCE){
+            state = "less than ideal move - " + distance;
+            //out.println("&lt; ideal");
+            angleOffset = 95;
+            dodgeDistance = 65;
+        } else if (distance &lt; MAX_DISTANCE){
+            state = "greater than ideal move - " + distance;
+            //out.println("&lt; max");
+            angleOffset = 75;
+            dodgeDistance = 65;
+        } else {
+            //print("&gt; max");
+            state = "greater than max move - " + distance;
+            angleOffset = 55;
+            dodgeDistance = 100;
+        }
+        Point2D.Double me = new Point2D.Double(getX(), getY());
+        double angleToTarget = absoluteBearing(me, circleCenter);
+        
+        Point2D cw, ccw;
+        
+        int smoothCW = 0; //How much we have to wallsmooth to drive clockwise
+        do{
+            cw = project(me, dodgeDistance, angleToTarget + angleOffset - smoothCW * 3);
+            smoothCW++;
+        }while(!field.contains(cw));
+        
+        int smoothCCW = 0; //How much we have to wallsmooth to drive counter-clockwise
+        do{
+            ccw = project(me, dodgeDistance, angleToTarget - angleOffset + smoothCCW * 3);
+            smoothCCW++;
+        }while(!field.contains(ccw));
+        
+        
+        //Keep traveling in the same direction unless it forces us to wallsmooth a lot more than reversing
+        if(lastDirectionWasClockwise){
+            if(smoothCW &lt;= smoothCCW + 3){
+                return cw;
+            } else {
+                lastDirectionWasClockwise = false;
+                return ccw;
+            }
+        } else {
+            if(smoothCCW &lt;= smoothCW + 3){
+                return ccw;
+            } else {
+                lastDirectionWasClockwise = true;
+                return cw;
+            }
+        }
+    }
+    
+    public void findSpinBot(){
+        while(lastScanTime != getTime()) turnRadarRight(44.9);
+    }
+    
+    public void sitStill(){
+        
+        //if(firingEnabled &amp;&amp; getGunHeat() == 0.0 &amp;&amp; getTime() - lastScanTime &lt;= 1 &amp;&amp; enemy.distance(getX(), getY()) &gt; MIN_DISTANCE){
+        if(firingEnabled &amp;&amp; getGunHeat() == 0.0 &amp;&amp; getTime() - lastScanTime &lt;= 1 &amp;&amp; circleCenter.distance(getX(), getY()) &gt; MIN_DISTANCE){
+            state = "aim and fire";
+            gun();
+            return;
+        }
+        state = "radar";
+        /*if(getTime() - lastScanTime &gt;= 3){
+            turnRadarRight(44.9);
+        } else {*/
+            double radarTurnAngle = normalRelativeAngle(enemyAngleDegrees - getRadarHeading());
+            if(radarTurnAngle &gt; 0){
+                radarTurnAngle = Math.min(44.9, radarTurnAngle + 15);
+            } else {
+                radarTurnAngle = Math.max(-44.9, radarTurnAngle - 15);
+            }
+            turnRadarRight(radarTurnAngle);
+        }
+    //}
+    
+    public void gun(){
+        double gunTurnTime = Math.ceil(Math.abs(normalRelativeAngle(getGunHeading() - getAbsoluteAngleDegrees(getX(), getY(), enemy.x, enemy.y)))/ 10.0);
+        double distanceBulletTraveled = - 11 *  gunTurnTime;
+        double enemyPositionOnCircle = absoluteBearing(circleCenter, enemy);
+        Point2D.Double projected;
+        //print("gunTurnTime: " + gunTurnTime);
+        if(enemyEnergy != 0.0){
+            do
+            {
+                distanceBulletTraveled += 11.0; 
+                enemyPositionOnCircle += 360.0 / ENEMY_FIRE_FREQUENCY;
+                projected = project(circleCenter, ENEMY_TURN_CIRCLE_RADIUS, enemyPositionOnCircle);
+                
+            }while (projected.distance(getX(), getY()) &gt; distanceBulletTraveled);
+        } else {
+            projected = enemy;
+        }
+        //print("enemy:     " + enemy);
+        //print("projected: " + projected);
+        double gunAngle = normalRelativeAngle(getAbsoluteAngleDegrees(getX(), getY(), projected.x, projected.y) - getGunHeading());
+        if(gunTurnTime &lt; 5){
+            turnGunRight(gunAngle);
+        } else {
+            turnGunRight(Math.max(Math.min(gunAngle, 50), -50));
+            return;
+        }
+        fire(3);
+    }
+    
+    private void goTo(Point2D destination) {
+        
+        Point2D location = new Point2D.Double(getX(), getY());
+        double distance = location.distance(destination);
+        double angle = normalRelativeAngle(absoluteBearing(location, destination) - getHeading());
+        if (Math.abs(angle) &gt; 90) {
+            distance *= -1;
+            if (angle &gt; 0) {
+                angle -= 180;
+            }
+            else {
+                angle += 180;
+            }
+        }
+        turnRight(angle);
+        ahead(distance);
+    }
+    
+    private void print(String s){
+        out.println(getRoundNum() + ":" + getTime() + ": " + s);
+    }
+    
+    private double getAbsoluteAngleDegrees(double x1, double y1, double x2, double y2){
+        return Math.toDegrees(Math.atan2(x2 - x1, y2 - y1));
+    }
+    
+    private double absoluteBearing(Point2D source, Point2D target) {
+        return Math.toDegrees(Math.atan2(target.getX() - source.getX(), target.getY() - source.getY()));
+    }
+
+    private double normalRelativeAngle(double angle) {
+        angle = Math.toRadians(angle);
+        return Math.toDegrees(Math.atan2(Math.sin(angle), Math.cos(angle))); 
+    }
+    
+    private Point2D.Double project(Point2D source, double distance, double angle){
+        return new Point2D.Double(source.getX() + distance * Math.sin(Math.toRadians(angle)), source.getY() + distance * Math.cos(Math.toRadians(angle)));
+    }
+    
+    public void onRobotDeath(RobotDeathEvent e){
+        enemyEnergy = 0;
+        if(withinExpectedFireTime()) lastFireTime = e.getTime();
+    }
+    
+    public boolean withinExpectedFireTime(){
+        return Math.abs(getTime() - (lastFireTime + ENEMY_FIRE_FREQUENCY)) &lt; 10;
+    }
+    
+    public void onSkippedTurn(SkippedTurnEvent e){
+        skippedTurns ++;
+    }
+    public void onWin(WinEvent e){
+        onDeath(null);
+    }
+    public void onDeath(DeathEvent e){
+        print("skipped turns: " + skippedTurns);
+        print("damage taken: " + damageTaken);
+        print("times rammed: " + ramCount);
+    }
+    
+    public void onHitByBullet(HitByBulletEvent e){
+        damageTaken += 4 * e.getPower();
+        if(e.getPower() &gt; 1) damageTaken += 2 * (e.getPower() - 1);
+        if(lastScanTime != e.getTime()){
+            enemyEnergy += 3 * e.getPower();
+        }
+        print("hit by bullet of power " + e.getPower() + " at distance " + fireRange + " while in state: " + state);
+    }
+    
+    public void onHitRobot(HitRobotEvent e){
+        ramCount++;
+        enemyEnergy = e.getEnergy();
+    }
+    
+    public void onBulletHit(BulletHitEvent e){
+        enemyEnergy = e.getEnergy();
+    }
+}
+
+</pre>
+<hr noshade class=wikiline size=1>
+<h3>Comments</h3>
+<p>
+I just want to say it's amazing, you are crazy, its the most amazing complex robot extends Robot i had seen. And the code is beautiful:). -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+<p>
+I'm as amazed as <a href="robowiki?Iiley" class=wikipagelink>iiley</a> is. How does this bot fare in the <a href="robowiki?ExtendsRobotCompetition" class=wikipagelink>ExtendsRobotCompetition</a>? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I think this robot would do very very badly against anything besides <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a>. But I might modify it a bit and enter one in that. :-) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=David_Alves/AntiSpinBot" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=David_Alves/AntiSpinBot">View other revisions</a><br>Last edited October 25, 2004 1:56 EST by <a href="robowiki?David_Alves" title="ID 3635 from c-67-180-85-25.client.comcast.net">David Alves</a> <a href="robowiki?action=browse&diff=1&id=David_Alves/AntiSpinBot">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

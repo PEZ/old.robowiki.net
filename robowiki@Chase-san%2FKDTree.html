@@ -1,0 +1,518 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Chase-san/KDTree - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Chase-san, KDTree'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/KDTree">Chase-san/KDTree</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Here is the start of my KDTree implimentation, this is free code
+<pre>
+package org.csdgn.util.multi;
+
+/**
+ * The thing you really need javadoc on has none,
+ * sorry about that, i'll add some.&lt;br&gt;&lt;br&gt;
+ * 
+ * A kd-tree is a multidimensional search tree for
+ * points in k dimensional space. Levels of the tree
+ * are split along successive dimensions at the points.
+ *
+ * @param &lt;K&gt; - The point object
+ * @param &lt;V&gt; - The type of data it'll store
+ * 
+ * @author Chase
+ */
+public class KDTree&lt;K extends Point, V&gt; {
+	private int dimensions;
+	private Node root;
+	
+	private int searched;
+	private double nearestDistance;
+	private Node nearestNode;
+	
+	/**
+	 * Sets up a new null tree, the number of dimensions will
+	 * be set when the first point is added, and cannot be
+	 * changed later.
+	 */
+	public KDTree() {
+		root = null;
+		dimensions = 0;
+	}
+	
+	/**
+	 * Sets up a new tree with the specified number of dimensions.
+	 */
+	public KDTree(int dimensions) {
+		root = null;
+		this.dimensions = dimensions; 
+	}
+	
+	public void add(K key, V value)
+		throws NullPointerException, IllegalArgumentException {
+		if(key == null) throw new NullPointerException(
+				"the key cannot be null");
+		if(root == null) {
+			if(dimensions &gt; 0 &amp;&amp; key.size() != dimensions)
+				throw new IllegalArgumentException(
+					"the key is of the wrong number of dimensions");
+			root = new Node(key,value);
+			dimensions = key.size();
+		} else {
+			Node n = root;
+			while(true) {
+				if(n.compareTo(key) &lt; 0) {
+					if(n.left == null) {
+						n.isBranch = true;
+						n.left = new Node(key,value,n);
+						break;
+					} else {
+						n = n.left;
+					}
+				} else {
+					if(n.right == null) {
+						n.isBranch = true;
+						n.right = new Node(key,value,n);
+						break;
+					} else {
+						n = n.right;
+					}
+				}
+			}
+		}
+	}
+	
+	public V getApproximateNearestNeighbor(K key)
+		throws NullPointerException {
+		if(key == null) throw new NullPointerException(
+				"the key cannot be null");
+		if(root == null) return null;
+		searched=0;
+		
+		Node n = root;
+		Node nearest = null;
+		
+		double distance = Double.POSITIVE_INFINITY;
+		while(n != null) {
+			searched++;
+			double dist = n.distance(key);
+			if(dist &lt; distance) {
+				nearest = n;
+				distance = dist;
+			}
+			
+			if(n.compareTo(key) &lt; 0) {
+				n = n.left;
+			} else {
+				n = n.right;
+			}
+		}
+		
+		return nearest.value;
+	}
+	
+	public V getNearestNeighbor(K key)
+		throws NullPointerException {
+		if(key == null) throw new NullPointerException(
+			"the key cannot be null");
+		if(root == null) return null;
+		searched = 0;
+		nearestDistance = Double.POSITIVE_INFINITY;
+		nearestNode = null;
+		setNearestNeighbor(root, key);
+		
+		return nearestNode.value;
+	}
+	
+	public void setNearestNeighbor(Node tree, K key) {
+		if(tree == null) return;
+		if(tree.left == null &amp;&amp; tree.right == null) return;
+		Node n = tree;
+		Node lastNode = null;
+		while(n != null) {
+			searched++;
+			double dist = n.distance(key);
+			if(dist &lt; nearestDistance) {
+				nearestNode = n;
+				nearestDistance = dist;
+			}
+			
+			lastNode = n;
+			if(n.compareTo(key) &lt; 0) {
+				n = n.left;
+			} else {
+				n = n.right;
+			}
+		}
+		
+		n = lastNode;
+		do {
+			//search
+			double dist = n.compareTo(key);
+			if(Math.abs(dist) &lt; nearestDistance) {
+				if(dist &lt; 0) {
+					setNearestNeighbor(n.right,key);
+				} else {
+					setNearestNeighbor(n.left,key);
+				}
+			}
+			//step up
+			lastNode = n;
+			n = n.up;
+		} while(n != null &amp;&amp; lastNode != tree);
+	}
+	
+	public int getSearched() {
+		return searched;
+	}
+	
+	private class Node {
+		protected int axis;
+		protected boolean isBranch;
+		protected K key;
+		protected V value;
+		//    |   Is this the fabled |
+		//   / \  flux capacitor?   \|/
+		protected Node left, right, up;
+		
+		protected Node(K k, V v) {
+			key = k;
+			value = v;
+			axis = 0;
+			isBranch = false;
+		}
+		
+		protected Node(K k, V v, Node parent) {
+			key = k;
+			value = v;
+			up = parent;
+			isBranch = false;
+			axis = (up.axis + 1) % dimensions;
+		}
+		
+		public double distance(K k) {
+			return key.distance(k);
+		}
+		
+		//Compare on the current axis
+		public double compareTo(K k) {
+			return key.compareTo(k, axis);
+		}
+	}
+}
+
+
+
+package org.csdgn.util.multi;
+/**
+ * This is the base class for my KDTree, it is a
+ * point with an undefined number of dimensions.&lt;br&gt;&lt;br&gt;
+ * And you all thought I couldn't write javadoc.
+ * @author Chase
+ */
+public class Point {
+	protected double[] array;
+	
+	/**
+	 * A constructor for this Point, defining the
+	 * number of dimensions it has. This cannot
+	 * be changed later on, but you may override
+	 * this class to make such options available.
+	 * @param dimensions - the number of dimensions
+	 */
+	public Point(int dimensions) {
+		array = new double[dimensions];
+	}
+	
+	/**
+	 * Returns the number of dimensions in this point. If
+	 * this point contains more than Integer.MAX_VALUE
+	 * dimensions, it returns Integer.MAX_VALUE.
+	 * @return
+	 * 		the number of dimensions in this point
+	 */
+	public int size() {
+		return array.length;
+	}
+	
+	/**
+	 * Returns the value at the specified dimension in this point.
+	 * @param index - index of value to return.
+	 * @return the value at the specified dimension in this point.
+	 * @throws IndexOutOfBoundsException - if the index is out of
+	 * 		range (index &lt; 0 || index &gt;= size()).
+	 */
+	public double get(int index) {
+		testOutOfRange(index);
+		return array[index];
+	}
+	
+	/**
+	 * Sets the value of the specified dimension to the specified value.
+	 * @param index - the dimension to set
+	 * @param value - the value to set the dimension to
+	 * @throws IndexOutOfBoundsException - if the index is out of
+	 * 		range (index &lt; 0 || index &gt;= size()).
+	 */
+	public void set(int index, double value) {
+		testOutOfRange(index);
+		array[index] = value;
+	}
+	
+	/**
+	 * Compares this point with the specified point on a certain dimension
+	 * for ordering. Returns a negative integer, zero, or a positive integer
+	 * as this point is less than, equal to, or greater than the specified object.
+	 * @param p - The point to compare
+	 * @param axis - the axis to compare on
+	 * @return 
+	 */
+	public double compareTo(Point p, int axis)  {
+		return array[axis] - p.get(axis);
+	}
+	
+	/**
+	 * Returns the square of the distance between two points.
+	 * @param p - the point to compare to
+	 * @return the square of the distance between the two sets of
+	 *  the specified coordinates, or -1 if they are not the same
+	 *  number of dimensions. 
+	 */
+	public double distanceSq(Point p) {
+		return distanceSq(this, p);
+	}
+	
+	/**
+	 * Returns the distance between two points.
+	 * @param p - the point to compare to
+	 * @return the distance between the two sets of the specified
+	 *  coordinates, or -1 if they are not the same number of dimensions. 
+	 */
+	public double distance(Point p) {
+		return distance(this, p);
+	}
+	
+	/**
+	 * Returns the square of the distance between two points.
+	 * @param p1 - the first point
+	 * @param p2 - the second point
+	 * @return the square of the distance between the two sets of
+	 *  the specified coordinates, or -1 if they are not the same
+	 *  number of dimensions. 
+	 */
+	public static double distanceSq(Point p1, Point p2) {
+		return distanceSq(p1.array, p2.array);
+	}
+	
+	/**
+	 * Returns the square of the distance between two arrays.
+	 * @param p1 - the first array
+	 * @param p2 - the second array
+	 * @return the square of the distance between the two sets of
+	 *  the specified coordinates, or -1 if they are not the same
+	 *  number of dimensions. 
+	 */
+	public static double distanceSq(double[] p1, double[] p2) {
+		if(p1.length != p2.length) return -1;
+		double total=0, k;
+		for(int i=0; i&lt;p1.length; i++)
+			total += (k=(p2[i] - p1[i]))*k;
+		return total;
+	}
+	
+	/**
+	 * Returns the distance between two points.
+	 * @param p1 - the first point
+	 * @param p2 - the second point
+	 * @return the distance between the two sets of the specified
+	 *  coordinates, or -1 if they are not the same number of dimensions. 
+	 */
+	public static double distance(Point p1, Point p2) {
+		double output = distanceSq(p1,p2);
+		if(output != -1)
+			return Math.sqrt(output);
+		else
+			return -1;
+	}
+	
+	/**
+	 * Private method to test if a dimension is out of range,
+	 * and thus complain about it.
+	 */
+	private void testOutOfRange(int index) {
+		if(index &lt; 0 || index &gt;= size()) {
+			throw new IndexOutOfBoundsException();
+		}
+	}
+}
+</pre>
+<p>
+All I need to do now is get the NearestNode<a href="robowiki?action=edit&id=NearestNode" class=wikipageedit>?</a> functions done, which is by far the hardest part. Also reading up on this, it turns out I implimented on my own what was one of the most suggested methods of removing nodes. Ergo mark it ignored and remove it on rebuild. Also notice, it uses an array that expands like an arraylist. :3
+<p>
+<hr noshade class=wikiline size=1>
+<h4>Comments:</h4>
+Yes, I do plan later to change it from using a double array of doubles, to using the actual node lists later. But currently thats just there for internal rebuilds. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Dn't worry, I just checked out <u><i>Foundations of Multidimensional and Metric Data Structures</i></u> (2006) by <i>Hanan Samet</i> from my campus library. Which goes over in detail K-d Trees, K-d Tries, PR K-d Trees, Sliding Midpoint K-d Trees, Bucket PR K-d Trees, Path-Compressed PR K-d Trees, BD-Trees, (Balanced Box Decomposition)BBD-Trees all sorts of search trees, quad-trees, and Conjunction trees. Thats only the first half of the first section. Personally something called LSD Tree caught my eye later on in the book. All in all its a very leafy subject.
+<p>
+Basically, since I can't beat all y'all, i'll just have to out-source.. hem out resource you. :) --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+<UL >
+<li> Very nice!  I'm not so sure it's a good idea to have your bot use LSD, though... --<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+<UL >
+<li> Heh, it was just a funny name. The book apparently uses 2077 References though. O.O --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</UL>
+<p>
+Not sure whether this makes any difference to your work, but I started on my own multi-dimension cluster-building tree.  It will keep itself balanced with each add, all operations will be O(log n).  Not sure how it will handle deletes yet ... or if it will.  I don't plan on deleting scans once this is implemented. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+True, the more dimensions a KDTree has the higher the constant. Otherwise with just about 3, its always about 12 to 14 node scans to find the nearest neighbor, most thing with 6 and less dimensions are okay, but from there is is pretty much exponential in checks it had to do. 1: low, 2: low, 3: low, 4: low, 5: ~25, 6: ~35, 7: ~50, 8: ~75, 9: ~180, 10: ~250, 11: ~340, 12: ~400, 13: ~500... etc. Out of anywhere from 2000 to 10000 total nodes. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+But in any case, its still alot faster then O(n). --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+There fixed some bad parts in the code *whistles innocently*, okay yes, i'll get the NN search working soon. (Just gotta finish a little reading on it) --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Okay, its all shoved into only one class now and only uses an array of an array of doubles when it needs to, otherwise its all KDNode arrays, also I added the ability to store alternate data with your Tree, and made the KDNodes public, so you can get at it :)... Alas, I have yet to impliment the radius, nearest-neighbor, and n nearest neighbors methods. But nearest neightbor is next on my list! I swear! --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Daw!! Major logical flaw.  My tree structure is broken.  Well ... actually it's working just fine - without the self-balancing part.  It's not even twice as fast as a linear search, though.  But now that I think harder about the getting it to self-balance on each add, it's definitely not going to work.  Back to the drawing board ... -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> On a whim this morning when I woke up I simplified my tree into an actual KD tree (again without any balancing or deleting).  Here's some timings, for those interested.  These are using totally random data, so without a balancing tree I would expect the speedup for game data to be worse. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL><PRE>
+      1000 iterations; history size=26,000 (about the # of tick waves in a fast learning challenge); cluster size=35; dimensions=5
+        O(n) method: 1624
+        O(log n) method: 1120
+      1000 iterations; history size=370,000 (about the # of tick waves in a regular challenge); cluster size=35; dimensions=5
+        O(n) method: 19168
+        O(log n) method: 3033
+      1000 iterations, history size=55,000 (history size I could increase to without skipping, theoretically); cluster size=35; dimensions=5
+        O(n) method: 3084
+        O(log n) method: 1652
+</PRE>
+<p>
+The second one really shows the speed bonus of using a KDTree, i'm about to start work on the NN function, so everyone can try this in a few minutes without having to make thier own. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+It has the nearest function now, tell me if there are any errors! I would do more but I have to get to class. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<UL >
+<li> I haven't tried it, but it appears your nearest function does have at least one error.  From, for example, the root node, it's possible that the nearest node lies in the left subtree even though your center point would lie in the right.  In this case, your function would not find it.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> This is very possible. But rather unlikely, and generally only if the tree is unbalanced. However I do need to thrash out the problem if it is equal to in the add and buildtree functions. There is a way to deal with searching an unbalanced tree, which I could impliment. but would require more reading on my part. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</UL>
+<p>
+<pre>
+ Unbalanced Tree
+  -------+------- 
+ |       |       |
+ +---+-*-+       |  S = node you are looking for the closer to
+ |   |   |   *   |  * = normal points
+ |   |   *       |
+ |   *   |       |
+ |   |   |S      |
+ |   |  *|       |
+  ---+---+-------
+
+ Balanced Tree
+  ------+-------- 
+ |      |    |   |
+ |     *|    |   |  S = node you are looking for the closer to
+ |      |    *   |  * = normal points
+ |      +*---+---|
+ |---*--|        |
+ |      | S      |
+ |      *        |
+  ------+--------
+</pre>
+<UL >
+<li> I doubt it's all that unlikely.  In a tree with enough nodes, you'll still get one that's close, but not necessarily the closest.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Blah you, okay, i'm reading up on it. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</UL>
+<p>
+Right now I am turning some completely inreadable pseudocode into Java, so I might be awhile. The main reason I am doing this is to make sure I have it right.
+<pre>
+Example:
+   1  direction procedure KDCOMPARE(P,R)
+   2  value pointer node P,R
+   3  return(if COORD(P,DISC(R)) &lt; COORD(R,DISC(R)) then 'LEFT'
+   4         else 'RIGHT'
+   5         endif)
+
+I changed to
+
+   public static enum Direction { LEFT, RIGHT };
+
+   private static final Direction KDCOMPARE(KDNode P, KDNode R) {
+       if(P.coordinate[R.axis] &lt; R.coordinate[R.axis])
+           return Direction.LEFT;
+       return Direction.RIGHT;
+   }
+</pre>
+<p>
+There are a few alot worse then that, almost completely incomprehensible, not the structure but the 'functions' they throw in to make thier code smaller, it requires alot of lookup. (normally if I read through the chapter I can find the reference of what it does). --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+For what it's worth, searching for "java kdtree" in Google turns up a fair number of things, including some GPLed code. You might want to take a peek at those for a reference of how to implement some parts of it. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+But thats boring. ^_^ Here is my finished set of converted code. Replacing what there was there. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Looks like I gave up too early on the KDTree stuff.  I had a major inefficiency in my search algorithm.  Here are the timings I get now.  7 dimensions, 26,000 scans, cluster size = 50.  Also, this is with squaring the distances, which seems to make it run a lot faster.
+<PRE >
+    O(n) method: 2172
+    O(log n) method: 1024
+</PRE>
+But here's the bonus move ... 52,000 scans:
+<PRE >
+    O(n) method: 3945
+    O(log n) method: 1260
+</PRE>
+104,000
+<PRE >
+    O(n) method: 8436
+    O(log n) method: 1512
+</PRE>
+Are you ready for this .... 400,000 scans.  This is more than you'll get in a targeting challenge, all for less than you WERE spending on 35 rounds.
+<PRE >
+    O(n) method: 70801
+    O(log n) method: 1756
+</PRE>
+-- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+So you got it working? --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Well, yeah.  This is the code I had before, just changed the order of the tree traversal when searching for nodes to seek out the closest nodes more quickly, allowing more of the tree to be skipped.  I still have my eye out for a tree like this that can keep itself balanced with each add, though.  I am currently pulling clusters of size 500 &amp; doing more analysis with those, and my timings of cluster sizes that big says that using the tree would be slower, so I'm not actually using this in a bot yet.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Hey <a href="robowiki?Simonton" class=wikipagelink>Simonton</a> how exactly are you able to find the K-nearest neighbours to a node in O(log n) aka the price of an insertion. The fastest i've gotten my tree is O(n ** (1 - 1/d)) care to shed some light on this -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+<p>
+I am starting work on mine again, I am trying to make a generic 'util' looking one, as per the java.util package. I mean I am trying to make the interface more user friendly, ergo getNextNearestNeighbor<a href="robowiki?action=edit&id=NextNearestNeighbor" class=wikipageedit>?</a> and simular. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Mine's pretty darn generic you just extend the KDTree.Node which is an abstract class and define the distance function and what variables need to be set to replace it with another node. And all functions return a instance to your new class, k-nearest neighbour returns a heap with the furthest away at the top. And it actually removes nodes properly instead of marking them for deletion upon a rebuild. The only thing not done is balancing. I'll put up the code if you want, when i have the rest of the movement and gun code done. Hopefully by the end of the  week -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+<p>
+That would be interesting to see, as removing of nodes in a KD-Tree is tricky (as you have to switch all the axis on the sub-tree). --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+HUh! switching all the axis on the subtree of the node to be removed would require a total rebuild of that tree, or alot of recursive switching of nodes that makes my head hurt even thinking of it. There is a much easier solution that only requires log(n) time, its quite simple and eloquent can u think of it, or do u need a hint :D -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+<p>
+I know of one that takes O(k log n), taking all the nodes below the tree and reinsearting them into the add function, but as for a flat O(log n) no. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Its quite simple and you'll kick yourself for not thinking of it. Traverse the tree untill you find the node to be removed and replace it whith either the node with the minimum value for that axis in the right subtree or the node with the maximum value for that axis in the left subtree. And the remove the node that is now duplicated. -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+<p>
+That actually might work. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+It does my friend... it does :D -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+<p>
+However, those nodes may already have subtrees, or there may not be a node with the same axis in either subtree(if you have a high number of dimensions). --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Your misunderstanding a bit of the algorithm. 1) as for whether the replacement nodes have subtrees that matters not because once the node has replaced the node to be remove we then remove the duplicate of it futher down the tree. 2) Your not looking for a node that is split on the same axis, your look for a node that has the greatest/least (depends on whether you choose from the left or right subtree) value in the axis that the node to be removed is split on. Hope that clears it up, if not ill post the code when i finish yoda, along with a bunch more usefull snippets , any way im off to bed its 5am -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+<p>
+Okay about the subtree, but still the axis problem, as there may not be one of the same axis further down the tree, say you remove a node with only two nodes attached to it, and no subtrees at all. (unless you mean the entire tree, in which case the use of the word subtree was just plain confusing) --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+In my implementation, each leaf node has an <a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a> that holds up to X items, at which point it becomes an internal node with two leaf nodes. To remove a data point, I just remove it from the <a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a>. I never remove nodes. Since the total amount of data that I store in the tree is either increasing or staying constant, it seems like there isn't much benefit to removing nodes, it wouldn't happen often and I don't think it would offer significant memory savings. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Has a heartattack from stack overflow! ... I don't even know HOW it can iterate that deep when it only has 25 nodes to search through..... --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+<img src="http://www.csdgn.org/images/treetest.png">
+<p>
+I sometimes get a odd result, a result that is closer but 'nearest' to the reference, as seen above in my reference picture, if anyone could point out the error I would be very happy about it. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+My Implementation doesn't use buckets, just a plain KD-tree, and its true you dont need to remove node very often i only do it when all the its closest node have a different guessFactor, that way its doesn't infect future predictions, how does nearest neighbour searches work in bucket kd-trees -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Chase-san/KDTree" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Chase-san/KDTree">View other revisions</a><br>Last edited January 27, 2008 4:19 EST by <a href="robowiki?Gorded" title="ID 13274 from bas2-toronto47-1242436432.dsl.bell.ca">Gorded</a> <a href="robowiki?action=browse&diff=1&id=Chase-san/KDTree">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

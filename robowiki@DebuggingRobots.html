@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>DebuggingRobots - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Debugging, Robots'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=DebuggingRobots">DebuggingRobots</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H4>Debugging Robocode Robots</H4>
+
+Come on people let us know how you do to debugyour bots.
+<p>
+I use the debug output window and <a href="robowiki?RobocodeGL" class=wikipagelink>RobocodeGL</a>. See <a href="robowiki?CassiusClay/GL" class=wikipagelink>CassiusClay/GL</a> for an example. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I remove the security of Robocode. I think there is a parameter for that. So I can use the full functional java. --SSO<a href="robowiki?action=edit&id=SSO" class=wikipageedit>?</a>
+<p>
+I know <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a> knows how to use the remote debugging feature to debug bots from inside <a href="robowiki?Eclipse" class=wikipagelink>Eclipse</a>. Please share your knowledge Pulsar! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Indeed, it's rather nice to debug it that way, at times at least.
+Compile you classes with -g to get all the debug info.
+Add the following to the command line starting robocode but you need a JPDA compatible JVM for this. Suns 1.4 (all versions?) and 1.5 are, can't remember about 1.3 but don't think so.
+<pre>
+-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=20500,server=y
+</pre>
+<p>
+It will wait for you to attach to it. Then in the debugger of your choice attach to the remote process by specifying host as localhost (if running on the same computer) and port 20500.
+I'm using CodeGuide<a href="robowiki?action=edit&id=CodeGuide" class=wikipageedit>?</a> from Omnicore (www.omnicore.com) myself. It's not free, but there is a trial version available if you want to try it out. It's nice because it allows me to step backwards in the debugger, if I could successfully disable the security in robocode that is (neeeded for debugging backwards). The command line option in robocode for this doesn't seem to work for me (NOSECURITY or something like that). -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+For eclipse I can't remember but there is probably a entry somewhere close to the other debug stuff in the menus giving you the choice to attach to a remote process. -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+Eclipse is among the most confusing environments you can imagine. I could, however, find out where I could try this. I created a new debug configuration that should try connect to a remote VM on port 20500. But I get the message "connection refused". Any ideas anyone? A step-by-step instruction shouldn't hurt... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+On Windows, try using <pre>transport=dt_shmem</pre> ;) Hey, is anyone going to help me with gl4java? -- <a href="robowiki?Alphax" class=wikipagelink>Alphax</a>
+<p>
+Sorry, didnt see that posting... take a look there now. (and let me know if it works). []´s -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=DebuggingRobots" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=DebuggingRobots">View other revisions</a><br>Last edited October 17, 2004 20:01 EST by <a href="robowiki?Axe" title="ID 3621 from 200141093206.user.veloxzone.com.br">Axe</a> <a href="robowiki?action=browse&diff=1&id=DebuggingRobots">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

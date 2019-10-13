@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>AreaTargetingBot/Code - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Area, Targeting, Bot, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Code">AreaTargetingBot/Code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?AreaTargetingBot" class=wikipagelink>AreaTargetingBot</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H4><a href="robowiki?AreaTargetingBot" class=wikipagelink>AreaTargetingBot</a> </H4>
+
+by <a href="robowiki?Stelokim" class=wikipagelink>Stelokim</a>.
+<p>
+<pre>
+package stelo;
+import robocode.*;
+import robocode.util.*;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.Color;
+
+public class AreaTargetingBot extends AdvancedRobot
+{
+	private static final int ANGLE_SEGMENTS = 8;
+	private static double[] buffer = new double[ANGLE_SEGMENTS];
+	private static double[] metaX = new double[ANGLE_SEGMENTS];
+	private static double[] metaY = new double[ANGLE_SEGMENTS];
+	private static ScannedRobotEvent[] metaSRE = new ScannedRobotEvent[ANGLE_SEGMENTS];
+				
+	private static int lastMaxIndex;
+	private static double moveAmount = 100;
+		
+	public void run() {
+		setColors(Color.red, null, null);
+		setAdjustGunForRobotTurn(true);
+		setAdjustRadarForGunTurn(true);
+		setAdjustRadarForRobotTurn(true);
+		
+		double x = 25, y = 150;
+		double x2 = 150, y2 = 25;
+//		int i;
+//		corner = false;
+		
+		if (getX() &gt; 500) {
+			x = 1000 - x;
+			x2 = 1000 - x2;
+		}
+		if (getY() &gt; 500) {
+			y = 1000 - y;
+			y2 = 1000 - y2;
+		}
+//		corner = true;
+		
+		boolean spot1 = true;
+		while(true) {
+			spot1 = !spot1;
+			if (spot1)
+				goTo(x, y);
+			else
+				goTo(x2, y2);
+			turnRadarRight(360 * 3);
+			for (int i = 0; i &lt; ANGLE_SEGMENTS; i++) {
+				buffer[i] = 0;
+			}
+		}
+	}
+
+	/**
+	 * onScannedRobot: What to do when you see another robot
+	 */
+	public void onScannedRobot(ScannedRobotEvent e) {
+		double absBearing = Utils.normalAbsoluteAngle(e.getBearingRadians() + getHeadingRadians());
+		int angleIndex = (int) (absBearing / (Math.PI * 2.0) * ANGLE_SEGMENTS);
+		buffer[angleIndex] += 1.0 / e.getDistance(); // weight
+//		buffer[angleIndex] += 1.0 / e.getEnergy();
+//		buffer[angleIndex]++;
+		metaSRE[angleIndex] = e;
+		metaX[angleIndex] = getX() + e.getDistance() * Math.sin(absBearing);
+		metaY[angleIndex] = getY() + e.getDistance() * Math.cos(absBearing);
+		
+		int maxIndex = lastMaxIndex;
+		if (e.getEnergy() == 0) { // tries to kill disabled bot
+			maxIndex = angleIndex;
+		} else {		
+			for (int i = 0; i &lt; ANGLE_SEGMENTS; i++) {
+				if (buffer[i] &gt; buffer[maxIndex]) {
+					maxIndex = i;
+				}
+			}
+		}
+		//out.println(maxIndex + " " + buffer[maxIndex]);
+		ScannedRobotEvent thenEvent = metaSRE[maxIndex];
+		
+		double bulletPower = Math.max(0.1, Math.min(3.0, thenEvent.getEnergy() / 6.0));
+		
+		// HeadOnTargeting
+		double angle = Math.atan2(metaX[maxIndex] - getX(), metaY[maxIndex] - getY());
+/*
+//		double w = thenEvent.getHeadingRadians() - lastEnemyHeading;
+		double eX = metaX[angleIndex];
+		double eY = metaY[angleIndex];
+		double myX = getX();
+		double myY = getY();
+		double v = thenEvent.getVelocity();
+		double bs = (20.0 - 3.0 * bulletPower);
+//		if (Math.random() &lt; 0.3) v = 0; // some randomness for GF 0
+
+		double ww = thenEvent.getHeadingRadians();  // enemy's starting heading
+		double db = bs * (thenEvent.getTime() - getTime());
+		do
+		{
+			db += bs;
+			eX += v * Math.sin(ww);
+			eY += v * Math.cos(ww);
+//			ww += w;  // turn w radians for next step
+		}while (db &lt; Point2D.distance(myX, myY, eX, eY));
+		double angle = Math.atan2(eX - myX, eY - myY);
+*/		
+		setTurnGunRightRadians(Utils.normalRelativeAngle(angle - getGunHeadingRadians()));
+
+//		setFire(3);
+		if (getEnergy() &gt; bulletPower)
+			setFire(bulletPower);
+		
+		if (Math.random() &lt; 0.05 * 300.0 / e.getDistance())
+			moveAmount = -moveAmount;
+		if (!(new Rectangle2D.Double(18, 18, 1000-36, 1000-36)).contains(Math.sin(absBearing = getHeadingRadians())*moveAmount + getX(),Math.cos(absBearing)*moveAmount + getY()))
+			moveAmount = -moveAmount;
+			
+//		if (Math.random() &lt; 0.05) {
+//			setTurnRight(90);			
+//			setTurnRightRadians(Utils.normalRelativeAngle(Math.PI / 2.0 + e.getBearingRadians()));
+//		}
+//		setTurnRight(90.0 / 20.0);
+//		if (getOthers() &lt;= 1) {
+//			setAhead(moveAmount);
+//			setTurnRightRadians(Math.random() - 0.5 + Math.cos(e.getBearingRadians()));
+//			setTurnRadarLeftRadians(getRadarTurnRemainingRadians());
+//		}
+
+		lastMaxIndex = maxIndex;
+	}
+
+//	public void onHitByBullet(HitByBulletEvent e) {
+//		setTurnRightRadians(Utils.normalRelativeAngle(Math.PI / 2.0 + e.getBearingRadians()));
+//		setAhead(Math.random() &lt; 0.5? 100 : -100);
+//		avoidAngle = e.getBearingRadians() + getHeadingRadians() + Math.PI;
+//	}
+
+	private void goTo(double destinationX, double destinationY) {
+        double angle = Utils.normalRelativeAngle(Math.atan2(destinationX - getX(), destinationY - getY()) - Math.toRadians(getHeading()) );
+		double turnAngle = Math.atan(Math.tan(angle));
+        setTurnRightRadians(turnAngle);
+	
+        setAhead(Math.sqrt((getX() - destinationX) * (getX() - destinationX) + (getY() - destinationY) * (getY() - destinationY)) * (angle == turnAngle ? 1 : -1));
+        //ahead((angle == turnAngle ? 100 : -100));	
+	}
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?AreaTargetingBot" class=wikipagelink>AreaTargetingBot</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=AreaTargetingBot/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=AreaTargetingBot/Code">View other revisions</a><br>Last edited February 18, 2007 15:49 EST by <a href="robowiki?Stelokim" title="ID 9360 from 211.194.60.229">Stelokim</a> <a href="robowiki?action=browse&diff=1&id=AreaTargetingBot/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

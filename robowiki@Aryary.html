@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Aryary - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Aryary'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Aryary">Aryary</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Hi All, I am basically in Secondary 3, age 15, in Singapore. I first got to know robocode in 13 when participaing in a competition. Since then I found it interesting and began further research on it.
+I am using robocode as a platform for relaxation, learning Java, for USACO (USA computing Olympiad) in c++, and I also know PHP, javascript, CSS and other web stuff.
+<p>
+Current Bots:
+<p>
+Help (currently best bot)
+Crisis
+SOS
+FourWD<a href="robowiki?action=edit&id=FourWD" class=wikipageedit>?</a>?
+ColorNanoP<a href="robowiki?action=edit&id=ColorNanoP" class=wikipageedit>?</a>? (First Nanobot)
+Plenty more coming up........
+<p>
+Contact Info:
+ang.ray.yan@gmail.com
+or use MSN : ang.ray.yan@hotmail.com
+Comments For everyone:
+<p>
+Welcome to the wiki! -- Baal
+<p>
+Hello, hopefully the server is back up again ASAP and I am currently trying out the wavesurfing challenge. My score against bot A is about 81% and bot B is about 60%. Any way of improving it?
+<p>
+The first things that come to mind are 'keeping your distance' and 'dive-in protection'. When you continuously try to keep a preferred distance (anywhere between 400 and 700 will do) you don't encounter any bullets you cannot evade anymore. The dive-in protection prevents too steep diving along the wall. And because it seems, by your score against botA and botB, that you are <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>, segmenting your movement on (lateral) velocity should improve your score against botB. Success with it! -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Make sure that your prediction matches your actual movement completely, down to the pixel. If you stop surfing a wave at time X, make sure your prediction stops on that same tick. Make sure you are using the lateral-velocity, distance, and whatever else you segment your movement on, from 2 ticks ago, and fire from the enemy's position 1 tick ago, at your position 2 ticks ago. Like <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a> said, distancing and dive protection are important. Make your danger function not just return the one bin at that index, but the average of all the bins it covers, taking the botwidth at that distance into account. Make your danger function show that positions closer are more dangerous. Add more buffers with different 'slices' so that numbers near the edges are more accurately represented. Once you've done all this, if your score is below 90% for bots A, B and C you have bugs. -- Skilgannon
+<p>
+First, welcome! As for the <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>, all those suggestions from Skilgannon are excellent, but I would keep it as simple as possible for now: add <a href="robowiki?DiveProtection" class=wikipagelink>DiveProtection</a> and get the timing stuff right (using segmentation from 2 ticks ago and his position 1 tick ago), and then try to get 98% against Bot A. You don't need segmentation, surfing multiple waves, fancy distancing, or even accurate bot width consideration to get really high scores against <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a>. And use the built in onPaint stuff (I use the <a href="robowiki?DrawingBot" class=wikipagelink>DrawingBot</a> code), it's super helpful. <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> has a way of hiding lots of bugs, so it's best to be vigilante right from the get go. Good luck! -- Voidious
+<p>
+Yeah, a lot of the stuff I said on there isn't completely necessary. But one that is quite useful is making closer points more dangerous. But be careful about tuning your bot purely for the MC, as the MC dictates much more dive protection/distancing than when facing a moving opponent! -- Skilgannon
+<p>
+Cool , I never came across the page called Dive Protection. Also, i read most articles for wavesurfing (including tutorial) and Despite the fact of the -0.2 as suggested and implemented in Komarious, my bot still doesn't keep any distance. I tried other ways, so hopefully it fair slighly better ..... More in-depth wavesurfing reasearch :) -- aryary
+<p>
+I realise there are bugs. Of every 20 rounds, it stops for no reason (meaning not wavesurfing). Anyway my simple dive protection works quite fine. Moderating it now. Dive protection is nice. It makes up +7% for Bot A. Now it is 88.181% . By the way, I am dive protecting by changing directions at the wall smoothing area. Is there any other place I need to do as such? -- aryary
+<p>
+Currently :
+<p>
+<PRE >
+        Score    Surv   Surv.b  dmg(b) dmg(bb)  Ram(d)  Ram(bd) 1sts    2nds      
+</PRE>
+1st	ary.FourWD<a href="robowiki?action=edit&id=FourWD" class=wikipageedit>?</a>?
+<p>
+<PRE >
+        60000	 50000	10000	0	0	0	0	1000	0
+</PRE>
+2nd	wiki.challenge.<a href="robowiki?WaveSurfingChallengeBotA" class=wikipagelink>WaveSurfingChallengeBotA</a> 1.0
+<PRE >
+        4284	 0	0	4284	0	0	0	0	1000
+</PRE>
+Much Much Better :) Thanks to all :D .
+<p>
+Nice improvement! I actually don't have <a href="robowiki?DiveProtection" class=wikipagelink>DiveProtection</a> in <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a>, instead simply making positions further forward have a higher danger (by dividing by distance squared). This makes it avoid the further forward points if it can, but still allows them to be reached if it is the only safe option. And tracking down and fixing that bug that causes occasional crashes will boost your score by a lot! Take a look at how I do the default distancing in Cunobelin, it works very well and is simple. Are you using graphical debugging? It can help a lot for getting the detailed trig stuff right. When running <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a>, turn on the painting and look at all the stuff I'm sticking on the screen! Just curious, but what gun do you have in FourWD<a href="robowiki?action=edit&id=FourWD" class=wikipageedit>?</a>??-- Skilgannon
+<p>
+I have a GF gun , and wavesurfing with rolling Avgs , Dive protection and normal stuff. This bot has some meelee functions as well. It uses AG movement and a pattern matcher. Noes, I am still quite far behind sandBoxDT<a href="robowiki?action=edit&id=BoxDT" class=wikipageedit>?</a>? :( -- aryary
+<p>
+I am actually trying to input virtual bullets into my bot. However, after input I realise it fairs worse than before. This upgrade ( or downgrade) has 2 anti - surfer guns (different rolling averages) and my normal GF Gun (the one in FourWD<a href="robowiki?action=edit&id=FourWD" class=wikipageedit>?</a>? 1.2) . Does anyone know the cause of this? I am starting to get a little worried here. Also, how does elloco.Kabuto 2.0r win <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> by such a large margin? --aryary
+<p>
+That battles between Kabuto and <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> are probably done by a buggy Robocode version somewhere between 1.1.3 and 1.4.x, note that the last result is from april 2007. As for your own problem, choosing the right gun at the right time has proven to be very difficult. Most people who actually use anti-surfer guns penalize its use heavily, so only if it is really really better than the standard gun it is used. -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Hearing what you said, I decided to drop my other guns (code still there , but then commented them), leaving me with my orig gun with virttual bullets code. I again started doing Wavesurfing for now, but my score vs Barracuda still not that good, about 96.65% (v1.3a , Improve from v1.2 abt 95.99 on my computer) . Anyway, thanks for the advice and now it is still the nice gun I have :) -- aryary
+<p>
+Hello once again, it seems that FourWd<a href="robowiki?action=edit&id=FourWd" class=wikipageedit>?</a> 1.3a may fare slighly than worse v1.2, but if so, why will the score against other bots be slightly better? ( at least for what I see ). Also, I would like to know how fast it takes to upload the results of a new bot, or at least an update of one. Thanks. -- aryary
+<p>
+I am curious about anyone's comments on <a href="robowiki?AceSurf" class=wikipagelink>AceSurf</a> if you have tried it. I am trying to perform wavesurfing in a nanobot. So if you have any comments, please share it here, and thanks for testing.
+<p>
+<DL >
+<dt><dd>Seeing this comment, I immediately went and downloaded, and watched it destroy my dev version of N for several hundred rounds. However, any number of movements can probably approximate what <a href="robowiki?AceSurf" class=wikipagelink>AceSurf</a> does. I think to determine if it surfs or not you need to look at your code and ask: Does it keep track of enemyWaves and move to the least dangerous spot on that wave? If this is a yes, then it surfs. At least how I understand it. Someone far smarter than I will probably correct me in the future if I am wrong :P. I am curious to view the code, though, any plans to make it open-source? Also consider writing a bot page for your bots so we can find information faster, as the robocode repository search does not work at this time. --<a href="robowiki?Baal" class=wikipagelink>Baal</a>
+</DL>
+<p>
+I can make the bot opensource, but I need sometime to make it readable. Also, Here is a brief Summary on how it moves:
+<p>
+Firstly, it determines a random distance. Then, it took me some time to convert it to a gf for me to record. So, it moves with that distance. If it is hit, I will add a counter to that particular gf. After which, everytime before I move, I will check if the distance (or gf) I am moving at is bigger than the least dangerous one or not. If so, reverse the direction. If not, step on. NOte that no wave has been recorded as it does not have the luxury to do so, and because it keeps about 150-200 distance near the enemy for sometimes ( I hope at least 50%) , only one wave is in the air , right? (as stated in the naonosurfer page) So, erh, yep give me some time, I have created a bot page for this. You can then post your comments there now instead.
+<p>
+Hello Again. I am actually now beginning to think, after so many guns, whether GF targeting is better or Pattern Matching. (+ is good, - is bad)
+<hr noshade class=wikiline size=1>
+Some things about GFT:
+<p>
++ Better chances of hitting most bots.
+<p>
++ Can have segemntation
+<p>
++ DC (I have no idea how to implement but seems good)
+<p>
+- Cannot hit some bots (i.e. <a href="robowiki?PatternBot" class=wikipagelink>PatternBot</a>) that well
+- Compared to PM, not sure which hits wavesurfers better.
+<p>
+Some things about PM:
+<p>
++ A lot better chances against oscillators, and sometimes better than GFT vs wavesurfers.
+<p>
++ slightly smaller in code?
+<p>
+- Slows down the whole bot (Thats for sure)
+<p>
+- Can it be segmented?
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+So, what I would like to know is which gun to use. I am quite confused. Thanks. -- <a href="robowiki?Aryary" class=wikipagelink>Aryary</a>
+<p>
+Well, I would certainly say that PM could be segmented even if it's not often done. Actually, one gun on my mental drawing board is somewhat based on what idea in <a href="robowiki?PatternMatching/SingleTick" class=wikipagelink>PatternMatching/SingleTick</a> but instead of plain choosing the "most likely next step" in the pattern ordinarily, it would segment the data of the "most likely next step" on some other things besides the pattern. You could also probably do something similar with a non-single-tick matcher, except that it might be a little trickier to balance between "lengthy match" and "similar situation" factors, possibly by making it handle non-exact matches and include the situation as part of that. Also, one comment about your note about <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a>: While it's something I'm using in my most competitive 1v1 bot, I wouldn't call it an advantage of GF targeting so much as yet another way to store/recall data for it. Actually, if you wanted you could use DC techniques to build a pattern matcher too, however it would probably be slower than most of the somewhat speedy symbolic matchers (any maybe even the slower matchers) anyways because KD trees don't optimize so well when the data is in a very very large number of dimensions. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Actually, I think the problem is I don't understand dynamic clustering much after looking at that page itself. Thus, I have no idea on how to implement it. Mind enlightening me? -- <a href="robowiki?Aryary" class=wikipagelink>Aryary</a>
+<p>
+Well, here's how I would explain what is called 'dynamic clustering' around here. Every time that a BulletWave<a href="robowiki?action=edit&id=BulletWave" class=wikipageedit>?</a> reaches a robot, instead of recording adding to a "visit count" array, you record the situation (the resultant GF, and the segmentation info when the wave was fired). Over time you just build up a bigger and bigger list of the situations. In order to know where to fire, you can either just search the list for the time with the most similar segmentation info (easy, but not too great), or you can search for a certain number of situations that are similar and aim for the consensus of those situations. Because the list of situations gets larger and larger as the battle progresses, people often use a structure called a <a rel="nofollow" href="http://en.wikipedia.org/wiki/Kd-tree">[kd tree]</a> which can be searched fairly quickly for the nearest situations no matter how many are stored. Really, the idea of "dynamic clustering" is about storing a list of situations and finding the similar ones as opposed to storing GF stats in bins, and can be applied to GF targeting, wavesurfing, or even can be applied in more eccentric ways to patternmatching and such. Does that help? -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Well , think it does. Some better understanding now. But then out you matching based on situations? From what I understand now , I feel like calling it "situation matching". So since the list builds up, we use this "kd tree' thing to find it ASAP. Is that it? Also, you said it was opposed to stroing GF stats in bins. Can both be used together? Also, with this situation matched, do you aim at some place you aim in that "situation" or dodge another place in that same "situation"? Anyway, that was great help. Thanks. -- <a href="robowiki?Aryary" class=wikipagelink>Aryary</a>
+<p>
+Well, yes I would say "situation matching" wouldn't be a bad term for it, though it's more about "nearest-n-situations" than a single matching situation usually. Sure, if you wanted you could combine it with storing GF stats in bins, in fact if I understand correctly <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a> did that in one recent version of <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> by adding in the DC-stats from <a href="robowiki?Stormrider" class=wikipagelink>Stormrider</a> (though that addition wasn't long-lived to my understanding). Well, as far as aiming and dodging, it wouldn't be the same "situation" because the situation lists would be completely different (whenever you waves pass the enemy for aiming, and whenever enemy bullets hit you for dodging) if I understand what you're asking. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Think I roughly get it then. But well, I don't think I have any idea with regards to implementing it. As in so what if you match the situation? Is it just something like PM where you "Play it Forward" ? Also, how do you determine the so called "nearest match" when one has so many factors? (i.e. Time, distance, location, bulletspeed, etc, etc). Now I am beginning to think. Since people like Kawigi and Voidious came up with GF Gun Tutorial and <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> Tutorial (Thanks a lot),  maybe someone could create a tutorial on DC perhaps. on how to implement it. Then you could call that bot "BasicDCSurfer<a href="robowiki?action=edit&id=BasicDCSurfer" class=wikipageedit>?</a>"? Well, maybe it will come true, maybe not. Anyway, how do you implement it? I still have no idea. -- <a href="robowiki?Aryary" class=wikipagelink>Aryary</a>
+<p>
+A <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> tutorial would indeed be nice - I could probably get to that sometime, but for now, I'm pretty busy and feel like the <a rel="nofollow" href="http://testwiki.roborumble.org">[new wiki]</a> migration should come first. There are some excellent open source implementations in <a href="robowiki?DCBot" class=wikipagelink>DCBot</a>, <a href="robowiki?Chalk" class=wikipagelink>Chalk</a>, and a quite few others in the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> top 25 which you could learn from. Anyway, to your questions - once you have the closest match (or multiple matches), you need to figure out a firing angle somehow - common ways are to use play it forward to find firing angles, or to record the hitting <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> or raw bearing offset for each scan as you collect it, and then (basically) find the most common GF / angle among the matches. Finding the nearest matches is most commonly a euclidean distance formula between the current scan and each past scan - e.g., square((distance1 - distance2) / 1000) + square((lateralVelocity1 - lateralVelocity2) / 8) + square(walldistance1 - walldistance2). Dividing by 1000 and 8 makes it so that each factor is a number between 0 and 1, so they have equal weighting. Hope that helps! -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Well, I will see what I can do, since the June holidays are coming. Think that helps, thanks. -- <a href="robowiki?Aryary" class=wikipagelink>Aryary</a>
+<p>
+loc
+Hello. Not sure if anyone still reading this but is getting 1-10 skipped turns for a melee bot acceptable? I need to submit this bot for competition by Friday (31 Oct). Thanks. -- <a href="robowiki?Aryary" class=wikipagelink>Aryary</a>
+<p>
+Well, it depends on the bot itself. A few bots freeze when turns are skipped and most get slightly inaccurate (waves out of sync etc) and lose a radar lock. A rare few though don't do anything except loose a chance to control movement, maybe loose a radar lock, but keep the waves and such in proper timing still. Assuming your bot doesn't freeze in those cases then that number is probably just fine in melee. Ideally I'd try to cut CPU usage just a tad, but 1-10 skipped turns per match probably wouldn't do too much in melee. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Aryary" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Aryary">View other revisions</a><br>Last edited November 9, 2008 9:21 EST by 220.255.7.241 <a href="robowiki?action=browse&diff=1&id=Aryary">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

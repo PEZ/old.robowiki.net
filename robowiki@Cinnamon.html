@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Cinnamon - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Cinnamon'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Cinnamon">Cinnamon</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Cinnamon, a Robot by Dan
+<hr>
+<p>
+<b>Update 1.1</b> 1/21/04<br>
+Tweaked the pattern matcher, added a lot of Try/Catches<a href="robowiki?action=edit&id=Cinnamon/Catches" class=wikipageedit>?</a> to the code. Finally works in Melee. Next comes saving the PM data. Most definitely a <a href="robowiki?SlowBot" class=wikipagelink>SlowBot</a>.
+<p>
+<b>Update 1.0</b> 1/10/04<br>
+Finally, I have equiped <a href="robowiki?Cinnamon" class=wikipagelink>Cinnamon</a> with a PatterMatcher<a href="robowiki?action=edit&id=PatterMatcher" class=wikipageedit>?</a>. The movement has been tweeked to take into account other enemys that are not being currently scanned. Will most likly be pegged a <a href="robowiki?SlowBot" class=wikipagelink>SlowBot</a>.
+<p>
+<b>Update 0.7</b> 12/31/03<br>
+Changed the gun to more of a <a href="robowiki?RandomTargeting" class=wikipagelink>RandomTargeting</a> setup. The Movements a bit less predictable. For those who want to know, it prints out its Accuracy data.
+<p>
+<b>Update 0.6</b><br>
+Mostly small improvments, should hold up better though.
+<p>
+<b>Update 0.5</b><br>
+Improved Movement alot. For a reason unknown, it will try to do a "Bombing Run" on its target every often, and still dodge on the way to the target.<br> 
+<br>
+Some Minor improvements to Gun, though still nowhere near the level of a competive bot.<br>
+<p>
+<p><b><font size="3">How does it move?</font></b></p>
+<p>Cinnamon uses a form of AntiGrav<a href="robowiki?action=edit&id=AntiGrav" class=wikipageedit>?</a> movement in which it places a GravPoint<a href="robowiki?action=edit&id=GravPoint" class=wikipageedit>?</a> on its current target, as well as three random points all over the map.</p>
+<p><br>
+<b><font size="3">How does it fire?</font></b></p>
+<p><br>
+It is using a PM partialy based on <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a>s.</p>
+<p><br>
+<font size="3"><b>How does it dodge bullets?</b></font></p>
+<p><br>
+If the Enemy's energy drops by 0.1-3 it places two GravPoints<a href="robowiki?action=edit&id=GravPoints" class=wikipageedit>?</a> at random locations within 100 units. It work quite well.</p>
+<p><br>
+<b><font size="3">How does the melee strategy differ from one-on-one strategy?</font></b></p>
+<p><br>
+The same as one v one, it (trys) keeps pattern data on all targets.</p>
+<p><br>
+<font size="3"><b>Where did you get the name?</b></font></p>
+<p><br>
+I was chewing Cinnamon gum when it came time to name it. Not like I really have a competive bot on my hands(Maybe yes, Maybe no).</p>
+<p><br>
+<font size="3"><b>Can I use your code?</b></font></p>
+<p><br>
+What! You want to use my code! I'm so Honored! Most of the code is on the Wiki already, as <a href="robowiki?Hanji" class=wikipagelink>Hanji</a>'s AGravEngine<a href="robowiki?action=edit&id=AGravEngine" class=wikipageedit>?</a>, GravPoint<a href="robowiki?action=edit&id=GravPoint" class=wikipageedit>?</a> and RobocodeUtils<a href="robowiki?action=edit&id=RobocodeUtils" class=wikipageedit>?</a>, with mostly only cosmetic changes. It is avalible at <a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=1964&nbsp">http://www.robocoderepository.com/BotDetail.jsp?id=1964&nbsp</a>;</p>
+<p><br>
+<font size="3"><b>What's next for your robot?</b></font></p>
+<p><br>
+Flatten the movement, and speed up the execution of the code. as well as adding saved data.</p>
+<p><br>
+<font size="3"><b>What other robot(s) is it based on?</b></font></p>
+<p><br>
+None, though it uses Hanji's <a href="robowiki?Hanji/AGravEngine" class=wikipagelink>Hanji/AGravEngine</a>, <a href="robowiki?Hanji/GravPoint" class=wikipagelink>Hanji/GravPoint</a> and <a href="robowiki?Hanji/RobocodeUtils" class=wikipagelink>Hanji/RobocodeUtils</a> classes, and some of the Pattern Matcher is based on <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a>.<br>
+<hr>
+<font size="3"><b>Comments? Questions?</b></font>
+<hr>
+<p>
+You're going to have difficulty keeping any form of coherent pattern in melee, your best bet is to sweep 360 arcs so the gap between observation is reasonably close to a constant 7 ticks (ie: see the opponent every 8, occasionally they'll move and it'll take 7 or 9). -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Ya, but I can hope right? :)--<a href="robowiki?Dan" class=wikipagelink>Dan</a>
+<p>
+What I meant to say is mostly keep your scan times consistent and don't try any more advanced <a href="robowiki?Radar" class=wikipagelink>radar</a> (unless it's DTstyle with consistent scan times, actually that's probably your best bet). Just remember when reconstructing the pattern that your scans don't represent every movement and interpolate or add each movement 8 times. You could also take a look at <a href="robowiki?Tron" class=wikipagelink>Tron</a>'s implementation for a few ideas in the regard of <a href="robowiki?Melee" class=wikipagelink>melee</a> stability. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+This sounds like you have some interesting stuff to add the the <a href="robowiki?Radar" class=wikipagelink>Radar</a> section. Please do. It is one of the first wiki pages and could be in need of a rewrite. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+The radar is the simplest I could come up with, merely a setRadarTurnRight<a href="robowiki?action=edit&id=RadarTurnRight" class=wikipageedit>?</a>(Double.POSITIVE_INFINITY) in run(), and setRadarTurnLeft<a href="robowiki?action=edit&id=RadarTurnLeft" class=wikipageedit>?</a>(getRadarTurnRemaining<a href="robowiki?action=edit&id=RadarTurnRemaining" class=wikipageedit>?</a>()) in onScanned. The melee radar is the same, I'm currently assumeing that the lock will hold long enough to catch a good movement snippit. The real challenge that I found was adapting <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a>'s Pattern matcher to melee. I'm still not sure its all that good, being entirely brute force, not finesse. --<a href="robowiki?Dan" class=wikipagelink>Dan</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Cinnamon" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Cinnamon">View other revisions</a><br>Last edited March 26, 2004 22:50 EST by <a href="robowiki?David_Alves" title="ID 111 from 12.107.165.xxx">David Alves</a> <a href="robowiki?action=browse&diff=1&id=Cinnamon">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

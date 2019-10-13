@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>CoopRobot/Chat - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Coop, Robot, Chat'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Chat">CoopRobot/Chat</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I moved the discussion here, because I'm going 
+<p>
+Sounds great! :-)  Might stir up some interest in team bots if people don't have to start from scratch.  Good luck! -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+There could be a problem with editing... I did not edited the page, but Tango did it... anyway in "changes" it's listed as mine -- <a href="robowiki?Simonech" class=wikipagelink>Simonech</a>
+<UL >
+<li> Tango probably has forgot to edit is Preferences. It's a bug in the wiki code we are using. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</UL><DL>
+<DL >
+<dt><dd>Sorry.  I was logging on from college, and forgot that it's only my home computer that has the cookies set up to remember my name.  -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+</DL>
+</DL>
+<p>
+It would be really great to have a framework like this. What about making it as an open source project ? --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>]
+<p>
+Would the <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a> translate received scans for the other robot?  A <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> isn't as useful if its relative to unknown x and y coordinates and heading. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<UL >
+<li> Droid versions of several existing bots sounds to me like this translation was in place. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+That's something I thought manu times, and I would even take the idea further. Right now teams are light-years away from other bots, so the easier way to make a good team is to just package a bunch of good melee bots not shoting each other. It would be cool to create a bot that fires and moves in an standar way (ie. you just tell the bot which enemy to target, and each x ticks tell him where to move). It would force people to develop teams that win because they have good team tactics (just because gun and movement would be the same for everyone)... -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+I'm not sure i understand you... would the bot just have a goTo(x,y) and a shoot(x,y), controlled by messages, and everything else would be done by the leader? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+All of this worked before, and <i>everything</i> was done automatically. You change Rapture to extend <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a> instead of <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>, and you literally created a droid version of it like this:
+<PRE >
+ public class RaptureDroid<a href="robowiki?action=edit&id=RaptureDroid" class=wikipageedit>?</a> extends Rapture implements Droid {}
+</PRE>
+And that was it; the <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a> class handled everything, and on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> worked exactly as if you had a radar spinning around; <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a> automatically translated teammate scans and created ScannedRobotEvents<a href="robowiki?action=edit&id=ScannedRobotEvents" class=wikipageedit>?</a> for them relative to your robot. It's unfortunate that this was lost because everything was already working, and I had actually done this with several open source bots. You wouldn't believe how cool it looked to have droid versions of bots like Rapture and Wolverine created this easily and working together. This is why I want to rebuild this. Give me about a week or so; I have my last midterm tomorrow and no major outstanding assignments so I should have some time soon to rebuild it. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+I assume you have to extend <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a>, not rapture... -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+No, the droid version of Rapture simply extends Rapture. The <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a> class will automatically known that it's a droid and synthesize scans for it. Absolutely no code is needed in the class; hence the closed braces. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+Of course, Rapture has been changed to extend <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a>. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<hr noshade class=wikiline size=1>
+<p>
+Qohnil's CooperativeRobot<a href="robowiki?action=edit&id=CooperativeRobot" class=wikipageedit>?</a> is still available at the <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a>:<br>
+<a rel="nofollow" href="http://robocoderepository.com/BotDetail.jsp?id=622">http://robocoderepository.com/BotDetail.jsp?id=622</a> 
+<p>
+Yes; however, Qohnil's CooperativeRobot<a href="robowiki?action=edit&id=CooperativeRobot" class=wikipageedit>?</a> class is not easily setup, and you have to change a lot of stuff in both the robot and the class to implement it. And you still need to program your bot for things like not shooting teammates, so there's not much point to the whole thing afterall. What it does do however does work well, but it wasn't very popular because it required a lot more work to install than people wanted at the time. 
+<p>
+I've been on the drawing board a lot of the past couple days on this <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a> thing, and I think I can rebuild it a lot better than it was before. The old one used to require you to change run() to go() and on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>() to onScannedEnemy<a href="robowiki?action=edit&id=ScannedEnemy" class=wikipageedit>?</a>() in addition to making it extend <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a> (yes, that was seriously all you needed to change). I think I can rebuild it so that the only thing you need to change is making it extend <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a>. I'll see what I can do. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Okay, I've got quite a bit of stuff done so far; it's basically already ready for beta use. I've built it much better than the version that was lost about a year ago; there is much more functionality, and it is much easier to set up. Now, all you have to do is extend <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a> instead of <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> and everything is handled automatically. It is far more compatible than old versions. In the old version, certain bots were completely incompatible with the system simply as a result of their design. In this version, bots like this *should* work fine.
+<p>
+Anyway, so far I've created the entire event manager; it completely handles and parses and dumps all events manually from Robocode. In the previous version, you couldn't use an event manager, and had to rename some event handlers. In the new version, getXxxEvents<a href="robowiki?action=edit&id=XxxEvents" class=wikipageedit>?</a>() methods work perfectly, on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> still works like it should, etc., except that none of these methods will ever return scans on your teammates; only enemies. They will also never return coop messages; these are handled automatically and removed from the event queue. In the previous version, you were not allowed to send messages at all; you can now send messages exactly like you used to. This means that <a href="robowiki?TeamRobot" class=wikipagelink>TeamRobot</a>s can now convert to <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a> without losing any of their teammate functionality; any team strategies they do will still work between these bots, but they will also be friendly to other <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a>s. This is probably the main big feature of the new <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a>; <a href="robowiki?TeamRobot" class=wikipagelink>TeamRobot</a>s as well as <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>s and Robots can directly convert to it without any changes. 
+<p>
+Anyway, so yes, what I have works surprisingly well, and by simply changing 'extends <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>/<a href="robowiki?TeamRobot" class=wikipagelink>TeamRobot</a>' to 'extends coop.<a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a>' I've successfully created a team of two Cakes, two Wolverines and a Rapture that coordinate their color and don't shoot eachother. But in normal non-team play, these bots are completely unchanged, and should work exactly the way they did when they extended <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>. Anyway, I have a few assignments to get done soon, so I probably won't be able to work on it much for a couple days, but I'll see if I can fix up a few issues, document it, add some teammate functionality, and test it out with some well-known open source melee bots to see how it flies; then I'll release a beta version so everyone can start playing around with it! :D
+<p>
+-- [[Vuen]
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Okay, I'd like to ask about how you guys want the color sharing set up. I figured that most people like to customize their body color; body color is the most visible part of the robot, and it is what makes robots distinct. So the way the system currently shares colors is that it makes robots on the same team choose the same gun and radar color and lets the robots choose their own body color. At first I was worried that this would make it too hard to tell team members apart, but it actually looks pretty good. I was wondering what your thoughts were on it. I'd love to put out a beta to show you, but once we pick a way, we have to stick with it, because all versions of <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a> will have to be forwards and backwards compatible. I can get you a screenshot of it in action with some melee bots if you'd like to see how either way looks. What are your thoughts? Body color sharing, or Turret and Radar color sharing? -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+I think sharing gun and radar would work quiet well.  It lets you recognise bots you already know from their non-team versions, but you can still tell what teams they are on.  How does it choose the colours?  Is there anyway to make sure no 2 teams have the same colours? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+The colors are simply chosen randomly, using a sine function to accentuate the contrast between the RGB values (although I don't even think this works the way I want it to). Unfortunately it's not really possible to make sure no 2 teams have the same colors, but it's not very probable. The color selection code in <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a> is this:
+<p>
+<PRE >
+ teamColor = new Color((int)((Math.sin(Math.random() * Math.PI * 2) / 2 + 0.5) * 256 - 1), (int)((Math.sin(Math.random() * Math.PI * 2) / 2 + 0.5) * 256 - 1), (int)((Math.sin(Math.random() * Math.PI * 2) / 2 + 0.5) * 256 - 1));
+</PRE>
+<p>
+I'm not sure if it mathematically works like it's supposed to, but it always seems to produce some nice, vibrant looking team colors. I like it :) -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Okay all, <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a> beta1 is out. Even if you don't have a melee bot, at least try downloading some of the sample coop bots and mix them up. Check out how smoothly <a href="robowiki?JollyNinja" class=wikipagelink>JollyNinja</a> and Wolverine work in droid form, with not a single line of code in their droid classes. If you do have a melee bot, then please, try testing it out and let me know if it works! It won't take you more than two minutes, and you will find that your robot will be able to team up with any other robots under <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a>. If your robot works properly under <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a>, consider releasing it that way; the current release version of Cake is already implementing the system, and its team performance is improved over that of the old team. Anyway, let me know what you think. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+Cooooool~~~Vuen,it comes so fast,i played it,very interesting,i made a team of Yager seconds.~;] A question, If i called set<a href="robowiki?AllowTeamScans" class=wikipagelink>AllowTeamScans</a>(true),can i receive the scan event on my teammates,eg:my hero scanned a droid of us,can the droids receive this scanned event? (seems not in my testing)  -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+<p>
+I know now,You writed some about that question,but sorry i had not read clearly on <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a> page.I can know my teammates' info from calling getTeammateXXX<a href="robowiki?action=edit&id=TeammateXXX" class=wikipageedit>?</a>() ~;],But i suggest thant teammates can receive teammates scans,then many melee bot can change to team easiler as the count the gravitation in on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>.the last,Thanx you Vuen.  -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+<p>
+Hmm... This is an interesting point, and a good idea. Since I have to create events for collisions anyway, I may as well also create a ScannedTeammateEvent that gets sent to an onScannedTeammate<a href="robowiki?action=edit&id=ScannedTeammate" class=wikipageedit>?</a> method; the scans will simply be generated by <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a> rather than being actual scans, so the robot can get one of these every turn on every teammate. It will also be handier because dead robots and non-team robots will not return scans. I'll put that on my list of things to do for next version :). Also, did the Droid version of Yager work? -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+Yes,it works,but the teammate scans did not happen,so the teammates always hit each others,i add some code,then it works fine,it did better than <a href="robowiki?DemoniacNimrods" class=wikipagelink>DemoniacNimrods</a>.Cool~;]  -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=CoopRobot/Chat" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=CoopRobot/Chat">View other revisions</a><br>Last edited October 28, 2003 17:56 EST by <a href="robowiki?Iiley" title="ID 1833 from 61.186.108.xxx">Iiley</a> <a href="robowiki?action=browse&diff=1&id=CoopRobot/Chat">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

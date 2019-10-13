@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>ChaoticDroid - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Chaotic, Droid'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=ChaoticDroid">ChaoticDroid</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>My <a href="robowiki?ImplementsDroidCompetition" class=wikipagelink>ImplementsDroidCompetition</a> Entry
+<hr noshade class=wikiline size=2>
+Runs in a circle, ramming any that dare touch it!
+<hr noshade class=wikiline size=2>
+<pre>
+package matt;
+import robocode.*;
+import matt.Utils;
+import java.awt.Color;
+import java.awt.geom.Point2D;
+
+public class ChaoticDroid extends AdvancedRobot implements Droid
+{
+	boolean hit=false;
+	public void run() {
+		setAdjustGunForRobotTurn(true);
+		setColors(Color.black,Color.black,Color.black);
+		while (true) {
+			if(!hit){
+				setAhead(200);
+				setTurnRight(200);
+			}
+			if(getGunHeat()==0 &amp;&amp; getTurnRemaining()==0 &amp;&amp; getDistanceRemaining()==0){
+				hit=false;
+			}
+			execute();
+		}
+	}
+	
+	public void onHitRobot(HitRobotEvent e) {
+		turnGunRight(Utils.normalizeBearing(getHeading() - getGunHeading() + e.getBearing()));
+		fire(3);
+	}
+	
+	public void onBulletHit(BulletHitEvent e) {
+		hit=true;
+		Bullet bullet = e.getBullet();
+		turnGunRight(Utils.normalizeBearing(Utils.absoluteBearing(getX(), getY(), bullet.getX(), bullet.getY())-getGunHeading()));
+		while(getGunHeat()!=0){
+			turnRight(1);
+		}
+		fire(3);
+		setTurnGunRight(Utils.normalizeBearing(Utils.absoluteBearing(getX(), getY(), bullet.getX(), bullet.getY())-getGunHeading()));
+		setTurnRight(Utils.normalizeBearing(Utils.absoluteBearing(getX(), getY(), bullet.getX(), bullet.getY())-getHeading()));
+		setAhead(Point2D.distance(getX(), getY(), bullet.getX(), bullet.getY()));
+		execute();
+	}
+	
+	public void onHitByBullet(HitByBulletEvent e){
+		hit=true;
+		setInterruptible(false);
+		setTurnRight(e.getBearing());
+		setAhead(5000);
+		execute();
+	}
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=ChaoticDroid" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=ChaoticDroid">View other revisions</a><br>Last edited June 14, 2005 23:21 EST by <a href="robowiki?UnderDark" title="ID 4723 from d149-67-30-72.try.wideopenwest.com">UnderDark</a> <a href="robowiki?action=browse&diff=1&id=ChaoticDroid">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

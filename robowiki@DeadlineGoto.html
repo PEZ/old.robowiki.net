@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>DeadlineGoto - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Deadline, Goto'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=DeadlineGoto">DeadlineGoto</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H3>Calling All Math Wizards</H3>
+
+<p>
+I have a problem to solve!  Given a speed (s), a distance to travel (d), and the number of ticks you have to get there (t), what speed should you travel such that you will arrive at that distance at the lowest speed possible?
+<p>
+Here's why I ask.  I want to plot a course to a given point on the battlefield, and I want to arrive there at the time a wave crashes over it, <strong>at the latest</strong>.  So I have a deadline.  I also want to get there as quickly as possible, and just hang out for a while if there's time.  If necessary, though, I'll arrive at full speed just as the wave crashes.  
+<p>
+I want to boil the problem down to a straight line.  That is, I'll worry about turning toward that point with a different algorithm.  That makes this problem strictly linear.
+<p>
+Here's what I have so far (mostly due to <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>' help).  Consider a function m(s, t) that gives you the minimum distance you can possibly travel.  That is, the distance you would travel if you hit the brakes hard.  This problem, then can be stated in terms of m.  You wan to pick an s such <strong>next</strong> tick m(s, t)=d.  That is, so that next tick you can hit the brakes as hard as possible and still make your deadline.  So, we want to solve this equation for s:
+<p>
+<PRE >
+ m(s, t-1)=d-s
+</PRE>
+<p>
+Note that this requires figuring out what m is, exactly!  So, who's up to the challenge??
+<p>
+-- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+<hr noshade class=wikiline size=1>
+<H3>Math wizards, enter your comments here</H3>
+
+<p>
+Hmm ... m(s, t) should just be the sum from x=1 to t of s-2x.  Who remembers / is learning how to solve simple summations?  But this only works as long as t &lt;= s/2.  Then you have to start using sum of s-x.  Or can that be handled easily with special cases?  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> Let me have a go =). 
+</UL>
+<pre>
+using formulas: 
+sum of i from 1 to n = (n/2)(n + 1)
+sum of k from 1 to n = kn, where k is a constant
+
+sum of s - 2x from 1 to t
+= (sum of s from 1 to t) - 2*(sum of x from 1 to t)
+= ts - 2*(t/2)(t + 1)
+= ts - t*t - t
+therefore 
+d - s = (t - 1)s - (t - 1)^2 - (t - 1)
+d - s = ts - s - t*t + 2t - 1 - t + 1
+d = -t*t + t + st 
+(d + t*t - t)/t = s
+</pre> -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<UL >
+<li> But hang on, if we're already solving with d-s=..., why are we putting in (t-1)? Isn't that two ticks, instead of one? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> I didn't follow through all the algebra, but the answer is right, so nice work!  But, in exactly one tick, you will have t-1 ticks left to travel, and you will have already traveled s pixels, meaning you have d-s to go.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+I heard from <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a> who heard from his software that the sum of x=1 to t of s-2x is -t^2+s*t-t.  Let's try some scenarios to see if that's all we needed. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a> again saves the day by avoiding all my mistake-prone algebra using his super-solver (from what I hear <a rel="nofollow" href="http://maxima.sourceforge.net/download.shtml">[Maxima]</a> is pretty cool software).  d-s=-(t-1)^2+s*(t-1)-(t-1) solved for s is s=(t*t-t+d)/t.  Now to try out this function: -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<PRE >
+    public double getSpeed(double curSpeed, double distance, long time) {
+        assert distance &gt;= 0;
+        assert time &gt; 0;
+        double min = Math.max(curSpeed-2, 0);
+        double max = Math.min(curSpeed+(curSpeed&lt;0?2:1), 8);
+        double ideal = (time*time-time+distance)/time;
+        return Math.min(Math.max(ideal, min), max);
+    }
+</PRE>
+<p>
+Ah, this is going to work well for the case that you are going to reach your deadline <em>just</em> on time (according to my experiments with it in a spreadsheet).  But it needs a separate case for when you'll have time to spare, to sit idle at the destination until the deadline passes.  I guess that will be tomorrow's project (unless someone graciously beats me to it). -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+I notice this assumes your moving in a straight line to the destination, what if your arcing (as in many surfers, and/or when wall-smoothing)? --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+<UL >
+<li> Quote: "I want to boil the problem down to a straight line.  That is, I'll worry about turning toward that point with a different algorithm.  That makes this problem strictly linear." Not that I disagree with you though; it is possible that moving linearly will allow the wave to hit you before you reach your predicted destination. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li> Moving linearly or any other way doesn't determine whether you'll reach your destination on time, if you're careful to only pick destinations that you can reach on time!  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+I did some tests limiting the speed of my travel, and I concluded that it makes me very vulnerable to velocity segmentation. It might have just been bugs in my system, but keep that in mind =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<UL >
+<li> Do you mean reducing your speed of travel below 8 longer than needed?  If so, have no fear, that's not what I'm after.  The only times I'll be limiting my speed is when I'm slowing down (or stopping) just before reaching my destination - otherwise it's full speed ahead.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+This can, I think, be simplified to <code>s = d/t + t - 1</code> if you wanted to... --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+I just implemented something like this in <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a>. If I need to get to a point, but I'm going to be sitting still for a while after getting there, rather sit still here for as long as possible so the enemy doesn't know where I'm headed. Although there may be some subtle changes in the movement all around, it shouldn't actually affect any of the points where I cross the waves, only what the enemy sees as I'm getting there. I don't expect it to do much, but you never know.  -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Actually, the new variety of <a href="robowiki?WaveSurfing/TrueSurf" class=wikipagelink>TrueSurfing</a> that I'm working with lately would do something similar to this. Due to the way the algorithm works (by simply evaluating which movement option leaves the lowest reachable danger open still), it would also be "lazy" and would move as late as possible to the new location. Of course, in actuality, I don't think this "lazy" effect does much, because I count all waves and it's rare for the lowest reachable danger of EVERY wave to still be reachable for all movement options. It may not be <a href="robowiki?DeadlineGoto" class=wikipagelink>DeadlineGoto</a>, but it has an equivalent property in <a href="robowiki?WaveSurfing/TrueSurf" class=wikipagelink>TrueSurf</a>-style. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Wouldn't this only be the case if you made staying still the priority, so if all are equal, staying still is the option that gets followed? Otherwise you could make it so it always moves towards GF 1 (or -1) until a 'best' option presents itself. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Well, yes, it does depend on implementation but in my implementation I do have it choose the option of staying still if all options are equal. I did at one point consider breaking such ties by evaluating which one has the lowest total (total as opposed to lowest danger point) danger, but then decided that's not worth it and that generally staying still would not be a bad thing because as you note it doesn't give the enemy much information about what I'll do next. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=DeadlineGoto" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=DeadlineGoto">View other revisions</a><br>Last edited June 11, 2008 19:25 EST by <a href="robowiki?Rednaxela" title="ID 13292 from d198-53-128-24.abhsia.telus.net">Rednaxela</a> <a href="robowiki?action=browse&diff=1&id=DeadlineGoto">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

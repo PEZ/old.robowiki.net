@@ -1,0 +1,349 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Axe/RoboLeagueAnalyser - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Axe, Robo, League, Analyser'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/RoboLeagueAnalyser">Axe/RoboLeagueAnalyser</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Axe" class=wikipagelink>Axe</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I allways suffered a lot running <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a>, something like 5 seasons of 35 rounds match in a <a href="robowiki?TestBed" class=wikipagelink>TestBed</a> of 20 bots or how. And also suffered after, trying to excel the results of those many tables.<br>
+In order to to help me analyse the results of <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a>, i built this modest analyser.<br> 
+It reads the .xml file resulting of running <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a> division mode, focused in your bot, against a <a href="robowiki?TestBed" class=wikipagelink>TestBed</a> of n bots in m seasons. Process
+The info of the xml and give me an output as a table with this kind of colums:
+<pre>
+dos.writeBytes("Opponent" + sep + "PBI(%)" + sep + "My score" + sep
+					+ "Opp Score" + sep + "My bull.dmg." + sep
+					+ "Opp bull.dmg." + "\r\n");
+</pre> 
+Averaged by the seasons quantity.<br>
+That means that i have now a single table with the results averaged.
+This by itself is usefull to me, but the real reason that made me post this, is that it is a very simple code accessing the output .xml file of <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a>, and demontrates the basic manipulation of xml structures with Java APIs. Its very crude and simple, but I prefer that way, it is (i think) easier to understand and adapt/use. Feel u all free to use this code (RWPCL).<br>
+<p>
+Usage: axe.LeagueAnalyser<a href="robowiki?action=edit&id=LeagueAnalyser" class=wikipageedit>?</a> &lt;[RoboLeague xml file]<a href="robowiki?action=edit&id=RoboLeague_xml_file" class=wikipageedit>?</a>&gt; &lt;bot_name_with_underscore_in_spaces&gt;<br>
+<p>
+<hr noshade class=wikiline size=1>
+<H3>The Code:</H3>
+
+<a rel="nofollow"  href="http://robowiki.net/robocode/uploads/axe/LeagueAnaliser.zip">Download it</a>
+<p>
+LeagueAnalyser<a href="robowiki?action=edit&id=LeagueAnalyser" class=wikipageedit>?</a>.java:
+<pre>
+package axe;
+
+import java.io.*;
+import java.text.DecimalFormat;
+import java.util.*;
+
+import javax.xml.parsers.*;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.*;
+/** 
+ * LeagueAnalyser - 10/06/2004
+ * @author Axe
+ * 
+ * This code is released under the RoboWiki Public Code Licence (RWPCL),
+ * datailed on:
+ * http://robowiki.net/?RWPCL
+ * (Basically it means you must keep the code public if you base any code on
+ * it.)
+ * Not basically, i think it means that the knowledge should not be 
+ * retained, but shared. We must all remember that the veins of the Knowledge 
+ * must flow. Quoting(or some) PEZ´s comment about OpenSouce: "At least is a 
+ * good Karma".
+ */
+public class LeagueAnalyser {
+
+	private Document document;
+	private String bot;
+	private HashMap matches = new HashMap();
+
+	public LeagueAnalyser(String srcFile, String robot) {
+		super();
+		this.bot = robot.replaceAll("_", " ");
+		System.out.println("processing file " + srcFile + " for bot "
+				+ this.bot);
+		setXML(srcFile);
+		Node root = document.getDocumentElement();
+		ArrayList seasons = getChilds(root, "SEASON");
+		System.out.println("Seasons:" + seasons.size());
+		BotPair pair = new BotPair();
+		String sep = "\u0009";
+		for (int i = 0; i &lt; seasons.size(); i++) {
+
+			Node season = (Node) seasons.get(i);
+			ArrayList groupings = getChilds(season, "GROUPING");
+			System.out
+					.println("Season " + i + " groupings " + groupings.size());
+			for (int j = 0; j &lt; groupings.size(); j++) {
+				Node grouping = (Node) groupings.get(j);
+				ArrayList results = getChilds(grouping, "RESULTS");
+				BotReg myReg = null;
+				BotReg oppReg = null;
+
+				for (int k = 0; k &lt; results.size(); k++) {
+					Element result = (Element) results.get(k);
+
+					BotReg reg = new BotReg(result);
+					if (reg.getBot().equals(bot)) {
+						myReg = reg;
+					} else {
+						oppReg = reg;
+					}
+				}
+				if (myReg != null &amp;&amp; oppReg != null) {
+					pair = new BotPair();
+					if (matches.containsKey(oppReg.getBot())) {
+						pair = (BotPair) matches.get(oppReg.getBot());
+
+						myReg = pair.getMe().add(myReg);
+						oppReg = pair.getHim().add(oppReg);
+					}
+					pair.setHim(oppReg);
+					pair.setMe(myReg);
+					matches.put(oppReg.getBot(), pair);
+
+				}
+			}
+		}
+		DecimalFormat forma = new DecimalFormat("0.00");
+
+		ArrayList keys = new ArrayList(matches.keySet());
+		Collections.sort(keys);
+		File output = new File(bot + ".results");
+		try {
+			FileOutputStream fos = new FileOutputStream(output);
+			DataOutputStream dos = new DataOutputStream(fos);
+			dos.writeBytes("Results for " + bot + " " + seasons.size()
+					+ " seasons\r\n");
+			dos.writeBytes("Opponent" + sep + "PBI(%)" + sep + "My score" + sep
+					+ "Opp Score" + sep + "My bull.dmg." + sep
+					+ "Opp bull.dmg." + "\r\n");
+
+			System.out.println("performing results for " + keys.size()
+					+ " matches.");
+			for (int i = 0; i &lt; keys.size(); i++) {
+
+				pair = (BotPair) matches.get(keys.get(i));
+				BotReg me = pair.getMe();
+				BotReg he = pair.getHim();
+
+				double percent = (me.getScore() * 100D)
+						/ (he.getScore() + me.getScore());
+				System.out.println(he.getBot() + ":" + forma.format(percent));
+				System.out.println(he.getBot() + ": " + forma.format(percent)
+						+ "% " + me.getScore() + "/" + he.getScore());
+				dos.writeBytes(he.getBot() + sep + forma.format(percent) + sep
+						+ me.getScore() + sep + he.getScore() + sep
+						+ me.getBullet_damage() + sep + he.getBullet_damage()
+						+ "\r\n");
+			}
+			dos.close();
+			fos.close();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * LeagueAnalyser main vm method
+	 * Usage: axe.LeagueAnalyser &lt;RoboLeague_xml_file&gt; &lt;bot_name_with_underscore_in_spaces&gt;
+	 */
+	public static void main(String[] args) {
+		new LeagueAnalyser(args[0], args[1]);
+	}
+
+	public void setXML(String xmlFile) {
+		try {
+			File src = new File(xmlFile);
+
+			DocumentBuilderFactory factory = DocumentBuilderFactory
+					.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			document = builder.parse(src);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private ArrayList getChilds(Node localRoot, String childName) {
+		ArrayList groupings = new ArrayList();
+
+		NodeList childs = localRoot.getChildNodes();
+		for (int i = 0; i &lt; childs.getLength(); i++) {
+			Node child = childs.item(i);
+			if (child.getNodeName().equals(childName)) {
+				groupings.add(child);
+			}
+		}
+		return groupings;
+	}
+
+}
+</pre>
+<p>
+BotReg<a href="robowiki?action=edit&id=BotReg" class=wikipageedit>?</a>.java:
+<pre>
+package axe;
+
+import org.w3c.dom.Element;
+/** 
+ * BotReg - 10/06/2004
+ * @author Axe
+ * 
+ * This code is released under the RoboWiki Public Code Licence (RWPCL),
+ * datailed on:
+ * http://robowiki.net/?RWPCL
+ * (Basically it means you must keep the code public if you base any code on
+ * it.)
+ * Not basically, i think it means that the knowledge should not be 
+ * retained, but shared. We must all remember that the veins of the Knowledge 
+ * must flow. Quoting(or some) PEZ´s comment about OpenSouce: "At least is a 
+ * good Karma".
+ */
+public class BotReg {
+
+	private String bot = null;
+	private int score = 0;
+	private int survival = 0;
+	private int last_survivor_bonus = 0;
+	private int bullet_damage = 0;
+	private int bullet_damage_bonus = 0;
+	private int ram_damage = 0;
+	private int ram_damage_bonus = 0;
+	private int n_first_rank = 0;
+	private int n_second_rank = 0;
+	private int n_third_rank = 0;
+
+	public BotReg() {
+		super();
+	}
+
+	public BotReg(Element reg) {
+		super();
+		bot = reg.getAttribute("id");
+		score = Integer.parseInt(reg.getAttribute("total_score"));
+		survival = Integer.parseInt(reg.getAttribute("survival"));
+		last_survivor_bonus = Integer.parseInt(reg
+				.getAttribute("last_survivor_bonus"));
+		bullet_damage = Integer.parseInt(reg.getAttribute("bullet_damage"));
+		bullet_damage_bonus = Integer.parseInt(reg
+				.getAttribute("bullet_damage_bonus"));
+		ram_damage = Integer.parseInt(reg.getAttribute("ram_damage"));
+		ram_damage_bonus = Integer.parseInt(reg
+				.getAttribute("ram_damage_bonus"));
+		n_first_rank = Integer.parseInt(reg.getAttribute("n_first_rank"));
+		n_second_rank = Integer.parseInt(reg.getAttribute("n_second_rank"));
+		n_third_rank = Integer.parseInt(reg.getAttribute("n_third_rank"));
+	}
+
+	public BotReg add(BotReg reg) {
+		if (!reg.equals(this)) {
+			System.err.println("BotReg.add(), bots don´t match:" + reg.getBot()
+					+ "," + this.getBot());
+			return null;
+		}
+		BotReg ret = new BotReg();
+		ret.bot = this.bot;
+		ret.score = this.score + reg.score;
+		ret.survival = this.survival + reg.survival;
+		ret.last_survivor_bonus = this.last_survivor_bonus
+				+ reg.last_survivor_bonus;
+		ret.bullet_damage = this.bullet_damage + reg.bullet_damage;
+		ret.bullet_damage_bonus = this.bullet_damage_bonus
+				+ reg.bullet_damage_bonus;
+		ret.ram_damage = this.ram_damage + reg.ram_damage;
+		ret.ram_damage_bonus = this.ram_damage_bonus + reg.ram_damage_bonus;
+		ret.n_first_rank = this.n_first_rank + reg.n_first_rank;
+		ret.n_second_rank = this.n_second_rank + reg.n_second_rank;
+		ret.n_third_rank = this.n_third_rank + reg.n_third_rank;
+		return ret;
+	}
+
+	public String getBot() {
+		return bot;
+	}
+	public int getScore() {
+		return score;
+	}
+	public boolean equals(Object o) {
+		if (!(o instanceof BotReg)) {
+			return false;
+		}
+		return ((BotReg) o).getBot().equals(this.getBot());
+	}
+	public int hashCode() {
+		return getBot().hashCode();
+	}
+	public int getBullet_damage() {
+		return bullet_damage;
+	}
+}
+</pre>
+<p>
+BotPair<a href="robowiki?action=edit&id=BotPair" class=wikipageedit>?</a>.java:
+<pre>
+package axe;
+
+/** 
+ * BotPair - 10/06/2004
+ * @author Axe
+ * 
+ * This code is released under the RoboWiki Public Code Licence (RWPCL),
+ * datailed on:
+ * http://robowiki.net/?RWPCL
+ * (Basically it means you must keep the code public if you base any code on
+ * it.)
+ * Not basically, i think it means that the knowledge should not be 
+ * retained, but shared. We must all remember that the veins of the Knowledge 
+ * must flow. Quoting(or some) PEZ´s comment about OpenSouce: "At least is a 
+ * good Karma".
+ */
+public class BotPair {
+
+	private BotReg me;
+	private BotReg him;
+
+	public BotPair() {
+		super();
+	}
+	public BotPair(BotReg me, BotReg him) {
+		super();
+		this.me = me;
+		this.him = him;
+	}
+	public BotReg getHim() {
+		return him;
+	}
+	public void setHim(BotReg him) {
+		this.him = him;
+	}
+	public BotReg getMe() {
+		return me;
+	}
+	public void setMe(BotReg me) {
+		this.me = me;
+	}
+}
+</pre>
+<p>
+--- Comments? ---
+<p>
+Hey, thanks man, this seems incredibly useful! The only thing I really needed to change so far is to use bot.replaceAll("\\*", "dev") in the filename portion of LeagueAnalyser<a href="robowiki?action=edit&id=LeagueAnalyser" class=wikipageedit>?</a>.java, since my dev versions always have *'s in the version number, and it chokes on that for a filename. This is just the kind of dev tool I needed right now... Somehow, <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>'s xslt template thing never works for me, and this is a bit more flexible, as well. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I posted it elsewhere on the wiki, but I should post it here too. I made a couple of small changes to Axe's extremely helpful league analyser program, and you can get my version here: <a rel="nofollow" href="http://www.dijitari.com/void/robocode/LeagueAnalyser_V.zip">[LeagueAnalyser_V.zip]</a> ... Instructions are the same as the rest of the page. The differences are:
+<p>
+<UL >
+<li> Understands a * in the filename, replaces *'s in the output filename with the string 'dev'.
+<li> Prints overall average percent at the end of the printed output.
+</UL>
+<p>
+-- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Axe" class=wikipagelink>Axe</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Axe/RoboLeagueAnalyser" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Axe/RoboLeagueAnalyser">View other revisions</a><br>Last edited August 22, 2006 4:50 EST by <a href="robowiki?Voidious" title="ID 7423 from pool-72-75-208-196.bflony.east.verizon.net">Voidious</a> <a href="robowiki?action=browse&diff=1&id=Axe/RoboLeagueAnalyser">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

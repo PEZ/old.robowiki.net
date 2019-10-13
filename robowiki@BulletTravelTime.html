@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>BulletTravelTime - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Bullet, Travel, Time'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=BulletTravelTime">BulletTravelTime</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>The Robocode masters share their secrets with us mortals at various web pages. But I have seldom seen them mention the estimation of bullet travel time. Which is very important for just about any aiming method. Please use this page to enlighten us, should you know some of the ways you could deal with this issue.
+<hr noshade class=wikiline size=1>
+I'm currently using a <strong>very</strong> simple estimate in <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a>. It keep tracks of an enemies delta movement along the X and Y axis between scans and then extrapolates that to get an estimate of how much to subtract or add to the straight bullet travel time calculated from the distance. Something like so:
+<pre>
+ xVelocity = xDelta / timeDelta;
+ yVelocity = yDelta / timeDelta;
+ bulletTravelTime = distance / bulletVelocity;
+ bulletTravelTime *= 1 + Math.sign(enemyX - robotX) * xVelocity / 14;
+ bulletTravelTime *= 1 + Math.sign(enemyY - robotY) * yVelocity / 14;
+</pre>
+It works quite well. Suprisingly well using <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a>. But now I suspect that it lowers my score using <a href="robowiki?PatternTargeting" class=wikipagelink>PatternTargeting</a>.
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Questions (can i ask them like this?) But of course! :
+<UL >
+<li> Why take into account the enemy velocity?
+</UL>
+Since I want to know how much time to add or subtract to the enemy_is_standing_still_bullet_travel-time I figured that if i multiplied velocity with with the current distance I'd get a time value. 
+<UL >
+<li> what is '14' in the equation?
+</UL>
+I just had to divide with something since I knew the bot was not going to double it's distance during my bullet's travel time. My first thought was to divide with the maximum velocity and since each axis represents about half of that velocity (well, if you over-simplify it) I thought I should try dividing with 16. But it didn't quite cut it against <a href="robowiki?Walls" class=wikipagelink>Walls</a> so I nudged it and it ended up at 14 (the hypotheneuse is always shorter than the two sides added). I suspected all the time that my theory behind this was faulty, but since it worked quite OK i left it at that. Though now I'm revisiting this since it has floated up among the things I think are the weakest spots of my robot.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I'w post some interesting links about the subject from the <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a> forums. The first one is about this specific topic.
+<p>
+<a rel="nofollow" href="http://www.robocoderepository.com/jive/thread.jsp?forum=18&amp;thread=977">http://www.robocoderepository.com/jive/thread.jsp?forum=18&amp;thread=977</a>
+<p>
+<a rel="nofollow" href="http://www.robocoderepository.com/jive/thread.jsp?forum=18&amp;thread=1081">http://www.robocoderepository.com/jive/thread.jsp?forum=18&amp;thread=1081</a>
+<p>
+<a rel="nofollow" href="http://www.robocoderepository.com/jive/thread.jsp?forum=18&amp;thread=1052">http://www.robocoderepository.com/jive/thread.jsp?forum=18&amp;thread=1052</a>
+<p>
+-- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Thanks! But, for some reason I need to scroll several meters sidewise to read each sentence. It makes it almost impossible to follow. Maybe you could repeat whatever interesting thing you posted there, here? I know it's asking for much, but it would be much more accessible on this site since it won't be dug down in an old forum thread, but instead will gets it's own page(s). And, continuing to ask for much, if you find some <a href="robowiki?OceansOfSpareTime" class=wikipagelink>OceansOfSpareTime</a>, maybe you could try the crazy code snippet I posted above and validate the results against a more serious approach? I would be very interested in results against <a href="robowiki?Walls" class=wikipagelink>Walls</a> in particular, since the later versions of <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> gets their ass kicked against it. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<hr noshade class=wikiline size=1>
+Ok, so i don't doubt for a second that this could just be me being an idiot, but in the formula above for calculating bullet travel time you have used a function called "Math.sign()", now i guessed that by this you meant "Math.sin()" (as Math.sign() does not appear in the java API) and implemented something similar (i was hoping this might make my pattern matcher work) but now my aim even using linear targetting is much worse. Was i wrong to guess that you meant "Math.sin()" or have i just made a mistake elsewhere?? -- <a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+The x should be Math.sin(), the y should be Math.cos(). -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Ahhhhhhhhhhh, now i actually understand what he means. They don't call me brain fade for nothing...:) <a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+I don't think Math.sign() there represent cos() or sin(). It was a while ago, but I think I had a function in my <a href="robowiki?BotMath" class=wikipagelink>BotMath</a> class that was named sign() and which returned the sign of its argument. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I'll let the above code snippet stand just a day more or so, just to give your comment some context. I don't use it any longer and we should try to get someone else post a working calculation. I don't have <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a> in my bots any longer. It works only against <a href="robowiki?Walls" class=wikipagelink>Walls</a> and is not worth it I think. And my pattern matcher calculates bullet travel time while it is iterating the enemy movement instead of doing a linear estimate. This seems to work better. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Although it looks logical to use Math.sin() and Math.cos() in the snippet above it makes your gun much less accurate than just using a prediction of time based on where they are now. As for linear targetting it is a great way for dummies like me to pretend that they use decent targetting (although firing directly at a robot tends to be quite successful). For some reason i have a complete inability to write a gun with any kind of success. I still have a linear targeting gun, just because i use a system that sounds very similar to Pez's virtual guns (Except i only have direct, linear and circular guns rather than the plethora that he uses), where i plot the trajectory of each gun every time i fire an actual bullet and store statistics of the hit-rates. I then fire the gun that has the best hit-rate (I used to think this was what virtual bullets were but now i hear i got it wrong). The disadvantage of using linear targetting by itself is that if the opponent is oscillating then you tend to fire miles either side of it. Pattern matching is clearly the way to go... if only my effort wasn't so bad :( -- <a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+Iteration through all the discrete values until you found the actual point of intersection along this projection is the best way. That or you can use Calculus. Both of these give exact travel times. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+There is a geometric way to do it, which I mused about on the page about <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a>.  I since tried it and debugged it and it is used in <a href="robowiki?SpareParts" class=wikipagelink>SpareParts</a> (which can be used without wading through too much code, because it's in a class called "LinearGun<a href="robowiki?action=edit&id=LinearGun" class=wikipageedit>?</a>" or something).  When <a href="robowiki?Nano" class=wikipagelink>nano</a> was testing his new curve-flattening movement that he's been working on, he tested the robot against <a href="robowiki?SpareParts" class=wikipagelink>SpareParts</a> and <a href="robowiki?SpareParts" class=wikipagelink>SpareParts</a>'s console indicated he was using his linear-projection gun after so many rounds. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Yes, that sounds like <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> alright. Interestingly enough my VG array doesn't include linear nor circular targeting. I probably should include it, but in theory my pattern matcher should take care of that. Funny that you ended up with VGs when you misunderstood VBs, that's exactly what happened to me. =) You will find that VGs work better if you segment your statistics. Marshmallow segments on distance and angular velocity. Maybe you should let your pattern matching efforts rest a while and you might find it is easier when you return to it in a week or two. Meanwhile you could plug in <a href="robowiki?Gouldingi" class=wikipagelink>Gouldingi</a> style targeting in your VG array. It's quite effective against oscillators. Add one or two random targeting guns as well and you'll have an array much like <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a>s. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+The law of sins is something you're told many times in physics and other practical classes to never use, because it can result in incorrect values, due to the nature of sin in different quadrants. It should generally work in this case, however, because unless a bot is buzzing you, it shouldn't come up. However, I'm willing to bet the gun goes a bit wacky when a bot comes into point blank and does a straight line across. Though yes, that method does eliminate the requirement of knowing the time the bullet travels.
+<p>
+Anyway, there is another method I failed to mention involving the summation of an infinite series, that you could easily use to determine very precise travel times. So with three methods that can precisely determine the times, I don't see why a bot not restricted on code size would really need to avoid finding it. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Please post some code snippets =) For me it's just that only my pattern matcher really needs an estimate of the bullet travel time and the iterative nature of my implementation produces the travel time as a side effect anyway. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=BulletTravelTime" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=BulletTravelTime">View other revisions</a><br>Last edited May 6, 2006 4:44 EST by <a href="robowiki?Wcsv" title="ID 6918 from r204174.res.Lehigh.EDU">Wcsv</a> <a href="robowiki?action=browse&diff=1&id=BulletTravelTime">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

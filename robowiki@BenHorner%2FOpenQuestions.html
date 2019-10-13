@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>BenHorner/OpenQuestions - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Ben, Horner, Open, Questions'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/OpenQuestions">BenHorner/OpenQuestions</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><hr noshade class=wikiline size=1>
+<em>I'm asking for help in this section, hoping people cruising the changes will notice these...</em>
+<hr noshade class=wikiline size=1>
+<p>
+This is kind of a dense, code heavy question, I'd appreciate any help...
+I'm wondering how best to capture when the time changes, in order to do some bookkeeping (like updating my time member variable).
+<p>
+I've made this class:
+<pre>
+public class TimeChangedCondition extends Condition {
+
+    public TimeChangedCondition(Robot bot){
+        super("TimeChanged", 99);
+        this.bot = bot;
+        this.last_round = -1;
+        this.last_time = -1;
+    }
+    
+    @Override
+    public boolean test() {
+        int  round = bot.getRoundNum();
+        long time  = bot.getTime();
+        boolean time_changed = ((round != last_round) || (time != last_time));
+        if (time_changed){
+            last_round = round;
+            last_time  = time;
+        }
+        return time_changed;
+    }
+
+    protected Robot bot;
+    protected int   last_round;
+    protected long  last_time;
+
+}
+</pre>
+<strong>...</strong> and put this in my run() method:
+<pre>
+    this.addCustomEvent(new TimeChangedCondition(this));
+</pre>
+<strong>...</strong> and made this event handler:
+<pre>
+    @Override
+    public void onCustomEvent(CustomEvent e){
+        if (e.getCondition() instanceof TimeChangedCondition){
+            time  = getTime();
+            round = this.getRoundNum();
+        }
+    }
+</pre>
+<strong>...</strong> I figure many people probably do something similar, so, is there a better way?  And, are there flaws with this method?  Is there a gap anywhere, such that in my code, it could be the case that:
+<pre>
+((bot.time != bot.getTime()) &amp;&amp; (bot.round != getRoundNum()))
+</pre>
+--<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<p>
+<UL >
+<li> There are a few things that happen exactly once every tick (i.e. every time change).  The most common way, I believe, is to simply have an infinite loop in your run() method with exactly 1 blocking call that is guaranteed to block for exactly one tick.  That would be execute(), scan(), fire(), or maybe a couple others?  Another thing that will happen exactly once every turn is a call to the test() method of a custom event.  So, using that approach, you could safely simplify your code to something more like this (with no event handler necessary): -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL><PRE>
+ public class TimeChangedCondition<a href="robowiki?action=edit&id=TimeChangedCondition" class=wikipageedit>?</a> extends Condition {
+     MyBotClass<a href="robowiki?action=edit&id=MyBotClass" class=wikipageedit>?</a> bot;
+</PRE>
+<p>
+<PRE >
+     public TimeChangedCondition<a href="robowiki?action=edit&id=TimeChangedCondition" class=wikipageedit>?</a>(MyBotClass<a href="robowiki?action=edit&id=MyBotClass" class=wikipageedit>?</a> bot) {
+         super("TimeChanged<a href="robowiki?action=edit&id=TimeChanged" class=wikipageedit>?</a>", 99);
+         this.bot = bot;
+     }
+</PRE>
+<p>
+<PRE >
+     @Override
+     public boolean test() {
+         bot.time = bot.getTime();
+         bot.round = bot.getRoundNum<a href="robowiki?action=edit&id=RoundNum" class=wikipageedit>?</a>();
+         return true;
+     }
+ }
+</PRE>
+<p>
+<UL >
+<UL >
+<li> That's very nice, thank you very much.  (For the information as well as the code!)  --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+</UL>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=BenHorner/OpenQuestions" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=BenHorner/OpenQuestions">View other revisions</a><br>Last edited October 9, 2007 2:33 EST by <a href="robowiki?BenHorner" title="ID 11928 from ip70-171-163-89.om.om.cox.net">BenHorner</a> <a href="robowiki?action=browse&diff=1&id=BenHorner/OpenQuestions">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

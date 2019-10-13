@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Clock - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Clock'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Clock">Clock</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>package jonathan.util;
+
+import java.util.*;
+import java.awt.Color;
+import robocode.robocodeGL.*;
+import robocode.robocodeGL.system.GLRenderer;
+
+public class Clock {
+	private static final double PI_30 = Math.PI / 30.0,
+							PI_SECOND = Math.PI / 30000.0,
+							PI_MINUTE = Math.PI / 1800000.0,
+							  PI_HOUR = Math.PI / 21600000.0;
+	private static final int MILLIS_IN_DAY = 43200000;
+	
+	private GLRenderer renderer;
+	
+	private double x, y;
+	private int offset;
+	private Color primary, secondary;
+	private double circleBegin, circleEnd, circleWidth;
+	private double hourBegin, hourEnd, hourWidth;
+	private double minuteBegin, minuteEnd, minuteWidth;
+	private double secondBegin, secondEnd, secondWidth;
+	private double dotSize;
+	
+	private LineGL[] circle;
+	private LineGL hour, minute, second;
+	private PointGL dot;
+	
+	private boolean changed;
+	
+	//////////////////////////////////////////////////////////////
+	
+	public Clock() {
+		renderer = GLRenderer.getInstance();
+		
+		circle = new LineGL[60];
+		for(int i=0; i&lt;60; i++) circle[i] = new LineGL();
+		
+		hour = new LineGL();
+		minute = new LineGL();
+		second = new LineGL();
+		dot = new PointGL();
+		
+		setDefaults();
+		tick();
+	}
+	
+	//////////////////////////////////////////////////////////////
+	
+	public void add() {
+		for(int i=0; i&lt;60; i++) renderer.addRenderElement(circle[i]);
+		
+		renderer.addRenderElement(hour);
+		renderer.addRenderElement(minute);
+		renderer.addRenderElement(second);
+		
+		renderer.addRenderElement(dot);
+	}
+	
+	public void remove() {
+		for(int i=0; i&lt;60; i++) circle[i].remove();
+		
+		hour.remove();
+		minute.remove();
+		second.remove();
+		
+		dot.remove();
+	}
+	
+	//////////////////////////////////////////////////////////////
+	
+	public void tick() {
+		if(changed) {
+			rebuild();
+			changed = false;
+		}
+		
+		double now = (double)((new Date().getTime() + offset) % MILLIS_IN_DAY);
+		setHand(hour, now * PI_HOUR, hourBegin, hourEnd);
+		setHand(minute, now * PI_MINUTE, minuteBegin, minuteEnd);
+		setHand(second, now * PI_SECOND, secondBegin, secondEnd);
+	}
+	
+	//////////////////////////////////////////////////////////////
+	
+	public void setLocal() {
+		setLocal(true);
+	}
+	
+	public void setUTC() {
+		setOffset(0);
+	}
+	
+	public void setLocal(boolean local) {
+		setOffset(local ? TimeZone.getDefault().getRawOffset() : 0);
+	}
+	
+	public void setOffset(int offset) {
+		this.offset = offset;
+	}
+	
+	public void setLocation(double x, double y) {
+		this.x = x;
+		this.y = y;
+		changed = true;
+	}
+	
+	public void setDotSize(double dotSize) {
+		this.dotSize = dotSize;
+		changed = true;
+	}
+	
+	public void setColors(Color primary, Color secondary) {
+		this.primary = primary;
+		this.secondary = secondary;
+		changed = true;
+	}
+	
+	public void setCircle(double begin, double end, double width) {
+		circleBegin = begin;
+		circleEnd = end;
+		circleWidth = width;
+		
+		changed = true;
+	}
+	
+	public void setHour(double begin, double end, double width) {
+		hourBegin = begin;
+		hourEnd = end;
+		hourWidth = width;
+		
+		changed = true;
+	}
+	
+	public void setMinute(double begin, double end, double width) {
+		minuteBegin = begin;
+		minuteEnd = end;
+		minuteWidth = width;
+		
+		changed = true;
+	}
+	
+	public void setSecond(double begin, double end, double width) {
+		secondBegin = begin;
+		secondEnd = end;
+		secondWidth = width;
+		
+		changed = true;
+	}
+	
+	public void setDefaults() {
+		setUTC();
+		setLocation(100.0, 100.0);
+		setColors(new Color(1.0f, 0.0f, 0.0f, 0.8f), new Color(0.8f, 0.8f, 0.8f, 0.8f));
+		setDotSize(10.3);
+		setCircle(87.5, 93.75, 2.7);
+		setHour(0.0, 43.75, 4.6);
+		setMinute(0.0, 75.0, 3.4);
+		setSecond(0.0, 81.25, 2.0);
+		
+		changed = true;
+	}
+	
+	//////////////////////////////////////////////////////////////
+	
+	private void rebuild() {
+		dot.setPosition(x, y);
+		dot.setSize((float)dotSize);
+		dot.setColor(primary);
+		
+		for(int i=0; i&lt;60; i++) {
+			LineGL line = circle[i];
+			setHand(line, i*PI_30, circleBegin, circleEnd);
+			line.setColor(i%5==0 ? primary : secondary);
+			line.setWidth(circleWidth);
+		}
+		
+		hour.setWidth(hourWidth);
+		minute.setWidth(minuteWidth);
+		second.setWidth(secondWidth);
+		
+		hour.setColor(secondary);
+		minute.setColor(secondary);
+		second.setColor(secondary);
+	}
+	
+	private void setHand(LineGL hand, double rotation, double begin, double end) {
+		double sin = Math.sin(rotation), cos = Math.cos(rotation);
+		hand.setLine(x + sin*begin, y + cos*begin, x + sin*end, y + cos*end);
+	}
+}
+</pre>
+<p>
+Now you can continue Robocoding without missing <a href="robowiki?NewYears" class=wikipagelink>NewYears</a>. :-) -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+<hr noshade class=wikiline size=1>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Clock" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Clock">View other revisions</a><br>Last edited December 31, 2004 0:22 EST by <a href="robowiki?Jonathan" title="ID 3545 from 213-73-203-9.cable.quicknet.nl">Jonathan</a> <a href="robowiki?action=browse&diff=1&id=Clock">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

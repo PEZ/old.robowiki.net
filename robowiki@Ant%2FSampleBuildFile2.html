@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Ant/SampleBuildFile2 - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Ant, Sample, Build, File2'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/SampleBuildFile2">Ant/SampleBuildFile2</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Ant" class=wikipagelink>Ant</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>The way I package is to manually edit the Phoenix.properties file to have the latest version number. This is then parsed by the ant build file to generate a jar with the right name.
+<p>
+Tools used by this build file: 
+<UL >
+<li> Pack task <a rel="nofollow" href="http://sadun-util.sourceforge.net/pack.html">http://sadun-util.sourceforge.net/pack.html</a>
+<li> Codesize utility (comes with Robocode now)
+<li> yGuard Obfuscator <a rel="nofollow" href="http://www.yworks.com/en/products_yguard_about.htm">http://www.yworks.com/en/products_yguard_about.htm</a>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<pre>
+&lt;?xml version="1.0"?&gt;
+&lt;!-- ====================================================================== 
+
+     Phoenix build file
+
+     ====================================================================== --&gt;
+
+&lt;project name="Phoenix" default="Phoenix" basedir="."&gt;
+	
+	&lt;property name="robot.properties.file" location="davidalves/Phoenix.properties" /&gt;
+	&lt;property name="team.properties.file" location="davidalves/PhoenixTeam.team" /&gt;
+	&lt;property name="robot.name" value="Phoenix" /&gt;
+	&lt;property name="robocode.jar" location="c:/robocode/dev/robocode.jar" /&gt;
+	
+	&lt;taskdef name="obfuscate" 
+		classname="com.yworks.yguard.ObfuscatorTask" 
+		classpath="yguard.jar"/&gt;
+	&lt;taskdef name="pack"
+		classname="org.sadun.util.ant.Pack"
+		classpath="pack.jar"/&gt;
+	
+	&lt;description&gt;Phoenix&lt;/description&gt;
+	
+	&lt;!-- Load version number from Phoenix.properties file --&gt;
+	&lt;property file="${robot.properties.file}" /&gt;
+	
+	&lt;target name="Phoenix" description="Make Phoenix jar"&gt;
+		
+		&lt;!-- Make date stamp --&gt;
+		&lt;tstamp/&gt;
+		
+		&lt;property name="backup.file" location="${robot.name}_${robot.version}_${DSTAMP}.jar" /&gt;
+		&lt;property name="release.file" location="${robot.classname}_${robot.version}.jar" /&gt;
+		&lt;property name="temp.file" location="${robot.name}_temp.jar" /&gt;
+		
+		&lt;delete file="${backup.file}" failonerror="false" /&gt;
+		&lt;delete file="${release.file}" failonerror="false" /&gt;
+		&lt;delete file="${temp.file}" failonerror="false" /&gt;
+		
+		&lt;jar duplicate="add" basedir="." destfile="${backup.file}" compress="true"&gt;
+			&lt;include name="davidalves/**/*.java" /&gt;
+			&lt;include name="davidalves/**/*.class" /&gt;
+			&lt;include name="${robot.properties.file}" /&gt;
+			&lt;include name="${team.properties.file}" /&gt;
+		&lt;/jar&gt;
+		
+		&lt;!-- "pack" task selects only the minimal set of classes needed to run the bot. 
+			 This can also be done with the "classfileset" task from ant-contrib --&gt;
+		&lt;pack classes="${robot.classname}" targetjar="${temp.file}" excludepkg="java,javax,sun,robocode"&gt;
+			&lt;classpath path="." /&gt;
+			&lt;classpath location="${robocode.jar}" /&gt;
+			&lt;resource name="davidalves/Phoenix.properties" /&gt;
+		&lt;/pack&gt;
+		
+		&lt;!-- Print codesize--&gt;
+		&lt;java fork="yes" jar="/robocode/codesize.jar"&gt;
+			&lt;arg value="${temp.file}" /&gt;
+		&lt;/java&gt;
+		
+		&lt;!-- Obfuscate release jar --&gt;
+		&lt;obfuscate replaceclassnamestrings="true" logfile="obf.txt"&gt;
+			&lt;inoutpair in="${temp.file}" out="${release.file}" /&gt;
+			&lt;expose&gt;
+				&lt;class name="davidalves.Phoenix" methods="public" fields="none" /&gt;
+			&lt;/expose&gt;
+			&lt;externalclasses&gt;
+				&lt;pathelement location="${robocode.jar}"/&gt;
+			&lt;/externalclasses&gt;
+		&lt;/obfuscate&gt;
+	&lt;/target&gt;
+&lt;/project&gt;
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Ant" class=wikipagelink>Ant</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Ant/SampleBuildFile2" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Ant/SampleBuildFile2">View other revisions</a><br>Last edited October 18, 2007 15:23 EST by <a href="robowiki?David_Alves" title="ID 12048 from adsl-71-146-14-176.dsl.pltn13.sbcglobal.net">David Alves</a> <a href="robowiki?action=browse&diff=1&id=Ant/SampleBuildFile2">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

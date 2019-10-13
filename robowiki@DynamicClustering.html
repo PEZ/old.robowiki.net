@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>DynamicClustering - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Dynamic, Clustering'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=DynamicClustering">DynamicClustering</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Consider a history of the enemy state (log, array, whatever). For each entry you have multiple data on the enemy, like distance, speed, distance to wall, etc. Now, <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> consists in categorizing those entries into clusters, so that each cluster contains "similar" entries. "Similar" is defined by beeing close to each other, the measure of distance beeing the euclidian distance between entries: sqrt(sqr(dist1 - dist2) + sqr(speed1 - speed2) + ...). If you search Google for Clustering algorithms, you'll get lots of references to K-means clustering, which involves iteratively changing the centers of the clusters and reassigning each entry to it's new cluster. I tried it, it's very slow and I didn't manage to make it work good enough. My aproach is simpler, you just take the current entry and consider it the center of the cluster, then you find the N closest entries in the log and use them to decide where to shoot.
+<p>
+Now for the wheighting of each dimension. Each dimension can be wheighted by some factor. Those factors can be decided intuitively (is velocity more important than distance to wall?), by trial and error, or you can use some statistical entities to dynamically decide for you. I tried many ;), the latest beeing the entropy association between each dimension and the hitting <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> (yes, I currently use <a href="robowiki?GuessFactors" class=wikipagelink>GuessFactors</a> in Shadow's gun ;)). Read more about it <a rel="nofollow" href="http://www.library.cornell.edu/nr/bookcpdf/c14-4.pdf">[here]</a>.
+<p>
+For a slightly simplified version of my DC gun used in <a href="robowiki?Shadow" class=wikipagelink>Shadow</a> and <a href="robowiki?Tron" class=wikipagelink>Tron</a> see: <a href="robowiki?DCBot" class=wikipagelink>DCBot</a>
+<p>
+-- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Check out the <a href="robowiki?KdTree" class=wikipagelink>KdTree</a> page for a nice way to make this a very fast technique.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+<hr noshade class=wikiline size=1>
+<H3>Comments</H3>
+
+<p>
+Yeah, I use that simplification of K-means too in my log based stat gun attempts. The weighting has driven me almost crazy though. Entropy association sounds great. But I think I'm way too rusty to attempt to implement it. Exciting developments in the <a href="robowiki?Shadow" class=wikipagelink>Shadow</a> gun! Keep us posted! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I'm making this comment / question mostly for myself, since I was struggling with how this was not a fancy word for 'bin smoothing'.  Rather, this is approaching the granularity vs. population balance by dynamically adjusting the granularity as the population increases.  <span style="text-decoration: line-through">It does so by finding centers of mass in the available data.</span> It does so by placing available data into rough groupings.  When a decision is required, the present condition is compared to the most relevant grouping, and each entry in that grouping is judged against the present condition based on individual parts, weighted for importance.  The new problem then becomes determining how important each individual type of data (e.g. acceleration, relative heading, wall proximity) is to how an opponent behaves, and if that weighting really depends on the specific opponent you are facing, or is a general observation.  Ok.. now that I've rehashed that out I guess it's time to read more .. -- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin</a> / <a href="robowiki?Ugluk" class=wikipagelink>Ugluk</a> (Perhaps the clusters are periodically reevaluated, which would be more dynamic.)
+<p>
+Martin, I believe "bin smoothing" generally refers to just the smoothing of the factors (or angles) themselves, but I'm not completely sure. My first <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> attempts smoothed across all the dimensions, were slow as hell, and had me very confused. These days, I only smooth across the factors themselves. I'm sure somebody else can say more definitively. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Well, my understanding of bin smoothing in concept is that it understood that data is more of a square peg we are stuffing into a discreet bin, so surrounding bins are 'hit' (to a lesser amount).  For example, originally I was increasing the primary by 9, bins that were 1 ordinal distance were increased by 4, and their neighbors increased by 1.  (When I refactored my gun recently and left out the smoothing, my rumble score was unchanged, so I am not putting it back in for now.)  The 'euclidian distance' approach is a cleaner (though more expensive) way of dealing with the fact that nearly all of the data we have doesn't fit in bins (without arbitrary ranges).  (The exception to this is time, or things based on time.)
+My question now is why cluster data at all.  My two answers so far are 'to reduce computation' and 'clusters represent data that is highly weighted'.  -- Martin
+<p>
+This is more of a <a href="robowiki?BinSmoothing" class=wikipagelink>BinSmoothing</a> discussion and we should move it later I think. Anyway, bin smoothing is not only to simulate the width of the robot that is hit. It is also to make sure you through away your bullet in the direction it has most chances to hit. We might have a spike at GF 0.6 but several "hills" around GF 0.2. If those hills are high enough and plenty enough it might be better to aim there.
+<p>
+Clustering is a completely different thing. In <a href="robowiki?Shadow" class=wikipagelink>Shadow</a>s gun ABC uses a log of fire-situations. Simplified this log builds from the start of the battle and to the end. When about to fire Shadow checks the log for similar situations. It's when figuring out what situations are similar that the clustering comes in handy. I'm not sure how it's done in Shadow, but in <a href="robowiki?Ali" class=wikipagelink>Ali</a> I tried several approaches. One was using the euclidian distance and choose the X "closest" situations. Then try figure out where these so choosen situations agreed was the best place to fire.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<p>
+Martin, what you describe is in fact the K-means clustering algorithm. Clusters are periodically reevaluated and the decision is based on the cluster with it's center closest to the current observation. I tried this method but it's very slow and never worked "good enough". My method is much simpler, just like PEZ described, you just find the N closest situations and build a statistic on the fly. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+In X2 I use a log of ALL scans, not only fire situation because I fire blind in melee. So I might try logging fire-situations only in <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a>, in melee this would need some changes in radar. The clustering is done with euclidian distance with intuitive factors, but now that I have read this page I might try entropy using what I have done in Toad as a starting point. -- <a href="robowiki?Florent" class=wikipagelink>Florent</a>
+<p>
+I recently found out that if I weight fired scans heavily, it increased my gun's performance a lot against traditional bullet dodgers like Cigaret and <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>. I used my<a href="robowiki?GunHeat" class=wikipagelink>GunHeat</a> as a dimension and wheigted it 100 times more than other dimensions, my score against Cigaret went from around 85% to around 90% in the TC. OTOH, it became worse against <a href="robowiki?WaveSurfers" class=wikipagelink>WaveSurfers</a>, so I had to make a simple virtual gun setup to chooses between the two guns. In melee I use all scans equally against everyone.
+<p>
+About the dimension weighting factors, I experimented with entropy but never got a decent enough improvement. I'm not currently using any factors, I just normalise everything to 0..1. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+I already store <a href="robowiki?GunHeat" class=wikipagelink>GunHeat</a> in my scans, but its weighting factor is currently null because I did not notice any improvement. This might be because it was too low. I think I'll try to use entropy to choose which gun I should use comparing the two sets of bearings(with or without <a href="robowiki?GunHeat" class=wikipagelink>GunHeat</a>) . -- <a href="robowiki?Florent" class=wikipagelink>Florent</a>
+<p>
+Tenho uma pergunta para você, <a href="robowiki?ABC" class=wikipagelink>ABC</a>. Phoenix (and many other bots) use different GF guns for hitting adaptive movements and hitting regular bots. Do you use any anti-AM code in your gun? For example, you might consider only very recent scans. Or does your gun work fine against Adaptive movers with the standard behavior? --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Estou a ver que a família Alves ainda tem algum sangue Português :). My gun works great against AM with its standard behavior. The only virtual-gun-like thing I tried was the anti-Cigaret trick (weighting gunHeat highly), but it didn't make any difference in the ranking...
+<p>
+Hem, well I know how the gun works, but not HOW the guns works. The only problem I am struggling with is how to figure out how to use the data to find the angle to fire at based on the X most simular scans. You see since it doesn't techincally use a wave system, I am unsure of how I would be able to aim at the enemy, and well that whole area to me about how to actually aim it is fuzzy (I know how to choose the top ones, etc etc etc, just aiming is a problem).
+<p>
+I decided to just junction it with and within a wave class, and see how that goes. I hope it works. -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Well, I finished, and I made the equivilent of a pattern matching gf gun. As I only ever got around to checking the very closest result instead of the N closest results. However dispite this, the gun holds alot of promise. It got over 95% vs Tigger, which leads me to believe that this gun would rock vs Surfers once I get it actually "clustering". My method of getting the N closest clusters didn't live up to my expectations. I plan t rebuild the thing from the ground up. The amazing thing I think about it is that in actual lines, my DC code as it was took up about half the space of my tradictional visit count stat gf gun. Totally unexpected (I expected it to be about 14 times larger, maybe once I get the clustering in it might be). -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+To your previous comment: There's no one way to aim. <a href="robowiki?ABC" class=wikipagelink>ABC</a> 'plays the movie forward' for his top X scans, throws out the scenarios that would leave his opponent out of bounds, and then decides which bearing is most common and shoots. <a href="robowiki?Lukious" class=wikipagelink>Lukious</a> and <a href="robowiki?Chalk" class=wikipagelink>Chalk</a> store bearing offsets in their scans, choose their top X, and then estimate the most probable bearing using a <a href="robowiki?KernelDensity" class=wikipagelink>KernelDensity</a> calculation. And I believe <a href="robowiki?Ali" class=wikipagelink>Ali</a> maps his bearings to an array and then chooses the bearing represented by the most visited bin. I remember more discussion in <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a>.  --<a href="robowiki?Corbos" class=wikipagelink>Corbos</a>
+<p>
+Well what I was doing is that I used waves to calculate the guessfactor that the enemy moved to after it passed the enemy, which allowed me to compare the before images and took the one that was most simular to the current situation, and it tested all the previous scanned up to 500. What I wanted to do it choose the top say 10 scans and find the mode guessfactor of them with a small area of diffrence (e.g. every gf within 0.1 would be considered the same), and then fire at that group of guessfactors.  -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+ha, well thats the 8th time I have failed to make a successful dc gun, i'm gonna try for 9. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+The 8th time? Do you crash your whole attempt and start from scratch each time? 
+<p>
+Happy Christmas! --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+Happy Holidays! Yes, I do start from scratch as I find it easier that way. I have made several DCish guns, in the last was a play it forward with Kernel Calculations. Next i'm gonna attempt another wave based ones, this has however given me ideas on how to make a pattern-matcher (something I have never been great at). --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+I was contemplating targeting algorithms tonight and I got to thinking that <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> is a lot closer to <a rel="nofollow" href="http://en.wikipedia.org/wiki/K-Nearest_Neighbor_algorithm">[K nearest neighbors]</a> than it is to <a rel="nofollow" href="http://en.wikipedia.org/wiki/K-means_clustering">[K means clustering]</a>. In fact, I would call <a href="robowiki?Ali" class=wikipagelink>Ali</a>'s gun precisely "K nearest neighbors". It's true that K means clustering uses the idea of distances and neighbors like "K nearest neighbors" does, but <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> really doesn't do the stuff that sets K means apart from that... Though the kernel density stuff in <a href="robowiki?DCBot" class=wikipagelink>DCBot</a> (and <a href="robowiki?Chalk" class=wikipagelink>Chalk</a> and others) do set it apart from straight "K nearest neighbors". (Somewhat of a precursor to this discussion from the <a href="robowiki?Lukious" class=wikipagelink>Lukious</a> page, but this comment really does belong here.) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+This technique sounds like a way to evaluate neighbours in a SelfOrganizingObservationLog<a href="robowiki?action=edit&id=SelfOrganizingObservationLog" class=wikipageedit>?</a>, like in <a href="robowiki?Locke" class=wikipagelink>Locke</a>'s gun, where the closest neighbours of the current observations are used for targeting. --<a href="robowiki?Nfwu" class=wikipagelink>Nfwu</a>
+<p>
+As seen here the difference between <a rel="nofollow" href="http://jad.tfsnewworld.com/bots/k-type.gif">[k-type]</a> and <a rel="nofollow" href="http://jad.tfsnewworld.com/bots/dc-type.gif">[dc-type]</a>. Also incase your wondering Illustrator is a program I made to test this kinda stuff on. k-type is much slower in the overall clustering, but as I found a recentering interation as small as 10 can preduce amazing results (as seen here, I tried up to 1000 and got not much better). The graphs both use 5000 points, the k-type uses 100 clusters and 10 iterations. DC = speed, K = Accuracy. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+What do you mean by "k-type" and "dc-type"? As in K-means clustering algorithm? -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Yes, k as in k-means and dc as in the type most often used in dynamic clustering guns (find nearest ones and such). In fact my tests also showed a iteration of 2 or 3 can, on atleast a 2d field, produce respectful results. I'm using such to create a "dual" clustering gun (it uses k-mean to get a general cluster, then uses it again to find the densest part of the factors). Here is a slightly more <a rel="nofollow" href="http://jad.tfsnewworld.com/bots/k-type-exact.gif">[exact]</a> graph of the k-mean type. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Hmm... What are you setting "k" to in that test, about 100? I don't really understand what the "dc" graph is showing. The part about finding the closest and then the densest among them is what <a href="robowiki?Chalk" class=wikipagelink>Chalk</a> does, too... Can't remember about <a href="robowiki?DCBot" class=wikipagelink>DCBot</a> off hand. (It's what I do in <a href="robowiki?Lukious" class=wikipagelink>Lukious</a>, too, having studied Chalk.) <a href="robowiki?Ali" class=wikipagelink>Ali</a> is the only one I know of that is straight k-nearest-neighbours. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+<UL >
+<li> Oh, you already said 100, nevermind. =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> Yah, in the dc-type graph its showing it finding the closest point, first it found the one the looked for one closer, then so on. Its the line showing from the furthest it checks to the closest, which is why its so fast. If you wanna see the k-mean code I can post it up. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</UL>
+<p>
+No, that's OK. I still am not sure about the DC stuff. Don't you check the distance of the current scan to every scan in your log? Why just 10? -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<UL >
+<li> Indeed I do, but that would made a very messy graph ;). I will later draw up one that displays the 20 or so nearest points.
+</UL>
+<p>
+A old bot I have uses k-type clustering (as I find it so much funner to mess with then the type shadow uses), I have begun rebuilding it but I was wondering if anyone has any ideas how to speed it up beyond the basics. Basically it only remaps once a turn, though I did have plans to make the remapping dynamic (for those who have no idea what i'm talking about when I say remap, I mean moving the center of the clusters to make up for new data). 
+<p>
+I already have inplace a system that only allows a certain number of nodes per cluster. I have ideas on to spread the load across multiple turns for when I get a great deal more nodes then can be mapped in one turn. I also have ideas on how to remap nodes in a specific area (x clusters near the new node, thus not having to map them all again).
+<p>
+Th neat part about it is that to aim or whatnot it doesn't need to do anything more strenous then finding the node closest to it and doing a quick kernal calculation (which it self could be removed and placed in the remap section). 
+<p>
+There are 101 ways this could be increased in speed, though I realize its the slower of the two clustering routines.
+<p>
+--<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Wow - granted, there is much common code between <a href="robowiki?Firebird" class=wikipagelink>Firebird</a> and <a href="robowiki?Phoenix" class=wikipagelink>Phoenix</a>, <a href="robowiki?Stormrider" class=wikipagelink>Stormrider</a> and <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a>, and <a href="robowiki?Hydra" class=wikipagelink>Hydra</a> and <a href="robowiki?WaveSerpent" class=wikipagelink>WaveSerpent</a>, but 4 of the top 6 and 6 of the top 10 <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> 1v1 bots now use DC for movement and/or targeting. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<UL >
+<li> Yeah, and <a href="robowiki?Horizon" class=wikipagelink>Horizon</a> is almost top-10 now too. =) -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+</UL>
+<p>
+Very cool, I'm very happy to have inspired so many top bots! :) -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=DynamicClustering" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=DynamicClustering">View other revisions</a><br>Last edited November 15, 2007 22:08 EST by <a href="robowiki?ABC" title="ID 8723 from 89-180-75-225.net.novis.pt">ABC</a> <a href="robowiki?action=browse&diff=1&id=DynamicClustering">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Darkcanuck/RRServer - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Darkcanuck, RRServer'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/RRServer">Darkcanuck/RRServer</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Darkcanuck" class=wikipagelink>Darkcanuck</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><UL >
+<UL >
+<li>MIGRATED:**  <a rel="nofollow" href="http://testwiki.roborumble.org/w/index.php?title=Darkcanuck/RRServer">http://testwiki.roborumble.org/w/index.php?title=Darkcanuck/RRServer</a>
+</UL>
+</UL>
+<p>
+<H4>Experimental <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> Server</H4>
+
+<p>
+I found some time on the weekend and put together a database-backed <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> server.  You can try it here:  <a rel="nofollow" href="http://darkcanuck.net/rumble/">http://darkcanuck.net/rumble/</a>  (warning: still quite alpha)
+<p>
+<p>
+<H4>Why a new server?</H4>
+
+<p>
+Like many others, I was getting frustrated with the weird results appearing on the regular server.  There didn't seem to be an easy way to fix the results, except to start over from scratch like <a href="robowiki?ABC" class=wikipagelink>ABC</a> did with his new temporary server.  It doesn't seem fair to new users that a single misconfiguration will corrupt everyone's results, nor to the Robocode developers where a bug in a new release can cause the same problems.
+<p>
+This effort is not meant to supplant the upcoming <a href="robowiki?Roborumble.org" class=wikipagelink>Roborumble.org</a>, which will add many great features.  But David has taken on a fairly large challenge, and I thought we needed an intermediate step in the meantime which works with the current rumble client and can help evolve the client/server system to become what <a href="robowiki?Roborumble.org" class=wikipagelink>Roborumble.org</a> will eventually need.
+<p>
+<p>
+<H4>Design Goals</H4>
+
+<p>
+<UL >
+<li> Results stored in a relational database, as close to the original format as possible
+<li> Supports current rumble clients as-is, while allowing for enhanced clients to be created in the future
+<li> Ability to "roll back" bad data, based on user id, ip address, timestamp or client version (in the near future).  So if you goof up your rumble configuration or use the wrong version for a week or two, no data is lost.
+<li> Extra checks added to ensure valid client configuration
+<li> Ability to display individual battle data for any pairing (so you can see how much the scores vary)
+<li> Ability to query more "fun" data, like daily rankings, top submitters, survivalist stats
+</UL>
+<p>
+<p>
+<H4>Current State</H4>
+
+<p>
+The new server is live and has been accepting requests for just under 24hrs.  My home test server has been running for several days, so it is stable but there are probably may bugs and still a number of missing features.
+<p>
+What's done:
+<UL >
+<li> support for <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> competitions (mega, mini, micro, nano)
+<li> support for melee and team competitions  **new!**
+<li> uploading results (1.5.4 client tested)
+<li> returning ratings file to client
+<li> removal of participants by client  **update:** now working
+<li> rankings display for <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a>
+<li> average percentage scoring
+<li> survivalist scoring
+<li> built-in checks for field size, number of rounds
+<li> pairings detail incl. detailed battle results **new!**
+<li> Glicko rankings
+<li> ability to sort rankings table
+<li> add check for total survival &gt;= 35 in <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a>
+<li> add check for score &gt; 10000 in <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a>
+</UL>
+<p>
+What's missing:
+<UL >
+<li> automatic (or semi-auto) rankings rebuild -- planned but not yet coded
+<li> support for twin duel (but tourney format won't be supported)
+<li> <strike>ELO scoring</strike>
+<li> ability to sort pairings and battle detail tables
+</UL>
+<p>
+Known bugs:
+<UL >
+<li> <strike>need to work on exception handling &amp; error messages.  The rumble client is very picky about brackets in returned results so an error from the server often causes an exception in the client!  The returned errors are fairly verbose at the moment for debugging.</strike>  **DONE!**  Very happy with new error handler class, sends short &amp; sweet output to clients, flags for turning on/off debugging.  Should no longer cause exceptions if an upload fails unexpectedly
+<li> <strike>an error during processing can cause a client to keep uploading duplicate results.</strike> **DONE!** Found the bug causing this, just some bad SQL in a case that wasn't seen until the pairings started to fill out.
+<li> <strike>Will change the server to toss out duplicates with a warning.</strike>  **DONE!**
+</UL>
+<p>
+<H4>How to use it</H4>
+
+<p>
+<strike>Read the list of known bugs above first!  Don't connect unless you're willing to run into the occasional error and hopefully send me a bug report.</strike>  Now accepting new contributors -- running smooth for my four clients for at least one week.
+<p>
+Just change the three URLs in your roborumble.txt file to point to <a rel="nofollow" href="http://darkcanuck.net/rumble/">http://darkcanuck.net/rumble/</a>...
+And reduce the number of battles to 300 for good measure.
+<p>
+<p>
+<H4>How you can help</H4>
+
+<p>
+Submit battle results!  Your results will also be relayed to <a href="robowiki?ABC" class=wikipagelink>ABC</a>'s server, so if you want to contribute to both efforts just change your upload URL to darkcanuck.net and leave the other two pointed at ABC's.
+<p>
+I'd like to make some forks of the latest rumble clients with a few new features.  Including the robocode version number in the uploaded results is the top priority.
+<p>
+If there's a feature you want to code and you know PHP/MySQL<a href="robowiki?action=edit&id=Darkcanuck/MySQL" class=wikipageedit>?</a>, let me know!
+<p>
+Feedback is very much appreciated.
+<p>
+<p>
+<p>
+<H4>Questions/comments?</H4>
+
+<p>
+Fire away...
+<p>
+Just a suggestion for an additional check. I have never seen score a bot more than 8000 points, so this could be checked too. When examining the results that messed up the original roborumble rating beyond repair, I saw results of 20000 against 16000 (Thats what you get when running <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> with MELEE=YES). For the time being I let my client running (unattended) for ABC's server, as I don't really have the time for bughunting. Your effort however seems promising. Good luck.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+<UL >
+<li> Thanks!  That's a good check, will be combining that with the survival &gt;=35 (also your suggestion I think) once I rearrange the error handling and failure output to the client.  Then I'll look into ELO... --<a href="robowiki?Darkcanuck" class=wikipagelink>Darkcanuck</a>
+<li> Your checks have both been implemented.  -- <a href="robowiki?Darkcanuck" class=wikipagelink>Darkcanuck</a>
+</UL>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Darkcanuck" class=wikipagelink>Darkcanuck</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Darkcanuck/RRServer" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Darkcanuck/RRServer">View other revisions</a><br>Last edited September 25, 2008 21:47 EST by <a href="robowiki?Darkcanuck" title="ID 13040 from S01060016cbc69598.vc.shawcable.net">Darkcanuck</a> <a href="robowiki?action=browse&diff=1&id=Darkcanuck/RRServer">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

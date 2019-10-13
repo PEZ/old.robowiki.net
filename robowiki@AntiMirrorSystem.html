@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>AntiMirrorSystem - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Anti, Mirror, System'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=AntiMirrorSystem">AntiMirrorSystem</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><b>What is it?</b><br>
+<p>
+The system used in <a href="robowiki?Musashi" class=wikipagelink>Musashi</a> to respond to <a href="robowiki?MirrorMovement" class=wikipagelink>MirrorMovement</a> bots.<br>
+<p>
+<hr noshade class=wikiline size=1>
+<b>The idea.</b><br>
+<p>
+There are a lot of possible approaches to that, but the one discused here is that: "if they wan't to follow me, be my guest...", my wife is trying to convince me to call it "Vem-Nenem", let's see (but u know the <a href="robowiki?GirlPower" class=wikipagelink>GirlPower</a>)...
+<p>
+<hr noshade class=wikiline size=1>
+<b>Bots using it.</b><br>
+<UL >
+<li><a href="robowiki?Musashi" class=wikipagelink>Musashi</a> (obviously)
+<li><a href="robowiki?Okami" class=wikipagelink>Okami</a>
+<li><a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> - Well, it uses an <a href="robowiki?AntiMirrorGun" class=wikipagelink>AntiMirrorGun</a> even if it might not be like this system. It's one of the <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> and always fires at the future mirrorPoint (somewhat sloppily defined). When the virtual stats says it should be used it is used. Of course, later versions of M have broken VG arrays so it might not show that it can potentially trash mirrorers.
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<b>Known MirrorBots<a href="robowiki?action=edit&id=MirrorBots" class=wikipageedit>?</a>. (help to fill...)</b><br>
+<UL >
+<li><a href="robowiki?NaN" class=wikipagelink>NaN</a> - a Classical mirror (someone should change that <a href="robowiki?NaN" class=wikipagelink>NaN</a> page, every robocoder knows what is a Double.<a href="robowiki?NaN" class=wikipagelink>NaN</a>) 
+<li><a href="robowiki?HumblePie" class=wikipagelink>HumblePie</a>
+<li><a href="robowiki?HumblePieLite" class=wikipagelink>HumblePieLite</a> - a Classical mirror.
+<li><a href="robowiki?OldManXP" class=wikipagelink>OldManXP</a> - a "loosen" mirror (<a href="robowiki?Musashi" class=wikipagelink>Musashi</a>'s headache)
+<li><a href="robowiki?PrairieWolf" class=wikipagelink>PrairieWolf</a> - mirror sometimes, and not based on the center-field.
+<li><a href="robowiki?Swiffer" class=wikipagelink>Swiffer</a> - sometimes. Probably not at all against <a href="robowiki?Musashi" class=wikipagelink>Musashi</a>. =) 
+<li><a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> - though it is more like a bath room mirror.
+<li><a href="robowiki?Mirror" class=wikipagelink>Mirror</a>
+</UL>
+<p>
+<p>
+<hr noshade class=wikiline size=1>
+<b>Why a system?</b><br>
+<p>
+I have call it <a href="robowiki?AntiMirrorSystem" class=wikipagelink>AntiMirrorSystem</a> just because it can't fit in a Object Orientated Model any <a href="robowiki?AntiMirrorTargeting" class=wikipagelink>AntiMirrorTargeting</a> by itself. The anti-mirror system concept that was used in <a href="robowiki?Musashi" class=wikipagelink>Musashi</a>'s code relies in a tripod: Detecting, Moving &amp; Aiming. 
+<p>
+<hr noshade class=wikiline size=1>
+<b>The tripod (Detecting, Moving &amp; Aiming)</b><br>
+<p>
+<b>Detecting:</b><br>
+That is probably the most important and sensible part of the system, if it's not well planned and implemented u might loose points against the non-mirror bots instead of only gaining points against the mirrors.<br>
+In <a href="robowiki?Musashi" class=wikipagelink>Musashi</a> this was thinked aiming bots that mirror using the center of the field as reference (at least for the present). What i've done is quite simple: 
+<UL >
+<li> Calculate a vector that goes from me to the center (mirrorVector).
+<li> Multiply the module of mirrorVector by 2.
+<li> Get the end point of mirrorVector (mirrorPoint).
+<li> Calculate the distance of the enemy to mirrorPoint (mirrorDist).
+<li> Store the last 60 (empiric) mirrorDist values and calculate the average (mirrorAvg).
+<li> If that value is lesser than mirrorSlack (set to 30, empiric again) then i presume that i found a MirrorBot<a href="robowiki?action=edit&id=MirrorBot" class=wikipageedit>?</a>, and then switch to anti-mirror system.
+</UL>
+Disadvantages: 
+<UL >
+<li> It can't detect <a href="robowiki?PrairieWolf" class=wikipagelink>PrairieWolf</a>'s mirror moving, that is not based on the center of the field.
+<li> It fails a lot to detect <a href="robowiki?OldManXP" class=wikipagelink>OldManXP</a>'s mirror, witch i describe as a "loosen" mirror.
+</UL>
+Advantages:
+<UL >
+<li> Detects classical mirrors almost perfectly.
+<li> It doesn't detects mistakenly(?) non-mirrors bots, and as such, it doesn't affect the "normal" behaviour of my bots.
+</UL>
+That could obviously had beeing done without the vector issue, but since i have already a Vector class inside my bot... Another advantadge, i think, of using vectors is that it can easely adapted to detecting bots that doesn't mirror using the field center.<br>
+<p>
+<b>Moving:</b><br>
+Here resides the soul of the "Vem-Nenem" or "if they wan't to follow me, be my guest..." philosophy.<br>
+That is: The mirror bots use your movement against you, so let's use our movement against them. Afterall, u can predict were u are going to, <b>they can't</b>.<br>
+The key for accomplish this, is instead of deciding "on-the-fly" where you are going to move next, pre-calculate your positions for the next n ticks and store them somewhere (an <a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a> for example).<br>
+<a href="robowiki?Musashi" class=wikipagelink>Musashi</a>'s particular implementation: Since <a href="robowiki?Musashi" class=wikipagelink>Musashi</a>'s movement is based only in inversions of direction, i pre-calculate my next inversions for the next (2*(distance_to_enemy/11)) ticks and store them in an <a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a>. <br>
+My problem here, was to garantee that a wall wouldn't be on my way, and then mess out my pre-calculated inversions. I had also, to fix somehow it's trajectory, otherelse the pre-calculated inversions would be useless by themselves.<br>
+I had opted for a <a href="robowiki?KISS" class=wikipagelink>KISS</a> solution for this: Once the mirror movement is detected, <a href="robowiki?Musashi" class=wikipagelink>Musashi</a> starts orbiting the center of the field instead of the enemy, and goes to a wall-safe orbit (radius = (int)Math.min(500, Math.min(field.height, field.width) - 100) / 2). 
+This is a particular implementation, other bots would probably fit better other approach, the important here is to have a way to predict your own moving. Another approach would be, for example, start moving in a simple pattern. But if the MirrorBot<a href="robowiki?action=edit&id=MirrorBot" class=wikipageedit>?</a> have a PM gun you can be vanished. Although that could be a simple and efficient approach if your gun is a PM (by moving in a predictable pattern, you can discard the pre-calculated moving, and you won't even need to link your gun to the moving... That is probably a good approach to a non-<a href="robowiki?MegaBot" class=wikipagelink>MegaBot</a>.).<br>
+<p>
+<b>Aiming:</b><br>
+The easy part: Once you've had started moving in a pre-calculated way, it's only a matter of choosing the fire power, calculating the time that the bullet would take to reach him and "play the film" of your own stored moving applied and mirrored(?). Fire at will! It's like a simple PM without having to choose a sample and with almost 100% of chance in hitting it. 
+<p>
+<hr noshade class=wikiline size=1>
+<b>Conclusion and general considerations...</b><br>
+<p>
+So, as i promissed to <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, here it is. <a href="robowiki?Musashi" class=wikipagelink>Musashi</a>'s implementation is yet too crude, it can't reach <a href="robowiki?OldManXP" class=wikipagelink>OldManXP</a> nor <a href="robowiki?PrairieWolf" class=wikipagelink>PrairieWolf</a> (at least for the present). But bots like <a href="robowiki?NaN" class=wikipagelink>NaN</a> that were actually beating <a href="robowiki?Musashi" class=wikipagelink>Musashi</a> (<a href="robowiki?Musashi" class=wikipagelink>Musashi</a>'s scored ~39% against <a href="robowiki?NaN" class=wikipagelink>NaN</a>, now it scores ~80%) now die like flies. I hope that this help other bots with the same problem, and also hope that it serves as an incentive on improving the MirrorBots<a href="robowiki?action=edit&id=MirrorBots" class=wikipageedit>?</a> themselves(yes, i know that is like a bayonet poking their belly, but it's still a stimulus :). As <a href="robowiki?ABC" class=wikipagelink>ABC</a> would say: "O mundo gira, a lusitana roda".<br>
+<p>
+These are the general lines of the idea. You probably will find a better way to doing this, or a better way to fitting it into your bot. If I can give any recomendation, there it goes: do it <a href="robowiki?KISS" class=wikipagelink>KISS</a>. Afterall, we aren't talking about beating <a href="robowiki?DT" class=wikipagelink>DT</a> nor <a href="robowiki?Shadow" class=wikipagelink>Shadow</a>...       
+<p>
+<hr noshade class=wikiline size=1>
+<b>Talk-a-lot:</b><br>
+<p>
+<p>
+To detect if I'm mirrored I just check if my enemy is within a certain distance of the mirrorPoint. This might make me mistakenly think I'm mirrored at times, but only very momentarily. From my tests this is very accurate on plain center-mirrorers. Of course I also fail on <a href="robowiki?OldManXP" class=wikipagelink>OldManXP</a> which uses velocity a bit to smart. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I have started with that approach too, but taking an average had proved to be much more accurate. I can even detect and beat <a href="robowiki?OldManXP" class=wikipagelink>OldManXP</a> if i adjust the mirrorSlack value to 50. The problem is that i start detecting other non-mirrors too... I strongly recommend u that averaging approach, it can last a little more to detect (depending on the wideness of the averaging), but is a lot more accurate. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+I like the idea with cicling the center when in anti-mirror mode. Bloody brilliant! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<a href="robowiki?KISS" class=wikipagelink>KISS</a>es! (obviously straight ones, on the cheeks). Glad u liked! -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Do you do anything to take into account the lag of the enemy's movement compared to yours? (ie. the enemy has to see what your doing, and then copy it, meaning it will be at least 1 tick behind, possibly more)  Could you not use a PM technique to detect, and basically compare your pattern to your enemy's pattern, and if they are the same, just mirrored, you have a mirror-bot regardless of the mirror-line (you would need to check horizontal, vertical and diagonal mirror-lines separately).  The easy way to counter this system is simply to move the mirror-line, a random mirror line (changed every round) would work quite well... -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+It's a very interesting idea. If you use old school heading-change and velocity the ideal mirror pattern will look exactly the same as the original. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Expect heading change would be *-1, surely? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Would it? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<UL >
+<li> Yes.  You are mirroring me, I turn right, you are going to turn left, aren't you? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<li> No. I also turn right. Unless you are talking about <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> style mirroring. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<li> <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> would turn right, a normal mirror would turn left.  Imagine this: The mirror line is vertical and in the middle.  I am in the middle of the left half, you are in the middle of the right half.  I turn right 90 degrees, so i am facing the mirror line.  You turn left 90 degrees so you are facing the mirror line too.  If you turned right, i would be looking at the back of my reflection, which is impossible in a single mirror. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<li> Think again - if you were in the middle of the top-left quadrant facing up, a normal (non-<a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a>-style) mirrorer would be in the bottom right quadrant facing down.  When you turn right 90 degrees to face right, the mirrorer turns right 90 degrees to face left.  <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a>, however, would be in the top-right quadrant facing up and then would turn 90 degrees left to face you (of course, in reality, <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> would turn either left or right to attempt to be 300 or so pixels away from you). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<li> Come on people... Don't you have a mirror at home? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<li> Not a HumplePieLite<a href="robowiki?action=edit&id=HumplePieLite" class=wikipageedit>?</a> kind of mirror. Do you? =) A <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> kind of mirror we all have I guess. <a href="robowiki?Tango" class=wikipagelink>Tango</a> consider a classic PM gun. You don't have to think about what quadrant the enemy lives in at the moment, right? You just play forward its matching heading change and velocity history. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<li> If you are in the oposite corner, surely that means you are using a diagonal mirrorline, not a vertical one, like I was talking about... -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<li> OK, for the record. In my book "normal" mirroring is the diagonal one. <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> was the first of its kind using real world mirroring I think. And it's still alone with it too. Some version of <a href="robowiki?OldMan" class=wikipagelink>OldMan</a> used it, but not any longer. And I challenge any of you to make a detection system that accurately can identify <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> as a mirrorer. It might prove as hard as with <a href="robowiki?OldManXP" class=wikipagelink>OldManXP</a> which I think is a bit inspired by Verti's mirror fuzzying. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<li> mathematically spoken, mirroring in this case is point reflection. it is easy to see that point reflections can be constructed with two line reflections (where a line reflection is normal mirroring like <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> does). with one line reflection the direction of rotation will change with two it will be the same as before (draw a triangle with edges A, B and C in clockwise direction, now make a point reflection and the mirrored points A', B' and C' will also be in clockwise direction). so if bot A turns right bot B has to turn right too. -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+</UL>
+<p>
+About the lag, u r right, very good observation. Indeed i use something to compensate it: the mirrorSlack (see the definition above), witch is precisely the lag.<br>
+About using vel &amp; heading change in detection: As i said, there are countless ways on doing it, that is one, no doubts (probably it wouldn't get <a href="robowiki?OldManXP" class=wikipagelink>OldManXP</a> either, but it should work for <a href="robowiki?PrairieWolf" class=wikipagelink>PrairieWolf</a>). I use vector operations because is what i use in my PM gun (i don't use directly vel &amp; heading for PM, but vector operations on the stored positions). Another reason that I found for using that kind of detection, is based on my particular solution of moving in a wall-safe orbit (see above), it seems more natural to me.<br>
+The important thing is to find a way on doing the detection and moving that seems natural to you and fit well in your bot. Regardless of the path that you trail, less is better. So, if you feel more comfortable in not using vectors, the best is not to use it. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a> 
+<p>
+I also thought many times about how to make a working <a href="robowiki?AntiMirrorSystem" class=wikipagelink>AntiMirrorSystem</a> and the most effective way to find out if an enemy is mirroring me seems to me a mirror counter: Everytime you scan your opponent check if it mirrors you like: <pre> boolean mirroring=Point2D.Double.distance(getX(),getY(),getBattleFieldWidth()-e_x,getBattleFieldHeight()-e_y)&lt;16 </pre>.If it does, add 1 to your mirror-counter if not reset it to 0.Then you just have to check each tick if this mirror counter is higher then a certain value and you can decide if you should use your <em>normal</em> behavior ( movement and gun ) or an AntiMirrorBehavior<a href="robowiki?action=edit&id=AntiMirrorBehavior" class=wikipageedit>?</a> that slaughters the mirror bot with a hit rate of 100% :D --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+Deathcon, that is precisely how I implemented my mirror detection in <a href="robowiki?Unnamed" class=wikipagelink>Unnamed</a> (although you have to widen the distance to about 30 for it to be effective). I also have an "anti-mirror counter" to detect if the enemy has stopped mirroring.  This gives a buffer at both ends.  -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+Damn it.I thought i was the first one that had this idea. :(((  --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=AntiMirrorSystem" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=AntiMirrorSystem">View other revisions</a><br>Last edited October 17, 2006 15:23 EST by <a href="robowiki?Stelokim" title="ID 7879 from 218.48.57.65">Stelokim</a> <a href="robowiki?action=browse&diff=1&id=AntiMirrorSystem">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

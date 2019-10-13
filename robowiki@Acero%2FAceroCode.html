@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Acero/AceroCode - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Acero, Acero, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/AceroCode">Acero/AceroCode</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Acero" class=wikipagelink>Acero</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package ahf;
+import robocode.*;
+import java.awt.geom.Rectangle2D;
+import robocode.util.Utils;
+
+public class Acero extends AdvancedRobot
+{
+	static double direction;
+	
+	public void run(){
+			direction=1;
+			setAdjustRadarForGunTurn(true);
+			do{
+				turnRadarRightRadians(1);
+			}
+			while(true);
+	}
+	public void onScannedRobot(ScannedRobotEvent e){ 
+		double enemyAbsoluteBearing;
+		double distance;
+		double goalDirection =(enemyAbsoluteBearing=e.getBearingRadians()+getHeadingRadians())-(Math.PI/2+((distance=e.getDistance())&gt;=600?0:0.4  ))*direction;
+	
+		while (!new Rectangle2D.Double(19.0,19.0,762.0,562.0).contains(getX()+Math.sin(goalDirection)*120,getY()+Math.cos(goalDirection)*120)){
+			goalDirection = goalDirection+direction*.1;	
+			if (Math.random()&lt;.01)
+				direction=-direction;
+		}
+		goalDirection = Utils.normalRelativeAngle(goalDirection-getHeadingRadians());
+		setTurnRightRadians(Math.tan(goalDirection));
+	    setAhead(100*(Math.abs(goalDirection) &gt; Math.PI/2 ?-1:1));
+		if (Math.random()&lt;.04)
+			direction=-direction;
+		setTurnGunRightRadians(Utils.normalRelativeAngle(enemyAbsoluteBearing-getGunHeadingRadians()));
+		setFire(2);
+		setTurnRadarRightRadians(Utils.normalRelativeAngle(enemyAbsoluteBearing - getRadarHeadingRadians()) );
+    }
+}	
+      				
+</pre>
+can anyone make it smaller?
+<p>
+oh yeah,in the next version i'll take out the distance variable or do somthing better than math.random&lt;.04:direction*=-1
+--<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+You could replace your radar code and get some space. Take a look to any of the open source nanos (ie. <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a>) to see the implementation. It avoids the do-while loop in the run method and makes the setTurnRadar<a href="robowiki?action=edit&id=TurnRadar" class=wikipageedit>?</a>... simpler. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+isn't this the best radar configuration there is for nanos? the do while loop is the same as the turnrightradians(infiniti) thing in terms of bytes. and the loop is better because when it falls off, it doesn't just die. 
+<p>
+I haven't measured the exact number of bytes used, but 
+<PRE >
+ public void run() { turnRadarRightRadians<a href="robowiki?action=edit&id=RadarRightRadians" class=wikipageedit>?</a>(Double.POSITIVE_INFINITY); }
+ public void on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) { set<a href="robowiki?TurnRadarLeftRadians" class=wikipagelink>TurnRadarLeftRadians</a>(getRadarTurnRemaining<a href="robowiki?action=edit&id=RadarTurnRemaining" class=wikipageedit>?</a>()); }
+</PRE>
+will probably be smaller (anyway, it's worth a try). In the other hand, it never stops when it falls, because the remaining turn of infinity is just infinity :-) <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+thanks Albert, i'll try it. --<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+Changing your while loop to a do-while loop will make it slightly smaller, too, if you think it's ok to do. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+don't i have a do-while loop?--<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+he means the while loop in your "on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>" handler... --<a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+ah. thanks, i'll try it. --<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+anyone know what the most effective gun would be. i can have about 15 more bytes while having head on. --<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+cool codesize 219!--mike
+<p>
+yeah,with the help of mike, codesize is now 219 w/ same functionality. --<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Acero" class=wikipagelink>Acero</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Acero/AceroCode" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Acero/AceroCode">View other revisions</a><br>Last edited April 8, 2004 21:20 EST by <a href="robowiki?Andrew" title="ID 2587 from pool-141-158-45-250.phil.east.verizon.net">Andrew</a> <a href="robowiki?action=browse&diff=1&id=Acero/AceroCode">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

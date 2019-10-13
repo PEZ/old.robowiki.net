@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Chase-san/NeuralClustering - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Chase-san, Neural, Clustering'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/NeuralClustering">Chase-san/NeuralClustering</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>A mixture of dynamic clustering and kohonen map neural networks. Given the neural nature imparted by kohonen maps, in Neural Clustering you theoretically shouldn't need to find the nearest n units to your current scan and do a core kernel calculation, but just the nearest unit and use its internal statbin array.
+<p>
+I am attempting second stab at this, I am making another NC gun, as I am now convinced (after several hours of thought) that my last implimentation may indeed be very buggy. I was just a little tweaked by Voidious nay-saying in the matter (as a low surfer score == head on or very easily predicatible). My last one may of been head on, linear or circular in nature to make it gain such a horrible score.
+<p>
+Also this is nearly my last hope for making a competitive Neural Network based gun, as DC &amp; VCS-GF completely dominates my straight kohonen map neural network based gun (however better it may of been then some other guns). I did not have anywhere further I could go with the gun, that was me taking it to its very extended limit. It had every whimsical and far thought out plan that I could do to it done to it, it has had more weights in it then the original Wolverine had get calls and it still fell short. My internal versions went up to 067, but the highest score I got is currently shown as 021. After 47 failed versions I kinda lost hope in the technology.
+<p>
+So in happier news, onward with Neural Clustering!
+<p>
+--<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+The results are horribly simular after a complete rebuild, I have hunted down every bug. I now know why it doesn't work however, As the nodes get updated, all the weights get pulled closer, but since they are also the lattice now in this case, the lattice shrinks which makes the neighborhood expand more nodes, meaning, I would need to quickly deflate the neighborhood, otherwise the whole network will more or less get the same changes and in this case, its like having a completely unsegmented one-sided gf gun. I will try a few things to push it into working correctly, but things don't seem likely. this is why it did horribly against surfers and still pretty bad against normal bots. (but hey, I figured out why it wasn't working)
+<p>
+--<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+<UL >
+<li> By "one-sided" do you mean it was only shooting at positive GFs? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+I didn't think you were using the input weights as the lattice positions before?? -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Not input weight, the nodes weights themselves, in fact I think your the one that suggested it? On my old version I was not, but on this version I am, on my one I was using before, the Neural Network gun (ergo, the one that found on Chase<a href="robowiki?Chase-san/Prototype" class=wikipagelink>/Prototype</a>), but this one I am, and it doesn't work. On Prototype KT0 I also used this, which failed as above. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+No, the system and neighborhood basically shrink to little to nothing over time and i'm not able to keep the weights hammered out flat enough for things to work correctly. However I will shift the prototype I made for this gun to using a lattice, as I made many optimizations that would help it. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Chase-san/NeuralClustering" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Chase-san/NeuralClustering">View other revisions</a><br>Last edited October 23, 2007 7:28 EST by <a href="robowiki?Skilgannon" title="ID 11213 from ctb-cache4-vif1.saix.net">Skilgannon</a> <a href="robowiki?action=browse&diff=1&id=Chase-san/NeuralClustering">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

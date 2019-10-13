@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>David Alves/Firebird - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='David, Alves, Firebird'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Firebird">David Alves/Firebird</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Firebird is based off of the <a href="robowiki?David_Alves/Phoenix" class=wikipagelink>Phoenix</a> code, but uses <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> guns for both <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> and firing at the enemy. All other code is the same. Even the <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> class is the same, it just has a different value for the "enemy gun" variable. Coming soon to a rumble near you! --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Found out something interesting while testing... Firebird spends about a third the time of Phoenix in the movement method (~1150 vs ~3400 ms per round on my laptop), but spends almost ten times as long in the aiming method (~650 vs. ~65 ms per round on my laptop). Need to investigate why that's the case, I would expect it to be uniformly slower or faster...  And yes, that does mean that Firebird is significantly faster overall. At least, it is until it turns on its flattener... --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Neat! Perhaps the movement / timing discrepancy is because a <a href="robowiki?VisitCountStats" class=wikipagelink>VisitCountStats</a> system will access and sum all your buffers no matter how much data you actually have, while a <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> system crunches far fewer numbers if you only have a few pieces of data. And if it dodges bullets anywhere near as well as <a href="robowiki?Phoenix" class=wikipagelink>Phoenix</a>, it probably doesn't have too many to deal with. =) Now to rederive the <a href="robowiki?Lukious" class=wikipagelink>Lukious</a> movement and we'll have a fully-DC-bot party going on in the top 10! -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Awww ... I want to party, too :( -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Oh come on, you'll probably crack the top 10 before I do with <a href="robowiki?Lukious" class=wikipagelink>Lukious</a>. =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+What's that you say? You want to have a <a href="robowiki?TopTenDCParty" class=wikipagelink>TopTenDCParty</a>? =) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Actually, I just came to the sad realization that the first two bots to be knocked <em>out</em> of the top 10 would also be DC bots... -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Adding 0.1 to the rumble now. Not expecting much, but it should hopefully be above 2000. Let the race to the top ten commence! --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<UL >
+<li>Well, that was quite an understatement. Where will you end when you <em>do</em> expect something?  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</UL>
+<p>
+I think it's pretty funny that this is so close to the rating of <a href="robowiki?Lukious" class=wikipagelink>Lukious</a>. And the Lukious gun rewrite left me with almost the exact same rating as the old gun. Are these just coincidence, or is there something specific in DC surfing that is holding us back? Hmm... -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I dunno, I'll run a movement challenge. Maybe that will shed some light on things. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+0.2 is up now. Flattener disabled for this release. Surfing should be substantially improved. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Just wondering, are you using <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>'s tree? Firebird seems pretty slow... -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Yeah I am, but I do a lot of other processing. I'll see if it can be sped up in future versions. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<UL >
+<li> David doesn't take enough credit.  I believe he wrote his own <a href="robowiki?KdTree" class=wikipagelink>KdTree</a>. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+Yeah I did, but the tree isn't the problem. It's all the black magic I work on my scans after I extract them that's the problem. =) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Incidentally, if anyone wants to look at a copy of my tree, I'd be willing to post it. Also, it is a well-known fact that "black magic" takes O(n^3 log n) time. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<UL >
+<li> What is n?  Number of ticks in the battle so far?  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> I believe it's number of scans extracted that he's doing his black magic on. &lt; Black magic&gt;&lt;cough cough&gt;&lt;multiway cuts&gt;&lt;cough cough&gt;&lt;dynamic attribute weighting&gt;&lt;cough cough&gt;  =). Any way you could reduce 'n'? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+Please don't read too much into the O(n^3 log n)... I made that number up as a joke. But yeah, n would be the number of scans retrieved. It's not the tree that's slow, and I'll see if I can speed it up. =) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Funny that, it put me onto an interesting paper <a rel="nofollow" href="http://delivery.acm.org/10.1145/130000/129736/p241-dahlhaus.pdf?key1=129736&amp;key2=9326144911&amp;coll=GUIDE&amp;dl=GUIDE&amp;CFID=41912567&amp;CFTOKEN=67454152">[MultiwayCuts]</a>. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+0.22 up. Gun improvements, slight movement tweaks. Flattener still disabled... it slows down Firebird quite a bit. All four clients going! --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+0.23 up. Much faster, even with the flattener enabled. Oh, did I mention there's a flattener now? =) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Holy 2097, Batman! Nice job with this beast. Oh, look at that, its only orange spot is <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> - woohoo! =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+0.241 is 0.23 without the antisurfer gun.
+<p>
+<p>
+MC2K7
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <strong>Bot Name</strong> </td><td colspan="0.5"> <strong>Author</strong> </td><td colspan="0.5"> <strong>Type</strong> </td><td colspan="0.5"> <strong>HOF</strong> </td><td colspan="0.5"> <strong>SPL</strong> </td><td colspan="0.5"> <strong>GRG</strong> </td><td colspan="0.5"> <strong>Sub 1</strong> </td><td colspan="0.5"> <strong>WAY (Sub 2)</strong> </td><td colspan="0.5"> <strong>GR3</strong> </td><td colspan="0.5"> <strong>RKM</strong> </td><td colspan="0.5"> <strong>Sub 3</strong> </td><td colspan="0.5"> <strong>ASC</strong> </td><td colspan="0.5"> <strong>CC</strong> </td><td colspan="0.5"> <strong>CHK</strong> </td><td colspan="0.5"> <strong>Sub 4</strong> </td><td colspan="0.5"> <strong>Total</strong> </td><td colspan="0.5"> <strong>Comments</strong></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> 1.554 </td><td colspan="0.5"> <a href="robowiki?Voidious" class=wikipagelink>Voidious</a> </td><td colspan="0.5"> WS </td><td colspan="0.5"> 99,94 </td><td colspan="0.5"> 86,30 </td><td colspan="0.5"> 94,31 </td><td colspan="0.5"> <strong>93,52</strong> </td><td colspan="0.5"> <strong>69,07</strong> </td><td colspan="0.5"> 69,41 </td><td colspan="0.5"> 84,12 </td><td colspan="0.5"> <strong>76,76</strong> </td><td colspan="0.5"> 40,73 </td><td colspan="0.5"> 52,86 </td><td colspan="0.5"> 52,06 </td><td colspan="0.5"> <strong>48,55</strong> </td><td colspan="0.5"> <strong>71,97</strong> </td><td colspan="0.5"> 31 seasons </td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <a href="robowiki?Phoenix" class=wikipagelink>Phoenix</a> 1.02 </td><td colspan="0.5"> <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> </td><td colspan="0.5"> WS </td><td colspan="0.5"> 99.85 </td><td colspan="0.5"> 87.44 </td><td colspan="0.5"> 93.58 </td><td colspan="0.5"> <strong>93.63</strong> </td><td colspan="0.5"> <strong>68.03</strong> </td><td colspan="0.5"> 64.96 </td><td colspan="0.5"> 84.56 </td><td colspan="0.5"> <strong>74.76</strong> </td><td colspan="0.5"> 37.33 </td><td colspan="0.5"> 46.26 </td><td colspan="0.5"> 49.87 </td><td colspan="0.5"> <strong>44.49</strong> </td><td colspan="0.5"> <strong>70.23</strong> </td><td colspan="0.5"> 279.0 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> 0.5.10 </td><td colspan="0.5"> <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a> </td><td colspan="0.5"> WS-GT </td><td colspan="0.5"> 99.73 </td><td colspan="0.5"> 86.85 </td><td colspan="0.5"> 92.73 </td><td colspan="0.5"> <strong>93.10</strong> </td><td colspan="0.5"> <strong>68.94</strong> </td><td colspan="0.5"> 69.72 </td><td colspan="0.5"> 80.75 </td><td colspan="0.5"> <strong>75.24</strong> </td><td colspan="0.5"> 33.44 </td><td colspan="0.5"> 45.76 </td><td colspan="0.5"> 50.36 </td><td colspan="0.5"> <strong>43.19</strong> </td><td colspan="0.5"> <strong>70.12</strong> </td><td colspan="0.5"> 50.0 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <a href="robowiki?Firebird" class=wikipagelink>Firebird</a> 0.25 </td><td colspan="0.5"> <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> </td><td colspan="0.5"> DC WS </td><td colspan="0.5"> 99.86 </td><td colspan="0.5"> 87.93 </td><td colspan="0.5"> 94.39 </td><td colspan="0.5"> <strong>94.06</strong> </td><td colspan="0.5"> <strong>66.86</strong> </td><td colspan="0.5"> 64.66 </td><td colspan="0.5"> 83.29 </td><td colspan="0.5"> <strong>73.97</strong> </td><td colspan="0.5"> 31.61 </td><td colspan="0.5"> 40.37 </td><td colspan="0.5"> 45.86 </td><td colspan="0.5"> <strong>39.28</strong> </td><td colspan="0.5"> <strong>68.54</strong> </td><td colspan="0.5"> 400.0 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <a href="robowiki?Firebird" class=wikipagelink>Firebird</a> 0.1 </td><td colspan="0.5"> <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> </td><td colspan="0.5"> DC WS </td><td colspan="0.5"> 99.88 </td><td colspan="0.5"> 87.01 </td><td colspan="0.5"> 86.72 </td><td colspan="0.5"> <strong>91.21</strong> </td><td colspan="0.5"> <strong>67.16</strong> </td><td colspan="0.5"> 64.53 </td><td colspan="0.5"> 77.10 </td><td colspan="0.5"> <strong>70.82</strong> </td><td colspan="0.5"> 30.02 </td><td colspan="0.5"> 42.54 </td><td colspan="0.5"> 42.16 </td><td colspan="0.5"> <strong>38.24</strong> </td><td colspan="0.5"> <strong>66.85</strong> </td><td colspan="0.5"> 100.0 seasons</td></TR>
+</TABLE>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=David_Alves/Firebird" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=David_Alves/Firebird">View other revisions</a><br>Last edited November 14, 2007 7:53 EST by <a href="robowiki?David_Alves" title="ID 12048 from adsl-71-146-5-119.dsl.pltn13.sbcglobal.net">David Alves</a> <a href="robowiki?action=browse&diff=1&id=David_Alves/Firebird">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>
