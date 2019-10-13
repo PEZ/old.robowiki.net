@@ -3,14 +3,14 @@
 <META NAME='KEYWORDS' CONTENT='Rolling, Average'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=RollingAverage">RollingAverage</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext>Rolling average means you only regard a certain depth of your recent history when calculating an average. The term entered the Robocode world with <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a> who also published a function that can be used for calclulation rolling averages:
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=RollingAverage">RollingAverage</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Rolling average means you only regard a certain depth of your recent history when calculating an average. The term entered the Robocode world with <a href="robowiki@Paul_Evans" class=wikipagelink>Paul Evans</a> who also published a function that can be used for calclulation rolling averages:
 <pre>static double rollingAvg(double value, double newEntry, double n, double weighting ) {
     return (value * n + newEntry * weighting)/(n + weighting);
 } </pre>
 You feed the function with the current average (<em>value</em>), the most recent reading (<em>newEntry</em>), the depth of the recent history (<em>n</em>), and a weight, or importance, of this reading (<em>weighting</em>). The function will return the average altered by the new reading in a way that simulates keeping a list of all readings with <em>n</em> depth and returning the average of the values in this list. It's like magic. 
 <p>
-All my bots use this function. Often like this:<pre>averageBearing = rollingAvg(averageBearing, bearing, Math.min(readings, HISTORY_DEPTH), bulletPower);</pre>Meaning that as long as I don't have enough readings I want a "straight" average from the readings I have and I get the result weighted by the bulletPower related to the current reading. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+All my bots use this function. Often like this:<pre>averageBearing = rollingAvg(averageBearing, bearing, Math.min(readings, HISTORY_DEPTH), bulletPower);</pre>Meaning that as long as I don't have enough readings I want a "straight" average from the readings I have and I get the result weighted by the bulletPower related to the current reading. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 Are there any math people out there that can comment on this routine that I invented from scratch.  For example:
 <UL >
@@ -18,11 +18,11 @@ Are there any math people out there that can comment on this routine that I inve
 <li> is it called by another name in the math world?
 <li> outside of the robocode community is it used by anyone else?
 </UL>
---  <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+--  <a href="robowiki@Paul_Evans" class=wikipagelink>Paul Evans</a>
 <p>
-I'm very far from a math person. But I am an empiric person if there ever were one. I have extensively tested this function side by side with some classes of mine which store data and thus always provides the "correct" answer. The function is very accurate from what I can see. Every time I stumble across a piece of my code where I use those classes I always remove those uses in favour of your function. Another usage of this function is to keep a "success rate". I do this often. It's done by initializing the success rate to 50 and then call this function with 100 for every success and 0 for every failure. This is how my <a href="robowiki?Orca" class=wikipagelink>Orca</a>s and <a href="robowiki?Mako" class=wikipagelink>Mako</a>s and <a href="robowiki?GB" class=wikipagelink>GB</a> and other bots rate their <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a>. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+I'm very far from a math person. But I am an empiric person if there ever were one. I have extensively tested this function side by side with some classes of mine which store data and thus always provides the "correct" answer. The function is very accurate from what I can see. Every time I stumble across a piece of my code where I use those classes I always remove those uses in favour of your function. Another usage of this function is to keep a "success rate". I do this often. It's done by initializing the success rate to 50 and then call this function with 100 for every success and 0 for every failure. This is how my <a href="robowiki@Orca" class=wikipagelink>Orca</a>s and <a href="robowiki@Mako" class=wikipagelink>Mako</a>s and <a href="robowiki@GB" class=wikipagelink>GB</a> and other bots rate their <a href="robowiki@VirtualGuns" class=wikipagelink>VirtualGuns</a>. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-<a href="robowiki?SpareParts" class=wikipagelink>SpareParts</a> does a different thing that accomplishes a similar goal.  He has an actual Averager class that really does take the average of either all samples or the last n samples fed into it.  I think it could be optimized very easily to find these averages more quickly, too.  But I suspect it doesn't come back with answers overly different.  It just completely forgets relics of the past, and weights all the recent samples exactly the same. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<a href="robowiki@SpareParts" class=wikipagelink>SpareParts</a> does a different thing that accomplishes a similar goal.  He has an actual Averager class that really does take the average of either all samples or the last n samples fed into it.  I think it could be optimized very easily to find these averages more quickly, too.  But I suspect it doesn't come back with answers overly different.  It just completely forgets relics of the past, and weights all the recent samples exactly the same. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
 I think this is commonly called a "moving average" or a
 "weighted moving average".  Another possibility is to weight values by their age:
@@ -49,10 +49,10 @@ For those that just want an avarage of all the values so far...<pre>if (count ==
 } else {
   average = (average*count + newValue)/(count+1);
   count = count+1;
-}</pre>--  <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+}</pre>--  <a href="robowiki@Paul_Evans" class=wikipagelink>Paul Evans</a>
 <p>
 <p>
-Wouldn't it just be faster to write the above code like so?<pre>average = (average*count + newValue)/(++count);</pre>-- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+Wouldn't it just be faster to write the above code like so?<pre>average = (average*count + newValue)/(++count);</pre>-- <a href="robowiki@Vuen" class=wikipagelink>Vuen</a>
 <p>
 <p>
 If your just looking for a straight rolling average  this method can be used
@@ -64,35 +64,35 @@ If your just looking for a straight rolling average  this method can be used
 </PRE>
 <p>
 I will give the same average as using Paul's method with a weighting of the current depth without the need to store a depth.
-The only problem is it doesn't give the flexibilty of wieghting  -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+The only problem is it doesn't give the flexibilty of wieghting  -- <a href="robowiki@Gorded" class=wikipagelink>Gorded</a>
 <p>
 <p>
 <hr noshade class=wikiline size=1>
-Is there much of a performance increase to be had by initialising the value to a value other than 0?? above pez mentions initialising to 50, then adding either 0 or 100 is this a dramatic improvement on simply adding 1 on success and 0 on failure?? -- <a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+Is there much of a performance increase to be had by initialising the value to a value other than 0?? above pez mentions initialising to 50, then adding either 0 or 100 is this a dramatic improvement on simply adding 1 on success and 0 on failure?? -- <a href="robowiki@Brainfade" class=wikipagelink>Brainfade</a>
 <p>
-That usage of the function is not about performance. It's just a way to simulate success rate (or hit rate if you like). Using 0 and 1 is just as good. Only you'll have to multiply by 100 if you want a percentage figure. If you know the approximate success rate before hand you can initialize the rolling average with that instead of 0 or 50 or whatever. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+That usage of the function is not about performance. It's just a way to simulate success rate (or hit rate if you like). Using 0 and 1 is just as good. Only you'll have to multiply by 100 if you want a percentage figure. If you know the approximate success rate before hand you can initialize the rolling average with that instead of 0 or 50 or whatever. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-What may improve performance is to seed the stat buffer with typical values at the start - ask yourself what a typical bot will show as far as a curve at various segments.  Most will show a more positive graph close up, a thinner middle-oriented graph far away.  Most will show a positive spike when accelerating and a negative when decelerating or approaching a wall.  If you could 'seed' the stat buffer with a slight bias in this direction, you might do better in early rounds against the majority of opponents. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+What may improve performance is to seed the stat buffer with typical values at the start - ask yourself what a typical bot will show as far as a curve at various segments.  Most will show a more positive graph close up, a thinner middle-oriented graph far away.  Most will show a positive spike when accelerating and a negative when decelerating or approaching a wall.  If you could 'seed' the stat buffer with a slight bias in this direction, you might do better in early rounds against the majority of opponents. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-That should be pretty easy. Just keep a general stat buffer updated with the accumulated data of all bots you meet. Then use this buffer to seed the specific buffer of any bot you have never met before. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+That should be pretty easy. Just keep a general stat buffer updated with the accumulated data of all bots you meet. Then use this buffer to seed the specific buffer of any bot you have never met before. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-That's a good idea.  But it would be better to just use the general buffer for working out where to fire, rather than actually seeding the specific buffer, otherwise it will reduce the acruacy of the specific one. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+That's a good idea.  But it would be better to just use the general buffer for working out where to fire, rather than actually seeding the specific buffer, otherwise it will reduce the acruacy of the specific one. -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-Wouldn't that lead to difficult decisions about when to start using the specific stats? A bit of the point with using rolling averages is that more old readings will get decreasing weighting compared to more recent data. So the specific buffer would pretty soon be decontaminated. Depending on the depth of the roll of course. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Wouldn't that lead to difficult decisions about when to start using the specific stats? A bit of the point with using rolling averages is that more old readings will get decreasing weighting compared to more recent data. So the specific buffer would pretty soon be decontaminated. Depending on the depth of the roll of course. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Right.  A higher rolling-coefficient in earlier rounds would make sense.  The general stat buffer would probably be a sum-all sort of solution, just take the <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>-style accumulation of everyone faced and store it somewhere, converting it to averages when you initialize a rolling stat buffer that you actually use.  The other option is to just create such a buffer against a range of bots and observe the results, then hard-code the basic gist into your bot somewhere. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+Right.  A higher rolling-coefficient in earlier rounds would make sense.  The general stat buffer would probably be a sum-all sort of solution, just take the <a href="robowiki@FloodMini" class=wikipagelink>FloodMini</a>-style accumulation of everyone faced and store it somewhere, converting it to averages when you initialize a rolling stat buffer that you actually use.  The other option is to just create such a buffer against a range of bots and observe the results, then hard-code the basic gist into your bot somewhere. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-I think the file might grow a bit too large if you just accumulated it <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>-style. Hardcoding the data into the buffers sounds like a bad idea. It's both smaller, cleaner and much more flexible to just read the data from a file. Though 85 - the oldest data will have been multiplied by the factor the most times and it's influence will automatically shrink as I get new info. Is there anything you might want to control the selection of bots represented in this file. That's easy. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+I think the file might grow a bit too large if you just accumulated it <a href="robowiki@FloodMini" class=wikipagelink>FloodMini</a>-style. Hardcoding the data into the buffers sounds like a bad idea. It's both smaller, cleaner and much more flexible to just read the data from a file. Though 85 - the oldest data will have been multiplied by the factor the most times and it's influence will automatically shrink as I get new info. Is there anything you might want to control the selection of bots represented in this file. That's easy. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-The only thing wrong with loading the file is that people delete data files. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+The only thing wrong with loading the file is that people delete data files. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-In order to favor the new data over the old, whenever I add new data to a segment, I multiply everything else in that segment (have just slapped together a guess factor gun, so I am not sure I understand all of this correctly) by some factor smaller than 1 - say .wrong with this approach? --<a href="robowiki?MightyMoose" class=wikipagelink>MightyMoose</a>
+In order to favor the new data over the old, whenever I add new data to a segment, I multiply everything else in that segment (have just slapped together a guess factor gun, so I am not sure I understand all of this correctly) by some factor smaller than 1 - say .wrong with this approach? --<a href="robowiki@MightyMoose" class=wikipagelink>MightyMoose</a>
 <p>
 i don't think i understand you correctly.  is what you have somthing like: velocityAverage=.6*velocityAverage+e.getVelocity()*.4? --]]amdrew]]
 <p>
-At the moment I am doing my average by avg=(avg+entry*WEIGHT)/(1+WEIGHT); and have WEIGHT = .05, which I usually tweak based on the application. It saves me from having to keep track of the number of previous entries. I use this with a WEIGHT around 1 for predictive bullet velocities when I do cool movement.  -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+At the moment I am doing my average by avg=(avg+entry*WEIGHT)/(1+WEIGHT); and have WEIGHT = .05, which I usually tweak based on the application. It saves me from having to keep track of the number of previous entries. I use this with a WEIGHT around 1 for predictive bullet velocities when I do cool movement.  -- <a href="robowiki@Jokester" class=wikipagelink>Jokester</a>
 <p>
-In my RRGC entry I use <a href="robowiki?RollingAverage" class=wikipagelink>RollingAverage</a> on enemyspeed. It is (avg * 49 + entry)/ 50, but the starting average is set on 4.0. Also I do not take into account the first ticks when the enemy does not move. -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+In my RRGC entry I use <a href="robowiki@RollingAverage" class=wikipagelink>RollingAverage</a> on enemyspeed. It is (avg * 49 + entry)/ 50, but the starting average is set on 4.0. Also I do not take into account the first ticks when the enemy does not move. -- <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
 <p>
 <pre>You feed the function with the current average (''value''), the most recent reading (''newEntry''), the depth of the recent history (''n'').</pre>
 I want to calrify this somewhat
@@ -101,7 +101,7 @@ I want to calrify this somewhat
 <li> <em>recent reading</em> - do you mean the guessfactor you were going to add the new value to?
 <li> <em>recent history</em> - meaning say 20, e.g. for the last 20 waves.
 </UL>
-I don't know what most these actually mean and thats all thats keeping me from using it. Like where is the rollingAverage used, before you place the average into the bins or when your going to take it out, and how does it corrulate to the bestBin or bestIndex? -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+I don't know what most these actually mean and thats all thats keeping me from using it. Like where is the rollingAverage used, before you place the average into the bins or when your going to take it out, and how does it corrulate to the bestBin or bestIndex? -- <a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 <p>
 The <em>current average</em> is the avarage of all insert <em>entries</em> up to a depth of <em>n</em> for one bin. You have a rollingAvg for every gf-bin, when a wave passes your enemy you call the avarage funktion for each of them. If the bin would have hit the enemy the <em>newEntry</em> is 1 if it missed it is 0. The code could look like this:
 <p>
@@ -128,23 +128,23 @@ void Hit(Wave wave)
 <p>
 Wave is a class storing the shot informations, it contains a function <em>binHit(int bin)</em> which determines if a bin would have hit the enemy. You have to do some research about the depth of your avarages and the weighting (If you want to use it). 
 <p>
-This is my understanding of rollingAvg, i hope its right :) --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+This is my understanding of rollingAvg, i hope its right :) --<a href="robowiki@Krabb" class=wikipagelink>Krabb</a>
 <p>
-It's almost right. You need to keep track of how many readings you actually have and put in Math.min(readings, 20) instead of just 20 for the recent depth. If you don't then your first 20 readings will be weighted incorrectly. --<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a>
+It's almost right. You need to keep track of how many readings you actually have and put in Math.min(readings, 20) instead of just 20 for the recent depth. If you don't then your first 20 readings will be weighted incorrectly. --<a href="robowiki@Wcsv" class=wikipagelink>wcsv</a>
 <p>
-Ahh I got it, that helps alot, my bots aim improved to what I expected it should be. =) -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+Ahh I got it, that helps alot, my bots aim improved to what I expected it should be. =) -- <a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 <p>
-If you want to see the real effects of <a href="robowiki?RollingAverage" class=wikipagelink>RollingAverage</a> in your gun, try testing it with different depths against <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> from the <a href="robowiki?TargetingChallenge2K6" class=wikipagelink>TC2K6</a>... -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+If you want to see the real effects of <a href="robowiki@RollingAverage" class=wikipagelink>RollingAverage</a> in your gun, try testing it with different depths against <a href="robowiki@CassiusClay" class=wikipagelink>CassiusClay</a> from the <a href="robowiki@TargetingChallenge2K6" class=wikipagelink>TC2K6</a>... -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <p>
-Anyway to make this into a <a rel="nofollow" href="http://en.wikipedia.org/wiki/Rolling_average#Exponential_moving_average">[Exponential Rolling Average]</a>? --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+Anyway to make this into a <a rel="nofollow" href="http://en.wikipedia.org/wiki/Rolling_average#Exponential_moving_average">[Exponential Rolling Average]</a>@ --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
 <p>
-Yes. =D -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+Yes. =D -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <p>
-I read Paul's comment above, but I didn't know what he ment about the Alpha, as well, they must of changed the formula's on wikipedia. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
-Eh, forget me being different (dispite that I think I mighta figured it out ;)) --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+I read Paul's comment above, but I didn't know what he ment about the Alpha, as well, they must of changed the formula's on wikipedia. --<a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
+Eh, forget me being different (dispite that I think I mighta figured it out ;)) --<a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=RollingAverage" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RollingAverage">View other revisions</a><br>Last edited May 21, 2007 3:22 EST by <a href="robowiki?Chase-san" title="ID 10589 from adsl-68-248-192-241.dsl.klmzmi.ameritech.net">Chase-san</a> <a href="robowiki?action=browse&diff=1&id=RollingAverage">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=RollingAverage" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=RollingAverage">View other revisions</a><br>Last edited May 21, 2007 3:22 EST by <a href="robowiki@Chase-san" title="ID 10589 from adsl-68-248-192-241.dsl.klmzmi.ameritech.net">Chase-san</a> <a href="robowiki@action=browse&diff=1&id=RollingAverage">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

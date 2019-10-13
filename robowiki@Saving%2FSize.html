@@ -3,46 +3,46 @@
 <META NAME='KEYWORDS' CONTENT='Saving, Size'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Size">Saving/Size</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Saving" class=wikipagelink>Saving</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/Size">Saving/Size</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Saving" class=wikipagelink>Saving</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext><H3>Reducing File Size</H3>
 
-I'd like to know how other people reduce the size of the data they save per robot. I was thinking about using the zip stream thing, but didn't have a clue about how to use it. Anyone help? -<a href="robowiki?Wolfman" class=wikipagelink>Wolfman</a>
+I'd like to know how other people reduce the size of the data they save per robot. I was thinking about using the zip stream thing, but didn't have a clue about how to use it. Anyone help? -<a href="robowiki@Wolfman" class=wikipagelink>Wolfman</a>
 <p>
-In my bot Parakeet, I store two arrays of floats instead of two arrays of doubles.. It cuts the filesize in half... I didn't need the precision of doubles anyway. --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+In my bot Parakeet, I store two arrays of floats instead of two arrays of doubles.. It cuts the filesize in half... I didn't need the precision of doubles anyway. --<a href="robowiki@Dummy" class=wikipagelink>Dummy</a>
 <p>
-Hrm ... what format do you save as <a href="robowiki?Dummy" class=wikipagelink>Dummy</a>? I just save as a text file currently. So Im not sure how saving as a float instead of a double will help in that circumstance! -- <a href="robowiki?Wolfman" class=wikipagelink>Wolfman</a>
+Hrm ... what format do you save as <a href="robowiki@Dummy" class=wikipagelink>Dummy</a>? I just save as a text file currently. So Im not sure how saving as a float instead of a double will help in that circumstance! -- <a href="robowiki@Wolfman" class=wikipagelink>Wolfman</a>
 <p>
-What are the limits of this file anyway? I was considering just serializing my Enemy objects, but I guess that's out of the question? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+What are the limits of this file anyway? I was considering just serializing my Enemy objects, but I guess that's out of the question? -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Serializing Enemy objects works, but if you find yourself running out of space, you can do better. You don't need to store things like last position, heading, velocity, etc. which are probably in your enemy class. What <a href="robowiki?DuelistMini" class=wikipagelink>DuelistMini</a> does is to store an array of doubles in a GZipOutputStream<a href="robowiki?action=edit&id=GZipOutputStream" class=wikipageedit>?</a>. Remember that arrays are java Objects, so you can write an entire array by using:
+Serializing Enemy objects works, but if you find yourself running out of space, you can do better. You don't need to store things like last position, heading, velocity, etc. which are probably in your enemy class. What <a href="robowiki@DuelistMini" class=wikipagelink>DuelistMini</a> does is to store an array of doubles in a GZipOutputStream<a href="robowiki@action=edit&id=GZipOutputStream" class=wikipageedit>?</a>. Remember that arrays are java Objects, so you can write an entire array by using:
 <p>
-myObjectOutputStream<a href="robowiki?action=edit&id=ObjectOutputStream" class=wikipageedit>?</a>.writeObject(myArray);
+myObjectOutputStream<a href="robowiki@action=edit&id=ObjectOutputStream" class=wikipageedit>?</a>.writeObject(myArray);
 <p>
 and read an entire array from an input stream by using:
 <p>
-myArray = (double[][]) myObjectInputStream<a href="robowiki?action=edit&id=ObjectInputStream" class=wikipageedit>?</a>.readObject();
+myArray = (double[][]) myObjectInputStream<a href="robowiki@action=edit&id=ObjectInputStream" class=wikipageedit>?</a>.readObject();
 <p>
---<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+--<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
-Parakeet saves one integer and two arrays per datafile (one datafile for each opponent it meets in 1-on-1. No data-storage in melee battles). The source of Parakeet is included in the .jar file on the RoboCodeRepository<a href="robowiki?action=edit&id=RoboCodeRepository" class=wikipageedit>?</a>. Actually, I looked in <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a>'s source code to see how writing to files worked. Which reminds me... forgot to add credits in Parakeet's description and source. --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+Parakeet saves one integer and two arrays per datafile (one datafile for each opponent it meets in 1-on-1. No data-storage in melee battles). The source of Parakeet is included in the .jar file on the RoboCodeRepository<a href="robowiki@action=edit&id=RoboCodeRepository" class=wikipageedit>?</a>. Actually, I looked in <a href="robowiki@TheArtOfWar" class=wikipagelink>TheArtOfWar</a>'s source code to see how writing to files worked. Which reminds me... forgot to add credits in Parakeet's description and source. --<a href="robowiki@Dummy" class=wikipagelink>Dummy</a>
 <p>
-Object Streams consume a lot of space.  Take a look inside a file written using ObjectOutputStream<a href="robowiki?action=edit&id=ObjectOutputStream" class=wikipageedit>?</a>.  If I remember correctly, each field is identified by its name and type, as well as the field's value.  The signatures of the object's methods might also be written to the file.  On the other hand, these files should compress very well with Zip Streams.
+Object Streams consume a lot of space.  Take a look inside a file written using ObjectOutputStream<a href="robowiki@action=edit&id=ObjectOutputStream" class=wikipageedit>?</a>.  If I remember correctly, each field is identified by its name and type, as well as the field's value.  The signatures of the object's methods might also be written to the file.  On the other hand, these files should compress very well with Zip Streams.
 <p>
 If you are really want to reduce file size, you might want to look at Data Streams.  Write only the fields you absolutely need.  If you still need to reduce the file size, try cramming larger fields into smaller ones where possible (ie: double into int).  Sure, you will lose some precision, but if file size is a real issue for you, you have to be willing to make some sacrifices.
 <p>
-<a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a>'s Bot class uses Data Streams, and the Reaction class crams two double fields (heading and speed) into two byte fields.  The source is available at the <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a>.  I should have used Zip Streams for further file size reduction, but I never got around to it  -- <a href="robowiki?Ray_Vermette" class=wikipagelink>Ray Vermette</a>
+<a href="robowiki@TheArtOfWar" class=wikipagelink>TheArtOfWar</a>'s Bot class uses Data Streams, and the Reaction class crams two double fields (heading and speed) into two byte fields.  The source is available at the <a href="robowiki@RobocodeRepository" class=wikipagelink>RobocodeRepository</a>.  I should have used Zip Streams for further file size reduction, but I never got around to it  -- <a href="robowiki@Ray_Vermette" class=wikipagelink>Ray Vermette</a>
 <p>
-Using Zip Streams is demonstrated, with code, on the <a href="robowiki?CompressedSerialization" class=wikipagelink>CompressedSerialization</a> page. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Using Zip Streams is demonstrated, with code, on the <a href="robowiki@CompressedSerialization" class=wikipagelink>CompressedSerialization</a> page. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
 <H3>Compressed Serialization</H3>
 
 <p>
-<strong>Same problem as on Saving<a href="robowiki?Saving/HowTo" class=wikipagelink>/HowTo</a> Copying over doesnt work...</strong>
+<strong>Same problem as on Saving<a href="robowiki@Saving/HowTo" class=wikipagelink>/HowTo</a> Copying over doesnt work...</strong>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Saving" class=wikipagelink>Saving</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=Saving/Size" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Saving/Size">View other revisions</a><br>Last edited July 8, 2005 3:56 EST by <a href="robowiki?Jokester" title="ID 4853 from 24-151-76-150.dhcp.nwtn.ct.charter.com">Jokester</a> <a href="robowiki?action=browse&diff=1&id=Saving/Size">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Saving" class=wikipagelink>Saving</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=Saving/Size" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=Saving/Size">View other revisions</a><br>Last edited July 8, 2005 3:56 EST by <a href="robowiki@Jokester" title="ID 4853 from 24-151-76-150.dhcp.nwtn.ct.charter.com">Jokester</a> <a href="robowiki@action=browse&diff=1&id=Saving/Size">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

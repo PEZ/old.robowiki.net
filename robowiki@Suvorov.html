@@ -3,8 +3,8 @@
 <META NAME='KEYWORDS' CONTENT='Suvorov'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Suvorov">Suvorov</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext>I've been trying to implement <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> on this bot Suvorov. I used the code from the article on IBM's site and fixed it a bit so that it would compile. Now Suvorov will shoot very nicely and accurately and directly at the lower left-hand corner. Here's the full code of the bot (you can also see my preliminary <a href="robowiki?Oscillators" class=wikipagelink>Oscillators</a> engine which I will tune up when I have the gun working). If you can see what the problem is, let me know. Thanks. --<a href="robowiki?Pfvicm" class=wikipagelink>Pfvicm</a>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=Suvorov">Suvorov</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I've been trying to implement <a href="robowiki@CircularTargeting" class=wikipagelink>CircularTargeting</a> on this bot Suvorov. I used the code from the article on IBM's site and fixed it a bit so that it would compile. Now Suvorov will shoot very nicely and accurately and directly at the lower left-hand corner. Here's the full code of the bot (you can also see my preliminary <a href="robowiki@Oscillators" class=wikipagelink>Oscillators</a> engine which I will tune up when I have the gun working). If you can see what the problem is, let me know. Thanks. --<a href="robowiki@Pfvicm" class=wikipagelink>Pfvicm</a>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
@@ -103,10 +103,10 @@ public class Suvorov extends AdvancedRobot
 </pre>
 <hr noshade class=wikiline size=1>
 <p>
-Questions/Comments<a href="robowiki?action=edit&id=Suvorov/Comments" class=wikipageedit>?</a>:
+Questions/Comments<a href="robowiki@action=edit&id=Suvorov/Comments" class=wikipageedit>?</a>:
 <p>
 <p>
-Well, you must have got rid of to much stuff to get it to compile. None of x, y, speed, heading, absbearing, changehead is given any value. Also you might want change in guessPosition x and y to tx and ty. -- <a href="robowiki?Florent" class=wikipagelink>Florent</a>
+Well, you must have got rid of to much stuff to get it to compile. None of x, y, speed, heading, absbearing, changehead is given any value. Also you might want change in guessPosition x and y to tx and ty. -- <a href="robowiki@Florent" class=wikipagelink>Florent</a>
 <p>
 I think the problem is that you never set tx and ty properly in the scannedRobot method. In your scannedRobot method you have:
 <PRE >
@@ -122,19 +122,19 @@ just replace the above lines with:
 <p>
 There may be more problems, but that jumps out at me.
 <p>
-EDIT: I just looked through that code more carefully and there are definitely more problems. <a href="robowiki?Florent" class=wikipagelink>Florent</a> is right, all of those values need to be set in order for this to work.
+EDIT: I just looked through that code more carefully and there are definitely more problems. <a href="robowiki@Florent" class=wikipagelink>Florent</a> is right, all of those values need to be set in order for this to work.
 <p>
---<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a>
+--<a href="robowiki@Wcsv" class=wikipagelink>wcsv</a>
 <p>
-Code above updated to current. Still doesn't work, fires due north. --<a href="robowiki?Pfvicm" class=wikipagelink>Pfvicm</a>
+Code above updated to current. Still doesn't work, fires due north. --<a href="robowiki@Pfvicm" class=wikipagelink>Pfvicm</a>
 <p>
-One quick remark: You never give <strong>absbearing</strong> a value, so it is always 0. In your scannedrobotevent it should be assigned the value <strong>get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>() + e.getBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a>()</strong> . If you just need a circular targeting routine, take a look at <a href="robowiki?WaveSurfingChallengeBotC" class=wikipagelink>WaveSurfingChallengeBotC</a>.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+One quick remark: You never give <strong>absbearing</strong> a value, so it is always 0. In your scannedrobotevent it should be assigned the value <strong>get<a href="robowiki@HeadingRadians" class=wikipagelink>HeadingRadians</a>() + e.getBearingRadians<a href="robowiki@action=edit&id=BearingRadians" class=wikipageedit>?</a>()</strong> . If you just need a circular targeting routine, take a look at <a href="robowiki@WaveSurfingChallengeBotC" class=wikipagelink>WaveSurfingChallengeBotC</a>.  -- <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
 <p>
-Thanks to all. Problem is not yet solved - he fires at angles between 0 and 90 - but I will inspect Bot C and and see what's missing from my routine. -- <a href="robowiki?Pfvicm" class=wikipagelink>Pfvicm</a>
+Thanks to all. Problem is not yet solved - he fires at angles between 0 and 90 - but I will inspect Bot C and and see what's missing from my routine. -- <a href="robowiki@Pfvicm" class=wikipagelink>Pfvicm</a>
 <p>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=Suvorov" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Suvorov">View other revisions</a><br>Last edited May 10, 2006 23:51 EST by <a href="robowiki?PFVICM" title="ID 6941 from pool-141-157-101-11.balt.east.verizon.net">PFVICM</a> <a href="robowiki?action=browse&diff=1&id=Suvorov">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=Suvorov" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=Suvorov">View other revisions</a><br>Last edited May 10, 2006 23:51 EST by <a href="robowiki@PFVICM" title="ID 6941 from pool-141-157-101-11.balt.east.verizon.net">PFVICM</a> <a href="robowiki@action=browse&diff=1&id=Suvorov">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

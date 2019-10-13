@@ -3,30 +3,30 @@
 <META NAME='KEYWORDS' CONTENT='Druss, GT'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=DrussGT">DrussGT</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?DrussGT/VersionHistory" class=wikipagelink>/VersionHistory</a>
-<a href="robowiki?DrussGT/ChallengeResults" class=wikipagelink>/ChallengeResults</a>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=DrussGT">DrussGT</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki@DrussGT/VersionHistory" class=wikipagelink>/VersionHistory</a>
+<a href="robowiki@DrussGT/ChallengeResults" class=wikipagelink>/ChallengeResults</a>
 <p>
 <p>
-Take <a href="robowiki?BasicGFSurfer" class=wikipagelink>BasicGFSurfer</a>, add a bit of segmentation and distancing, and switch it to surfing goto-style. Spend about 10 hours working out all the bugs (remember to account for the reduced distance when you slow down at each point - gah!), and something like <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> should result. Now to add a flattener (just pick a random point from the precise prediction - would that work?), and then I'll work on guns. =). -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<p>
-<UL >
-<li> That will work for a "flatter than flat with flat juice on top" movement, but you will be in 100% flat mode. Most flatteners (I think? Certainly mine...) add a flattening factor on top of the normal danger factor, so you still have normal dodging with a touch of flat juice on top. =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
-</UL>
-<p>
-Very nice scores! Not really surprising, but still remarkable to see that coming to a full-stop every wave does exploit the weaknesses of LT and CT targeting. I expect you also have some kind of dive-in protection added, or does <a href="robowiki?BasicGFSurfer" class=wikipagelink>BasicGFSurfer</a> already have that. I would like to see the total score of the <a href="robowiki?MovementChallenge2K6" class=wikipagelink>MovementChallenge2K6</a>, then you will see the true power of your movement.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
-<p>
-No dive protection =). Instead, I have 151 bins (I'm thinking of adding more) , so at all distances a botwidth covers at least 3 bins. Then, at the predicted position, I add the values of all the covered bins together to get the danger at that point. So, as I get closer, I cover more bins, and it increases the danger. To me this is the most accurate representation of how dangerous it is at a point. I'm not sure how much the <a href="robowiki?StopAndGo" class=wikipagelink>StopAndGo</a> is helping me against LT/CT. Another 'feature' (which I'm not sure helps) is my choice of high/med/low/none segmentations. I check if the 'hiseg' bin has any recorded hits, and if it does then I use that segmentation. Otherwise I check the next lowest segment. Each segment has it's own rolling average, which is lower the more precise the segment is. Finally, I think that GoToSurfing<a href="robowiki?action=edit&id=GoToSurfing" class=wikipageedit>?</a> eliminates one big bug-risk: you <b>always</b> go where your precise-prediction thinks you will. =)  <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> will be coming to the Rumble as soon as I add rolling averages to the gun =). -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<p>
-Very nice WSC scores there! Those are 500 rounds, right? (I only ask because we used to do 1000 rounds and yours are particularly good. =)) What kind of gun do you have hooked up, by the way? Feel free to post a test version with the gun from <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> or <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>, which is a good way of seeing just where your movement stands in the rumble. Keep up the good work! 
+Take <a href="robowiki@BasicGFSurfer" class=wikipagelink>BasicGFSurfer</a>, add a bit of segmentation and distancing, and switch it to surfing goto-style. Spend about 10 hours working out all the bugs (remember to account for the reduced distance when you slow down at each point - gah!), and something like <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a> should result. Now to add a flattener (just pick a random point from the precise prediction - would that work?), and then I'll work on guns. =). -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <p>
 <UL >
-<li> A modified gun from <a href="robowiki?GFTargetingBot" class=wikipagelink>GFTargetingBot</a>. I layered several segments on top of each other, and added a Time-since-decel segment.
+<li> That will work for a "flatter than flat with flat juice on top" movement, but you will be in 100% flat mode. Most flatteners (I think? Certainly mine...) add a flattening factor on top of the normal danger factor, so you still have normal dodging with a touch of flat juice on top. =) -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 </UL>
 <p>
-Oh, I also had a thought on your distance / <a href="robowiki?DiveProtection" class=wikipagelink>DiveProtection</a>. I can see the logic in it and it surely works, but if you divided the danger by number of bins covered (average danger), you would have much finer control of your distancing. You could still divide the final danger by the distance (basically what you're doing now), but you'd also have the choice of trying 1.2 * distance or square(distance) if you wanted. There are a <em>lot</em> of points in fine tuning distancing and <a href="robowiki?DiveProtection" class=wikipagelink>DiveProtection</a>!
+Very nice scores! Not really surprising, but still remarkable to see that coming to a full-stop every wave does exploit the weaknesses of LT and CT targeting. I expect you also have some kind of dive-in protection added, or does <a href="robowiki@BasicGFSurfer" class=wikipagelink>BasicGFSurfer</a> already have that. I would like to see the total score of the <a href="robowiki@MovementChallenge2K6" class=wikipagelink>MovementChallenge2K6</a>, then you will see the true power of your movement.  -- <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
 <p>
--- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+No dive protection =). Instead, I have 151 bins (I'm thinking of adding more) , so at all distances a botwidth covers at least 3 bins. Then, at the predicted position, I add the values of all the covered bins together to get the danger at that point. So, as I get closer, I cover more bins, and it increases the danger. To me this is the most accurate representation of how dangerous it is at a point. I'm not sure how much the <a href="robowiki@StopAndGo" class=wikipagelink>StopAndGo</a> is helping me against LT/CT. Another 'feature' (which I'm not sure helps) is my choice of high/med/low/none segmentations. I check if the 'hiseg' bin has any recorded hits, and if it does then I use that segmentation. Otherwise I check the next lowest segment. Each segment has it's own rolling average, which is lower the more precise the segment is. Finally, I think that GoToSurfing<a href="robowiki@action=edit&id=GoToSurfing" class=wikipageedit>?</a> eliminates one big bug-risk: you <b>always</b> go where your precise-prediction thinks you will. =)  <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a> will be coming to the Rumble as soon as I add rolling averages to the gun =). -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Very nice WSC scores there! Those are 500 rounds, right? (I only ask because we used to do 1000 rounds and yours are particularly good. =)) What kind of gun do you have hooked up, by the way? Feel free to post a test version with the gun from <a href="robowiki@CassiusClay" class=wikipagelink>CassiusClay</a> or <a href="robowiki@Dookious" class=wikipagelink>Dookious</a>, which is a good way of seeing just where your movement stands in the rumble. Keep up the good work! 
+<p>
+<UL >
+<li> A modified gun from <a href="robowiki@GFTargetingBot" class=wikipagelink>GFTargetingBot</a>. I layered several segments on top of each other, and added a Time-since-decel segment.
+</UL>
+<p>
+Oh, I also had a thought on your distance / <a href="robowiki@DiveProtection" class=wikipagelink>DiveProtection</a>. I can see the logic in it and it surely works, but if you divided the danger by number of bins covered (average danger), you would have much finer control of your distancing. You could still divide the final danger by the distance (basically what you're doing now), but you'd also have the choice of trying 1.2 * distance or square(distance) if you wanted. There are a <em>lot</em> of points in fine tuning distancing and <a href="robowiki@DiveProtection" class=wikipagelink>DiveProtection</a>!
+<p>
+-- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <UL >
 <li> I just tried that, and it squeezes out another few points. Awesome. So here's what I'm using:
 </UL>
@@ -35,308 +35,308 @@ Oh, I also had a thought on your distance / <a href="robowiki?DiveProtection" cl
          thisDanger /= Math.pow(distance,2);
 </pre>
 <p>
-Hmmm I just found that I get eaten alive by PatternMatchers<a href="robowiki?action=edit&id=PatternMatchers" class=wikipageedit>?</a>. A Time-Since-Velocity Change segment won't help me, because I stop for every wave. Time-since-dir-change doesn't help much either. I've even tried setting my surfing rolling depth to 2, and it still doesn't help. Any ideas? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+Hmmm I just found that I get eaten alive by PatternMatchers<a href="robowiki@action=edit&id=PatternMatchers" class=wikipageedit>?</a>. A Time-Since-Velocity Change segment won't help me, because I stop for every wave. Time-since-dir-change doesn't help much either. I've even tried setting my surfing rolling depth to 2, and it still doesn't help. Any ideas? -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <p>
 <UL >
-<li> Just a lot of experimentation. =) But are you sure it's not just that your gun is weak? (I still don't know what you have on there...) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
-<li> I'll try putting CC's gun in. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<li> <a href="robowiki?AntiPatternMatching" class=wikipagelink>AntiPatternMatching</a>? (Not a very serious suggestion ... ) -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
-<li> I think it's the movement. I can't get Che below a 14% hit ratio. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<li> Do you <a href="robowiki?RollingAverage" class=wikipagelink>roll</a> (or otherwise decay) your surfing stats? And if so, how quickly? That's important. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> Just a lot of experimentation. =) But are you sure it's not just that your gun is weak? (I still don't know what you have on there...) -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
+<li> I'll try putting CC's gun in. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> <a href="robowiki@AntiPatternMatching" class=wikipagelink>AntiPatternMatching</a>? (Not a very serious suggestion ... ) -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
+<li> I think it's the movement. I can't get Che below a 14% hit ratio. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> Do you <a href="robowiki@RollingAverage" class=wikipagelink>roll</a> (or otherwise decay) your surfing stats? And if so, how quickly? That's important. -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <UL >
-<li> Yep, with a depth of between 10 and 40 (hiseg and noseg, respectively). Only real waves are weighted, at 1. I'm smoothing using the algorithm on <a href="robowiki?BasicSurfer" class=wikipagelink>BasicSurfer</a>. I tried <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>'s bell-curve for smoothing, but it didn't work as well. I guess the spike helps. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> Yep, with a depth of between 10 and 40 (hiseg and noseg, respectively). Only real waves are weighted, at 1. I'm smoothing using the algorithm on <a href="robowiki@BasicSurfer" class=wikipagelink>BasicSurfer</a>. I tried <a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>'s bell-curve for smoothing, but it didn't work as well. I guess the spike helps. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <UL >
-<li> For what it's worth, I think even 3 is a high rolling depth in movement. If I were using just one depth on all my stats, it would be 0.7 (and used to be). Right now, I have a variety of depths ranging from 0.5 to about 5. I'd definitely encourage experimenting with some lower depths, at least on the hiseg. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> For what it's worth, I think even 3 is a high rolling depth in movement. If I were using just one depth on all my stats, it would be 0.7 (and used to be). Right now, I have a variety of depths ranging from 0.5 to about 5. I'd definitely encourage experimenting with some lower depths, at least on the hiseg. -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 </UL>
 </UL>
-<li> HA! I just realised that I'm using regular Che, not CheMC<a href="robowiki?action=edit&id=CheMC" class=wikipageedit>?</a>. It looks like it only moves on bullet fire, and I wasn't firing, so I thought it was the right one. I've added back the time-since-dir-change layer, I'll tell you what happens. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> HA! I just realised that I'm using regular Che, not CheMC<a href="robowiki@action=edit&id=CheMC" class=wikipageedit>?</a>. It looks like it only moves on bullet fire, and I wasn't firing, so I thought it was the right one. I've added back the time-since-dir-change layer, I'll tell you what happens. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <UL >
-<li> 16.96. I think it might be because of my way of choosing segments. The low segments don't get weighted at all once the high segments have a hit, and this slows down my learning. But I'll give another try with lower depths, before I change anything. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<li> One more thought: do you ever move away from the enemy, or always just perpendicular? If you aren't keeping a good distance, it will drastically decrease your movement challenge scores - much more so than it would in a real battle, where staying close also helps out your own hit percentages. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> 16.96. I think it might be because of my way of choosing segments. The low segments don't get weighted at all once the high segments have a hit, and this slows down my learning. But I'll give another try with lower depths, before I change anything. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> One more thought: do you ever move away from the enemy, or always just perpendicular? If you aren't keeping a good distance, it will drastically decrease your movement challenge scores - much more so than it would in a real battle, where staying close also helps out your own hit percentages. -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <UL >
-<li> Against the WSC bots I found 400 gave me the best results, but against Che I upped it to 600, where I'm not as big of a target. I'm using an offset of (PI/2 - 1 + dist/BEST_DIST), so that when dist==BEST_DIST it gives me PI/2, which is perpendicular. It keeps me away nicely. A nice part about using GoTo<a href="robowiki?action=edit&id=GoTo" class=wikipageedit>?</a> is that I don't have to change the formulas all over the place - I just change it in the <a href="robowiki?PrecisePrediction" class=wikipagelink>PrecisePrediction</a>, and when I go to the points I follow the path the <a href="robowiki?PrecisePrediction" class=wikipagelink>PrecisePrediction</a> took. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-</UL>
-</UL>
-</UL>
-<p>
-OK, I've uploaded version 0.1 with Raiko's gun (from the mc2k7, thanks for the pluggable version <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>!). -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<UL >
-<li> It seems that the surfing is broken, I'll check into it. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<UL >
-<li> 0.1.2 should fix it. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<UL >
-<li> It would help if it could fire, huh? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> Against the WSC bots I found 400 gave me the best results, but against Che I upped it to 600, where I'm not as big of a target. I'm using an offset of (PI/2 - 1 + dist/BEST_DIST), so that when dist==BEST_DIST it gives me PI/2, which is perpendicular. It keeps me away nicely. A nice part about using GoTo<a href="robowiki@action=edit&id=GoTo" class=wikipageedit>?</a> is that I don't have to change the formulas all over the place - I just change it in the <a href="robowiki@PrecisePrediction" class=wikipagelink>PrecisePrediction</a>, and when I go to the points I follow the path the <a href="robowiki@PrecisePrediction" class=wikipagelink>PrecisePrediction</a> took. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 </UL>
 </UL>
 </UL>
 <p>
-Ok, so I fixed the precise prediction (it thought it could get 6 pixels further than it could), put Raiko's gun in, and (it looks like) a 2020+ bot. This is without a flattener in the movement, or rolling averages in the gun. In fact, it looses to almost every surfer on the block (besides <a href="robowiki?BasicGFSurfer" class=wikipagelink>BasicGFSurfer</a> :-p). Do I get a medal? =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<p>
-Yes, cept i'm not certified to give it ;). I had my eyes on the 20th spot. Oh also! I might have to make my own goto surfing implimentation after I get my gun above shadows in all the targeting challenges (only about 2 and a half points away in the TC and TC2K6). --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
-<p>
-OK, I'm ranking on par with <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a>, and I'm using <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>'s gun. Maybe it's time to do a version with dLightning? =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<p>
-Holy cow! Dude, major congrats. =) Yeah man, put up a version with DookiLightning<a href="robowiki?action=edit&id=DookiLightning" class=wikipageedit>?</a> and see what happens. I want to know. =) Maybe wait for 0.3.1 to get to 2,000 battles, could still move a few points up or down from there. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
-<p>
-Keep this up you could take the crown... O.o --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
-<p>
-Impressive scores! It still is not as good as Dookious, but i would like to have such a movement :) --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
-<p>
-Looks like the third member of <a href="robowiki?The2100Club" class=wikipagelink>The2100Club</a> pre-announced himself. If your gun will be on the same level as your movement, it is just a matter of time! @<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>: Don't you hate it when people don't want to enter our 'race for 2050 in eighty days' (or weeks), but just beat us left, right and in the middle. :-(   -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
-<p>
+OK, I've uploaded version 0.1 with Raiko's gun (from the mc2k7, thanks for the pluggable version <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>!). -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <UL >
-<li> Haha, I can't tell you why, but for some reason i get motivated instead of depressed by such impressive developments. I think we have our own way of doing things, "slowly but surely". May be one day this stratgie will pay off, he?! How many days are left, if we say 80 weeks? Circumnavigating the world is a complex business... PS: I'm quite satisfied with my ~10 PL ranking for now. --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
-</UL>
-<p>
+<li> It seems that the surfing is broken, I'll check into it. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <UL >
-<li> I didn't even know you had that race going! And <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>, you could seriously increase your score by adding a few more buffers to your movement. I found that it really helps to have different buffers of the same dimension, with different slices. For example, having lateral velocity slices at {3,6}, {1,3,5,7} and {1,2,3,4,5,6,7,8}. If you also add segmentation on distance, do the same thing, with {200,500}, {100,300,500,700} and {200,400,600,800}. @<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>: This had been said other places, but get rid of your flattener and extra segments, and get EVERY single bug out of your code. Use the graphical debugging to check if you arrive at the place you think you will, when you think you will. The latest robocode  has the swing graphics lined up properly, so this is way easier than it used to be. Then add back your segments and flattener, one at a time. =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> 0.1.2 should fix it. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <UL >
-<li> I know, I must be the only 2K bot with such a simple movement (and my gun is not that good either)  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
-<li> <a href="robowiki?WeeksOnEnd" class=wikipagelink>WeeksOnEnd</a> uses a single movement buffer segmented only on lateral velocity (But sadly it no longer looks like a 2K bot).  And <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>: it wasn't that hard to line up swing graphics before - you just had to pause the screen then wipe another window over it to get it to repaint with the up-to-date state information :) -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
-</UL>
-</UL>
-<p>
-<UL >
-<li> I'm using debugging graphics since i discovered robocodeGL and my segmentation is simple and singlebuffered. And there is no flattener at all. My over all ranking is not as high as it could be, because the rolling dept is quite low, tick waves are just fired in the first 3 rounds and the segmentation isn't tuned. You can still join our race, as you still need to write your own gun. But look out! I'll start to do some segmentation reasearch in the next few days. Lets see how many nasty bugs are left :) --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
-</UL>
-<p>
-<UL >
-<li> Ok, I'll start working on my gun soon. I just need to get my movement sorted first =). I still need to add a few more buffers (I'm only at 44 right now ;-) ), and then I'll start on a GF/PM gun. Where do I have to start? Can I start from <a href="robowiki?GFTargetingBot" class=wikipagelink>GFTargetingBot</a>, or do I have to start from scratch? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-</UL>
-<p>
-<UL >
-<li> First you have to start with HOT, than <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a>, <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> and after that you need to mess around with <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a>, 	at least for a year. If you have finished this cycle you are allowed to start with your GF-gun... :) <a href="robowiki?GFTargetingBot" class=wikipagelink>GFTargetingBot</a> as a start is alright, <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a> started there too. --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
-<UL >
-<li> In fact I did not start with <a href="robowiki?GFTargetingBot" class=wikipagelink>GFTargetingBot</a>, but with <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>'s <a href="robowiki?GuessFactorTargeting/Tutorial" class=wikipagelink>GuessFactorTargeting Tutorial</a> and <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>' <a href="robowiki?WaveSurfing/Tutorial" class=wikipagelink>WaveSurfing Tutorial</a>. Ok, I took the stuff I wanted (which is alot), but tried to keep my own ideas intact. As a framework <a href="robowiki?GFTargetingBot" class=wikipagelink>GFTargetingBot</a> is a good way to start, soon enough you will change the stuff that matters to your own taste.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
-</UL>
-</UL>
-<p>
-Congratulations! Hmm... so if you implemented a goto-surfer with <a href="robowiki?VisitCountStats" class=wikipagelink>VisitCountStats</a>, would its shorthand be WS-GT/VCS? =) -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
-<UL >
-<li> Yeah, and you're doing WS-GT/DC =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-</UL>
-<p>
-Started up 4 RRAH clients here for ya. =) So <a href="robowiki?DrussiousGT" class=wikipagelink>DrussiousGT</a> is your movement with Dooki's gun? --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
-<UL >
-<li> Yip. I'm surprised how high it ranks in the PL, considering it doesn't have a flattener, and only has 5 dimensions in the movement. I want to try weighting secondary waves a bit higher, now. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-</UL>
-<p>
-I will start up a power-client as well to do battles, one of those core duo lab machines I use to benchmark. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
-<p>
-Started up some clients for you. What's new in this version? (How about a <a href="robowiki?DrussGT/VersionHistory" class=wikipagelink>/VersionHistory</a> ?) =)--<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
-<p>
-A couple segmentation tweaks, nothing much. I haven't had time for anything else. I'll release a version with my own gun some time next week (I hope). -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<UL >
-<li> Ha! That's the fastest I've ever seen a bot get to 2000 battles. I added 0.3.6, I'll remove 0.3.4 later. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-</UL>
-<p>
-Buggy? <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison?game=roborumble&amp;name1=jk.mega.DrussGT%200.3.6&amp;name2=jk.mega.DrussGT%200.3.4">http://rumble.fervir.com/rumble/RatingDetailsComparison?game=roborumble&amp;name1=jk.mega.DrussGT%200.3.6&amp;name2=jk.mega.DrussGT%200.3.4</a> =(
---<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
-<UL >
-<li> Yeah, I'm guessing it was my new deceleration simulation attempt. 0.3.6 has been removed. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<li> Found it! Never assume that distance is positive, especially when you made it negative a few lines above =). Basically, my goTo method wouldn't let me turn if I was traveling backwards =). 0.3.7 on the way. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-</UL>
-<p>
-Who would have thought it possible - passing <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a> with a pattern matcher (and not even multiple choice, at that!) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<p>
-Hey man, I don't know if you meant to leave both of them in there, but there's generally a rule of thumb that you should only have one version of a bot in the rumble at a time. Maybe you could remove <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> / PM? Having two versions in as a temporary test is no big deal, but long-term, it kinda throws off what "Top 10 / 25 / 50" means if people leave multiple versions in the rumble. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
-<p>
-<UL >
-<li> Will do =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-</UL>
-<p>
-2062.76	and more than 500 battles... your 2050+ ranking seems save ;( --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
-<p>
-Indeed, this one look almost perfectly tied up with the Raiko version (<a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison?game=roborumble&amp;name1=jk.mega.DrussGT%200.4.4&amp;name2=jk.mega.DrussGT%200.3.10">[compare]</a>). -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
-<p>
-It's depressing, if I'd had this score 2 weeks ago, I would be in 4th by a good 7 points, but now I'm in 6th! =(. I really need to work on a decent gun...maybe give DC a shot. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<p>
-I didn't do this intentionally, but this DC gun seems to be quite a potent surfer killer. I'm counting 7 losses. Maybe I should try reducing the scan size even more....and put in a Vgun array with my VCS gun. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<p>
-Look ma, no flattener! <a rel="nofollow" href="http://rumble.fervir.com/rumble/PremierLeague?game=roborumble">[PL]</a> -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<p>
-He, the 5th PL place is mine! :) --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
-<p>
-Prove it! The only way that will happen is if I get 4th! :-D -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<p>
-<UL >
-<li> HeHe<a href="robowiki?action=edit&id=HeHe" class=wikipageedit>?</a>, <a rel="nofollow" href="http://rumble.fervir.com/rumble/PremierLeague?game=roborumble">[PL]</a>^^ --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
-<li> You can have it back for a while, at least until I get a VCS antisurfer gun going =) - <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-</UL>
-<p>
-Hey man, I hope you don't mind a word of wisdom from someone who has done this before - be careful not to over-optimize for the <a href="robowiki?MovementChallenge" class=wikipagelink>MovementChallenge</a> (or any challenge, really). I think MC2K7 is less susceptible to this than the old MC's, but I'm sure it can still be done. You could very well be increasing your MC2K7 score at the cost of overall (i.e., <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>) performance. Just be sure to post to the rumble often enough to make sure that's not the case. =) Keep up the good work, though! -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
-<p>
-Yeah, 0.5.10's movement is what is currently under my DC gun in 0.7.0, so I don't think it's that bad. But thanks for the pointer. =) I'm trying to get my DC working as good as my VCS, and I have one idea, but it may not pay off. DC definitely has its problems, but this latest idea may make it good for movement. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<p>
-By the way, I'm not sure how long it's been happening, but I noticed some recent versions of <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> were compiled with Java 6, so they're not getting any real battles from my clients. Just FYI - if you're not using anything Java 6, you'll get more battles faster with Java 5 compatibility. ;) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
-<p>
-Wow, thanks for the heads up. It seems that when I changed to compiling with jikes to javac to accommodate Simonton's tree, I didn't add -target 1.5 to the <em>right</em> place in the compiler config. This latest version seems a bit buggy anyways...I'll get a new one up asap. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a> 
-<p>
-version 0.8.3 still is not Java 1.5 compatible, putting jk.mega.* back on my exclude list :-(   -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
-<p>
-I think I know what it is....some of the dependencies didn't get their .class file replaced with the new compile. Sorry 'bout that... -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<p>
-<p>
-<p>
-<p>
-<p>
-<p>
-<p>
-<p>
-<p>
-<p>
-<UL >
-<li> "Added 'Shakespearean Insulter' - inspired by the quotes in Dookious =)" - Haha, did not expect to see that when I checked your version history. =) Shakespearean Insulter, that sounds like a band name... -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
-<li> Run a battle against <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> in your regular Robocode, and check the debug window at the end of each round. =) It's also partly inspired by <a rel="nofollow" href="http://www.pangloss.com/seidel/Shaker/index.html">[this]</a>, which I find hilarious! -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-</UL>
-<p>
-So much for that <a href="robowiki?BrickWall" class=wikipagelink>BrickWall</a>, eh? =) Man, 2111, that's pretty solid, nice work. I suppose it may be time to start testing / tweaking <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> again... -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
-<p>
-It was just a straight revert back to 0.7.23. Which has no precise max-GFs. So I'm thinking that my implementation might have had some bugs in it. Unless of course I broke something else in the process, which quite likely. My final implementation was to not allow the choosing of any angles that were outside the present maximum, but I think I should have allowed an extra half botwidth as well so that I could choose that very end angle if I had to. Maybe I'll give that another look, but for now I've got some different things I want to try. Including a major refactor. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<p>
-It's strange that I gained 5 points from adding a flattener, whereas <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> gained nothing...maybe <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>' strong anti-surfer gun takes care of the bots that his flattener would help against, negating the effect? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<p>
-Nice work! Hard to say where the difference is. It could be the <a href="robowiki?AntiSurfer" class=wikipagelink>AntiSurfer</a> gun. It could be that my base movement is already pretty well tweaked against top guns where the flattener would help. It could even be that my flattener just stinks, or that yours is killer! -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
-<p>
-My flattener only logs hits on 'real' waves, and it logs all waves, whether or not I was hit by the bullet, or even if the bullet got hit by one of my bullets. And it uses about 35 buffers (randomly selected, like my others) on all the same dimensions that I normally use. It seems <a href="robowiki?Chalk" class=wikipagelink>Chalk</a> has my number though, so I'll have to give it another look. I think the fact that Dookious has quite a few 'deep' buffers (ie. a buffer with more than 5 dimensions) makes his movement more unpredictable to the top guns (a sort of 'randomness' due to differing slices) whereas <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> has several slices for every dimension, and each slice is paired with many other slice combinations, but never has more than 4 dimensions in one buffer, making more of a 'surfing' movement that can be predicted by very low rolling averages coupled with real-wave-only logging. Anyways...off to test against <a href="robowiki?Chalk" class=wikipagelink>Chalk</a>! -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<p>
-Wow, did I read that right? You use 35 VCS buffers in your surfing movement? How many dimensions? That makes my movement, with just 5 unwheighted dimensions, look like childs play in terms of complexity... -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
-<UL >
-<li> Nope, wrong. I use 35 buffers just for the <em>flattener</em>. I have 100 buffers for the main surfing buffers =). The code was generated at random, and I just copied it into my initialization method =). I have 8 dimensions, but each buffer only ever has 4 at a time. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<li> Ok, why not go with the full set then? If my calculations are correct there are 162 possible combinations of 8 dimensions. :) -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
-<li> I think there are actually more, because some buffers have 3, 2, or even 1 dimension. And the reason I'm not going with more is because of memory limitations =). That's the same reason I have a maximum of 4 dimensions per buffer =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<li> I calculated combinations of 8 in 4, 3, 2 and 1, and got to 162 (70 + 56 + 28 + 8), 163 if you have an unsegmented buffer. Multiplied by 31 bins and 4 bytes per bin gives 20212 bytes, should be doable. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
-<li> <a rel="nofollow" href="http://www.mathsisfun.com/combinatorics/combinations-permutations-calculator.html">[Combinations and permutations calculator]</a> ... Yep! -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
-<li> Oh, yes, but it gets more complicated: each dimension can have 1 of 3 different 'slice' sets, course, medium or fine. This is something similar to TileCoding<a href="robowiki?action=edit&id=TileCoding" class=wikipageedit>?</a> that I think <a href="robowiki?Tigger" class=wikipagelink>Tigger</a> uses. Also, I'm using 101 bins (down from 151 to same memory). -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-</UL>
-<p>
-I also use something in that range =) : 34, unweighted, varying dimensions and segments, but not random. I don't have a second set of 34 for my flattener, though, the flattening is also done right in those same buffers. Then I have 3 separate buffers for the non-firing waves flattener. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
-<p>
-Psh, 3 releases in one day is nothing. =) Also, by the way, I think some of your recent ratings under <a href="robowiki?DrussGT/VersionHistory" class=wikipagelink>/VersionHistory</a> are off by 1 (or 100 =)). -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
-<p>
-<UL >
-<li> Haha, it's more like 3 releases in 4 hours =). And thanks for that catch...I probably would have left it like that forever =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-</UL>
-<p>
-Version 1.0.0 is incompatible with java 1.5. :/ -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
-<p>
-Oh gosh, not this again. I must have not replaced the classes from one of my reverts...give me a minute and it'll be fixed... -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<p>
-Holy.....73% against <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> after 4 battles.....it might be worth keeping this one even if the points dropped a bit... -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<p>
-I know it's just one battle, but Shadow 3.77v just got 77.7% against DT! -- <a href="robowiki?ABC" class=wikipagelink>ABC</a> 
-<p>
-I'm guessing it's because my flattener only recognizes 'real' waves...adding tick waves would make it quite a bit slower, but if it's what it takes to improve my score ;-) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<p>
-<UL >
-<li> A couple thoughts. First, I think it would take at least 100 matches for each of you against DT to really judge who's better against DT. Yes, battles really are that random. =) Second, it might be a good starting place to try tweaking your flattener, but I doubt you could jump to that conclusion so quickly. The last time I tested (which was, admittedly, a while ago), my flattener made almost zero different against <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> - and that <em>was</em> tested over hundreds of battles.  (The same flattener upped my score vs Ascendant by over 10%, so it wasn't a useless flattener...) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
-</UL>
-<p>
-<UL >
-<li> Maybe I should have clarified =). The 73% against DT was due (I think) to my change in segmentation for 1.0.1. And my flattener boosted my score by about 10% against Ascendant as well. But adding tick-waves to my flattener would help against other bots, I think. Even if it didn't help against DT. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-</UL>
-<p>
-Congratulations on your new crown! :) Version 1.0.17NVBW is clearly ahead of Dookious, your precise bot width code wasn't very effective in the rumble after all. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
-<p>
-Thanks! =) Yeah, seems not. I've just had some ideas on improving the precise botwidth, inspired by Rednaxela's animations, and I see some of the assumptions I took with it aren't quite right. So perhaps I can improve even further than simply removing it. I also had the idea of doing DC surfing weighted parallel with VCS surfing, I remember Stormrider had quite a different set of problembots from <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a>. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<p>
-Congratulations indeed! You just passed halfway mark from <a href="robowiki?The2100Club" class=wikipagelink>The2100Club</a> to the The2200Club<a href="robowiki?action=edit&id=The2200Club" class=wikipageedit>?</a> of legend! In any case, nice stuff, hopefully you can indeed improve further than simply removing it :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
-<p>
-Hmm, interesting, looking at the comparison between your new version and your last [<a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison?game=roborumble&amp;name1=jk.mega.DrussGT%201.0.20NVBW&amp;name2=jk.mega.DrussGT%201.1.0">[here]</a>], at least as far as <a href="robowiki?UbaRamLT" class=wikipagelink>UbaRamLT</a> goes it isn't doing any better desipite adding the gunheat waves like I have in <a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a>, and that's one rambot that <a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a> is doing better with than <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> (~81% as opposed to ~74%). Perhaps the key to <a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a>'s rambot success is not entirely in the gunheat waves... -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
-<p>
-I was tweaking the attack angles against <a href="robowiki?GrubbmThree" class=wikipagelink>GrubbmThree</a>, maybe I'll have to add some other <a href="robowiki?RamBots" class=wikipagelink>RamBots</a> to my testbed. Also maybe I'll watch some battles to see what you're doing there in <a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a> to get those scores =). I think your precise botwidth helps a lot with the close-range AntiRamBot<a href="robowiki?action=edit&id=AntiRamBot" class=wikipageedit>?</a> movement, because 1 pixel different can quite often make the difference between getting hit and dodging a bullet. But now I've released 2 new versions, one leaving out the <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> and the other leaving out this 2 tick advantage, we'll see what happens. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<p>
-By the way, I've noticed how <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> somehow outputs to the console when run in the rumble and I noticed that something is off with <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a>'s hitrate calculation. Against pmc.SniperBot<a href="robowiki?action=edit&id=SniperBot" class=wikipageedit>?</a> which I think stands still it outputs things like "My hitrate: 1.5" and "My hitrate: 1.2857142857142858" sometimes. Is this a known issue? -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
-<p>
-Wow, it doesn't print to the rumble in my local versions. Checking in the gun, I see that the System.out.println("My hitrate: " + (bulletHit/bulletsPassed)); is placed inside the gun constructor, and the gun is a non-static object in the main bot. So maybe Robocode 1.6 has a bug that allows printing to the console from the constructors? Because this doesn't happen in 1.5.4 with the rumble. And about that buggy hitrate - the only thing it controls is whether or not I fire power 3 bullets. It seems it's buggy only at close range. I'll take a look at it, but I've got other stuff on my plate at the moment, like getting this weighting system working, oh yeah and that integral calculus test in 12 hours time that I should theoretically be studying for =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<p>
-<UL >
-<li> This sounds like an interesting problem in itself: if you've got a calc test in 12 hours, X bugs in your weighting system, and you require 3 hours of sleep before the exam, what is the maximum value of X for which your new bot version can be ready before the test? :-P -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
-</UL>
-<p>
-<UL >
-<li> Well, let's define this problem a bit more accurately: I need to wait for my current version to get more battles, I need 7 hours sleep before the exam (it's night here - doh) and there are an infinite number of possible ways of doing the weighting system, my goal is to find one that yields better results than no weighting system. I've now given up on weighting the individual sets of bins, instead weighting the entire buffer. 200 round tests against <a href="robowiki?RaikoMicro" class=wikipagelink>RaikoMicro</a> reveal that there have been no improvements so far. Tests against Ascendant reveal that using this weighting on the flattener, however, *is* effective. But that's to be determined by tomorrow's release. And I really need to work on my gun, anyways. There, just plug it into your calculator, and the answer says that I'm going to bed right now =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-</UL>
-<p>
-<UL >
-<li> Ah, bringing back fond memories of academic crunch time + Robocode addiction. =) Good luck on your exam! -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
-</UL>
-<p>
-<UL >
-<li> Quite busy I see :) Good luck on that exam! By the way, I was wondering if you'd have any objections if I released two temporary bots to the rumble in the wiki package: One that uses <a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a>'s gun and <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a>'s movement, and one that's the other way around. I highly suspect they'll both rate somewhere between <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> and <a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a>, but I think the bot-by-bot comparison may be interesting. Of course, I'll wait to add them till I both get your word, and the new bots currently in the rumble get to the 2000 battle mark, and I'll remove the temporary ones after they get to the 2000 battle mark. Any objections, and if not, any naming suggestions? :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
-</UL>
-<p>
-<UL >
-<li> Sure, go ahead. But be warned, <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a>'s movement is very sensitive to the gun taking too much CPU time because it uses the majority of the tick whenever it encounters a new wave, or gets data from a bullet hit. Of course, the rest of the time it uses almost nothing, which is why it seems to run pretty fast ;-). Anyways, I suggest you use 1.1.3, but do a search for all references to areaNormalize(float[] bins) and replace it with a call to heightNormalize(float[] bins). I put forward the name <a href="robowiki?RoussGT" class=wikipagelink>RoussGT</a> - thus keeping the majority "Rouge" as well as signifying the GT movement  =). Of course, Scourge sounds better - it's your call =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a> - 1 hour till exam
-</UL>
-<p>
-<UL >
-<li> Hm, I think I'll go with <a href="robowiki?RoussGT" class=wikipagelink>RoussGT</a> for the one with <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a>'s movement and my gun, and then <a href="robowiki?DrugeDC" class=wikipagelink>DrugeDC</a> for the one with <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a>'s gun and my DC movement. They'll go up around when my last release of <a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a> gets close to 2000 battles, though that could be a while with how the rumble seems to be running slowish in the last 12 hours (probably partially my fault though, as I only have my slowest machine running the rumble right now, while my fastest is doing <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a>). In any case may your exam be successful =) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
-</UL>
-<p>
-<UL >
-<li> Okay, I have wiki.<a href="robowiki?RoussGT" class=wikipagelink>RoussGT</a> and wiki.<a href="robowiki?DrugeDC" class=wikipagelink>DrugeDC</a> ready now (took a bit to make <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> into a reusable component which could have features like gun or movement enabled/disabled). They're based on <a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a> Gamma4 and <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> 1.1.3 with the normalization change you suggested. Should I wait till <a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a> Gamma4 and <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> 1.1.4 are at 2000 battles before releasing the hybrids, or think they should be released right about now? :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
-</UL>
-<p>
-<UL >
-<li> Just go ahead and release them. Getting <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> into a component form should just require: commenting out all references to dgun, making it no longer extend <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>, trying to compile it, and adding a reference to the <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> 'father' object (that should be a constructor parameter) wherever there is an error =) But maybe you have some other structural requirements? I personally think part of the fun is building your bot around the structure that Robocode gives us =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-</UL>
-<p>
-<UL >
-<li> Alright! They're out! Well, I also had to separate out "init()" and "runTick(List&lt;Events&gt; events)" from the "run()" code in order to make it fit in the bot structure I use. I also opted to add "useGun", "useRadar", and "useSurf" boolean flags in the constructor instead of simply commenting out parts. Actually, it really surprised me how monolithic <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a>'s code is when I first looked at it. Anyways, about <a href="robowiki?RoussGT" class=wikipagelink>RoussGT</a> and <a href="robowiki?DrugeDC" class=wikipagelink>DrugeDC</a>, note that my gun from <a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a> Gamma4 is looking like the weakest yet since Gamma1, so it's possible <a href="robowiki?RoussGT" class=wikipagelink>RoussGT</a> might not perform so great even compared my Gamma1 and Gamma2 releases of <a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a> despite the stronger movement. In any case, this should be interesting. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
-</UL>
-<p>
-<UL >
-<li> Monolithic is the right word =). The only restructure since it's <a href="robowiki?BasicSurfer" class=wikipagelink>BasicSurfer</a> roots is cleaning up the getBestPoints<a href="robowiki?action=edit&id=BestPoints" class=wikipageedit>?</a> method handling both the first and second waves (it used to be handled in the getDanger function, as did the buffer generation - yuk!), and making the buffers a class of their own. Other than that it's just had stuff added to it. I tried to make any additions as forward-compatible as possible, so other than getting pretty big, it's actually pretty clean, follows an inline code path, no recursion, stuff like that. The worst of it was removed in 1.1.3, take a look at 1.1.1 if you want to see some ugly code =) I blame it on my never taking any courses in OO programming or anything. Anyways, coding is just a hobby for me =) Give me real robots any day =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-</UL>
-<p>
-<UL >
-<li> Well, I haven't taken an OO programming courses, but personally I have a taste for keep-each-file-small practices and avoid repeated code like you have for setting up the horde of buffers =).  Anyways, here's some comparison links for quick reference if you're interested: <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison?game=roborumble&amp;name1=wiki.DrugeDC%201.0&amp;name2=ags.rougedc.RougeDC%20Gamma4">[DrugeDC to RougeDC]</a>, <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison?game=roborumble&amp;name1=wiki.DrugeDC%201.0&amp;name2=jk.mega.DrussGT%201.1.3">[DrugeDC to DrussGT]</a>, <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison?game=roborumble&amp;name1=wiki.RoussGT%201.0&amp;name2=ags.rougedc.RougeDC%20Gamma4">[RoussGT to RougeDC]</a>, and <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison?game=roborumble&amp;name1=wiki.RoussGT%201.0&amp;name2=jk.mega.DrussGT%201.1.3">[RoussGT to DrussGT]</a> =) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
-</UL>
-<p>
-<UL >
-<li> Hmmm... I think that's the most compact way of keeping a huge set of 'pre-determined random' buffers. I don't want to actually determine them at runtime, because then every one-in-10000 battles I might end up without any lateral-velocity or something funny like that. It might look random but I actually had to generate about 3 sets to get one that is fairly evenly spread, and doesn't have to many duplicate/similar entries. I think it's a lot more compact than <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>'s method of making a seperate class for each buffer =) That would be *very* impractical for me, with my horde =) He has something simple, like 20. I guess I could put them in a seperate class with a static method, but for me that doesn't seem a more elegant method. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-</UL>
-<p>
-<UL >
-<li> Well, <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>'s method makes me cringe even more, but I would prefer a more systematic/programmable way for generating the list at runtime. In any case: What the heck though? So many buffers? You're a madman! A winning madman though =) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
-<UL >
-<li> Yep, crazy. But it works like a charm. Go figure. =) I'll make a special effort to come up with a cleaner way to load it. How does putting the slices into a giant 2 dimensional array sound, then running it through a loop and building the buffers? :-p -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-</UL>
-</UL>
-<p>
-<UL >
-<li> Yeah, yeah, go ahead and make fun of me. :-P It was a tough call, but in the end I opted for a class wrapper around each buffer to allow for cleaner / more robust execution code. And hey, it's Java, you can't be afraid of having lots of classes! =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
-</UL>
-<p>
-<UL >
-<li> It's not lots of classes that make me cringe, it's mass duplicated code even if each bit is small =P -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
-</UL>
-<p>
-<UL >
-<li> Hehe - well, I don't really consider my setup to have any duplicated code. :-P I'm also pretty anal about that. And the code for handling my buffers and sets of buffers is pretty clean as a result of the class structure. Reflection would probably have given me an even cleaner setup, but I'm not too familiar with it yet, and it could have been real slow... -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
-<UL >
-<li> Hmmm.... I see the lines words "public class" duplicated a lot. There also seems to be a huge number of unnecessary constructors :-p -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<UL >
-<li> "Code" == "semicolon"! ;) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> It would help if it could fire, huh? -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 </UL>
 </UL>
 </UL>
 <p>
-Well, I think the buffer import code is much better now, and the buffer extraction code, while it may be more messy and complicated, is actually much more technologically advanced, as all floating point comparisons are limited to the absolute minimum, and a huge number of loops are avoided. It could be made to look neater, but that would require a redesign of the entire mess, something I certainly don't have the time for now. Also, while being much neater, it would be less readable, because of all the stuff that would have to be generated beforehand. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+Ok, so I fixed the precise prediction (it thought it could get 6 pixels further than it could), put Raiko's gun in, and (it looks like) a 2020+ bot. This is without a flattener in the movement, or rolling averages in the gun. In fact, it looses to almost every surfer on the block (besides <a href="robowiki@BasicGFSurfer" class=wikipagelink>BasicGFSurfer</a> :-p). Do I get a medal? =) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Yes, cept i'm not certified to give it ;). I had my eyes on the 20th spot. Oh also! I might have to make my own goto surfing implimentation after I get my gun above shadows in all the targeting challenges (only about 2 and a half points away in the TC and TC2K6). --<a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+OK, I'm ranking on par with <a href="robowiki@CassiusClay" class=wikipagelink>CassiusClay</a>, and I'm using <a href="robowiki@Raiko" class=wikipagelink>Raiko</a>'s gun. Maybe it's time to do a version with dLightning? =) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Holy cow! Dude, major congrats. =) Yeah man, put up a version with DookiLightning<a href="robowiki@action=edit&id=DookiLightning" class=wikipageedit>?</a> and see what happens. I want to know. =) Maybe wait for 0.3.1 to get to 2,000 battles, could still move a few points up or down from there. -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
+<p>
+Keep this up you could take the crown... O.o --<a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Impressive scores! It still is not as good as Dookious, but i would like to have such a movement :) --<a href="robowiki@Krabb" class=wikipagelink>Krabb</a>
+<p>
+Looks like the third member of <a href="robowiki@The2100Club" class=wikipagelink>The2100Club</a> pre-announced himself. If your gun will be on the same level as your movement, it is just a matter of time! @<a href="robowiki@Krabb" class=wikipagelink>Krabb</a>: Don't you hate it when people don't want to enter our 'race for 2050 in eighty days' (or weeks), but just beat us left, right and in the middle. :-(   -- <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+<UL >
+<li> Haha, I can't tell you why, but for some reason i get motivated instead of depressed by such impressive developments. I think we have our own way of doing things, "slowly but surely". May be one day this stratgie will pay off, he?! How many days are left, if we say 80 weeks? Circumnavigating the world is a complex business... PS: I'm quite satisfied with my ~10 PL ranking for now. --<a href="robowiki@Krabb" class=wikipagelink>Krabb</a>
+</UL>
+<p>
+<UL >
+<li> I didn't even know you had that race going! And <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>, you could seriously increase your score by adding a few more buffers to your movement. I found that it really helps to have different buffers of the same dimension, with different slices. For example, having lateral velocity slices at {3,6}, {1,3,5,7} and {1,2,3,4,5,6,7,8}. If you also add segmentation on distance, do the same thing, with {200,500}, {100,300,500,700} and {200,400,600,800}. @<a href="robowiki@Krabb" class=wikipagelink>Krabb</a>: This had been said other places, but get rid of your flattener and extra segments, and get EVERY single bug out of your code. Use the graphical debugging to check if you arrive at the place you think you will, when you think you will. The latest robocode  has the swing graphics lined up properly, so this is way easier than it used to be. Then add back your segments and flattener, one at a time. =) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<UL >
+<li> I know, I must be the only 2K bot with such a simple movement (and my gun is not that good either)  -- <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<li> <a href="robowiki@WeeksOnEnd" class=wikipagelink>WeeksOnEnd</a> uses a single movement buffer segmented only on lateral velocity (But sadly it no longer looks like a 2K bot).  And <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>: it wasn't that hard to line up swing graphics before - you just had to pause the screen then wipe another window over it to get it to repaint with the up-to-date state information :) -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
+</UL>
+</UL>
+<p>
+<UL >
+<li> I'm using debugging graphics since i discovered robocodeGL and my segmentation is simple and singlebuffered. And there is no flattener at all. My over all ranking is not as high as it could be, because the rolling dept is quite low, tick waves are just fired in the first 3 rounds and the segmentation isn't tuned. You can still join our race, as you still need to write your own gun. But look out! I'll start to do some segmentation reasearch in the next few days. Lets see how many nasty bugs are left :) --<a href="robowiki@Krabb" class=wikipagelink>Krabb</a>
+</UL>
+<p>
+<UL >
+<li> Ok, I'll start working on my gun soon. I just need to get my movement sorted first =). I still need to add a few more buffers (I'm only at 44 right now ;-) ), and then I'll start on a GF/PM gun. Where do I have to start? Can I start from <a href="robowiki@GFTargetingBot" class=wikipagelink>GFTargetingBot</a>, or do I have to start from scratch? -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+<UL >
+<li> First you have to start with HOT, than <a href="robowiki@LinearTargeting" class=wikipagelink>LinearTargeting</a>, <a href="robowiki@CircularTargeting" class=wikipagelink>CircularTargeting</a> and after that you need to mess around with <a href="robowiki@VirtualGuns" class=wikipagelink>VirtualGuns</a>, 	at least for a year. If you have finished this cycle you are allowed to start with your GF-gun... :) <a href="robowiki@GFTargetingBot" class=wikipagelink>GFTargetingBot</a> as a start is alright, <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a> started there too. --<a href="robowiki@Krabb" class=wikipagelink>Krabb</a>
+<UL >
+<li> In fact I did not start with <a href="robowiki@GFTargetingBot" class=wikipagelink>GFTargetingBot</a>, but with <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>'s <a href="robowiki@GuessFactorTargeting/Tutorial" class=wikipagelink>GuessFactorTargeting Tutorial</a> and <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>' <a href="robowiki@WaveSurfing/Tutorial" class=wikipagelink>WaveSurfing Tutorial</a>. Ok, I took the stuff I wanted (which is alot), but tried to keep my own ideas intact. As a framework <a href="robowiki@GFTargetingBot" class=wikipagelink>GFTargetingBot</a> is a good way to start, soon enough you will change the stuff that matters to your own taste.  -- <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</UL>
+</UL>
+<p>
+Congratulations! Hmm... so if you implemented a goto-surfer with <a href="robowiki@VisitCountStats" class=wikipagelink>VisitCountStats</a>, would its shorthand be WS-GT/VCS? =) -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
+<UL >
+<li> Yeah, and you're doing WS-GT/DC =) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+Started up 4 RRAH clients here for ya. =) So <a href="robowiki@DrussiousGT" class=wikipagelink>DrussiousGT</a> is your movement with Dooki's gun? --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
+<UL >
+<li> Yip. I'm surprised how high it ranks in the PL, considering it doesn't have a flattener, and only has 5 dimensions in the movement. I want to try weighting secondary waves a bit higher, now. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+I will start up a power-client as well to do battles, one of those core duo lab machines I use to benchmark. --<a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Started up some clients for you. What's new in this version? (How about a <a href="robowiki@DrussGT/VersionHistory" class=wikipagelink>/VersionHistory</a> ?) =)--<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
+<p>
+A couple segmentation tweaks, nothing much. I haven't had time for anything else. I'll release a version with my own gun some time next week (I hope). -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<UL >
+<li> Ha! That's the fastest I've ever seen a bot get to 2000 battles. I added 0.3.6, I'll remove 0.3.4 later. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+Buggy? <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison@game=roborumble&amp;name1=jk.mega.DrussGT%200.3.6&amp;name2=jk.mega.DrussGT%200.3.4">http://rumble.fervir.com/rumble/RatingDetailsComparison?game=roborumble&amp;name1=jk.mega.DrussGT%200.3.6&amp;name2=jk.mega.DrussGT%200.3.4</a> =(
+--<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
+<UL >
+<li> Yeah, I'm guessing it was my new deceleration simulation attempt. 0.3.6 has been removed. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> Found it! Never assume that distance is positive, especially when you made it negative a few lines above =). Basically, my goTo method wouldn't let me turn if I was traveling backwards =). 0.3.7 on the way. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+Who would have thought it possible - passing <a href="robowiki@RaikoMX" class=wikipagelink>RaikoMX</a> with a pattern matcher (and not even multiple choice, at that!) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Hey man, I don't know if you meant to leave both of them in there, but there's generally a rule of thumb that you should only have one version of a bot in the rumble at a time. Maybe you could remove <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a> / PM? Having two versions in as a temporary test is no big deal, but long-term, it kinda throws off what "Top 10 / 25 / 50" means if people leave multiple versions in the rumble. -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
+<p>
+<UL >
+<li> Will do =) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+2062.76	and more than 500 battles... your 2050+ ranking seems save ;( --<a href="robowiki@Krabb" class=wikipagelink>Krabb</a>
+<p>
+Indeed, this one look almost perfectly tied up with the Raiko version (<a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison@game=roborumble&amp;name1=jk.mega.DrussGT%200.4.4&amp;name2=jk.mega.DrussGT%200.3.10">[compare]</a>). -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
+<p>
+It's depressing, if I'd had this score 2 weeks ago, I would be in 4th by a good 7 points, but now I'm in 6th! =(. I really need to work on a decent gun...maybe give DC a shot. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+I didn't do this intentionally, but this DC gun seems to be quite a potent surfer killer. I'm counting 7 losses. Maybe I should try reducing the scan size even more....and put in a Vgun array with my VCS gun. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Look ma, no flattener! <a rel="nofollow" href="http://rumble.fervir.com/rumble/PremierLeague@game=roborumble">[PL]</a> -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+He, the 5th PL place is mine! :) --<a href="robowiki@Krabb" class=wikipagelink>Krabb</a>
+<p>
+Prove it! The only way that will happen is if I get 4th! :-D -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+<UL >
+<li> HeHe<a href="robowiki@action=edit&id=HeHe" class=wikipageedit>?</a>, <a rel="nofollow" href="http://rumble.fervir.com/rumble/PremierLeague@game=roborumble">[PL]</a>^^ --<a href="robowiki@Krabb" class=wikipagelink>Krabb</a>
+<li> You can have it back for a while, at least until I get a VCS antisurfer gun going =) - <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+Hey man, I hope you don't mind a word of wisdom from someone who has done this before - be careful not to over-optimize for the <a href="robowiki@MovementChallenge" class=wikipagelink>MovementChallenge</a> (or any challenge, really). I think MC2K7 is less susceptible to this than the old MC's, but I'm sure it can still be done. You could very well be increasing your MC2K7 score at the cost of overall (i.e., <a href="robowiki@RoboRumble" class=wikipagelink>RoboRumble</a>) performance. Just be sure to post to the rumble often enough to make sure that's not the case. =) Keep up the good work, though! -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
+<p>
+Yeah, 0.5.10's movement is what is currently under my DC gun in 0.7.0, so I don't think it's that bad. But thanks for the pointer. =) I'm trying to get my DC working as good as my VCS, and I have one idea, but it may not pay off. DC definitely has its problems, but this latest idea may make it good for movement. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+By the way, I'm not sure how long it's been happening, but I noticed some recent versions of <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a> were compiled with Java 6, so they're not getting any real battles from my clients. Just FYI - if you're not using anything Java 6, you'll get more battles faster with Java 5 compatibility. ;) -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
+<p>
+Wow, thanks for the heads up. It seems that when I changed to compiling with jikes to javac to accommodate Simonton's tree, I didn't add -target 1.5 to the <em>right</em> place in the compiler config. This latest version seems a bit buggy anyways...I'll get a new one up asap. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a> 
+<p>
+version 0.8.3 still is not Java 1.5 compatible, putting jk.mega.* back on my exclude list :-(   -- <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+I think I know what it is....some of the dependencies didn't get their .class file replaced with the new compile. Sorry 'bout that... -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<UL >
+<li> "Added 'Shakespearean Insulter' - inspired by the quotes in Dookious =)" - Haha, did not expect to see that when I checked your version history. =) Shakespearean Insulter, that sounds like a band name... -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
+<li> Run a battle against <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a> in your regular Robocode, and check the debug window at the end of each round. =) It's also partly inspired by <a rel="nofollow" href="http://www.pangloss.com/seidel/Shaker/index.html">[this]</a>, which I find hilarious! -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+So much for that <a href="robowiki@BrickWall" class=wikipagelink>BrickWall</a>, eh? =) Man, 2111, that's pretty solid, nice work. I suppose it may be time to start testing / tweaking <a href="robowiki@Dookious" class=wikipagelink>Dookious</a> again... -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
+<p>
+It was just a straight revert back to 0.7.23. Which has no precise max-GFs. So I'm thinking that my implementation might have had some bugs in it. Unless of course I broke something else in the process, which quite likely. My final implementation was to not allow the choosing of any angles that were outside the present maximum, but I think I should have allowed an extra half botwidth as well so that I could choose that very end angle if I had to. Maybe I'll give that another look, but for now I've got some different things I want to try. Including a major refactor. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+It's strange that I gained 5 points from adding a flattener, whereas <a href="robowiki@Dookious" class=wikipagelink>Dookious</a> gained nothing...maybe <a href="robowiki@Dookious" class=wikipagelink>Dookious</a>' strong anti-surfer gun takes care of the bots that his flattener would help against, negating the effect? -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Nice work! Hard to say where the difference is. It could be the <a href="robowiki@AntiSurfer" class=wikipagelink>AntiSurfer</a> gun. It could be that my base movement is already pretty well tweaked against top guns where the flattener would help. It could even be that my flattener just stinks, or that yours is killer! -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
+<p>
+My flattener only logs hits on 'real' waves, and it logs all waves, whether or not I was hit by the bullet, or even if the bullet got hit by one of my bullets. And it uses about 35 buffers (randomly selected, like my others) on all the same dimensions that I normally use. It seems <a href="robowiki@Chalk" class=wikipagelink>Chalk</a> has my number though, so I'll have to give it another look. I think the fact that Dookious has quite a few 'deep' buffers (ie. a buffer with more than 5 dimensions) makes his movement more unpredictable to the top guns (a sort of 'randomness' due to differing slices) whereas <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a> has several slices for every dimension, and each slice is paired with many other slice combinations, but never has more than 4 dimensions in one buffer, making more of a 'surfing' movement that can be predicted by very low rolling averages coupled with real-wave-only logging. Anyways...off to test against <a href="robowiki@Chalk" class=wikipagelink>Chalk</a>! -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Wow, did I read that right? You use 35 VCS buffers in your surfing movement? How many dimensions? That makes my movement, with just 5 unwheighted dimensions, look like childs play in terms of complexity... -- <a href="robowiki@ABC" class=wikipagelink>ABC</a>
+<UL >
+<li> Nope, wrong. I use 35 buffers just for the <em>flattener</em>. I have 100 buffers for the main surfing buffers =). The code was generated at random, and I just copied it into my initialization method =). I have 8 dimensions, but each buffer only ever has 4 at a time. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> Ok, why not go with the full set then? If my calculations are correct there are 162 possible combinations of 8 dimensions. :) -- <a href="robowiki@ABC" class=wikipagelink>ABC</a>
+<li> I think there are actually more, because some buffers have 3, 2, or even 1 dimension. And the reason I'm not going with more is because of memory limitations =). That's the same reason I have a maximum of 4 dimensions per buffer =) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> I calculated combinations of 8 in 4, 3, 2 and 1, and got to 162 (70 + 56 + 28 + 8), 163 if you have an unsegmented buffer. Multiplied by 31 bins and 4 bytes per bin gives 20212 bytes, should be doable. -- <a href="robowiki@ABC" class=wikipagelink>ABC</a>
+<li> <a rel="nofollow" href="http://www.mathsisfun.com/combinatorics/combinations-permutations-calculator.html">[Combinations and permutations calculator]</a> ... Yep! -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
+<li> Oh, yes, but it gets more complicated: each dimension can have 1 of 3 different 'slice' sets, course, medium or fine. This is something similar to TileCoding<a href="robowiki@action=edit&id=TileCoding" class=wikipageedit>?</a> that I think <a href="robowiki@Tigger" class=wikipagelink>Tigger</a> uses. Also, I'm using 101 bins (down from 151 to same memory). -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+I also use something in that range =) : 34, unweighted, varying dimensions and segments, but not random. I don't have a second set of 34 for my flattener, though, the flattening is also done right in those same buffers. Then I have 3 separate buffers for the non-firing waves flattener. -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
+<p>
+Psh, 3 releases in one day is nothing. =) Also, by the way, I think some of your recent ratings under <a href="robowiki@DrussGT/VersionHistory" class=wikipagelink>/VersionHistory</a> are off by 1 (or 100 =)). -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
+<p>
+<UL >
+<li> Haha, it's more like 3 releases in 4 hours =). And thanks for that catch...I probably would have left it like that forever =) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+Version 1.0.0 is incompatible with java 1.5. :/ -- <a href="robowiki@ABC" class=wikipagelink>ABC</a>
+<p>
+Oh gosh, not this again. I must have not replaced the classes from one of my reverts...give me a minute and it'll be fixed... -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Holy.....73% against <a href="robowiki@SandboxDT" class=wikipagelink>SandboxDT</a> after 4 battles.....it might be worth keeping this one even if the points dropped a bit... -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+I know it's just one battle, but Shadow 3.77v just got 77.7% against DT! -- <a href="robowiki@ABC" class=wikipagelink>ABC</a> 
+<p>
+I'm guessing it's because my flattener only recognizes 'real' waves...adding tick waves would make it quite a bit slower, but if it's what it takes to improve my score ;-) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+<UL >
+<li> A couple thoughts. First, I think it would take at least 100 matches for each of you against DT to really judge who's better against DT. Yes, battles really are that random. =) Second, it might be a good starting place to try tweaking your flattener, but I doubt you could jump to that conclusion so quickly. The last time I tested (which was, admittedly, a while ago), my flattener made almost zero different against <a href="robowiki@SandboxDT" class=wikipagelink>SandboxDT</a> - and that <em>was</em> tested over hundreds of battles.  (The same flattener upped my score vs Ascendant by over 10%, so it wasn't a useless flattener...) -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+<UL >
+<li> Maybe I should have clarified =). The 73% against DT was due (I think) to my change in segmentation for 1.0.1. And my flattener boosted my score by about 10% against Ascendant as well. But adding tick-waves to my flattener would help against other bots, I think. Even if it didn't help against DT. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+Congratulations on your new crown! :) Version 1.0.17NVBW is clearly ahead of Dookious, your precise bot width code wasn't very effective in the rumble after all. -- <a href="robowiki@ABC" class=wikipagelink>ABC</a>
+<p>
+Thanks! =) Yeah, seems not. I've just had some ideas on improving the precise botwidth, inspired by Rednaxela's animations, and I see some of the assumptions I took with it aren't quite right. So perhaps I can improve even further than simply removing it. I also had the idea of doing DC surfing weighted parallel with VCS surfing, I remember Stormrider had quite a different set of problembots from <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a>. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Congratulations indeed! You just passed halfway mark from <a href="robowiki@The2100Club" class=wikipagelink>The2100Club</a> to the The2200Club<a href="robowiki@action=edit&id=The2200Club" class=wikipageedit>?</a> of legend! In any case, nice stuff, hopefully you can indeed improve further than simply removing it :) -- <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Hmm, interesting, looking at the comparison between your new version and your last [<a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison@game=roborumble&amp;name1=jk.mega.DrussGT%201.0.20NVBW&amp;name2=jk.mega.DrussGT%201.1.0">[here]</a>], at least as far as <a href="robowiki@UbaRamLT" class=wikipagelink>UbaRamLT</a> goes it isn't doing any better desipite adding the gunheat waves like I have in <a href="robowiki@RougeDC" class=wikipagelink>RougeDC</a>, and that's one rambot that <a href="robowiki@RougeDC" class=wikipagelink>RougeDC</a> is doing better with than <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a> (~81% as opposed to ~74%). Perhaps the key to <a href="robowiki@RougeDC" class=wikipagelink>RougeDC</a>'s rambot success is not entirely in the gunheat waves... -- <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+I was tweaking the attack angles against <a href="robowiki@GrubbmThree" class=wikipagelink>GrubbmThree</a>, maybe I'll have to add some other <a href="robowiki@RamBots" class=wikipagelink>RamBots</a> to my testbed. Also maybe I'll watch some battles to see what you're doing there in <a href="robowiki@RougeDC" class=wikipagelink>RougeDC</a> to get those scores =). I think your precise botwidth helps a lot with the close-range AntiRamBot<a href="robowiki@action=edit&id=AntiRamBot" class=wikipageedit>?</a> movement, because 1 pixel different can quite often make the difference between getting hit and dodging a bullet. But now I've released 2 new versions, one leaving out the <a href="robowiki@DynamicClustering" class=wikipagelink>DynamicClustering</a> and the other leaving out this 2 tick advantage, we'll see what happens. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+By the way, I've noticed how <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a> somehow outputs to the console when run in the rumble and I noticed that something is off with <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a>'s hitrate calculation. Against pmc.SniperBot<a href="robowiki@action=edit&id=SniperBot" class=wikipageedit>?</a> which I think stands still it outputs things like "My hitrate: 1.5" and "My hitrate: 1.2857142857142858" sometimes. Is this a known issue? -- <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Wow, it doesn't print to the rumble in my local versions. Checking in the gun, I see that the System.out.println("My hitrate: " + (bulletHit/bulletsPassed)); is placed inside the gun constructor, and the gun is a non-static object in the main bot. So maybe Robocode 1.6 has a bug that allows printing to the console from the constructors? Because this doesn't happen in 1.5.4 with the rumble. And about that buggy hitrate - the only thing it controls is whether or not I fire power 3 bullets. It seems it's buggy only at close range. I'll take a look at it, but I've got other stuff on my plate at the moment, like getting this weighting system working, oh yeah and that integral calculus test in 12 hours time that I should theoretically be studying for =) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+<UL >
+<li> This sounds like an interesting problem in itself: if you've got a calc test in 12 hours, X bugs in your weighting system, and you require 3 hours of sleep before the exam, what is the maximum value of X for which your new bot version can be ready before the test? :-P -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+<UL >
+<li> Well, let's define this problem a bit more accurately: I need to wait for my current version to get more battles, I need 7 hours sleep before the exam (it's night here - doh) and there are an infinite number of possible ways of doing the weighting system, my goal is to find one that yields better results than no weighting system. I've now given up on weighting the individual sets of bins, instead weighting the entire buffer. 200 round tests against <a href="robowiki@RaikoMicro" class=wikipagelink>RaikoMicro</a> reveal that there have been no improvements so far. Tests against Ascendant reveal that using this weighting on the flattener, however, *is* effective. But that's to be determined by tomorrow's release. And I really need to work on my gun, anyways. There, just plug it into your calculator, and the answer says that I'm going to bed right now =) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+<UL >
+<li> Ah, bringing back fond memories of academic crunch time + Robocode addiction. =) Good luck on your exam! -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+<UL >
+<li> Quite busy I see :) Good luck on that exam! By the way, I was wondering if you'd have any objections if I released two temporary bots to the rumble in the wiki package: One that uses <a href="robowiki@RougeDC" class=wikipagelink>RougeDC</a>'s gun and <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a>'s movement, and one that's the other way around. I highly suspect they'll both rate somewhere between <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a> and <a href="robowiki@RougeDC" class=wikipagelink>RougeDC</a>, but I think the bot-by-bot comparison may be interesting. Of course, I'll wait to add them till I both get your word, and the new bots currently in the rumble get to the 2000 battle mark, and I'll remove the temporary ones after they get to the 2000 battle mark. Any objections, and if not, any naming suggestions? :) -- <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>
+</UL>
+<p>
+<UL >
+<li> Sure, go ahead. But be warned, <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a>'s movement is very sensitive to the gun taking too much CPU time because it uses the majority of the tick whenever it encounters a new wave, or gets data from a bullet hit. Of course, the rest of the time it uses almost nothing, which is why it seems to run pretty fast ;-). Anyways, I suggest you use 1.1.3, but do a search for all references to areaNormalize(float[] bins) and replace it with a call to heightNormalize(float[] bins). I put forward the name <a href="robowiki@RoussGT" class=wikipagelink>RoussGT</a> - thus keeping the majority "Rouge" as well as signifying the GT movement  =). Of course, Scourge sounds better - it's your call =) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a> - 1 hour till exam
+</UL>
+<p>
+<UL >
+<li> Hm, I think I'll go with <a href="robowiki@RoussGT" class=wikipagelink>RoussGT</a> for the one with <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a>'s movement and my gun, and then <a href="robowiki@DrugeDC" class=wikipagelink>DrugeDC</a> for the one with <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a>'s gun and my DC movement. They'll go up around when my last release of <a href="robowiki@RougeDC" class=wikipagelink>RougeDC</a> gets close to 2000 battles, though that could be a while with how the rumble seems to be running slowish in the last 12 hours (probably partially my fault though, as I only have my slowest machine running the rumble right now, while my fastest is doing <a href="robowiki@RoboResearch" class=wikipagelink>RoboResearch</a>). In any case may your exam be successful =) -- <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>
+</UL>
+<p>
+<UL >
+<li> Okay, I have wiki.<a href="robowiki@RoussGT" class=wikipagelink>RoussGT</a> and wiki.<a href="robowiki@DrugeDC" class=wikipagelink>DrugeDC</a> ready now (took a bit to make <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a> into a reusable component which could have features like gun or movement enabled/disabled). They're based on <a href="robowiki@RougeDC" class=wikipagelink>RougeDC</a> Gamma4 and <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a> 1.1.3 with the normalization change you suggested. Should I wait till <a href="robowiki@RougeDC" class=wikipagelink>RougeDC</a> Gamma4 and <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a> 1.1.4 are at 2000 battles before releasing the hybrids, or think they should be released right about now? :) -- <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>
+</UL>
+<p>
+<UL >
+<li> Just go ahead and release them. Getting <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a> into a component form should just require: commenting out all references to dgun, making it no longer extend <a href="robowiki@AdvancedRobot" class=wikipagelink>AdvancedRobot</a>, trying to compile it, and adding a reference to the <a href="robowiki@AdvancedRobot" class=wikipagelink>AdvancedRobot</a> 'father' object (that should be a constructor parameter) wherever there is an error =) But maybe you have some other structural requirements? I personally think part of the fun is building your bot around the structure that Robocode gives us =) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+<UL >
+<li> Alright! They're out! Well, I also had to separate out "init()" and "runTick(List&lt;Events&gt; events)" from the "run()" code in order to make it fit in the bot structure I use. I also opted to add "useGun", "useRadar", and "useSurf" boolean flags in the constructor instead of simply commenting out parts. Actually, it really surprised me how monolithic <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a>'s code is when I first looked at it. Anyways, about <a href="robowiki@RoussGT" class=wikipagelink>RoussGT</a> and <a href="robowiki@DrugeDC" class=wikipagelink>DrugeDC</a>, note that my gun from <a href="robowiki@RougeDC" class=wikipagelink>RougeDC</a> Gamma4 is looking like the weakest yet since Gamma1, so it's possible <a href="robowiki@RoussGT" class=wikipagelink>RoussGT</a> might not perform so great even compared my Gamma1 and Gamma2 releases of <a href="robowiki@RougeDC" class=wikipagelink>RougeDC</a> despite the stronger movement. In any case, this should be interesting. -- <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>
+</UL>
+<p>
+<UL >
+<li> Monolithic is the right word =). The only restructure since it's <a href="robowiki@BasicSurfer" class=wikipagelink>BasicSurfer</a> roots is cleaning up the getBestPoints<a href="robowiki@action=edit&id=BestPoints" class=wikipageedit>?</a> method handling both the first and second waves (it used to be handled in the getDanger function, as did the buffer generation - yuk!), and making the buffers a class of their own. Other than that it's just had stuff added to it. I tried to make any additions as forward-compatible as possible, so other than getting pretty big, it's actually pretty clean, follows an inline code path, no recursion, stuff like that. The worst of it was removed in 1.1.3, take a look at 1.1.1 if you want to see some ugly code =) I blame it on my never taking any courses in OO programming or anything. Anyways, coding is just a hobby for me =) Give me real robots any day =) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+<UL >
+<li> Well, I haven't taken an OO programming courses, but personally I have a taste for keep-each-file-small practices and avoid repeated code like you have for setting up the horde of buffers =).  Anyways, here's some comparison links for quick reference if you're interested: <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison@game=roborumble&amp;name1=wiki.DrugeDC%201.0&amp;name2=ags.rougedc.RougeDC%20Gamma4">[DrugeDC to RougeDC]</a>, <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison@game=roborumble&amp;name1=wiki.DrugeDC%201.0&amp;name2=jk.mega.DrussGT%201.1.3">[DrugeDC to DrussGT]</a>, <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison@game=roborumble&amp;name1=wiki.RoussGT%201.0&amp;name2=ags.rougedc.RougeDC%20Gamma4">[RoussGT to RougeDC]</a>, and <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison@game=roborumble&amp;name1=wiki.RoussGT%201.0&amp;name2=jk.mega.DrussGT%201.1.3">[RoussGT to DrussGT]</a> =) -- <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>
+</UL>
+<p>
+<UL >
+<li> Hmmm... I think that's the most compact way of keeping a huge set of 'pre-determined random' buffers. I don't want to actually determine them at runtime, because then every one-in-10000 battles I might end up without any lateral-velocity or something funny like that. It might look random but I actually had to generate about 3 sets to get one that is fairly evenly spread, and doesn't have to many duplicate/similar entries. I think it's a lot more compact than <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>'s method of making a seperate class for each buffer =) That would be *very* impractical for me, with my horde =) He has something simple, like 20. I guess I could put them in a seperate class with a static method, but for me that doesn't seem a more elegant method. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+<UL >
+<li> Well, <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>'s method makes me cringe even more, but I would prefer a more systematic/programmable way for generating the list at runtime. In any case: What the heck though? So many buffers? You're a madman! A winning madman though =) -- <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>
+<UL >
+<li> Yep, crazy. But it works like a charm. Go figure. =) I'll make a special effort to come up with a cleaner way to load it. How does putting the slices into a giant 2 dimensional array sound, then running it through a loop and building the buffers? :-p -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+</UL>
+<p>
+<UL >
+<li> Yeah, yeah, go ahead and make fun of me. :-P It was a tough call, but in the end I opted for a class wrapper around each buffer to allow for cleaner / more robust execution code. And hey, it's Java, you can't be afraid of having lots of classes! =) -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+<UL >
+<li> It's not lots of classes that make me cringe, it's mass duplicated code even if each bit is small =P -- <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>
+</UL>
+<p>
+<UL >
+<li> Hehe - well, I don't really consider my setup to have any duplicated code. :-P I'm also pretty anal about that. And the code for handling my buffers and sets of buffers is pretty clean as a result of the class structure. Reflection would probably have given me an even cleaner setup, but I'm not too familiar with it yet, and it could have been real slow... -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
+<UL >
+<li> Hmmm.... I see the lines words "public class" duplicated a lot. There also seems to be a huge number of unnecessary constructors :-p -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<UL >
+<li> "Code" == "semicolon"! ;) -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
+</UL>
+</UL>
+</UL>
+<p>
+Well, I think the buffer import code is much better now, and the buffer extraction code, while it may be more messy and complicated, is actually much more technologically advanced, as all floating point comparisons are limited to the absolute minimum, and a huge number of loops are avoided. It could be made to look neater, but that would require a redesign of the entire mess, something I certainly don't have the time for now. Also, while being much neater, it would be less readable, because of all the stuff that would have to be generated beforehand. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
-It seems that somewhere along the gun adaption <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> decided he would start going for the surfers... Except for Hydra, <a href="robowiki?WaveSerpent" class=wikipagelink>WaveSerpent</a> (its close) and Shadow, for some reason <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> (who I used to beat fairly easily, but maybe more matches are needed) and the yet unuploaded Dookious coming in about 47%. I rose above Ascendant, burnt Phoenix to ashes (ok I'll stop now, I promise =) ) and I think got a terrific score against the Raiko family. All in all, I'm 100% happy with the gun transition to precise GFs. I even found a bug in the gun code, so it runs a lot faster than before. My TCRM seasons take place in about 2/3 the time they used to. Thanks for the inspiration, <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>!! -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+It seems that somewhere along the gun adaption <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a> decided he would start going for the surfers... Except for Hydra, <a href="robowiki@WaveSerpent" class=wikipagelink>WaveSerpent</a> (its close) and Shadow, for some reason <a href="robowiki@CassiusClay" class=wikipagelink>CassiusClay</a> (who I used to beat fairly easily, but maybe more matches are needed) and the yet unuploaded Dookious coming in about 47%. I rose above Ascendant, burnt Phoenix to ashes (ok I'll stop now, I promise =) ) and I think got a terrific score against the Raiko family. All in all, I'm 100% happy with the gun transition to precise GFs. I even found a bug in the gun code, so it runs a lot faster than before. My TCRM seasons take place in about 2/3 the time they used to. Thanks for the inspiration, <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>!! -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <p>
-Haha! Nice stuff <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>! I'm glad I was able to inspire you =) I'm glad at least some of the qualities that made my DC gun differant than most are not complete garbage =) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+Haha! Nice stuff <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>! I'm glad I was able to inspire you =) I'm glad at least some of the qualities that made my DC gun differant than most are not complete garbage =) -- <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
-Maybe I take back what I said about hitting surfers. Yeow... my gun must have been terrible at it before. My TC2K7 score for the surfer sub-catagory is now a mind-numbing 66.61 after the first 4 seasons. ~57 against Shadow. I really think I need to get started on an anti-surfer gun... if I ever get the time. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+Maybe I take back what I said about hitting surfers. Yeow... my gun must have been terrible at it before. My TC2K7 score for the surfer sub-catagory is now a mind-numbing 66.61 after the first 4 seasons. ~57 against Shadow. I really think I need to get started on an anti-surfer gun... if I ever get the time. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=DrussGT" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=DrussGT">View other revisions</a><br>Last edited August 10, 2008 20:28 EST by <a href="robowiki?Skilgannon" title="ID 14128 from wblv-ip-pcache-1-vif0.telkom-ipnet.co.za">Skilgannon</a> <a href="robowiki?action=browse&diff=1&id=DrussGT">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=DrussGT" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=DrussGT">View other revisions</a><br>Last edited August 10, 2008 20:28 EST by <a href="robowiki@Skilgannon" title="ID 14128 from wblv-ip-pcache-1-vif0.telkom-ipnet.co.za">Skilgannon</a> <a href="robowiki@action=browse&diff=1&id=DrussGT">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

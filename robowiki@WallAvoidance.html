@@ -3,16 +3,16 @@
 <META NAME='KEYWORDS' CONTENT='Wall, Avoidance'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=WallAvoidance">WallAvoidance</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext>Related pages: <a href="robowiki?Movement" class=wikipagelink>Movement</a> - <a href="robowiki?Movement/CodeSnippetGoTo" class=wikipagelink>Movement/CodeSnippetGoTo</a> - <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=WallAvoidance">WallAvoidance</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Related pages: <a href="robowiki@Movement" class=wikipagelink>Movement</a> - <a href="robowiki@Movement/CodeSnippetGoTo" class=wikipagelink>Movement/CodeSnippetGoTo</a> - <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a>
 <hr noshade class=wikiline size=1>
-I need serious help with this wall avoidance issue. This is the weakest spot of <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> at the moment. Is there some simple strategies I can use that doesn't end in the robot oscillation, quite predictably, against the walls? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+I need serious help with this wall avoidance issue. This is the weakest spot of <a href="robowiki@Marshmallow" class=wikipagelink>Marshmallow</a> at the moment. Is there some simple strategies I can use that doesn't end in the robot oscillation, quite predictably, against the walls? -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-The easiest way I've found to avoid walls is to use a movement method that picks an (x,y) coordinate to move to. As long as the coordinate you pick is within the rectangle (18.0, 18.0)-(battlefieldwidth - 18.0, battlefieldheight - 18.0) you won't hit any walls. You can make the wall margin greater than 18.0 to account for the fact that bots make wide turns at high speed. Code for moving to an (x,y) coordinate is readily available. There is an extremely small piece of code to do this in <a href="robowiki?DuelistMicro" class=wikipagelink>DuelistMicro</a>'s source, (It has to fit into a microbot, remember? :-P) though it occaisionally drives the bot in the wrong direction (about once per round at 800x600). As far as I know this is the smallest possible code. -- <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+The easiest way I've found to avoid walls is to use a movement method that picks an (x,y) coordinate to move to. As long as the coordinate you pick is within the rectangle (18.0, 18.0)-(battlefieldwidth - 18.0, battlefieldheight - 18.0) you won't hit any walls. You can make the wall margin greater than 18.0 to account for the fact that bots make wide turns at high speed. Code for moving to an (x,y) coordinate is readily available. There is an extremely small piece of code to do this in <a href="robowiki@DuelistMicro" class=wikipagelink>DuelistMicro</a>'s source, (It has to fit into a microbot, remember? :-P) though it occaisionally drives the bot in the wrong direction (about once per round at 800x600). As far as I know this is the smallest possible code. -- <a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <hr noshade class=wikiline size=1>
-Has anyone tried David <a href="robowiki?David_McCoy" class=wikipagelink>David McCoy</a>'s <a href="robowiki?WallAvoidance" class=wikipagelink>WallAvoidance</a> method at <a rel="nofollow" href="http://www-106.ibm.com/developerworks/library/j-fwa/index.html">[developerWorks]</a>? It works by seeing if it is necessary to adjust for walls, and if it is necessary it factors in a bearing to the middle of the BattleField<a href="robowiki?action=edit&id=BattleField" class=wikipageedit>?</a>. It seems to work quite well, but sometimes seems to go totally the wrong way... -- <a href="robowiki?Jomel" class=wikipagelink>Jomel</a>
+Has anyone tried David <a href="robowiki@David_McCoy" class=wikipagelink>David McCoy</a>'s <a href="robowiki@WallAvoidance" class=wikipagelink>WallAvoidance</a> method at <a rel="nofollow" href="http://www-106.ibm.com/developerworks/library/j-fwa/index.html">[developerWorks]</a>@ It works by seeing if it is necessary to adjust for walls, and if it is necessary it factors in a bearing to the middle of the BattleField<a href="robowiki?action=edit&id=BattleField" class=wikipageedit>?</a>. It seems to work quite well, but sometimes seems to go totally the wrong way... -- <a href="robowiki@Jomel" class=wikipagelink>Jomel</a>
 <hr noshade class=wikiline size=1>
-Somewhat depending on your movement system the following piece of code (which I found the first time in <a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a> I think) could make for a huge improvement in wall avoidance:<pre>setMaxVelocity(Math.abs(getTurnRemaining()) &lt; 40 ? preferredVelocity : 0.1);</pre>You need to do this almost every turn. The idea here is to push the brake pedal hard if you find yourself having to make a really sharp turn. I'm working with a new movement system for <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a>, somewhat on the basis of an <a href="robowiki?AngleGenerator" class=wikipagelink>AngleGenerator</a>. This allows me to make movement descisions very often and makes for a very fluid movement. With this code plugged in I hit the wall less than 2% of the rounds. Without it I hit the wall about 5 times every round. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Somewhat depending on your movement system the following piece of code (which I found the first time in <a href="robowiki@Cigaret" class=wikipagelink>Cigaret</a> I think) could make for a huge improvement in wall avoidance:<pre>setMaxVelocity(Math.abs(getTurnRemaining()) &lt; 40 ? preferredVelocity : 0.1);</pre>You need to do this almost every turn. The idea here is to push the brake pedal hard if you find yourself having to make a really sharp turn. I'm working with a new movement system for <a href="robowiki@Marshmallow" class=wikipagelink>Marshmallow</a>, somewhat on the basis of an <a href="robowiki@AngleGenerator" class=wikipagelink>AngleGenerator</a>. This allows me to make movement descisions very often and makes for a very fluid movement. With this code plugged in I hit the wall less than 2% of the rounds. Without it I hit the wall about 5 times every round. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <hr noshade class=wikiline size=1>
 Any idea why this doesn't work:<pre>
 if (getX()&lt;20 || getY()&lt;20 || getX()&gt;getBattleFieldWidth()-20 || getY()&gt;getBattleFieldHeight()-20) {
@@ -28,47 +28,47 @@ else {
     nearwall=false;
 }</pre>
 <p>
-nearwall is set to false originally, and this is the first thing in the run method.  afterwards it goes ahead(100*direction).  The onscannedrobot keeps it perpedicular. When i run it it hits walls, it notices when it is "still near wall", but it never says "near wall", so never changes direction until it crashes (onHitWall<a href="robowiki?action=edit&id=HitWall" class=wikipageedit>?</a> changes direction too) -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+nearwall is set to false originally, and this is the first thing in the run method.  afterwards it goes ahead(100*direction).  The onscannedrobot keeps it perpedicular. When i run it it hits walls, it notices when it is "still near wall", but it never says "near wall", so never changes direction until it crashes (onHitWall<a href="robowiki@action=edit&id=HitWall" class=wikipageedit>?</a> changes direction too) -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-if your distance is less then 18 to the wall you just hit it, because 2*18 is the length of your robot. so if you have for example a distance of 25 to a wall and you are moving with velocity 8 against the wall you will have a distance of 25-8=17 the next tick (this means you just hit the wall). as a result the chance that you are once in the range of 18-20 to a wall is really small compared to all possible situations you will hit the wall in the next tick (especially if you are moving with full speed). have a look at how <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>'s bots do this (at least some of them) they calculate their position for the next tick and then check if this is a "dangerous" position. -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+if your distance is less then 18 to the wall you just hit it, because 2*18 is the length of your robot. so if you have for example a distance of 25 to a wall and you are moving with velocity 8 against the wall you will have a distance of 25-8=17 the next tick (this means you just hit the wall). as a result the chance that you are once in the range of 18-20 to a wall is really small compared to all possible situations you will hit the wall in the next tick (especially if you are moving with full speed). have a look at how <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>'s bots do this (at least some of them) they calculate their position for the next tick and then check if this is a "dangerous" position. -- <a href="robowiki@Rozu" class=wikipagelink>rozu</a>
 <p>
-I'm working on a whole new movement system, but i just wanted to try this.  The new one will use Rectange2D.contains.  So the best way to improve this system is to increase the 20.  I'll give 30 a try, 18+8=26, so 30 seems a good buffer. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+I'm working on a whole new movement system, but i just wanted to try this.  The new one will use Rectange2D.contains.  So the best way to improve this system is to increase the 20.  I'll give 30 a try, 18+8=26, so 30 seems a good buffer. -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-No, it seems that wasn't the problem.  I even tried it with 50 and it didn't work.  It's not that it's discovering it's near the wall too late, it's the fact that it is only running the "still near wall" code, and not the "near wall" code. (i made the distinction so it wouldn't just go backwards and fowards near the wall, and would instead wait until it was away from the wall before starting again) -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+No, it seems that wasn't the problem.  I even tried it with 50 and it didn't work.  It's not that it's discovering it's near the wall too late, it's the fact that it is only running the "still near wall" code, and not the "near wall" code. (i made the distinction so it wouldn't just go backwards and fowards near the wall, and would instead wait until it was away from the wall before starting again) -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-What I generally do is project my movement forward (i.e. getX() + Math.sin(get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>())*currentDirection*30 or something) and see if that point is inside the field rectangle (it doesn't matter if you're close to the wall if you're not going toward it) -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+What I generally do is project my movement forward (i.e. getX() + Math.sin(get<a href="robowiki@HeadingRadians" class=wikipagelink>HeadingRadians</a>())*currentDirection*30 or something) and see if that point is inside the field rectangle (it doesn't matter if you're close to the wall if you're not going toward it) -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-Yeah, i plan to do something like that when i get around to a new movement system, i'm just trying to work out why this one doesn't work, to try and improve my java knowledge. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+Yeah, i plan to do something like that when i get around to a new movement system, i'm just trying to work out why this one doesn't work, to try and improve my java knowledge. -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-If you're using ahead() and not setAhead() then your method isn't interrupting until you hit the wall, and that's the only time the remainder has a chance to look and actually see if you're near a wall. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+If you're using ahead() and not setAhead() then your method isn't interrupting until you hit the wall, and that's the only time the remainder has a chance to look and actually see if you're near a wall. -- <a href="robowiki@Kuuran" class=wikipagelink>Kuuran</a>
 <p>
-That still doesn't explain why the nested if never comes up true (ie. why it always prints "still near wall" and never "near wall".  -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+That still doesn't explain why the nested if never comes up true (ie. why it always prints "still near wall" and never "near wall".  -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-You used an assignment instead of a conditional. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+You used an assignment instead of a conditional. -- <a href="robowiki@Kuuran" class=wikipagelink>Kuuran</a>
 <p>
-So i did, thankyou.  All this for want of an equals sign... -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+So i did, thankyou.  All this for want of an equals sign... -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-It's a common pitfall for all C based languages (and other languages too where you can use an assignment as an expression). In your case the compiler would have cought it if it wasn't that the variable involved is a boolean. One way to avoid this is to use the unary not operator, <em>!</em>, when testing booleans. Like so:<pre>if (!nearwall) { ...</pre>This can be read as "if not nearwall" which better expresses what you intend and thus is better code. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+It's a common pitfall for all C based languages (and other languages too where you can use an assignment as an expression). In your case the compiler would have cought it if it wasn't that the variable involved is a boolean. One way to avoid this is to use the unary not operator, <em>!</em>, when testing booleans. Like so:<pre>if (!nearwall) { ...</pre>This can be read as "if not nearwall" which better expresses what you intend and thus is better code. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-I actually knew that... not sure why i didn't use it... :-/ -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+I actually knew that... not sure why i didn't use it... :-/ -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-whats this <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>
+whats this <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a>
 <p>
 <p>
-Watch Shadow and <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a>. See how they move as the approach the wall? Thats wall smoothing. -- jim
+Watch Shadow and <a href="robowiki@SandboxDT" class=wikipagelink>SandboxDT</a>. See how they move as the approach the wall? Thats wall smoothing. -- jim
 <hr noshade class=wikiline size=1>
-I'm trying <a href="robowiki?WallAvoidance" class=wikipagelink>WallAvoidance</a> with a <a href="robowiki?CustomEvent" class=wikipagelink>CustomEvent</a>. Anyone done this already? -- <a href="robowiki?Qetu" class=wikipagelink>Qetu</a>
+I'm trying <a href="robowiki@WallAvoidance" class=wikipagelink>WallAvoidance</a> with a <a href="robowiki@CustomEvent" class=wikipagelink>CustomEvent</a>. Anyone done this already? -- <a href="robowiki@Qetu" class=wikipagelink>Qetu</a>
 <p>
-Yeah, i worked on this for quite a while but never quite managed to get it to work for me. The problem i found was that although you could get it to work successfully in not hitting the walls, it tended to degrade my performance against any wall segmenters (or pattern matchers to a lesser extent). I rightly or wrongly concluded that this was because of the instantanious nature with which the wall avoidance was initiated, and that it involved an almost complete change of movement pattern. I suppose you could write more complex event handlers to implement an approximation to <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>, but i concluded it was easier to actually check the projected destination of my robot and adjust accordingly to avoid the problem, rather than trying to deal with it once the problem had arisen. Prevention is better than cure, or so they say anyway. Good luck to you... --<a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+Yeah, i worked on this for quite a while but never quite managed to get it to work for me. The problem i found was that although you could get it to work successfully in not hitting the walls, it tended to degrade my performance against any wall segmenters (or pattern matchers to a lesser extent). I rightly or wrongly concluded that this was because of the instantanious nature with which the wall avoidance was initiated, and that it involved an almost complete change of movement pattern. I suppose you could write more complex event handlers to implement an approximation to <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a>, but i concluded it was easier to actually check the projected destination of my robot and adjust accordingly to avoid the problem, rather than trying to deal with it once the problem had arisen. Prevention is better than cure, or so they say anyway. Good luck to you... --<a href="robowiki@Brainfade" class=wikipagelink>Brainfade</a>
 <p>
-Righto! Prevention <strong>is</strong> better than cure. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Righto! Prevention <strong>is</strong> better than cure. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 the two good methods seem to be: 
 create a rectangle slightly smaller than the battlefield
 1. bounce if your predicted posistion is outside of rectangle a
 2. wall smooth if your predicted posistion is outside of recangle a
 <p>
-Just to add to the section, the following code does wall avoidance with custom events. As an example, i just made the robot to look at the center of the field and move ahead a bit whenever it is very near the wall. The code can be suitably modified to do <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> as well. 
+Just to add to the section, the following code does wall avoidance with custom events. As an example, i just made the robot to look at the center of the field and move ahead a bit whenever it is very near the wall. The code can be suitably modified to do <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a> as well. 
 <p>
 <pre>class NearWallEvent extends Condition
 {
@@ -106,22 +106,22 @@ public void onCustomEvent(CustomEvent ce)
         this.resume();
     }        
 }</pre>
--- <a href="robowiki?AxialXForm" class=wikipagelink>AxialXForm</a>
+-- <a href="robowiki@AxialXForm" class=wikipagelink>AxialXForm</a>
 <hr noshade class=wikiline size=1>
 Yet another "any idea why this code doesn't work"?:
 <p>
 <PRE >
-		if(!field.contains(getX() + getVelocity()*Math.sin(get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>()),getY() + getVelocity()*Math.cos(get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>()))) {
+		if(!field.contains(getX() + getVelocity()*Math.sin(get<a href="robowiki@HeadingRadians" class=wikipagelink>HeadingRadians</a>()),getY() + getVelocity()*Math.cos(get<a href="robowiki@HeadingRadians" class=wikipagelink>HeadingRadians</a>()))) {
 			ahead= -ahead ;
 		}
 		setAhead(ahead*md);
 </PRE>
 <p>
-where ahead is either 1 or -1, and md is a constant. My bot seems to vibrate and get stuck(won't ever come off) on the wall. -- <a href="robowiki?Nantuko_Primus" class=wikipagelink>Nantuko Primus</a>
+where ahead is either 1 or -1, and md is a constant. My bot seems to vibrate and get stuck(won't ever come off) on the wall. -- <a href="robowiki@Nantuko_Primus" class=wikipagelink>Nantuko Primus</a>
 <p>
 <UL >
 <UL >
-<li> Now that I have read your whole question: It takes you 5 ticks to slow down, during which you travel 8 + 6 + 4 + 2 + 0 pixels. At some point I would guess you get more than one pixel inside your boundary (I assume field is smaller than the whole field) and you oscillate. You oscilate because when your velocity is zero you are using getX() and getY() to see if you are out of bounds. It is possible to do this with velocities larger that zero if you are in the corners too. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<li> Now that I have read your whole question: It takes you 5 ticks to slow down, during which you travel 8 + 6 + 4 + 2 + 0 pixels. At some point I would guess you get more than one pixel inside your boundary (I assume field is smaller than the whole field) and you oscillate. You oscilate because when your velocity is zero you are using getX() and getY() to see if you are out of bounds. It is possible to do this with velocities larger that zero if you are in the corners too. -- <a href="robowiki@Jim" class=wikipagelink>jim</a>
 </UL>
 </UL>
 <p>
@@ -133,12 +133,12 @@ Why not do:
 		setAhead(ahead*md);
 
 </pre>
-or something like that?  (I don't know what md is, maybe you'd want to use a smaller number).  The problem is that when you change ahead, the sign of the velocity doesn't change for several more turns, what's important is what direction you're <em>trying</em> to go. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+or something like that?  (I don't know what md is, maybe you'd want to use a smaller number).  The problem is that when you change ahead, the sign of the velocity doesn't change for several more turns, what's important is what direction you're <em>trying</em> to go. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-Thanks! I realized the problem in Spanish class today. Thanks for the help though. -- <a href="robowiki?Nantuko_Primus" class=wikipagelink>Nantuko Primus</a>
+Thanks! I realized the problem in Spanish class today. Thanks for the help though. -- <a href="robowiki@Nantuko_Primus" class=wikipagelink>Nantuko Primus</a>
 <p>
 <hr noshade class=wikiline size=1>
-Why don't use <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a> - that's very simple (you don't need to think about other algorithms - this not only avoids walls, but also other robots, and can be useful in targeting)? A good <a href="robowiki?AntiGravity" class=wikipagelink>AntiGravity</a> snippet is here: <a href="robowiki?Hanji/AGravEngine" class=wikipagelink>Hanji/AGravEngine</a> <a href="robowiki?Hanji/GravPoint" class=wikipagelink>Hanji/GravPoint</a> -- <a href="robowiki?Ph" class=wikipagelink>Ph</a>
+Why don't use <a href="robowiki@AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a> - that's very simple (you don't need to think about other algorithms - this not only avoids walls, but also other robots, and can be useful in targeting)? A good <a href="robowiki@AntiGravity" class=wikipagelink>AntiGravity</a> snippet is here: <a href="robowiki@Hanji/AGravEngine" class=wikipagelink>Hanji/AGravEngine</a> <a href="robowiki@Hanji/GravPoint" class=wikipagelink>Hanji/GravPoint</a> -- <a href="robowiki@Ph" class=wikipagelink>Ph</a>
 <p>
 My nearWall() function isn't working.  Could someone tell me why?  Here it is:
 <p>
@@ -168,11 +168,11 @@ public boolean nearWall() {
 	}
 </pre>
 <p>
-<pre>dir</pre> is set to either 1 or -1 and I use it to determine whether I am going forward or backward.  nearWall() tells me if I am about to crash.  When it returns true, I do <pre>dir=-dir;</pre>.  WHy does it mess up? --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>  (edit: it's fixed now)
+<pre>dir</pre> is set to either 1 or -1 and I use it to determine whether I am going forward or backward.  nearWall() tells me if I am about to crash.  When it returns true, I do <pre>dir=-dir;</pre>.  WHy does it mess up? --<a href="robowiki@Bayen" class=wikipagelink>Bayen</a>  (edit: it's fixed now)
 <p>
 I'm going to take a guess here that it seems to freeze instead of going backwards.  You need to adjust the <b>if</b> block so that it doesn't check for the first set of conditions if you are in reverse.  As it is, I expect it will get near the wall while going foward, hit reverse, still be near the wall, hit reverse again, and keep reversing direction until the transmission drops out. -- Martin
 <p>
-Thanks Martin, that fixed it up completely!  I went back and changed the code to the correct version  --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+Thanks Martin, that fixed it up completely!  I went back and changed the code to the correct version  --<a href="robowiki@Bayen" class=wikipagelink>Bayen</a>
 <p>
 <pre>
 private static final double northeast =  45.0;
@@ -236,12 +236,12 @@ if (!playField.contains( newposx, newposy)) {
     switchDir = true;
 }
 </pre>
-You have to put it in a function yourself, and change some variables to your own. I just quickly copied it from an older source.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+You have to put it in a function yourself, and change some variables to your own. I just quickly copied it from an older source.  -- <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
 <p>
 I originally said 20 units but 'corrected' myself with 12.  You are right. -- Martin
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=WallAvoidance" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=WallAvoidance">View other revisions</a><br>Last edited December 31, 2006 10:31 EST by delhi-203.200.95-130.static.vsnl.net.in <a href="robowiki?action=browse&diff=1&id=WallAvoidance">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=WallAvoidance" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=WallAvoidance">View other revisions</a><br>Last edited December 31, 2006 10:31 EST by delhi-203.200.95-130.static.vsnl.net.in <a href="robowiki@action=browse&diff=1&id=WallAvoidance">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

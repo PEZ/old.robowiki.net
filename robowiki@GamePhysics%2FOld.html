@@ -3,7 +3,7 @@
 <META NAME='KEYWORDS' CONTENT='Game, Physics, Old'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Old">GamePhysics/Old</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?GamePhysics" class=wikipagelink>GamePhysics</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/Old">GamePhysics/Old</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@GamePhysics" class=wikipagelink>GamePhysics</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext><H3>Robocode Processing Loop</H3>
 
 <p>
@@ -18,7 +18,7 @@ The order that Robocode runs is as follows:
 </OL>
 <p>
 <UL >
-<li> Where do the events get processed? -- <a href="robowiki?Filmil" class=wikipagelink>filmil</a>
+<li> Where do the events get processed? -- <a href="robowiki@Filmil" class=wikipagelink>filmil</a>
 <li> When does firing occur?
 <UL >
 <li> On the next tick.  The difference between fire() and setFire() is that fire() also runs the next tick.  However, it is fired from your current location.
@@ -45,23 +45,23 @@ The order that Robocode runs is as follows:
 Time (t) Robocode time is measured in "ticks", which are equivalent to frames displayed on the screen. Each robot gets one turn per tick. 1 tick = 1 turn = 1 frame. 
 <p>
 <UL >
-<li> How much in fact is the robot allowed to think? A "Tick" does not correspond to real time, but there exists a realtime limit on how long one can 'contemplate'. What is this limit, and does it depend upon the system the Robocode simulator is running on? -- <a href="robowiki?Filmil" class=wikipagelink>filmil</a>
-<li> The Robocode environment tries to measure the performance of the system when it is started. This in order to make it not dependent on this. How much you are allowed to think I don't know really. It's seldom a problem anyway. You'll tire of the bot being a really <a href="robowiki?SlowBot" class=wikipagelink>SlowBot</a> before reaching this limit I think... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> 
-<li> Ok, I just tested this, and if it takes more than 5 seconds in a tick <a href="robowiki?Robocode" class=wikipagelink>Robocode</a> determines not to calculate score for the bot, and after 10 seconds the bot is stopped and is no longer processed. When it comes to skipped turns however, I am a bit confused.  A bot in an infinite loop will not recieve skipped turn events, but other robots in the battle will still execute (although at a slower framerate) this leads me to believe that robocode does not run battles strictly sequentially. It appears that ticks still continue while the bot loops (a getTime within the loop shows anywhere from 7 to 20 ticks a second on my comp)for the first 5 seconds, and then for another 5 seconds <a href="robowiki?Robocode" class=wikipagelink>Robocode</a> solely runs that robot (no ticks pass) until it is disabled.  -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
-<li> IIRC your robot is warped to the next tick. Your robot continues running where it was, as if it is still in the previous tick (besides getting new data from getX() etc). You only receive events when you move to the next tick normally. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<li> How much in fact is the robot allowed to think? A "Tick" does not correspond to real time, but there exists a realtime limit on how long one can 'contemplate'. What is this limit, and does it depend upon the system the Robocode simulator is running on? -- <a href="robowiki@Filmil" class=wikipagelink>filmil</a>
+<li> The Robocode environment tries to measure the performance of the system when it is started. This in order to make it not dependent on this. How much you are allowed to think I don't know really. It's seldom a problem anyway. You'll tire of the bot being a really <a href="robowiki@SlowBot" class=wikipagelink>SlowBot</a> before reaching this limit I think... -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a> 
+<li> Ok, I just tested this, and if it takes more than 5 seconds in a tick <a href="robowiki@Robocode" class=wikipagelink>Robocode</a> determines not to calculate score for the bot, and after 10 seconds the bot is stopped and is no longer processed. When it comes to skipped turns however, I am a bit confused.  A bot in an infinite loop will not recieve skipped turn events, but other robots in the battle will still execute (although at a slower framerate) this leads me to believe that robocode does not run battles strictly sequentially. It appears that ticks still continue while the bot loops (a getTime within the loop shows anywhere from 7 to 20 ticks a second on my comp)for the first 5 seconds, and then for another 5 seconds <a href="robowiki@Robocode" class=wikipagelink>Robocode</a> solely runs that robot (no ticks pass) until it is disabled.  -- <a href="robowiki@Jokester" class=wikipagelink>Jokester</a>
+<li> IIRC your robot is warped to the next tick. Your robot continues running where it was, as if it is still in the previous tick (besides getting new data from getX() etc). You only receive events when you move to the next tick normally. -- <a href="robowiki@Jonathan" class=wikipagelink>Jonathan</a>
 </UL>
 <p>
 Distance Measurement Robocode's units are basically measured in pixels, with two exceptions. First, all distances are measured with double precision, so you can actually move a fraction of a pixel. Second, Robocode automatically scales down battles to fit on the screen. In this case, the unit of distance is actually smaller than a pixel. 
 <p>
 <UL >
-<li> With all due respect, equating pixels with robocode units is simply an error. Robocode units (runits) do not correspond to pixels since display can be scaled. As it is now, the explanation says: the units are pixels, except sometimes when they are not. It does not seem to clarify too much. Thanks for your patience in reading this. :) -- <a href="robowiki?Filmil" class=wikipagelink>filmil</a>
-<li> It doesn't really matter. It's like with time ticks. Just units. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<li> With all due respect, equating pixels with robocode units is simply an error. Robocode units (runits) do not correspond to pixels since display can be scaled. As it is now, the explanation says: the units are pixels, except sometimes when they are not. It does not seem to clarify too much. Thanks for your patience in reading this. :) -- <a href="robowiki@Filmil" class=wikipagelink>filmil</a>
+<li> It doesn't really matter. It's like with time ticks. Just units. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <UL >
-<li> That's why I said the above: introducing pixels serves no purpose. But I guess if it has become a custom, let they be pixels... -- <a href="robowiki?Filmil" class=wikipagelink>filmil</a>
+<li> That's why I said the above: introducing pixels serves no purpose. But I guess if it has become a custom, let they be pixels... -- <a href="robowiki@Filmil" class=wikipagelink>filmil</a>
 <UL >
-<li> It does serve a purpose, though.  The distance will always be in pixels unless the user makes the window too small to display the battlefield, in which case Robocode will scale the whole battlefield down.  But it certainly is pixels by default, and will never be any <em>larger</em> than pixels. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<li> It does serve a purpose, though.  The distance will always be in pixels unless the user makes the window too small to display the battlefield, in which case Robocode will scale the whole battlefield down.  But it certainly is pixels by default, and will never be any <em>larger</em> than pixels. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 </UL>
-<li> This is just like scaling down a large image to fit an average screen. It is still, say, 2048 pixels wide, even though it is 1024 on that screen. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<li> This is just like scaling down a large image to fit an average screen. It is still, say, 2048 pixels wide, even though it is 1024 on that screen. -- <a href="robowiki@Jonathan" class=wikipagelink>Jonathan</a>
 </UL>
 </UL>
 <p>
@@ -71,11 +71,11 @@ Distance Measurement Robocode's units are basically measured in pixels, with two
 Acceleration (a) Robots accelerate at the rate of 1 pixel/tick. Robots decelerate at the rate of 2 pixels/tick. Robocode determines acceleration for you, based on the distance you are trying to move.
 <p>
 <UL >
-<li> Note that this is different than real, 'live' tanks, i.e. with motors, where you can set the <i>speed</i>, and acceleration is of course dependent on the horsepower count of the motor. This difference also gets the system control people a surprise. -- <a href="robowiki?Filmil" class=wikipagelink>filmil</a>
+<li> Note that this is different than real, 'live' tanks, i.e. with motors, where you can set the <i>speed</i>, and acceleration is of course dependent on the horsepower count of the motor. This difference also gets the system control people a surprise. -- <a href="robowiki@Filmil" class=wikipagelink>filmil</a>
 <UL >
-<li> How different is this, aside from the fact that we can assume constant acceleration / deceleration? -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<li> How different is this, aside from the fact that we can assume constant acceleration / deceleration? -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 </UL>
-<li> Acceleration and deceleration does happen with full numbers, except for the last one reaching 0 or the intended speed. That last tick just fills the remaining part. Spinbot for example accelerates from 0 -&gt; 1 -&gt; 2 -&gt; 3 -&gt; 4 -&gt; 5 -&gt; 5.5 and if it would decelerate, it would go 5.5 -&gt; 3.5 -&gt; 1.5 -&gt; 0  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<li> Acceleration and deceleration does happen with full numbers, except for the last one reaching 0 or the intended speed. That last tick just fills the remaining part. Spinbot for example accelerates from 0 -&gt; 1 -&gt; 2 -&gt; 3 -&gt; 4 -&gt; 5 -&gt; 5.5 and if it would decelerate, it would go 5.5 -&gt; 3.5 -&gt; 1.5 -&gt; 0  -- <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
 <li> Deceleration can also be greater than 2, which occurs during collisions.
 <li> Even if you decelerate past 0 your max speed difference is 2. This means that if your speed is -0.5 it is possible to have 1.5 in the next tick, and vice versa.
 </UL>
@@ -108,7 +108,7 @@ Distance Equation (d) d = vt.
 <UL >
 <li>Damage = 4 * firepower. If firepower &gt; 1, it does an additional 2 * (power - 1). 
 <li>Velocity 20 - 3 * firepower; 
-<li><a href="robowiki?GunHeat" class=wikipagelink>GunHeat</a> generated 1 + firepower / 5. You cannot fire if gunHeat &gt; 0. All guns are hot at the start of each round. 
+<li><a href="robowiki@GunHeat" class=wikipagelink>GunHeat</a> generated 1 + firepower / 5. You cannot fire if gunHeat &gt; 0. All guns are hot at the start of each round. 
 <UL >
 <li> How hot do the guns start?
 <li> 3.0 IIRC
@@ -121,11 +121,11 @@ Distance Equation (d) d = vt.
 <p>
 With Another Robot Each robot takes .6 damage. If a robot is moving away from the collision, it will not be stopped. 
 <p>
-With a Wall AdvancedRobots<a href="robowiki?action=edit&id=AdvancedRobots" class=wikipageedit>?</a> take Math.abs(velocity) * .5 - 1; (Never &lt; 0)
+With a Wall AdvancedRobots<a href="robowiki@action=edit&id=AdvancedRobots" class=wikipageedit>?</a> take Math.abs(velocity) * .5 - 1; (Never &lt; 0)
 <p>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?GamePhysics" class=wikipagelink>GamePhysics</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=GamePhysics/Old" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=GamePhysics/Old">View other revisions</a><br>Last edited May 5, 2006 1:33 EST by <a href="robowiki?Voidious" title="ID 6343 from resnet216-83.resnet.buffalo.edu">Voidious</a> <a href="robowiki?action=browse&diff=1&id=GamePhysics/Old">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@GamePhysics" class=wikipagelink>GamePhysics</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=GamePhysics/Old" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=GamePhysics/Old">View other revisions</a><br>Last edited May 5, 2006 1:33 EST by <a href="robowiki@Voidious" title="ID 6343 from resnet216-83.resnet.buffalo.edu">Voidious</a> <a href="robowiki@action=browse&diff=1&id=GamePhysics/Old">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

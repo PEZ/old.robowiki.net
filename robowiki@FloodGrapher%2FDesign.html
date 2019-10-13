@@ -3,66 +3,66 @@
 <META NAME='KEYWORDS' CONTENT='Flood, Grapher, Design'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Design">FloodGrapher/Design</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?FloodGrapher" class=wikipagelink>FloodGrapher</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/Design">FloodGrapher/Design</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@FloodGrapher" class=wikipagelink>FloodGrapher</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext>package kawigi.tools;
 <p>
 <H3>Grapher back-end</H3>
 
 <p>
 <UL >
-<li> <tt>class Scheme</tt> : Aggregate of <tt>GrapherSegmentation<a href="robowiki?action=edit&id=GrapherSegmentation" class=wikipageedit>?</a></tt>s
+<li> <tt>class Scheme</tt> : Aggregate of <tt>GrapherSegmentation<a href="robowiki@action=edit&id=GrapherSegmentation" class=wikipageedit>?</a></tt>s
 </UL><DL>
-<dt><dd><tt>public GrapherSegmentation<a href="robowiki?action=edit&id=GrapherSegmentation" class=wikipageedit>?</a> segmentAt(int index)</tt>
+<dt><dd><tt>public GrapherSegmentation<a href="robowiki@action=edit&id=GrapherSegmentation" class=wikipageedit>?</a> segmentAt(int index)</tt>
 <dt><dd><tt>public int size()</tt>
-<dt><dd><tt>public void add(GrapherSegmentation<a href="robowiki?action=edit&id=GrapherSegmentation" class=wikipageedit>?</a> seg)</tt>
+<dt><dd><tt>public void add(GrapherSegmentation<a href="robowiki@action=edit&id=GrapherSegmentation" class=wikipageedit>?</a> seg)</tt>
 </DL>
 <p>
 <UL >
-<li> <tt>class <a href="robowiki?SegmentedData" class=wikipagelink>SegmentedData</a></tt> : A sort of database using the <tt>Scheme</tt> that can be "selected" from to collect actual data.  It should be flexible enough that it should be unnecessary to subclass it.  This class should be easily createable from the information saved by the Graphing bot, and may also have a constructor to take the array of data and scheme, so that it can be extended to analyze data from other bots.
+<li> <tt>class <a href="robowiki@SegmentedData" class=wikipagelink>SegmentedData</a></tt> : A sort of database using the <tt>Scheme</tt> that can be "selected" from to collect actual data.  It should be flexible enough that it should be unnecessary to subclass it.  This class should be easily createable from the information saved by the Graphing bot, and may also have a constructor to take the array of data and scheme, so that it can be extended to analyze data from other bots.
 </UL><DL>
 <dt><dd><tt>private Scheme scheme</tt>
 <dt><dd><tt>private Object statsbuffer</tt> : a multi-dimensional array of numbers whose dimensionality is one more than the size of the scheme.  Shouldn't be jagged (so a finite number of buckets can be used to take any cross-section of the data).
-<dt><dd><tt>public <a href="robowiki?SegmentedData" class=wikipagelink>SegmentedData</a>(Scheme scheme, Object stats)</tt> : Creates a new <tt><a href="robowiki?SegmentedData" class=wikipagelink>SegmentedData</a></tt> object.  <tt>stats</tt> should be a non-jagged multi-dimensional array of doubles, the size of the scheme should be one less than the dimensionality of the stats (if not, expect crashes later).
-<dt><dd><tt>public void createSelectionGUI<a href="robowiki?action=edit&id=SelectionGUI" class=wikipageedit>?</a>(GraphControlWindow<a href="robowiki?action=edit&id=GraphControlWindow" class=wikipageedit>?</a> window)</tt> : Sets up the <tt>GraphControlWindow<a href="robowiki?action=edit&id=GraphControlWindow" class=wikipageedit>?</a></tt> to have all the necessary widgets to select a graph.  The components added to this window will come from the <tt>GrapherSegmentation<a href="robowiki?action=edit&id=GrapherSegmentation" class=wikipageedit>?</a></tt> objects in the Scheme.  The window is also an <tt>ActionListener<a href="robowiki?action=edit&id=ActionListener" class=wikipageedit>?</a></tt> and <tt>ItemListener<a href="robowiki?action=edit&id=ItemListener" class=wikipageedit>?</a></tt> and should be added as a listener to the relevant components.
-<dt><dd><tt>public GraphData<a href="robowiki?action=edit&id=GraphData" class=wikipageedit>?</a> getSelectedGraphData<a href="robowiki?action=edit&id=SelectedGraphData" class=wikipageedit>?</a>()</tt> : This is the main point of this class, to get the data selected through the various GUI components.
-<dt><dd><tt>public void setData(<a href="robowiki?SegmentedData" class=wikipagelink>SegmentedData</a> reload)</tt> : sets the data in this object to the data in <tt>reload</tt>.  This is used to "refresh" the graph and keep the same UI.
+<dt><dd><tt>public <a href="robowiki@SegmentedData" class=wikipagelink>SegmentedData</a>(Scheme scheme, Object stats)</tt> : Creates a new <tt><a href="robowiki@SegmentedData" class=wikipagelink>SegmentedData</a></tt> object.  <tt>stats</tt> should be a non-jagged multi-dimensional array of doubles, the size of the scheme should be one less than the dimensionality of the stats (if not, expect crashes later).
+<dt><dd><tt>public void createSelectionGUI<a href="robowiki@action=edit&id=SelectionGUI" class=wikipageedit>?</a>(GraphControlWindow<a href="robowiki@action=edit&id=GraphControlWindow" class=wikipageedit>?</a> window)</tt> : Sets up the <tt>GraphControlWindow<a href="robowiki@action=edit&id=GraphControlWindow" class=wikipageedit>?</a></tt> to have all the necessary widgets to select a graph.  The components added to this window will come from the <tt>GrapherSegmentation<a href="robowiki@action=edit&id=GrapherSegmentation" class=wikipageedit>?</a></tt> objects in the Scheme.  The window is also an <tt>ActionListener<a href="robowiki@action=edit&id=ActionListener" class=wikipageedit>?</a></tt> and <tt>ItemListener<a href="robowiki@action=edit&id=ItemListener" class=wikipageedit>?</a></tt> and should be added as a listener to the relevant components.
+<dt><dd><tt>public GraphData<a href="robowiki@action=edit&id=GraphData" class=wikipageedit>?</a> getSelectedGraphData<a href="robowiki@action=edit&id=SelectedGraphData" class=wikipageedit>?</a>()</tt> : This is the main point of this class, to get the data selected through the various GUI components.
+<dt><dd><tt>public void setData(<a href="robowiki@SegmentedData" class=wikipagelink>SegmentedData</a> reload)</tt> : sets the data in this object to the data in <tt>reload</tt>.  This is used to "refresh" the graph and keep the same UI.
 </DL>
 <p>
 <UL >
-<li> <tt>interface GrapherSegmentation<a href="robowiki?action=edit&id=GrapherSegmentation" class=wikipageedit>?</a></tt> : represents a <tt>SegmentationAxis<a href="robowiki?action=edit&id=SegmentationAxis" class=wikipageedit>?</a></tt>.
+<li> <tt>interface GrapherSegmentation<a href="robowiki@action=edit&id=GrapherSegmentation" class=wikipageedit>?</a></tt> : represents a <tt>SegmentationAxis<a href="robowiki@action=edit&id=SegmentationAxis" class=wikipageedit>?</a></tt>.
 </UL><DL>
 <dt><dd><tt>public String getName()</tt> : gets the name of this segmentation axis
-<dt><dd><tt>public void addSelectionWidget<a href="robowiki?action=edit&id=SelectionWidget" class=wikipageedit>?</a>(GraphControlWindow<a href="robowiki?action=edit&id=GraphControlWindow" class=wikipageedit>?</a> window)</tt> : adds a component (most often a <tt>JComboBox<a href="robowiki?action=edit&id=JComboBox" class=wikipageedit>?</a></tt>) to select information from this segmentation, as well as necessary listeners, to the window.  The object should keep a reference to this component and only one such widget should ever be associated with each <tt>GrapherSegmentation<a href="robowiki?action=edit&id=GrapherSegmentation" class=wikipageedit>?</a></tt> object.
+<dt><dd><tt>public void addSelectionWidget<a href="robowiki@action=edit&id=SelectionWidget" class=wikipageedit>?</a>(GraphControlWindow<a href="robowiki@action=edit&id=GraphControlWindow" class=wikipageedit>?</a> window)</tt> : adds a component (most often a <tt>JComboBox<a href="robowiki@action=edit&id=JComboBox" class=wikipageedit>?</a></tt>) to select information from this segmentation, as well as necessary listeners, to the window.  The object should keep a reference to this component and only one such widget should ever be associated with each <tt>GrapherSegmentation<a href="robowiki@action=edit&id=GrapherSegmentation" class=wikipageedit>?</a></tt> object.
 <dt><dd><tt>public boolean accept(int index)</tt> : returns true if the current state of the widget accepts this segment index.  Returns false if it does not or if the widget has not yet been created.
 </DL><UL>
 <UL >
-<li> Some possible subclasses: <tt>DistanceGSegmentation<a href="robowiki?action=edit&id=DistanceGSegmentation" class=wikipageedit>?</a></tt>, <tt>BFTGSegmentation</tt>, <tt>LateralVelocityGSegmentation<a href="robowiki?action=edit&id=LateralVelocityGSegmentation" class=wikipageedit>?</a></tt>, <tt>AccelerationGSegmentation<a href="robowiki?action=edit&id=AccelerationGSegmentation" class=wikipageedit>?</a></tt>, <tt>WallGSegmentation<a href="robowiki?action=edit&id=WallGSegmentation" class=wikipageedit>?</a></tt>
+<li> Some possible subclasses: <tt>DistanceGSegmentation<a href="robowiki@action=edit&id=DistanceGSegmentation" class=wikipageedit>?</a></tt>, <tt>BFTGSegmentation</tt>, <tt>LateralVelocityGSegmentation<a href="robowiki@action=edit&id=LateralVelocityGSegmentation" class=wikipageedit>?</a></tt>, <tt>AccelerationGSegmentation<a href="robowiki@action=edit&id=AccelerationGSegmentation" class=wikipageedit>?</a></tt>, <tt>WallGSegmentation<a href="robowiki@action=edit&id=WallGSegmentation" class=wikipageedit>?</a></tt>
 </UL>
 </UL>
 <p>
 <UL >
-<li> <tt>class GraphData<a href="robowiki?action=edit&id=GraphData" class=wikipageedit>?</a></tt>: contains the array of values to be graphed for a single line graph, and the intended color, which can occasionally be changed.
+<li> <tt>class GraphData<a href="robowiki@action=edit&id=GraphData" class=wikipageedit>?</a></tt>: contains the array of values to be graphed for a single line graph, and the intended color, which can occasionally be changed.
 </UL><DL>
-<dt><dd><tt>public GraphData<a href="robowiki?action=edit&id=GraphData" class=wikipageedit>?</a>(Color c, double[] data)</tt>
-<dt><dd><tt>public GraphData<a href="robowiki?action=edit&id=GraphData" class=wikipageedit>?</a>(double[] data)</tt>
+<dt><dd><tt>public GraphData<a href="robowiki@action=edit&id=GraphData" class=wikipageedit>?</a>(Color c, double[] data)</tt>
+<dt><dd><tt>public GraphData<a href="robowiki@action=edit&id=GraphData" class=wikipageedit>?</a>(double[] data)</tt>
 <dt><dd><tt>public Color getColor()</tt>
 <dt><dd><tt>public void setColor(Color newcolor)</tt>
 <dt><dd><tt>public double[] getData()</tt>
 </DL>
 <p>
 <UL >
-<li><tt>interface FileFormat<a href="robowiki?action=edit&id=FileFormat" class=wikipageedit>?</a></tt>: Represents the format a robot's data file is saved in.  <em>Implementations should have an empty constructor.</em>
+<li><tt>interface FileFormat<a href="robowiki@action=edit&id=FileFormat" class=wikipageedit>?</a></tt>: Represents the format a robot's data file is saved in.  <em>Implementations should have an empty constructor.</em>
 </UL><DL>
-<dt><dd><tt>public <a href="robowiki?SegmentedData" class=wikipagelink>SegmentedData</a> getData(File datafile) throws IOException, InvalidFileException<a href="robowiki?action=edit&id=InvalidFileException" class=wikipageedit>?</a></tt>
-<dt><dd><tt>public String getFormatName<a href="robowiki?action=edit&id=FormatName" class=wikipageedit>?</a>()</tt> : Used when the object is dynamically loaded with other FileFormat<a href="robowiki?action=edit&id=FileFormat" class=wikipageedit>?</a> objects to create a list of possible objects to use on a given file.
+<dt><dd><tt>public <a href="robowiki@SegmentedData" class=wikipagelink>SegmentedData</a> getData(File datafile) throws IOException, InvalidFileException<a href="robowiki@action=edit&id=InvalidFileException" class=wikipageedit>?</a></tt>
+<dt><dd><tt>public String getFormatName<a href="robowiki@action=edit&id=FormatName" class=wikipageedit>?</a>()</tt> : Used when the object is dynamically loaded with other FileFormat<a href="robowiki@action=edit&id=FileFormat" class=wikipageedit>?</a> objects to create a list of possible objects to use on a given file.
 </DL><UL>
-<li> Possible Subclasses: <tt>FloodGrapherFileFormat<a href="robowiki?action=edit&id=FloodGrapherFileFormat" class=wikipageedit>?</a></tt>, <tt>FloodMini14FileFormat<a href="robowiki?action=edit&id=FloodMini14FileFormat" class=wikipageedit>?</a></tt>, <tt>Fhqwhgads11FileFormat<a href="robowiki?action=edit&id=FileFormat" class=wikipageedit>?</a></tt>, <tt>JekylFileFormat<a href="robowiki?action=edit&id=JekylFileFormat" class=wikipageedit>?</a></tt>
+<li> Possible Subclasses: <tt>FloodGrapherFileFormat<a href="robowiki@action=edit&id=FloodGrapherFileFormat" class=wikipageedit>?</a></tt>, <tt>FloodMini14FileFormat<a href="robowiki@action=edit&id=FloodMini14FileFormat" class=wikipageedit>?</a></tt>, <tt>Fhqwhgads11FileFormat<a href="robowiki@action=edit&id=FileFormat" class=wikipageedit>?</a></tt>, <tt>JekylFileFormat<a href="robowiki@action=edit&id=JekylFileFormat" class=wikipageedit>?</a></tt>
 </UL>
 <p>
 <UL >
-<li> <tt>class InvalidFileException<a href="robowiki?action=edit&id=InvalidFileException" class=wikipageedit>?</a> extends Exception</tt> : Thrown when the wrong <tt>FileFormat<a href="robowiki?action=edit&id=FileFormat" class=wikipageedit>?</a></tt> is used to read a certain file.
+<li> <tt>class InvalidFileException<a href="robowiki@action=edit&id=InvalidFileException" class=wikipageedit>?</a> extends Exception</tt> : Thrown when the wrong <tt>FileFormat<a href="robowiki@action=edit&id=FileFormat" class=wikipageedit>?</a></tt> is used to read a certain file.
 </UL><DL>
-<dt><dd><tt>public InvalidFileException<a href="robowiki?action=edit&id=InvalidFileException" class=wikipageedit>?</a>(String message)</tt>
+<dt><dd><tt>public InvalidFileException<a href="robowiki@action=edit&id=InvalidFileException" class=wikipageedit>?</a>(String message)</tt>
 </DL>
 <p>
 <hr noshade class=wikiline size=1>
@@ -71,16 +71,16 @@
 
 <p>
 <UL >
-<li> <tt>class GraphColorSelector<a href="robowiki?action=edit&id=GraphColorSelector" class=wikipageedit>?</a></tt>: A simple widget with a spectrum of saturated, bright colors to choose from.  
+<li> <tt>class GraphColorSelector<a href="robowiki@action=edit&id=GraphColorSelector" class=wikipageedit>?</a></tt>: A simple widget with a spectrum of saturated, bright colors to choose from.  
 </UL><PRE>
-	Color getSelectedColor<a href="robowiki?action=edit&id=SelectedColor" class=wikipageedit>?</a>()
+	Color getSelectedColor<a href="robowiki@action=edit&id=SelectedColor" class=wikipageedit>?</a>()
 </PRE>
 <p>
 <UL >
-<li> <tt>class GraphDisplay<a href="robowiki?action=edit&id=GraphDisplay" class=wikipageedit>?</a> extends JPanel</tt>: A widget that shows a series of <tt>GraphData<a href="robowiki?action=edit&id=GraphData" class=wikipageedit>?</a></tt> objects in their respective colors.  Only one graph will be kept for each <tt>GraphControlWindow<a href="robowiki?action=edit&id=GraphControlWindow" class=wikipageedit>?</a></tt> to create the graphs.
+<li> <tt>class GraphDisplay<a href="robowiki@action=edit&id=GraphDisplay" class=wikipageedit>?</a> extends JPanel</tt>: A widget that shows a series of <tt>GraphData<a href="robowiki@action=edit&id=GraphData" class=wikipageedit>?</a></tt> objects in their respective colors.  Only one graph will be kept for each <tt>GraphControlWindow<a href="robowiki@action=edit&id=GraphControlWindow" class=wikipageedit>?</a></tt> to create the graphs.
 </UL><DL>
-<dt><dd><tt>public void addGraph(GraphData<a href="robowiki?action=edit&id=GraphData" class=wikipageedit>?</a> graph, GraphControlWindow<a href="robowiki?action=edit&id=GraphControlWindow" class=wikipageedit>?</a> source)</tt> : adds the new graph or replaces the old one from this source if one exists
-<dt><dd><tt>public void removeGraph(GraphControlWindow<a href="robowiki?action=edit&id=GraphControlWindow" class=wikipageedit>?</a> source)</tt> : removes the graph associated with the given frame from the display.  Called when the <tt>GraphControlWindow<a href="robowiki?action=edit&id=GraphControlWindow" class=wikipageedit>?</a></tt> is closed.
+<dt><dd><tt>public void addGraph(GraphData<a href="robowiki@action=edit&id=GraphData" class=wikipageedit>?</a> graph, GraphControlWindow<a href="robowiki@action=edit&id=GraphControlWindow" class=wikipageedit>?</a> source)</tt> : adds the new graph or replaces the old one from this source if one exists
+<dt><dd><tt>public void removeGraph(GraphControlWindow<a href="robowiki@action=edit&id=GraphControlWindow" class=wikipageedit>?</a> source)</tt> : removes the graph associated with the given frame from the display.  Called when the <tt>GraphControlWindow<a href="robowiki@action=edit&id=GraphControlWindow" class=wikipageedit>?</a></tt> is closed.
 </DL><UL>
 <UL >
 <li> This class may have more options like smoothing or something.
@@ -88,21 +88,21 @@
 </UL>
 <p>
 <UL >
-<li> <tt>GraphControlWindow<a href="robowiki?action=edit&id=GraphControlWindow" class=wikipageedit>?</a> extends JInternalFrame<a href="robowiki?action=edit&id=JInternalFrame" class=wikipageedit>?</a> implements ItemListener<a href="robowiki?action=edit&id=ItemListener" class=wikipageedit>?</a>, ActionListener<a href="robowiki?action=edit&id=ActionListener" class=wikipageedit>?</a>, InternalFrameListener<a href="robowiki?action=edit&id=InternalFrameListener" class=wikipageedit>?</a></tt>
+<li> <tt>GraphControlWindow<a href="robowiki@action=edit&id=GraphControlWindow" class=wikipageedit>?</a> extends JInternalFrame<a href="robowiki@action=edit&id=JInternalFrame" class=wikipageedit>?</a> implements ItemListener<a href="robowiki@action=edit&id=ItemListener" class=wikipageedit>?</a>, ActionListener<a href="robowiki@action=edit&id=ActionListener" class=wikipageedit>?</a>, InternalFrameListener<a href="robowiki@action=edit&id=InternalFrameListener" class=wikipageedit>?</a></tt>
 </UL><DL>
-<dt><dd><tt>public GraphControlWindow<a href="robowiki?action=edit&id=GraphControlWindow" class=wikipageedit>?</a>(<a href="robowiki?SegmentedData" class=wikipagelink>SegmentedData</a> data, String name, GraphDisplayer<a href="robowiki?action=edit&id=GraphDisplayer" class=wikipageedit>?</a> )</tt> : the name is set on the title bar of the window, the GUI components are added to it for the segmentation of the graph as well as a <tt>GraphColorSelector<a href="robowiki?action=edit&id=GraphColorSelector" class=wikipageedit>?</a></tt> and a refresh button.
-<dt><dd><tt>public void actionPerformed(ActionEvent<a href="robowiki?action=edit&id=ActionEvent" class=wikipageedit>?</a> event)</tt> : for interface <tt>ActionListener<a href="robowiki?action=edit&id=ActionListener" class=wikipageedit>?</a></tt>.  Updates the <tt>GraphDisplayer<a href="robowiki?action=edit&id=GraphDisplayer" class=wikipageedit>?</a></tt>.
-<dt><dd><tt>public void itemStateChanged<a href="robowiki?action=edit&id=StateChanged" class=wikipageedit>?</a>(ItemEvent<a href="robowiki?action=edit&id=ItemEvent" class=wikipageedit>?</a> event)</tt> : for interface <tt>ItemListener<a href="robowiki?action=edit&id=ItemListener" class=wikipageedit>?</a></tt>.  Updates the <tt>GraphDisplayer<a href="robowiki?action=edit&id=GraphDisplayer" class=wikipageedit>?</a></tt>
-<dt><dd><tt>public void internalFrameClosing<a href="robowiki?action=edit&id=FrameClosing" class=wikipageedit>?</a>(InternalFrameEvent<a href="robowiki?action=edit&id=InternalFrameEvent" class=wikipageedit>?</a> event)</tt> : disposes of the window after removing the graph associated with this window from the <tt>GraphDisplay<a href="robowiki?action=edit&id=GraphDisplay" class=wikipageedit>?</a></tt>
-<dt><dd><tt>public void internalFrameDidWhatever<a href="robowiki?action=edit&id=FrameDidWhatever" class=wikipageedit>?</a>(InternalFrameEvent<a href="robowiki?action=edit&id=InternalFrameEvent" class=wikipageedit>?</a> event)</tt> : whatever else is necessary to satisfy interface <tt>InternalFrameListener<a href="robowiki?action=edit&id=InternalFrameListener" class=wikipageedit>?</a></tt>, these probably won't do anything exciting.
+<dt><dd><tt>public GraphControlWindow<a href="robowiki@action=edit&id=GraphControlWindow" class=wikipageedit>?</a>(<a href="robowiki@SegmentedData" class=wikipagelink>SegmentedData</a> data, String name, GraphDisplayer<a href="robowiki@action=edit&id=GraphDisplayer" class=wikipageedit>?</a> )</tt> : the name is set on the title bar of the window, the GUI components are added to it for the segmentation of the graph as well as a <tt>GraphColorSelector<a href="robowiki@action=edit&id=GraphColorSelector" class=wikipageedit>?</a></tt> and a refresh button.
+<dt><dd><tt>public void actionPerformed(ActionEvent<a href="robowiki@action=edit&id=ActionEvent" class=wikipageedit>?</a> event)</tt> : for interface <tt>ActionListener<a href="robowiki@action=edit&id=ActionListener" class=wikipageedit>?</a></tt>.  Updates the <tt>GraphDisplayer<a href="robowiki@action=edit&id=GraphDisplayer" class=wikipageedit>?</a></tt>.
+<dt><dd><tt>public void itemStateChanged<a href="robowiki@action=edit&id=StateChanged" class=wikipageedit>?</a>(ItemEvent<a href="robowiki@action=edit&id=ItemEvent" class=wikipageedit>?</a> event)</tt> : for interface <tt>ItemListener<a href="robowiki@action=edit&id=ItemListener" class=wikipageedit>?</a></tt>.  Updates the <tt>GraphDisplayer<a href="robowiki@action=edit&id=GraphDisplayer" class=wikipageedit>?</a></tt>
+<dt><dd><tt>public void internalFrameClosing<a href="robowiki@action=edit&id=FrameClosing" class=wikipageedit>?</a>(InternalFrameEvent<a href="robowiki@action=edit&id=InternalFrameEvent" class=wikipageedit>?</a> event)</tt> : disposes of the window after removing the graph associated with this window from the <tt>GraphDisplay<a href="robowiki@action=edit&id=GraphDisplay" class=wikipageedit>?</a></tt>
+<dt><dd><tt>public void internalFrameDidWhatever<a href="robowiki@action=edit&id=FrameDidWhatever" class=wikipageedit>?</a>(InternalFrameEvent<a href="robowiki@action=edit&id=InternalFrameEvent" class=wikipageedit>?</a> event)</tt> : whatever else is necessary to satisfy interface <tt>InternalFrameListener<a href="robowiki@action=edit&id=InternalFrameListener" class=wikipageedit>?</a></tt>, these probably won't do anything exciting.
 </DL>
 <p>
 <UL >
-<li> <tt>NewGraphWindow<a href="robowiki?action=edit&id=NewGraphWindow" class=wikipageedit>?</a> extends JDialog</tt> : includes components to choose a file and a <tt>FileFormat<a href="robowiki?action=edit&id=FileFormat" class=wikipageedit>?</a></tt> to use to open it and OK/Cancel<a href="robowiki?action=edit&id=FloodGrapher/Cancel" class=wikipageedit>?</a> buttons, has some sort of callback mechanism to add a <tt>GraphControlWindow<a href="robowiki?action=edit&id=GraphControlWindow" class=wikipageedit>?</a></tt> back into the main GUI when the OK button is pressed.  The <tt>JDesktopPane<a href="robowiki?action=edit&id=JDesktopPane" class=wikipageedit>?</a></tt> will probably be passed into the constructor or something.
+<li> <tt>NewGraphWindow<a href="robowiki@action=edit&id=NewGraphWindow" class=wikipageedit>?</a> extends JDialog</tt> : includes components to choose a file and a <tt>FileFormat<a href="robowiki@action=edit&id=FileFormat" class=wikipageedit>?</a></tt> to use to open it and OK/Cancel<a href="robowiki@action=edit&id=FloodGrapher/Cancel" class=wikipageedit>?</a> buttons, has some sort of callback mechanism to add a <tt>GraphControlWindow<a href="robowiki@action=edit&id=GraphControlWindow" class=wikipageedit>?</a></tt> back into the main GUI when the OK button is pressed.  The <tt>JDesktopPane<a href="robowiki@action=edit&id=JDesktopPane" class=wikipageedit>?</a></tt> will probably be passed into the constructor or something.
 </UL>
 <p>
 <UL >
-<li> <tt>FloodGrapherGUI<a href="robowiki?action=edit&id=FloodGrapherGUI" class=wikipageedit>?</a> extends JFrame</tt> : This is the container for the entire Graphing utility.  It contains mainly a <tt>GraphDisplayer<a href="robowiki?action=edit&id=GraphDisplayer" class=wikipageedit>?</a></tt>, a <tt>JDesktopPane<a href="robowiki?action=edit&id=JDesktopPane" class=wikipageedit>?</a></tt>, and a <tt>JMenuBar<a href="robowiki?action=edit&id=JMenuBar" class=wikipageedit>?</a></tt>.  The menus have the ability to open files and select from available <tt>FileFormat<a href="robowiki?action=edit&id=FileFormat" class=wikipageedit>?</a></tt> objects, close the application, and possibly some other features with the display.  The <tt>JDesktopPane<a href="robowiki?action=edit&id=JDesktopPane" class=wikipageedit>?</a></tt> will contain some number of <tt>GraphControlWindow<a href="robowiki?action=edit&id=GraphControlWindow" class=wikipageedit>?</a></tt> which will control the <tt>GraphDisplayer<a href="robowiki?action=edit&id=GraphDisplayer" class=wikipageedit>?</a></tt>.
+<li> <tt>FloodGrapherGUI<a href="robowiki@action=edit&id=FloodGrapherGUI" class=wikipageedit>?</a> extends JFrame</tt> : This is the container for the entire Graphing utility.  It contains mainly a <tt>GraphDisplayer<a href="robowiki@action=edit&id=GraphDisplayer" class=wikipageedit>?</a></tt>, a <tt>JDesktopPane<a href="robowiki@action=edit&id=JDesktopPane" class=wikipageedit>?</a></tt>, and a <tt>JMenuBar<a href="robowiki@action=edit&id=JMenuBar" class=wikipageedit>?</a></tt>.  The menus have the ability to open files and select from available <tt>FileFormat<a href="robowiki@action=edit&id=FileFormat" class=wikipageedit>?</a></tt> objects, close the application, and possibly some other features with the display.  The <tt>JDesktopPane<a href="robowiki@action=edit&id=JDesktopPane" class=wikipageedit>?</a></tt> will contain some number of <tt>GraphControlWindow<a href="robowiki@action=edit&id=GraphControlWindow" class=wikipageedit>?</a></tt> which will control the <tt>GraphDisplayer<a href="robowiki@action=edit&id=GraphDisplayer" class=wikipageedit>?</a></tt>.
 </UL>
 <p>
 <hr noshade class=wikiline size=1>
@@ -111,12 +111,12 @@
 
 <p>
 <UL >
-<li> <tt><a href="robowiki?FloodGrapher" class=wikipagelink>FloodGrapher</a> extends <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a></tt> : robot that creates and uses the configured modules.  If robots are allowed to do so, it should try to dynamically load these classes based on what it reads from a config file:
+<li> <tt><a href="robowiki@FloodGrapher" class=wikipagelink>FloodGrapher</a> extends <a href="robowiki@AdvancedRobot" class=wikipagelink>AdvancedRobot</a></tt> : robot that creates and uses the configured modules.  If robots are allowed to do so, it should try to dynamically load these classes based on what it reads from a config file:
 <UL >
 <li> Config file info:
 <UL >
 <li> <tt>Movement</tt> class
-<li> <tt>PowerManagement<a href="robowiki?action=edit&id=PowerManagement" class=wikipageedit>?</a></tt> class
+<li> <tt>PowerManagement<a href="robowiki@action=edit&id=PowerManagement" class=wikipageedit>?</a></tt> class
 <li> <tt>Segmentation</tt> classes (comma seperated?)
 <li> Distancing algorithm (dynamic | min=xxx,max=yyy | uncontrolled)
 <li> Wave Timing (scan | fire)
@@ -126,47 +126,47 @@
 </UL>
 <p>
 <UL >
-<li> <tt>class WaveBullet<a href="robowiki?action=edit&id=WaveBullet" class=wikipageedit>?</a></tt> - pretty self-explanitory.  Includes a "segment" (array of numbers) to return to, has an update/check method, probably like <tt>MiniBullet<a href="robowiki?action=edit&id=MiniBullet" class=wikipageedit>?</a></tt> but more clear.
+<li> <tt>class WaveBullet<a href="robowiki@action=edit&id=WaveBullet" class=wikipageedit>?</a></tt> - pretty self-explanitory.  Includes a "segment" (array of numbers) to return to, has an update/check method, probably like <tt>MiniBullet<a href="robowiki@action=edit&id=MiniBullet" class=wikipageedit>?</a></tt> but more clear.
 </UL>
 <p>
 <UL >
 <li> <tt>interface Movement</tt> : Represents a movement strategy.  These should be easily dynamically loadable, i.e. - have a parameterless constructor.
 </UL><DL>
-<dt><dd><tt>public void onEvent(Event, <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>)</tt>
-<dt><dd><tt>public void run(<a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>)</tt> : called in the run loop of the robot
+<dt><dd><tt>public void onEvent(Event, <a href="robowiki@AdvancedRobot" class=wikipagelink>AdvancedRobot</a>)</tt>
+<dt><dd><tt>public void run(<a href="robowiki@AdvancedRobot" class=wikipagelink>AdvancedRobot</a>)</tt> : called in the run loop of the robot
 </DL><UL>
 <UL >
-<li> Subclasses: <tt>StationaryMovement<a href="robowiki?action=edit&id=StationaryMovement" class=wikipageedit>?</a></tt> : for TC-type tests, sort of an oxymoron, <tt><a href="robowiki?FloodMovement" class=wikipagelink>FloodMovement</a></tt>: Like <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>, <tt>FhqwhgadsMovement<a href="robowiki?action=edit&id=FhqwhgadsMovement" class=wikipageedit>?</a></tt>: Like Fhqwhgads, <tt>CigaretMovement<a href="robowiki?action=edit&id=CigaretMovement" class=wikipageedit>?</a></tt>: Like Cigaret, <tt>LinebackerMovement<a href="robowiki?action=edit&id=LinebackerMovement" class=wikipageedit>?</a></tt>: Tries to corner you.  Good to test against.
+<li> Subclasses: <tt>StationaryMovement<a href="robowiki@action=edit&id=StationaryMovement" class=wikipageedit>?</a></tt> : for TC-type tests, sort of an oxymoron, <tt><a href="robowiki@FloodMovement" class=wikipagelink>FloodMovement</a></tt>: Like <a href="robowiki@FloodMini" class=wikipagelink>FloodMini</a>, <tt>FhqwhgadsMovement<a href="robowiki@action=edit&id=FhqwhgadsMovement" class=wikipageedit>?</a></tt>: Like Fhqwhgads, <tt>CigaretMovement<a href="robowiki@action=edit&id=CigaretMovement" class=wikipageedit>?</a></tt>: Like Cigaret, <tt>LinebackerMovement<a href="robowiki@action=edit&id=LinebackerMovement" class=wikipageedit>?</a></tt>: Tries to corner you.  Good to test against.
 </UL>
 </UL>
 <p>
 <UL >
-<li> <tt>interface PowerManagement<a href="robowiki?action=edit&id=PowerManagement" class=wikipageedit>?</a></tt> : Used to play with power management.  These should be easily dynamically loadable, i.e. - have a parameterless constructor.
+<li> <tt>interface PowerManagement<a href="robowiki@action=edit&id=PowerManagement" class=wikipageedit>?</a></tt> : Used to play with power management.  These should be easily dynamically loadable, i.e. - have a parameterless constructor.
 </UL><DL>
-<dt><dd><tt>public double getPower(<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e, <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> ar)</tt> : returns the power that should be used, or return &lt;= 0 if no shot should be fired.
+<dt><dd><tt>public double getPower(<a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e, <a href="robowiki@AdvancedRobot" class=wikipagelink>AdvancedRobot</a> ar)</tt> : returns the power that should be used, or return &lt;= 0 if no shot should be fired.
 </DL><UL>
 <li> * Subclasses: <tt>Power3Only</tt> : Useful, also used for TC stuff
 </UL>
-<tt>FloodMiniPower<a href="robowiki?action=edit&id=FloodMiniPower" class=wikipageedit>?</a></tt> : The energy management I use in most of my bots, <tt>FloodHTPower<a href="robowiki?action=edit&id=FloodHTPower" class=wikipageedit>?</a></tt> : A little more complex and strategy oriented power management, <tt>ConservativePower<a href="robowiki?action=edit&id=ConservativePower" class=wikipageedit>?</a></tt> : A power management scheme that favors lower powers than 3 most of the time, <tt>RandomPower<a href="robowiki?action=edit&id=RandomPower" class=wikipageedit>?</a></tt> : Might be worthwhile, <tt>SparkPower<a href="robowiki?action=edit&id=SparkPower" class=wikipageedit>?</a></tt> : Might also be interesting, <tt>LowPower<a href="robowiki?action=edit&id=LowPower" class=wikipageedit>?</a></tt> : Shoots fast bullets
+<tt>FloodMiniPower<a href="robowiki@action=edit&id=FloodMiniPower" class=wikipageedit>?</a></tt> : The energy management I use in most of my bots, <tt>FloodHTPower<a href="robowiki@action=edit&id=FloodHTPower" class=wikipageedit>?</a></tt> : A little more complex and strategy oriented power management, <tt>ConservativePower<a href="robowiki@action=edit&id=ConservativePower" class=wikipageedit>?</a></tt> : A power management scheme that favors lower powers than 3 most of the time, <tt>RandomPower<a href="robowiki@action=edit&id=RandomPower" class=wikipageedit>?</a></tt> : Might be worthwhile, <tt>SparkPower<a href="robowiki@action=edit&id=SparkPower" class=wikipageedit>?</a></tt> : Might also be interesting, <tt>LowPower<a href="robowiki@action=edit&id=LowPower" class=wikipageedit>?</a></tt> : Shoots fast bullets
 <p>
 <UL >
-<li> <tt>interface Segmentation</tt>: Robot's version of <tt>GrapherSegmentation<a href="robowiki?action=edit&id=GrapherSegmentation" class=wikipageedit>?</a></tt>.
+<li> <tt>interface Segmentation</tt>: Robot's version of <tt>GrapherSegmentation<a href="robowiki@action=edit&id=GrapherSegmentation" class=wikipageedit>?</a></tt>.
 </UL><DL>
 <dt><dd><tt>public int numSegments()</tt> : returns the total number of possible segments that could be chosen
-<dt><dd><tt>public GraphingSegmentation<a href="robowiki?action=edit&id=GraphingSegmentation" class=wikipageedit>?</a> getGraphingSegmentation<a href="robowiki?action=edit&id=GraphingSegmentation" class=wikipageedit>?</a>()</tt> : This information will probably be stored in the data files, the idea is to convert it directly into a <tt>GraphingSegmentation<a href="robowiki?action=edit&id=GraphingSegmentation" class=wikipageedit>?</a></tt> object.  There should basically be a corresponding <tt>GraphingSegmentation<a href="robowiki?action=edit&id=GraphingSegmentation" class=wikipageedit>?</a></tt> class for each <tt>Segmentation</tt> class.
-<dt><dd><tt>public int getSegmentIndex<a href="robowiki?action=edit&id=SegmentIndex" class=wikipageedit>?</a>(<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e, <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> ar, PowerManagement<a href="robowiki?action=edit&id=PowerManagement" class=wikipageedit>?</a> em)</tt> : Gets the index of the segment that should be used in the given situation.
+<dt><dd><tt>public GraphingSegmentation<a href="robowiki@action=edit&id=GraphingSegmentation" class=wikipageedit>?</a> getGraphingSegmentation<a href="robowiki@action=edit&id=GraphingSegmentation" class=wikipageedit>?</a>()</tt> : This information will probably be stored in the data files, the idea is to convert it directly into a <tt>GraphingSegmentation<a href="robowiki@action=edit&id=GraphingSegmentation" class=wikipageedit>?</a></tt> object.  There should basically be a corresponding <tt>GraphingSegmentation<a href="robowiki@action=edit&id=GraphingSegmentation" class=wikipageedit>?</a></tt> class for each <tt>Segmentation</tt> class.
+<dt><dd><tt>public int getSegmentIndex<a href="robowiki@action=edit&id=SegmentIndex" class=wikipageedit>?</a>(<a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e, <a href="robowiki@AdvancedRobot" class=wikipagelink>AdvancedRobot</a> ar, PowerManagement<a href="robowiki@action=edit&id=PowerManagement" class=wikipageedit>?</a> em)</tt> : Gets the index of the segment that should be used in the given situation.
 </DL><UL>
 <UL >
-<li> Subclasses (possibilities are endless): <tt>DistanceSegmentation<a href="robowiki?action=edit&id=DistanceSegmentation" class=wikipageedit>?</a></tt>, <tt>BFTSegmentation</tt>, <tt>LateralVelocitySegmentation<a href="robowiki?action=edit&id=LateralVelocitySegmentation" class=wikipageedit>?</a></tt>, <tt>AccelerationSegmentation<a href="robowiki?action=edit&id=AccelerationSegmentation" class=wikipageedit>?</a></tt>, <tt>WallSegmentation<a href="robowiki?action=edit&id=WallSegmentation" class=wikipageedit>?</a></tt>, <tt>TimeSegmentation<a href="robowiki?action=edit&id=TimeSegmentation" class=wikipageedit>?</a></tt>, <tt>LateralDirectionSegmentation<a href="robowiki?action=edit&id=LateralDirectionSegmentation" class=wikipageedit>?</a></tt>, <tt>MeleeSegmentation<a href="robowiki?action=edit&id=MeleeSegmentation" class=wikipageedit>?</a></tt>, (Be creative)
+<li> Subclasses (possibilities are endless): <tt>DistanceSegmentation<a href="robowiki@action=edit&id=DistanceSegmentation" class=wikipageedit>?</a></tt>, <tt>BFTSegmentation</tt>, <tt>LateralVelocitySegmentation<a href="robowiki@action=edit&id=LateralVelocitySegmentation" class=wikipageedit>?</a></tt>, <tt>AccelerationSegmentation<a href="robowiki@action=edit&id=AccelerationSegmentation" class=wikipageedit>?</a></tt>, <tt>WallSegmentation<a href="robowiki@action=edit&id=WallSegmentation" class=wikipageedit>?</a></tt>, <tt>TimeSegmentation<a href="robowiki@action=edit&id=TimeSegmentation" class=wikipageedit>?</a></tt>, <tt>LateralDirectionSegmentation<a href="robowiki@action=edit&id=LateralDirectionSegmentation" class=wikipageedit>?</a></tt>, <tt>MeleeSegmentation<a href="robowiki@action=edit&id=MeleeSegmentation" class=wikipageedit>?</a></tt>, (Be creative)
 </UL>
 </UL>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
-While some of this design was changed by the time it was released (most notably that the GUI panels became plugins themselves), I really stuck to this design in general, not just for the design's sake, but because it just all fit together on paper, and fit together almost as well in code.  I suspect that future changes to this design will allow better flexibility for modules and such. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+While some of this design was changed by the time it was released (most notably that the GUI panels became plugins themselves), I really stuck to this design in general, not just for the design's sake, but because it just all fit together on paper, and fit together almost as well in code.  I suspect that future changes to this design will allow better flexibility for modules and such. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?FloodGrapher" class=wikipagelink>FloodGrapher</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=FloodGrapher/Design" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=FloodGrapher/Design">View other revisions</a><br>Last edited March 9, 2004 22:58 EST by <a href="robowiki?Kawigi" title="ID 2424 from byu176783wks.rn.byu.edu">Kawigi</a> <a href="robowiki?action=browse&diff=1&id=FloodGrapher/Design">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@FloodGrapher" class=wikipagelink>FloodGrapher</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=FloodGrapher/Design" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=FloodGrapher/Design">View other revisions</a><br>Last edited March 9, 2004 22:58 EST by <a href="robowiki@Kawigi" title="ID 2424 from byu176783wks.rn.byu.edu">Kawigi</a> <a href="robowiki@action=browse&diff=1&id=FloodGrapher/Design">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

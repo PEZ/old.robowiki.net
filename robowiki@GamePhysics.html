@@ -3,8 +3,8 @@
 <META NAME='KEYWORDS' CONTENT='Game, Physics'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=GamePhysics">GamePhysics</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?GamePhysics/Old" class=wikipagelink>/Old</a>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=GamePhysics">GamePhysics</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki@GamePhysics/Old" class=wikipagelink>/Old</a>
 <p>
 <H3>Robocode Processing Loop</H3>
 
@@ -20,7 +20,7 @@ The order that Robocode runs is as follows:
 </OL>
 <p>
 <UL >
-<li> Where do the events get processed? -- <a href="robowiki?Filmil" class=wikipagelink>filmil</a>
+<li> Where do the events get processed? -- <a href="robowiki@Filmil" class=wikipagelink>filmil</a>
 <li> When does firing occur?
 <UL >
 <li> On the next tick.  The difference between fire() and setFire() is that fire() also runs the next tick.  However, it is fired from your current location.
@@ -39,35 +39,35 @@ The order that Robocode runs is as follows:
 <li> Enemy bullet has moved 22, your bullet moved 11.
 </UL>
 </UL>
-<li> This part was confusing to me for a while so here goes my shot at explaining it: -- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin Alan Pedersen</a>
+<li> This part was confusing to me for a while so here goes my shot at explaining it: -- <a href="robowiki@Martin_Alan_Pedersen" class=wikipagelink>Martin Alan Pedersen</a>
 <UL >
 <li> In this example, I am breaking down turns into server side (-) and client side (+).  The server side turn occurs first, with bullet and bot movement calculated.  The results perceived in the client turn have the same turn number, but all of your instructions are going to be processed in the next turn's server side portion.  Though I think of it as client/server, really the 'client' is your bot's run() processing loop.
 <li> Turn 30+: you tell your bot to move somewhere and also to fire.
 <li> Turn 31-: your bullet fires and travels from the center of your bot outward one unit of velocity (e.g. 11.0 for a power 3.0 shot).  If your enemy is in the path of the line segment (highly unlikely in the first tick) it is hit.  After all bullets fire / move, all bots are moved.  Events are sent to bots as things happen during this 'server side' processing.
-<li> Turn 31+: Control is returned to your bot's run() processing loop.  Your getXX() methods are populated with your present demographics.  (Position, etc may be updated earlier and visible while processing an OnHitWall<a href="robowiki?action=edit&id=OnHitWall" class=wikipageedit>?</a> / Robot event, for example .. not really sure.)
+<li> Turn 31+: Control is returned to your bot's run() processing loop.  Your getXX() methods are populated with your present demographics.  (Position, etc may be updated earlier and visible while processing an OnHitWall<a href="robowiki@action=edit&id=OnHitWall" class=wikipageedit>?</a> / Robot event, for example .. not really sure.)
 </UL>
 <li> You cannot send team messages back and forth in the same tick; that is, if Bot 1 sends a message to Bot 2, and Bot 2 responds to Bot 1, the response won't come until the next tick.
 <UL >
-<li> It seems that team messages won't be send until the robot calls execute() and hence won't be received until the end of the turn. I have two robots sharing enemy data and it goes like this:<a href="robowiki?Gir" class=wikipagelink>Gir</a>
+<li> It seems that team messages won't be send until the robot calls execute() and hence won't be received until the end of the turn. I have two robots sharing enemy data and it goes like this:<a href="robowiki@Gir" class=wikipagelink>Gir</a>
 <UL >
 <li> Server Side (getTime() == n): Robot A &amp; Robot B scan Enemy 1 at getTime() == n. Robot B sends a team message to Robot A with the data for Enemy 1 at tick n.
 <li> Robots Side (getTime() == n): Robot A has only his own scan informations for Enemy 1 at tick n. 
 <li> Server Side (getTime() == n + 1): Robot A receives the team message from Robot B with the data for Enemy 1 at tick n.
 </UL>
-<li> I'm not sure - the message might be received on the same turn. However, it is definitely the case that you cannot respond to the message and have that received the same turn. It is probably like onMessageReceived<a href="robowiki?action=edit&id=MessageReceived" class=wikipageedit>?</a> is triggered "simultaneously" in each tank each tick, so you can't really send messages back and forth in the same tick. You could easily test it, though, by sending the time (getTime()) to your teammate, and in onMessageReceived<a href="robowiki?action=edit&id=MessageReceived" class=wikipageedit>?</a>, print the real time and the time that the message contains. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
-<li> Well that's what I did, so it really seems to be this way... too bad.<a href="robowiki?Gir" class=wikipagelink>Gir</a>
+<li> I'm not sure - the message might be received on the same turn. However, it is definitely the case that you cannot respond to the message and have that received the same turn. It is probably like onMessageReceived<a href="robowiki@action=edit&id=MessageReceived" class=wikipageedit>?</a> is triggered "simultaneously" in each tank each tick, so you can't really send messages back and forth in the same tick. You could easily test it, though, by sending the time (getTime()) to your teammate, and in onMessageReceived<a href="robowiki@action=edit&id=MessageReceived" class=wikipageedit>?</a>, print the real time and the time that the message contains. -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
+<li> Well that's what I did, so it really seems to be this way... too bad.<a href="robowiki@Gir" class=wikipagelink>Gir</a>
 </UL>
 </UL>
 <p>
 <UL >
-<li> I think the easiest way to answer the "When do bullets fire?" question would be to add "Bullet's fired this turn appear at firing robot's position" in between "All bullets move and check for collisions" and "All robots move (heading, accel, velocity, distance, in that order)" in the order of actions listed above. While I am at it, I have a question myself. When robocode is calculating collisions, it pretends that all robot's are facing directly north/east/south/west, right? So rotating to face a bullet that is coming at you would not help at all? -- Avi<a href="robowiki?action=edit&id=Avi" class=wikipageedit>?</a>
+<li> I think the easiest way to answer the "When do bullets fire?" question would be to add "Bullet's fired this turn appear at firing robot's position" in between "All bullets move and check for collisions" and "All robots move (heading, accel, velocity, distance, in that order)" in the order of actions listed above. While I am at it, I have a question myself. When robocode is calculating collisions, it pretends that all robot's are facing directly north/east/south/west, right? So rotating to face a bullet that is coming at you would not help at all? -- Avi<a href="robowiki@action=edit&id=Avi" class=wikipageedit>?</a>
 <UL >
-<li> I thought about it some more and I think my suggestion is wrong. Really, the action "all bullets appear" happens at some point between heading and distance. If it happened before heading then the bullet object would not have the correct direction. So my new suggestion is that right after "...heading, " and right before "accel" you put "bullets appear" -- Avi<a href="robowiki?action=edit&id=Avi" class=wikipageedit>?</a>
-<li> nope, a robot is represented as a non-rotating square of 36x36, if the 'line' of the bullet (8 pixels long) intersects with this square, it is a hit.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<li> I thought about it some more and I think my suggestion is wrong. Really, the action "all bullets appear" happens at some point between heading and distance. If it happened before heading then the bullet object would not have the correct direction. So my new suggestion is that right after "...heading, " and right before "accel" you put "bullets appear" -- Avi<a href="robowiki@action=edit&id=Avi" class=wikipageedit>?</a>
+<li> nope, a robot is represented as a non-rotating square of 36x36, if the 'line' of the bullet (8 pixels long) intersects with this square, it is a hit.  -- <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
 <UL >
-<li> what? 'line' of the bullet? I thought bullets were pixels. Can somebody explain to me how bullets colliding with other bullets works in light of this new information? --Avi<a href="robowiki?action=edit&id=Avi" class=wikipageedit>?</a>
+<li> what? 'line' of the bullet? I thought bullets were pixels. Can somebody explain to me how bullets colliding with other bullets works in light of this new information? --Avi<a href="robowiki@action=edit&id=Avi" class=wikipageedit>?</a>
 </UL>
-<li> a pixel is shown as a dot, but internally handled as a 8-pixel long line. Bullets collide with each other when their lines do intersect. I could not find the info on the <a href="robowiki?BeginnersFAQ" class=wikipagelink>BeginnersFAQ</a>, but I know it is around somewhere.  --<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<li> a pixel is shown as a dot, but internally handled as a 8-pixel long line. Bullets collide with each other when their lines do intersect. I could not find the info on the <a href="robowiki@BeginnersFAQ" class=wikipagelink>BeginnersFAQ</a>, but I know it is around somewhere.  --<a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
 </UL>
 </UL>
 <p>
@@ -77,23 +77,23 @@ The order that Robocode runs is as follows:
 Time (t) Robocode time is measured in "ticks", which are equivalent to frames displayed on the screen. Each robot gets one turn per tick. 1 tick = 1 turn = 1 frame. 
 <p>
 <UL >
-<li> How much in fact is the robot allowed to think? A "Tick" does not correspond to real time, but there exists a realtime limit on how long one can 'contemplate'. What is this limit, and does it depend upon the system the Robocode simulator is running on? -- <a href="robowiki?Filmil" class=wikipagelink>filmil</a>
-<li> The Robocode environment tries to measure the performance of the system when it is started. This in order to make it not dependent on this. How much you are allowed to think I don't know really. It's seldom a problem anyway. You'll tire of the bot being a really <a href="robowiki?SlowBot" class=wikipagelink>SlowBot</a> before reaching this limit I think... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> 
-<li> Ok, I just tested this, and if it takes more than 5 seconds in a tick <a href="robowiki?Robocode" class=wikipagelink>Robocode</a> determines not to calculate score for the bot, and after 10 seconds the bot is stopped and is no longer processed. When it comes to skipped turns however, I am a bit confused.  A bot in an infinite loop will not recieve skipped turn events, but other robots in the battle will still execute (although at a slower framerate) this leads me to believe that robocode does not run battles strictly sequentially. It appears that ticks still continue while the bot loops (a getTime within the loop shows anywhere from 7 to 20 ticks a second on my comp)for the first 5 seconds, and then for another 5 seconds <a href="robowiki?Robocode" class=wikipagelink>Robocode</a> solely runs that robot (no ticks pass) until it is disabled.  -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
-<li> IIRC your robot is warped to the next tick. Your robot continues running where it was, as if it is still in the previous tick (besides getting new data from getX() etc). You only receive events when you move to the next tick normally. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<li> How much in fact is the robot allowed to think? A "Tick" does not correspond to real time, but there exists a realtime limit on how long one can 'contemplate'. What is this limit, and does it depend upon the system the Robocode simulator is running on? -- <a href="robowiki@Filmil" class=wikipagelink>filmil</a>
+<li> The Robocode environment tries to measure the performance of the system when it is started. This in order to make it not dependent on this. How much you are allowed to think I don't know really. It's seldom a problem anyway. You'll tire of the bot being a really <a href="robowiki@SlowBot" class=wikipagelink>SlowBot</a> before reaching this limit I think... -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a> 
+<li> Ok, I just tested this, and if it takes more than 5 seconds in a tick <a href="robowiki@Robocode" class=wikipagelink>Robocode</a> determines not to calculate score for the bot, and after 10 seconds the bot is stopped and is no longer processed. When it comes to skipped turns however, I am a bit confused.  A bot in an infinite loop will not recieve skipped turn events, but other robots in the battle will still execute (although at a slower framerate) this leads me to believe that robocode does not run battles strictly sequentially. It appears that ticks still continue while the bot loops (a getTime within the loop shows anywhere from 7 to 20 ticks a second on my comp)for the first 5 seconds, and then for another 5 seconds <a href="robowiki@Robocode" class=wikipagelink>Robocode</a> solely runs that robot (no ticks pass) until it is disabled.  -- <a href="robowiki@Jokester" class=wikipagelink>Jokester</a>
+<li> IIRC your robot is warped to the next tick. Your robot continues running where it was, as if it is still in the previous tick (besides getting new data from getX() etc). You only receive events when you move to the next tick normally. -- <a href="robowiki@Jonathan" class=wikipagelink>Jonathan</a>
 </UL>
 <p>
 Distance Measurement Robocode's units are basically measured in pixels, with two exceptions. First, all distances are measured with double precision, so you can actually move a fraction of a pixel. Second, Robocode automatically scales down battles to fit on the screen. In this case, the unit of distance is actually smaller than a pixel. 
 <p>
 <UL >
-<li> With all due respect, equating pixels with robocode units is simply an error. Robocode units (runits) do not correspond to pixels since display can be scaled. As it is now, the explanation says: the units are pixels, except sometimes when they are not. It does not seem to clarify too much. Thanks for your patience in reading this. :) -- <a href="robowiki?Filmil" class=wikipagelink>filmil</a>
-<li> It doesn't really matter. It's like with time ticks. Just units. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<li> With all due respect, equating pixels with robocode units is simply an error. Robocode units (runits) do not correspond to pixels since display can be scaled. As it is now, the explanation says: the units are pixels, except sometimes when they are not. It does not seem to clarify too much. Thanks for your patience in reading this. :) -- <a href="robowiki@Filmil" class=wikipagelink>filmil</a>
+<li> It doesn't really matter. It's like with time ticks. Just units. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <UL >
-<li> That's why I said the above: introducing pixels serves no purpose. But I guess if it has become a custom, let they be pixels... -- <a href="robowiki?Filmil" class=wikipagelink>filmil</a>
+<li> That's why I said the above: introducing pixels serves no purpose. But I guess if it has become a custom, let they be pixels... -- <a href="robowiki@Filmil" class=wikipagelink>filmil</a>
 <UL >
-<li> It does serve a purpose, though.  The distance will always be in pixels unless the user makes the window too small to display the battlefield, in which case Robocode will scale the whole battlefield down.  But it certainly is pixels by default, and will never be any <em>larger</em> than pixels. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<li> It does serve a purpose, though.  The distance will always be in pixels unless the user makes the window too small to display the battlefield, in which case Robocode will scale the whole battlefield down.  But it certainly is pixels by default, and will never be any <em>larger</em> than pixels. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 </UL>
-<li> This is just like scaling down a large image to fit an average screen. It is still, say, 2048 pixels wide, even though it is 1024 on that screen. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<li> This is just like scaling down a large image to fit an average screen. It is still, say, 2048 pixels wide, even though it is 1024 on that screen. -- <a href="robowiki@Jonathan" class=wikipagelink>Jonathan</a>
 </UL>
 </UL>
 <p>
@@ -103,14 +103,14 @@ Distance Measurement Robocode's units are basically measured in pixels, with two
 Acceleration (a) Robots accelerate at the rate of 1 pixel/tick. Robots decelerate at the rate of 2 pixels/tick. Robocode determines acceleration for you, based on the distance you are trying to move.
 <p>
 <UL >
-<li> Note that this is different than real, 'live' tanks, i.e. with motors, where you can set the <i>speed</i>, and acceleration is of course dependent on the horsepower count of the motor. This difference also gets the system control people a surprise. -- <a href="robowiki?Filmil" class=wikipagelink>filmil</a>
+<li> Note that this is different than real, 'live' tanks, i.e. with motors, where you can set the <i>speed</i>, and acceleration is of course dependent on the horsepower count of the motor. This difference also gets the system control people a surprise. -- <a href="robowiki@Filmil" class=wikipagelink>filmil</a>
 <UL >
-<li> How different is this, aside from the fact that we can assume constant acceleration / deceleration? -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<li> How different is this, aside from the fact that we can assume constant acceleration / deceleration? -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 </UL>
-<li> Acceleration and deceleration does happen with full numbers, except for the last one reaching 0 or the intended speed. That last tick just fills the remaining part. Spinbot for example accelerates from 0 -&gt; 1 -&gt; 2 -&gt; 3 -&gt; 4 -&gt; 5 -&gt; 5.5 and if it would decelerate, it would go 5.5 -&gt; 3.5 -&gt; 1.5 -&gt; 0  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<li> Acceleration and deceleration does happen with full numbers, except for the last one reaching 0 or the intended speed. That last tick just fills the remaining part. Spinbot for example accelerates from 0 -&gt; 1 -&gt; 2 -&gt; 3 -&gt; 4 -&gt; 5 -&gt; 5.5 and if it would decelerate, it would go 5.5 -&gt; 3.5 -&gt; 1.5 -&gt; 0  -- <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
 <li> Deceleration can also be greater than 2, which occurs during collisions.
 <li> Even if you decelerate past 0 your max speed difference is 2. This means that if your speed is -0.5 it is possible to have 1.5 in the next tick, and vice versa.
-<li> There are a few exceptions to these basic ideas, which most bots will either never run into or not care about.  However, for those using GoTo<a href="robowiki?action=edit&id=GoTo" class=wikipageedit>?</a> (can someone find a page describing goto &amp; make that a link, then delete this request?) style movement and <a href="robowiki?PrecisePrediction" class=wikipagelink>PrecisePrediction</a>, you need to read about <a href="robowiki?GamePhysics/BotSpeed" class=wikipagelink>GamePhysics/BotSpeed</a>. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> There are a few exceptions to these basic ideas, which most bots will either never run into or not care about.  However, for those using GoTo<a href="robowiki@action=edit&id=GoTo" class=wikipageedit>?</a> (can someone find a page describing goto &amp; make that a link, then delete this request?) style movement and <a href="robowiki@PrecisePrediction" class=wikipagelink>PrecisePrediction</a>, you need to read about <a href="robowiki@GamePhysics/BotSpeed" class=wikipagelink>GamePhysics/BotSpeed</a>. -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 </UL>
 <p>
 Velocity Equation(v) v = at. Absolute velocity can never exceed 8. Note that technically, velocity is a vector, but in Robocode we simply assume the direction of the vector to be the robot's heading. 
@@ -141,7 +141,7 @@ Distance Equation (d) d = vt.
 <UL >
 <li>Damage = 4 * firepower. If firepower &gt; 1, it does an additional 2 * (power - 1). 
 <li>Velocity 20 - 3 * firepower; 
-<li><a href="robowiki?GunHeat" class=wikipagelink>GunHeat</a> generated 1 + firepower / 5. You cannot fire if gunHeat &gt; 0. All guns are hot at the start of each round. 
+<li><a href="robowiki@GunHeat" class=wikipagelink>GunHeat</a> generated 1 + firepower / 5. You cannot fire if gunHeat &gt; 0. All guns are hot at the start of each round. 
 <UL >
 <li> How hot do the guns start?
 <li> 3.0 IIRC
@@ -159,44 +159,44 @@ In detail: a robot is moving "toward" the collision if its velocity is non-zero 
 <H3>Wall Collisions</H3>
 
 <p>
-AdvancedRobots<a href="robowiki?action=edit&id=AdvancedRobots" class=wikipageedit>?</a> take Math.abs(velocity) * .5 - 1 damage (but never &lt; 0)
+AdvancedRobots<a href="robowiki@action=edit&id=AdvancedRobots" class=wikipageedit>?</a> take Math.abs(velocity) * .5 - 1 damage (but never &lt; 0)
 <p>
 <H3>Bullets Hitting Robots</H3>
 
 <p>
 Robots are 36x36 squares centered on the (x,y) coordinate.  Even when you have rotated, you collide with walls and robots and are hit by bullets based on 18 pixels in all four directions.  Bullet collisions are based on whether the line between the bullet's last position and its new position intersect that square.
 <p>
-Note: If you are using <a href="robowiki?VirtualBullets" class=wikipagelink>virtual bullets</a> and taking a short cut of estimating a hit based on a bullet passing within 18 pixels distance (as though the Tank were a circle) you are losing a significant amount of area.  A robot has an area of 1296 pixels (square) as opposed to a circle of 18 radius having an area of 1018, or about 79%.  -- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin Alan Pedersen</a>
+Note: If you are using <a href="robowiki@VirtualBullets" class=wikipagelink>virtual bullets</a> and taking a short cut of estimating a hit based on a bullet passing within 18 pixels distance (as though the Tank were a circle) you are losing a significant amount of area.  A robot has an area of 1296 pixels (square) as opposed to a circle of 18 radius having an area of 1018, or about 79%.  -- <a href="robowiki@Martin_Alan_Pedersen" class=wikipagelink>Martin Alan Pedersen</a>
 <p>
-I think a quick way to get around this would be to model your virtual bullets as Point2D objects and the other bot as a 36x36 Rectangle2D. Then you can just use the Rectangle2D.contains(Point2D) method to check for hits. I used this method in <a href="robowiki?Stampede" class=wikipagelink>Stampede</a>, which feeds its gun data with VBs.--<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a>
+I think a quick way to get around this would be to model your virtual bullets as Point2D objects and the other bot as a 36x36 Rectangle2D. Then you can just use the Rectangle2D.contains(Point2D) method to check for hits. I used this method in <a href="robowiki@Stampede" class=wikipagelink>Stampede</a>, which feeds its gun data with VBs.--<a href="robowiki@Wcsv" class=wikipagelink>wcsv</a>
 <p>
-I don't check for collisions with a bot, I just mark down the angle the gun shot at on the virtual bullet (actually, I use a factor index, but it works the same); when the virtual bullet / wave passes the bot, I find the min and max angles that would have hit the bot, and check if the angle was between those. It seems quite a bit less CPU intensive to do it this way, and it fits well into my wave-based targeting systems... (I highly doubt I'm the first to do it this way.) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+I don't check for collisions with a bot, I just mark down the angle the gun shot at on the virtual bullet (actually, I use a factor index, but it works the same); when the virtual bullet / wave passes the bot, I find the min and max angles that would have hit the bot, and check if the angle was between those. It seems quite a bit less CPU intensive to do it this way, and it fits well into my wave-based targeting systems... (I highly doubt I'm the first to do it this way.) -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <p>
-That is indeed what I do with waves in <a href="robowiki?PowerHouse" class=wikipagelink>PowerHouse</a>, but using VBs that way is essentially the same as using waves; at least the way I understand it. --<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a>
+That is indeed what I do with waves in <a href="robowiki@PowerHouse" class=wikipagelink>PowerHouse</a>, but using VBs that way is essentially the same as using waves; at least the way I understand it. --<a href="robowiki@Wcsv" class=wikipagelink>wcsv</a>
 <hr noshade class=wikiline size=1>
 <p>
-Theres alot of good stuff on the <a rel="nofollow" href="http://robocode.sourceforge.net/help/robocode.faq.txt">[Robocode FAQ]</a> with regards to physics.  I will try to include this stuff and rework the page if I have time -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+Theres alot of good stuff on the <a rel="nofollow" href="http://robocode.sourceforge.net/help/robocode.faq.txt">[Robocode FAQ]</a> with regards to physics.  I will try to include this stuff and rework the page if I have time -- <a href="robowiki@Jokester" class=wikipagelink>Jokester</a>
 <p>
 <hr noshade class=wikiline size=1>
-Does anyone know if there is a size limit fo team message, because my bot throws exception when I try to broadcast my hashmap containing all the scan stores of the last survivor at the begining of the next round. Note that all the objects contained in the hash map are serializable. -- <a href="robowiki?Florent" class=wikipagelink>Florent</a>
+Does anyone know if there is a size limit fo team message, because my bot throws exception when I try to broadcast my hashmap containing all the scan stores of the last survivor at the begining of the next round. Note that all the objects contained in the hash map are serializable. -- <a href="robowiki@Florent" class=wikipagelink>Florent</a>
 <p>
 <UL >
-<li> I don't know of any size limit, but that doesn't mean there isn't one... Have you tried sending a very small hashmap to see if the same thing happens? I don't know much about Serializable objects, but is it possible it is still referencing Bot A's objects in the hashmap it sends to Bot B? -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> I don't know of any size limit, but that doesn't mean there isn't one... Have you tried sending a very small hashmap to see if the same thing happens? I don't know much about Serializable objects, but is it possible it is still referencing Bot A's objects in the hashmap it sends to Bot B? -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 </UL>
 <p>
 <UL >
-<li> Florent, i use a different approach so i don't need messages to synchronise the data. I made the hashmap a static so that all instances (in a team) of Freya read from and update the same hashmap. I haven't checked if this really works though... --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<li> Florent, i use a different approach so i don't need messages to synchronise the data. I made the hashmap a static so that all instances (in a team) of Freya read from and update the same hashmap. I haven't checked if this really works though... --<a href="robowiki@Loki" class=wikipagelink>Loki</a>
 </UL>
 <p>
-I will try those ideas, but I have some doubts regarding Loki's one. -- <a href="robowiki?Florent" class=wikipagelink>Florent</a>
+I will try those ideas, but I have some doubts regarding Loki's one. -- <a href="robowiki@Florent" class=wikipagelink>Florent</a>
 <UL >
 <li> well, i was inspired by this text from my Java textbook: "Variables and methods marked static belong to the class, rather than to any particular instance. In fact, you can use a static method or variable without having any instances of that class at all. You need only have the class available to be able to invoke a static method or access a static variable. Static variables, too, can be accessed without having an instance of a class. But if there are instances, a <b>static variable</b> of a class will be <b>shared by all instances</b> of that class; there is only one copy." 
 </UL>
-Why do you doubt that it works? --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+Why do you doubt that it works? --<a href="robowiki@Loki" class=wikipagelink>Loki</a>
 <p>
-I remember reading that Robocode loads each bot with a separate classloader. This elimates the possibility of reading into another bot's statics and allows bots of the same class to compete in the same battle without static variable conflicts. (It also takes away your ability to share statics.) So, you are correct about Java statics but Robocode hijacks their behavior for its own purposes. --<a href="robowiki?Corbos" class=wikipagelink>Corbos</a>
+I remember reading that Robocode loads each bot with a separate classloader. This elimates the possibility of reading into another bot's statics and allows bots of the same class to compete in the same battle without static variable conflicts. (It also takes away your ability to share statics.) So, you are correct about Java statics but Robocode hijacks their behavior for its own purposes. --<a href="robowiki@Corbos" class=wikipagelink>Corbos</a>
 <p>
-I found this info on <a href="robowiki?JavaAPI" class=wikipagelink>JavaAPI</a> as well.
+I found this info on <a href="robowiki@JavaAPI" class=wikipagelink>JavaAPI</a> as well.
 <p>
 <pre> 
 I'm working on team play right now... look for it soon. Messages will be
@@ -209,9 +209,9 @@ Thanks
 -Mat
 </pre>
 <p>
--- <a href="robowiki?Florent" class=wikipagelink>Florent</a>
+-- <a href="robowiki@Florent" class=wikipagelink>Florent</a>
 <p>
-ok, thanks for the info. So there is room for a little improvement. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+ok, thanks for the info. So there is room for a little improvement. --<a href="robowiki@Loki" class=wikipagelink>Loki</a>
 <p>
 I think there is a size limit, after a few experiment here is what I get when I transfer the gun date at the begining of round 2.
 <pre>
@@ -228,45 +228,45 @@ java.io.IOException: Buffer is full.
 <p>
 After looking at code on sourceforge, I found that the limit is 32768 bytes and it is set in <code>robocode.peer.robot.RobotMessageManager.java</code>.
 <p>
--- <a href="robowiki?Florent" class=wikipagelink>Florent</a>
+-- <a href="robowiki@Florent" class=wikipagelink>Florent</a>
 <hr noshade class=wikiline size=1>
 <p>
-A quick question: From the list at the top of this page, it looks like a bot's max turn rate is computed using the previous tick's velocity. Is that right? (this is probably really obvious, so I apologize in advance) --<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a>
+A quick question: From the list at the top of this page, it looks like a bot's max turn rate is computed using the previous tick's velocity. Is that right? (this is probably really obvious, so I apologize in advance) --<a href="robowiki@Wcsv" class=wikipagelink>wcsv</a>
 <p>
 You are correct.  Your turn rate is based on your velocity before acceleration / deceleration.  The distance you travel is based on your adjusted velocity though. -- Martin
 <p>
-I think I've found a way to (sort of) exploit the movement system. A robot's acceleration is one, but its deceleration is 2. This means going from velocity 2 to 0.1 to -1.9 is faster than going 2 to 0 to -1. I don't know of any robots that do this, but it could be useful trick for moving a little faster. Does this work? -- <a href="robowiki?Kev" class=wikipagelink>Kev</a>
+I think I've found a way to (sort of) exploit the movement system. A robot's acceleration is one, but its deceleration is 2. This means going from velocity 2 to 0.1 to -1.9 is faster than going 2 to 0 to -1. I don't know of any robots that do this, but it could be useful trick for moving a little faster. Does this work? -- <a href="robowiki@Kev" class=wikipagelink>Kev</a>
 <p>
-Probably - I know a tank can vibrate between 1 and -1 velocities. Not sure it's worth the trouble of implementing it, but a neat idea for sure :) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+Probably - I know a tank can vibrate between 1 and -1 velocities. Not sure it's worth the trouble of implementing it, but a neat idea for sure :) -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <p>
 You could probably use it to throw off people using guess factors.  You'd be able to squeeze 7-8 additional units of distance if you went from -2 to -0.00001 to 1.99999 rather than -2 to 0 to 1.  The additional nearly 1 unit of velocity would give you that edge.  If someone were limiting their guess factors to aim for your rear corner rather than your center they be hard pressed to hit you, and you might even make them throw an exception.  Still, that's a very small set of bots (if any at all). -- Martin
 <p>
 <UL >
-<li> Indeed, the great majority of of GF guns use an imprecise GF 1/-1, Math.asin(8/bulletVelocity), but <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> certainly tries to calculate an "exact" GF -1, which doesn't use this trick. However, he also records up to GF +/-1.1, so I think he'd still be able to hit ya. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> Indeed, the great majority of of GF guns use an imprecise GF 1/-1, Math.asin(8/bulletVelocity), but <a href="robowiki@Dookious" class=wikipagelink>Dookious</a> certainly tries to calculate an "exact" GF -1, which doesn't use this trick. However, he also records up to GF +/-1.1, so I think he'd still be able to hit ya. -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 </UL>
 <p>
-FYI your suspicions were correct, that does indeed work.  I tried it.  A small trick to increase escape angles.  Nice thought, <a href="robowiki?Kev" class=wikipagelink>Kev</a>!  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+FYI your suspicions were correct, that does indeed work.  I tried it.  A small trick to increase escape angles.  Nice thought, <a href="robowiki@Kev" class=wikipagelink>Kev</a>!  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <p>
-Thanks! Although it might be a lot of work to implement (in <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> at least), every little improvement counts. -- <a href="robowiki?Kev" class=wikipagelink>Kev</a>
+Thanks! Although it might be a lot of work to implement (in <a href="robowiki@WaveSurfing" class=wikipagelink>WaveSurfing</a> at least), every little improvement counts. -- <a href="robowiki@Kev" class=wikipagelink>Kev</a>
 <p>
-One thing I thought worth noting is that onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a> events are not sent immediately upon being hit by a bullet.  They are sent after all of your instructions have been processed (e.g. movement, turret rotation).  They are also sent before on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> events.  The significance of this is that calls to this.getX(), for example, don't reflect the robot's position at the time of being hit, even though you are calling it while processing an onHitByBulletEvent<a href="robowiki?action=edit&id=HitByBulletEvent" class=wikipageedit>?</a>.  It is your bots position after being hit and then moving.  In the event that the bullet killed you and you can't move, I think that rather than getting an onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a> event you are instead given an onDeath event.  In the event that your energy is &lt;= 0.0, you can't move anyway so the observation is moot.  -- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin</a>
+One thing I thought worth noting is that onHitByBullet<a href="robowiki@action=edit&id=HitByBullet" class=wikipageedit>?</a> events are not sent immediately upon being hit by a bullet.  They are sent after all of your instructions have been processed (e.g. movement, turret rotation).  They are also sent before on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a> events.  The significance of this is that calls to this.getX(), for example, don't reflect the robot's position at the time of being hit, even though you are calling it while processing an onHitByBulletEvent<a href="robowiki@action=edit&id=HitByBulletEvent" class=wikipageedit>?</a>.  It is your bots position after being hit and then moving.  In the event that the bullet killed you and you can't move, I think that rather than getting an onHitByBullet<a href="robowiki@action=edit&id=HitByBullet" class=wikipageedit>?</a> event you are instead given an onDeath event.  In the event that your energy is &lt;= 0.0, you can't move anyway so the observation is moot.  -- <a href="robowiki@Martin_Alan_Pedersen" class=wikipagelink>Martin</a>
 <p>
 <UL >
-<li> The onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a> event is not triggered after onDeath, but it is queued up, and you can handle it yourself. <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> posted some info about it on the <a href="robowiki?OnDeath" class=wikipagelink>onDeath</a> page a few weeks ago. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> The onHitByBullet<a href="robowiki@action=edit&id=HitByBullet" class=wikipageedit>?</a> event is not triggered after onDeath, but it is queued up, and you can handle it yourself. <a href="robowiki@David_Alves" class=wikipagelink>David Alves</a> posted some info about it on the <a href="robowiki@OnDeath" class=wikipagelink>onDeath</a> page a few weeks ago. -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 </UL>
 <p>
-About the Collisions part from above - if you are moving away from the collision, it will not be stopped - what exactly does that mean? Does it mean when you hit a robot and you try to move away, you can't? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+About the Collisions part from above - if you are moving away from the collision, it will not be stopped - what exactly does that mean? Does it mean when you hit a robot and you try to move away, you can't? --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-I think it refers to another robot rear-ending you - in that case, you shouldn't abruptly stop (they will, though). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+I think it refers to another robot rear-ending you - in that case, you shouldn't abruptly stop (they will, though). -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-A question: Sometimes when ramfire hits my bot, my bot is "stuck" to ramfire and can't move away. Sometimes it can move away, though. Does it have to do with e.isMyFault<a href="robowiki?action=edit&id=MyFault" class=wikipageedit>?</a>()? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+A question: Sometimes when ramfire hits my bot, my bot is "stuck" to ramfire and can't move away. Sometimes it can move away, though. Does it have to do with e.isMyFault<a href="robowiki@action=edit&id=MyFault" class=wikipageedit>?</a>()? --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-[v1.5.4] I was under the impression that you were not allowed to fire bullets with less than 0.1 energy, but in testing just now one of my bots fired a shot in round 735 with a power of 0.06049954275264291.  That is the power returned by the event's bullet.getPower() method, reported from both the BulletHit<a href="robowiki?action=edit&id=BulletHit" class=wikipageedit>?</a> and HitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a> events, from their respective perspectives.  I speculate that the shot was fired immediately after being hit by a bullet, and the host didn't bother to check the firepower constraints.  Alternatively, it may be that a robot can fire it's last energy regardless of the 0.1 constraint. -- Martin
+[v1.5.4] I was under the impression that you were not allowed to fire bullets with less than 0.1 energy, but in testing just now one of my bots fired a shot in round 735 with a power of 0.06049954275264291.  That is the power returned by the event's bullet.getPower() method, reported from both the BulletHit<a href="robowiki@action=edit&id=BulletHit" class=wikipageedit>?</a> and HitByBullet<a href="robowiki@action=edit&id=HitByBullet" class=wikipageedit>?</a> events, from their respective perspectives.  I speculate that the shot was fired immediately after being hit by a bullet, and the host didn't bother to check the firepower constraints.  Alternatively, it may be that a robot can fire it's last energy regardless of the 0.1 constraint. -- Martin
 <p>
-Yes, I think the only time a robot can fire less than 0.1 power bullets is when firing the bullet disables the bot. I've tried specifying less than 0.1 and it didn't work =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+Yes, I think the only time a robot can fire less than 0.1 power bullets is when firing the bullet disables the bot. I've tried specifying less than 0.1 and it didn't work =) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=GamePhysics" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=GamePhysics">View other revisions</a><br>Last edited September 5, 2008 4:04 EST by <a href="robowiki?Simonton" title="ID 15092 from c-71-205-154-10.hsd1.mi.comcast.net">Simonton</a> <a href="robowiki?action=browse&diff=1&id=GamePhysics">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=GamePhysics" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=GamePhysics">View other revisions</a><br>Last edited September 5, 2008 4:04 EST by <a href="robowiki@Simonton" title="ID 15092 from c-71-205-154-10.hsd1.mi.comcast.net">Simonton</a> <a href="robowiki@action=browse&diff=1&id=GamePhysics">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

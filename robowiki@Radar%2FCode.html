@@ -3,7 +3,7 @@
 <META NAME='KEYWORDS' CONTENT='Radar, Code'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Code">Radar/Code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Radar" class=wikipagelink>Radar</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/Code">Radar/Code</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Radar" class=wikipagelink>Radar</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext><pre>
 double getRadarSweepTurn(double direction) {
     if (numRecent == robot.getOthers() &amp;&amp; oldestEnemy != null) {
@@ -23,9 +23,9 @@ double sweepTurn = school.getRadarSweepTurn(radarDirection);
 setTurnRadarRight(sweepTurn);
 radarDirection = Math.sign(sweepTurn);
 </pre>
-"school" being the school of Enemies. If you're even considering competing in <a href="robowiki?Melee" class=wikipagelink>Melee</a> battles I guess you'll eventually end up with a collection like that anyway. This radar management works quite OK in <a href="robowiki?Melee" class=wikipagelink>Melee</a> battle as far as I can judge and it isn't all that bad in <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> battle either. Though you might want to experiment with drastically shrinking that magic number 22.5 when you have only one enemy. <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> doesn't do that. It uses a completely different, and even simpler, management of the radar in <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> situations.
+"school" being the school of Enemies. If you're even considering competing in <a href="robowiki@Melee" class=wikipagelink>Melee</a> battles I guess you'll eventually end up with a collection like that anyway. This radar management works quite OK in <a href="robowiki@Melee" class=wikipagelink>Melee</a> battle as far as I can judge and it isn't all that bad in <a href="robowiki@OneOnOne" class=wikipagelink>OneOnOne</a> battle either. Though you might want to experiment with drastically shrinking that magic number 22.5 when you have only one enemy. <a href="robowiki@Marshmallow" class=wikipagelink>Marshmallow</a> doesn't do that. It uses a completely different, and even simpler, management of the radar in <a href="robowiki@OneOnOne" class=wikipagelink>OneOnOne</a> situations.
 <p>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <hr noshade class=wikiline size=1>
 <p>
 <pre>
@@ -63,27 +63,27 @@ In case it isn't clear, here's what the variables and functions are:
 <li> getAbsoluteAngleTo(Enemy e): The angle to our enemy, NOT relative to our current heading. Note that when you do ScannedRobotEvent.getBearing() the number is relative to your current heading, so you need to adjust for this...
 </UL>
 <p>
--- <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+-- <a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <hr noshade class=wikiline size=1>
-Here's the current <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> radar of Marshmallow (inside on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>()):
+Here's the current <a href="robowiki@OneOnOne" class=wikipagelink>OneOnOne</a> radar of Marshmallow (inside on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a>()):
 <pre>
 if (isOneOnOne) {
     setTurnRadarRight(RUtils.normalRelativeAngle(getHeading() + e.getBearing() - getRadarHeading()) * 1.6);
 }
 </pre>
-Works pretty well, but at times it the radar "slips" off of the enemy. I'd be grateful to anyone who can help in minimizing that, my pattern matcher is sensitive to these glitches. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Works pretty well, but at times it the radar "slips" off of the enemy. I'd be grateful to anyone who can help in minimizing that, my pattern matcher is sensitive to these glitches. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <hr noshade class=wikiline size=1>
 The one for Aspid is like follows:
 <pre>
  setTurnRadarRightRadians(Math.sin((targetBearing=e.getBearingRadians() + getHeadingRadians()) - getRadarHeadingRadians())*1.5);
 </pre>
-I took the idea of using Math.sin() from Duelist bots. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+I took the idea of using Math.sin() from Duelist bots. -- <a href="robowiki@Albert" class=wikipagelink>Albert</a>
 <hr noshade class=wikiline size=1>
 x = Math.asin(Math.sin(x)) is a well-known way to normalize an angle in Minibots. It will find the equivalent angle between -pi/2 and pi/2. For example, 6 radians becomes -.28... Radians. So a basic radar would be 
 <p>
-set<a href="robowiki?TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>(Math.asin(Math.sin(e.getBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a>() + get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>() - getRadarHeadingRadians<a href="robowiki?action=edit&id=RadarHeadingRadians" class=wikipageedit>?</a>())).
+set<a href="robowiki@TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>(Math.asin(Math.sin(e.getBearingRadians<a href="robowiki@action=edit&id=BearingRadians" class=wikipageedit>?</a>() + get<a href="robowiki@HeadingRadians" class=wikipagelink>HeadingRadians</a>() - getRadarHeadingRadians<a href="robowiki@action=edit&id=RadarHeadingRadians" class=wikipageedit>?</a>())).
 <p>
-What I did was drop the Math.asin() since for angles close to 0, sin(x) is approximately equal to x. Since the angle to the enemy  is roughly 0, Math.sin(x) alone is close enough to the correct normalized angle to work. If you then multiply this by a number, you're having the radar sweep past the target, so that on the next turn it will sweep back, and so on. Multiplying by less than two will give a scan arc that gets smaller and smaller (with both bots stationary), equal to 2 will give a constant size scan arc, and larger than two will give a scan arc that gets larger and larger, up to the limit of 45 degrees per tick. I use 3, which makes the scan arc get larger over time, and makes the arc wide enough that I don't need to use  set<a href="robowiki?AdjustRadarForGunTurn" class=wikipagelink>AdjustRadarForGunTurn</a>(true), which costs 5 bytes. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+What I did was drop the Math.asin() since for angles close to 0, sin(x) is approximately equal to x. Since the angle to the enemy  is roughly 0, Math.sin(x) alone is close enough to the correct normalized angle to work. If you then multiply this by a number, you're having the radar sweep past the target, so that on the next turn it will sweep back, and so on. Multiplying by less than two will give a scan arc that gets smaller and smaller (with both bots stationary), equal to 2 will give a constant size scan arc, and larger than two will give a scan arc that gets larger and larger, up to the limit of 45 degrees per tick. I use 3, which makes the scan arc get larger over time, and makes the arc wide enough that I don't need to use  set<a href="robowiki@AdjustRadarForGunTurn" class=wikipagelink>AdjustRadarForGunTurn</a>(true), which costs 5 bytes. --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <hr noshade class=wikiline size=1>
 <pre>
 //-------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ public void onScannedRobot(ScannedRobotEvent e)
 }
 </pre>
 <PRE >
- -- <a href="robowiki?Miked0801" class=wikipagelink>Miked0801</a>
+ -- <a href="robowiki@Miked0801" class=wikipagelink>Miked0801</a>
 </PRE>
 <hr noshade class=wikiline size=1>
 <pre>public class ScanBot extends AdvancedRobot {
@@ -115,9 +115,9 @@ public void onScannedRobot(ScannedRobotEvent e)
 		if (getOthers() == 1) setTurnRadarLeft(getRadarTurnRemaining());
 	}
 }</pre>
--- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+-- <a href="robowiki@Vuen" class=wikipagelink>Vuen</a>
 <hr noshade class=wikiline size=1>
-If you dont care too much about codesize ive got a method that works 99.999% of the time and never slips. Works in both <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> and Melee but it completley ignores all other bots in Melee. Make this your while(true) loop:
+If you dont care too much about codesize ive got a method that works 99.999% of the time and never slips. Works in both <a href="robowiki@OneOnOne" class=wikipagelink>OneOnOne</a> and Melee but it completley ignores all other bots in Melee. Make this your while(true) loop:
 <p>
 <pre>
 if(lastScanned &gt;= 3) {
@@ -134,19 +134,19 @@ else {
 lastScanned++;
 execute();
 </pre>
-Then Add "haveTarget = true;" and "absoluteBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a> = get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>() + e.getBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a>();" to the beginning of on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> and add "lastScanned = 0;" to the end of it. Oh... and create "int lastScanned", "boolean haveTarget", "double absoluteBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a>". 
+Then Add "haveTarget = true;" and "absoluteBearingRadians<a href="robowiki@action=edit&id=BearingRadians" class=wikipageedit>?</a> = get<a href="robowiki@HeadingRadians" class=wikipagelink>HeadingRadians</a>() + e.getBearingRadians<a href="robowiki@action=edit&id=BearingRadians" class=wikipageedit>?</a>();" to the beginning of on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a> and add "lastScanned = 0;" to the end of it. Oh... and create "int lastScanned", "boolean haveTarget", "double absoluteBearingRadians<a href="robowiki@action=edit&id=BearingRadians" class=wikipageedit>?</a>". 
 <PRE >
- -- Dan724<a href="robowiki?action=edit&id=Dan724" class=wikipageedit>?</a>
+ -- Dan724<a href="robowiki@action=edit&id=Dan724" class=wikipageedit>?</a>
 </PRE>
 <p>
 I think that the code for the radar lock only turns the radar to the exact location of the other robot. Then it would not work all the time if the other robot is not moving and occaisionally when the other robot is moving in the same direction as the radar.
 <pre>
 setTurnRadarRightRadians(robocode.util.Utils.normalRelativeAngle(absoluteBearingRadians -getRadarHeadingRadians()));
 </pre>
-The easiest way to fix it is to add a degree to the radar in the same direction so that it goes past the target a little. -- <a href="robowiki?Kinsen" class=wikipagelink>Kinsen</a>
+The easiest way to fix it is to add a degree to the radar in the same direction so that it goes past the target a little. -- <a href="robowiki@Kinsen" class=wikipagelink>Kinsen</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Radar" class=wikipagelink>Radar</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=Radar/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Radar/Code">View other revisions</a><br>Last edited January 12, 2006 23:46 EST by out200-45.sdcoe.net <a href="robowiki?action=browse&diff=1&id=Radar/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Radar" class=wikipagelink>Radar</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=Radar/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=Radar/Code">View other revisions</a><br>Last edited January 12, 2006 23:46 EST by out200-45.sdcoe.net <a href="robowiki@action=browse&diff=1&id=Radar/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

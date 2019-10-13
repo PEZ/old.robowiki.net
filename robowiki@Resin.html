@@ -3,15 +3,15 @@
 <META NAME='KEYWORDS' CONTENT='Resin'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Resin">Resin</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext><H4>A silly <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> gun by <a href="robowiki?PEZ" class=wikipagelink>PEZ</a></H4>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=Resin">Resin</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H4>A silly <a href="robowiki@PatternMatching" class=wikipagelink>PatternMatching</a> gun by <a href="robowiki@PEZ" class=wikipagelink>PEZ</a></H4>
 
 <p>
-(See <a href="robowiki?ResinRRGC" class=wikipagelink>ResinRRGC</a> for a download link).
+(See <a href="robowiki@ResinRRGC" class=wikipagelink>ResinRRGC</a> for a download link).
 <p>
-The idea behind this gun is simple (but maybe not worth it anyway...). Resin fires a <a href="robowiki?Wave" class=wikipagelink>Wave</a> every tick and for each tick it takes for the wave to hit the enemy it records a pattern (at the moment the pattern is built from heading-delta and velocity). When the wave reaches the enemy the <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> that would have hit is stored in the wave. The accumulated pattern and its corresponding pattern is saved in a pattern buffer. This buffer is then searched before shooting and if there's a match the guess factor is retrieved and the gun aimed.
+The idea behind this gun is simple (but maybe not worth it anyway...). Resin fires a <a href="robowiki@Wave" class=wikipagelink>Wave</a> every tick and for each tick it takes for the wave to hit the enemy it records a pattern (at the moment the pattern is built from heading-delta and velocity). When the wave reaches the enemy the <a href="robowiki@GuessFactor" class=wikipagelink>GuessFactor</a> that would have hit is stored in the wave. The accumulated pattern and its corresponding pattern is saved in a pattern buffer. This buffer is then searched before shooting and if there's a match the guess factor is retrieved and the gun aimed.
 <p>
-Problem is this gun can't even hit <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> reliably... Maybe someone curious will look at the code and see if the whole idea is crap or if there's a bug in the implementation. Here's the code for version 0.3:
+Problem is this gun can't even hit <a href="robowiki@SpinBot" class=wikipagelink>SpinBot</a> reliably... Maybe someone curious will look at the code and see if the whole idea is crap or if there's a bug in the implementation. Here's the code for version 0.3:
 <p>
 <pre>
 package pez.rumble.pgun;
@@ -233,30 +233,30 @@ The code is uncommented as always with me. But at least it's small. =) The only 
 <p>
 Well, the gun is crap at its current. Any help or comments is truly appreciated.
 <p>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-OK, so I have found a major bug now. Anyone about to give me some help might want to wait a little while until I publish a version where this bug is nailed. (The bug is about me shrinking the pattern to be matched from the wrong end.) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+OK, so I have found a major bug now. Anyone about to give me some help might want to wait a little while until I publish a version where this bug is nailed. (The bug is about me shrinking the pattern to be matched from the wrong end.) -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Now the bug should be fixed. I also changed things so the pattern includes the sign of where the enemy is going lateraly and advancing. Did this to hit <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> better, but that didn't help. <strong>This gun still can't hit <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> reliably!</strong> Also added visit counts for the guess factors. Making the gun work like a simple statistical gun when there are short pattern matches. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Now the bug should be fixed. I also changed things so the pattern includes the sign of where the enemy is going lateraly and advancing. Did this to hit <a href="robowiki@SpinBot" class=wikipagelink>SpinBot</a> better, but that didn't help. <strong>This gun still can't hit <a href="robowiki@SpinBot" class=wikipagelink>SpinBot</a> reliably!</strong> Also added visit counts for the guess factors. Making the gun work like a simple statistical gun when there are short pattern matches. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Hmmm, I think I have found out where this gun fails. It's fundamental. I try to match against the patterns of while the bullet is in the air... I must of course match against the patterns before the bullets are fired! Is there a punishment connected to being too stupid? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Hmmm, I think I have found out where this gun fails. It's fundamental. I try to match against the patterns of while the bullet is in the air... I must of course match against the patterns before the bullets are fired! Is there a punishment connected to being too stupid? -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Yes, your guns can't hit <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a>.  But seriously, I was about to say what you did - when I attempted a gun of this style, I found the pattern and used the projection from BFT ticks *later* as my bearing.  Or something like that. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+Yes, your guns can't hit <a href="robowiki@SpinBot" class=wikipagelink>SpinBot</a>.  But seriously, I was about to say what you did - when I attempted a gun of this style, I found the pattern and used the projection from BFT ticks *later* as my bearing.  Or something like that. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-Well, that's about what I did before fixing that first bug. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Well, that's about what I did before fixing that first bug. =) -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Now I've tried to match the guess_factor &lt;=&gt; pattern pairs such that the pattern before the wave was shot is paired with the guess factor that should have hit. Now I hit <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> a bit better, but I still miss loads of shots... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Now I've tried to match the guess_factor &lt;=&gt; pattern pairs such that the pattern before the wave was shot is paired with the guess factor that should have hit. Now I hit <a href="robowiki@SpinBot" class=wikipagelink>SpinBot</a> a bit better, but I still miss loads of shots... -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-The gun works fine against spinbot if you disable <a href="robowiki?ResinRRGC" class=wikipagelink>ResinRRGC</a>'s movement; are you recording the opponent's displacement relative to your bot?  --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+The gun works fine against spinbot if you disable <a href="robowiki@ResinRRGC" class=wikipagelink>ResinRRGC</a>'s movement; are you recording the opponent's displacement relative to your bot?  --<a href="robowiki@Dummy" class=wikipagelink>Dummy</a>
 <p>
-Hmm, I haven't noticed your observation and question until now Dummy. I had no idea it performed better against <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> if I disabled movement... However, Resin's <a href="robowiki?TargetingChallenge" class=wikipagelink>TargetingChallenge</a> score is far from good. I don't think any of my measures are really relative to my bot. Well, two of them are by definition but it's still formulas that should work if I am moving... I could be wrong though, I haven't really wrapped my mind around those formulas. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Hmm, I haven't noticed your observation and question until now Dummy. I had no idea it performed better against <a href="robowiki@SpinBot" class=wikipagelink>SpinBot</a> if I disabled movement... However, Resin's <a href="robowiki@TargetingChallenge" class=wikipagelink>TargetingChallenge</a> score is far from good. I don't think any of my measures are really relative to my bot. Well, two of them are by definition but it's still formulas that should work if I am moving... I could be wrong though, I haven't really wrapped my mind around those formulas. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Well, you couldn't have noticed me much earlier; your reply came like 9 minutes after I posted my question! :-p --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+Well, you couldn't have noticed me much earlier; your reply came like 9 minutes after I posted my question! :-p --<a href="robowiki@Dummy" class=wikipagelink>Dummy</a>
 <p>
-Ah, then you must have posted your question just after I had loaded the Changes page, because then the page where several days old. Funny coincidence. I was going to write here that I will abandon this gun. But your observation made me rethink. No I am rethinking again maybe. This gun might not have something to offer compared to the best PM guns out there anyway. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Ah, then you must have posted your question just after I had loaded the Changes page, because then the page where several days old. Funny coincidence. I was going to write here that I will abandon this gun. But your observation made me rethink. No I am rethinking again maybe. This gun might not have something to offer compared to the best PM guns out there anyway. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=Resin" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Resin">View other revisions</a><br>Last edited July 30, 2004 21:54 EST by <a href="robowiki?PEZ" title="ID 3032 from 192.168.0.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=Resin">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=Resin" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=Resin">View other revisions</a><br>Last edited July 30, 2004 21:54 EST by <a href="robowiki@PEZ" title="ID 3032 from 192.168.0.xxx">PEZ</a> <a href="robowiki@action=browse&diff=1&id=Resin">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

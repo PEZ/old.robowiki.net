@@ -3,10 +3,10 @@
 <META NAME='KEYWORDS' CONTENT='Angular, Targeting, Factored'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Factored">AngularTargeting/Factored</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?AngularTargeting" class=wikipagelink>AngularTargeting</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/Factored">AngularTargeting/Factored</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@AngularTargeting" class=wikipagelink>AngularTargeting</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext><H4>What it is</H4>
 
-A truly simple <a href="robowiki?Targeting" class=wikipagelink>Targeting</a> method which in <a href="robowiki?Gouldingi" class=wikipagelink>Gouldingi</a> is implemented like this:
+A truly simple <a href="robowiki@Targeting" class=wikipagelink>Targeting</a> method which in <a href="robowiki@Gouldingi" class=wikipagelink>Gouldingi</a> is implemented like this:
 <UL >
 <li> Multiply the bearing delta (<em>bd</em>) between two consecutive scans by a factor (<em>F</em>)
 <li> Fire a bullet and registrer an event which keeps information about:
@@ -22,35 +22,35 @@ A truly simple <a href="robowiki?Targeting" class=wikipagelink>Targeting</a> met
 <UL >
 <li> Take the difference in bearing between <em>orl</em> -&gt; <em>oel</em> and <em>orl</em> -&gt; <em>current enemy location</em>. Let's call this bearing delta <em>BD</em>
 <li> Calculate the factor (<em>f</em>) that would have been needed to hit the enemy using <em>bd</em> (this is as simple as <em>BD</em>/<em>bd</em>).
-<li> Update <em>F</em> so that <em>f</em> becomes "part" of it. (I use <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>' function rollingAvg() for this. Read about it on <a rel="nofollow" href="http://www.sandbox.dial.pipex.com/robocode/guessfactor.shtml">http://www.sandbox.dial.pipex.com/robocode/guessfactor.shtml</a>)
+<li> Update <em>F</em> so that <em>f</em> becomes "part" of it. (I use <a href="robowiki@Paul_Evans" class=wikipagelink>Paul Evans</a>' function rollingAvg() for this. Read about it on <a rel="nofollow" href="http://www.sandbox.dial.pipex.com/robocode/guessfactor.shtml">http://www.sandbox.dial.pipex.com/robocode/guessfactor.shtml</a>)
 <li> Deregister the event
 </UL>
 </UL>
 <p>
-Check <a href="robowiki?MakoHT/Code" class=wikipagelink>MakoHT/Code</a> for a full implementation of this. Though it is somewhat obscured there by a second aiming method and <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> code. It is about ten times as simple as it looks in <a href="robowiki?MakoHT" class=wikipagelink>MakoHT</a>.
+Check <a href="robowiki@MakoHT/Code" class=wikipagelink>MakoHT/Code</a> for a full implementation of this. Though it is somewhat obscured there by a second aiming method and <a href="robowiki@VirtualGuns" class=wikipagelink>VirtualGuns</a> code. It is about ten times as simple as it looks in <a href="robowiki@MakoHT" class=wikipagelink>MakoHT</a>.
 <p>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <H4>Strengths and weaknesses</H4>
 
-The result of using this technique is that you keep firing at some average distance from the enemy relative to its current moving direction. This works surprisingly well against many surpringly advanced bots. But it can easily be fooled. Try pitching <a href="robowiki?Gouldingi" class=wikipagelink>Gouldingi</a> 1.0 against <a href="robowiki?Ares" class=wikipagelink>Ares</a> and you'll see that <em>anything</em> multiplied by <em>zero</em> is always <em>zero</em> =). You'll need to substitute some <em>bd</em> average when shooting against <a href="robowiki?Ares" class=wikipagelink>Ares</a> type movement styles. Later versions of <a href="robowiki?Gouldingi" class=wikipagelink>Gouldingi</a> handles this by using an even simpler targeting method (<a href="robowiki?AveragedBearingOffsetTargeting" class=wikipagelink>AveragedBearingOffsetTargeting</a>) when the enemy is stationary. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+The result of using this technique is that you keep firing at some average distance from the enemy relative to its current moving direction. This works surprisingly well against many surpringly advanced bots. But it can easily be fooled. Try pitching <a href="robowiki@Gouldingi" class=wikipagelink>Gouldingi</a> 1.0 against <a href="robowiki@Ares" class=wikipagelink>Ares</a> and you'll see that <em>anything</em> multiplied by <em>zero</em> is always <em>zero</em> =). You'll need to substitute some <em>bd</em> average when shooting against <a href="robowiki@Ares" class=wikipagelink>Ares</a> type movement styles. Later versions of <a href="robowiki@Gouldingi" class=wikipagelink>Gouldingi</a> handles this by using an even simpler targeting method (<a href="robowiki@AveragedBearingOffsetTargeting" class=wikipagelink>AveragedBearingOffsetTargeting</a>) when the enemy is stationary. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <H4>Bots using this technique</H4>
 
 <UL >
-<li> <a href="robowiki?Gouldingi" class=wikipagelink>Gouldingi</a>
-<li> <a href="robowiki?Mako" class=wikipagelink>Mako</a>
-<li> <a href="robowiki?MakoHT" class=wikipagelink>MakoHT</a>
-<li> <a href="robowiki?GouldingiHT" class=wikipagelink>GouldingiHT</a>
+<li> <a href="robowiki@Gouldingi" class=wikipagelink>Gouldingi</a>
+<li> <a href="robowiki@Mako" class=wikipagelink>Mako</a>
+<li> <a href="robowiki@MakoHT" class=wikipagelink>MakoHT</a>
+<li> <a href="robowiki@GouldingiHT" class=wikipagelink>GouldingiHT</a>
 </UL>
 <H4>Related techniques</H4>
 
 <UL >
-<li> <a href="robowiki?AngularTargeting" class=wikipagelink>AngularTargeting</a> (of course)
-<li> <a href="robowiki?AveragedBearingOffsetTargeting" class=wikipagelink>AveragedBearingOffsetTargeting</a>
-<li> <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a>
+<li> <a href="robowiki@AngularTargeting" class=wikipagelink>AngularTargeting</a> (of course)
+<li> <a href="robowiki@AveragedBearingOffsetTargeting" class=wikipagelink>AveragedBearingOffsetTargeting</a>
+<li> <a href="robowiki@StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a>
 </UL>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?AngularTargeting" class=wikipagelink>AngularTargeting</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=AngularTargeting/Factored" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=AngularTargeting/Factored">View other revisions</a><br>Last edited May 5, 2006 1:34 EST by <a href="robowiki?Voidious" title="ID 6343 from resnet216-83.resnet.buffalo.edu">Voidious</a> <a href="robowiki?action=browse&diff=1&id=AngularTargeting/Factored">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@AngularTargeting" class=wikipagelink>AngularTargeting</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=AngularTargeting/Factored" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=AngularTargeting/Factored">View other revisions</a><br>Last edited May 5, 2006 1:34 EST by <a href="robowiki@Voidious" title="ID 6343 from resnet216-83.resnet.buffalo.edu">Voidious</a> <a href="robowiki@action=browse&diff=1&id=AngularTargeting/Factored">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

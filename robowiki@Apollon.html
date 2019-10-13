@@ -3,19 +3,19 @@
 <META NAME='KEYWORDS' CONTENT='Apollon'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Apollon">Apollon</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=Apollon">Apollon</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext>My test bot.
-I don't know what to do with <a href="robowiki?Aleph" class=wikipagelink>Aleph</a> at the moment so I started to work on <a href="robowiki?Apollon" class=wikipagelink>Apollon</a> to see if there are some small changes with great effect. my first version of Apollon had something like 3200 bytes. So it took me some time to squeeze it into a <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a> (currently 1496 bytes). -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+I don't know what to do with <a href="robowiki@Aleph" class=wikipagelink>Aleph</a> at the moment so I started to work on <a href="robowiki@Apollon" class=wikipagelink>Apollon</a> to see if there are some small changes with great effect. my first version of Apollon had something like 3200 bytes. So it took me some time to squeeze it into a <a href="robowiki@MiniBot" class=wikipagelink>MiniBot</a> (currently 1496 bytes). -- <a href="robowiki@Rozu" class=wikipagelink>rozu</a>
 <p>
-Looks like a strong mini! Way cool. Is it using <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Looks like a strong mini! Way cool. Is it using <a href="robowiki@WaveSurfing" class=wikipagelink>WaveSurfing</a>? -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-It is. with the exact movement prediction just to see if the whole thing fits into a mini. -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+It is. with the exact movement prediction just to see if the whole thing fits into a mini. -- <a href="robowiki@Rozu" class=wikipagelink>rozu</a>
 <p>
-Can you share the code for that mini-sized predictor? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Can you share the code for that mini-sized predictor? -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 Sure. I'll need some time to make it readable...
 <p>
-this is the code I'd use to predict my <a href="robowiki?FuturePosition" class=wikipagelink>FuturePosition</a> at the time (getTime() + 10) if I want to go to the point (200, 300) with the well known goTo code somewhere in the run method (I think it should also work for inside the <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>, though I didn't try it):
+this is the code I'd use to predict my <a href="robowiki@FuturePosition" class=wikipagelink>FuturePosition</a> at the time (getTime() + 10) if I want to go to the point (200, 300) with the well known goTo code somewhere in the run method (I think it should also work for inside the <a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>, though I didn't try it):
 <p>
 <pre>
 double moveAngle = Math.atan2(200 - getX(), 300 - getY()) - getHeadingRadians();
@@ -30,7 +30,7 @@ setAhead(100 * moveDir);
 setTurnRightRadians(Utils.normalRelativeAngle(moveAngle));
 </pre>
 <p>
-this is the desired piece of code. I'm not using setMaxVelocity<a href="robowiki?action=edit&id=MaxVelocity" class=wikipageedit>?</a>, so it is quiet small.
+this is the desired piece of code. I'm not using setMaxVelocity<a href="robowiki@action=edit&id=MaxVelocity" class=wikipageedit>?</a>, so it is quiet small.
 It returns the predicted position.
 <p>
 <pre>
@@ -81,12 +81,12 @@ private static Point2D.Double translatePoint(Point2D.Double p, double dist, doub
 }
 </pre>
 <p>
-I didn't make any tests so far with exactly this piece of code. please tell me (or correct) if you can see some misbehavior and/or mistakes. -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+I didn't make any tests so far with exactly this piece of code. please tell me (or correct) if you can see some misbehavior and/or mistakes. -- <a href="robowiki@Rozu" class=wikipagelink>rozu</a>
 <p>
 <p>
-Wow. Way cool. I just might try it in Pugilist to see if it works. And if it helps me with my GF1 problem. I can't fit this probably, but it's good to know if it would help. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Wow. Way cool. I just might try it in Pugilist to see if it works. And if it helps me with my GF1 problem. I can't fit this probably, but it's good to know if it would help. =) -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-OK, so I tried it. It didn't compile at first, but I managed to fix that. It grew my bot with 200 bytes as I suspected. Unfortunately I didn't get an answer on whether it would help my bot. My reverse destination points are of the battle field for some reason. And I don't understand how to fix it. If you have <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a> you can maybe try yourself to apply this to <a href="robowiki?PugilistGL" class=wikipagelink>PugilistGL</a>? It's the destinations calculated inside <tt>updateDirectionStats()</tt> that I fed your predictor with. Aamzingly simple to apply it when we both thing goTo() style. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+OK, so I tried it. It didn't compile at first, but I managed to fix that. It grew my bot with 200 bytes as I suspected. Unfortunately I didn't get an answer on whether it would help my bot. My reverse destination points are of the battle field for some reason. And I don't understand how to fix it. If you have <a href="robowiki@RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a> you can maybe try yourself to apply this to <a href="robowiki@PugilistGL" class=wikipagelink>PugilistGL</a>? It's the destinations calculated inside <tt>updateDirectionStats()</tt> that I fed your predictor with. Aamzingly simple to apply it when we both thing goTo() style. =) -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 BTW. This is pretty cool:
 <pre>
@@ -94,40 +94,40 @@ Fighting battle 18 ... rz.Apollon 0.2,kawigi.sbf.Barracuda 1.0
 RESULT = rz.Apollon 0.2 wins 3358 to 120
 </pre>
 <p>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-thx, ... . can you send me a version of Pugilist with the above predictor implemented to zuestro@student.ethz.ch. I don't need the GL stuff for this (<a href="robowiki?PugilistGL" class=wikipagelink>PugilistGL</a> looks complicated ;)) -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+thx, ... . can you send me a version of Pugilist with the above predictor implemented to zuestro@student.ethz.ch. I don't need the GL stuff for this (<a href="robowiki@PugilistGL" class=wikipagelink>PugilistGL</a> looks complicated ;)) -- <a href="robowiki@Rozu" class=wikipagelink>rozu</a>
 <p>
-Eh, I trashed it when I didn't get it to work. But it's easy enough for me to redo it. I'll do it in <a href="robowiki?PugilistGL" class=wikipagelink>PugilistGL</a>, because <strong>I</strong> need it for this. That's how I saw the reverse predicted destinations wasn't on the battle field. Pugilist is as complicated as <a href="robowiki?PugilistGL" class=wikipagelink>PugilistGL</a> so it doesn't matter if it comes to that. It'll make a nice demo of the predictor too I think. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Eh, I trashed it when I didn't get it to work. But it's easy enough for me to redo it. I'll do it in <a href="robowiki@PugilistGL" class=wikipagelink>PugilistGL</a>, because <strong>I</strong> need it for this. That's how I saw the reverse predicted destinations wasn't on the battle field. Pugilist is as complicated as <a href="robowiki@PugilistGL" class=wikipagelink>PugilistGL</a> so it doesn't matter if it comes to that. It'll make a nice demo of the predictor too I think. =) -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-why is this code so long? if predicting code needs to be this complex, i'm definitely doing something very wrong.--<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+why is this code so long? if predicting code needs to be this complex, i'm definitely doing something very wrong.--<a href="robowiki@Andrew" class=wikipagelink>andrew</a>
 <p>
-Sure there are some bytes you could gain if you don't want it to be readable. You also have to make the difference between "absolutely accurate" prediction and "will be more or less the same" prediction. In many cases the code above belongs into the first group. And if you want to be really accurate look here: <a href="robowiki?FuturePosition" class=wikipagelink>FuturePosition</a> (this one is a little bit longer). -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+Sure there are some bytes you could gain if you don't want it to be readable. You also have to make the difference between "absolutely accurate" prediction and "will be more or less the same" prediction. In many cases the code above belongs into the first group. And if you want to be really accurate look here: <a href="robowiki@FuturePosition" class=wikipagelink>FuturePosition</a> (this one is a little bit longer). -- <a href="robowiki@Rozu" class=wikipagelink>rozu</a>
 <p>
-Long? Remove the comments if you like. It's only a few lines of code. And it's hardly complex. What it does is iterate the position of the bot from the current position, using current heading and velocity, to the desired destination point, accounting for acceleration and decceleration and max turn angle at a given velocity. Nothing of that can be discarded if you want to do precise prediction. For something simpler, look at Pugilist, which basicly uses the <a href="robowiki?RandomMovementBot" class=wikipagelink>RandomMovementBot</a> movement for prediction. Of course it's more like "what's my desired destination?" than an actual prediction. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Long? Remove the comments if you like. It's only a few lines of code. And it's hardly complex. What it does is iterate the position of the bot from the current position, using current heading and velocity, to the desired destination point, accounting for acceleration and decceleration and max turn angle at a given velocity. Nothing of that can be discarded if you want to do precise prediction. For something simpler, look at Pugilist, which basicly uses the <a href="robowiki@RandomMovementBot" class=wikipagelink>RandomMovementBot</a> movement for prediction. Of course it's more like "what's my desired destination?" than an actual prediction. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 i guess i just don't understand what it does,that's what makes it look complicated to me.--andrew
 <p>
-OK, I'll rephrase that. I mean it's not more complex than the task at hand. It's not trivial to predict your future position accurately. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+OK, I'll rephrase that. I mean it's not more complex than the task at hand. It's not trivial to predict your future position accurately. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Wow.  I didn't think I'd ever see a minibot at #2 again, even with only 88 battles. :-)  Looks like I'm going to have to do some work on <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> shortly. -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+Wow.  I didn't think I'd ever see a minibot at #2 again, even with only 88 battles. :-)  Looks like I'm going to have to do some work on <a href="robowiki@Raiko" class=wikipagelink>Raiko</a> shortly. -- <a href="robowiki@Jamougha" class=wikipagelink>Jamougha</a>
 <p>
-"Wow" is right. --<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+"Wow" is right. --<a href="robowiki@Andrew" class=wikipagelink>andrew</a>
 <p>
-Thx, but... Just the typical rz.A... bot behavior going up fast and then falling down deep ;). I think it'll stand still somewhere at around 1960 (not a big deal for Raiko). -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+Thx, but... Just the typical rz.A... bot behavior going up fast and then falling down deep ;). I think it'll stand still somewhere at around 1960 (not a big deal for Raiko). -- <a href="robowiki@Rozu" class=wikipagelink>rozu</a>
 <p>
-1975 after 400+ battles. I'd say that'll be hard for Raiko unless Jamougha changes strategy for it. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+1975 after 400+ battles. I'd say that'll be hard for Raiko unless Jamougha changes strategy for it. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-<a href="robowiki?Jim" class=wikipagelink>Jim</a> has gotten the above predictor to work. I have plugged it in a bot I call <a href="robowiki?PPP" class=wikipagelink>PPP</a> and it makes a world of difference I tell you. Now I'm having spikes near GF-1 as well. =) This is with only the flattener active (that is, no adaption). Looks kinda funny. I'll post yet another profile shot (yaps) on the PPPugilist page. Right now I'm just awaiting <a href="robowiki?Jim" class=wikipagelink>Jim</a>'s permission to release the bot for test in the rumble. Can you place the above code under the <a href="robowiki?RWPCL" class=wikipagelink>RWPCL</a> umbrella? That would make it clearer what you can and cannot do with the code. You should be the only one allowed to use it for closed source bots I think. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<a href="robowiki@Jim" class=wikipagelink>Jim</a> has gotten the above predictor to work. I have plugged it in a bot I call <a href="robowiki@PPP" class=wikipagelink>PPP</a> and it makes a world of difference I tell you. Now I'm having spikes near GF-1 as well. =) This is with only the flattener active (that is, no adaption). Looks kinda funny. I'll post yet another profile shot (yaps) on the PPPugilist page. Right now I'm just awaiting <a href="robowiki@Jim" class=wikipagelink>Jim</a>'s permission to release the bot for test in the rumble. Can you place the above code under the <a href="robowiki@RWPCL" class=wikipagelink>RWPCL</a> umbrella? That would make it clearer what you can and cannot do with the code. You should be the only one allowed to use it for closed source bots I think. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Sure use this code under the licence: "make whatever you want with this code and it would be nice if you give credit" -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+Sure use this code under the licence: "make whatever you want with this code and it would be nice if you give credit" -- <a href="robowiki@Rozu" class=wikipagelink>rozu</a>
 <p>
-The code above used to find out a future position can probably make a big difference for wave surfers using to goto-style methode, but wave surfers that circle around the enemy (or the position the enemy was when it shot the wave that is nearest to you) cant find out their future position with this piece of code and the current heading precise. What i am doing in my current project ( - which is not yett running - so i should better say what i am trying to do) is to have a function that calculates a referenced move point with wished circle direction, circle center and move step from my current position. So i can simulate my future move - and end position. What i didnt do is to check if the single steps are really possible - i could implement that with the above shown code. Hope one could understand this. --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+The code above used to find out a future position can probably make a big difference for wave surfers using to goto-style methode, but wave surfers that circle around the enemy (or the position the enemy was when it shot the wave that is nearest to you) cant find out their future position with this piece of code and the current heading precise. What i am doing in my current project ( - which is not yett running - so i should better say what i am trying to do) is to have a function that calculates a referenced move point with wished circle direction, circle center and move step from my current position. So i can simulate my future move - and end position. What i didnt do is to check if the single steps are really possible - i could implement that with the above shown code. Hope one could understand this. --<a href="robowiki@Deathcon" class=wikipagelink>deathcon</a>
 <p>
-That's what I do in <a href="robowiki?PPP" class=wikipagelink>PPP</a> and I think that's what <a href="robowiki?Apollon" class=wikipagelink>Apollon</a> does too, as does <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a> and possibly other surfers. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+That's what I do in <a href="robowiki@PPP" class=wikipagelink>PPP</a> and I think that's what <a href="robowiki@Apollon" class=wikipagelink>Apollon</a> does too, as does <a href="robowiki@RaikoMX" class=wikipagelink>RaikoMX</a> and possibly other surfers. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=Apollon" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Apollon">View other revisions</a><br>Last edited June 1, 2004 11:35 EST by <a href="robowiki?Deathcon" title="ID 2867 from krlh-d9b92b9b.pool.mediaWays.net">Deathcon</a> <a href="robowiki?action=browse&diff=1&id=Apollon">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=Apollon" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=Apollon">View other revisions</a><br>Last edited June 1, 2004 11:35 EST by <a href="robowiki@Deathcon" title="ID 2867 from krlh-d9b92b9b.pool.mediaWays.net">Deathcon</a> <a href="robowiki@action=browse&diff=1&id=Apollon">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

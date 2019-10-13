@@ -3,8 +3,8 @@
 <META NAME='KEYWORDS' CONTENT='Writing, Fast, Code, Wall, Distance'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/WallDistance">WritingFastCode/WallDistance</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?WritingFastCode" class=wikipagelink>WritingFastCode</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext>Since the battle field height and width do not change, save them to class variables in the beginning of the battle to avoid unnecessary calls to getBattleFieldHeight<a href="robowiki?action=edit&id=BattleFieldHeight" class=wikipageedit>?</a>() and getBattleFieldWidth<a href="robowiki?action=edit&id=BattleFieldWidth" class=wikipageedit>?</a>(). Although the code in those methods is small, the overhead of a method invocation is high relative to using class variables.
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/WallDistance">WritingFastCode/WallDistance</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@WritingFastCode" class=wikipagelink>WritingFastCode</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Since the battle field height and width do not change, save them to class variables in the beginning of the battle to avoid unnecessary calls to getBattleFieldHeight<a href="robowiki@action=edit&id=BattleFieldHeight" class=wikipageedit>?</a>() and getBattleFieldWidth<a href="robowiki@action=edit&id=BattleFieldWidth" class=wikipageedit>?</a>(). Although the code in those methods is small, the overhead of a method invocation is high relative to using class variables.
 <p>
 This is the fastest code I've found:
 <pre>
@@ -41,33 +41,33 @@ The top method is faster because it uses 1 method invocation instead of 3. Metho
 <p>
 I rewrote it when I noticed that <tt>getWallDistance()</tt> was responsible for over 16% of my bot's CPU time. (!)
 <p>
---<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+--<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
 <hr noshade class=wikiline size=1>
 <strong>Chat</strong>
 <p>
-How many times per turn were you calling it? -- <a href="robowiki?Wolfman" class=wikipagelink>Wolfman</a>
+How many times per turn were you calling it? -- <a href="robowiki@Wolfman" class=wikipagelink>Wolfman</a>
 <p>
-16% of CPU time doesn't necessarily mean that during each tick 16% of the time is spent on get<a href="robowiki?WallDistance" class=wikipagelink>WallDistance</a>() calls. For example, some patternmatching bots do not run their patternmatchers unless the <a href="robowiki?GunHeat" class=wikipagelink>GunHeat</a> nears zero (no use in doing any predictions if you can't fire anyway). Checking for walldistances, on the other hand, may be useful to do every tick. This might increase the relative time spent in get<a href="robowiki?WallDistance" class=wikipagelink>WallDistance</a>(). (Or David's bot is really, really simple ;-p.)
-Anyway, I am just guessing... --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+16% of CPU time doesn't necessarily mean that during each tick 16% of the time is spent on get<a href="robowiki@WallDistance" class=wikipagelink>WallDistance</a>() calls. For example, some patternmatching bots do not run their patternmatchers unless the <a href="robowiki@GunHeat" class=wikipagelink>GunHeat</a> nears zero (no use in doing any predictions if you can't fire anyway). Checking for walldistances, on the other hand, may be useful to do every tick. This might increase the relative time spent in get<a href="robowiki@WallDistance" class=wikipagelink>WallDistance</a>(). (Or David's bot is really, really simple ;-p.)
+Anyway, I am just guessing... --<a href="robowiki@Dummy" class=wikipagelink>Dummy</a>
 <p>
-When do you need to know distance to closest wall? -- <a href="robowiki?CuriousGeorge" class=wikipagelink>CuriousGeorge</a>
+When do you need to know distance to closest wall? -- <a href="robowiki@CuriousGeorge" class=wikipagelink>CuriousGeorge</a>
 <p>
 @Wolfman: Depending on the state of the battlefield, anywhere from 50 to 700+ (theoretical worst-case scenario) times per turn.
-@<a href="robowiki?CuriousGeorge" class=wikipagelink>CuriousGeorge</a>: In my <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> code. By the way, if you're interested in speeding up CC, it spends about 50% of its CPU time on <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>. I've found that you can do much less accurate <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> without it affecting your bot's score. Just use a larger angle in your <tt>while(!battlefield.contains(...))</tt> code. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+@<a href="robowiki@CuriousGeorge" class=wikipagelink>CuriousGeorge</a>: In my <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a> code. By the way, if you're interested in speeding up CC, it spends about 50% of its CPU time on <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a>. I've found that you can do much less accurate <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a> without it affecting your bot's score. Just use a larger angle in your <tt>while(!battlefield.contains(...))</tt> code. --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
-Yes, <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> is the major thing CC keeps doing. Larger angle.. You mean larger increments? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Yes, <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a> is the major thing CC keeps doing. Larger angle.. You mean larger increments? -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-I'm Curious... why do you need to call get<a href="robowiki?WallDistance" class=wikipagelink>WallDistance</a> more than once each turn? I mean.. it's not likely that your bot has moved during the same turn. --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+I'm Curious... why do you need to call get<a href="robowiki@WallDistance" class=wikipagelink>WallDistance</a> more than once each turn? I mean.. it's not likely that your bot has moved during the same turn. --<a href="robowiki@Dummy" class=wikipagelink>Dummy</a>
 <p>
-When <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> you need to check each futue tick in respect to the currently surfed wave. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+When <a href="robowiki@WaveSurfing" class=wikipagelink>WaveSurfing</a> you need to check each futue tick in respect to the currently surfed wave. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Ah, I see...Well, if it's speed you want, you could build a lookup table for each position. Uses a lot of memory, but it should be a lot faster ;-) --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+Ah, I see...Well, if it's speed you want, you could build a lookup table for each position. Uses a lot of memory, but it should be a lot faster ;-) --<a href="robowiki@Dummy" class=wikipagelink>Dummy</a>
 <p>
-CC .48 should spend significally less time in <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> now. At least in near wall situations. It didn't affect its score, just as David suggested. -- Thanks David!! <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+CC .48 should spend significally less time in <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a> now. At least in near wall situations. It didn't affect its score, just as David suggested. -- Thanks David!! <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?WritingFastCode" class=wikipagelink>WritingFastCode</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=WritingFastCode/WallDistance" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=WritingFastCode/WallDistance">View other revisions</a><br>Last edited November 1, 2004 3:13 EST by <a href="robowiki?David_Alves" title="ID 3735 from c-67-180-85-38.client.comcast.net">David Alves</a> <a href="robowiki?action=browse&diff=1&id=WritingFastCode/WallDistance">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@WritingFastCode" class=wikipagelink>WritingFastCode</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=WritingFastCode/WallDistance" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=WritingFastCode/WallDistance">View other revisions</a><br>Last edited November 1, 2004 3:13 EST by <a href="robowiki@David_Alves" title="ID 3735 from c-67-180-85-38.client.comcast.net">David Alves</a> <a href="robowiki@action=browse&diff=1&id=WritingFastCode/WallDistance">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

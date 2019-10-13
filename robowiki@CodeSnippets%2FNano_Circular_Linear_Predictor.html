@@ -3,8 +3,8 @@
 <META NAME='KEYWORDS' CONTENT='Code, Snippets, Nano, Circular, Linear, Predictor'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Nano+Circular+Linear+Predictor">CodeSnippets/Nano Circular Linear Predictor</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?CodeSnippets" class=wikipagelink>CodeSnippets</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext>Hereunder is the source-code from my bot Nano_Circular_Linear_Predictor, a bot I built just to prove that a circular predictor fits into a <a href="robowiki?NanoBot" class=wikipagelink>NanoBot</a>. :-)
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/Nano+Circular+Linear+Predictor">CodeSnippets/Nano Circular Linear Predictor</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@CodeSnippets" class=wikipagelink>CodeSnippets</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Hereunder is the source-code from my bot Nano_Circular_Linear_Predictor, a bot I built just to prove that a circular predictor fits into a <a href="robowiki@NanoBot" class=wikipagelink>NanoBot</a>. :-)
 <p>
 <hr noshade class=wikiline size=1><pre>
 public class Nano_Circular_Linear_Predictor extends AdvancedRobot
@@ -53,9 +53,9 @@ public class Nano_Circular_Linear_Predictor extends AdvancedRobot
 <strong>Smaller code</strong>
 <UL >
 <li> Removed the variable w.
-<li> Put lastEnemyHeading<a href="robowiki?action=edit&id=EnemyHeading" class=wikipageedit>?</a> after the loop.
+<li> Put lastEnemyHeading<a href="robowiki@action=edit&id=EnemyHeading" class=wikipageedit>?</a> after the loop.
 <li> Added dx and dy directly, instead of declaring variables first
-<li> Replace the asin/sin with normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>
+<li> Replace the asin/sin with normal<a href="robowiki@RelativeAngle" class=wikipagelink>RelativeAngle</a>
 </UL>
 <pre>
 		double enemyAbsoluteBearing=e.getBearingRadians()+getHeadingRadians();
@@ -83,7 +83,7 @@ public class Nano_Circular_Linear_Predictor extends AdvancedRobot
 
 </pre>
 <p>
--- <a href="robowiki?Stelokim" class=wikipagelink>Stelokim</a>
+-- <a href="robowiki@Stelokim" class=wikipagelink>Stelokim</a>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
@@ -93,22 +93,22 @@ double enemyAbsoluteBearing;
 double eX = e.getDistance() + Math.sin(enemyAbsoluteBearing = e.getBearingRadians() + getHeadingRadians());
 double eY = e.getDistance() + Math.sin(enemyAbsoluteBearing);
 </pre>
--- <a href="robowiki?Kinsen" class=wikipagelink>Kinsen</a>
+-- <a href="robowiki@Kinsen" class=wikipagelink>Kinsen</a>
 <p>
 Don't you mean
 <pre>
 double eX = getX() + Math.sin...
 double eY = getY() + Math.cos...
 </pre>
--- <a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+-- <a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-No, in this example, eX and eY represent the enemy Position relative to yours --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+No, in this example, eX and eY represent the enemy Position relative to yours --<a href="robowiki@Dummy" class=wikipagelink>Dummy</a>
 <p>
-btw, I'm not sure that putting "lastenemyHeading = e.get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>()" after the loop is a good idea, because before the loop, "ww=lastenemyHeading" will get an incorrect value. (though I haven't tested this, I haven't played with <a href="robowiki?RoboCode" class=wikipagelink>RoboCode</a> for years now :-p) -- <a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+btw, I'm not sure that putting "lastenemyHeading = e.get<a href="robowiki@HeadingRadians" class=wikipagelink>HeadingRadians</a>()" after the loop is a good idea, because before the loop, "ww=lastenemyHeading" will get an incorrect value. (though I haven't tested this, I haven't played with <a href="robowiki@RoboCode" class=wikipagelink>RoboCode</a> for years now :-p) -- <a href="robowiki@Dummy" class=wikipagelink>Dummy</a>
 <p>
-I don't think it would make much of a difference, though.  The first tick of the round it would be wrong, but no one can fire the first tick anyway, so it should be irrelevant.  I think so, at least.  I'm in no way an expert on this, all I know about Java is what I've figured out and what people have told me here at the wiki.  --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+I don't think it would make much of a difference, though.  The first tick of the round it would be wrong, but no one can fire the first tick anyway, so it should be irrelevant.  I think so, at least.  I'm in no way an expert on this, all I know about Java is what I've figured out and what people have told me here at the wiki.  --<a href="robowiki@Bayen" class=wikipagelink>Bayen</a>
 <p>
-Well, the thing is that ww needs to start at the enemies current heading. If you put "lastenemyHeading = ..." after the assignment to ww, you'll be using the enemy heading of the previous scan, and the circular prediction will be a slightly less accurate. This will be even more of a problem if you're not scanning your target every tick, which may be the case during melee. --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+Well, the thing is that ww needs to start at the enemies current heading. If you put "lastenemyHeading = ..." after the assignment to ww, you'll be using the enemy heading of the previous scan, and the circular prediction will be a slightly less accurate. This will be even more of a problem if you're not scanning your target every tick, which may be the case during melee. --<a href="robowiki@Dummy" class=wikipagelink>Dummy</a>
 <p>
 Oh wow, this is gonna sound really retarded, but, couldn't you do something like this? Its probably bigger, but I dislike loops.
 <pre>
@@ -160,10 +160,10 @@ public class NanoCircle extends AdvancedRobot {
 }
 </pre>
 <p>
---<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+--<a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?CodeSnippets" class=wikipagelink>CodeSnippets</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=CodeSnippets/Nano_Circular_Linear_Predictor" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=CodeSnippets/Nano_Circular_Linear_Predictor">View other revisions</a><br>Last edited December 7, 2007 22:12 EST by <a href="robowiki?Chase-san" title="ID 12394 from emcnair-78-215.resnet.mtu.edu">Chase-san</a> <a href="robowiki?action=browse&diff=1&id=CodeSnippets/Nano_Circular_Linear_Predictor">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@CodeSnippets" class=wikipagelink>CodeSnippets</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=CodeSnippets/Nano_Circular_Linear_Predictor" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=CodeSnippets/Nano_Circular_Linear_Predictor">View other revisions</a><br>Last edited December 7, 2007 22:12 EST by <a href="robowiki@Chase-san" title="ID 12394 from emcnair-78-215.resnet.mtu.edu">Chase-san</a> <a href="robowiki@action=browse&diff=1&id=CodeSnippets/Nano_Circular_Linear_Predictor">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

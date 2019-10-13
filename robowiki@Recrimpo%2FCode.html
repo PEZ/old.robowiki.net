@@ -3,7 +3,7 @@
 <META NAME='KEYWORDS' CONTENT='Recrimpo, Code'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Code">Recrimpo/Code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Recrimpo" class=wikipagelink>Recrimpo</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/Code">Recrimpo/Code</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Recrimpo" class=wikipagelink>Recrimpo</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext><pre>
 package tango;
 import robocode.*;
@@ -161,7 +161,7 @@ public class Recrimpo extends AdvancedRobot
 Ok, first question what is this:
 <p>
 <PRE >
- AngleOffset<a href="robowiki?action=edit&id=AngleOffset" class=wikipageedit>?</a>=Math.toDegrees(Math.acos((Math.pow(b,2)+Math.pow(c,2)-Math.pow(a,2))/(2*b*c)));
+ AngleOffset<a href="robowiki@action=edit&id=AngleOffset" class=wikipageedit>?</a>=Math.toDegrees(Math.acos((Math.pow(b,2)+Math.pow(c,2)-Math.pow(a,2))/(2*b*c)));
 </PRE>
 <p>
 It looks like you're trying to use the law of cosines to figure out the angle, which is intuitive and original, but may have a symantic problem - I think arc cosines only return positive numbers.
@@ -173,7 +173,7 @@ It looks like you're trying to use the law of cosines to figure out the angle, w
 You want it to be negative sometimes.  The way I would do this calculation is:
 <p>
 <PRE >
- AngleOffset<a href="robowiki?action=edit&id=AngleOffset" class=wikipageedit>?</a> = Math.toDegrees(robocode.util.Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(Math.atan2(EnemyCurrent<a href="robowiki?action=edit&id=EnemyCurrent" class=wikipageedit>?</a>.getX()-CurrentWave<a href="robowiki?action=edit&id=CurrentWave" class=wikipageedit>?</a>.FiredPosition<a href="robowiki?action=edit&id=FiredPosition" class=wikipageedit>?</a>.getX(), EnemeyCurrent<a href="robowiki?action=edit&id=EnemeyCurrent" class=wikipageedit>?</a>.getY()-CurrentWave<a href="robowiki?action=edit&id=CurrentWave" class=wikipageedit>?</a>.FiredPosition<a href="robowiki?action=edit&id=FiredPosition" class=wikipageedit>?</a>.getY())-EnemyOriginalBearing<a href="robowiki?action=edit&id=EnemyOriginalBearing" class=wikipageedit>?</a>));
+ AngleOffset<a href="robowiki@action=edit&id=AngleOffset" class=wikipageedit>?</a> = Math.toDegrees(robocode.util.Utils.normal<a href="robowiki@RelativeAngle" class=wikipagelink>RelativeAngle</a>(Math.atan2(EnemyCurrent<a href="robowiki@action=edit&id=EnemyCurrent" class=wikipageedit>?</a>.getX()-CurrentWave<a href="robowiki@action=edit&id=CurrentWave" class=wikipageedit>?</a>.FiredPosition<a href="robowiki@action=edit&id=FiredPosition" class=wikipageedit>?</a>.getX(), EnemeyCurrent<a href="robowiki@action=edit&id=EnemeyCurrent" class=wikipageedit>?</a>.getY()-CurrentWave<a href="robowiki@action=edit&id=CurrentWave" class=wikipageedit>?</a>.FiredPosition<a href="robowiki@action=edit&id=FiredPosition" class=wikipageedit>?</a>.getY())-EnemyOriginalBearing<a href="robowiki@action=edit&id=EnemyOriginalBearing" class=wikipageedit>?</a>));
 </PRE>
 <p>
 Basically, take the current bearing of the enemy from the original spot the wave was fired from and subtract their original bearing, then normalize it to range (to account for going over 0 degrees).  
@@ -190,7 +190,7 @@ if (EnemyNewBearing-CurrentWave.EnemyOriginalBearing&gt;=0 &amp;&amp; !CurrentWa
 }
 </pre>
 <p>
-I think you just always want to multiply by -1 if !CurentWave<a href="robowiki?action=edit&id=CurentWave" class=wikipageedit>?</a>.clockwise.  The idea here is that EnemyNewBearing<a href="robowiki?action=edit&id=EnemyNewBearing" class=wikipageedit>?</a>-CurrentWave<a href="robowiki?action=edit&id=CurrentWave" class=wikipageedit>?</a>.EnemeyOriginalBearing<a href="robowiki?action=edit&id=EnemeyOriginalBearing" class=wikipageedit>?</a> will be positive if they were going clockwise and are still going clockwise, or negative if they were going clockwise and ended up counterclockwise, and that's right.  However, if he was going counter-clockwise at fire time and he ended up counter-clockwise, AngleOffset<a href="robowiki?action=edit&id=AngleOffset" class=wikipageedit>?</a> will be negative but should be positive.
+I think you just always want to multiply by -1 if !CurentWave<a href="robowiki@action=edit&id=CurentWave" class=wikipageedit>?</a>.clockwise.  The idea here is that EnemyNewBearing<a href="robowiki@action=edit&id=EnemyNewBearing" class=wikipageedit>?</a>-CurrentWave<a href="robowiki@action=edit&id=CurrentWave" class=wikipageedit>?</a>.EnemeyOriginalBearing<a href="robowiki@action=edit&id=EnemeyOriginalBearing" class=wikipageedit>?</a> will be positive if they were going clockwise and are still going clockwise, or negative if they were going clockwise and ended up counterclockwise, and that's right.  However, if he was going counter-clockwise at fire time and he ended up counter-clockwise, AngleOffset<a href="robowiki@action=edit&id=AngleOffset" class=wikipageedit>?</a> will be negative but should be positive.
 <p>
 <DL >
 <dt><dd> I don't think so.  It should work.  There are 2 parts to the if statement, on for clockwise to anticlockwise, and one for anticlockwise to clockwise.  It should work.  However, it's not needed if i use the code you suggested above.
@@ -199,51 +199,51 @@ I think you just always want to multiply by -1 if !CurentWave<a href="robowiki?a
 On the side, using their old bearing and their current bearing is unstable, as it depends as much on your movement as your opponent's movement.
 <p>
 <DL >
-<dt><dd> Indeed, but i don't think i use the current bearing.  EnemyNewBearing<a href="robowiki?action=edit&id=EnemyNewBearing" class=wikipageedit>?</a> is calculated from FiredPosition<a href="robowiki?action=edit&id=FiredPosition" class=wikipageedit>?</a> to EnemyCurrent<a href="robowiki?action=edit&id=EnemyCurrent" class=wikipageedit>?</a>.
+<dt><dd> Indeed, but i don't think i use the current bearing.  EnemyNewBearing<a href="robowiki@action=edit&id=EnemyNewBearing" class=wikipageedit>?</a> is calculated from FiredPosition<a href="robowiki@action=edit&id=FiredPosition" class=wikipageedit>?</a> to EnemyCurrent<a href="robowiki@action=edit&id=EnemyCurrent" class=wikipageedit>?</a>.
 </DL>
 <p>
-So there are a couple of stabs at what might be problems.  No time to test and see if I'm close... -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+So there are a couple of stabs at what might be problems.  No time to test and see if I'm close... -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-Thanks.  I can certainly simplify things using your suggestions, so even if that doesn't fix it, it should make it easier to fix.  -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+Thanks.  I can certainly simplify things using your suggestions, so even if that doesn't fix it, it should make it easier to fix.  -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-OK, i lied about not using current bearing, i do in one place, but as i've commented out my movement, i'll fix that later.  I also realised that i had EnemyNewBearing<a href="robowiki?action=edit&id=EnemyNewBearing" class=wikipageedit>?</a> in radians, which didn't help much... so with that fixed, things are slowing making more sense.  I've got a problem with getting -ve offsets when i'm sure they should be +ve, though, so i need to check something there.  -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+OK, i lied about not using current bearing, i do in one place, but as i've commented out my movement, i'll fix that later.  I also realised that i had EnemyNewBearing<a href="robowiki@action=edit&id=EnemyNewBearing" class=wikipageedit>?</a> in radians, which didn't help much... so with that fixed, things are slowing making more sense.  I've got a problem with getting -ve offsets when i'm sure they should be +ve, though, so i need to check something there.  -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
 I've fixed the -ve/+ve problem, there were some angles i hadn't normalised.  It's still not hitting the target though. It looks like the GFs are correct, so i think the problem must be in the predicting section, rather than the data gathering section.  The line in question is:
 <p>
 <PRE >
- turnGunRight<a href="robowiki?action=edit&id=GunRight" class=wikipageedit>?</a>(Math.toDegrees(robocode.util.Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(Math.toRadians(getHeading()-getGunHeading<a href="robowiki?action=edit&id=GunHeading" class=wikipageedit>?</a>()+e.getBearing()+((BestGuess<a href="robowiki?action=edit&id=BestGuess" class=wikipageedit>?</a>-25)/25*46.66*(clockwise?1:-1))))));
+ turnGunRight<a href="robowiki@action=edit&id=GunRight" class=wikipageedit>?</a>(Math.toDegrees(robocode.util.Utils.normal<a href="robowiki@RelativeAngle" class=wikipagelink>RelativeAngle</a>(Math.toRadians(getHeading()-getGunHeading<a href="robowiki@action=edit&id=GunHeading" class=wikipageedit>?</a>()+e.getBearing()+((BestGuess<a href="robowiki@action=edit&id=BestGuess" class=wikipageedit>?</a>-25)/25*46.66*(clockwise?1:-1))))));
 </PRE>
 <p>
-I have updated the code with the changes i've made.  Does anything look wrong in the above line of code? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+I have updated the code with the changes i've made.  Does anything look wrong in the above line of code? -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
 Not wrong maybe, but it's too crowded I think. Split it up in a few lines and it should make more sense. And you don't need those conversions between radians and degrees I think. It only hides what's going on. <pre>
 double predictedBearing = Math.toRadians(((BestGuess - 25) / 25) * 46.66 * (clockwise ? 1 : -1));
 turnGunRightRadians(robocode.util.Utils.normalRelativeAngle(getHeadingRadians() - getGunHeadingRadians() + predictedBearing);
 </pre>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-I agree, it's very untidy, so is the rest of the code.  The 46.66 is correct, then?  In other bots i've seen an formula to get the number, but as i'm always using power 3 bullets (at the moment, at least), it seemed easier to make it constant. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+I agree, it's very untidy, so is the rest of the code.  The 46.66 is correct, then?  In other bots i've seen an formula to get the number, but as i'm always using power 3 bullets (at the moment, at least), it seemed easier to make it constant. -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-You could make a function named double maxEscapeAngle<a href="robowiki?action=edit&id=EscapeAngle" class=wikipageedit>?</a>(double firePower) or something that just returns this magic number 46.66 (which is correct, yes). That will both communicate what the number is about and provide for flexibility once you want to test other bullet power ranges. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+You could make a function named double maxEscapeAngle<a href="robowiki@action=edit&id=EscapeAngle" class=wikipageedit>?</a>(double firePower) or something that just returns this magic number 46.66 (which is correct, yes). That will both communicate what the number is about and provide for flexibility once you want to test other bullet power ranges. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-I ought to modularise a lot of the code, it would make it so much more readable.  At the moment, i've stopped working on my GF gun, because it was driving me mad, and am working on a PM gun, if i can eventually get them both to work, i intend to test a <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> system.  My PM gun is 2/3 done, it makes the patterns and finds them, i now just have to do the forcasting bit, which hopefully won't be too hard. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+I ought to modularise a lot of the code, it would make it so much more readable.  At the moment, i've stopped working on my GF gun, because it was driving me mad, and am working on a PM gun, if i can eventually get them both to work, i intend to test a <a href="robowiki@VirtualGuns" class=wikipagelink>VirtualGuns</a> system.  My PM gun is 2/3 done, it makes the patterns and finds them, i now just have to do the forcasting bit, which hopefully won't be too hard. -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-Yeah, when things get to messy, add <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> =) I think you can get your GF gun together. Just start with the modularization and you'll dig that bug up quite soon. It's hard to write a PM gun that's better than even the most basic GF one. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Yeah, when things get to messy, add <a href="robowiki@VirtualGuns" class=wikipagelink>VirtualGuns</a> =) I think you can get your GF gun together. Just start with the modularization and you'll dig that bug up quite soon. It's hard to write a PM gun that's better than even the most basic GF one. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-That depends on the enemy.  If your enemy is very deterministic you can get a 100% hit rate with PM, getting 100% with GF is unusual. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+That depends on the enemy.  If your enemy is very deterministic you can get a 100% hit rate with PM, getting 100% with GF is unusual. -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-Though, in real combat, bots deterministic against GF guns are more common than bots deterministic from a PM point of view. A quick glance at the <a href="robowiki?TargetingChallenge" class=wikipagelink>TargetingChallenge</a> results table says that at least one bot in the RR@H roster can be hit 100% with a GF gun. Again I suspect you are argumenting from theoretical grounds. What I meant with better is "performs best against the competition". Walls and <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> are not the competition. You do as you like of course, but if the goal is higher ranking in the RR@H I would say that a GF gun is a better choice than a PM one. Unless, of course, you produce a spectacular PM gun. If you are going to put that GF gun into a VG array together with a PM gun (which I think is a good idea) you'll need to fix the GF gun first anyway, right? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Though, in real combat, bots deterministic against GF guns are more common than bots deterministic from a PM point of view. A quick glance at the <a href="robowiki@TargetingChallenge" class=wikipagelink>TargetingChallenge</a> results table says that at least one bot in the RR@H roster can be hit 100% with a GF gun. Again I suspect you are argumenting from theoretical grounds. What I meant with better is "performs best against the competition". Walls and <a href="robowiki@SpinBot" class=wikipagelink>SpinBot</a> are not the competition. You do as you like of course, but if the goal is higher ranking in the RR@H I would say that a GF gun is a better choice than a PM one. Unless, of course, you produce a spectacular PM gun. If you are going to put that GF gun into a VG array together with a PM gun (which I think is a good idea) you'll need to fix the GF gun first anyway, right? -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Indeed, in real life, a good PM gun isn't as good as a good GF gun, but of course, any PM gun is better than a GF gun that doesn't work.  The PM gun seems to be working, my first test got 49% in the PMC, and that's without any saving between rounds, and no tweaking.  I'll probably release a version with just PM, while i fix the GF, because i don't know how long that will take. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+Indeed, in real life, a good PM gun isn't as good as a good GF gun, but of course, any PM gun is better than a GF gun that doesn't work.  The PM gun seems to be working, my first test got 49% in the PMC, and that's without any saving between rounds, and no tweaking.  I'll probably release a version with just PM, while i fix the GF, because i don't know how long that will take. -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-Up to 60%, but it's running very slowly because the string is too long.  Next step is to handle missed scans better. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+Up to 60%, but it's running very slowly because the string is too long.  Next step is to handle missed scans better. -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-Ah, progress is sweet! Are you checking the gun heat before running the matcher? That can speed things up considerably. Also doing a binary search gains speed. Is it a symbolic PM? Handling missed scans is quite easy I think. Check how <a href="robowiki?LeachPMC/Code" class=wikipagelink>LeachPMC/Code</a> does it if you like. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Ah, progress is sweet! Are you checking the gun heat before running the matcher? That can speed things up considerably. Also doing a binary search gains speed. Is it a symbolic PM? Handling missed scans is quite easy I think. Check how <a href="robowiki@LeachPMC/Code" class=wikipagelink>LeachPMC/Code</a> does it if you like. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-I do check heat yes, but at the moment it checks each length increasing by 1 tick each time until it fails, a binary search is on my mental todo list.  Yes, it is symbolic.  I'm pretty sure of how to do missed scans, i just have to actually do it. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+I do check heat yes, but at the moment it checks each length increasing by 1 tick each time until it fails, a binary search is on my mental todo list.  Yes, it is symbolic.  I'm pretty sure of how to do missed scans, i just have to actually do it. -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Recrimpo" class=wikipagelink>Recrimpo</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=Recrimpo/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Recrimpo/Code">View other revisions</a><br>Last edited November 16, 2003 15:03 EST by <a href="robowiki?Tango" title="ID 1197 from webcacheH06a.cache.pol.co.uk">Tango</a> <a href="robowiki?action=browse&diff=1&id=Recrimpo/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Recrimpo" class=wikipagelink>Recrimpo</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=Recrimpo/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=Recrimpo/Code">View other revisions</a><br>Last edited November 16, 2003 15:03 EST by <a href="robowiki@Tango" title="ID 1197 from webcacheH06a.cache.pol.co.uk">Tango</a> <a href="robowiki@action=browse&diff=1&id=Recrimpo/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

@@ -3,8 +3,8 @@
 <META NAME='KEYWORDS' CONTENT='Code, Size, Writing, Small, Code'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/WritingSmallCode">CodeSize/WritingSmallCode</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext>The tips on this page are specific ways you can rewrite your code to use fewer bytes, as measured by the <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> utility. Please note that <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> is not affected by the length of your method or variable names.
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/WritingSmallCode">CodeSize/WritingSmallCode</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@CodeSize" class=wikipagelink>CodeSize</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>The tips on this page are specific ways you can rewrite your code to use fewer bytes, as measured by the <a href="robowiki@CodeSize" class=wikipagelink>CodeSize</a> utility. Please note that <a href="robowiki@CodeSize" class=wikipagelink>CodeSize</a> is not affected by the length of your method or variable names.
 <p>
 Discussion is at the bottom of this page.
 <p>
@@ -13,7 +13,7 @@ Discussion is at the bottom of this page.
 <UL >
 <li> Static variables take less space than non-static ones.
 <UL >
-<li> <a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a> adds: They save 5 bytes to be exact
+<li> <a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a> adds: They save 5 bytes to be exact
 </UL>
 <li> Don't initialize your number variables to zero - they're zero by default (thanks to the Java Spec)
 <li> <code> try{ ... } catch </code> is a great way to save space. For example,
@@ -34,7 +34,7 @@ Discussion is at the bottom of this page.
             }
 </pre>
 <UL >
-<li> Any time you are "doing the same thing" in more than one place, try to find a way to condense it into a method and call it in each place. In some situations, this may seem obvious, but in others it is less obvious. A line from <a href="robowiki?Komarious" class=wikipagelink>Komarious</a> that makes use of a sign(double d) method where you wouldn't normally expect one:
+<li> Any time you are "doing the same thing" in more than one place, try to find a way to condense it into a method and call it in each place. In some situations, this may seem obvious, but in others it is less obvious. A line from <a href="robowiki@Komarious" class=wikipagelink>Komarious</a> that makes use of a sign(double d) method where you wouldn't normally expect one:
 </UL>
 <pre>
             _goAngle = angleFromWaveSource +
@@ -96,7 +96,7 @@ Discussion is at the bottom of this page.
 <li> Be careful with the above rule: <tt>x + 1 + 2</tt> does not count, you must do <tt>x + (1 + 2)</tt>.
 <li> You pay for the default constructor of a class even if you don't write the empty code for it yourself, so if you have something useful to put there, go ahead and put it there.
 <li> If you initialize any static variables (that are not final), you pay one extra byte, so if you aren't saving *any* data between battles, initialize your variables in the run method or in your constructor (which you are paying for whether you want to or not).
-<li> The first 4 variables in a method represent registers, the rest represent places in memory.  I discovered this over the weekend.  I now name my first 4 variables r1i (an integer), r2d (a double), r4p (a Point2D.Double) etc.  USE THIS FACT.  All operations must work from registers, and every load from memory into a register requires an operation, as does storing from a register back to memory.  By using your first 4 variables wisely, you can save yourself a lot of load &amp; store operations (which each cost you in <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a>).  Some more notes:
+<li> The first 4 variables in a method represent registers, the rest represent places in memory.  I discovered this over the weekend.  I now name my first 4 variables r1i (an integer), r2d (a double), r4p (a Point2D.Double) etc.  USE THIS FACT.  All operations must work from registers, and every load from memory into a register requires an operation, as does storing from a register back to memory.  By using your first 4 variables wisely, you can save yourself a lot of load &amp; store operations (which each cost you in <a href="robowiki@CodeSize" class=wikipagelink>CodeSize</a>).  Some more notes:
 <UL >
 <li> The first variable passed to a non-static method is "this".  It uses your first register.
 <li> The next variables declared in your method are the parameters.  They use your next registers.
@@ -108,7 +108,7 @@ Discussion is at the bottom of this page.
 Please add to this table as you can, and organize it if you like:
 <p>
 <TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
-<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> <strong>Operation</strong>                        </td><td align="right" colspan="0.5"><strong>Cost in <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a></strong></td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> <strong>Operation</strong>                        </td><td align="right" colspan="0.5"><strong>Cost in <a href="robowiki@CodeSize" class=wikipagelink>CodeSize</a></strong></td></TR>
 <TR VALIGN='CENTER' ><td align="left" colspan='0.5'> 1st constructor                        </td><td align="right" colspan="0.5">free</td></TR>
 <TR VALIGN='CENTER' ><td align="left" colspan='0.5'> creating a method                      </td><td align="right" colspan="0.5">free</td></TR>
 <TR VALIGN='CENTER' ><td align="left" colspan='0.5'> returning from a method                </td><td align="right" colspan="0.5">1</td></TR>
@@ -148,13 +148,13 @@ double rawr[] = new double[12];
 if(rawr[].length &gt; 0)
     rawr[2][4] = 10;
 </pre>
--- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+-- <a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 <p>
-I would guess that they compile to the exact same thing, so there would be no gain there. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+I would guess that they compile to the exact same thing, so there would be no gain there. -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <p>
-It is universally true (in the Java universe) that uninitialized variables are 0, false, or null. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+It is universally true (in the Java universe) that uninitialized variables are 0, false, or null. -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <p>
-First of all. Cool page, and which is a great inspiration. -- <a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+First of all. Cool page, and which is a great inspiration. -- <a href="robowiki@Fnl" class=wikipagelink>Fnl</a>
 <p>
 I am wondering if:
 <pre>
@@ -169,10 +169,10 @@ Could be written even smaller:
 <pre>
             int i = (j &gt; 2) ? -1 : 1;
 </pre>
-At least it should have a faster execution time! ;-) --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+At least it should have a faster execution time! ;-) --<a href="robowiki@Fnl" class=wikipagelink>Fnl</a>
 <p>
 <UL >
-<li> Yes, you are right.  Smaller still would be <tt>int i = (int) Math.signum(2 - j)</tt>, if you could afford the situation that i comes out to be zero.  Or, for one extra byte (still smaller, though), you can almost always afford a rare, rare situation that something like <tt>int i = (int) Math.signum(2.00000000000001 - j)</tt> would come out to zero. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Yes, you are right.  Smaller still would be <tt>int i = (int) Math.signum(2 - j)</tt>, if you could afford the situation that i comes out to be zero.  Or, for one extra byte (still smaller, though), you can almost always afford a rare, rare situation that something like <tt>int i = (int) Math.signum(2.00000000000001 - j)</tt> would come out to zero. -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 </UL>
 <p>
 Hehe..
@@ -182,7 +182,7 @@ Hehe..
                 someFunction(list.getFirst());
             } catch(Exception ex){}
 </pre>
-..is smaller, but more expensive in execution time due to the try-catch! ;-) --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+..is smaller, but more expensive in execution time due to the try-catch! ;-) --<a href="robowiki@Fnl" class=wikipagelink>Fnl</a>
 <p>
 A few of my tricks.  Remember your binary operators &amp;, |, and especially ^ (xor).  Xor is great for swapping very cheaply between 2 integer numbers for next to nothing:
 <pre>
@@ -192,17 +192,17 @@ A few of my tricks.  Remember your binary operators &amp;, |, and especially ^ (
 </pre>
 is a very cheap way to swap between 64 and 96.  Just be careful of the binary math :)
 <p>
-It is almost always cheaper to directly call a method that has 2 or more lines of code than to repeat the code.  I've manually called <a href="robowiki?OnDeath" class=wikipagelink>OnDeath</a>(null) before to reinitialize variables and such.
+It is almost always cheaper to directly call a method that has 2 or more lines of code than to repeat the code.  I've manually called <a href="robowiki@OnDeath" class=wikipagelink>OnDeath</a>(null) before to reinitialize variables and such.
 <p>
 In the spirit of smaller numbers, it is cheaper to divide by 5 than to multiply my 0.2.  Same for any other operator.
 <p>
 I know there is another page around here I've posted on before about this - one I started a long time ago.  I also know there is a lost thread over at the Repository than had similiar info.  I wonder if that could be recovered.
---<a href="robowiki?Miked0801" class=wikipagelink>Miked0801</a>
+--<a href="robowiki@Miked0801" class=wikipagelink>Miked0801</a>
 <p>
 <UL >
-<li> I'm interested by your "number swapping" trick.  Can you give an example of when this is useful?  Thanks! -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> I'm interested by your "number swapping" trick.  Can you give an example of when this is useful?  Thanks! -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <UL >
-<li> I've used it to multi-mode between 2 movement amounts - say you do better with small movements against some and large against others, xor  between the 2 values on <a href="robowiki?OnDeath" class=wikipagelink>OnDeath</a> or whatever.  I believe the current Moebius uses this.  It also works for swapping between non similiar positive and negative numbers as well.  You can imagine where that could be useful.
+<li> I've used it to multi-mode between 2 movement amounts - say you do better with small movements against some and large against others, xor  between the 2 values on <a href="robowiki@OnDeath" class=wikipagelink>OnDeath</a> or whatever.  I believe the current Moebius uses this.  It also works for swapping between non similiar positive and negative numbers as well.  You can imagine where that could be useful.
 </UL>
 </UL>
 <p>
@@ -232,11 +232,11 @@ def void doStuff() {
     Foo c = new Foo();
 }
 </pre>
-In other words it appears that factory methods are smaller than constructors if used 3 or more times. They are the same size if used twice, but are larger if the constructor is only used once. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+In other words it appears that factory methods are smaller than constructors if used 3 or more times. They are the same size if used twice, but are larger if the constructor is only used once. -- <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>
 <p>
-Lol, <code>double bulletPower = 3/2;</code> uses up less space than <code>double bulletPower = 1.5;</code> (2 bytes(?) to be exact) --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+Lol, <code>double bulletPower = 3/2;</code> uses up less space than <code>double bulletPower = 1.5;</code> (2 bytes(?) to be exact) --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-That would be because 3/2 is integer arithmetic.... essentially equivalent to 1. Try putting 1.0 in there, it should be the same =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+That would be because 3/2 is integer arithmetic.... essentially equivalent to 1. Try putting 1.0 in there, it should be the same =) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <p>
 In a method,
 <pre>
@@ -254,7 +254,7 @@ if(condition){
     foo2();
 }
 </pre>
---<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+--<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
 I haven't tested this, but I believe that
 <pre>
@@ -271,14 +271,14 @@ public void run(){
     .
 }
 </pre>
-(of course if the stats reset after every round then it doesn't work) --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+(of course if the stats reset after every round then it doesn't work) --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-Yep, that should be the case. Though, that should be equally small as simply going "static double[] stats = new double[BINS];" during the decleration, no reason to have the seperate static block I don't think. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+Yep, that should be the case. Though, that should be equally small as simply going "static double[] stats = new double[BINS];" during the decleration, no reason to have the seperate static block I don't think. -- <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>
 <p>
 question: why does ldc take up 1 byte less than sipush (i.e. why does loading 32768 take up one byte less than loading 32767)?
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=CodeSize/WritingSmallCode" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=CodeSize/WritingSmallCode">View other revisions</a><br>Last edited April 2, 2009 1:47 EST by cpe-75-84-83-181.socal.res.rr.com <a href="robowiki?action=browse&diff=1&id=CodeSize/WritingSmallCode">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@CodeSize" class=wikipagelink>CodeSize</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=CodeSize/WritingSmallCode" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=CodeSize/WritingSmallCode">View other revisions</a><br>Last edited April 2, 2009 1:47 EST by cpe-75-84-83-181.socal.res.rr.com <a href="robowiki@action=browse&diff=1&id=CodeSize/WritingSmallCode">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

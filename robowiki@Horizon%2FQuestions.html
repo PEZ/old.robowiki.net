@@ -3,22 +3,22 @@
 <META NAME='KEYWORDS' CONTENT='Horizon, Questions'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Questions">Horizon/Questions</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Horizon" class=wikipagelink>Horizon</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/Questions">Horizon/Questions</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Horizon" class=wikipagelink>Horizon</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext>On this page, I humbly beg for help from the Robocode masters.
 <p>
 <p>
 <H3>Pummeled by Linear / Circular Targeting</H3>
 
 <p>
-I think I know why it is that <a href="robowiki?Horizon" class=wikipagelink>Horizon</a> is ranked much lower than <a href="robowiki?BasicGFSurfer" class=wikipagelink>BasicGFSurfer</a> on <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>. Check out these scores from the <a href="robowiki?WaveSurfingChallenge2K6" class=wikipagelink>WaveSurfingChallenge2K6</a>:
+I think I know why it is that <a href="robowiki@Horizon" class=wikipagelink>Horizon</a> is ranked much lower than <a href="robowiki@BasicGFSurfer" class=wikipagelink>BasicGFSurfer</a> on <a href="robowiki@RoboRumble" class=wikipagelink>RoboRumble</a>. Check out these scores from the <a href="robowiki@WaveSurfingChallenge2K6" class=wikipagelink>WaveSurfingChallenge2K6</a>:
 <p>
 <TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
 <TR VALIGN='CENTER' ><td align="left" colspan='0.5'>Bot Name                </td><td colspan="0.5">Score vs. Bot A</td><td colspan="0.5">Score vs. Bot B</td><td colspan="0.5">Score vs. Bot C</td><td colspan="0.5"><strong>Overall Score</strong></td></TR>
-<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> <a href="robowiki?BasicSurfer" class=wikipagelink>BasicSurfer</a> 1.0    </td><td align="left" colspan="0.5"> 91.59       </td><td align="left" colspan="0.5"> 58.87       </td><td align="left" colspan="0.5"> 61.09       </td><td colspan="0.5"> <strong>70.51</strong></td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> <a href="robowiki@BasicSurfer" class=wikipagelink>BasicSurfer</a> 1.0    </td><td align="left" colspan="0.5"> 91.59       </td><td align="left" colspan="0.5"> 58.87       </td><td align="left" colspan="0.5"> 61.09       </td><td colspan="0.5"> <strong>70.51</strong></td></TR>
 <TR VALIGN='CENTER' ><td align="left" colspan='0.5'> Horizon 0.9.2.1        </td><td align="left" colspan="0.5"> 99.184      </td><td align="left" colspan="0.5"> 53.574      </td><td align="left" colspan="0.5"> 38.346      </td><td colspan="0.5"> <strong>63.70</strong></td></TR>
 </TABLE>
 <p>
-In other words, Horizon outperforms <a href="robowiki?BasicSurfer" class=wikipagelink>BasicSurfer</a> by a large amount when dodging HOT, but, against linear/circular targeting, gets converted to spare parts. Not that <a href="robowiki?BasicSurfer" class=wikipagelink>BasicSurfer</a> is exactly top-notch at dodging linear targeting, but at least it doesn't get *killed* by the challenge bots! Anyone have suggestions as to how to avoid this type of targeting? Is it segmentation on velocity? (At one point I tried putting segmentation on Horizon's movement, but even when I had only one segmentation dimension its learning became much too slow - see next question.)
+In other words, Horizon outperforms <a href="robowiki@BasicSurfer" class=wikipagelink>BasicSurfer</a> by a large amount when dodging HOT, but, against linear/circular targeting, gets converted to spare parts. Not that <a href="robowiki@BasicSurfer" class=wikipagelink>BasicSurfer</a> is exactly top-notch at dodging linear targeting, but at least it doesn't get *killed* by the challenge bots! Anyone have suggestions as to how to avoid this type of targeting? Is it segmentation on velocity? (At one point I tried putting segmentation on Horizon's movement, but even when I had only one segmentation dimension its learning became much too slow - see next question.)
 <p>
 <p>
 <H3>Data Smoothing Across Segments</H3>
@@ -54,32 +54,32 @@ private double[] getSegment() {
 }
 </pre>
 <p>
-Note that the logHit() method does <a href="robowiki?BinSmoothing" class=wikipagelink>BinSmoothing</a> on its own, and has a weight of 1.0 by default but can also accept a weight parameter. How would I implement segment smoothing here (preferably without a large performance hit)?
+Note that the logHit() method does <a href="robowiki@BinSmoothing" class=wikipagelink>BinSmoothing</a> on its own, and has a weight of 1.0 by default but can also accept a weight parameter. How would I implement segment smoothing here (preferably without a large performance hit)?
 <p>
 <hr noshade class=wikiline size=1>
 <p>
-For the poor performance against Bots B and C in the WSC, I just wanted to say it probably isn't segmentation - <a href="robowiki?BasicSurfer" class=wikipagelink>BasicSurfer</a> doesn't segment at all and is still getting much higher scores than you. There are a lot of places the bugs could be hiding, so you probably know where to look better than I would, but the first thing that comes to mind is to make sure your Precise Prediction is still correctly predicting your movement after the changes you made. If you are <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>, controlling distance, or anything differently than the original code was, you need to make sure the prediction is predicting that stuff correctly. E.g., <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> adjusts distancing / attack angle and does <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> every tick, so I have to simulate those decisions in every part of the prediction.
+For the poor performance against Bots B and C in the WSC, I just wanted to say it probably isn't segmentation - <a href="robowiki@BasicSurfer" class=wikipagelink>BasicSurfer</a> doesn't segment at all and is still getting much higher scores than you. There are a lot of places the bugs could be hiding, so you probably know where to look better than I would, but the first thing that comes to mind is to make sure your Precise Prediction is still correctly predicting your movement after the changes you made. If you are <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a>, controlling distance, or anything differently than the original code was, you need to make sure the prediction is predicting that stuff correctly. E.g., <a href="robowiki@Dookious" class=wikipagelink>Dookious</a> adjusts distancing / attack angle and does <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a> every tick, so I have to simulate those decisions in every part of the prediction.
 <p>
-As for the <a href="robowiki?DataSmoothing" class=wikipagelink>DataSmoothing</a>, I have always found this to be incredibly slow when I tried it, though I haven't tried it for a while. There are other ways to overcome the problem, though. You could have multiple buffers, some with lower segmentations than others, and sum them to get the score for any segment - if your high buffer has no data, it will just sum in as a 0. <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> is a different style of stats, but it basically has <a href="robowiki?DataSmoothing" class=wikipagelink>DataSmoothing</a> built into how it works. There are other little tricks you could try, as well, like switching from a low segmentation to a higher one once you have enough data.
+As for the <a href="robowiki@DataSmoothing" class=wikipagelink>DataSmoothing</a>, I have always found this to be incredibly slow when I tried it, though I haven't tried it for a while. There are other ways to overcome the problem, though. You could have multiple buffers, some with lower segmentations than others, and sum them to get the score for any segment - if your high buffer has no data, it will just sum in as a 0. <a href="robowiki@DynamicClustering" class=wikipagelink>DynamicClustering</a> is a different style of stats, but it basically has <a href="robowiki@DataSmoothing" class=wikipagelink>DataSmoothing</a> built into how it works. There are other little tricks you could try, as well, like switching from a low segmentation to a higher one once you have enough data.
 <p>
 Hope some of that is helpful, good luck!
 <p>
--- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+-- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <p>
-I found that I get poor preformance vs B and C when the wave detection is a little off, it might dodge to late and get hit, Head On is easiest to dodge, and noticed very little difference in its stat. I personally like <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a>, its power is unquestionable, as its used in Lukious, Shadow and Chalk, all very nice, very powerful bots. <a href="robowiki?DataSmoothing" class=wikipagelink>DataSmoothing</a> is very slow on anything but two or three segments, I have tried it and it can really slow a bot down. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+I found that I get poor preformance vs B and C when the wave detection is a little off, it might dodge to late and get hit, Head On is easiest to dodge, and noticed very little difference in its stat. I personally like <a href="robowiki@DynamicClustering" class=wikipagelink>DynamicClustering</a>, its power is unquestionable, as its used in Lukious, Shadow and Chalk, all very nice, very powerful bots. <a href="robowiki@DataSmoothing" class=wikipagelink>DataSmoothing</a> is very slow on anything but two or three segments, I have tried it and it can really slow a bot down. --<a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 <p>
-Thank you, thank you, THANK YOU! Not only did I find a bug in my surfing that caused waves to lag behind bullets by a couple ticks, but fixing that, tweaking a few variables, and sorting my <a href="robowiki?GuessFactors" class=wikipagelink>GuessFactors</a> with <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> instead of segmentation improved Horizon's scores against all three test bots:
+Thank you, thank you, THANK YOU! Not only did I find a bug in my surfing that caused waves to lag behind bullets by a couple ticks, but fixing that, tweaking a few variables, and sorting my <a href="robowiki@GuessFactors" class=wikipagelink>GuessFactors</a> with <a href="robowiki@DynamicClustering" class=wikipagelink>DynamicClustering</a> instead of segmentation improved Horizon's scores against all three test bots:
 <p>
 <TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
 <TR VALIGN='CENTER' ><td align="left" colspan='0.5'>Bot Name                </td><td colspan="0.5">Score vs. Bot A</td><td colspan="0.5">Score vs. Bot B</td><td colspan="0.5">Score vs. Bot C</td><td colspan="0.5"><strong>Overall Score</strong></td></TR>
-<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> <a href="robowiki?BasicSurfer" class=wikipagelink>BasicSurfer</a> 1.0    </td><td align="left" colspan="0.5"> 91.59       </td><td align="left" colspan="0.5"> 58.87       </td><td align="left" colspan="0.5"> 61.09       </td><td colspan="0.5"> <strong>70.51</strong></td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> <a href="robowiki@BasicSurfer" class=wikipagelink>BasicSurfer</a> 1.0    </td><td align="left" colspan="0.5"> 91.59       </td><td align="left" colspan="0.5"> 58.87       </td><td align="left" colspan="0.5"> 61.09       </td><td colspan="0.5"> <strong>70.51</strong></td></TR>
 <TR VALIGN='CENTER' ><td align="left" colspan='0.5'> Horizon 0.9.2.1        </td><td align="left" colspan="0.5"> 99.184      </td><td align="left" colspan="0.5"> 53.574      </td><td align="left" colspan="0.5"> 38.346      </td><td colspan="0.5"> <strong>63.70</strong></td></TR>
 <TR VALIGN='CENTER' ><td align="left" colspan='0.5'> <em>Horizon development</em></td><td align="left" colspan="0.5"> <em>99.628</em>  </td><td align="left" colspan="0.5"> <em>68.51</em>   </td><td align="left" colspan="0.5"> <em>43.67</em>   </td><td colspan="0.5"> <em> <strong>70.602</strong> </em></td></TR>
 </TABLE>
 <p>
-So Horizon's surfing is now better overall than <a href="robowiki?BasicSurfer" class=wikipagelink>BasicSurfer</a> against simple targeting. I also added DC to the gun, so I will be releasing an improved (hopefully) version soon.
+So Horizon's surfing is now better overall than <a href="robowiki@BasicSurfer" class=wikipagelink>BasicSurfer</a> against simple targeting. I also added DC to the gun, so I will be releasing an improved (hopefully) version soon.
 <p>
--- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+-- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 <p>
 <p>
 <hr noshade class=wikiline size=1>
@@ -104,11 +104,11 @@ public void run() {
 </pre>
 <p>
 <UL >
-<li> The code you have above is a good way to do it, but there are a few caveats.  1) make sure everything you want to execute that turn has happened by the time you make the execute() call, and 2) make sure you don't use any of the blocking API calls anywhere else in your code (e.g. don't call turnRadarRight<a href="robowiki?action=edit&id=RadarRight" class=wikipageedit>?</a>() in on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(), use <b>set</b><a href="robowiki?TurnRadarRight" class=wikipagelink>TurnRadarRight</a>()).  Creating a custom event would work, too, but I think putting execute() into a loop in the run() method is more straightforward.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> The code you have above is a good way to do it, but there are a few caveats.  1) make sure everything you want to execute that turn has happened by the time you make the execute() call, and 2) make sure you don't use any of the blocking API calls anywhere else in your code (e.g. don't call turnRadarRight<a href="robowiki@action=edit&id=RadarRight" class=wikipageedit>?</a>() in on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a>(), use <b>set</b><a href="robowiki@TurnRadarRight" class=wikipagelink>TurnRadarRight</a>()).  Creating a custom event would work, too, but I think putting execute() into a loop in the run() method is more straightforward.  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <UL >
-<li> #1 you list was exactly the problem: execute() could get called before all events finish on a turn. I fixed the problem in my code by using a custom event with the highest possible priority that always evaluates to true, but I wanted to know if there was a better way. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li> #1 you list was exactly the problem: execute() could get called before all events finish on a turn. I fixed the problem in my code by using a custom event with the highest possible priority that always evaluates to true, but I wanted to know if there was a better way. -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 </UL>
-<li> Something doesn't add up here.  When you say "before all events finish on a turn", do you mean an event like <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> (or, actually, its handler, "on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>")?  If that's the case, events happen one after the other unless you're creating your own threads, and only after they are all done could execute() return.  So (unless you're using threads) no events can be in-process between calls to execute() in your loop above.  What am I missing? -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Something doesn't add up here.  When you say "before all events finish on a turn", do you mean an event like <a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> (or, actually, its handler, "on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a>")?  If that's the case, events happen one after the other unless you're creating your own threads, and only after they are all done could execute() return.  So (unless you're using threads) no events can be in-process between calls to execute() in your loop above.  What am I missing? -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <UL >
 <li> I think what you are missing is that I am using a custom-built plugin system that delegates events. The code looks like this:
 </UL>
@@ -193,12 +193,12 @@ public class RadarLock extends Component {
 
 </pre>
 <p>
-I admit I was being somewhat unclear. The problem is, running Horizon with this setup makes it spin the radar forever without getting a lock, because scannedRobot() in RadarLock<a href="robowiki?action=edit&id=RadarLock" class=wikipageedit>?</a> is being called *before* eachFrame(). That is, eachFrame()'s turnRadarRight<a href="robowiki?action=edit&id=RadarRight" class=wikipageedit>?</a>(POSITIVE_INFINITY) is overriding scannedRobot()'s radar lock. I replaced the problematic loop with a custom event with the highest priority so that eachFrame() would always be called *before* any other events are executed.
+I admit I was being somewhat unclear. The problem is, running Horizon with this setup makes it spin the radar forever without getting a lock, because scannedRobot() in RadarLock<a href="robowiki@action=edit&id=RadarLock" class=wikipageedit>?</a> is being called *before* eachFrame(). That is, eachFrame()'s turnRadarRight<a href="robowiki@action=edit&id=RadarRight" class=wikipageedit>?</a>(POSITIVE_INFINITY) is overriding scannedRobot()'s radar lock. I replaced the problematic loop with a custom event with the highest priority so that eachFrame() would always be called *before* any other events are executed.
 <p>
--- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+-- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 <p>
 <UL >
-<li> Gotcha.  As far as any "better" ways - I think some of the big boys collect all the events in a list, then process them in a loop inside the run() method.  That gives you complete control over the order in which they happen.  But your solution also seems like a very good way to get code to execute before any events are processed. --<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Gotcha.  As far as any "better" ways - I think some of the big boys collect all the events in a list, then process them in a loop inside the run() method.  That gives you complete control over the order in which they happen.  But your solution also seems like a very good way to get code to execute before any events are processed. --<a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 </UL>
 <p>
 <H3>Move Away Code Could be Better</H3>
@@ -224,15 +224,15 @@ private double checkDanger(Wave wave, double[] segment, int direction) {
 The problem with this is, it tends to make the bot settle into a nice, comfortable spot in the corner and vibrate back and forth - not a good thing! However, taking out this adjustment makes the bot head along the wall that the enemy is on and barrel right towards them (due to the wall smoothing). What alternative methods of avoiding the enemy are there?
 <p>
 <UL >
-<li> This is a basic problem with any orbital movement.  I think a lot of people (myself included) force the bot to switch orbit directions if wall smoothing would cause it to "dive" toward the enemy too sharply.  A new random movement I made couples this type of "dive protection" with a tendency to move toward the line through the enemy and the center point of the field.  I haven't tested it much in real battles yet, but judging by its behavior <a href="robowiki?WaveSerpent" class=wikipagelink>WaveSerpent</a> does this same thing, and its movement is very good.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> This is a basic problem with any orbital movement.  I think a lot of people (myself included) force the bot to switch orbit directions if wall smoothing would cause it to "dive" toward the enemy too sharply.  A new random movement I made couples this type of "dive protection" with a tendency to move toward the line through the enemy and the center point of the field.  I haven't tested it much in real battles yet, but judging by its behavior <a href="robowiki@WaveSerpent" class=wikipagelink>WaveSerpent</a> does this same thing, and its movement is very good.  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 </UL>
 <p>
 <UL >
-<li> What I do in <a href="robowiki?Decado" class=wikipagelink>Decado</a> is set the default orbital angle slightly away from perpendicular, but if I am further than 400 pixels from them I set it to slightly towards them. The value of 400 I sucked out of my thumb, but it seems to work quite well. I also gleaned (from <a href="robowiki?RaikoNano" class=wikipagelink>RaikoNano</a>) a very easy way to set the "dive protection" mentioned above: assuming a perpendicular bearing would have an 'offset' towards the enemy of PI/2, if the wallsmoothed bearing has an 'offset' of less than PI/3.5 I change orbit direction. This works for <a href="robowiki?RandomMovement" class=wikipagelink>RandomMovement</a>, I'm not sure how well it will work for <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> What I do in <a href="robowiki@Decado" class=wikipagelink>Decado</a> is set the default orbital angle slightly away from perpendicular, but if I am further than 400 pixels from them I set it to slightly towards them. The value of 400 I sucked out of my thumb, but it seems to work quite well. I also gleaned (from <a href="robowiki@RaikoNano" class=wikipagelink>RaikoNano</a>) a very easy way to set the "dive protection" mentioned above: assuming a perpendicular bearing would have an 'offset' towards the enemy of PI/2, if the wallsmoothed bearing has an 'offset' of less than PI/3.5 I change orbit direction. This works for <a href="robowiki@RandomMovement" class=wikipagelink>RandomMovement</a>, I'm not sure how well it will work for <a href="robowiki@WaveSurfing" class=wikipagelink>WaveSurfing</a>. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 </UL>
 <p>
 <UL >
-<li>After a bit of thought, here's how you could implement dive protection in <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>: if the projected position is a certain amount closer or further than the current position, add extra 'danger' to that direction. Maybe something like <pre>if(proj_dist/curr_dist &lt; 0.8)increaseDanger(orbitDir);</pre> or <pre>if(Math.abs(proj_dist - curr_dist) &gt; curr_dist/5)increaseDanger(orbitDir);</pre> --<a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<li>After a bit of thought, here's how you could implement dive protection in <a href="robowiki@WaveSurfing" class=wikipagelink>WaveSurfing</a>: if the projected position is a certain amount closer or further than the current position, add extra 'danger' to that direction. Maybe something like <pre>if(proj_dist/curr_dist &lt; 0.8)increaseDanger(orbitDir);</pre> or <pre>if(Math.abs(proj_dist - curr_dist) &gt; curr_dist/5)increaseDanger(orbitDir);</pre> --<a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 </UL>
 <p>
 <H3>Horizon Has a Seizure</H3>
@@ -241,9 +241,9 @@ The problem with this is, it tends to make the bot settle into a nice, comfortab
 Even with the enemy avoidance code taken out, Horizon spasms a lot. How do you deal with spasming? Also, I have tried adding a stop position to the code but it didn't make any improvement. Is there a way to detect when the bot is spasming and make it freeze instead?
 <p>
 <UL >
-<li> What's the problem with spasming? -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> What's the problem with spasming? -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <UL >
-<li> It is not a big problem, it's just that the movement doesn't have that gliding, sailing look that more advanced surfers do. It's more of an "it looks better that way" thing than an actual bug. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li> It is not a big problem, it's just that the movement doesn't have that gliding, sailing look that more advanced surfers do. It's more of an "it looks better that way" thing than an actual bug. -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 </UL>
 </UL>
 <p>
@@ -251,11 +251,11 @@ Even with the enemy avoidance code taken out, Horizon spasms a lot. How do you d
 <p>
 Now that the conversation has gotten completely out of control... =)
 <p>
-Where should we move this discussion to? It seems like so far, we have parts that could go to <a href="robowiki?ShrapnelDodging" class=wikipagelink>ShrapnelDodging</a>, <a href="robowiki?AntiSurferTargeting" class=wikipagelink>AntiSurferTargeting</a>, <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>, maybe <a href="robowiki?Trigonometry" class=wikipagelink>Trigonometry</a>...
+Where should we move this discussion to? It seems like so far, we have parts that could go to <a href="robowiki@ShrapnelDodging" class=wikipagelink>ShrapnelDodging</a>, <a href="robowiki@AntiSurferTargeting" class=wikipagelink>AntiSurferTargeting</a>, <a href="robowiki@GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>, maybe <a href="robowiki@Trigonometry" class=wikipagelink>Trigonometry</a>...
 <p>
--- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+-- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 <p>
-I moved it over to <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>, since that seemed like the biggest topic and it all related to that in some way or another. Feel free to delete this comment and your own if you want to keep this page nice and tidy. =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+I moved it over to <a href="robowiki@WaveSurfing" class=wikipagelink>WaveSurfing</a>, since that seemed like the biggest topic and it all related to that in some way or another. Feel free to delete this comment and your own if you want to keep this page nice and tidy. =) -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
@@ -291,15 +291,15 @@ In addition, since I am using dynamic clustering, I can assign each factor a wei
 <strong>Post responses here</strong>
 <p>
 <p>
-I think you have too many velocities; if you're in 1v1, I'd definitely just stick with lateral velocity. For me, these are the first attributes I try in a new gun: <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a>, distance (or bullet time), time since velocity change (divided by distance or bullet time), accel (0 = decelerating, 1 = same speed, 2 = accelerating), and <a href="robowiki?WallDistance" class=wikipagelink>WallDistance</a>. 
+I think you have too many velocities; if you're in 1v1, I'd definitely just stick with lateral velocity. For me, these are the first attributes I try in a new gun: <a href="robowiki@LateralVelocity" class=wikipagelink>LateralVelocity</a>, distance (or bullet time), time since velocity change (divided by distance or bullet time), accel (0 = decelerating, 1 = same speed, 2 = accelerating), and <a href="robowiki@WallDistance" class=wikipagelink>WallDistance</a>. 
 <p>
-The best way to segment <a href="robowiki?WallDistance" class=wikipagelink>WallDistance</a> in 1v1, as far as I know / am concerned, is by segmenting on what amounts to "at what <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> starting from now will the enemy be when they hit the wall if they keep orbiting me"; so a value of 1 means they will hit the wall right as my bullet arrives. One last minor thing: with <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a>, I personally tend to do something like <code>min(wallDistance, 1)</code> for some values - if your <a href="robowiki?WallDistance" class=wikipagelink>WallDistance</a> is 2 or 3 or 5, it amounts to about the same thing: you don't have to account for the wall. Hope this helps. (PS - they're not segments unless you're segmenting them! =) But segments and attributes are almost synonymous because of the popularity of <a href="robowiki?VisitCountStats" class=wikipagelink>VisitCountStats</a>...)
+The best way to segment <a href="robowiki@WallDistance" class=wikipagelink>WallDistance</a> in 1v1, as far as I know / am concerned, is by segmenting on what amounts to "at what <a href="robowiki@GuessFactor" class=wikipagelink>GuessFactor</a> starting from now will the enemy be when they hit the wall if they keep orbiting me"; so a value of 1 means they will hit the wall right as my bullet arrives. One last minor thing: with <a href="robowiki@DynamicClustering" class=wikipagelink>DynamicClustering</a>, I personally tend to do something like <code>min(wallDistance, 1)</code> for some values - if your <a href="robowiki@WallDistance" class=wikipagelink>WallDistance</a> is 2 or 3 or 5, it amounts to about the same thing: you don't have to account for the wall. Hope this helps. (PS - they're not segments unless you're segmenting them! =) But segments and attributes are almost synonymous because of the popularity of <a href="robowiki@VisitCountStats" class=wikipagelink>VisitCountStats</a>...)
 <p>
-Not sure I can give solid advice on the weights, but I'd say <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a> and distance would be the first ones I'd try to give higher weights to.
+Not sure I can give solid advice on the weights, but I'd say <a href="robowiki@LateralVelocity" class=wikipagelink>LateralVelocity</a> and distance would be the first ones I'd try to give higher weights to.
 <p>
--- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+-- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <p>
-Thanks, that is exactly what I was looking for advice-wise! ;-) I think I threw in so many velocity factors because I saw someone said at some point that acceleration was a good segment (not factor or attribute, segment, since there were no GF guns using clustering at the time), and someone else said that lateral acceleration was also good, and ... you get the idea. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+Thanks, that is exactly what I was looking for advice-wise! ;-) I think I threw in so many velocity factors because I saw someone said at some point that acceleration was a good segment (not factor or attribute, segment, since there were no GF guns using clustering at the time), and someone else said that lateral acceleration was also good, and ... you get the idea. -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
@@ -316,25 +316,25 @@ Now what?
 <p>
 <strong>Post responses here</strong>
 <p>
-Hmm, I'm not sure I really understand your code situation - why do you have make multiple copies of all the waves? Let me try this: as you move tick by tick through the prediction, you can calculate the bot's distance to the wave source and the distance the wave has traveled by that tick, without actually modifying the wave (and thus needing to copy it to have the original version); those are all the data you need to check if the wave has intercepted you by that tick. Am I imagining this dilemma correctly, or am I way off here? =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+Hmm, I'm not sure I really understand your code situation - why do you have make multiple copies of all the waves? Let me try this: as you move tick by tick through the prediction, you can calculate the bot's distance to the wave source and the distance the wave has traveled by that tick, without actually modifying the wave (and thus needing to copy it to have the original version); those are all the data you need to check if the wave has intercepted you by that tick. Am I imagining this dilemma correctly, or am I way off here? =) -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <p>
-You are close, that is pretty much what I was doing with all of my previous versions that only surfed one wave (look at lines 213-217 of <a href="robowiki?BasicSurfer" class=wikipagelink>BasicSurfer</a>, that is what I was doing). My current problem is that I now have to determine when one wave hits, precise predict that, and then determine when the next wave will hit, <em>adjusting for the time during which I was predicting my surfing for the first wave</em>. So I could predict that wave A will hit in 10 ticks, then start predicting wave B, but I have to compensate for the distance B "traveled" while A was being predicted. To do this I either have to mutate the waves in the precise prediction function or have the function pass back an integer indicating how many ticks will elapse before the relevant wave hits, and then mutate the waves in the danger function. Either way I end up with a mess.
+You are close, that is pretty much what I was doing with all of my previous versions that only surfed one wave (look at lines 213-217 of <a href="robowiki@BasicSurfer" class=wikipagelink>BasicSurfer</a>, that is what I was doing). My current problem is that I now have to determine when one wave hits, precise predict that, and then determine when the next wave will hit, <em>adjusting for the time during which I was predicting my surfing for the first wave</em>. So I could predict that wave A will hit in 10 ticks, then start predicting wave B, but I have to compensate for the distance B "traveled" while A was being predicted. To do this I either have to mutate the waves in the precise prediction function or have the function pass back an integer indicating how many ticks will elapse before the relevant wave hits, and then mutate the waves in the danger function. Either way I end up with a mess.
 <p>
 P.S. Sorry if I can't make it any clearer, my code is about as clear to me as mud right now.
 <p>
--- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+-- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 <p>
-So why can't your precise prediction function return a class with position and time? Than that will be the base to calculate the next-wave danger. Not that I used it, but probably I also need it if I want to improve my multiple-wave precise prediction.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+So why can't your precise prediction function return a class with position and time? Than that will be the base to calculate the next-wave danger. Not that I used it, but probably I also need it if I want to improve my multiple-wave precise prediction.  -- <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
 <UL >
-<li> You are dead on, that is what I need. It seems like a bit of a waste to make a whole class just for one function though. But I suppose the only alternative is to pass an integer to the precise prediction method by reference, and since Java doesn't have pointers, some of the screwier aspects of the language (wrapper classes) would come into play. So yeah, I'll probably just make an inner class. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li> You are dead on, that is what I need. It seems like a bit of a waste to make a whole class just for one function though. But I suppose the only alternative is to pass an integer to the precise prediction method by reference, and since Java doesn't have pointers, some of the screwier aspects of the language (wrapper classes) would come into play. So yeah, I'll probably just make an inner class. -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 </UL>
 <p>
-What I did in <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> was to weight waves by multiplying the danger at a point by pow(0.55, timeUntilArrival<a href="robowiki?action=edit&id=UntilArrival" class=wikipageedit>?</a> - 15). This function tapers off quickly, so the closest waves get weighted almost exclusively, but it will still weight <a href="robowiki?ChaseBullets" class=wikipagelink>ChaseBullets</a> quite highly. However, why don't you return an array of points from your <a href="robowiki?PrecisePrediction" class=wikipagelink>PrecisePrediction</a>, adding a point each time a wave passes? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+What I did in <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a> was to weight waves by multiplying the danger at a point by pow(0.55, timeUntilArrival<a href="robowiki@action=edit&id=UntilArrival" class=wikipageedit>?</a> - 15). This function tapers off quickly, so the closest waves get weighted almost exclusively, but it will still weight <a href="robowiki@ChaseBullets" class=wikipagelink>ChaseBullets</a> quite highly. However, why don't you return an array of points from your <a href="robowiki@PrecisePrediction" class=wikipagelink>PrecisePrediction</a>, adding a point each time a wave passes? -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <p>
-You do need to compensate for the time B traveled while surfing A, but no need to permanently "mutate" the wave! The wave has logged its starting (center) point, time fired, and bullet velocity. Your wave class could have a <em>distanceToBot<a href="robowiki?action=edit&id=ToBot" class=wikipageedit>?</a>(Point2D bot, time t)</em> method that calculates ((how far from wave source to enemy bot) - (distance traveled at time t)) - you'd surf it until that is less than zero. When you surf wave A, say you have a variable <em>time = now</em> that increments by 1 as you surf; then pass that off to the method that's surfing wave B and start at time t = wave A intercepted you. Right? -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+You do need to compensate for the time B traveled while surfing A, but no need to permanently "mutate" the wave! The wave has logged its starting (center) point, time fired, and bullet velocity. Your wave class could have a <em>distanceToBot<a href="robowiki@action=edit&id=ToBot" class=wikipageedit>?</a>(Point2D bot, time t)</em> method that calculates ((how far from wave source to enemy bot) - (distance traveled at time t)) - you'd surf it until that is less than zero. When you surf wave A, say you have a variable <em>time = now</em> that increments by 1 as you surf; then pass that off to the method that's surfing wave B and start at time t = wave A intercepted you. Right? -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <p>
 <UL >
-<li> Re-reading, I wonder if this is what you are already doing... ? :-\ But this shouldn't include making a copy of every wave, I don't think. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> Re-reading, I wonder if this is what you are already doing... ? :-\ But this shouldn't include making a copy of every wave, I don't think. -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 </UL>
 <p>
 Here is basically what my code <em>should</em> do:
@@ -360,17 +360,17 @@ Here is basically what my code <em>should</em> do:
 <p>
 Hope that makes things clearer.
 <p>
--- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a> 
+-- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a> 
 <p>
-Well, if that's not what your code is doing, then you need to refactor =). I always put it off, because I'm scared of breaking things when I do. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+Well, if that's not what your code is doing, then you need to refactor =). I always put it off, because I'm scared of breaking things when I do. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <UL >
-<li> Been there, done that. =) I think that at this point the only thing stopping me from fixing everything trivially (using <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>'s suggestion) is that I won't have access to my computer with Robocode on it until later tonight. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li> Been there, done that. =) I think that at this point the only thing stopping me from fixing everything trivially (using <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>'s suggestion) is that I won't have access to my computer with Robocode on it until later tonight. -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 </UL>
 <p>
-It appears I got my precise prediction working. I ran 100 rounds of <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a> vs. Horizon 1.0 with no gun, and Horizon won 6000 to 15. =) -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+It appears I got my precise prediction working. I ran 100 rounds of <a href="robowiki@HawkOnFire" class=wikipagelink>HawkOnFire</a> vs. Horizon 1.0 with no gun, and Horizon won 6000 to 15. =) -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Horizon" class=wikipagelink>Horizon</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=Horizon/Questions" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Horizon/Questions">View other revisions</a><br>Last edited September 19, 2007 6:03 EST by <a href="robowiki?AaronR" title="ID 9168 from 44.170.205.68.cfl.res.rr.com">AaronR</a> <a href="robowiki?action=browse&diff=1&id=Horizon/Questions">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Horizon" class=wikipagelink>Horizon</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=Horizon/Questions" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=Horizon/Questions">View other revisions</a><br>Last edited September 19, 2007 6:03 EST by <a href="robowiki@AaronR" title="ID 9168 from 44.170.205.68.cfl.res.rr.com">AaronR</a> <a href="robowiki@action=browse&diff=1&id=Horizon/Questions">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

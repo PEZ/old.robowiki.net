@@ -3,34 +3,34 @@
 <META NAME='KEYWORDS' CONTENT='Daves, Patented, Anti, Mirroring, Gun'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=DavesPatentedAntiMirroringGun">DavesPatentedAntiMirroringGun</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?PerceptualDuelist" class=wikipagelink>PerceptualDuelist</a> doesn't have anti-mirroring code anymore - it was not very useful in a perceptual bot because you aren't allowed to store data, so it was hard to tell if the enemy was actually mirroring or if they just happened to be in a position that made it look like they were. It would be more useful in a non-perceptual bot where you could track the enemy's movement over time and thus be more certain that you're being mirrored.
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=DavesPatentedAntiMirroringGun">DavesPatentedAntiMirroringGun</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki@PerceptualDuelist" class=wikipagelink>PerceptualDuelist</a> doesn't have anti-mirroring code anymore - it was not very useful in a perceptual bot because you aren't allowed to store data, so it was hard to tell if the enemy was actually mirroring or if they just happened to be in a position that made it look like they were. It would be more useful in a non-perceptual bot where you could track the enemy's movement over time and thus be more certain that you're being mirrored.
 <p>
-<a href="robowiki?PerceptualDuelist" class=wikipagelink>PerceptualDuelist</a> detected x, y, and xy mirroring by checking if the opponent was within 20 units of the mirrored point. When it detected mirroring, <a href="robowiki?PerceptualDuelist" class=wikipagelink>PerceptualDuelist</a>'s anti-mirroring system did the following:
+<a href="robowiki@PerceptualDuelist" class=wikipagelink>PerceptualDuelist</a> detected x, y, and xy mirroring by checking if the opponent was within 20 units of the mirrored point. When it detected mirroring, <a href="robowiki@PerceptualDuelist" class=wikipagelink>PerceptualDuelist</a>'s anti-mirroring system did the following:
 <p>
 <OL >
 <li>Select our bot's next destination point.
 <li>Calculate time it will take our bot to drive to the destination point. (Don't forget acceleration - you can't just divide by 8)
 <li>Calculate mirrored destination point.
 <li>Calculate bullet power required for a bullet fired from our current location to reach the mirrored destination point at the time given by step 2. Since they are mirroring us the time for us to drive to our destination is the same as the time for them to drive to the mirrored destination. Remember that bullet speed = 20 - 3 * bullet power.
-<li>Turn gun toward mirrored destination point, holding fire until gun turn is complete. Since <a href="robowiki?PerceptualDuelist" class=wikipagelink>PerceptualDuelist</a> was a perceptual bot I had to use waitFor(new GunTurnCompleteCondition<a href="robowiki?action=edit&id=GunTurnCompleteCondition" class=wikipageedit>?</a>(this)). This caused it to do nothing for several turns while the gun was turning.
+<li>Turn gun toward mirrored destination point, holding fire until gun turn is complete. Since <a href="robowiki@PerceptualDuelist" class=wikipagelink>PerceptualDuelist</a> was a perceptual bot I had to use waitFor(new GunTurnCompleteCondition<a href="robowiki@action=edit&id=GunTurnCompleteCondition" class=wikipageedit>?</a>(this)). This caused it to do nothing for several turns while the gun was turning.
 <li>Fire with bullet power from step 4.
 </OL>
 <p>
-To account for the fact that our enemy's mirroring might not be perfect, <a href="robowiki?PerceptualDuelist" class=wikipagelink>PerceptualDuelist</a> stopped at the destination for a while and added 4 to the time calculated in step 2. 
+To account for the fact that our enemy's mirroring might not be perfect, <a href="robowiki@PerceptualDuelist" class=wikipagelink>PerceptualDuelist</a> stopped at the destination for a while and added 4 to the time calculated in step 2. 
 <p>
-This system allowed <a href="robowiki?PerceptualDuelist" class=wikipagelink>PerceptualDuelist</a> to win 100-0 vs. some versions of PerceptualCaymic<a href="robowiki?action=edit&id=PerceptualCaymic" class=wikipageedit>?</a>. :-)
+This system allowed <a href="robowiki@PerceptualDuelist" class=wikipagelink>PerceptualDuelist</a> to win 100-0 vs. some versions of PerceptualCaymic<a href="robowiki@action=edit&id=PerceptualCaymic" class=wikipageedit>?</a>. :-)
 <p>
---<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+--<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
-The most interesting part of AntiMirroring<a href="robowiki?action=edit&id=AntiMirroring" class=wikipageedit>?</a> for me would be to get an idea about how to identify that you're being mirrored. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+The most interesting part of AntiMirroring<a href="robowiki@action=edit&id=AntiMirroring" class=wikipageedit>?</a> for me would be to get an idea about how to identify that you're being mirrored. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-I'd have thought the way to find out if an opponent was mirroring you would be to pattern match between your own history and the targets history. Probably not worth the effort I think. But it might be fun to see someone else do it! :) -<a href="robowiki?Wolfman" class=wikipagelink>wolfman</a>
+I'd have thought the way to find out if an opponent was mirroring you would be to pattern match between your own history and the targets history. Probably not worth the effort I think. But it might be fun to see someone else do it! :) -<a href="robowiki@Wolfman" class=wikipagelink>wolfman</a>
 <p>
-<a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> has had a half-good anti-mirror gun a while now. It simply asks the movement system where the bot is going and shoots there. The problem with knowing if I'm being mirrored or not is solved by the <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> statistics. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<a href="robowiki@Marshmallow" class=wikipagelink>Marshmallow</a> has had a half-good anti-mirror gun a while now. It simply asks the movement system where the bot is going and shoots there. The problem with knowing if I'm being mirrored or not is solved by the <a href="robowiki@VirtualGuns" class=wikipagelink>VirtualGuns</a> statistics. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=DavesPatentedAntiMirroringGun" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=DavesPatentedAntiMirroringGun">View other revisions</a><br>Last edited February 29, 2004 8:02 EST by <a href="robowiki?David_Alves" title="ID 2363 from c-67-161-11-94.client.comcast.net">David Alves</a> <a href="robowiki?action=browse&diff=1&id=DavesPatentedAntiMirroringGun">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=DavesPatentedAntiMirroringGun" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=DavesPatentedAntiMirroringGun">View other revisions</a><br>Last edited February 29, 2004 8:02 EST by <a href="robowiki@David_Alves" title="ID 2363 from c-67-161-11-94.client.comcast.net">David Alves</a> <a href="robowiki@action=browse&diff=1&id=DavesPatentedAntiMirroringGun">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

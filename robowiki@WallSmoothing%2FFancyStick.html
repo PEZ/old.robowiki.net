@@ -3,10 +3,10 @@
 <META NAME='KEYWORDS' CONTENT='Wall, Smoothing, Fancy, Stick'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/FancyStick">WallSmoothing/FancyStick</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/FancyStick">WallSmoothing/FancyStick</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext>There are a few other wall smoothing algorithms out there, but this one is a little different so I thought I'd share it.  It does not use a standard "walking stick" (a theoretical "stick" that, when it hits a wall, tells your bot to turn more inward toward your orbiting point).  That type of algorithm keeps your bot unnecessarily far from the walls around the corners (which is not necessarily a bad thing, but it's true).  This algorithm uses a more sophisticated stick, that will let your bot stay much closer to the walls (almost as close as possible when running full speed).
 <p>
-To understand this new type of walking stick, consider the picture below.  You are orbiting <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a> there, where the blue circle is the orbit.  Obviously, following the orbit would crash you into the wall, so you need to do some wall smoothing.  The green line is the closest you can get to the wall without crashing (&lt;tt&gt;getBattlefieldWidth() - 18.0&lt;/tt&gt;), and the white circle represents your smallest turning radius at top speed (<tt>r = 114.5450131316624</tt>, ask me if you want to know how to come up with that number).  The two red lines are your walking stick.  The walking stick always extends to the center of the tightest circle you can turn,  then straight to the wall.  
+To understand this new type of walking stick, consider the picture below.  You are orbiting <a href="robowiki@SittingDuck" class=wikipagelink>SittingDuck</a> there, where the blue circle is the orbit.  Obviously, following the orbit would crash you into the wall, so you need to do some wall smoothing.  The green line is the closest you can get to the wall without crashing (&lt;tt&gt;getBattlefieldWidth() - 18.0&lt;/tt&gt;), and the white circle represents your smallest turning radius at top speed (<tt>r = 114.5450131316624</tt>, ask me if you want to know how to come up with that number).  The two red lines are your walking stick.  The walking stick always extends to the center of the tightest circle you can turn,  then straight to the wall.  
 <p>
 <img src="http:/images/wall_smoothing.gif">
 <p>
@@ -66,7 +66,7 @@ Note here that we are only trying to find the smoothing angle when you are orbit
     }
 </pre>
 <p>
-The <tt>if</tt> statement protects us from giving the <tt>acos</tt> method illegal values, and therefore from returning <tt><a href="robowiki?NaN" class=wikipagelink>NaN</a></tt>.  Also notice that we are using the <b>normal</b> <tt>a</tt> value to project the next point, instead of the smoothed angle.  This means you will actually turn slightly sharper than necessary (very slightly).  If anyone can solve the equation <tt>x + s * sin(a) + r * (cos(a) + 1) = 0.0</tt> for a, please do tell!!
+The <tt>if</tt> statement protects us from giving the <tt>acos</tt> method illegal values, and therefore from returning <tt><a href="robowiki@NaN" class=wikipagelink>NaN</a></tt>.  Also notice that we are using the <b>normal</b> <tt>a</tt> value to project the next point, instead of the smoothed angle.  This means you will actually turn slightly sharper than necessary (very slightly).  If anyone can solve the equation <tt>x + s * sin(a) + r * (cos(a) + 1) = 0.0</tt> for a, please do tell!!
 <p>
 As we just mentioned, this is only good for smoothing when traveling clockwise toward the rightmost wall (and then only if it's at <tt>x = 0</tt>!).  So, to use the methods, you must first translate your bot's situation into this "normal" situation, and translate its answer back.  Without further ado, here is how (explanation following):
 <p>
@@ -139,16 +139,16 @@ Also note that this method handles corners well, e.g. if you are approaching the
 <H4>Comments, questions, feedback:</H4>
 
 <p>
-Interesting, and nice write-up. With a more traditional WallStick<a href="robowiki?action=edit&id=WallStick" class=wikipageedit>?</a> method, you do end up turning a lot more often than you need to, which may decrease your max escape angle in general. However, waiting until the last minute before turning may (I'm not quite sure) give you a more predictable movement profile near walls, which is a key component of <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>, and a <a href="robowiki?Segmentation" class=wikipagelink>segment</a> that is very important to top aiming methods. In any case, I would like to give this a try, or at least see some benchmarks using this and traditional <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> against a good GF gun. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+Interesting, and nice write-up. With a more traditional WallStick<a href="robowiki@action=edit&id=WallStick" class=wikipageedit>?</a> method, you do end up turning a lot more often than you need to, which may decrease your max escape angle in general. However, waiting until the last minute before turning may (I'm not quite sure) give you a more predictable movement profile near walls, which is a key component of <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a>, and a <a href="robowiki@Segmentation" class=wikipagelink>segment</a> that is very important to top aiming methods. In any case, I would like to give this a try, or at least see some benchmarks using this and traditional <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a> against a good GF gun. -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <p>
 <p>
-I would be interested to see results of those kinds of tests, too.  I'm not so sure it will give you better escape angles, though.  If the wave crosses you before you get very far into the turn, then yes, but for waves that hit you on the wall, the greatest escape angle would be to meet the wall just as the <a href="robowiki?Wave" class=wikipagelink>Wave</a> hits (the shortest distance between where you are and where the wave hits is a straight line), so turning earlier would be better.  At any rate, this algorithm should give you more freedom to do it either way :). -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+I would be interested to see results of those kinds of tests, too.  I'm not so sure it will give you better escape angles, though.  If the wave crosses you before you get very far into the turn, then yes, but for waves that hit you on the wall, the greatest escape angle would be to meet the wall just as the <a href="robowiki@Wave" class=wikipagelink>Wave</a> hits (the shortest distance between where you are and where the wave hits is a straight line), so turning earlier would be better.  At any rate, this algorithm should give you more freedom to do it either way :). -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <p>
-Very nice method and nice write-up. I actually tried to do this sort of optimal wall smoothing thing a while ago but it was a miserable failure... my code got huge and unreadable and I crashed into walls like crazy. Your idea of translating everything to the right hand wall is brilliant. =) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+Very nice method and nice write-up. I actually tried to do this sort of optimal wall smoothing thing a while ago but it was a miserable failure... my code got huge and unreadable and I crashed into walls like crazy. Your idea of translating everything to the right hand wall is brilliant. =) --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
 <strong>Dave's Scary Math Section</strong>
 <blockquote>
-<i>If anyone can solve the equation x + s * sin(a) + r * (cos(a) + 1) = 0.0 for a, please do tell!!</i> No promises, but I'll give it a shot. How does this look? --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<i>If anyone can solve the equation x + s * sin(a) + r * (cos(a) + 1) = 0.0 for a, please do tell!!</i> No promises, but I'll give it a shot. How does this look? --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
 <PRE >
  x + s * sin(a) + r * (cos(a) + 1) = 0.0
@@ -195,11 +195,11 @@ a = - &#59330;·SIGN(r)/2 - ASIN((x + r)/&#8730;(r^2 + s^2)) + ATAN(s/r) &#8744; 
 As a Image:
 <img src="http://designnj.de/robocode/equation.gif">
 <p>
-I dont know if it helps :) --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+I dont know if it helps :) --<a href="robowiki@Krabb" class=wikipagelink>Krabb</a>
 <p>
-Fixed my algebra now. That stuff Derive gets is terrible, it's doable with only one acos, no need for tons of asins and atans. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+Fixed my algebra now. That stuff Derive gets is terrible, it's doable with only one acos, no need for tons of asins and atans. --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
-I know that Mathematica can simplify equations. I can do it at school if no one else does. -- <a href="robowiki?Kinsen" class=wikipagelink>Kinsen</a>
+I know that Mathematica can simplify equations. I can do it at school if no one else does. -- <a href="robowiki@Kinsen" class=wikipagelink>Kinsen</a>
 <p>
 <p>
 Rather than simplify that crap, just use this function:
@@ -210,15 +210,15 @@ public void solveQuadratic(double a, double b, double c, boolean positiveSolutio
 }
 </pre>
 <p>
-Call it with a = r² + s², b = 2xr + 2r², and c = x² + 2xr + r² - s² and you should be good to go. Oddly enough, both the negative and positive solutions yield valid values. The negative solution is pi at x = 0, whereas the positive solution is 3.002. However the positive solution is zero at x = -2r, while the negative solution is .139... so I'm not sure which one you should use. =P --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+Call it with a = r² + s², b = 2xr + 2r², and c = x² + 2xr + r² - s² and you should be good to go. Oddly enough, both the negative and positive solutions yield valid values. The negative solution is pi at x = 0, whereas the positive solution is 3.002. However the positive solution is zero at x = -2r, while the negative solution is .139... so I'm not sure which one you should use. =P --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
-NICE!  I'm impressed.  And that's a very nice solution simply programming in a quadradic equation solver :).  I'll give it a try sometime soon (not enough time now).  <a href="robowiki?WallSmoothing/Optimal" class=wikipagelink>Now let's get REALLY close to the wall</a>.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+NICE!  I'm impressed.  And that's a very nice solution simply programming in a quadradic equation solver :).  I'll give it a try sometime soon (not enough time now).  <a href="robowiki@WallSmoothing/Optimal" class=wikipagelink>Now let's get REALLY close to the wall</a>.  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <p>
 I simplified the equation by hand and it doesn't look <i>that</i> ugly: 
 <pre>acos[(-2r(x + r) +/- sqrt(-4s²(x² + 2xr - s²))) / 2(r² + s²)]</pre>
-Using the simplified equation might be a little faster, but I'm not too sure. There should be no smoothing at x = -2r (I think), so the positive root sounds correct to me. And nice job with the math David! I would never have though of using the pythagorean identity that way. -- <a href="robowiki?Kev" class=wikipagelink>Kev</a> 
+Using the simplified equation might be a little faster, but I'm not too sure. There should be no smoothing at x = -2r (I think), so the positive root sounds correct to me. And nice job with the math David! I would never have though of using the pythagorean identity that way. -- <a href="robowiki@Kev" class=wikipagelink>Kev</a> 
 <p>
-Alright <a href="robowiki?Kev" class=wikipagelink>Kev</a>!  Simplifing that a little further, we get
+Alright <a href="robowiki@Kev" class=wikipagelink>Kev</a>!  Simplifing that a little further, we get
 <pre>
     acos[(-2r(x + r) +/- sqrt(-4s²(x² + 2xr - s²))) / 2(r² + s²)]
     acos[(-2r(x + r) +/- 2s * sqrt(-x² - 2xr + s²)) / 2(r² + s²)]
@@ -238,9 +238,9 @@ Experimentally determined, we add the sqrt.  Throw that into the smooth method a
 		return Math.acos(-(rx + rr + s * Math.sqrt(ss - xx - 2.0 * rx)) / ss_rr);
 	}
 </pre>
-Congratulations, all! -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+Congratulations, all! -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <p>
-Phoenix 0.8 and 0.801 both used this type of smoothing. However, it seems to have lowered Phoenix's rating by around 10 points. It's possible that it would work better with some tuning, but for now I'm going to go back to the old way of doing things. Compare them here: <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison?game=roborumble&amp;name1=davidalves.Phoenix%200.802&amp;name2=davidalves.Phoenix%200.801">http://rumble.fervir.com/rumble/RatingDetailsComparison?game=roborumble&amp;name1=davidalves.Phoenix%200.802&amp;name2=davidalves.Phoenix%200.801</a> --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+Phoenix 0.8 and 0.801 both used this type of smoothing. However, it seems to have lowered Phoenix's rating by around 10 points. It's possible that it would work better with some tuning, but for now I'm going to go back to the old way of doing things. Compare them here: <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison@game=roborumble&amp;name1=davidalves.Phoenix%200.802&amp;name2=davidalves.Phoenix%200.801">http://rumble.fervir.com/rumble/RatingDetailsComparison?game=roborumble&amp;name1=davidalves.Phoenix%200.802&amp;name2=davidalves.Phoenix%200.801</a> --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
 Turns out we need to add a simple check to that new smoothAngle method (2 comments above) because <tt>double</tt> values are not exact.  The modified method looks something like:
 <pre>
@@ -253,11 +253,11 @@ Turns out we need to add a simple check to that new smoothAngle method (2 commen
 		return Math.acos(-(rx + rr + s * Math.sqrt(ss - xx - 2.0 * rx)) / ss_rr);
 	}
 </pre>
--- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+-- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <p>
-I tried to implement this <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>, but i failed. Could anybody (David Alves or Simonton :D) post his complete implementation so that i could check my one, thanks <a href="robowiki?Krabb" class=wikipagelink>Krabb</a>.
+I tried to implement this <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a>, but i failed. Could anybody (David Alves or Simonton :D) post his complete implementation so that i could check my one, thanks <a href="robowiki@Krabb" class=wikipagelink>Krabb</a>.
 <p>
-Sure Krabb. Here's the complete implementation from Phoenix. I think it's pretty clear what my utility functions do by their names (e.g. <code>Utils.normalAbsoluteAngle</code>) but let me know if there's anything that isn't clear. Note that there's a problem with this method in corners, it doesn't always select the correct wall to smooth against. My solution was to calculate smoothing for both top / bottom as well as left / right. It then checks which angle is farther from the desired angle and returns that angle. I should mention that I used different tweaks of this method of <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> for a few Phoenix versions starting with .8, but I always seemed to rate about 5-10 points lower than normal, so I've switched back to my old way of doing smoothing. You should try another method and see if this technique makes your bot stronger or weaker than the other method. Good luck! --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+Sure Krabb. Here's the complete implementation from Phoenix. I think it's pretty clear what my utility functions do by their names (e.g. <code>Utils.normalAbsoluteAngle</code>) but let me know if there's anything that isn't clear. Note that there's a problem with this method in corners, it doesn't always select the correct wall to smooth against. My solution was to calculate smoothing for both top / bottom as well as left / right. It then checks which angle is farther from the desired angle and returns that angle. I should mention that I used different tweaks of this method of <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a> for a few Phoenix versions starting with .8, but I always seemed to rate about 5-10 points lower than normal, so I've switched back to my old way of doing smoothing. You should try another method and see if this technique makes your bot stronger or weaker than the other method. Good luck! --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
 <pre>
 package davidalves.net.movement.wallsmoother;
@@ -398,21 +398,21 @@ public class PreciseWallSmoother extends WallSmoother{
 }
 </pre>
 <p>
-The names are clear, but why do you set margin to 30? I thought this <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> funktion is highly accurate, so that i am able to move next to the wall?! <br>
-EDIT: For some reason your code doesn't work for me as well. The debug grafics look like my previous ones, my art teacher would be proud of them :/ I´ll first try the "normal" solution and maybe switch back to this one later, but thanks for your help! --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+The names are clear, but why do you set margin to 30? I thought this <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a> funktion is highly accurate, so that i am able to move next to the wall?! <br>
+EDIT: For some reason your code doesn't work for me as well. The debug grafics look like my previous ones, my art teacher would be proud of them :/ I´ll first try the "normal" solution and maybe switch back to this one later, but thanks for your help! --<a href="robowiki@Krabb" class=wikipagelink>Krabb</a>
 <p>
-The wall margin is set to 30 because I keep hitting walls with this method. Setting it to 30 greatly reduced the problem, but I still hit walls somewhat. I dunno. I gave up on this method. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+The wall margin is set to 30 because I keep hitting walls with this method. Setting it to 30 greatly reduced the problem, but I still hit walls somewhat. I dunno. I gave up on this method. --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
-Hmm - I thought I responded to this earlier today ...  Anyway - sorry for not noticing this conversation until this morning.  I'll try to remember to bring in some full source for you.  I was running into walls for a while until I realized that if I'm travelling the *opposite* direction I want to be (i.e. just after I flip directions), I need to smooth that *opposite* direction.  --<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+Hmm - I thought I responded to this earlier today ...  Anyway - sorry for not noticing this conversation until this morning.  I'll try to remember to bring in some full source for you.  I was running into walls for a while until I realized that if I'm travelling the *opposite* direction I want to be (i.e. just after I flip directions), I need to smooth that *opposite* direction.  --<a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <UL >
-<li> If you have a good working implementation I would definitely try to use this approach again! --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<li> If you have a good working implementation I would definitely try to use this approach again! --<a href="robowiki@Krabb" class=wikipagelink>Krabb</a>
 </UL>
 <p>
-You know, you could just determine your distance and angle to the wall in the direction your going and adjust by the correct amount. I plan to deveop such a system to use in my BFS (built from scratch) surfer. -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+You know, you could just determine your distance and angle to the wall in the direction your going and adjust by the correct amount. I plan to deveop such a system to use in my BFS (built from scratch) surfer. -- <a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 <p>
-@Chase-san Isn't that exactly what this technique does? @Simonton The version I posted above doesn't have that issue, but it does run into walls. You're welcome to check it out and see if you can figure out why. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+@Chase-san Isn't that exactly what this technique does? @Simonton The version I posted above doesn't have that issue, but it does run into walls. You're welcome to check it out and see if you can figure out why. --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
-Yah, but its complex, i'm sure there is a much simpler way to do it using a complex polynomial equation. But then again maybe not, but i'm still going to try. :P -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+Yah, but its complex, i'm sure there is a much simpler way to do it using a complex polynomial equation. But then again maybe not, but i'm still going to try. :P -- <a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 <p>
 I haven't tried it yet, and its probably needs some refining (and alot of other stuff aswell.), but here is my idea for the wallSmoothing. 
 <pre>
@@ -426,7 +426,7 @@ double smooth(Point2D.Double location, double direction, double angle) {
         ((m-location.y)*direction*aF)+((m-(w-location.x))*direction*aF) - angle;
 }
 </pre>
-I give this a 99.99999% chance of not working as I haven't had time to refine how I will handle the angle correction and the aF amount. But its a start. I may end up having to define it by section and wall facing. But it should work in the end with much less code. -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+I give this a 99.99999% chance of not working as I haven't had time to refine how I will handle the angle correction and the aF amount. But its a start. I may end up having to define it by section and wall facing. But it should work in the end with much less code. -- <a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 <p>
 Here is the (mostly) full source, as promised.  Sorry for the delay.  Notice that this works in degrees, not radians.  Also, I changed the code from what was in my bot because it depended on other classes that I wrote, so this hasn't actually been compiled.  Hopefully I didn't make any dumb mistakes!
 <pre>
@@ -587,9 +587,9 @@ Here is the (mostly) full source, as promised.  Sorry for the delay.  Notice tha
 		return a;
 	}
 </pre>
---<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+--<a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <p>
-Nice, the code works! I fixed some minor things (changed your posted code too, if you dont mind) like "getBattle<b>F</b>ieldHeight", "<b>Math.</b>toRadians(angle)" and added "r", "rr", "s", "ss", and "ss_rr" but the rest is fine, thanks! --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+Nice, the code works! I fixed some minor things (changed your posted code too, if you dont mind) like "getBattle<b>F</b>ieldHeight", "<b>Math.</b>toRadians(angle)" and added "r", "rr", "s", "ss", and "ss_rr" but the rest is fine, thanks! --<a href="robowiki@Krabb" class=wikipagelink>Krabb</a>
 <p>
 I have to revice the last comment, the clockwise direction works fine but the anti-clockwise didn't ;( I made the following changes (<b>bold</b>):
 <p>
@@ -647,7 +647,7 @@ I have to revice the last comment, the clockwise direction works fine but the an
         }
 </PRE>
 <p>
-I dont know why your code doesn't work for me :/ The above changes should handle the anti-clockwise direction accurately and with less code! --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+I dont know why your code doesn't work for me :/ The above changes should handle the anti-clockwise direction accurately and with less code! --<a href="robowiki@Krabb" class=wikipagelink>Krabb</a>
 <p>
 <p>
 I came up with these equations for finding a way to smooth. However I cannot get them to work correctly, I seem to lack some logic that will make it all work as it should. If anyone can, please tell me.
@@ -679,15 +679,15 @@ new Point2D.Double(nextX+sqrt(-pow(MaxY,2)+2*nextY*MaxY+pow(r,2)-pow(nextY,2)), 
 new Point2D.Double(nextX-sqrt(-pow(MinY,2)+2*nextY*MinY+pow(r,2)-pow(nextY,2)), MinY);
 new Point2D.Double(nextX+sqrt(-pow(MinY,2)+2*nextY*MinY+pow(r,2)-pow(nextY,2)), MinY);
 </pre>
---<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+--<a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 <p>
-Does any one have a working implementation of the fancy stick, and can they post it -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+Does any one have a working implementation of the fancy stick, and can they post it -- <a href="robowiki@Gorded" class=wikipagelink>Gorded</a>
 <p>
-Wouldn't it be easier to simply project two points perpendicular to your bot's heading, in each direction, a distance of 114.5450131316624, see which one is closer to the enemy, and then find that point's wall-distance. If the wall distance is less than 114.5450131316624 (or maybe add 8 as a buffer), then you have to turn 100% towards the enemy, otherwise don't turn? You wouldn't even need to do any weird translations =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+Wouldn't it be easier to simply project two points perpendicular to your bot's heading, in each direction, a distance of 114.5450131316624, see which one is closer to the enemy, and then find that point's wall-distance. If the wall distance is less than 114.5450131316624 (or maybe add 8 as a buffer), then you have to turn 100% towards the enemy, otherwise don't turn? You wouldn't even need to do any weird translations =) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <UL >
-<li> Hmm ... not sure.  Not ready to think about it very hard right now :).  My <a href="robowiki?WallDistance" class=wikipagelink>WallDistance</a> fuction, however, does do wierd translations :).  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
-<li> I'm thinking a simple min(min(point.x - 18, 800 - 18 - point.x),min(point.y - 18,600 - 18 - point.y)); Just simple distance to the nearest wall. Maybe you would also have to throw in a regular wallsmoothing stick, so that you don't smooth if you're traveling away from the wall. I'll work on it tomorrow, right now I'm meant to be studying Additional Mathematics (the stuff that makes this look easy, lol) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<li> Oh, gotcha.  Yeah, maybe you would have to do something to avoid launching yourself off the wall instead of exiting smoothly ... but a regular stick will always smooth before a fancy stick, so that's not it.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Hmm ... not sure.  Not ready to think about it very hard right now :).  My <a href="robowiki@WallDistance" class=wikipagelink>WallDistance</a> fuction, however, does do wierd translations :).  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
+<li> I'm thinking a simple min(min(point.x - 18, 800 - 18 - point.x),min(point.y - 18,600 - 18 - point.y)); Just simple distance to the nearest wall. Maybe you would also have to throw in a regular wallsmoothing stick, so that you don't smooth if you're traveling away from the wall. I'll work on it tomorrow, right now I'm meant to be studying Additional Mathematics (the stuff that makes this look easy, lol) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> Oh, gotcha.  Yeah, maybe you would have to do something to avoid launching yourself off the wall instead of exiting smoothly ... but a regular stick will always smooth before a fancy stick, so that's not it.  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 </UL>
 <p>
 I can't test right now, tell me if it works =)
@@ -730,12 +730,12 @@ double smoothAngle(Point2D.Double location, double angle, double direction){
     return angle;
 }
 </pre>
--- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+-- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <p>
-Hmm... I've been thinking about smoothing for a while now, and I think I just had a thought that could make "FancyStick"-like smoothing far simpler. Imagine a circle like in the diagram near the top of this page. Now imagine one on each side of the bot, and then essentially represent the path of the bot when moving at top speed and turning as much as possible in a direction. If the circles are both far from any walls, nothing need be done, if a circle is very near to a wall, it means the bot must turn if it is to keep going towards the wall. If a circle intersects the field boundry however, it means the bot cannot keep going in that direction without either hitting the wall or slowing down. My thought is, why bother "smoothing" an angle? The location of the circles relative to the wall, effectively can just have 3 meanings for each "quadrent" around the bot. Instead of smoothing a goal angle, one could set either "can't go that way", "Can move freely that way", or "Must turn sharply if going that way", for each of the corners (forward left, forward right, back left, back right). All that could be lost with that approach I believe, is a very small amount of precision, but does that really matter? It would still wall-hug far tighter than traditional <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>. Maybe I'm just making a fool of myself though and am missing some point. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+Hmm... I've been thinking about smoothing for a while now, and I think I just had a thought that could make "FancyStick"-like smoothing far simpler. Imagine a circle like in the diagram near the top of this page. Now imagine one on each side of the bot, and then essentially represent the path of the bot when moving at top speed and turning as much as possible in a direction. If the circles are both far from any walls, nothing need be done, if a circle is very near to a wall, it means the bot must turn if it is to keep going towards the wall. If a circle intersects the field boundry however, it means the bot cannot keep going in that direction without either hitting the wall or slowing down. My thought is, why bother "smoothing" an angle? The location of the circles relative to the wall, effectively can just have 3 meanings for each "quadrent" around the bot. Instead of smoothing a goal angle, one could set either "can't go that way", "Can move freely that way", or "Must turn sharply if going that way", for each of the corners (forward left, forward right, back left, back right). All that could be lost with that approach I believe, is a very small amount of precision, but does that really matter? It would still wall-hug far tighter than traditional <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a>. Maybe I'm just making a fool of myself though and am missing some point. -- <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=WallSmoothing/FancyStick" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=WallSmoothing/FancyStick">View other revisions</a><br>Last edited August 21, 2008 20:32 EST by <a href="robowiki?Rednaxela" title="ID 15324 from pc109.oia.ucalgary.ca">Rednaxela</a> <a href="robowiki?action=browse&diff=1&id=WallSmoothing/FancyStick">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=WallSmoothing/FancyStick" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=WallSmoothing/FancyStick">View other revisions</a><br>Last edited August 21, 2008 20:32 EST by <a href="robowiki@Rednaxela" title="ID 15324 from pc109.oia.ucalgary.ca">Rednaxela</a> <a href="robowiki@action=browse&diff=1&id=WallSmoothing/FancyStick">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <META NAME='KEYWORDS' CONTENT='PEZ/Question'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Question">PEZ/Question</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/Question">PEZ/Question</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@PEZ" class=wikipagelink>PEZ</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext>This is a bit embarassing, but I get so strange results with my methods for it so I just have to ask you others how you would do it.
 <p>
 Consider a measured value which can be between +/- MAX_V. I want to use this measure as an index to an array of BUCKETS length. Like:
@@ -12,11 +12,11 @@ Consider a measured value which can be between +/- MAX_V. I want to use this mea
 <li> Meaure == MAX_V =&gt; index = BUCKETS - 1;
 <li> Measure == 0 =&gt; index = (BUCKETS - 1) / 2
 </UL>
-I have gotten the reverse of this to work, but I would still appreciate if you could suggest functions for both ways. I won't show you my functions because I want your unbiased suggestions. TIA! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+I have gotten the reverse of this to work, but I would still appreciate if you could suggest functions for both ways. I won't show you my functions because I want your unbiased suggestions. TIA! -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Shouldn't Measure + MAX_V always be the corresponding index? The reverse would be index - MAX_V is the measure? Or do I misunderstand your question? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+Shouldn't Measure + MAX_V always be the corresponding index? The reverse would be index - MAX_V is the measure? Or do I misunderstand your question? -- <a href="robowiki@Kuuran" class=wikipagelink>Kuuran</a>
 <p>
-I don't quite follow. Measured values are doubles, I forgot to say that. Risking adding some bias I might also mention that in my application of these functions I often have BUCKETS == 41 and MAX_V == 0.8143399. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+I don't quite follow. Measured values are doubles, I forgot to say that. Risking adding some bias I might also mention that in my application of these functions I often have BUCKETS == 41 and MAX_V == 0.8143399. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 let's see if I understand the question. (Warning: The following formula's are off the top off my head and haven't been verified)
 <p>
@@ -27,7 +27,7 @@ and
 index maps to v = ((index+0.5)/BUCKETS)*2*MAX_V-MAX_V
 <p>
 Is this what you wanted to know?
--- <a href="robowiki?FnH" class=wikipagelink>FnH</a>
+-- <a href="robowiki@FnH" class=wikipagelink>FnH</a>
 <p>
 I'd try something like:
 <pre>
@@ -36,16 +36,16 @@ measure /= 2 * MAX_V;
 measure *= BUCKETS;
 index = Math.round(measure);
 </pre>
-Which I believe is in essence the same as what <a href="robowiki?FnH" class=wikipagelink>FnH</a> posted while I was typing. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+Which I believe is in essence the same as what <a href="robowiki@FnH" class=wikipagelink>FnH</a> posted while I was typing. -- <a href="robowiki@Kuuran" class=wikipagelink>Kuuran</a>
 <p>
-heh :) - great minds think alike :) -- <a href="robowiki?FnH" class=wikipagelink>FnH</a>
+heh :) - great minds think alike :) -- <a href="robowiki@FnH" class=wikipagelink>FnH</a>
 <p>
-Thanks. That's about what I do. I think my bug was in my testing code (sigh...). What's (index + 0.5) about? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Thanks. That's about what I do. I think my bug was in my testing code (sigh...). What's (index + 0.5) about? -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Just so you use the average value of the bucket instead of the max or min value of it ... (in order to compensate for the rounding in the other direction) -- <a href="robowiki?FnH" class=wikipagelink>FnH</a>
+Just so you use the average value of the bucket instead of the max or min value of it ... (in order to compensate for the rounding in the other direction) -- <a href="robowiki@FnH" class=wikipagelink>FnH</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=PEZ/Question" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=PEZ/Question">View other revisions</a><br>Last edited August 31, 2003 15:54 EST by <a href="robowiki?FnH" title="ID 1574 from nchobo04.telenet-ops.be">FnH</a> <a href="robowiki?action=browse&diff=1&id=PEZ/Question">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@PEZ" class=wikipagelink>PEZ</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=PEZ/Question" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=PEZ/Question">View other revisions</a><br>Last edited August 31, 2003 15:54 EST by <a href="robowiki@FnH" title="ID 1574 from nchobo04.telenet-ops.be">FnH</a> <a href="robowiki@action=browse&diff=1&id=PEZ/Question">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

@@ -3,49 +3,49 @@
 <META NAME='KEYWORDS' CONTENT='Melee, Strategy, Understanding, Gruweltje'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/UnderstandingGruweltje">MeleeStrategy/UnderstandingGruweltje</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?MeleeStrategy" class=wikipagelink>MeleeStrategy</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext><H2>Melee Strategy - Understanding <a href="robowiki?Gruweltje" class=wikipagelink>Gruweltje</a> (and <a href="robowiki?Gruwel" class=wikipagelink>Gruwel</a>)</H2>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/UnderstandingGruweltje">MeleeStrategy/UnderstandingGruweltje</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@MeleeStrategy" class=wikipagelink>MeleeStrategy</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H2>Melee Strategy - Understanding <a href="robowiki@Gruweltje" class=wikipagelink>Gruweltje</a> (and <a href="robowiki@Gruwel" class=wikipagelink>Gruwel</a>)</H2>
 
 <p>
-<em>By <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a></em>
+<em>By <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a></em>
 <p>
-This tutorial is focussed on <a href="robowiki?Gruweltje" class=wikipagelink>Gruweltje</a>, as it is the lean and clean variant of <a href="robowiki?Gruwel" class=wikipagelink>Gruwel</a>, which has a lot of outcommented code in it. If necessary, the differences between the two are mentioned. Any direct references I make to code will be from <a href="robowiki?Gruweltje" class=wikipagelink>Gruweltje</a> 0.2 or <a href="robowiki?Gruwel" class=wikipagelink>Gruwel</a> 0.1. The format for this page is lent from <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>.
+This tutorial is focussed on <a href="robowiki@Gruweltje" class=wikipagelink>Gruweltje</a>, as it is the lean and clean variant of <a href="robowiki@Gruwel" class=wikipagelink>Gruwel</a>, which has a lot of outcommented code in it. If necessary, the differences between the two are mentioned. Any direct references I make to code will be from <a href="robowiki@Gruweltje" class=wikipagelink>Gruweltje</a> 0.2 or <a href="robowiki@Gruwel" class=wikipagelink>Gruwel</a> 0.1. The format for this page is lent from <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>.
 <p>
 <H3>Notice</H3>
 
-I do not see <a href="robowiki?Gruweltje" class=wikipagelink>Gruweltje</a> as a specific meleebot, because the only melee-specific thing it has is its radar. It is a very good melee-capable bot and that it performs so well in melee is only due to the fact that there are not many melee-specific bots out there.
+I do not see <a href="robowiki@Gruweltje" class=wikipagelink>Gruweltje</a> as a specific meleebot, because the only melee-specific thing it has is its radar. It is a very good melee-capable bot and that it performs so well in melee is only due to the fact that there are not many melee-specific bots out there.
 <p>
 <H3>Getting Started</H3>
 
-<a href="robowiki?Gruweltje" class=wikipagelink>Gruweltje</a> only has a main robot class, while <a href="robowiki?Gruwel" class=wikipagelink>Gruwel</a> also has a Scan class. This is a remnant of the teamcode of <a href="robowiki?Troodon" class=wikipagelink>Troodon</a> and I am too lazy to replace it. Only the basic things (name, position, distance, energy) are kept here.
+<a href="robowiki@Gruweltje" class=wikipagelink>Gruweltje</a> only has a main robot class, while <a href="robowiki@Gruwel" class=wikipagelink>Gruwel</a> also has a Scan class. This is a remnant of the teamcode of <a href="robowiki@Troodon" class=wikipagelink>Troodon</a> and I am too lazy to replace it. Only the basic things (name, position, distance, energy) are kept here.
 <p>
 <H3>Globals</H3>
 
-For <a href="robowiki?Gruweltje" class=wikipagelink>Gruweltje</a> the few global variables are pretty self-explanitory (and the code is commented). The 'oldheading' is needed for the targetting to calculate at which curve the target is moving.
+For <a href="robowiki@Gruweltje" class=wikipagelink>Gruweltje</a> the few global variables are pretty self-explanitory (and the code is commented). The 'oldheading' is needed for the targetting to calculate at which curve the target is moving.
 <p>
-<a href="robowiki?Gruwel" class=wikipagelink>Gruwel</a> uses a lot more globals, most of them for wallavoidance and some for locking and scanning. 
+<a href="robowiki@Gruwel" class=wikipagelink>Gruwel</a> uses a lot more globals, most of them for wallavoidance and some for locking and scanning. 
 <p>
 <H3>Radar</H3>
 
-<a href="robowiki?Gruweltje" class=wikipagelink>Gruweltje</a> does two radarsweeps at startup, and thereafter only performs a sweep after firing. It uses a simple nano-style radarlock in between. When it finds a more attractive target, it locks immediately without finishing the sweep. When no more-attractive target is found, it locks again on its current target. The radarcode can be found in line 52 and 154.
+<a href="robowiki@Gruweltje" class=wikipagelink>Gruweltje</a> does two radarsweeps at startup, and thereafter only performs a sweep after firing. It uses a simple nano-style radarlock in between. When it finds a more attractive target, it locks immediately without finishing the sweep. When no more-attractive target is found, it locks again on its current target. The radarcode can be found in line 52 and 154.
 <p>
-<a href="robowiki?Gruwel" class=wikipagelink>Gruwel</a>s radar is a bit more complicated, but seems less effective. It does one sweep at startup, it always finishes the sweep before locking onto the (new) target, and it also has a timeout of 20 ticks for a sweep. See line 130-142 and 216. (Note that I have a development version with improved radar and 100 bytes spare which performs slightly better.)
+<a href="robowiki@Gruwel" class=wikipagelink>Gruwel</a>s radar is a bit more complicated, but seems less effective. It does one sweep at startup, it always finishes the sweep before locking onto the (new) target, and it also has a timeout of 20 ticks for a sweep. See line 130-142 and 216. (Note that I have a development version with improved radar and 100 bytes spare which performs slightly better.)
 <p>
 <H3>Movement</H3>
 
-Both bots share the same movement except for near-wall handling. The normal movement is a double oscillator (see <a href="robowiki?Oscillators" class=wikipagelink>Oscillators</a>) with a small random element added. During a radarlock the movement is purely perpendicular, but during a sweep this is not possible. This gives the movement a small 'hick-up' which is barely noticable, but gives about 10-15 points in one-on-one.
+Both bots share the same movement except for near-wall handling. The normal movement is a double oscillator (see <a href="robowiki@Oscillators" class=wikipagelink>Oscillators</a>) with a small random element added. During a radarlock the movement is purely perpendicular, but during a sweep this is not possible. This gives the movement a small 'hick-up' which is barely noticable, but gives about 10-15 points in one-on-one.
 <p>
-<a href="robowiki?Gruweltje" class=wikipagelink>Gruweltje</a> bounces of the wall without touching it, and can get stuck in corners. The complete movement code can be found in line 59-70 and line 99.
+<a href="robowiki@Gruweltje" class=wikipagelink>Gruweltje</a> bounces of the wall without touching it, and can get stuck in corners. The complete movement code can be found in line 59-70 and line 99.
 <p>
-<a href="robowiki?Gruwel" class=wikipagelink>Gruwel</a> uses a wall-smoothing technique which checks for two sides if the <a href="robowiki?BlindMansStick" class=wikipagelink>BlindMansStick</a> or remaining distance (whichever is shorter) fits within the battlefield. If not, the angle is increased with 5 degrees and checked again until it does fit. Furthermore <a href="robowiki?Gruwel" class=wikipagelink>Gruwel</a> will bounce when hitting another bot.
+<a href="robowiki@Gruwel" class=wikipagelink>Gruwel</a> uses a wall-smoothing technique which checks for two sides if the <a href="robowiki@BlindMansStick" class=wikipagelink>BlindMansStick</a> or remaining distance (whichever is shorter) fits within the battlefield. If not, the angle is increased with 5 degrees and checked again until it does fit. Furthermore <a href="robowiki@Gruwel" class=wikipagelink>Gruwel</a> will bounce when hitting another bot.
 <p>
 <H3>Switching targets</H3>
 
-The attractivity of the target has a one-on-one relation to the distance. <a href="robowiki?Gruweltje" class=wikipagelink>Gruweltje</a> only switches targets when the new target is 20% closer, except when the current target is closer than 70 pixels, see line 87-96. <a href="robowiki?Gruwel" class=wikipagelink>Gruwel</a> gives an additional 25% attractivity when the target has less than 20 energy left, hoping for the finishing blow, see method doChangeTarget<a href="robowiki?action=edit&id=ChangeTarget" class=wikipageedit>?</a>(). Both bots override the onRobotDeath<a href="robowiki?action=edit&id=RobotDeath" class=wikipageedit>?</a> method to mark the current target very unattractive.
+The attractivity of the target has a one-on-one relation to the distance. <a href="robowiki@Gruweltje" class=wikipagelink>Gruweltje</a> only switches targets when the new target is 20% closer, except when the current target is closer than 70 pixels, see line 87-96. <a href="robowiki@Gruwel" class=wikipagelink>Gruwel</a> gives an additional 25% attractivity when the target has less than 20 energy left, hoping for the finishing blow, see method doChangeTarget<a href="robowiki@action=edit&id=ChangeTarget" class=wikipageedit>?</a>(). Both bots override the onRobotDeath<a href="robowiki@action=edit&id=RobotDeath" class=wikipageedit>?</a> method to mark the current target very unattractive.
 <p>
 <H3>Gunning</H3>
 
-The aiming and firing is done in the <a href="robowiki?OnScannedRobot" class=wikipagelink>OnScannedRobot</a> method. Both use a quite simple iterative circular targetting gun. Whenever the next calculated point is outside the battlefield, the bulletpower is adapted to intercept the target at the previous point. This still gives a change of hitting the target regardless if it bounces or does wallsmoothing. If the calculated point can't be reached in time by a 0.1 power bullet, <a href="robowiki?Gruwel" class=wikipagelink>Gruwel</a> will hold its fire. The code can be found in Gruweltje.java at line 113-146
+The aiming and firing is done in the <a href="robowiki@OnScannedRobot" class=wikipagelink>OnScannedRobot</a> method. Both use a quite simple iterative circular targetting gun. Whenever the next calculated point is outside the battlefield, the bulletpower is adapted to intercept the target at the previous point. This still gives a change of hitting the target regardless if it bounces or does wallsmoothing. If the calculated point can't be reached in time by a 0.1 power bullet, <a href="robowiki@Gruwel" class=wikipagelink>Gruwel</a> will hold its fire. The code can be found in Gruweltje.java at line 113-146
 <p>
 <H3>Energymanagement</H3>
 
@@ -56,8 +56,8 @@ The initial bulletpower is: 3.0 at &lt; 250, 1.9 at &lt; 700, 0.5 at &lt; 850 an
 <p>
 One question remains: How is it possible that both bots perform so well in melee?
 <p>
-While most good meleebots try to get far away from the others, it does not matter to <a href="robowiki?Gruweltje" class=wikipagelink>Gruweltje</a> if it is close to others or not. While being close or at midrange, it can take advantage of its gun which is at its best at closerange and midrange.
-When looking at the details of the <a href="robowiki?RobocodeLittleLeague" class=wikipagelink>RobocodeLittleLeague</a>, two things catch the eye:
+While most good meleebots try to get far away from the others, it does not matter to <a href="robowiki@Gruweltje" class=wikipagelink>Gruweltje</a> if it is close to others or not. While being close or at midrange, it can take advantage of its gun which is at its best at closerange and midrange.
+When looking at the details of the <a href="robowiki@RobocodeLittleLeague" class=wikipagelink>RobocodeLittleLeague</a>, two things catch the eye:
 <UL >
 <li> the inflicted bulletdamage is the highest
 <li> relatively low number of 2nd and 3rd places
@@ -65,23 +65,23 @@ When looking at the details of the <a href="robowiki?RobocodeLittleLeague" class
 This indicates the scenario below when following the different stages of a meleebattle.
 <PRE >
  7-10 bots on the battlefield: Hitting and killing alot of 'simple' bots, because most of them are close enough.
- 4-6 bots on the battlefield: The better meleebots are in place and although <a href="robowiki?Gruweltje" class=wikipagelink>Gruweltje</a> still hits alot, its location is probably not so good. Relatively it is killed most in this stage.
- 2-3 bots on the battlefield: The better one-on-one performance of <a href="robowiki?Gruweltje" class=wikipagelink>Gruweltje</a> against the remaining good meleebots gets the upperhand here, resulting in high number of first-places and lower number of second and third places.
+ 4-6 bots on the battlefield: The better meleebots are in place and although <a href="robowiki@Gruweltje" class=wikipagelink>Gruweltje</a> still hits alot, its location is probably not so good. Relatively it is killed most in this stage.
+ 2-3 bots on the battlefield: The better one-on-one performance of <a href="robowiki@Gruweltje" class=wikipagelink>Gruweltje</a> against the remaining good meleebots gets the upperhand here, resulting in high number of first-places and lower number of second and third places.
 </PRE>
 <p>
-You see, it is possible to create a good meleebot without specific melee-movement, see also <a href="robowiki?DoctorBob" class=wikipagelink>DoctorBob</a>. As long as you have an efficient radar, a good gun and an adequate movement, you can get far. As soon as more melee-specific bots enter the competition, <a href="robowiki?Gruweltje" class=wikipagelink>Gruweltje</a> and <a href="robowiki?Gruwel" class=wikipagelink>Gruwel</a> will not be able to keep their position.
+You see, it is possible to create a good meleebot without specific melee-movement, see also <a href="robowiki@DoctorBob" class=wikipagelink>DoctorBob</a>. As long as you have an efficient radar, a good gun and an adequate movement, you can get far. As soon as more melee-specific bots enter the competition, <a href="robowiki@Gruweltje" class=wikipagelink>Gruweltje</a> and <a href="robowiki@Gruwel" class=wikipagelink>Gruwel</a> will not be able to keep their position.
 <p>
 <hr noshade class=wikiline size=1>
 <H3>Comments</H3>
 
 <p>
-Don't forget target selection.  I'm sure these bots would also go down significantly (particularly in the bullet damage area maybe) if they didn't normally target the closest enemy. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+Don't forget target selection.  I'm sure these bots would also go down significantly (particularly in the bullet damage area maybe) if they didn't normally target the closest enemy. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-You're right. Selecting the most attractive enemy (mostly the closest) is important. The point I want to make with this page is that you must have a well-suited combination of radar, gun, movement en target selection to make a competitive meleebot. I have the feeling that fitting my gun into for example <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a> will not do significantly better than <a href="robowiki?Gruweltje" class=wikipagelink>Gruweltje</a> itself, because my gun (close and midrange) and your movement (getting far away) do not support eachother. -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+You're right. Selecting the most attractive enemy (mostly the closest) is important. The point I want to make with this page is that you must have a well-suited combination of radar, gun, movement en target selection to make a competitive meleebot. I have the feeling that fitting my gun into for example <a href="robowiki@Coriantumr" class=wikipagelink>Coriantumr</a> will not do significantly better than <a href="robowiki@Gruweltje" class=wikipagelink>Gruweltje</a> itself, because my gun (close and midrange) and your movement (getting far away) do not support eachother. -- <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
 <p>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?MeleeStrategy" class=wikipagelink>MeleeStrategy</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=MeleeStrategy/UnderstandingGruweltje" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=MeleeStrategy/UnderstandingGruweltje">View other revisions</a><br>Last edited May 18, 2006 21:39 EST by <a href="robowiki?Florent" title="ID 6624 from 148.187.103-84.rev.gaoland.net">Florent</a> <a href="robowiki?action=browse&diff=1&id=MeleeStrategy/UnderstandingGruweltje">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@MeleeStrategy" class=wikipagelink>MeleeStrategy</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=MeleeStrategy/UnderstandingGruweltje" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=MeleeStrategy/UnderstandingGruweltje">View other revisions</a><br>Last edited May 18, 2006 21:39 EST by <a href="robowiki@Florent" title="ID 6624 from 148.187.103-84.rev.gaoland.net">Florent</a> <a href="robowiki@action=browse&diff=1&id=MeleeStrategy/UnderstandingGruweltje">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

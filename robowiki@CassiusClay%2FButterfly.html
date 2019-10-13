@@ -3,19 +3,19 @@
 <META NAME='KEYWORDS' CONTENT='Cassius, Clay, Butterfly'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Butterfly">CassiusClay/Butterfly</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext><H4><a href="robowiki?CassiusClay/Butterfly" class=wikipagelink>/Butterfly</a> by <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> - The <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> (pluggable) movement</H4>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/Butterfly">CassiusClay/Butterfly</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@CassiusClay" class=wikipagelink>CassiusClay</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H4><a href="robowiki@CassiusClay/Butterfly" class=wikipagelink>/Butterfly</a> by <a href="robowiki@PEZ" class=wikipagelink>PEZ</a> - The <a href="robowiki@CassiusClay" class=wikipagelink>CassiusClay</a> (pluggable) movement</H4>
 
 <p>
-Butterfly is all about <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>. It's the result of letting the <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a> movement grow out of its <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a> constraints. The design is pretty simple:
+Butterfly is all about <a href="robowiki@WaveSurfing" class=wikipagelink>WaveSurfing</a>. It's the result of letting the <a href="robowiki@Pugilist" class=wikipagelink>Pugilist</a> movement grow out of its <a href="robowiki@MiniBot" class=wikipagelink>MiniBot</a> constraints. The design is pretty simple:
 <OL >
-<li> Every scan create an <a href="robowiki?EnemyWave" class=wikipagelink>EnemyWave</a>
+<li> Every scan create an <a href="robowiki@EnemyWave" class=wikipagelink>EnemyWave</a>
 <OL >
 <li> If the enemy fired the tick before then mark the wave as "surfable"
 <li> If a bullet hits my bot then
 <OL >
 <li> Find the wave that is in the passing
-<li> Find out what <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> we were hit on
+<li> Find out what <a href="robowiki@GuessFactor" class=wikipagelink>GuessFactor</a> we were hit on
 <li> Update the stat buffers with this knowledge
 </OL>
 </OL>
@@ -36,11 +36,11 @@ Butterfly is all about <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSur
 </OL>
 </OL>
 <p>
-Simple enough, huh? One of those steps is a bit complicated though - step 2.1. It involves predicting our own movement some ticks in the future. This can be done in many ways. <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a> does it in a pretty sloppy manner. <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> is a bit more precise. In fact as of version 1.9.9.00g (g for gamma, my first test version) not only considers how fast CC can accelerate/deccelerate. It also tries to take into account the maximum turn angle it can do at a given velocity. Here's the scheme for the predictor:
+Simple enough, huh? One of those steps is a bit complicated though - step 2.1. It involves predicting our own movement some ticks in the future. This can be done in many ways. <a href="robowiki@Pugilist" class=wikipagelink>Pugilist</a> does it in a pretty sloppy manner. <a href="robowiki@CassiusClay" class=wikipagelink>CassiusClay</a> is a bit more precise. In fact as of version 1.9.9.00g (g for gamma, my first test version) not only considers how fast CC can accelerate/deccelerate. It also tries to take into account the maximum turn angle it can do at a given velocity. Here's the scheme for the predictor:
 <p>
 <em>Inputs</em>
 <UL >
-<li> The closest "surfable" <a href="robowiki?EnemyWave" class=wikipagelink>EnemyWave</a>
+<li> The closest "surfable" <a href="robowiki@EnemyWave" class=wikipagelink>EnemyWave</a>
 <li> The desired orbit direction
 <li> The desired target velocity (between 0 and 8 inclusive)
 </UL>
@@ -51,18 +51,18 @@ Simple enough, huh? One of those steps is a bit complicated though - step 2.1. I
 <li> Grab the current velocity (relative to the desired orbit direction)
 <li> Do
 <OL >
-<li> Calculate a <a href="robowiki?WallSmoothed" class=wikipagelink>WallSmoothed</a> position in the desired orbit direction
+<li> Calculate a <a href="robowiki@WallSmoothed" class=wikipagelink>WallSmoothed</a> position in the desired orbit direction
 <li> Calculate absolute bearing to this position
 <li> Adjust the velocity according to Robocode physics (aiming for the target velocity)
 <li> Calculate how much we would need to turn the bot to get the right heading
-<li> Adjust our virtual heading while considering <a href="robowiki?BackAsFront" class=wikipagelink>BackAsFront</a> and the maximum turn rate at the current virtual velocity
+<li> Adjust our virtual heading while considering <a href="robowiki@BackAsFront" class=wikipagelink>BackAsFront</a> and the maximum turn rate at the current virtual velocity
 <li> Calculate the position of the bot 1 tick into the future using the new virtual heading and velocity
 <li> Advance the wave 1 tick into the future
 </OL>
 <li> Until the wave impacts with the predicted bot position
 </OL>
 <p>
-Here's the implementing code (<a href="robowiki?RWPCL" class=wikipagelink>RWPCL</a>):
+Here's the implementing code (<a href="robowiki@RWPCL" class=wikipagelink>RWPCL</a>):
 <pre>
     Move waveImpactLocation(MovementWave closest, double direction, double maxVelocity) {
 	double currentDirection = robotOrbitDirection(closest.gunBearing(robotLocation));
@@ -90,7 +90,7 @@ Here's the implementing code (<a href="robowiki?RWPCL" class=wikipagelink>RWPCL<
     }
 </pre>
 <p>
-The <a href="robowiki?BackAsFront" class=wikipagelink>BackAsFront</a> functions there looks like so:
+The <a href="robowiki@BackAsFront" class=wikipagelink>BackAsFront</a> functions there looks like so:
 <pre>
     public static double backAsFrontTurn(double newHeading, double oldHeading) {
 	return Math.tan(newHeading - oldHeading);
@@ -101,7 +101,7 @@ The <a href="robowiki?BackAsFront" class=wikipagelink>BackAsFront</a> functions 
     }
 </pre>
 <p>
-It's the same functions I use to move my bot around <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a> style:
+It's the same functions I use to move my bot around <a href="robowiki@Jamougha" class=wikipagelink>Jamougha</a> style:
 <pre>
 	double newHeading = PUtils.absoluteBearing(robotLocation, destination);
 	double oldHeading = robot.getHeadingRadians();
@@ -109,12 +109,12 @@ It's the same functions I use to move my bot around <a href="robowiki?Jamougha" 
 	robot.setTurnRightRadians(PUtils.backAsFrontTurn(newHeading, oldHeading));
 </pre>
 <p>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 <hr noshade class=wikiline size=1>
 <H4>Comments</H4>
 
-I just noticed this page! Cool, since this is the best explanation of <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> I've seen yet. I think I understand the design (except for how you do <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>). From reading the sourcecode I have no clue what could cause the problem you mention, but I do have an idea that may give you visual feedback on where the problem might occur: maybe you could modify CC so that it only tries <strong>one</strong> out of your three movement options. For instance 'move fully forward' (I assume CC will automatically choose that one option for real). Then in your waveImpactLocation<a href="robowiki?action=edit&id=ImpactLocation" class=wikipageedit>?</a>() function store all predicted positions in an array. Make sure this array is accessible to the GL version of CC. Then plot these points using CCGL and watch if the position of CC each tick corresponds with the predicted positions. Test each of the three movement options separately. I once did something similar with testing my <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> gun. I plotted the enemy's predicted path in this way, and tested using bots with simple movement. It was a huge help in ironing out the bugs. Maybe it helps in this case as well. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+I just noticed this page! Cool, since this is the best explanation of <a href="robowiki@WaveSurfing" class=wikipagelink>WaveSurfing</a> I've seen yet. I think I understand the design (except for how you do <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a>). From reading the sourcecode I have no clue what could cause the problem you mention, but I do have an idea that may give you visual feedback on where the problem might occur: maybe you could modify CC so that it only tries <strong>one</strong> out of your three movement options. For instance 'move fully forward' (I assume CC will automatically choose that one option for real). Then in your waveImpactLocation<a href="robowiki@action=edit&id=ImpactLocation" class=wikipageedit>?</a>() function store all predicted positions in an array. Make sure this array is accessible to the GL version of CC. Then plot these points using CCGL and watch if the position of CC each tick corresponds with the predicted positions. Test each of the three movement options separately. I once did something similar with testing my <a href="robowiki@PatternMatching" class=wikipagelink>PatternMatching</a> gun. I plotted the enemy's predicted path in this way, and tested using bots with simple movement. It was a huge help in ironing out the bugs. Maybe it helps in this case as well. --<a href="robowiki@Vic" class=wikipagelink>Vic</a>
 <p>
 Thanks! I did something like that actually, though not in GL. Maybe it wasn't clear, but I have verified now that the above code does work for its purpose. So there's no problem. But I'll let the page be published. Maybe someone can learn something from it. Since you might still be wondering, here's the wall smoothing function:
 <pre>
@@ -132,27 +132,27 @@ Thanks! I did something like that actually, though not in GL. Maybe it wasn't cl
 	return new Move(destination, smoothing, evasion, distance, destination.distance(enemyLocation));
     }
 </pre>
-Yes, much the same as <a href="robowiki?RandomMovementBot" class=wikipagelink>RandomMovementBot</a> is using.
+Yes, much the same as <a href="robowiki@RandomMovementBot" class=wikipagelink>RandomMovementBot</a> is using.
 <p>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Ok, thanx. Surprisingly simple solution! --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+Ok, thanx. Surprisingly simple solution! --<a href="robowiki@Vic" class=wikipagelink>Vic</a>
 <p>
-Maybe so. But I'm very proud of it! =) It started the whole <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> - <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> race and was a major key to create two really competetive micros (<a href="robowiki?RaikoMicro" class=wikipagelink>RaikoMicro</a> and <a href="robowiki?Aristocles" class=wikipagelink>Aristocles</a>). -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Maybe so. But I'm very proud of it! =) It started the whole <a href="robowiki@Tityus" class=wikipagelink>Tityus</a> - <a href="robowiki@Raiko" class=wikipagelink>Raiko</a> race and was a major key to create two really competetive micros (<a href="robowiki@RaikoMicro" class=wikipagelink>RaikoMicro</a> and <a href="robowiki@Aristocles" class=wikipagelink>Aristocles</a>). -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Don't get me wrong, that was a compliment! Simple==good (when it works:) --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+Don't get me wrong, that was a compliment! Simple==good (when it works:) --<a href="robowiki@Vic" class=wikipagelink>Vic</a>
 <p>
-I didn't get you wrong. See that smiley? I think most of us like simplicity in key parts of our bots. It gives room for complexity elsewhere if nothing else. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+I didn't get you wrong. See that smiley? I think most of us like simplicity in key parts of our bots. It gives room for complexity elsewhere if nothing else. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
-Why are you firing enemy waves every tick? Isn't it enough to just fire 'surfable' waves? --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+Why are you firing enemy waves every tick? Isn't it enough to just fire 'surfable' waves? --<a href="robowiki@Vic" class=wikipagelink>Vic</a>
 <p>
-For the purposes of the above described scheme, yes. But part of the story is not told. =) I have a flattening "under current" in my surfing. And that surfing uses visit counts from those every-tick waves. Furthermore, many of my methods and functions need a wave to work with and since i don't always have a fresh surfable wave at hand i hand them the latest created wave, regardless if it's surfabe or not. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+For the purposes of the above described scheme, yes. But part of the story is not told. =) I have a flattening "under current" in my surfing. And that surfing uses visit counts from those every-tick waves. Furthermore, many of my methods and functions need a wave to work with and since i don't always have a fresh surfable wave at hand i hand them the latest created wave, regardless if it's surfabe or not. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Great explanation! May be I'w even try a bot with <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>. BTW, to calculate your exact future position, you can use <a href="robowiki?FuturePosition" class=wikipagelink>FuturePosition</a>. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+Great explanation! May be I'w even try a bot with <a href="robowiki@WaveSurfing" class=wikipagelink>WaveSurfing</a>. BTW, to calculate your exact future position, you can use <a href="robowiki@FuturePosition" class=wikipagelink>FuturePosition</a>. -- <a href="robowiki@Albert" class=wikipagelink>Albert</a>
 <p>
-Thanks! I was hoping it would help make <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> a bit less voodoo-ish. Funny that the author of <a href="robowiki?FuturePosition" class=wikipagelink>FuturePosition</a> would be someone finding the explanation useful. =) Note that this is just one way to go about wave surfing. <a href="robowiki?Axe" class=wikipagelink>Axe</a> is doing something different. Which he eventualy will explain on the <a href="robowiki?SilverSurfer/WaveSuffering" class=wikipagelink>SilverSurfer/WaveSuffering</a> page. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Thanks! I was hoping it would help make <a href="robowiki@WaveSurfing" class=wikipagelink>WaveSurfing</a> a bit less voodoo-ish. Funny that the author of <a href="robowiki@FuturePosition" class=wikipagelink>FuturePosition</a> would be someone finding the explanation useful. =) Note that this is just one way to go about wave surfing. <a href="robowiki@Axe" class=wikipagelink>Axe</a> is doing something different. Which he eventualy will explain on the <a href="robowiki@SilverSurfer/WaveSuffering" class=wikipagelink>SilverSurfer/WaveSuffering</a> page. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 <hr noshade class=wikiline size=1>
 I was studying the code to try to understand why it was so good and I found this (lines 121-125)
@@ -171,32 +171,32 @@ if (velocityIndex != lastVelocityIndex) {
 	wave.accelIndex = velocityIndex &lt; lastVelocityIndex ? 1 : 2;
 }
 </pre>
-<a href="robowiki?Florent" class=wikipagelink>Florent</a>
+<a href="robowiki@Florent" class=wikipagelink>Florent</a>
 <p>
-Florent, it looks like you must be right about that, so I figured I'd test it in the <a href="robowiki?CurveFlatteningChallenge" class=wikipagelink>CurveFlatteningChallenge</a> both ways. The score was actually higher with it the way it is, so maybe he did that to just disable the accelIndex? It was 96.52% vs 97.32%. A few matches vs Ascendant all gave CC a higher score percentage than the 40.8% he has now in the RR, though, so maybe it really is a mistake! I'm tempted to make a new bot that is CC with that one thing changed and enter it in the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> to see what happens... ;) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+Florent, it looks like you must be right about that, so I figured I'd test it in the <a href="robowiki@CurveFlatteningChallenge" class=wikipagelink>CurveFlatteningChallenge</a> both ways. The score was actually higher with it the way it is, so maybe he did that to just disable the accelIndex? It was 96.52% vs 97.32%. A few matches vs Ascendant all gave CC a higher score percentage than the 40.8% he has now in the RR, though, so maybe it really is a mistake! I'm tempted to make a new bot that is CC with that one thing changed and enter it in the <a href="robowiki@RoboRumble" class=wikipagelink>RoboRumble</a> to see what happens... ;) -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <p>
-Hey PEZ, you probably never saw this comment, but now that you're checking the wiki again... This certainly seems like it could possibly be a bug in <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a>'s movement, unless you intended to turn off the accel index. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+Hey PEZ, you probably never saw this comment, but now that you're checking the wiki again... This certainly seems like it could possibly be a bug in <a href="robowiki@CassiusClay" class=wikipagelink>CassiusClay</a>'s movement, unless you intended to turn off the accel index. -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <p>
 Wow, that sure looks stupid, doesn't it? It's hard to remember, but I know I wouldn't switch off accelIndex like that. I checked the code now and I saw that the accelIndex isn't used in the segmentation. I think that the Florent-bug made accelIndex useless and thus I probably tuned it away. Now, wouldn't it be a bit interesting to tune CC for using it again now that Florent showed how to enable it? This is prolly extremely belated Florent, but HUGE thanks! And thanks to Voidious for picking it up and for reminding me now that I am paying attention again.
 <p>
 The changes in performance you saw there, V, must have been chance in play. That's how inexact the indexes are I guess.
 <p>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 I was checking my own math, comparing with yours when I found that:
 <pre>
 approachVelocity = velocity * -Math.cos(robot.getHeadingRadians() - (enemyAbsoluteBearing + 180));
 </pre>
-That's line 114, I think adding degrees (180) and radians is not a good idea. -- <a href="robowiki?Florent" class=wikipagelink>Florent</a>
+That's line 114, I think adding degrees (180) and radians is not a good idea. -- <a href="robowiki@Florent" class=wikipagelink>Florent</a>
 <p>
-Wow! And thanks! Even if belated, voidious mentioned this bug report to me yesterday. I'll release a bugfixed version in a jiffy. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Wow! And thanks! Even if belated, voidious mentioned this bug report to me yesterday. I'll release a bugfixed version in a jiffy. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Seems I gained 2 points with that bug fix. It might or migt not be a significant change, but at least I think it can be said that fixing this bug didn't make things worse. =) And now that this bug is fixed I might be able to tweak the weights of the segmentation to squeeze out some more points. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Seems I gained 2 points with that bug fix. It might or migt not be a significant change, but at least I think it can be said that fixing this bug didn't make things worse. =) And now that this bug is fixed I might be able to tweak the weights of the segmentation to squeeze out some more points. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 Finally somebody came up with the solution
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=CassiusClay/Butterfly" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=CassiusClay/Butterfly">View other revisions</a><br>Last edited November 9, 2006 11:36 EST by <a href="robowiki?Jeff" title="ID 8530 from bbcache-13.singnet.com.sg">Jeff</a> <a href="robowiki?action=browse&diff=1&id=CassiusClay/Butterfly">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@CassiusClay" class=wikipagelink>CassiusClay</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=CassiusClay/Butterfly" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=CassiusClay/Butterfly">View other revisions</a><br>Last edited November 9, 2006 11:36 EST by <a href="robowiki@Jeff" title="ID 8530 from bbcache-13.singnet.com.sg">Jeff</a> <a href="robowiki@action=browse&diff=1&id=CassiusClay/Butterfly">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

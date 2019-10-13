@@ -3,8 +3,8 @@
 <META NAME='KEYWORDS' CONTENT='Compressed, Serialization'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=CompressedSerialization">CompressedSerialization</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext>Related pages: <a href="robowiki?SavingDataHowto" class=wikipagelink>SavingDataHowto</a> - <a href="robowiki?ReducingDataFileSize" class=wikipagelink>ReducingDataFileSize</a>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=CompressedSerialization">CompressedSerialization</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Related pages: <a href="robowiki@SavingDataHowto" class=wikipagelink>SavingDataHowto</a> - <a href="robowiki@ReducingDataFileSize" class=wikipagelink>ReducingDataFileSize</a>
 <hr noshade class=wikiline size=1>
 If you ever want to store several somewhat large objects, this is probably the best way - (aside from carefully using the <em>transient</em> key word as was mentioned above) - feel free to insert this code into your robots if you find yourself using up your disk space for your robot:
 <pre>
@@ -60,119 +60,119 @@ public void writeObject(Serializable obj, String filename)
 </pre>
 What this basically does is compresses your serialized objects in zip files.  I can't remember exactly what degree of compression I got from doing this, but it seems like it was on the order of 1/10th the file size.
 <p>
--- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+-- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <hr noshade class=wikiline size=1>
-<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> mentioned that <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>' <a href="robowiki?SandboxMini" class=wikipagelink>SandboxMini</a> has two easy-to-use methods for this as well, PEWriteObject and PEReadObject.
+<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a> mentioned that <a href="robowiki@Paul_Evans" class=wikipagelink>Paul Evans</a>' <a href="robowiki@SandboxMini" class=wikipagelink>SandboxMini</a> has two easy-to-use methods for this as well, PEWriteObject and PEReadObject.
 <hr noshade class=wikiline size=1>
 <H4>Question department</H4>
 
-Is anybody else but me using serialization to save data on enemy bots? I have a big problem. Since <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> takes quite a while to learn what works best against a given enemy I want to train the robot before I package it and upload it. The serialized files get's packagedas they should but something goes wrong when they are to be deserialized so it always starts afresh when the packaged robot meets an enemy (for the first time after being packaged that is). I'm suspecting this could have something to with what version of some Java API objects that get serialized is used on the machine packaging and the machine running the packaged bot. Someone has an idea how to solve this? Sorry if this is confusing... The caveat is that it seems that my robot can't take advantage of saved data once packaged and running on another computer. --<a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Is anybody else but me using serialization to save data on enemy bots? I have a big problem. Since <a href="robowiki@Marshmallow" class=wikipagelink>Marshmallow</a> takes quite a while to learn what works best against a given enemy I want to train the robot before I package it and upload it. The serialized files get's packagedas they should but something goes wrong when they are to be deserialized so it always starts afresh when the packaged robot meets an enemy (for the first time after being packaged that is). I'm suspecting this could have something to with what version of some Java API objects that get serialized is used on the machine packaging and the machine running the packaged bot. Someone has an idea how to solve this? Sorry if this is confusing... The caveat is that it seems that my robot can't take advantage of saved data once packaged and running on another computer. --<a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-What standard-java-type objects are you trying to serialize within your objects?  Usually the Java documentation has a note somewhere if serialized objects under one implementation of a class will not be compatible with future releases. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+What standard-java-type objects are you trying to serialize within your objects?  Usually the Java documentation has a note somewhere if serialized objects under one implementation of a class will not be compatible with future releases. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-The objects I'm serializing are simple. Containing two <strong>double</strong>s, two <strong>int</strong>s and one <a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a> containing even simpler objects consisting of only <strong>double</strong>s and <strong>int</strong>s. Could it be some versioning problem with my own objects? I don't think so since I would then expect to see the failure without the packaging/unpackaging. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+The objects I'm serializing are simple. Containing two <strong>double</strong>s, two <strong>int</strong>s and one <a href="robowiki@ArrayList" class=wikipagelink>ArrayList</a> containing even simpler objects consisting of only <strong>double</strong>s and <strong>int</strong>s. Could it be some versioning problem with my own objects? I don't think so since I would then expect to see the failure without the packaging/unpackaging. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Hmmm... not sure what to say.  The javadocs don't say anything about problems with serializing <a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a> objects... -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+Hmmm... not sure what to say.  The javadocs don't say anything about problems with serializing <a href="robowiki@ArrayList" class=wikipagelink>ArrayList</a> objects... -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-Well, it might be some aspect of Robocode that I have misunderstood. If "train" a development version robot and then package it and then run the packaged robot it seems unable to read the serialized objects. It doesn't matter that it is the same computer and JVM running. While using the development version there are no problems at all reading those objects. And the packaged robot has no problems reading its object files once it has reacreated them... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Well, it might be some aspect of Robocode that I have misunderstood. If "train" a development version robot and then package it and then run the packaged robot it seems unable to read the serialized objects. It doesn't matter that it is the same computer and JVM running. While using the development version there are no problems at all reading those objects. And the packaged robot has no problems reading its object files once it has reacreated them... -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 <hr noshade class=wikiline size=1>
-Are there examples of bots storing whole movement array's? -- <a href="robowiki?Loki" class=wikipagelink>Loki</a>
+Are there examples of bots storing whole movement array's? -- <a href="robowiki@Loki" class=wikipagelink>Loki</a>
 <p>
-What do you mean with movement arrays? Like pattern matcher data?. Between rounds all pattern matchers do this I would guess. Between matches some do it. <a href="robowiki?Nibbler" class=wikipagelink>Nibbler</a> is one. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+What do you mean with movement arrays? Like pattern matcher data?. Between rounds all pattern matchers do this I would guess. Between matches some do it. <a href="robowiki@Nibbler" class=wikipagelink>Nibbler</a> is one. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 yes, i mean pattern matcher data. Between rounds i 'store' the data by using static's. Now i am looking for a way to store the data at the end of a match and retreive it at the start of a new match. 
-I have been looking into the JavaDoc<a href="robowiki?action=edit&id=JavaDoc" class=wikipageedit>?</a>, but find Java's IO terribly complex with al those nested streams. The code on this page shows an example and works for a simple case, but after i started saving data from my targets i now get all  kinds of "inconvertible types" errors. Isn't it possible to save int's and double's? -- <a href="robowiki?Loki" class=wikipagelink>Loki</a>
+I have been looking into the JavaDoc<a href="robowiki@action=edit&id=JavaDoc" class=wikipageedit>?</a>, but find Java's IO terribly complex with al those nested streams. The code on this page shows an example and works for a simple case, but after i started saving data from my targets i now get all  kinds of "inconvertible types" errors. Isn't it possible to save int's and double's? -- <a href="robowiki@Loki" class=wikipagelink>Loki</a>
 <p>
-<a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, is your problem with the deserialisation of data (mentioned at <a href="robowiki?CompressedSerialization" class=wikipagelink>CompressedSerialization</a>) solved?
+<a href="robowiki@PEZ" class=wikipagelink>PEZ</a>, is your problem with the deserialisation of data (mentioned at <a href="robowiki@CompressedSerialization" class=wikipagelink>CompressedSerialization</a>) solved?
 <p>
-Sure you can just save primitive data types. Look at <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a> for one way of doing this. <a href="robowiki?Nibbler" class=wikipagelink>Nibbler</a> uses <a href="robowiki?SymbolicPatternMatching" class=wikipagelink>SymbolicPatternMatching</a> and saves the string. That's one more advantage of symbolic pattern matching. Yes, I still have problems with deserialization. I haven't looked in to it, but now it is starting to become a problem again. I haven't tried to use the serial version id thingy yet. If that doesn't work I'll go for externalization instead. Should be able to save some space that way also. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Sure you can just save primitive data types. Look at <a href="robowiki@SittingDuck" class=wikipagelink>SittingDuck</a> for one way of doing this. <a href="robowiki@Nibbler" class=wikipagelink>Nibbler</a> uses <a href="robowiki@SymbolicPatternMatching" class=wikipagelink>SymbolicPatternMatching</a> and saves the string. That's one more advantage of symbolic pattern matching. Yes, I still have problems with deserialization. I haven't looked in to it, but now it is starting to become a problem again. I haven't tried to use the serial version id thingy yet. If that doesn't work I'll go for externalization instead. Should be able to save some space that way also. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 Found the solution for my "inconvertible types" errors: 
 I am using ObjectInput/OutputStream as in the example. When reading data from file you have to cast the object into the desired object. Example: 
 <pre>
 StringBuffer pattern = (StringBuffer)in.readObject();
 </pre>
-When reading primitive types you have to use the appropriate methods from the ObjectInputStream<a href="robowiki?action=edit&id=ObjectInputStream" class=wikipageedit>?</a> class. Example: 
+When reading primitive types you have to use the appropriate methods from the ObjectInputStream<a href="robowiki@action=edit&id=ObjectInputStream" class=wikipageedit>?</a> class. Example: 
 <pre>
 int historyCounter = in.readInt();
 </pre>
--- <a href="robowiki?Loki" class=wikipagelink>Loki</a>
+-- <a href="robowiki@Loki" class=wikipagelink>Loki</a>
 <p>
-New question: I found in the Robocode version info that the quota for files is 200k (as for robocode version 1.06). How can you prevent running out of 'disk space' -- <a href="robowiki?Loki" class=wikipagelink>Loki</a>
+New question: I found in the Robocode version info that the quota for files is 200k (as for robocode version 1.06). How can you prevent running out of 'disk space' -- <a href="robowiki@Loki" class=wikipagelink>Loki</a>
 <p>
-The only way must be to check if what you want to write fits in the space left and then you have to either save less or delete something from your directory. Check <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a> code, it handles this situation. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+The only way must be to check if what you want to write fits in the space left and then you have to either save less or delete something from your directory. Check <a href="robowiki@TheArtOfWar" class=wikipagelink>TheArtOfWar</a> code, it handles this situation. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <hr noshade class=wikiline size=1>
 <p>
-Did any one try this with jdk1.4.2 beta. I have some problems to save or load data. I tried Marshmallow as well it also fails. Any ideas? --SSO<a href="robowiki?action=edit&id=SSO" class=wikipageedit>?</a>
+Did any one try this with jdk1.4.2 beta. I have some problems to save or load data. I tried Marshmallow as well it also fails. Any ideas? --SSO<a href="robowiki@action=edit&id=SSO" class=wikipageedit>?</a>
 <p>
-What problems do you encounter? I use jdk1.4.1 b.t.w. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+What problems do you encounter? I use jdk1.4.1 b.t.w. --<a href="robowiki@Loki" class=wikipagelink>Loki</a>
 <p>
-In what way does Marshmallow fail? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+In what way does Marshmallow fail? -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 Mainly it's security problem. My bot has the same problem. Here is the exception
 <p>
-pez.Marshmallow 1.5.3: Exception: java.security.AccessControlException<a href="robowiki?action=edit&id=AccessControlException" class=wikipageedit>?</a>: Preventing pez.Marshmallow 1.5.3 from access: (java.io.FilePermission<a href="robowiki?action=edit&id=FilePermission" class=wikipageedit>?</a> E:\java\robocode\robots\pez read): You may only read files in your own root package directory. 
-java.security.AccessControlException<a href="robowiki?action=edit&id=AccessControlException" class=wikipageedit>?</a>: Preventing pez.Marshmallow 1.5.3 from access: (java.io.FilePermission<a href="robowiki?action=edit&id=FilePermission" class=wikipageedit>?</a> E:\java\robocode\robots\pez read): You may only read files in your own root package directory. 
+pez.Marshmallow 1.5.3: Exception: java.security.AccessControlException<a href="robowiki@action=edit&id=AccessControlException" class=wikipageedit>?</a>: Preventing pez.Marshmallow 1.5.3 from access: (java.io.FilePermission<a href="robowiki@action=edit&id=FilePermission" class=wikipageedit>?</a> E:\java\robocode\robots\pez read): You may only read files in your own root package directory. 
+java.security.AccessControlException<a href="robowiki@action=edit&id=AccessControlException" class=wikipageedit>?</a>: Preventing pez.Marshmallow 1.5.3 from access: (java.io.FilePermission<a href="robowiki@action=edit&id=FilePermission" class=wikipageedit>?</a> E:\java\robocode\robots\pez read): You may only read files in your own root package directory. 
 <PRE >
-    at robocode.security.RobocodeSecurityManager<a href="robowiki?action=edit&id=RobocodeSecurityManager" class=wikipageedit>?</a>.checkPermission(RobocodeSecurityManager<a href="robowiki?action=edit&id=RobocodeSecurityManager" class=wikipageedit>?</a>.java:314)
-    at java.lang.SecurityManager<a href="robowiki?action=edit&id=SecurityManager" class=wikipageedit>?</a>.checkRead(SecurityManager<a href="robowiki?action=edit&id=SecurityManager" class=wikipageedit>?</a>.java:863)
+    at robocode.security.RobocodeSecurityManager<a href="robowiki@action=edit&id=RobocodeSecurityManager" class=wikipageedit>?</a>.checkPermission(RobocodeSecurityManager<a href="robowiki@action=edit&id=RobocodeSecurityManager" class=wikipageedit>?</a>.java:314)
+    at java.lang.SecurityManager<a href="robowiki@action=edit&id=SecurityManager" class=wikipageedit>?</a>.checkRead(SecurityManager<a href="robowiki@action=edit&id=SecurityManager" class=wikipageedit>?</a>.java:863)
     at java.io.File.exists(File.java:678)
-    at java.io.Win32FileSystem<a href="robowiki?action=edit&id=FileSystem" class=wikipageedit>?</a>.canonicalize(Win32FileSystem<a href="robowiki?action=edit&id=FileSystem" class=wikipageedit>?</a>.java:358)
-    at java.io.File.getCanonicalPath<a href="robowiki?action=edit&id=CanonicalPath" class=wikipageedit>?</a>(File.java:513)
-    at java.io.File.getCanonicalFile<a href="robowiki?action=edit&id=CanonicalFile" class=wikipageedit>?</a>(File.java:534)
-    at robocode.peer.robot.RobotFileSystemManager<a href="robowiki?action=edit&id=RobotFileSystemManager" class=wikipageedit>?</a>.getReadableDirectory<a href="robowiki?action=edit&id=ReadableDirectory" class=wikipageedit>?</a>(RobotFileSystemManager<a href="robowiki?action=edit&id=RobotFileSystemManager" class=wikipageedit>?</a>.java:110)
-    at robocode.security.RobocodeSecurityManager<a href="robowiki?action=edit&id=RobocodeSecurityManager" class=wikipageedit>?</a>.checkPermission(RobocodeSecurityManager<a href="robowiki?action=edit&id=RobocodeSecurityManager" class=wikipageedit>?</a>.java:299)
-    at java.lang.SecurityManager<a href="robowiki?action=edit&id=SecurityManager" class=wikipageedit>?</a>.checkRead(SecurityManager<a href="robowiki?action=edit&id=SecurityManager" class=wikipageedit>?</a>.java:863)
+    at java.io.Win32FileSystem<a href="robowiki@action=edit&id=FileSystem" class=wikipageedit>?</a>.canonicalize(Win32FileSystem<a href="robowiki@action=edit&id=FileSystem" class=wikipageedit>?</a>.java:358)
+    at java.io.File.getCanonicalPath<a href="robowiki@action=edit&id=CanonicalPath" class=wikipageedit>?</a>(File.java:513)
+    at java.io.File.getCanonicalFile<a href="robowiki@action=edit&id=CanonicalFile" class=wikipageedit>?</a>(File.java:534)
+    at robocode.peer.robot.RobotFileSystemManager<a href="robowiki@action=edit&id=RobotFileSystemManager" class=wikipageedit>?</a>.getReadableDirectory<a href="robowiki@action=edit&id=ReadableDirectory" class=wikipageedit>?</a>(RobotFileSystemManager<a href="robowiki@action=edit&id=RobotFileSystemManager" class=wikipageedit>?</a>.java:110)
+    at robocode.security.RobocodeSecurityManager<a href="robowiki@action=edit&id=RobocodeSecurityManager" class=wikipageedit>?</a>.checkPermission(RobocodeSecurityManager<a href="robowiki@action=edit&id=RobocodeSecurityManager" class=wikipageedit>?</a>.java:299)
+    at java.lang.SecurityManager<a href="robowiki@action=edit&id=SecurityManager" class=wikipageedit>?</a>.checkRead(SecurityManager<a href="robowiki@action=edit&id=SecurityManager" class=wikipageedit>?</a>.java:863)
     at java.io.File.exists(File.java:678)
-    at java.io.Win32FileSystem<a href="robowiki?action=edit&id=FileSystem" class=wikipageedit>?</a>.canonicalize(Win32FileSystem<a href="robowiki?action=edit&id=FileSystem" class=wikipageedit>?</a>.java:358)
-    at java.io.File.getCanonicalPath<a href="robowiki?action=edit&id=CanonicalPath" class=wikipageedit>?</a>(File.java:513)
-    at java.io.File.getCanonicalFile<a href="robowiki?action=edit&id=CanonicalFile" class=wikipageedit>?</a>(File.java:534)
-    at robocode.peer.robot.RobotFileSystemManager<a href="robowiki?action=edit&id=RobotFileSystemManager" class=wikipageedit>?</a>.getWritableDirectory<a href="robowiki?action=edit&id=WritableDirectory" class=wikipageedit>?</a>(RobotFileSystemManager<a href="robowiki?action=edit&id=RobotFileSystemManager" class=wikipageedit>?</a>.java:125)
-    at robocode.<a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>.getDataFile<a href="robowiki?action=edit&id=DataFile" class=wikipageedit>?</a>(<a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>.java:363)
+    at java.io.Win32FileSystem<a href="robowiki@action=edit&id=FileSystem" class=wikipageedit>?</a>.canonicalize(Win32FileSystem<a href="robowiki@action=edit&id=FileSystem" class=wikipageedit>?</a>.java:358)
+    at java.io.File.getCanonicalPath<a href="robowiki@action=edit&id=CanonicalPath" class=wikipageedit>?</a>(File.java:513)
+    at java.io.File.getCanonicalFile<a href="robowiki@action=edit&id=CanonicalFile" class=wikipageedit>?</a>(File.java:534)
+    at robocode.peer.robot.RobotFileSystemManager<a href="robowiki@action=edit&id=RobotFileSystemManager" class=wikipageedit>?</a>.getWritableDirectory<a href="robowiki@action=edit&id=WritableDirectory" class=wikipageedit>?</a>(RobotFileSystemManager<a href="robowiki@action=edit&id=RobotFileSystemManager" class=wikipageedit>?</a>.java:125)
+    at robocode.<a href="robowiki@AdvancedRobot" class=wikipagelink>AdvancedRobot</a>.getDataFile<a href="robowiki@action=edit&id=DataFile" class=wikipageedit>?</a>(<a href="robowiki@AdvancedRobot" class=wikipagelink>AdvancedRobot</a>.java:363)
     at pez.Marshmallow.writeObject(Unknown Source)
     at pez.Marshmallow.saveStatistics(Unknown Source)
-    at pez.Marshmallow.onRobotDeath<a href="robowiki?action=edit&id=RobotDeath" class=wikipageedit>?</a>(Unknown Source)
-    at robocode.peer.robot.EventManager<a href="robowiki?action=edit&id=EventManager" class=wikipageedit>?</a>.onRobotDeath<a href="robowiki?action=edit&id=RobotDeath" class=wikipageedit>?</a>(EventManager<a href="robowiki?action=edit&id=EventManager" class=wikipageedit>?</a>.java:598)
-    at robocode.peer.robot.EventManager<a href="robowiki?action=edit&id=EventManager" class=wikipageedit>?</a>.processEvents(EventManager<a href="robowiki?action=edit&id=EventManager" class=wikipageedit>?</a>.java:742)
-    at robocode.peer.RobotPeer<a href="robowiki?action=edit&id=RobotPeer" class=wikipageedit>?</a>.tick(RobotPeer<a href="robowiki?action=edit&id=RobotPeer" class=wikipageedit>?</a>.java:1024)
-    at robocode.<a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>.execute(<a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>.java:186)
+    at pez.Marshmallow.onRobotDeath<a href="robowiki@action=edit&id=RobotDeath" class=wikipageedit>?</a>(Unknown Source)
+    at robocode.peer.robot.EventManager<a href="robowiki@action=edit&id=EventManager" class=wikipageedit>?</a>.onRobotDeath<a href="robowiki@action=edit&id=RobotDeath" class=wikipageedit>?</a>(EventManager<a href="robowiki@action=edit&id=EventManager" class=wikipageedit>?</a>.java:598)
+    at robocode.peer.robot.EventManager<a href="robowiki@action=edit&id=EventManager" class=wikipageedit>?</a>.processEvents(EventManager<a href="robowiki@action=edit&id=EventManager" class=wikipageedit>?</a>.java:742)
+    at robocode.peer.RobotPeer<a href="robowiki@action=edit&id=RobotPeer" class=wikipageedit>?</a>.tick(RobotPeer<a href="robowiki@action=edit&id=RobotPeer" class=wikipageedit>?</a>.java:1024)
+    at robocode.<a href="robowiki@AdvancedRobot" class=wikipagelink>AdvancedRobot</a>.execute(<a href="robowiki@AdvancedRobot" class=wikipagelink>AdvancedRobot</a>.java:186)
     at pez.Marshmallow.run(Unknown Source)
-    at robocode.peer.RobotPeer<a href="robowiki?action=edit&id=RobotPeer" class=wikipageedit>?</a>.run(RobotPeer<a href="robowiki?action=edit&id=RobotPeer" class=wikipageedit>?</a>.java:616)
+    at robocode.peer.RobotPeer<a href="robowiki@action=edit&id=RobotPeer" class=wikipageedit>?</a>.run(RobotPeer<a href="robowiki@action=edit&id=RobotPeer" class=wikipageedit>?</a>.java:616)
     at java.lang.Thread.run(Thread.java:534)
 </PRE>
 <p>
---SSO<a href="robowiki?action=edit&id=SSO" class=wikipageedit>?</a>
+--SSO<a href="robowiki@action=edit&id=SSO" class=wikipageedit>?</a>
 <p>
-And does <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a> have the same problem? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+And does <a href="robowiki@SittingDuck" class=wikipagelink>SittingDuck</a> have the same problem? -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-NO! --SSO<a href="robowiki?action=edit&id=SSO" class=wikipageedit>?</a>
+NO! --SSO<a href="robowiki@action=edit&id=SSO" class=wikipageedit>?</a>
 <p>
-Strange, I was almost sure it should... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Strange, I was almost sure it should... -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Do you use getDataFile<a href="robowiki?action=edit&id=DataFile" class=wikipageedit>?</a>() or whatever? -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+Do you use getDataFile<a href="robowiki@action=edit&id=DataFile" class=wikipageedit>?</a>() or whatever? -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
 I had the same problem. Solved it by
 <p>
-while (!dataIsLoaded<a href="robowiki?action=edit&id=IsLoaded" class=wikipageedit>?</a>) {
+while (!dataIsLoaded<a href="robowiki@action=edit&id=IsLoaded" class=wikipageedit>?</a>) {
 <PRE >
     try {
-        tryToReadData<a href="robowiki?action=edit&id=ToReadData" class=wikipageedit>?</a>;
-        dataIsLoaded<a href="robowiki?action=edit&id=IsLoaded" class=wikipageedit>?</a> = true;
-    } catch (AnyException<a href="robowiki?action=edit&id=AnyException" class=wikipageedit>?</a> e) {}
+        tryToReadData<a href="robowiki@action=edit&id=ToReadData" class=wikipageedit>?</a>;
+        dataIsLoaded<a href="robowiki@action=edit&id=IsLoaded" class=wikipageedit>?</a> = true;
+    } catch (AnyException<a href="robowiki@action=edit&id=AnyException" class=wikipageedit>?</a> e) {}
 </PRE>
 }
 <p>
 this looks like something that should never work, but it does. about every 10th try to read anthing, the exception occurs. randomly. so i just try to read the file ovr and over again until robocode gives up, and i get the file.
-same for saving. -<a href="robowiki?HoD" class=wikipagelink>HoD</a>
+same for saving. -<a href="robowiki@HoD" class=wikipagelink>HoD</a>
 <p>
-Wait, I'm confused; how come it lets you catch an AccessControlException<a href="robowiki?action=edit&id=AccessControlException" class=wikipageedit>?</a> and allows the bot to keep going? When I was testing out the effects of referencing GL classes on regular Robocode, even if I caught the AccessControlException<a href="robowiki?action=edit&id=AccessControlException" class=wikipageedit>?</a>, Robocode would still disable my robot and kill its thread.
+Wait, I'm confused; how come it lets you catch an AccessControlException<a href="robowiki@action=edit&id=AccessControlException" class=wikipageedit>?</a> and allows the bot to keep going? When I was testing out the effects of referencing GL classes on regular Robocode, even if I caught the AccessControlException<a href="robowiki@action=edit&id=AccessControlException" class=wikipageedit>?</a>, Robocode would still disable my robot and kill its thread.
 <p>
-Also, does that zipping code write the .zip header with the file, or does it just write the zip data bare? Because if it is, you're saving a zip header for nothing. I mean it could only be a few bytes per file, but still... -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+Also, does that zipping code write the .zip header with the file, or does it just write the zip data bare? Because if it is, you're saving a zip header for nothing. I mean it could only be a few bytes per file, but still... -- <a href="robowiki@Vuen" class=wikipagelink>Vuen</a>
 <p>
-Such is true.  You can also be classy and make a zip file with a file in it for each enemy if you wanted.  Or you can go <a href="robowiki?SandboxMini" class=wikipagelink>SandboxMini</a>'s route (and presumably <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a>'s) and use a GZip compression thingy.  (I don't know if that changes the header stuff).  Or you could be REALLY like <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a> and make your own complete compression scheme. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+Such is true.  You can also be classy and make a zip file with a file in it for each enemy if you wanted.  Or you can go <a href="robowiki@SandboxMini" class=wikipagelink>SandboxMini</a>'s route (and presumably <a href="robowiki@SandboxDT" class=wikipagelink>SandboxDT</a>'s) and use a GZip compression thingy.  (I don't know if that changes the header stuff).  Or you could be REALLY like <a href="robowiki@Paul_Evans" class=wikipagelink>Paul Evans</a> and make your own complete compression scheme. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-I am suffering with the java.security.AccessControlException<a href="robowiki?action=edit&id=AccessControlException" class=wikipageedit>?</a> problem since upgrading to Java version 1.4.2.  I have observed the following...
+I am suffering with the java.security.AccessControlException<a href="robowiki@action=edit&id=AccessControlException" class=wikipageedit>?</a> problem since upgrading to Java version 1.4.2.  I have observed the following...
 <UL >
 <li> It is possible to trap this exception, however the only advantage in trapping is that you can try to read/write again instead of crashing.
 <li> If the exception occurs your energy is dropped to zero and you are disabled.
@@ -182,10 +182,10 @@ I am suffering with the java.security.AccessControlException<a href="robowiki?ac
 <p>
 My present solution to work around the problem is to do all file reads in round 1, storing the data in statics - catching the exception and re-reading if necessary.  At worst you will loose round 1 because of being disabled.  For any other file I/O perform at then end of the round - retyring if the output is important.
 <p>
--- <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+-- <a href="robowiki@Paul_Evans" class=wikipagelink>Paul Evans</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=CompressedSerialization" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=CompressedSerialization">View other revisions</a><br>Last edited March 24, 2007 3:16 EST by 134.220.188.59 <a href="robowiki?action=browse&diff=1&id=CompressedSerialization">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=CompressedSerialization" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=CompressedSerialization">View other revisions</a><br>Last edited March 24, 2007 3:16 EST by 134.220.188.59 <a href="robowiki@action=browse&diff=1&id=CompressedSerialization">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

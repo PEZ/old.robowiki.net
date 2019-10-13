@@ -3,7 +3,7 @@
 <META NAME='KEYWORDS' CONTENT='Hat, Tourney, Message, Format'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/MessageFormat">HatTourney/MessageFormat</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?HatTourney" class=wikipagelink>HatTourney</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/MessageFormat">HatTourney/MessageFormat</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@HatTourney" class=wikipagelink>HatTourney</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext>Here's my draft suggestion for a common message format.  Each line in a message is a different message, prefixed by the message type, followed by comma-seperated-values:
 <pre>
 PD,time,x,y,h,v,e	// personal data
@@ -16,17 +16,17 @@ TR,name			// suggested radar target
 TB,name			// suggested bullet target
 NA,message		// custom message
 </pre>
--- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin</a>
+-- <a href="robowiki@Martin_Alan_Pedersen" class=wikipagelink>Martin</a>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
-I like the messages you have laid out there. So were you thinking of just sending strings for each thing? Alternatively, we could create a base class for everyone to extend, with (Serializable) classes for each message type, and methods for sending the messages that are customizable (i.e., not personal data or enemy scan); then create the onMessageReceived method that passes off the message types to handler methods, which you'd override like with the built in event methods. I hope I'm making sense... No other message types come to mind that you don't already have listed, but I'll rack my brain a bit. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+I like the messages you have laid out there. So were you thinking of just sending strings for each thing? Alternatively, we could create a base class for everyone to extend, with (Serializable) classes for each message type, and methods for sending the messages that are customizable (i.e., not personal data or enemy scan); then create the onMessageReceived method that passes off the message types to handler methods, which you'd override like with the built in event methods. I hope I'm making sense... No other message types come to mind that you don't already have listed, but I'll rack my brain a bit. -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <p>
 In my second attempt at making a team robot, I had a serializable structure that had some doubles in it, but when I tried to send it to the message broadcaster it choked.  I ended up having to break the same data into a comma delimeted string manually and reinterpreting it on the other end.  If there is some magic thing I overlooked then it would certainly be easier to send it as a structure.  Otherwise we / I can provide a complete class to compose and translate messages.  I do mostly batch processing lately so I've got routines for doing the CSV stuff already.  -- Martin
 <p>
-Sending serializable structures (with doubles) worked in my last 5 team attempts :) --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+Sending serializable structures (with doubles) worked in my last 5 team attempts :) --<a href="robowiki@Krabb" class=wikipagelink>Krabb</a>
 <p>
-Just FYI, I found that internal classes wouldn't serialize even if they extended Serializable. The moment I made the class external, problem solved. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+Just FYI, I found that internal classes wouldn't serialize even if they extended Serializable. The moment I made the class external, problem solved. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <p>
 <hr>
 <pre>
@@ -80,7 +80,7 @@ Just FYI, I found that internal classes wouldn't serialize even if they extended
 	}
 </pre>
 Above is some code I've written for a batch processing application.  I am sure it could stand some optimization.  The ExceptionHandler class is just a log file recorder.  You could also use this to process tab delimeted (not shown) or some other delimeter.  Writing out comma separated values is much simpler, so I didn't bother writing any example code.<br>
-The result of this code is a String array containing the number of elements specified by a parameter.  If there are fewer elements in the CSV string, the remaining elements in the array will be null strings. This will not be a problem since we know by the first element what type of message it is, and how many elements we are looking for. -- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin</a>
+The result of this code is a String array containing the number of elements specified by a parameter.  If there are fewer elements in the CSV string, the remaining elements in the array will be null strings. This will not be a problem since we know by the first element what type of message it is, and how many elements we are looking for. -- <a href="robowiki@Martin_Alan_Pedersen" class=wikipagelink>Martin</a>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
@@ -220,11 +220,11 @@ public class TeamTestBot extends CustomTeamRobot
 
 </pre>
 <p>
-This could be the beginning of a "base class" for all competitors, we could implement the same for ScannedRobotEvents and Bullet Missed(/Hit)Events. With this kind of implementation the bots don't have to differentiate between their own or mate bullets and events, but it might be a bit slow :/ Suggestions? --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+This could be the beginning of a "base class" for all competitors, we could implement the same for ScannedRobotEvents and Bullet Missed(/Hit)Events. With this kind of implementation the bots don't have to differentiate between their own or mate bullets and events, but it might be a bit slow :/ Suggestions? --<a href="robowiki@Krabb" class=wikipagelink>Krabb</a>
 <p>
-Would the 2000 byte limit still apply? Cause this code doesn't exactly look optimized for size... ---<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+Would the 2000 byte limit still apply? Cause this code doesn't exactly look optimized for size... ---<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
-I was under the impression there would be no <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> limit for this... ? -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+I was under the impression there would be no <a href="robowiki@CodeSize" class=wikipagelink>CodeSize</a> limit for this... ? -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <UL >
 <li>That is also my understanding. -- Martin
 </UL>
@@ -236,29 +236,29 @@ I'm mentioning this prematurely, as I don't have the JavaDoc written and am not 
 <p>
 (discussion migrated to new wiki)
 <p>
-I'm running into some issues with packaging the JAR file.  All of my traditional tank code is packaged under pedersen.*, but the new communication code is packaged as wiki.team.communication.*.  I launched Robocode from within Eclipse and started getting errors about one of the communication class files being duplicated.  Doing a clean and rebuild did not change this.  I started a new project and moved the communication package to it, linking robocode.jar (for MessageEvent<a href="robowiki?action=edit&id=MessageEvent" class=wikipageedit>?</a>).  I packaged the contents as a JAR file under F:\robocode\libs\communication.jar, linked to it from my main tank project, and added the jar to the VM arguments for launching Robocode within Eclipse.  Launching Robocode within Eclipse again I got NoClassDefFound<a href="robowiki?action=edit&id=NoClassDefFound" class=wikipageedit>?</a> errors for the communication classes.  Anyone know what I am doing wrong? -- Martin
+I'm running into some issues with packaging the JAR file.  All of my traditional tank code is packaged under pedersen.*, but the new communication code is packaged as wiki.team.communication.*.  I launched Robocode from within Eclipse and started getting errors about one of the communication class files being duplicated.  Doing a clean and rebuild did not change this.  I started a new project and moved the communication package to it, linking robocode.jar (for MessageEvent<a href="robowiki@action=edit&id=MessageEvent" class=wikipageedit>?</a>).  I packaged the contents as a JAR file under F:\robocode\libs\communication.jar, linked to it from my main tank project, and added the jar to the VM arguments for launching Robocode within Eclipse.  Launching Robocode within Eclipse again I got NoClassDefFound<a href="robowiki@action=edit&id=NoClassDefFound" class=wikipageedit>?</a> errors for the communication classes.  Anyone know what I am doing wrong? -- Martin
 <p>
 <UL >
-<li> It's simple. Robocode's security manager doesn't allow robots to access outside JAR files. Sorry, but you'll have to distribute the source file and let people copy it into their bots. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
-<li> You could just distribute the class file, but seeing as all the source is already posted. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
-<li> (Edit Conflict) You don't need to distribute the source, you can just distribute the .class files and tell us how to interface with them. We've done this with <a href="robowiki?Mue" class=wikipagelink>Mue</a>'s gun for Ascendant before with this "TargetingAdapter<a href="robowiki?action=edit&id=TargetingAdapter" class=wikipageedit>?</a>" classes (I think that was the title).  I'm pretty sure you can't have JARs within JARs and have it work with Robocode - is that the problem, maybe? -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> It's simple. Robocode's security manager doesn't allow robots to access outside JAR files. Sorry, but you'll have to distribute the source file and let people copy it into their bots. -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
+<li> You could just distribute the class file, but seeing as all the source is already posted. --<a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
+<li> (Edit Conflict) You don't need to distribute the source, you can just distribute the .class files and tell us how to interface with them. We've done this with <a href="robowiki@Mue" class=wikipagelink>Mue</a>'s gun for Ascendant before with this "TargetingAdapter<a href="robowiki@action=edit&id=TargetingAdapter" class=wikipageedit>?</a>" classes (I think that was the title).  I'm pretty sure you can't have JARs within JARs and have it work with Robocode - is that the problem, maybe? -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <UL >
-<li> From what I understand, even outside of JARs you can't set the classpath for a robot to anything other than the JRE libraries and the Robocode JAR. The classloader in Robocode will not load classes from JARs outside of the robot, hence the NoClassDefFoundErrors<a href="robowiki?action=edit&id=NoClassDefFoundErrors" class=wikipageedit>?</a>. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
-<li> I'm not saying you'd access class files outside your robot JAR, just that Martin doesn't need to distribute his source, just the class files. We could load his class files into our JARs and use them. Right? -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
-<li> Right... but I thought he was including the source anyway. =) -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li> From what I understand, even outside of JARs you can't set the classpath for a robot to anything other than the JRE libraries and the Robocode JAR. The classloader in Robocode will not load classes from JARs outside of the robot, hence the NoClassDefFoundErrors<a href="robowiki@action=edit&id=NoClassDefFoundErrors" class=wikipageedit>?</a>. -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
+<li> I'm not saying you'd access class files outside your robot JAR, just that Martin doesn't need to distribute his source, just the class files. We could load his class files into our JARs and use them. Right? -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
+<li> Right... but I thought he was including the source anyway. =) -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 </UL>
-<li>Thanks for the responses.  I'm not worried about sharing my code so much as ensuring that everyone is working off of the same version.  I'll try to get some JavaDoc<a href="robowiki?action=edit&id=JavaDoc" class=wikipageedit>?</a> in place and distribute them in a ZIP or JAR file with usage notes and samples.  I'll aim for this week but I haven't had much free time lately. -- Martin
-<li> On a related note, I posted a (probably very different) framework <a rel="nofollow" href="http://testwiki.roborumble.org/w/index.php?title=User:AaronR/HatLeagueRobot">[on the new wiki]</a> yesterday. I hope we don't end up with a <a href="robowiki?HatTourney" class=wikipagelink>HatTourney</a> format war. =) -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li>Thanks for the responses.  I'm not worried about sharing my code so much as ensuring that everyone is working off of the same version.  I'll try to get some JavaDoc<a href="robowiki@action=edit&id=JavaDoc" class=wikipageedit>?</a> in place and distribute them in a ZIP or JAR file with usage notes and samples.  I'll aim for this week but I haven't had much free time lately. -- Martin
+<li> On a related note, I posted a (probably very different) framework <a rel="nofollow" href="http://testwiki.roborumble.org/w/index.php@title=User:AaronR/HatLeagueRobot">[on the new wiki]</a> yesterday. I hope we don't end up with a <a href="robowiki@HatTourney" class=wikipagelink>HatTourney</a> format war. =) -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 <UL >
-<li>I didn't look too deeply into your implementation, but I did check that you are treating the MessageEvent<a href="robowiki?action=edit&id=MessageEvent" class=wikipageedit>?</a>.getMessage() as a String (rather than a custom class that was serialized) so it should work fine (with testing).  If you haven't already, you should first split the entire string with "\n" to handle multiple sub-messages within the same transmission.  The main thing I am trying to avoid is making a real dependency on anyone's implementation.  "Very handy to have" is good. -- Martin
+<li>I didn't look too deeply into your implementation, but I did check that you are treating the MessageEvent<a href="robowiki@action=edit&id=MessageEvent" class=wikipageedit>?</a>.getMessage() as a String (rather than a custom class that was serialized) so it should work fine (with testing).  If you haven't already, you should first split the entire string with "\n" to handle multiple sub-messages within the same transmission.  The main thing I am trying to avoid is making a real dependency on anyone's implementation.  "Very handy to have" is good. -- Martin
 <UL >
-<li> A format war?! Really? Well I personally like frameworks to mimic the style of the jdk (I take alot of wisdom from the well formatted java.util section). But thats me. If I was to make a format I would probably base it off the normal robocode api and just add some basics, such as "onTeammateDeath<a href="robowiki?action=edit&id=TeammateDeath" class=wikipageedit>?</a>" and (getLastTeammateX<a href="robowiki?action=edit&id=LastTeammateX" class=wikipageedit>?</a>, getLastTeammateY<a href="robowiki?action=edit&id=LastTeammateY" class=wikipageedit>?</a>) or getLastTeammateLocation<a href="robowiki?action=edit&id=LastTeammateLocation" class=wikipageedit>?</a>. Basically only based off the message system, and override the setFire, fire and such options to send messages based on those. I basically apt for a bearly know its there approach. However I am strange. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<li> A format war?! Really? Well I personally like frameworks to mimic the style of the jdk (I take alot of wisdom from the well formatted java.util section). But thats me. If I was to make a format I would probably base it off the normal robocode api and just add some basics, such as "onTeammateDeath<a href="robowiki@action=edit&id=TeammateDeath" class=wikipageedit>?</a>" and (getLastTeammateX<a href="robowiki@action=edit&id=LastTeammateX" class=wikipageedit>?</a>, getLastTeammateY<a href="robowiki@action=edit&id=LastTeammateY" class=wikipageedit>?</a>) or getLastTeammateLocation<a href="robowiki@action=edit&id=LastTeammateLocation" class=wikipageedit>?</a>. Basically only based off the message system, and override the setFire, fire and such options to send messages based on those. I basically apt for a bearly know its there approach. However I am strange. --<a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 </UL>
 </UL>
 </UL>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?HatTourney" class=wikipagelink>HatTourney</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=HatTourney/MessageFormat" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=HatTourney/MessageFormat">View other revisions</a><br>Last edited January 16, 2008 2:34 EST by <a href="robowiki?Chase-san" title="ID 13072 from emcnair-76-50.resnet.mtu.edu">Chase-san</a> <a href="robowiki?action=browse&diff=1&id=HatTourney/MessageFormat">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@HatTourney" class=wikipagelink>HatTourney</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=HatTourney/MessageFormat" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=HatTourney/MessageFormat">View other revisions</a><br>Last edited January 16, 2008 2:34 EST by <a href="robowiki@Chase-san" title="ID 13072 from emcnair-76-50.resnet.mtu.edu">Chase-san</a> <a href="robowiki@action=browse&diff=1&id=HatTourney/MessageFormat">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

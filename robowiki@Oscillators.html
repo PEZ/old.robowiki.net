@@ -3,12 +3,12 @@
 <META NAME='KEYWORDS' CONTENT='Oscillators'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Oscillators">Oscillators</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=Oscillators">Oscillators</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext>Oscillators usually play perpendicular to enemy bot, and avoid being hit by changing direction frequently. Oscillating movement is very easy to implement, needs only a few lines of code, and can be combined with avoiding and other tricks.
 <p>
 Some disadvantages of oscillating movement are that you can get easily hit by an advanced targeting system, and that you have little control on your absolute position in the battlefield (you define the position relative to the enemy).
 <p>
-Here it goes some code similar to the one <a href="robowiki?MicroAspid" class=wikipagelink>MicroAspid</a> 1.2 was using (feel free to use it on your bots).
+Here it goes some code similar to the one <a href="robowiki@MicroAspid" class=wikipagelink>MicroAspid</a> 1.2 was using (feel free to use it on your bots).
 <pre>
 //** it is from onScannedRobot
 if (getDistanceRemaining() == 0) { FORWARD = -FORWARD; setAhead(185 * FORWARD); }
@@ -16,11 +16,11 @@ setTurnRightRadians(e.getBearingRadians() + Math.PI/2 - 0.5236 * FORWARD * (e.ge
 </pre>
 As you see, you need only two lines to control your bot!!! Some improvements you can do here are to replace the static 185 distance by a random distance, and to ajdust the turn angles and preferred distance. Note that the bot tries to close to the enemy when distance is greater than 200, and tries to go away when it is closer than 200, by changing the angle a little bit. 
 <p>
--- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+-- <a href="robowiki@Albert" class=wikipagelink>Albert</a>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
-Another way to create an oscillator is to use sin/cos functions (I think it was NanoDuelist<a href="robowiki?action=edit&id=NanoDuelist" class=wikipageedit>?</a> the first to use it). <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a> also uses it.
+Another way to create an oscillator is to use sin/cos functions (I think it was NanoDuelist<a href="robowiki@action=edit&id=NanoDuelist" class=wikipageedit>?</a> the first to use it). <a href="robowiki@NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a> also uses it.
 <p>
 <pre>setAhead(Math.sin(100*getTime()/a))</pre>
 <p>
@@ -30,23 +30,23 @@ You can also create more complex oscillations combining some sin/cos functions. 
 <p>
 <pre>setAhead(100*(Math.sin(getTime()/a)+Math.cos(getTime()/b)));</pre>
 <p>
-An alternative approach is the one used by <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a> 1.0 (with similar results):
+An alternative approach is the one used by <a href="robowiki@NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a> 1.0 (with similar results):
 <p>
 <pre>setAhead(200*(Math.sin(getTime()/a)*Math.cos(getTime()/b)));</pre>
 <p>
 The parameters a/b (just make sure they are different for some large factor) will define two different frequencies that will combine to create a more complex oscillatory movement.
 <p>
-There ase some interesting issues related to choosing A and B that I'w explain in <a href="robowiki?Oscillators/Period" class=wikipagelink>Oscillators/Period</a>
+There ase some interesting issues related to choosing A and B that I'w explain in <a href="robowiki@Oscillators/Period" class=wikipagelink>Oscillators/Period</a>
 <p>
--- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+-- <a href="robowiki@Albert" class=wikipagelink>Albert</a>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
-Thanks for the idea, Albert - I did some tweaking and fiddling with your "complex oscillations" formula and wrote a perceptual <a href="robowiki?NanoBot" class=wikipagelink>NanoBot</a> called <a href="robowiki?SillyBot" class=wikipagelink>SillyBot</a> (after the movement) that can beat a lot of fairly good bots, including <a href="robowiki?MogBot" class=wikipagelink>MogBot</a> (one of my first <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s).  Credit definitely goes to you on that one (although I suppose I've been creative enough to do things like that before in other programs).  Note - it can't beat Aspid ;-)  -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+Thanks for the idea, Albert - I did some tweaking and fiddling with your "complex oscillations" formula and wrote a perceptual <a href="robowiki@NanoBot" class=wikipagelink>NanoBot</a> called <a href="robowiki@SillyBot" class=wikipagelink>SillyBot</a> (after the movement) that can beat a lot of fairly good bots, including <a href="robowiki@MogBot" class=wikipagelink>MogBot</a> (one of my first <a href="robowiki@WhiteWhale" class=wikipagelink>WhiteWhale</a>s).  Credit definitely goes to you on that one (although I suppose I've been creative enough to do things like that before in other programs).  Note - it can't beat Aspid ;-)  -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
 Note: oscillate, oscillator and oscillating have two ls
 <p>
-Thanks, though I encourage you to also correct spelling directly in the page. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Thanks, though I encourage you to also correct spelling directly in the page. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 Maybe, it's a logical statement rather than a correction? - perhaps he was hoping you would learn ;P
 <p>
@@ -54,15 +54,15 @@ Maybe, it's a logical statement rather than a correction? - perhaps he was hopin
 <p>
 I have an idea... though it may be way out of wack. What if one were to generate the oscilation pattern at the start of the round. This would be randomly generated at the begging of each round, making it slightly less vulnerable to pattern matching bots that use static variables to keep track of it. Just a thought, and I haven't thought of a way to implement it. Perhaps you guys would have some ideas. ;-) -- Torahteen
 <p>
-You can take it a step further and make each leg of the 'oscillation' a random length of time, within some range.  e.g. if( ( b + a * Random() ) &gt; timeSinceReverse<a href="robowiki?action=edit&id=SinceReverse" class=wikipageedit>?</a> ) { /* reverse direction, set timeSinceLastReverse<a href="robowiki?action=edit&id=SinceLastReverse" class=wikipageedit>?</a> to 0 */ }
-'b' is the minimum period, 'a' is the variability.  You'll have to cast stuff to doubles to make it work. -- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin</a>
+You can take it a step further and make each leg of the 'oscillation' a random length of time, within some range.  e.g. if( ( b + a * Random() ) &gt; timeSinceReverse<a href="robowiki@action=edit&id=SinceReverse" class=wikipageedit>?</a> ) { /* reverse direction, set timeSinceLastReverse<a href="robowiki@action=edit&id=SinceLastReverse" class=wikipageedit>?</a> to 0 */ }
+'b' is the minimum period, 'a' is the variability.  You'll have to cast stuff to doubles to make it work. -- <a href="robowiki@Martin_Alan_Pedersen" class=wikipagelink>Martin</a>
 <p>
-How would generating the lengths at the beginning be any different than generating them on the fly? I would agree that making your randomness independent of the current situation would help avoid being vulnerable to <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a>, but you can do that without pregenerating random numbers... (Maybe I'm missing something here. :)) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+How would generating the lengths at the beginning be any different than generating them on the fly? I would agree that making your randomness independent of the current situation would help avoid being vulnerable to <a href="robowiki@PatternMatching" class=wikipagelink>PatternMatching</a>, but you can do that without pregenerating random numbers... (Maybe I'm missing something here. :)) -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <p>
-Yeah you are just a bit ;-). I mean that the oscillation patterns most commonly used are just that, patterns. They are pre-built into the bot. But by generating the oscillation pattern at the beginning of each round, the pattern isn't built into the bot. This means that a pattern matching bot would not truly be able to keep a set of patters for your bot, as the oscillation pattern is never the same. I'm rambling too much aren't I =P.  --  Torahteen<a href="robowiki?action=edit&id=Torahteen" class=wikipageedit>?</a>
+Yeah you are just a bit ;-). I mean that the oscillation patterns most commonly used are just that, patterns. They are pre-built into the bot. But by generating the oscillation pattern at the beginning of each round, the pattern isn't built into the bot. This means that a pattern matching bot would not truly be able to keep a set of patters for your bot, as the oscillation pattern is never the same. I'm rambling too much aren't I =P.  --  Torahteen<a href="robowiki@action=edit&id=Torahteen" class=wikipageedit>?</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=Oscillators" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Oscillators">View other revisions</a><br>Last edited June 7, 2007 16:11 EST by 155.140.122.227 <a href="robowiki?action=browse&diff=1&id=Oscillators">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=Oscillators" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=Oscillators">View other revisions</a><br>Last edited June 7, 2007 16:11 EST by 155.140.122.227 <a href="robowiki@action=browse&diff=1&id=Oscillators">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

@@ -3,41 +3,41 @@
 <META NAME='KEYWORDS' CONTENT='Event, Management'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=EventManagement">EventManagement</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext>I use an event manager in my bots, and I like it. Events are received at the beginning of the turn, and all the events are processed and dropped by <a href="robowiki?Fractal" class=wikipagelink>Fractal</a> before it begins doing anything else on its turn. The event manager handles putting everything into <a href="robowiki?Fractal" class=wikipagelink>Fractal</a>'s memory databanks. The power in this is firstly that I hate event-driven programming; I like this way because I can write my code polling the data in <a href="robowiki?Fractal" class=wikipagelink>Fractal</a>'s memory banks when it needs it, rather than worrying about what data is available in this method and what data is available in that method. It also has some advantages such as if a scan is missed for example, the memory manager can simply extrapolate a new scan and plug it into the memory banks; the entire rest of the robot will never know the difference and can continue seemlesly without a scan. Other advantages are for team play; when sending eachother things like scans, these can be plugged into the memory banks, and once again the bot need not know the difference between an actual scan, a received scan, and an extrapolated scan.
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=EventManagement">EventManagement</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I use an event manager in my bots, and I like it. Events are received at the beginning of the turn, and all the events are processed and dropped by <a href="robowiki@Fractal" class=wikipagelink>Fractal</a> before it begins doing anything else on its turn. The event manager handles putting everything into <a href="robowiki@Fractal" class=wikipagelink>Fractal</a>'s memory databanks. The power in this is firstly that I hate event-driven programming; I like this way because I can write my code polling the data in <a href="robowiki@Fractal" class=wikipagelink>Fractal</a>'s memory banks when it needs it, rather than worrying about what data is available in this method and what data is available in that method. It also has some advantages such as if a scan is missed for example, the memory manager can simply extrapolate a new scan and plug it into the memory banks; the entire rest of the robot will never know the difference and can continue seemlesly without a scan. Other advantages are for team play; when sending eachother things like scans, these can be plugged into the memory banks, and once again the bot need not know the difference between an actual scan, a received scan, and an extrapolated scan.
 <p>
-There are several ways of implementing an event manager; <a href="robowiki?Fractal" class=wikipagelink>Fractal</a> currently does this the easy way, by simply forwarding the events to the event manager and letting them be handled there. for example:
+There are several ways of implementing an event manager; <a href="robowiki@Fractal" class=wikipagelink>Fractal</a> currently does this the easy way, by simply forwarding the events to the event manager and letting them be handled there. for example:
 <PRE >
- public void on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {eventManager.scan(e);}
+ public void on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {eventManager.scan(e);}
 </PRE>
-You can also do this somewhat of the fancy way, which may be what I will eventually implement in <a href="robowiki?Fractal" class=wikipagelink>Fractal</a>. Make one custom event at max priority on a condition that is always true, and whenever the custom event fires make it call eventManager.doEvents();. The event manager can then request the entire event queue, pass through each one and perform the appropriate action (putting the memory where it goes), and then simply dump the event queue. This is how <a href="robowiki?SineSweep" class=wikipagelink>SineSweep</a> managed events (and unfortunately I lost its source code...). This catches all events except those at highest priority.
+You can also do this somewhat of the fancy way, which may be what I will eventually implement in <a href="robowiki@Fractal" class=wikipagelink>Fractal</a>. Make one custom event at max priority on a condition that is always true, and whenever the custom event fires make it call eventManager.doEvents();. The event manager can then request the entire event queue, pass through each one and perform the appropriate action (putting the memory where it goes), and then simply dump the event queue. This is how <a href="robowiki@SineSweep" class=wikipagelink>SineSweep</a> managed events (and unfortunately I lost its source code...). This catches all events except those at highest priority.
 <p>
-Anyway, although an event manager may not seem like something important, I find it is something absolutely crucial to the reliability and ease of programming of your bot, and I have also considered the event manager the one most important module of my bot. The event manager built into <a href="robowiki?Fractal" class=wikipagelink>Fractal</a> was the very first code I wrote for it (as was for most of my bots), and it was the foundation and building blocks for all of its other code. Now that I know it works, I can easily build any methods I want, and I know that any data I want on anybody is readily available in memory.getPacket(&lt;botNum&gt;) regardless of when or how it was acquired. Once the event manager is built, you never have to worry about data acquisition again; you can comfortably design your robot's behaviour just knowing the data it needs is there ready to be used.
+Anyway, although an event manager may not seem like something important, I find it is something absolutely crucial to the reliability and ease of programming of your bot, and I have also considered the event manager the one most important module of my bot. The event manager built into <a href="robowiki@Fractal" class=wikipagelink>Fractal</a> was the very first code I wrote for it (as was for most of my bots), and it was the foundation and building blocks for all of its other code. Now that I know it works, I can easily build any methods I want, and I know that any data I want on anybody is readily available in memory.getPacket(&lt;botNum&gt;) regardless of when or how it was acquired. Once the event manager is built, you never have to worry about data acquisition again; you can comfortably design your robot's behaviour just knowing the data it needs is there ready to be used.
 <p>
--- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+-- <a href="robowiki@Vuen" class=wikipagelink>Vuen</a>
 <p>
-Thanks!  I was sure there was someone out there using something like this.  I've never used any of the getEvent methods, do you have to check what type of event it is before doing anything?  -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+Thanks!  I was sure there was someone out there using something like this.  I've never used any of the getEvent methods, do you have to check what type of event it is before doing anything?  -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-<a href="robowiki?Fractal" class=wikipagelink>Fractal</a> does not use a 'custom' event manager; none of my bots have and will ever use custom events. Everything the bots need to know is polled for. It's not that it directly improves its rating; it just makes it so much easier to program. All info Fractal has is within the Memory class, and it is managed by the Events class; the way Fractal's objects are created, any data can be accessed from anywhere using memory.&lt;whateveryouwanttoknow&gt;. That way you don't have to worry about where to put your code; if you want something to happen when your bot gets hit, you don't have to worry about putting it in onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a> for example; you can put in wherever you want the code to be executed 'if (memory.wasHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a>())' and program your statement from there. You can organize it however you want; you can program in one method making it perform some movement decisions, do something if it's hit, perform more stuff, do something else if its hit, use the power you were hit by directly in calculations (something like memory.getHitByBulletPower<a href="robowiki?action=edit&id=HitByBulletPower" class=wikipageedit>?</a>()) and these methods can easily share variables and interact with eachother. This power makes Fractal's execution extremely linear, so that code is guaranteed to follow exactly the order its written and you never have to worry about what events fire first and stuff like that. The code is also much more readable; because it's so linear you can simply read along the code and know exactly every decision <a href="robowiki?Fractal" class=wikipagelink>Fractal</a> will make and in what order. This is just the power I find in an EventManager<a href="robowiki?action=edit&id=EventManager" class=wikipageedit>?</a>.
+<a href="robowiki@Fractal" class=wikipagelink>Fractal</a> does not use a 'custom' event manager; none of my bots have and will ever use custom events. Everything the bots need to know is polled for. It's not that it directly improves its rating; it just makes it so much easier to program. All info Fractal has is within the Memory class, and it is managed by the Events class; the way Fractal's objects are created, any data can be accessed from anywhere using memory.&lt;whateveryouwanttoknow&gt;. That way you don't have to worry about where to put your code; if you want something to happen when your bot gets hit, you don't have to worry about putting it in onHitByBullet<a href="robowiki@action=edit&id=HitByBullet" class=wikipageedit>?</a> for example; you can put in wherever you want the code to be executed 'if (memory.wasHitByBullet<a href="robowiki@action=edit&id=HitByBullet" class=wikipageedit>?</a>())' and program your statement from there. You can organize it however you want; you can program in one method making it perform some movement decisions, do something if it's hit, perform more stuff, do something else if its hit, use the power you were hit by directly in calculations (something like memory.getHitByBulletPower<a href="robowiki@action=edit&id=HitByBulletPower" class=wikipageedit>?</a>()) and these methods can easily share variables and interact with eachother. This power makes Fractal's execution extremely linear, so that code is guaranteed to follow exactly the order its written and you never have to worry about what events fire first and stuff like that. The code is also much more readable; because it's so linear you can simply read along the code and know exactly every decision <a href="robowiki@Fractal" class=wikipagelink>Fractal</a> will make and in what order. This is just the power I find in an EventManager<a href="robowiki@action=edit&id=EventManager" class=wikipageedit>?</a>.
 <p>
-An EventManager<a href="robowiki?action=edit&id=EventManager" class=wikipageedit>?</a> is also much more useful in melee; I find programming stuff in a scan event is utter nonsense in melee, and if your bot is written for 1v1 like that it'l take you ages to change it for melee because you have to isolate all your code from the scans anyway.
+An EventManager<a href="robowiki@action=edit&id=EventManager" class=wikipageedit>?</a> is also much more useful in melee; I find programming stuff in a scan event is utter nonsense in melee, and if your bot is written for 1v1 like that it'l take you ages to change it for melee because you have to isolate all your code from the scans anyway.
 <p>
 As for the getEvents methods, it will return a vector of all the events; you have to take each one from the vector and use (ex: if it's put in the variable 'event')
 <PRE >
- if (event instanceof <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>) //dump scan info into memory banks
- else if (event instanceof HitRobotEvent<a href="robowiki?action=edit&id=HitRobotEvent" class=wikipageedit>?</a>) //dump collision info into memory banks
+ if (event instanceof <a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>) //dump scan info into memory banks
+ else if (event instanceof HitRobotEvent<a href="robowiki@action=edit&id=HitRobotEvent" class=wikipageedit>?</a>) //dump collision info into memory banks
 </PRE>
 and so on. The only quirk with this method is you have to call it from within an event; after Robocode advances a frame events fire before a holding call (such as execute()) is released. This is why you have to create a custom event with a permanently true condition on max priority that runs the event manager, and program everything else from within your run() method.
 <p>
--- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+-- <a href="robowiki@Vuen" class=wikipagelink>Vuen</a>
 <p>
-Using the events mainly to collect data is very much what I think I have seen <a href="robowiki?MathewNelson" class=wikipagelink>MathewNelson</a> say they were meant for. And I think that's what most people do with their <a href="robowiki?MegaBots" class=wikipagelink>MegaBots</a>. (I still refuse to prepare my bot for melee until I am actually going to make it melee-aware.)
+Using the events mainly to collect data is very much what I think I have seen <a href="robowiki@MathewNelson" class=wikipagelink>MathewNelson</a> say they were meant for. And I think that's what most people do with their <a href="robowiki@MegaBots" class=wikipagelink>MegaBots</a>. (I still refuse to prepare my bot for melee until I am actually going to make it melee-aware.)
 <p>
-About getEvents(), can you set your own custom super event to have higher priority than all built-ins? Can you post a a sceleton of code for such an event manager? If I get the sceleton I can make an /ExampleBot<a href="robowiki?action=edit&id=EventManagement/ExampleBot" class=wikipageedit>?</a> using it. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+About getEvents(), can you set your own custom super event to have higher priority than all built-ins? Can you post a a sceleton of code for such an event manager? If I get the sceleton I can make an /ExampleBot<a href="robowiki@action=edit&id=EventManagement/ExampleBot" class=wikipageedit>?</a> using it. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 From the FAQ:
 <p>
-Q: How do I use getAllEvents<a href="robowiki?action=edit&id=AllEvents" class=wikipageedit>?</a>()?
+Q: How do I use getAllEvents<a href="robowiki@action=edit&id=AllEvents" class=wikipageedit>?</a>()?
 A: (Based on answer from Graygoo)
 Add a condition that calls a function to record the state.  For example:
 <pre>
@@ -55,7 +55,7 @@ Add a condition that calls a function to record the state.  For example:
   }
 </pre>
 <p>
-Thanks. Though I tried that a long while ago and never got it to work. Maybe now when I have more Robocode experience I can try again. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Thanks. Though I tried that a long while ago and never got it to work. Maybe now when I have more Robocode experience I can try again. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 It's really a matter of taste. I also never did it that way, my code looks like this:
 <pre>
@@ -66,33 +66,33 @@ public void onHitRobot(HitRobotEvent e) {
 	movement.update(e);
 }
 </pre>
-etc. --<a href="robowiki?ABC" class=wikipagelink>ABC</a>
+etc. --<a href="robowiki@ABC" class=wikipagelink>ABC</a>
 <p>
 Umm, yes, that's somewhat like what I do in Marshmallow, though I package somewhat before calling update() on my managers. I have this thing that they should not bother to know about the event interfaces.
 <p>
-However, the reason I'd want to try using the event vector is that I would like to be able to process all events and not get them prioritized by the Robocode environment. Am I understanding it correctly that this should be possible? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+However, the reason I'd want to try using the event vector is that I would like to be able to process all events and not get them prioritized by the Robocode environment. Am I understanding it correctly that this should be possible? -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 Yes. The above code posted from the FAQ does exactly that. getEvents() returns a vector containing all the events in the robots queue, in the order of their priority (i think thats the order). Of course, the order doesn't matter; the beauty in this is that you see all your events at once in a handy little vector and handle them in the order you want, so you don't have to follow the order Robocode prioritized them. Simply import java.util.Vector, then within the recordState method you get your events like this:
 <PRE >
  Vector events = getEvents();
 </PRE>
-then parse the vector for your events, and in an if (. instanceof .) block cast them into the appropriate types and handle them from there. Another way to build this code is simply make the condition always return true, and put the call to recordState in on<a href="robowiki?CustomEvent" class=wikipagelink>CustomEvent</a>; that's how <a href="robowiki?SineSweep" class=wikipagelink>SineSweep</a> did it. However you can't set a priority higher than 90 so WinEvent<a href="robowiki?action=edit&id=WinEvent" class=wikipageedit>?</a>, DeathEvent<a href="robowiki?action=edit&id=DeathEvent" class=wikipageedit>?</a>, and SkippedTurnEvent<a href="robowiki?action=edit&id=SkippedTurnEvent" class=wikipageedit>?</a> get sent to the bot before the call to recordState, at least <a href="robowiki?SineSweep" class=wikipagelink>SineSweep</a>'s way; I'm not sure if the FAQ way above will keep these higher priority events in the vector but I don't think they will. In any case, yes, this is how you process events without having them prioritized by Robocode. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+then parse the vector for your events, and in an if (. instanceof .) block cast them into the appropriate types and handle them from there. Another way to build this code is simply make the condition always return true, and put the call to recordState in on<a href="robowiki@CustomEvent" class=wikipagelink>CustomEvent</a>; that's how <a href="robowiki@SineSweep" class=wikipagelink>SineSweep</a> did it. However you can't set a priority higher than 90 so WinEvent<a href="robowiki@action=edit&id=WinEvent" class=wikipageedit>?</a>, DeathEvent<a href="robowiki@action=edit&id=DeathEvent" class=wikipageedit>?</a>, and SkippedTurnEvent<a href="robowiki@action=edit&id=SkippedTurnEvent" class=wikipageedit>?</a> get sent to the bot before the call to recordState, at least <a href="robowiki@SineSweep" class=wikipagelink>SineSweep</a>'s way; I'm not sure if the FAQ way above will keep these higher priority events in the vector but I don't think they will. In any case, yes, this is how you process events without having them prioritized by Robocode. -- <a href="robowiki@Vuen" class=wikipagelink>Vuen</a>
 <p>
-Using the method in the FAQ i have just made an event manager, however when i run it i get a <a href="robowiki?NullPointerException" class=wikipagelink>NullPointerException</a>... i barely know java, so i don't actually know what that means, and certainly don't know how to fix it... -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+Using the method in the FAQ i have just made an event manager, however when i run it i get a <a href="robowiki@NullPointerException" class=wikipagelink>NullPointerException</a>... i barely know java, so i don't actually know what that means, and certainly don't know how to fix it... -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-If you don't know what a null pointer exception is I suggest you read up on your Java before trying advanced concepts like this in Robocode. As I said previously, custom event management won't win you any ground in Robocode. It's something to consider maybe when you have a bot a few rating points behind DT. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+If you don't know what a null pointer exception is I suggest you read up on your Java before trying advanced concepts like this in Robocode. As I said previously, custom event management won't win you any ground in Robocode. It's something to consider maybe when you have a bot a few rating points behind DT. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 <hr noshade class=wikiline size=1>
-OK. For <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a> I now need to be sure that all custom events have been processed when the work inside <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> handler starts. Someone has an idea how I can do this? I don't have too many bytes to play with... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+OK. For <a href="robowiki@Pugilist" class=wikipagelink>Pugilist</a> I now need to be sure that all custom events have been processed when the work inside <a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> handler starts. Someone has an idea how I can do this? I don't have too many bytes to play with... -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> has priority 10 (lowes priority) and the <a href="robowiki?CustomEvent" class=wikipagelink>CustomEvent</a>'s have priority 80 so they will be processed when the <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> starts... Or have I missed something? -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+<a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> has priority 10 (lowes priority) and the <a href="robowiki@CustomEvent" class=wikipagelink>CustomEvent</a>'s have priority 80 so they will be processed when the <a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> starts... Or have I missed something? -- <a href="robowiki@Rozu" class=wikipagelink>rozu</a>
 <p>
-Is there a way to increase the priority of <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>?  I understand that having an event manager makes it easier to program the rest of your robot, but I think there is something else it can be used for.  Robocode clears it's event queue if a turn is skipped (correct me if i'm wrong).  If everything is sent to an event manager to be processed under a different thread, skipped turns won't be a problem then...  -- <a href="robowiki?Scoob" class=wikipagelink>Scoob</a>
+Is there a way to increase the priority of <a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>?  I understand that having an event manager makes it easier to program the rest of your robot, but I think there is something else it can be used for.  Robocode clears it's event queue if a turn is skipped (correct me if i'm wrong).  If everything is sent to an event manager to be processed under a different thread, skipped turns won't be a problem then...  -- <a href="robowiki@Scoob" class=wikipagelink>Scoob</a>
 <p>
-@Scoob Read about setEventPriority<a href="robowiki?action=edit&id=EventPriority" class=wikipageedit>?</a>(String eventClass, int priority) in the <a href="robowiki?RobocodeAPI" class=wikipagelink>RobocodeAPI</a>. Look under <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>.
+@Scoob Read about setEventPriority<a href="robowiki@action=edit&id=EventPriority" class=wikipageedit>?</a>(String eventClass, int priority) in the <a href="robowiki@RobocodeAPI" class=wikipagelink>RobocodeAPI</a>. Look under <a href="robowiki@AdvancedRobot" class=wikipagelink>AdvancedRobot</a>.
 <p>
 @PEZ First make sure there is a problem before you waste time and bytes fixing it. I agree with Rozu, but let us know if we're mistaken. :-)
---<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+--<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
 I thought so too, but I get weird results. Look at this bot:
 <pre>
@@ -124,13 +124,13 @@ class Doomed extends Condition {
     }
 }
 </pre>
-Put it up against <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a> and watch the ouput. Not quite what I expect anyway... And if you remove the while loop around the blocking radar turn call it seems my reset if the reap-count doesn't do it's job...
+Put it up against <a href="robowiki@SittingDuck" class=wikipagelink>SittingDuck</a> and watch the ouput. Not quite what I expect anyway... And if you remove the while loop around the blocking radar turn call it seems my reset if the reap-count doesn't do it's job...
 <p>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-I'm still stuck with this problem. But I think it might have to do with threading somehow. It seems I read the values from different threads or something... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+I'm still stuck with this problem. But I think it might have to do with threading somehow. It seems I read the values from different threads or something... -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-i haven't ran the code, but surely the problem is that the event is being tested every tick, and you're adding more events every scan. add remove<a href="robowiki?CustomEvent" class=wikipagelink>CustomEvent</a>() somewhere and try it... --<a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+i haven't ran the code, but surely the problem is that the event is being tested every tick, and you're adding more events every scan. add remove<a href="robowiki@CustomEvent" class=wikipagelink>CustomEvent</a>() somewhere and try it... --<a href="robowiki@Brainfade" class=wikipagelink>Brainfade</a>
 <p>
 No, that's not the problem. I leave the events in the queue on purpose in the example. The thing is I would need the print to print consistant numbers. Like so:
 <pre>
@@ -140,11 +140,11 @@ No, that's not the problem. I leave the events in the queue on purpose in the ex
 3 : 24
 ...
 </pre>
-But it doesn't. Every other row it prints "2 : 2" and such. But if I move the actual printing to a static method in Doomed I get consistant output. I think. It seem to behave a bit arbritrary... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+But it doesn't. Every other row it prints "2 : 2" and such. But if I move the actual printing to a static method in Doomed I get consistant output. I think. It seem to behave a bit arbritrary... -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Hmm, now I get consistant output when I run the above code. Arbritrary is just the first name of this. =( -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Hmm, now I get consistant output when I run the above code. Arbritrary is just the first name of this. =( -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Indeed hmmmmmm, i have to say now that having tested it i get precisely what you wrote above, that's both with and without the do...while loop in the run method. However that's only when you run it over 1 round. if you run it over several rounds, the second printed value is always 8. I'm puzzled... --<a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+Indeed hmmmmmm, i have to say now that having tested it i get precisely what you wrote above, that's both with and without the do...while loop in the run method. However that's only when you run it over 1 round. if you run it over several rounds, the second printed value is always 8. I'm puzzled... --<a href="robowiki@Brainfade" class=wikipagelink>Brainfade</a>
 <p>
 Actually, no its not at all puzzling. It seems to be that calling the class in a new round uses a new instance of the class, and therefore the static variable is different. The funny thing is that i have been messing around trying to store instances of the Doomed class in a static variable in the bot, in order to trying stop it beong garbage collected incase that was the problem. And from teh print statements it seems to show that 2 different static values are used:
 <pre>
@@ -155,28 +155,28 @@ Actually, no its not at all puzzling. It seems to be that calling the class in a
 1071 : 165
 1072 : 1162
 </pre>
-As you can see the number of events every 2 ticks are the right amount. Just taht there are 2 instances of Doomed accepting them. Strange that... :) --<a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a> 
+As you can see the number of events every 2 ticks are the right amount. Just taht there are 2 instances of Doomed accepting them. Strange that... :) --<a href="robowiki@Brainfade" class=wikipagelink>Brainfade</a> 
 <p>
 I got this from Mat Nelson;
 <blockquote>
 Pez, 
 <p>
-A bit strapped for time to fully analyze this, but as I recall, add<a href="robowiki?CustomEvent" class=wikipagelink>CustomEvent</a> doesn't just put an event in the event queue;  It actually adds a new test to perform on each tick.  So if you keep adding new tests each time <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> is called, that "reaped" variable is going to go up quick.  Normally you add a custom event just once, despite my lousy documentation. :) 
+A bit strapped for time to fully analyze this, but as I recall, add<a href="robowiki@CustomEvent" class=wikipagelink>CustomEvent</a> doesn't just put an event in the event queue;  It actually adds a new test to perform on each tick.  So if you keep adding new tests each time <a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> is called, that "reaped" variable is going to go up quick.  Normally you add a custom event just once, despite my lousy documentation. :) 
 <p>
-All events exist inside any event *handler*.  Not inside the test() method.  So just create a custom event (returning true so the handler is called each tick) once - at the beginning of run(), call getAllEvents<a href="robowiki?action=edit&id=AllEvents" class=wikipageedit>?</a> inside on<a href="robowiki?CustomEvent" class=wikipagelink>CustomEvent</a>, and don't call execute() inside any (other) event handlers.  Make sense? 
+All events exist inside any event *handler*.  Not inside the test() method.  So just create a custom event (returning true so the handler is called each tick) once - at the beginning of run(), call getAllEvents<a href="robowiki@action=edit&id=AllEvents" class=wikipageedit>?</a> inside on<a href="robowiki@CustomEvent" class=wikipagelink>CustomEvent</a>, and don't call execute() inside any (other) event handlers.  Make sense? 
 <p>
 -Mat 
 </blockquote>
 <p>
 Anyone understand that?
 <p>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-He seems to think you're adding events every tick because you think robocode is forgetting the events after the tick (just adding an event in the queue that time through). At least that's what I get from him saying "doesn't just put an event in the event queue;  It actually adds a new test to perform on each tick". He's saying what you should do is add one event that always returns true at the start of run and have on<a href="robowiki?CustomEvent" class=wikipagelink>CustomEvent</a>() do the work currently in test() of incrementing that variable once each turn (since the always true event will call that handler once every tick when it's test()ed). He seems to have misunderstood you for the most part, but maybe there is something to using on<a href="robowiki?CustomEvent" class=wikipagelink>CustomEvent</a>(). You can still use getAllEvents<a href="robowiki?action=edit&id=AllEvents" class=wikipageedit>?</a> to find out the total number of custom events - or you can take advantage of each custom event calling the handler once and just put the increment code there - if you're adding one each tick, from the on<a href="robowiki?CustomEvent" class=wikipagelink>CustomEvent</a> handler. I think by "All events exist inside any event *handler*." he meant you can't find the other instances of the event from within the test() method, but that doesn't seem to make sense to me if you can access the robot's methods (including getAllEvents<a href="robowiki?action=edit&id=AllEvents" class=wikipageedit>?</a>); I'm not so sure about this bit.
+He seems to think you're adding events every tick because you think robocode is forgetting the events after the tick (just adding an event in the queue that time through). At least that's what I get from him saying "doesn't just put an event in the event queue;  It actually adds a new test to perform on each tick". He's saying what you should do is add one event that always returns true at the start of run and have on<a href="robowiki@CustomEvent" class=wikipagelink>CustomEvent</a>() do the work currently in test() of incrementing that variable once each turn (since the always true event will call that handler once every tick when it's test()ed). He seems to have misunderstood you for the most part, but maybe there is something to using on<a href="robowiki@CustomEvent" class=wikipagelink>CustomEvent</a>(). You can still use getAllEvents<a href="robowiki@action=edit&id=AllEvents" class=wikipageedit>?</a> to find out the total number of custom events - or you can take advantage of each custom event calling the handler once and just put the increment code there - if you're adding one each tick, from the on<a href="robowiki@CustomEvent" class=wikipagelink>CustomEvent</a> handler. I think by "All events exist inside any event *handler*." he meant you can't find the other instances of the event from within the test() method, but that doesn't seem to make sense to me if you can access the robot's methods (including getAllEvents<a href="robowiki@action=edit&id=AllEvents" class=wikipageedit>?</a>); I'm not so sure about this bit.
 <p>
-On a me note, has it occured to you that you might have so many events going that you're skipping turns and simply not having all the test()s called consistently? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+On a me note, has it occured to you that you might have so many events going that you're skipping turns and simply not having all the test()s called consistently? -- <a href="robowiki@Kuuran" class=wikipagelink>Kuuran</a>
 <p>
-Hehe, I do want the events hanging around until I say so. And I do want all those tests() methods keep doing their work. =) No, that hasn't occured to me that skipped events could be the problem. Must be checked. But when using custom events for targeting waves I have found i don't even need to ever remove them. I do it mainly because of a tidy part of me says I should. Then again the order of event execution isn't critical then as it is now when I need to keep a summary of some of the <a href="robowiki?EnemyWaves" class=wikipagelink>EnemyWaves</a>... I couldn't fit building my own event queue manager in <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a> I think. If I could fit that I could as well use a list for the enemy waves instead of trying to get Robocode keep book on them for me. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Hehe, I do want the events hanging around until I say so. And I do want all those tests() methods keep doing their work. =) No, that hasn't occured to me that skipped events could be the problem. Must be checked. But when using custom events for targeting waves I have found i don't even need to ever remove them. I do it mainly because of a tidy part of me says I should. Then again the order of event execution isn't critical then as it is now when I need to keep a summary of some of the <a href="robowiki@EnemyWaves" class=wikipagelink>EnemyWaves</a>... I couldn't fit building my own event queue manager in <a href="robowiki@Pugilist" class=wikipagelink>Pugilist</a> I think. If I could fit that I could as well use a list for the enemy waves instead of trying to get Robocode keep book on them for me. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 OK, so the mystery with the test bot above seems to have been solved. Mat Nelson, suggested I try the below code to debug better:<pre>
 package pez.tests;
@@ -213,31 +213,31 @@ class Doomed extends Condition {
     }
 }
 </pre>
-Running it I saw that the weird results came when two scans followed without the 7 tick delay of a full radar turn. And this seems to happen at close ranges. Then the scanned event gets fired twice as the beam passes <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a>. Shouldn't be a problem for <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a> though, but it has other problems. Now I am trying to figure out how the event prioirity thingy is supposed to work. I'll let you know if that becomes clear to me.
+Running it I saw that the weird results came when two scans followed without the 7 tick delay of a full radar turn. And this seems to happen at close ranges. Then the scanned event gets fired twice as the beam passes <a href="robowiki@SittingDuck" class=wikipagelink>SittingDuck</a>. Shouldn't be a problem for <a href="robowiki@Pugilist" class=wikipagelink>Pugilist</a> though, but it has other problems. Now I am trying to figure out how the event prioirity thingy is supposed to work. I'll let you know if that becomes clear to me.
 <p>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-If you figure out event priorities please post your results here. I have tried several times setting and manipulating the order in which events are triggered and I have never been able to succeed. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+If you figure out event priorities please post your results here. I have tried several times setting and manipulating the order in which events are triggered and I have never been able to succeed. -- <a href="robowiki@Jim" class=wikipagelink>jim</a>
 <p>
 Well, here it is. Mat wrote me this on the direct question:
 <p>
 When you (and all other robots) have called execute(), the following happens in this order: 
 <OL >
 <li> All robots and bullets move 
-<li> Events may be generated (<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>, HitRobotEvent<a href="robowiki?action=edit&id=HitRobotEvent" class=wikipageedit>?</a>, etc.) and added to the event queue. 
-<li> Custom event test()s are run, possibly generating <a href="robowiki?CustomEvents" class=wikipagelink>CustomEvents</a>. 
+<li> Events may be generated (<a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>, HitRobotEvent<a href="robowiki@action=edit&id=HitRobotEvent" class=wikipageedit>?</a>, etc.) and added to the event queue. 
+<li> Custom event test()s are run, possibly generating <a href="robowiki@CustomEvents" class=wikipagelink>CustomEvents</a>. 
 <li> The event queue is sorted by priority 
 <li> for each event in the event queue, the appropriate onXXX handler is called. (in order of priority, since the event queue is sorted). 
 <li> execute() returns. 
 </OL>
 <p>
-Pretty much like I have assumed things work until I ran in to strange problems with <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a>. But those problems must stem from my own bugs. =) As you can see from the above, event priorities doesn't even matter as long as we don't use the custom event event handler.
+Pretty much like I have assumed things work until I ran in to strange problems with <a href="robowiki@Pugilist" class=wikipagelink>Pugilist</a>. But those problems must stem from my own bugs. =) As you can see from the above, event priorities doesn't even matter as long as we don't use the custom event event handler.
 <p>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Where does the call to onPaint() fall in the order of operations? -- <a href="robowiki?RobertWalker" class=wikipagelink>RobertWalker</a>
+Where does the call to onPaint() fall in the order of operations? -- <a href="robowiki@RobertWalker" class=wikipagelink>RobertWalker</a>
 <UL >
-<li> Exerpt from <a href="robowiki?Ugluk" class=wikipagelink>Ugluk's</a> <a href="robowiki?Ugluk/Chat_Log_2" class=wikipagelink>chat log</a> that may shed some light: "I have been having a problem with graphical debugging. I was building lists of line segments to draw, but by the time they are drawn they are one turn late. So with a few tweaks this morning I made the onPaint method process my robot's turn (and if it wasn't called for that turn the normal run() cycle will process it, and execute the instructions). Snag #2 is that onPaint is called before any events are processed. So now I am remodelling the event handlers so that I grab them off the queue manually at the beginning of the round and process them all before making any decisions. This will have the side effect of improving the handling of onDeath and onWin events." -- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin</a>
+<li> Exerpt from <a href="robowiki@Ugluk" class=wikipagelink>Ugluk's</a> <a href="robowiki@Ugluk/Chat_Log_2" class=wikipagelink>chat log</a> that may shed some light: "I have been having a problem with graphical debugging. I was building lists of line segments to draw, but by the time they are drawn they are one turn late. So with a few tweaks this morning I made the onPaint method process my robot's turn (and if it wasn't called for that turn the normal run() cycle will process it, and execute the instructions). Snag #2 is that onPaint is called before any events are processed. So now I am remodelling the event handlers so that I grab them off the queue manually at the beginning of the round and process them all before making any decisions. This will have the side effect of improving the handling of onDeath and onWin events." -- <a href="robowiki@Martin_Alan_Pedersen" class=wikipagelink>Martin</a>
 <li> It's been a while, but after reading what I said, let me reiterate:
 <UL >
 <li> 1) The instructions of the prior turn are processed, generating a queue of events for each tank, and updating each tank's getXXX() values.
@@ -245,7 +245,7 @@ Where does the call to onPaint() fall in the order of operations? -- <a href="ro
 <li> 3) Events are triggered on the tank in order of priority.
 <li> 4) The tank's run() method is called.
 </UL>
-<li> What I did to get around this was to decouple the turn's processing from the run() method.  If the first entry point for the turn is through onPaint(), the event queue is processed, I perform all logic for the turn, and I paint the results.  In the run() loop I check if the present turn has been processed yet, and if not I perform the same event queue and logic processing (without painting).  Then I execute the instructions for the turn (wether they were generated in the onPaint or run paths). -- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin</a>
+<li> What I did to get around this was to decouple the turn's processing from the run() method.  If the first entry point for the turn is through onPaint(), the event queue is processed, I perform all logic for the turn, and I paint the results.  In the run() loop I check if the present turn has been processed yet, and if not I perform the same event queue and logic processing (without painting).  Then I execute the instructions for the turn (wether they were generated in the onPaint or run paths). -- <a href="robowiki@Martin_Alan_Pedersen" class=wikipagelink>Martin</a>
 </UL>
 <p>
 Yeah, before I read your response I had dug into Robocode's source and found the main game loop inside the Battle.runRound() method. Careful reading of that method gave me this list of operations:
@@ -262,17 +262,17 @@ Yeah, before I read your response I had dug into Robocode's source and found the
 <p>
 Maybe this is picking nits, but it's a bit misleading to say that the run() method gets called in the cycle; it really only gets run once. The bot's thread is simply put to sleep whenever it performs a blocking action. When it's time for the bots to act, Battle.wakeupRobots() is called, which iterates the bots and calls Object.notify() on each. It's easy to think of it as a call to run(), though, which caused a bug in the pluggable robot architecture I've been working on.
 <p>
-Anyway, I had some architectural concerns about putting my event management code inside the test() method on a custom listener, but the pragmatic coder in me won out. Finally (most of) my debug graphics actually match up with the game's graphics. It's sweeeeet. :) Now to figure out why my waves don't always line up with the enemy bullets... -- <a href="robowiki?RobertWalker" class=wikipagelink>RobertWalker</a>
+Anyway, I had some architectural concerns about putting my event management code inside the test() method on a custom listener, but the pragmatic coder in me won out. Finally (most of) my debug graphics actually match up with the game's graphics. It's sweeeeet. :) Now to figure out why my waves don't always line up with the enemy bullets... -- <a href="robowiki@RobertWalker" class=wikipagelink>RobertWalker</a>
 <p>
-Update: The order I listed above previously is *wrong*; the onPaint() call happens *before* the custom event test()s get run! Yikes! -- <a href="robowiki?RobertWalker" class=wikipagelink>RobertWalker</a>
+Update: The order I listed above previously is *wrong*; the onPaint() call happens *before* the custom event test()s get run! Yikes! -- <a href="robowiki@RobertWalker" class=wikipagelink>RobertWalker</a>
 <p>
-Hmm.. interesting.. perhaps the Paint should be done after handling events? I could change this and see what comes out of it. --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+Hmm.. interesting.. perhaps the Paint should be done after handling events? I could change this and see what comes out of it. --<a href="robowiki@Fnl" class=wikipagelink>Fnl</a>
 <UL >
-<li>Well, it may break tanks that take the sequencing into account, but at least it wouldn't affect the rumble (in which onPaint() is not called). Personally I'd leave it in the same sequence it was called in <a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a>. -- Martin
-<li>Having all events in the queue before onPaint() gets called would certainly make things easier. I also think that Robocode should not restrict event priority changes like it currently does. I should be able to shuffle things around as I please, even if it means that some events get priority over Win, Death and <a href="robowiki?SkippedTurn" class=wikipagelink>SkippedTurn</a>. Sure, it's giving coders enough rope to shoot themselves in the foot, but they've already got plenty of rope for that. -- <a href="robowiki?RobertWalker" class=wikipagelink>RobertWalker</a>
+<li>Well, it may break tanks that take the sequencing into account, but at least it wouldn't affect the rumble (in which onPaint() is not called). Personally I'd leave it in the same sequence it was called in <a href="robowiki@RobocodeSG" class=wikipagelink>RobocodeSG</a>. -- Martin
+<li>Having all events in the queue before onPaint() gets called would certainly make things easier. I also think that Robocode should not restrict event priority changes like it currently does. I should be able to shuffle things around as I please, even if it means that some events get priority over Win, Death and <a href="robowiki@SkippedTurn" class=wikipagelink>SkippedTurn</a>. Sure, it's giving coders enough rope to shoot themselves in the foot, but they've already got plenty of rope for that. -- <a href="robowiki@RobertWalker" class=wikipagelink>RobertWalker</a>
 </UL>
 <p>
-I have a method called handleEvents() which iterates and processes the event queue manually, and sets a flag saying that it's been done. If handleEvents() gets called and the flag is already set, it does nothing. Then I call it in both onPaint() and in the test() method of my event listener custom event. This way, it is guaranteed to happen every turn, whether onPaint() gets called or not, it will *include* the ever-elusive Win, Death and <a href="robowiki?SkippedTurn" class=wikipagelink>SkippedTurn</a> events, and my debug graphics will have the latest data to use for painting. This is nothing earth-shaking; just a combination of a couple of different tricks I read here, but I haven't seen any sample code putting them all together. So here it is: (Update: Some lines commented out to make it compatible with Robocode 1.4.2)
+I have a method called handleEvents() which iterates and processes the event queue manually, and sets a flag saying that it's been done. If handleEvents() gets called and the flag is already set, it does nothing. Then I call it in both onPaint() and in the test() method of my event listener custom event. This way, it is guaranteed to happen every turn, whether onPaint() gets called or not, it will *include* the ever-elusive Win, Death and <a href="robowiki@SkippedTurn" class=wikipagelink>SkippedTurn</a> events, and my debug graphics will have the latest data to use for painting. This is nothing earth-shaking; just a combination of a couple of different tricks I read here, but I haven't seen any sample code putting them all together. So here it is: (Update: Some lines commented out to make it compatible with Robocode 1.4.2)
 <p>
 <pre>// private boolean _eventsProcessed = false;
 public void run() {
@@ -303,49 +303,49 @@ public void onPaint(Graphics2D g) {
 	// Debug graphics code here
 }</pre> -- RJW
 <p>
-I'm not sure if that will work or not, as I donno if you can actually call robot functions from onPaint (such as turnLeft, etc). However this might allow a calculation escape point for slowbots and avoid skipping turns (that is however if onPaint is not taken into consideration for a robots turn time). If it is the only thing you get is a neat way to impliment your bot. As you would have to pass the actions back onto the main thread. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+I'm not sure if that will work or not, as I donno if you can actually call robot functions from onPaint (such as turnLeft, etc). However this might allow a calculation escape point for slowbots and avoid skipping turns (that is however if onPaint is not taken into consideration for a robots turn time). If it is the only thing you get is a neat way to impliment your bot. As you would have to pass the actions back onto the main thread. --<a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 <UL >
-<li>Yeah, I don't actually execute any actions inside my handleEvents() call. All I do there is update the robot's internal representation of the battlefield. The actions happen where I put the "// Combat logic here" comment, inside run(). I'm using this setup now on my first robot and it's working very nicely; onPaint() always has the latest data. -- <a href="robowiki?RobertWalker" class=wikipagelink>RobertWalker</a>
+<li>Yeah, I don't actually execute any actions inside my handleEvents() call. All I do there is update the robot's internal representation of the battlefield. The actions happen where I put the "// Combat logic here" comment, inside run(). I'm using this setup now on my first robot and it's working very nicely; onPaint() always has the latest data. -- <a href="robowiki@RobertWalker" class=wikipagelink>RobertWalker</a>
 <UL >
-<li>Robocode 1.4.2 breaks the setup described above. <a href="robowiki?Fnl" class=wikipagelink>Fnl</a> has moved the onPaint() call so that it's invoked *after* events get fired. This makes more sense; robot's shouldn't be expected to paint until after they've had a chance to update their internal game states, which is what the handleEvents() stuff above was trying to circumvent. According to <a href="robowiki?Robocode/News" class=wikipagelink>Robocode/News</a>, some bugs have been found, so I think I'll be holding off on fixing this in my bot until things settle down in that area. --<a href="robowiki?RobertWalker" class=wikipagelink>RobertWalker</a>
+<li>Robocode 1.4.2 breaks the setup described above. <a href="robowiki@Fnl" class=wikipagelink>Fnl</a> has moved the onPaint() call so that it's invoked *after* events get fired. This makes more sense; robot's shouldn't be expected to paint until after they've had a chance to update their internal game states, which is what the handleEvents() stuff above was trying to circumvent. According to <a href="robowiki@Robocode/News" class=wikipagelink>Robocode/News</a>, some bugs have been found, so I think I'll be holding off on fixing this in my bot until things settle down in that area. --<a href="robowiki@RobertWalker" class=wikipagelink>RobertWalker</a>
 <UL >
-<li>Looking at it a little closer, it seems that really all that needs to be done is to remove the handleEvents() call from the onPaint() method. You can also remove the _eventsProcessed variable, since it only exists to prevent handleEvents() from acting doing its job twice, since now it will only be called once. --<a href="robowiki?RobertWalker" class=wikipagelink>RobertWalker</a>
+<li>Looking at it a little closer, it seems that really all that needs to be done is to remove the handleEvents() call from the onPaint() method. You can also remove the _eventsProcessed variable, since it only exists to prevent handleEvents() from acting doing its job twice, since now it will only be called once. --<a href="robowiki@RobertWalker" class=wikipagelink>RobertWalker</a>
 </UL>
 </UL>
 </UL>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
-Ok, I don't know if this is somewhere else on the wiki, but here are the default event priorities (I unzipped the source &amp; found it in EventManager<a href="robowiki?action=edit&id=EventManager" class=wikipageedit>?</a>.java):
+Ok, I don't know if this is somewhere else on the wiki, but here are the default event priorities (I unzipped the source &amp; found it in EventManager<a href="robowiki@action=edit&id=EventManager" class=wikipageedit>?</a>.java):
 <TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
-<TR VALIGN='CENTER' ><td colspan='0.5'> scannedRobotEventPriority<a href="robowiki?action=edit&id=RobotEventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 10</td></TR>
-<TR VALIGN='CENTER' ><td colspan='0.5'> hitByBulletEventPriority<a href="robowiki?action=edit&id=ByBulletEventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 20</td></TR>
-<TR VALIGN='CENTER' ><td colspan='0.5'> hitWallEventPriority<a href="robowiki?action=edit&id=WallEventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 30</td></TR>
-<TR VALIGN='CENTER' ><td colspan='0.5'> hitRobotEventPriority<a href="robowiki?action=edit&id=RobotEventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 40</td></TR>
-<TR VALIGN='CENTER' ><td colspan='0.5'> bulletHitEventPriority<a href="robowiki?action=edit&id=HitEventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 50</td></TR>
-<TR VALIGN='CENTER' ><td colspan='0.5'> bulletHitBulletEventPriority<a href="robowiki?action=edit&id=HitBulletEventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 55</td></TR>
-<TR VALIGN='CENTER' ><td colspan='0.5'> bulletMissedEventPriority<a href="robowiki?action=edit&id=MissedEventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 60</td></TR>
-<TR VALIGN='CENTER' ><td colspan='0.5'> robotDeathEventPriority<a href="robowiki?action=edit&id=DeathEventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 70</td></TR>
-<TR VALIGN='CENTER' ><td colspan='0.5'> messageEventPriority<a href="robowiki?action=edit&id=EventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 75</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> scannedRobotEventPriority<a href="robowiki@action=edit&id=RobotEventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 10</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> hitByBulletEventPriority<a href="robowiki@action=edit&id=ByBulletEventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 20</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> hitWallEventPriority<a href="robowiki@action=edit&id=WallEventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 30</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> hitRobotEventPriority<a href="robowiki@action=edit&id=RobotEventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 40</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> bulletHitEventPriority<a href="robowiki@action=edit&id=HitEventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 50</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> bulletHitBulletEventPriority<a href="robowiki@action=edit&id=HitBulletEventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 55</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> bulletMissedEventPriority<a href="robowiki@action=edit&id=MissedEventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 60</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> robotDeathEventPriority<a href="robowiki@action=edit&id=DeathEventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 70</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> messageEventPriority<a href="robowiki@action=edit&id=EventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 75</td></TR>
 <TR VALIGN='CENTER' ><td colspan='0.5'> custom events defaults to </td><td colspan="0.5"> 80</td></TR>
-<TR VALIGN='CENTER' ><td colspan='0.5'> skippedTurnEventPriority<a href="robowiki?action=edit&id=TurnEventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 100</td></TR>
-<TR VALIGN='CENTER' ><td colspan='0.5'> winEventPriority<a href="robowiki?action=edit&id=EventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 100</td></TR>
-<TR VALIGN='CENTER' ><td colspan='0.5'> deathEventPriority<a href="robowiki?action=edit&id=EventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 100</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> skippedTurnEventPriority<a href="robowiki@action=edit&id=TurnEventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 100</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> winEventPriority<a href="robowiki@action=edit&id=EventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 100</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> deathEventPriority<a href="robowiki@action=edit&id=EventPriority" class=wikipageedit>?</a> </td><td colspan="0.5"> 100</td></TR>
 </TABLE>
 The higher the priority, the sooner the event be passed to your robot.
 <UL >
 <li>It is clearly documented in the API. -- Martin
-<li>That may be, but to this day I never find it in the API when I look.  I have before, but I never remember where.  Like right now.  Google gave me this page, so yay!  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li>That may be, but to this day I never find it in the API when I look.  I have before, but I never remember where.  Like right now.  Google gave me this page, so yay!  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <UL >
 <li>Try AdvancedRobot.setEventPriority <a rel="nofollow" href="http://www.cs.xu.edu/csci170/02s/robocode/javadoc/robocode/AdvancedRobot.html#setEventPriority(java.lang.String,%20int)">[1]</a>. -- Martin
-<li> Are you aware that Fnl has changed the priority of DeathEvents to -1? Are you looking at a recent version of the Robocode source? -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li> Are you aware that Fnl has changed the priority of DeathEvents to -1? Are you looking at a recent version of the Robocode source? -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 <UL >
-<li> He has? I may need to adjust some code for that... Some of us already had worked around that issue with <a href="robowiki?OnDeath" class=wikipagelink>proper handling of OnDeath</a>. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
-<li> Look at this: <a rel="nofollow" href="http://robocode.cvs.sourceforge.net/robocode/robocode/robocode/peer/robot/EventManager.java?view=log">[2]</a>. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
-<li> Whoa.  I <em>just</em>, I mean <strong>just</strong> made proper onDeath handling.  Just right now.  I just did it.  And now I find it's totally worthless.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
-<li> I was about to put proper death handling in Horizon a couple weeks ago, when I noticed this change while browsing the Robocode source. Apparently, my timing is better. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
-<li> I just looked at the source.  I don't know what that CVS comment is all about, but it's still 100 in the code. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
-<li> And now I just ran a test.  It's definitely not processing the bullet hit event.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> He has? I may need to adjust some code for that... Some of us already had worked around that issue with <a href="robowiki@OnDeath" class=wikipagelink>proper handling of OnDeath</a>. -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
+<li> Look at this: <a rel="nofollow" href="http://robocode.cvs.sourceforge.net/robocode/robocode/robocode/peer/robot/EventManager.java@view=log">[2]</a>. -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
+<li> Whoa.  I <em>just</em>, I mean <strong>just</strong> made proper onDeath handling.  Just right now.  I just did it.  And now I find it's totally worthless.  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
+<li> I was about to put proper death handling in Horizon a couple weeks ago, when I noticed this change while browsing the Robocode source. Apparently, my timing is better. -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
+<li> I just looked at the source.  I don't know what that CVS comment is all about, but it's still 100 in the code. -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
+<li> And now I just ran a test.  It's definitely not processing the bullet hit event.  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 </UL>
 </UL>
 </UL>
@@ -368,9 +368,9 @@ private final int skippedTurnEventPriority = 100; // System event -&gt; cannot b
 private final int winEventPriority = 100; // System event -&gt; cannot be changed!
 </pre>
 <p>
--- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+-- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 <p>
-I dunno.  Try printing in your onDeath and onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a> methods.  Running version 1.4.8, onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a> does not get called.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+I dunno.  Try printing in your onDeath and onHitByBullet<a href="robowiki@action=edit&id=HitByBullet" class=wikipageedit>?</a> methods.  Running version 1.4.8, onHitByBullet<a href="robowiki@action=edit&id=HitByBullet" class=wikipageedit>?</a> does not get called.  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <pre>
 66: HIT!!!
 166: HIT!!!
@@ -415,11 +415,11 @@ You are right, it goes straight from this:
 Died!
 </pre>
 <p>
-Weird... -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+Weird... -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 <p>
-Maybe -1 is a way of putting POSITIVE_INFINITY or something like that? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+Maybe -1 is a way of putting POSITIVE_INFINITY or something like that? -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <p>
-The only thing in the comments was "- Changed the priority of the DeathEvent<a href="robowiki?action=edit&id=DeathEvent" class=wikipageedit>?</a> from 100 to -1 in order to let robots process events before they die" ... yet that seems to be "useless" since the onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a> isn't being called --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+The only thing in the comments was "- Changed the priority of the DeathEvent<a href="robowiki@action=edit&id=DeathEvent" class=wikipageedit>?</a> from 100 to -1 in order to let robots process events before they die" ... yet that seems to be "useless" since the onHitByBullet<a href="robowiki@action=edit&id=HitByBullet" class=wikipageedit>?</a> isn't being called --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
 Ok, using Robocode 1.5.1 I did another quick test using Windows.
 <pre>
@@ -432,10 +432,10 @@ Ok, using Robocode 1.5.1 I did another quick test using Windows.
 171: onHitByBullet() called. This event has 20 priority according to e.getPriority()
 171: onDeath() called. This event has -1 priority according to e.getPriority()
 </pre>
-apparently the "problem" has been fixed :) --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+apparently the "problem" has been fixed :) --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=EventManagement" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=EventManagement">View other revisions</a><br>Last edited February 16, 2008 21:29 EST by cpe-75-84-83-181.socal.res.rr.com <a href="robowiki?action=browse&diff=1&id=EventManagement">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=EventManagement" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=EventManagement">View other revisions</a><br>Last edited February 16, 2008 21:29 EST by cpe-75-84-83-181.socal.res.rr.com <a href="robowiki@action=browse&diff=1&id=EventManagement">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

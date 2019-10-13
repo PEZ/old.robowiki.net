@@ -3,7 +3,7 @@
 <META NAME='KEYWORDS' CONTENT='Hanji, Robocode, Utils'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/RobocodeUtils">Hanji/RobocodeUtils</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Hanji" class=wikipagelink>Hanji</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/RobocodeUtils">Hanji/RobocodeUtils</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Hanji" class=wikipagelink>Hanji</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext>This is just a simple class that contains some useful basic functions. I just provide this for completeness so that my other classes will compile w/o modification.
 <hr noshade class=wikiline size=1>
 <pre>
@@ -75,23 +75,23 @@ And there are a couple versions of normalizeBearing floating around out there, b
     }
 </PRE>
 <p>
-- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+- <a href="robowiki@Nano" class=wikipagelink>nano</a>
 <p>
 The Math.abs() version doesn't work correctly on negatives I don't think (not that simple).  However, I figured out a way to make Robocode do it- 
 <pre>
 	return robocode.util.Utils.normalAbsoluteAngle(angle);
 </pre>
 <p>
-In <a href="robowiki?SillyBot" class=wikipagelink>SillyBot</a>, the way I do normalizeBearing is using the above:
+In <a href="robowiki@SillyBot" class=wikipagelink>SillyBot</a>, the way I do normalizeBearing is using the above:
 <pre>
 	return robocode.util.Utils.normalAbsoluteAngle(angle+Math.PI)-Math.PI;
 </pre>
-I hear that takes 1 byte more than the trig way <a href="robowiki?Nano" class=wikipagelink>nano</a> showed, though, if you're worried about codesize.
+I hear that takes 1 byte more than the trig way <a href="robowiki@Nano" class=wikipagelink>nano</a> showed, though, if you're worried about codesize.
 <p>
 Does anyone know if there are any other utils in the robocode class besides 
-normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a> and normalAbsoluteAngle<a href="robowiki?action=edit&id=AbsoluteAngle" class=wikipageedit>?</a>?  - <a href="robowiki?Tyrol" class=wikipagelink>Tyrol</a>
+normal<a href="robowiki@RelativeAngle" class=wikipagelink>RelativeAngle</a> and normalAbsoluteAngle<a href="robowiki@action=edit&id=AbsoluteAngle" class=wikipageedit>?</a>?  - <a href="robowiki@Tyrol" class=wikipagelink>Tyrol</a>
 <p>
-I don't know about the correctness of the normalizeHeading and normalizeBearing functions in this code, I think the following versions are functionally the same and are faster. --Quag<a href="robowiki?action=edit&id=Quag" class=wikipageedit>?</a>
+I don't know about the correctness of the normalizeHeading and normalizeBearing functions in this code, I think the following versions are functionally the same and are faster. --Quag<a href="robowiki@action=edit&id=Quag" class=wikipageedit>?</a>
 <pre>
 	public final static double normalizeBearing(final double ang) {
 		return ang % Math.PI;
@@ -106,7 +106,7 @@ I don't know about the correctness of the normalizeHeading and normalizeBearing 
 	}
 </pre>
 <p>
-Quaq<a href="robowiki?action=edit&id=Quaq" class=wikipageedit>?</a>, your code doesn't work right. I quickly wrote Normalizer (32 <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a>) as an example:
+Quaq<a href="robowiki@action=edit&id=Quaq" class=wikipageedit>?</a>, your code doesn't work right. I quickly wrote Normalizer (32 <a href="robowiki@CodeSize" class=wikipagelink>CodeSize</a>) as an example:
 <pre>public class Normalizer {
 	public final static double PI2 = Math.PI*2;
 	
@@ -126,11 +126,11 @@ Quaq<a href="robowiki?action=edit&id=Quaq" class=wikipageedit>?</a>, your code d
 		return normalizeHeading(bearing + Math.PI) - Math.PI;
 	}
 }</pre>
-Note that you can use normalizeAbsoluteAngle<a href="robowiki?action=edit&id=AbsoluteAngle" class=wikipageedit>?</a>() and normalize<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>() of robocode.util.Utils (my <a href="robowiki?IDE" class=wikipagelink>IDE</a> shows variables and methods if you open a .class, but doesn't try to get the inside of methods back - it shows nothing instead). Handy for <a href="robowiki?NanoBots" class=wikipagelink>NanoBots</a>.
+Note that you can use normalizeAbsoluteAngle<a href="robowiki@action=edit&id=AbsoluteAngle" class=wikipageedit>?</a>() and normalize<a href="robowiki@RelativeAngle" class=wikipagelink>RelativeAngle</a>() of robocode.util.Utils (my <a href="robowiki@IDE" class=wikipagelink>IDE</a> shows variables and methods if you open a .class, but doesn't try to get the inside of methods back - it shows nothing instead). Handy for <a href="robowiki@NanoBots" class=wikipagelink>NanoBots</a>.
 <p>
-dist() is more efficient (less (code)size and faster) when written directly in Java ByteCode<a href="robowiki?action=edit&id=ByteCode" class=wikipageedit>?</a>, and getBearing() uses inefficient (more (code)size and slower) variables. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+dist() is more efficient (less (code)size and faster) when written directly in Java ByteCode<a href="robowiki@action=edit&id=ByteCode" class=wikipageedit>?</a>, and getBearing() uses inefficient (more (code)size and slower) variables. -- <a href="robowiki@Jonathan" class=wikipagelink>Jonathan</a>
 <p>
-Oooops... not quite enough test cases. :) Thanks for spotting my errors <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>. --Quag<a href="robowiki?action=edit&id=Quag" class=wikipageedit>?</a>
+Oooops... not quite enough test cases. :) Thanks for spotting my errors <a href="robowiki@Jonathan" class=wikipagelink>Jonathan</a>. --Quag<a href="robowiki@action=edit&id=Quag" class=wikipageedit>?</a>
 <p>
 You can also use:
 <pre>
@@ -139,7 +139,7 @@ You can also use:
 Clemens(cr)
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Hanji" class=wikipagelink>Hanji</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=Hanji/RobocodeUtils" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Hanji/RobocodeUtils">View other revisions</a><br>Last edited December 7, 2004 20:02 EST by chello080108084091.31.11.vie.surfer.at <a href="robowiki?action=browse&diff=1&id=Hanji/RobocodeUtils">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Hanji" class=wikipagelink>Hanji</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=Hanji/RobocodeUtils" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=Hanji/RobocodeUtils">View other revisions</a><br>Last edited December 7, 2004 20:02 EST by chello080108084091.31.11.vie.surfer.at <a href="robowiki@action=browse&diff=1&id=Hanji/RobocodeUtils">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <META NAME='KEYWORDS' CONTENT='Interpreter, Code'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Code">Interpreter/Code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Interpreter" class=wikipagelink>Interpreter</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/Code">Interpreter/Code</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Interpreter" class=wikipagelink>Interpreter</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext><pre>
 package strider;
 
@@ -172,23 +172,23 @@ public class Interpreter extends AdvancedRobot {
 </pre>
 <p>
 <hr noshade class=wikiline size=1>
-Man! This is so cool I'll have to take my jacket on! It'll take me a while to understand the first bit about it, but I'll give it a try! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Man! This is so cool I'll have to take my jacket on! It'll take me a while to understand the first bit about it, but I'll give it a try! -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-I've been thinking of something similar but easier, dynamically load a delegated robot class :) After a rename of the file (.class). But that is cheating I would say of course. -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+I've been thinking of something similar but easier, dynamically load a delegated robot class :) After a rename of the file (.class). But that is cheating I would say of course. -- <a href="robowiki@Pulsar" class=wikipagelink>Pulsar</a>
 <p>
-I first tried dumping a .class-file into a string and loading it with a custom class loader. Sadly, the SecurityManager<a href="robowiki?action=edit&id=SecurityManager" class=wikipageedit>?</a> in robocode won't allow you to use a custom class loader and that was when I got this interpreter idea. -- <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+I first tried dumping a .class-file into a string and loading it with a custom class loader. Sadly, the SecurityManager<a href="robowiki@action=edit&id=SecurityManager" class=wikipageedit>?</a> in robocode won't allow you to use a custom class loader and that was when I got this interpreter idea. -- <a href="robowiki@Strider" class=wikipagelink>Strider</a>
 <p>
-Don't need  a custom class loader I think? I mean just a real class file but renamed file suffix so the codesize is fooled. Then Class.forName().newInstance() and delegate to that instance. --<a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+Don't need  a custom class loader I think? I mean just a real class file but renamed file suffix so the codesize is fooled. Then Class.forName().newInstance() and delegate to that instance. --<a href="robowiki@Pulsar" class=wikipagelink>Pulsar</a>
 <p>
-But Class.forName("Foo") will look for a file named Foo.class, so that won't work unless you include code to rename the file first. -- <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+But Class.forName("Foo") will look for a file named Foo.class, so that won't work unless you include code to rename the file first. -- <a href="robowiki@Strider" class=wikipagelink>Strider</a>
 <p>
-Exactly hence the "a rename of the file" ;-) -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+Exactly hence the "a rename of the file" ;-) -- <a href="robowiki@Pulsar" class=wikipagelink>Pulsar</a>
 <p>
-But the Robocode Security Manager won't allow you to do that. Would it? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+But the Robocode Security Manager won't allow you to do that. Would it? -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Would it be possible to reach the class methods of the <a href="robowiki?JavaAPI" class=wikipagelink>JavaAPI</a> (or any API) somehow? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Would it be possible to reach the class methods of the <a href="robowiki@JavaAPI" class=wikipagelink>JavaAPI</a> (or any API) somehow? -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-I don't think I fully understand how this language works... Why is there a need for the Nop instuction for instance? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+I don't think I fully understand how this language works... Why is there a need for the Nop instuction for instance? -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 Short answer: Codesaving in the interpreter.
 Long answer: When the interpreter executes an instruction with data, ('#', '.' &amp; ',') it looks for the next ';' in the code to extract the data with substring() at the same time it advances pc but only to point at the semicolon. It would cost several extra bytes to skip past it. Implementing ';' to be a NOP instruction costs nothing, as you can see the code for it is commented out as it is just a break anyway (in fact any unknown character is interpreted as NOP).
@@ -196,12 +196,12 @@ Long answer: When the interpreter executes an instruction with data, ('#', '.' &
 The interpreter is made to be small (but it's not that optimized) and therefore the interpreted code is a bit strage. For example there is no addition, you must use subtraction, A + B = A - (0 - B), and since it is stack based everything is in reverse polish notation (HP-calculator users should know it). So the code will be more like A 0 B - - (see the code for "Calculate heading towards enemy").
 <p>
 I must say that I haven't looked any more at this robot myself since I first wrote it. It was more of a test and never ment to be anything usefull and it is way to difficult to write code to make anything more advanced with it.
--- <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+-- <a href="robowiki@Strider" class=wikipagelink>Strider</a>
 <p>
-I think it's way cool. Just having a hard time grasping the language. Maybe I just must try doing something with it myself and then it'll get clearer. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+I think it's way cool. Just having a hard time grasping the language. Maybe I just must try doing something with it myself and then it'll get clearer. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Interpreter" class=wikipagelink>Interpreter</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=Interpreter/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Interpreter/Code">View other revisions</a><br>Last edited October 16, 2004 20:32 EST by <a href="robowiki?PEZ" title="ID 3512 from as5-1-7.dre.s.bonet.se">PEZ</a> <a href="robowiki?action=browse&diff=1&id=Interpreter/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Interpreter" class=wikipagelink>Interpreter</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=Interpreter/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=Interpreter/Code">View other revisions</a><br>Last edited October 16, 2004 20:32 EST by <a href="robowiki@PEZ" title="ID 3512 from as5-1-7.dre.s.bonet.se">PEZ</a> <a href="robowiki@action=browse&diff=1&id=Interpreter/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

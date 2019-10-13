@@ -3,8 +3,8 @@
 <META NAME='KEYWORDS' CONTENT='Relative, Heading'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=RelativeHeading">RelativeHeading</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext>I'm ready to try it. If someone shows what it is. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=RelativeHeading">RelativeHeading</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I'm ready to try it. If someone shows what it is. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 It's the enemy's movement direction relative to you.
 <p>
@@ -13,21 +13,21 @@ Quite simply:
 angleToMe = Math.abs(BotUtils.normalizeBearing(enemyHeading - getHeading() - e.getBearing()));
 </pre>
 <p>
-<a href="robowiki?Paul" class=wikipagelink>Paul</a> calls it "attack angle", iirc. I believe he also segments on it in his guns.
+<a href="robowiki@Paul" class=wikipagelink>Paul</a> calls it "attack angle", iirc. I believe he also segments on it in his guns.
 <p>
--- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+-- <a href="robowiki@ABC" class=wikipagelink>ABC</a>
 <p>
-Coriantumr uses cos(enemyHeading-absBearing)*sign(enemyVelocity).  I scale this by multiplying it by 1.4 (originally 1.5, but in very rare cases, I'd get an index out of bounds) and adding 1.5.  This is basically segmenting on moving toward me, moving perpendicular to me (not usually confused by just moving slowly) and moving away from me.  It could be considered an <a href="robowiki?AdvancingVelocity" class=wikipagelink>AdvancingVelocity</a> segmentation, but it's more of an advancing <em>direction</em> segmentation.  However, notice that it's just the cosine of <a href="robowiki?ABC" class=wikipagelink>ABC</a>'s calculation, so the difference is really a sort of curved scaling factor. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+Coriantumr uses cos(enemyHeading-absBearing)*sign(enemyVelocity).  I scale this by multiplying it by 1.4 (originally 1.5, but in very rare cases, I'd get an index out of bounds) and adding 1.5.  This is basically segmenting on moving toward me, moving perpendicular to me (not usually confused by just moving slowly) and moving away from me.  It could be considered an <a href="robowiki@AdvancingVelocity" class=wikipagelink>AdvancingVelocity</a> segmentation, but it's more of an advancing <em>direction</em> segmentation.  However, notice that it's just the cosine of <a href="robowiki@ABC" class=wikipagelink>ABC</a>'s calculation, so the difference is really a sort of curved scaling factor. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
 <p>
-In fact <a href="robowiki?Locke" class=wikipagelink>Locke</a> looks at my bearing from the point of view of the enemy. But that should give the same result I think.
+In fact <a href="robowiki@Locke" class=wikipagelink>Locke</a> looks at my bearing from the point of view of the enemy. But that should give the same result I think.
 <pre>
 myBearing = BotUtils.normalizeBearing(Math.atan2(meX-enemyX, meY-enemyY) - enemyHeading);
 </pre>
 <p>
-<a href="robowiki?ABC" class=wikipagelink>ABC</a>, why do you take the absolute value? I can't see how that would work, unless somewhere you compensate with sign(velocity) or something? -- <a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<a href="robowiki@ABC" class=wikipagelink>ABC</a>, why do you take the absolute value? I can't see how that would work, unless somewhere you compensate with sign(velocity) or something? -- <a href="robowiki@Vic" class=wikipagelink>Vic</a>
 <p>
-My enemyHeading var is "e.getHeading() * sign(enemyLastMovingVelocity<a href="robowiki?action=edit&id=LastMovingVelocity" class=wikipageedit>?</a>)". I take the absolute value because I don't care if the enemy is going clockwise or counter-clockwise:
+My enemyHeading var is "e.getHeading() * sign(enemyLastMovingVelocity<a href="robowiki@action=edit&id=LastMovingVelocity" class=wikipageedit>?</a>)". I take the absolute value because I don't care if the enemy is going clockwise or counter-clockwise:
 <p>
 close to 0 = coming towards me<br>
 close to 90 = going perpendicular to me<br>
@@ -35,12 +35,12 @@ close to 180 = going away from me<br>
 <p>
 PS: your method is basically the same, your bearing from the point of view of the enemy is the enemy's bearing from your point of view * -1. I might have confused the sign of the normalized subtraction (wouldn't be the first time ;)), but since I take the absolute value it doesn't really matter.
 <p>
--- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+-- <a href="robowiki@ABC" class=wikipagelink>ABC</a>
 <p>
-Thanks guys. Maybe I can try this. It could be that it helps against some really low-ranked bots. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Thanks guys. Maybe I can try this. It could be that it helps against some really low-ranked bots. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=RelativeHeading" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RelativeHeading">View other revisions</a><br>Last edited May 18, 2004 18:58 EST by <a href="robowiki?PEZ" title="ID 2163 from 192.168.0.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=RelativeHeading">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=RelativeHeading" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=RelativeHeading">View other revisions</a><br>Last edited May 18, 2004 18:58 EST by <a href="robowiki@PEZ" title="ID 2163 from 192.168.0.xxx">PEZ</a> <a href="robowiki@action=browse&diff=1&id=RelativeHeading">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

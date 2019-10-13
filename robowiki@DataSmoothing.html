@@ -3,51 +3,51 @@
 <META NAME='KEYWORDS' CONTENT='Data, Smoothing'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=DataSmoothing">DataSmoothing</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=DataSmoothing">DataSmoothing</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext>Many bots collect data on their opponents to base decissions on. Sometimes raw data is used, sometimes the data is processed.
 <p>
-This page presents a discussion on <a href="robowiki?DataSmoothing" class=wikipagelink>DataSmoothing</a> and DataWindowing<a href="robowiki?action=edit&id=DataWindowing" class=wikipageedit>?</a> that was originally held on different pages on this wiki. It's not really structured yet, but at least the information can be found on one page.
+This page presents a discussion on <a href="robowiki@DataSmoothing" class=wikipagelink>DataSmoothing</a> and DataWindowing<a href="robowiki@action=edit&id=DataWindowing" class=wikipageedit>?</a> that was originally held on different pages on this wiki. It's not really structured yet, but at least the information can be found on one page.
 <p>
 Related topics/pages:
 <UL >
-<li> <a href="robowiki?BinSmoothing" class=wikipagelink>BinSmoothing</a>
+<li> <a href="robowiki@BinSmoothing" class=wikipagelink>BinSmoothing</a>
 </UL>
 <hr noshade class=wikiline size=1>
-from the <a href="robowiki?SilverSurfer/History" class=wikipagelink>SilverSurfer/History</a>'s page:<br>
-About smoothing in the gun or not. You're right, neither <a href="robowiki?Jam" class=wikipagelink>Jam</a> nor I have gotten it to work better than unsmoothed updates and reads from the stat buffers. That's not to say that it doesn't work though. After all <a href="robowiki?Jam" class=wikipagelink>Jam</a>'s and my GF guns are all based on <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> and from there they followed almost the same evolutionary path. I think <a href="robowiki?Mue" class=wikipagelink>Mue</a>'s gun works best when smoothing the data. Mue can correct this or give more info. That said, I fail to see why smoothing should be needed. What's wrong with firing at the GF where you've seen the enemy most often? (Not regarding surfers here of course.) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+from the <a href="robowiki@SilverSurfer/History" class=wikipagelink>SilverSurfer/History</a>'s page:<br>
+About smoothing in the gun or not. You're right, neither <a href="robowiki@Jam" class=wikipagelink>Jam</a> nor I have gotten it to work better than unsmoothed updates and reads from the stat buffers. That's not to say that it doesn't work though. After all <a href="robowiki@Jam" class=wikipagelink>Jam</a>'s and my GF guns are all based on <a href="robowiki@Tityus" class=wikipagelink>Tityus</a> and from there they followed almost the same evolutionary path. I think <a href="robowiki@Mue" class=wikipagelink>Mue</a>'s gun works best when smoothing the data. Mue can correct this or give more info. That said, I fail to see why smoothing should be needed. What's wrong with firing at the GF where you've seen the enemy most often? (Not regarding surfers here of course.) -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Well, in my gun i update all guess factor bins covered by the target bot when a wave hits. And when selecting the guess factor to fire at i also take bot width into account. I'm not sure whether this qualifies as smoothing. But still the Bee gun is better than mine, so you are probably better of with listening to <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> :-). --<a href="robowiki?Mue" class=wikipagelink>Mue</a>
+Well, in my gun i update all guess factor bins covered by the target bot when a wave hits. And when selecting the guess factor to fire at i also take bot width into account. I'm not sure whether this qualifies as smoothing. But still the Bee gun is better than mine, so you are probably better of with listening to <a href="robowiki@PEZ" class=wikipagelink>PEZ</a> :-). --<a href="robowiki@Mue" class=wikipagelink>Mue</a>
 <p>
-What makes you say Bee is better than Ascendant's gun? Have you tested the latest version in the <a href="robowiki?RRGunChallenge" class=wikipagelink>RRGunChallenge</a>? My guess is that your gun is stronger than mine. And, no, I wouldn't call what you are doing "smoothing". -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+What makes you say Bee is better than Ascendant's gun? Have you tested the latest version in the <a href="robowiki@RRGunChallenge" class=wikipagelink>RRGunChallenge</a>? My guess is that your gun is stronger than mine. And, no, I wouldn't call what you are doing "smoothing". -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-I call it "windowing". It has a 'smoothing'-like effect ofcourse. It 'transforms' your max<a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> wide array into a smaller array.
+I call it "windowing". It has a 'smoothing'-like effect ofcourse. It 'transforms' your max<a href="robowiki@GuessFactor" class=wikipagelink>GuessFactor</a> wide array into a smaller array.
 <p>
 Suppose you originally have something like (with only 9 bins):
 <pre>0 3 4 1 1 0 0 6 0</pre>
 In this case you would shoot at gf 8. Suppose at (very) close range the relative width of the opponent is 3 bins. Windowing results in:
 <pre>7 2 6</pre>
-this time you would shoot at a negative gf instead of the positive gf. It gained me about 5 points in the rankings. my 2 cts. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+this time you would shoot at a negative gf instead of the positive gf. It gained me about 5 points in the rankings. my 2 cts. --<a href="robowiki@Loki" class=wikipagelink>Loki</a>
 <p>
-And do you do this windowing on reading the stats only or do you do it when registrering the hits too? 5 ranking points would make me King again! =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+And do you do this windowing on reading the stats only or do you do it when registrering the hits too? 5 ranking points would make me King again! =) -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <UL >
-<li> only when i read the stats (so just before selecting the best GF). I keep the original data untouched, except when i apply aging. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<li> only when i read the stats (so just before selecting the best GF). I keep the original data untouched, except when i apply aging. --<a href="robowiki@Loki" class=wikipagelink>Loki</a>
 </UL>
 <p>
 I dont really reduce the size of my guess factor array. My kind of 'windowing' would result in:
 <pre>x 7 8 6 2 1 6 6 x</pre>
 (the x mark the borders where special treatment is required) in other word the windows i use overlap each other. Then the third bin (counting from left) would be chosen.
 <p>
-@<a href="robowiki?PEZ" class=wikipagelink>PEZ</a> Then i'll release a new AscendantRRGC<a href="robowiki?action=edit&id=AscendantRRGC" class=wikipageedit>?</a> soon, so that we get a definite answer. --<a href="robowiki?Mue" class=wikipagelink>Mue</a>
+@<a href="robowiki@PEZ" class=wikipagelink>PEZ</a> Then i'll release a new AscendantRRGC<a href="robowiki@action=edit&id=AscendantRRGC" class=wikipageedit>?</a> soon, so that we get a definite answer. --<a href="robowiki@Mue" class=wikipagelink>Mue</a>
 <UL >
-<li> this is a diiferent approach but you still reduce the effects of single peaks and would also shoot at a negative gf like i would. My idea of reducing bins is because it doesn't matter if you hit him at the center or the sides. But this probably works equally well and with the same gf-to-angle routine, while i have to adjust for reducing the maximum<a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a>.<br>
+<li> this is a diiferent approach but you still reduce the effects of single peaks and would also shoot at a negative gf like i would. My idea of reducing bins is because it doesn't matter if you hit him at the center or the sides. But this probably works equally well and with the same gf-to-angle routine, while i have to adjust for reducing the maximum<a href="robowiki@GuessFactor" class=wikipagelink>GuessFactor</a>.<br>
 </UL>
-succes to both of you in this head-to-head race for the top. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+succes to both of you in this head-to-head race for the top. --<a href="robowiki@Loki" class=wikipagelink>Loki</a>
 <p>
 <UL >
-<li> Thanks! This is an endless run... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<li> Thanks! This is an endless run... -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 </UL>
 <p>
-About the smoothing, seems that it is needed at least for me... About Loki´s windowing, isn´t it almost the same as a smoothing by 1/(n^2)? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+About the smoothing, seems that it is needed at least for me... About Loki´s windowing, isn´t it almost the same as a smoothing by 1/(n^2)? -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 <p>
 Congrats on making 2057 Axe! Your gun is shaping up at last. =)
 <p>
@@ -63,26 +63,26 @@ I think your smoothing is more like Mue's windowing than Loki's. But it's not th
 </pre>
 Does that look like it should work? Intutively it seems like I would need some edge protection, but trying to apply it it seemed like it lowered the performance...
 <p>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <UL >
-<li> seems like this topic has been 'finalised'. But just to add my last question: am i the only one who uses the relative botwidth to determine the maximum GF? --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<li> seems like this topic has been 'finalised'. But just to add my last question: am i the only one who uses the relative botwidth to determine the maximum GF? --<a href="robowiki@Loki" class=wikipagelink>Loki</a>
 </UL>
 <p>
 Well in the code above the edges will be chosen less often than the middle bins. Thats why i compute the average instead of the sum of the bins in a window. This makes no difference when comparing windows with the same size, but smaller windows are no longer at a disadvantage (thats my reasoning at least). I have to admit though that i never tried without that protection. 
 <p>
-BTW: The Bee gun rates 7 points higher than <a href="robowiki?Ascendant" class=wikipagelink>Ascendants</a> current gun in the <a href="robowiki?RRGunChallenge" class=wikipagelink>RRGunChallenge</a>. q.e.d. :-) --<a href="robowiki?Mue" class=wikipagelink>Mue</a>
+BTW: The Bee gun rates 7 points higher than <a href="robowiki@Ascendant" class=wikipagelink>Ascendants</a> current gun in the <a href="robowiki@RRGunChallenge" class=wikipagelink>RRGunChallenge</a>. q.e.d. :-) --<a href="robowiki@Mue" class=wikipagelink>Mue</a>
 <p>
-Yeah, and maybe I lose 7 points by applying windowing. =) Averaging each window, great idea! I'll try that next. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Yeah, and maybe I lose 7 points by applying windowing. =) Averaging each window, great idea! I'll try that next. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Using the average for each window in my dev version now, looks good in my first tests. Stay tuned. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Using the average for each window in my dev version now, looks good in my first tests. Stay tuned. =) -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Thanks, <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>... Actually most of the points i gain in gun came from your 1.9 power bullets (Thanks, man!) idea. These last ~6 pts, came only from movement (the DinamicDistancing<a href="robowiki?action=edit&id=DinamicDistancing" class=wikipageedit>?</a>, see History)! The good news is that i´m fullfilled with ideas to try myself a crown-strike... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+Thanks, <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>... Actually most of the points i gain in gun came from your 1.9 power bullets (Thanks, man!) idea. These last ~6 pts, came only from movement (the DinamicDistancing<a href="robowiki@action=edit&id=DinamicDistancing" class=wikipageedit>?</a>, see History)! The good news is that i´m fullfilled with ideas to try myself a crown-strike... -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 <p>
-Against <a href="robowiki?Quest" class=wikipagelink>Quest</a> my windowing implementation works increadibly well. But over all in the rumble I lose 15+ points. My first implementation without averaging lost me "only" 7 points. I guess gun smoothing of any kind is not for Bee. Yet. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Against <a href="robowiki@Quest" class=wikipagelink>Quest</a> my windowing implementation works increadibly well. But over all in the rumble I lose 15+ points. My first implementation without averaging lost me "only" 7 points. I guess gun smoothing of any kind is not for Bee. Yet. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 <hr noshade class=wikiline size=1>
-from <a href="robowiki?Tron" class=wikipagelink>Tron</a>'s page:<br>
-Like I said, I tried countless wavesurfing variants. The 2.48 to 2.49 jump (that put me in the 2kclub) consisted in the removal of the flattener. Shadow 2.49 surfs hits only, segmented by distance (9), acceleration (3), speed (3), and using 19 bins. I also increased the data smoothing (adapting speed) a lot, smoothing the data not only across bins but also across segments. That way Shadow only needs to take 1 hit from a <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a> bot to instantly dodge it "perfectly". And that's where, imo, most of the ranking points come from. -- ABC 
+from <a href="robowiki@Tron" class=wikipagelink>Tron</a>'s page:<br>
+Like I said, I tried countless wavesurfing variants. The 2.48 to 2.49 jump (that put me in the 2kclub) consisted in the removal of the flattener. Shadow 2.49 surfs hits only, segmented by distance (9), acceleration (3), speed (3), and using 19 bins. I also increased the data smoothing (adapting speed) a lot, smoothing the data not only across bins but also across segments. That way Shadow only needs to take 1 hit from a <a href="robowiki@HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a> bot to instantly dodge it "perfectly". And that's where, imo, most of the ranking points come from. -- ABC 
 <p>
 YES! That's how to do it! Thanks for sharing! -- PEZ 
 <p>
@@ -111,14 +111,14 @@ Your suggestion for learning speed improvements is about what I ended up doing. 
 -- PEZ 
 <p>
 <hr noshade class=wikiline size=1>
-from the <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>'s page:<br>
-(originally from the <a href="robowiki?RoboRumble/RankingChat" class=wikipagelink>RoboRumble/RankingChat</a> discussion) 
+from the <a href="robowiki@GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>'s page:<br>
+(originally from the <a href="robowiki@RoboRumble/RankingChat" class=wikipagelink>RoboRumble/RankingChat</a> discussion) 
 <p>
 As for weighting the bins in a GF gun... When I was first building my GF gun, I tried coming up with a good concept of picking the angle to shoot at. (This isn't really the same as what you were mentioning, but it kindof applies.) Anyway, at the time, just shooting at the highest bin seemed a little too simple to me to actually work properly (the KISS principle usually hates me (that sounds wrong on multiple levels... lol)). Anyway, so I figured, how about I pick, say, the top 3 peaks in the graph, then do a weighted random selection of the 3. Of course, this is of no real use. Say you have 5 angle bins (I know it's more like 30, but bear with me). 3 of these are empty, bin 'a' has 20 hits, and bin 'b' has 10 hits. Thus 2/3 of the time, the enemy is found at 'a', and 1/3 of the time the enemy is found at 'b'. With a weighted randomization, 2/3 of the time it chooses the 'a' bin, and 1/3 of the time it chooses the 'b' bin. Mathematically, this adds up to 1/2 (or 5/9, I forget) chance of hitting. But just shooting at the highest bin gives you a 2/3 chance of hitting! After more work I ended up just assuming that, provided the distribution of angles is consistent, your probability of hitting the enemy cannot exceed the probability of hitting by always firing at the highest bin. There's my obvious conjecture about GF guns : ). I'm sure there's a mathematical proof for it, but I'm really quite sick of math for a while. There's my blurb on GF guns. I'm going to bed : ) -- Vuen 
 <p>
-Shooting at the highest bin might work very well. But I think there are situations where it can be wiser to shoot at the densest part of the curve rather than at the peak. This is what <a href="robowiki?VisitCountStats/Dynamic" class=wikipagelink>VisitCountStats/Dynamic</a> is about. I have yet to prove that it works though since I have this bug in <a href="robowiki?GloomyDark" class=wikipagelink>GloomyDark</a>... -- PEZ 
+Shooting at the highest bin might work very well. But I think there are situations where it can be wiser to shoot at the densest part of the curve rather than at the peak. This is what <a href="robowiki@VisitCountStats/Dynamic" class=wikipagelink>VisitCountStats/Dynamic</a> is about. I have yet to prove that it works though since I have this bug in <a href="robowiki@GloomyDark" class=wikipagelink>GloomyDark</a>... -- PEZ 
 <p>
-Jekyl use's a simplified kernel density estimator to find the "densest" part of the curve. My implementation of the estimator (called a nieve estimator) buckets a guess factor with some number of neighboring bins that surround it (left and right). I then count all occurances that happen with that range and compare this with all other such "windows" to arrive at the window with the highest probability of occurance. I have implemented it in such a way that I can dynamically adjust the window size on the fly. Currently I use a large window for close range (where it is possible for guess factors to overlap) and a smaller window at longer ranges (where they are less likely to overlap). One un-intended side effect of this is that you need to come up with some algorithm for handling the edges and near edges (-1, +1) as they have no||few left||right neighbors. This tends to concentrate your fire more toward the center. Now that I type this I wonder if this was the reason for <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> 1.91 and lower to default firing at +1/-1 when a target was beyond some set distance. Paul, care to share? A yes or no answer (addressing the +1/-1 statement) is enough for me. -- jim 
+Jekyl use's a simplified kernel density estimator to find the "densest" part of the curve. My implementation of the estimator (called a nieve estimator) buckets a guess factor with some number of neighboring bins that surround it (left and right). I then count all occurances that happen with that range and compare this with all other such "windows" to arrive at the window with the highest probability of occurance. I have implemented it in such a way that I can dynamically adjust the window size on the fly. Currently I use a large window for close range (where it is possible for guess factors to overlap) and a smaller window at longer ranges (where they are less likely to overlap). One un-intended side effect of this is that you need to come up with some algorithm for handling the edges and near edges (-1, +1) as they have no||few left||right neighbors. This tends to concentrate your fire more toward the center. Now that I type this I wonder if this was the reason for <a href="robowiki@SandboxDT" class=wikipagelink>SandboxDT</a> 1.91 and lower to default firing at +1/-1 when a target was beyond some set distance. Paul, care to share? A yes or no answer (addressing the +1/-1 statement) is enough for me. -- jim 
 <p>
 I believe DT fired at +1.0 when the distance array was out of bounds - in normal battles this never happened because I measure distance as bullet flight time, and over long distances I used fast bullets or no bullets at all. Then the movement challenges came requiring DT to fire 3.0 bullets, and the bug was discovered. -- Paul 
 <p>
@@ -140,7 +140,7 @@ Ah, thanks Paul. I'll change its smoothing now to set the standard deviation to 
 <p>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=DataSmoothing" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=DataSmoothing">View other revisions</a><br>Last edited December 22, 2007 0:29 EST by <a href="robowiki?AaronR" title="ID 12875 from 28.173.33.65.cfl.res.rr.com">AaronR</a> <a href="robowiki?action=browse&diff=1&id=DataSmoothing">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=DataSmoothing" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=DataSmoothing">View other revisions</a><br>Last edited December 22, 2007 0:29 EST by <a href="robowiki@AaronR" title="ID 12875 from 28.173.33.65.cfl.res.rr.com">AaronR</a> <a href="robowiki@action=browse&diff=1&id=DataSmoothing">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

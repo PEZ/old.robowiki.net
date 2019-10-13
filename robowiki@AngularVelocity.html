@@ -3,50 +3,50 @@
 <META NAME='KEYWORDS' CONTENT='Angular, Velocity'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=AngularVelocity">AngularVelocity</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=AngularVelocity">AngularVelocity</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext>How many radians the opponent is moving relative to you per tick.
 <p>
 Equal to the enemy's lateral velocity divided by their distance from you.
 <p>
 Examples:
 <p>
-An enemy 100 units away is driving forwards perpendicular to you at 8 units / tick. They are going counterclockwise around you.  Their <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a> is -8 since they are going counterclockwise. Their <a href="robowiki?AngularVelocity" class=wikipagelink>AngularVelocity</a> is -.08.
+An enemy 100 units away is driving forwards perpendicular to you at 8 units / tick. They are going counterclockwise around you.  Their <a href="robowiki@LateralVelocity" class=wikipagelink>LateralVelocity</a> is -8 since they are going counterclockwise. Their <a href="robowiki@AngularVelocity" class=wikipagelink>AngularVelocity</a> is -.08.
 <UL >
 <li>Velocity: 8.0
-<li><a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a>: -8.0
-<li><a href="robowiki?AngularVelocity" class=wikipagelink>AngularVelocity</a>: -.08
+<li><a href="robowiki@LateralVelocity" class=wikipagelink>LateralVelocity</a>: -8.0
+<li><a href="robowiki@AngularVelocity" class=wikipagelink>AngularVelocity</a>: -.08
 </UL>
 <p>
 <p>
-An enemy 200 units away is driving backwards towards you at 8 units / tick. They are going clockwise around you. They are 30 degrees off from going straight at you. Their velocity is -8 since they are moving backwards.  Their <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a> is +4, positive because they are moving clockwise and 4 because they are 30 degrees off from approaching you directly, and the sine of 30 degrees is .5. Their <a href="robowiki?AngularVelocity" class=wikipagelink>AngularVelocity</a> is .02.
+An enemy 200 units away is driving backwards towards you at 8 units / tick. They are going clockwise around you. They are 30 degrees off from going straight at you. Their velocity is -8 since they are moving backwards.  Their <a href="robowiki@LateralVelocity" class=wikipagelink>LateralVelocity</a> is +4, positive because they are moving clockwise and 4 because they are 30 degrees off from approaching you directly, and the sine of 30 degrees is .5. Their <a href="robowiki@AngularVelocity" class=wikipagelink>AngularVelocity</a> is .02.
 <UL >
 <li>Velocity: -8.0
-<li><a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a>: 4.0
-<li><a href="robowiki?AngularVelocity" class=wikipagelink>AngularVelocity</a>: .02
+<li><a href="robowiki@LateralVelocity" class=wikipagelink>LateralVelocity</a>: 4.0
+<li><a href="robowiki@AngularVelocity" class=wikipagelink>AngularVelocity</a>: .02
 </UL>
 <p>
 How to calculate:
 <p>
 <PRE >
- Velocity: scannedRobotEvent<a href="robowiki?action=edit&id=RobotEvent" class=wikipageedit>?</a>.getVelocity()
- <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a>: velocity * Math.sin(scannedRobotEvent<a href="robowiki?action=edit&id=RobotEvent" class=wikipageedit>?</a>.get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>() - scannedRobotEvent<a href="robowiki?action=edit&id=RobotEvent" class=wikipageedit>?</a>.getBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a>() + get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>())
- <a href="robowiki?AngularVelocity" class=wikipagelink>AngularVelocity</a>: lateralVelocity / scannedRobotEvent<a href="robowiki?action=edit&id=RobotEvent" class=wikipageedit>?</a>.getDistance()
+ Velocity: scannedRobotEvent<a href="robowiki@action=edit&id=RobotEvent" class=wikipageedit>?</a>.getVelocity()
+ <a href="robowiki@LateralVelocity" class=wikipagelink>LateralVelocity</a>: velocity * Math.sin(scannedRobotEvent<a href="robowiki@action=edit&id=RobotEvent" class=wikipageedit>?</a>.get<a href="robowiki@HeadingRadians" class=wikipagelink>HeadingRadians</a>() - scannedRobotEvent<a href="robowiki@action=edit&id=RobotEvent" class=wikipageedit>?</a>.getBearingRadians<a href="robowiki@action=edit&id=BearingRadians" class=wikipageedit>?</a>() + get<a href="robowiki@HeadingRadians" class=wikipagelink>HeadingRadians</a>())
+ <a href="robowiki@AngularVelocity" class=wikipagelink>AngularVelocity</a>: lateralVelocity / scannedRobotEvent<a href="robowiki@action=edit&id=RobotEvent" class=wikipageedit>?</a>.getDistance()
 </PRE>
 <p>
 <p>
 <hr noshade class=wikiline size=1>
 <H4>Questions</H4>
 
-If you are segmenting on lateral velocity and distance already this isn't providng any more information, right? Well depending on the exact buckets I guess. But it could help reduce those two into one segementation (but not fully)? -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+If you are segmenting on lateral velocity and distance already this isn't providng any more information, right? Well depending on the exact buckets I guess. But it could help reduce those two into one segementation (but not fully)? -- <a href="robowiki@Pulsar" class=wikipagelink>Pulsar</a>
 <p>
-I don't really understand the question asked here. I doubt using angular velocity would really allow you to reduce segmentation though. If you don't have the distance segmentation there's instead the risk that you get quite polluted data buckets I think. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+I don't really understand the question asked here. I doubt using angular velocity would really allow you to reduce segmentation though. If you don't have the distance segmentation there's instead the risk that you get quite polluted data buckets I think. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Well I wasn't very clear I guess. I'm trying to concentrate on writing a bot but just end up reading more and more, testing and watching. Trying roborumble etc etc Then it's time for sleep and work :) Let me rephrase the question/statement evne though it's late and I might make it worse! Let's say you have your data segmented into distance and lateral velocity. If you would add a segment of let's say x=distance*latervelocity that would be meaningless as that is what you are already doing but even more segmented. Division should amount to the same thing, sort of. Am I making any sense? -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+Well I wasn't very clear I guess. I'm trying to concentrate on writing a bot but just end up reading more and more, testing and watching. Trying roborumble etc etc Then it's time for sleep and work :) Let me rephrase the question/statement evne though it's late and I might make it worse! Let's say you have your data segmented into distance and lateral velocity. If you would add a segment of let's say x=distance*latervelocity that would be meaningless as that is what you are already doing but even more segmented. Division should amount to the same thing, sort of. Am I making any sense? -- <a href="robowiki@Pulsar" class=wikipagelink>Pulsar</a>
 <p>
-Yes, I totally agree. I tend to segment on primitive data and let the more sophisticated segmentations sort them self out in this matrix. Like I segment on velocity and last_tick_velocity instead of segmenting on acceleration. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Yes, I totally agree. I tend to segment on primitive data and let the more sophisticated segmentations sort them self out in this matrix. Like I segment on velocity and last_tick_velocity instead of segmenting on acceleration. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=AngularVelocity" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=AngularVelocity">View other revisions</a><br>Last edited April 26, 2004 21:25 EST by <a href="robowiki?PEZ" title="ID 2163 from 192.168.0.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=AngularVelocity">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=AngularVelocity" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=AngularVelocity">View other revisions</a><br>Last edited April 26, 2004 21:25 EST by <a href="robowiki@PEZ" title="ID 2163 from 192.168.0.xxx">PEZ</a> <a href="robowiki@action=browse&diff=1&id=AngularVelocity">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

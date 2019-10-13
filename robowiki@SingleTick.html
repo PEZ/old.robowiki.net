@@ -3,8 +3,8 @@
 <META NAME='KEYWORDS' CONTENT='Single, Tick'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=SingleTick">SingleTick</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext>An open-source, bare-bones implementation of <a href="robowiki?PatternMatching/SingleTick" class=wikipagelink>Single Tick Pattern Matching</a>.
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=SingleTick">SingleTick</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>An open-source, bare-bones implementation of <a href="robowiki@PatternMatching/SingleTick" class=wikipagelink>Single Tick Pattern Matching</a>.
 <pre>
 package simonton.tutorial;
 
@@ -247,16 +247,16 @@ class LRUMap&lt;K, T&gt; extends LinkedHashMap&lt;K, T&gt; {
 }
 </pre>
 <hr noshade class=wikiline size=1>
-Well, there it is.  Not a great performer, but provides the skeleton used in <a href="robowiki?WeeklongObsession" class=wikipagelink>WeeklongObsession</a> and <a href="robowiki?WeeksOnEnd" class=wikipagelink>WeeksOnEnd</a>.  To give you some ideas how to improve its performance, here is what <a href="robowiki?WeeklongObsession" class=wikipagelink>WeeklongObsession</a> has modified:
+Well, there it is.  Not a great performer, but provides the skeleton used in <a href="robowiki@WeeklongObsession" class=wikipagelink>WeeklongObsession</a> and <a href="robowiki@WeeksOnEnd" class=wikipagelink>WeeksOnEnd</a>.  To give you some ideas how to improve its performance, here is what <a href="robowiki@WeeklongObsession" class=wikipagelink>WeeklongObsession</a> has modified:
 <p>
 <UL >
 <li> As soon as a predicted position is out-of-bounds, it simulates a wall hit in the predicted history, so that it 1) will not shoot toward a position that is out-of-bounds and 2) predicts bots that bounce off walls <i>very</i> nicely.
 <li> Will not return a step that must have come from a wall hit from the pattern matcher.
 <li> Keeps track of every 2 degrees change in heading, instead of every degree. This halves the size of the frequency tables, which almost halves the memory it needs (well ... actually, almost doubles the number patterns that it tracks).
-<li> Matches on <i>change</i> in velocity instead of velocity.  This allows the frequency tables to be drasticly shortened.  In fact <a href="robowiki?WeeklongObsession" class=wikipagelink>WeeklongObsession</a> doesn't need to use an LRUMap at all for 35 round battles, it fits them all into about 150 MB (whereas <a href="robowiki?SingleTick" class=wikipagelink>SingleTick</a> fills that much in less than 5 rounds). You have to be careful with this, though, to prevent predicting out-of-control velocities!
+<li> Matches on <i>change</i> in velocity instead of velocity.  This allows the frequency tables to be drasticly shortened.  In fact <a href="robowiki@WeeklongObsession" class=wikipagelink>WeeklongObsession</a> doesn't need to use an LRUMap at all for 35 round battles, it fits them all into about 150 MB (whereas <a href="robowiki@SingleTick" class=wikipagelink>SingleTick</a> fills that much in less than 5 rounds). You have to be careful with this, though, to prevent predicting out-of-control velocities!
 </UL>
 <p>
-<a href="robowiki?WeeksOnEnd" class=wikipagelink>WeeksOnEnd</a> adds one further improvement:
+<a href="robowiki@WeeksOnEnd" class=wikipagelink>WeeksOnEnd</a> adds one further improvement:
 <p>
 <UL >
 <li> Folds the pattern matching in half, so that it records &amp; predicts backward movement as if it were forward movement. This is a bit more memory efficient, and learns most enemy movements faster.
@@ -267,14 +267,14 @@ Lifelong obsession adds the following:
 <UL >
 <li> Segmenting (on the distance to the enemy and the enemy's forward distance to a wall).
 <li> Folding the pattern matcher in half again, so that it records &amp; predicts counterclockwise movement as if it were clockwise movement.
-<li> Using custom classes instead of Strings to improve memory &amp; execution time.  This actually improved things enough to safely run 2 single-tick guns in a VG array, though <a href="robowiki?LifelongObsession" class=wikipagelink>LifelongObsession</a> does not do so, except in the TC2K6.
+<li> Using custom classes instead of Strings to improve memory &amp; execution time.  This actually improved things enough to safely run 2 single-tick guns in a VG array, though <a href="robowiki@LifelongObsession" class=wikipagelink>LifelongObsession</a> does not do so, except in the TC2K6.
 </UL>
 <p>
 <hr noshade class=wikiline size=1>
 <H4>Comments, questions, feedback:</H4>
 
 <p>
-If you leave questions here, I'll try to answer them by adding comments in the code.  --<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+If you leave questions here, I'll try to answer them by adding comments in the code.  --<a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <hr noshade class=wikiline size=1>
 Too sad this code can't be compiled by Jikes. :( I turned on Eclipse SDK to compile this :)
 <p>
@@ -287,9 +287,9 @@ I think using maximum turning depending on a velocity can improve correctness a 
 ...
 </pre>
 <p>
--- <a href="robowiki?Stelokim" class=wikipagelink>Stelokim</a>
+-- <a href="robowiki@Stelokim" class=wikipagelink>Stelokim</a>
 <p>
-No, because the maximum turn rate is determined by the bot's velocity LAST tick (since, internally, the bot turns before it moves).  That check in the encode method is really only to catch when a symbol would be out-of-bounds, and cause an <tt>ArrayIndexOutOfBoundsException<a href="robowiki?action=edit&id=ArrayIndexOutOfBoundsException" class=wikipageedit>?</a></tt> when trying to enter it into a frequency table.  Given 100% radar lock this is impossible except when <tt>lastEnemyHeading<a href="robowiki?action=edit&id=EnemyHeading" class=wikipageedit>?</a></tt> is from a previous round.  If the enemy bot <i>happens</i> to start a round facing almost the same direction as the end of the last round, the check in the <tt>encode</tt> method may not catch it, causing a bogus symbol in the pattern matcher.  I think this would be both rare and negligible, but you could replace the <tt>if</tt> statement in <tt>encode</tt> with a flag like this (setting it to <tt>true</tt> at the beginning of the <tt>run</tt> method) to prevent it:
+No, because the maximum turn rate is determined by the bot's velocity LAST tick (since, internally, the bot turns before it moves).  That check in the encode method is really only to catch when a symbol would be out-of-bounds, and cause an <tt>ArrayIndexOutOfBoundsException<a href="robowiki@action=edit&id=ArrayIndexOutOfBoundsException" class=wikipageedit>?</a></tt> when trying to enter it into a frequency table.  Given 100% radar lock this is impossible except when <tt>lastEnemyHeading<a href="robowiki@action=edit&id=EnemyHeading" class=wikipageedit>?</a></tt> is from a previous round.  If the enemy bot <i>happens</i> to start a round facing almost the same direction as the end of the last round, the check in the <tt>encode</tt> method may not catch it, causing a bogus symbol in the pattern matcher.  I think this would be both rare and negligible, but you could replace the <tt>if</tt> statement in <tt>encode</tt> with a flag like this (setting it to <tt>true</tt> at the beginning of the <tt>run</tt> method) to prevent it:
 <pre>
 		// memorize.
 		double enemyH = e.getHeadingRadians();
@@ -306,7 +306,7 @@ No, because the maximum turn rate is determined by the bot's velocity LAST tick 
 </pre>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=SingleTick" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=SingleTick">View other revisions</a><br>Last edited March 26, 2007 14:25 EST by <a href="robowiki?Simonton" title="ID 7817 from technisource-router.mtec.mtu.edu">Simonton</a> <a href="robowiki?action=browse&diff=1&id=SingleTick">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=SingleTick" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=SingleTick">View other revisions</a><br>Last edited March 26, 2007 14:25 EST by <a href="robowiki@Simonton" title="ID 7817 from technisource-router.mtec.mtu.edu">Simonton</a> <a href="robowiki@action=browse&diff=1&id=SingleTick">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

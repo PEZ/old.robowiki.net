@@ -3,8 +3,8 @@
 <META NAME='KEYWORDS' CONTENT='Trigonometry, Intersection'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Intersection">Trigonometry/Intersection</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Trigonometry" class=wikipagelink>Trigonometry</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext>For finding out where (if indeed) a line intersects a given shape <a href="robowiki?Nano" class=wikipagelink>Nano</a> made us these functions:
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/Intersection">Trigonometry/Intersection</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Trigonometry" class=wikipagelink>Trigonometry</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>For finding out where (if indeed) a line intersects a given shape <a href="robowiki@Nano" class=wikipagelink>Nano</a> made us these functions:
 <pre>
 	private static final int TRACE_DEPTH = 16;
 	
@@ -30,9 +30,9 @@
 			return findIntersection(new Line2D.Double(middle, line.getP2()), shape, depth + 1);
 	}
 </pre>
-This is completely untested, but at least you will probably be able to fix it where it is broken.  It should provide reasonable accuracy, though with a high computational cost, as it is merely a binary search.  It should recurse 0 times if the line lies entirely inside or outside the shape, and should recurse between TRACE_DEPTH and 2 * TRACE_DEPTH times otherwise, with an average of 1.5 * TRACE_DEPTH (that is, 3 * TRACE_DEPTH calls to contains()). -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+This is completely untested, but at least you will probably be able to fix it where it is broken.  It should provide reasonable accuracy, though with a high computational cost, as it is merely a binary search.  It should recurse 0 times if the line lies entirely inside or outside the shape, and should recurse between TRACE_DEPTH and 2 * TRACE_DEPTH times otherwise, with an average of 1.5 * TRACE_DEPTH (that is, 3 * TRACE_DEPTH calls to contains()). -- <a href="robowiki@Nano" class=wikipagelink>nano</a>
 <hr noshade class=wikiline size=1>
-In my computer graphics class, we actually discussed an algorithm like <a href="robowiki?Nano" class=wikipagelink>nano</a>'s for line clipping.  Of course, it can just as easily be done iteratively. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+In my computer graphics class, we actually discussed an algorithm like <a href="robowiki@Nano" class=wikipagelink>nano</a>'s for line clipping.  Of course, it can just as easily be done iteratively. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
 So true, and the iterative version can use half of the calls to Shape.contains().  It should be quite a bit faster:
 <pre>
@@ -57,18 +57,18 @@ So true, and the iterative version can use half of the calls to Shape.contains()
 		return new Point2D.Double((line.getX1() + line.getX2()) / 2, (line.getY1() + line.getY2()) / 2);
 	}
 </pre>
-Again, it's untested.  The best I can say is that I read through it quickly after I finished it and it seems to be all there. :) -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+Again, it's untested.  The best I can say is that I read through it quickly after I finished it and it seems to be all there. :) -- <a href="robowiki@Nano" class=wikipagelink>nano</a>
 <p>
-I edited it again to change the "else if" into an "else", as the second test was unnecessary.  If the whole line intersects the shape, than either one half of it or the other intersects.  This again decreases the number of Shape.contains() calls necessary.  I also simplified the code by removing a lot of unnecessary boolean saving.  -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+I edited it again to change the "else if" into an "else", as the second test was unnecessary.  If the whole line intersects the shape, than either one half of it or the other intersects.  This again decreases the number of Shape.contains() calls necessary.  I also simplified the code by removing a lot of unnecessary boolean saving.  -- <a href="robowiki@Nano" class=wikipagelink>nano</a>
 <p>
-That looks much nicer. :-) Would it be better of worse to decided when to stop by checking if the guessed intersection and the previously guessed intersection are within a certain distance of eachother? It would stop needless extra iterations, and could still be stopped after TRACE_DEPTH iterations, although it would mean an extra variable, and a call to distance() for each iteration. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+That looks much nicer. :-) Would it be better of worse to decided when to stop by checking if the guessed intersection and the previously guessed intersection are within a certain distance of eachother? It would stop needless extra iterations, and could still be stopped after TRACE_DEPTH iterations, although it would mean an extra variable, and a call to distance() for each iteration. -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-Yes, I thought of that, but decided it wasn't really worth it.  This version has an accuracy that is 1/65536th the length of the line.  That's fairly accurate. :) --<a href="robowiki?Nano" class=wikipagelink>nano</a>
+Yes, I thought of that, but decided it wasn't really worth it.  This version has an accuracy that is 1/65536th the length of the line.  That's fairly accurate. :) --<a href="robowiki@Nano" class=wikipagelink>nano</a>
 <p>
-Is it?  I hadn't done the maths.  I think i'll let you off then. ;-) -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+Is it?  I hadn't done the maths.  I think i'll let you off then. ;-) -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Trigonometry" class=wikipagelink>Trigonometry</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=Trigonometry/Intersection" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Trigonometry/Intersection">View other revisions</a><br>Last edited December 24, 2003 22:34 EST by <a href="robowiki?Tango" title="ID 1197 from webcacheH09b.cache.pol.co.uk">Tango</a> <a href="robowiki?action=browse&diff=1&id=Trigonometry/Intersection">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Trigonometry" class=wikipagelink>Trigonometry</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=Trigonometry/Intersection" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=Trigonometry/Intersection">View other revisions</a><br>Last edited December 24, 2003 22:34 EST by <a href="robowiki@Tango" title="ID 1197 from webcacheH09b.cache.pol.co.uk">Tango</a> <a href="robowiki@action=browse&diff=1&id=Trigonometry/Intersection">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

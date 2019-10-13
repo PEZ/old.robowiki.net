@@ -3,12 +3,12 @@
 <META NAME='KEYWORDS' CONTENT='Segmentation, Best, Segment'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/BestSegment">Segmentation/BestSegment</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext>Given a VisitCount<a href="robowiki?action=edit&id=VisitCount" class=wikipageedit>?</a> array, when it comes time to segment you need to be able to choose the division that give you the most bang for your buck.  The main goal is to maximize hit percentage, but you also need to take into account the best segmenations for future divisions.  The three main strategies would be
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/BestSegment">Segmentation/BestSegment</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Segmentation" class=wikipagelink>Segmentation</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Given a VisitCount<a href="robowiki@action=edit&id=VisitCount" class=wikipageedit>?</a> array, when it comes time to segment you need to be able to choose the division that give you the most bang for your buck.  The main goal is to maximize hit percentage, but you also need to take into account the best segmenations for future divisions.  The three main strategies would be
 <p>
-<em>Entropy</em> -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>'s description
+<em>Entropy</em> -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>'s description
 <p>
-I'm reading about learning decision trees and the ID3 algorithm for doing it in my machine learning class right now at school, and I saw a lot of ideas that seem relevant to guess-factor targeting, flattening and segmentation.   First is the idea of Entropy.  A set of data has an entropy from zero to log2(c) where c is the number of possible values.  It is zero if all the data has the same value, and it is log2(c) if all the possible values are evenly used.  In other words, entropy is like a measurement for flatness.  If we find the entropy of a given set of data and divide it by the max entropy, we can get a sort of normalized entropy, where our goal in movement would be to have an entropy of 1 in every segment (<a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a> has an entropy of zero on its profile).  The entropy of a set of samples is the sum of -p*log2(p) for each possible output, where p is the probability of that output within the set.  A code example, samples could be thought of as a segment:
+I'm reading about learning decision trees and the ID3 algorithm for doing it in my machine learning class right now at school, and I saw a lot of ideas that seem relevant to guess-factor targeting, flattening and segmentation.   First is the idea of Entropy.  A set of data has an entropy from zero to log2(c) where c is the number of possible values.  It is zero if all the data has the same value, and it is log2(c) if all the possible values are evenly used.  In other words, entropy is like a measurement for flatness.  If we find the entropy of a given set of data and divide it by the max entropy, we can get a sort of normalized entropy, where our goal in movement would be to have an entropy of 1 in every segment (<a href="robowiki@SittingDuck" class=wikipagelink>SittingDuck</a> has an entropy of zero on its profile).  The entropy of a set of samples is the sum of -p*log2(p) for each possible output, where p is the probability of that output within the set.  A code example, samples could be thought of as a segment:
 <p>
 <pre>
 	public static double entropy(int[] samples)
@@ -65,9 +65,9 @@ If you apply this recursively on some overly complex set of data, you should be 
 Upside: counts the overall spikiness of the segment
 Downside: does not always select the segment with the best hit percentage
 <p>
-<em>VisitCount<a href="robowiki?action=edit&id=VisitCount" class=wikipageedit>?</a></em> - <a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<em>VisitCount<a href="robowiki@action=edit&id=VisitCount" class=wikipageedit>?</a></em> - <a href="robowiki@Vic" class=wikipagelink>Vic</a>
 <p>
-The decision is a modified spikyness algorithm (as seen on the <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a> page), that returns a VisitsCovered<a href="robowiki?action=edit&id=VisitsCovered" class=wikipageedit>?</a> number.
+The decision is a modified spikyness algorithm (as seen on the <a href="robowiki@WikiTargeting" class=wikipagelink>WikiTargeting</a> page), that returns a VisitsCovered<a href="robowiki@action=edit&id=VisitsCovered" class=wikipageedit>?</a> number.
 <p>
 suppose we have a Node that needs to be split, containing the following GF bins:
 (The numbers represent visits, the ^ represents bins used for targeting, taking botwidth into account)
@@ -84,7 +84,7 @@ suppose we have a Node that needs to be split, containing the following GF bins:
 [999999998877665]
     ^^^
 </pre>
-This node is obviously very flat. Suppose botwidth covers 3 bins. VisitsCovered<a href="robowiki?action=edit&id=VisitsCovered" class=wikipageedit>?</a> will be 9+9+9=27, which in this case is not very good.
+This node is obviously very flat. Suppose botwidth covers 3 bins. VisitsCovered<a href="robowiki@action=edit&id=VisitsCovered" class=wikipageedit>?</a> will be 9+9+9=27, which in this case is not very good.
 Now suppose our algorithm finds that one of the many possible splitting parameters results in these two child nodes:
 <pre>
 [               ]
@@ -110,7 +110,7 @@ Now suppose our algorithm finds that one of the many possible splitting paramete
 [876543211223344]
  ^^^
 </pre>
-Now we have one VisitsCovered<a href="robowiki?action=edit&id=VisitsCovered" class=wikipageedit>?</a> number of 7+8+7 = 22, and one of 8+7+6 = 21, so we have a total of 22+21 = 43. The algorithm will have found that 43 is much better than 27 (the VisitsCovered<a href="robowiki?action=edit&id=VisitsCovered" class=wikipageedit>?</a> of the parent node). Maybe some other splits have resulted in, say, total VisitsCovered<a href="robowiki?action=edit&id=VisitsCovered" class=wikipageedit>?</a> of 29, 35, 28, 30 etc. Now the algorithm will decide that our example split is the most efficient one, since it will cover most visits.
+Now we have one VisitsCovered<a href="robowiki@action=edit&id=VisitsCovered" class=wikipageedit>?</a> number of 7+8+7 = 22, and one of 8+7+6 = 21, so we have a total of 22+21 = 43. The algorithm will have found that 43 is much better than 27 (the VisitsCovered<a href="robowiki@action=edit&id=VisitsCovered" class=wikipageedit>?</a> of the parent node). Maybe some other splits have resulted in, say, total VisitsCovered<a href="robowiki@action=edit&id=VisitsCovered" class=wikipageedit>?</a> of 29, 35, 28, 30 etc. Now the algorithm will decide that our example split is the most efficient one, since it will cover most visits.
 <p>
 Upside: finds the highest probability selection
 Downside: Not very effective against flat profiles
@@ -126,7 +126,7 @@ Downside: Population sensitive
 While the Hit Percentage method is the most promising, a combination of the methods could yield the best results
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=Segmentation/BestSegment" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Segmentation/BestSegment">View other revisions</a><br>Last edited April 7, 2006 4:43 EST by <a href="robowiki?Voidious" title="ID 6343 from resnet216-83.resnet.buffalo.edu">Voidious</a> <a href="robowiki?action=browse&diff=1&id=Segmentation/BestSegment">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Segmentation" class=wikipagelink>Segmentation</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=Segmentation/BestSegment" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=Segmentation/BestSegment">View other revisions</a><br>Last edited April 7, 2006 4:43 EST by <a href="robowiki@Voidious" title="ID 6343 from resnet216-83.resnet.buffalo.edu">Voidious</a> <a href="robowiki@action=browse&diff=1&id=Segmentation/BestSegment">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

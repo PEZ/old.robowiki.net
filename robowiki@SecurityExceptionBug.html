@@ -3,17 +3,17 @@
 <META NAME='KEYWORDS' CONTENT='JRE, 1.4.2, Security, Exception, Bug'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h3>(redirected from <a href="robowiki?action=edit&id=SecurityExceptionBug" class=wikipageedit>SecurityExceptionBug</a>)</h3><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=JRE+1.4.2+SecurityException+Bug">JRE 1.4.2 SecurityException Bug</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h3>(redirected from <a href="robowiki@action=edit&id=SecurityExceptionBug" class=wikipageedit>SecurityExceptionBug</a>)</h3><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=JRE+1.4.2+SecurityException+Bug">JRE 1.4.2 SecurityException Bug</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext>This page was created in order to organize the info about this bug, since it's all spread around this site.
 You can find people talking about it in:
-<a href="robowiki?RoboRumble/ReportedProblems" class=wikipagelink>RoboRumble/ReportedProblems</a><br>
-<a href="robowiki?CompressedSerialization" class=wikipagelink>CompressedSerialization</a><br>
-<a href="robowiki?MSWindows" class=wikipagelink>MSWindows</a><br>
+<a href="robowiki@RoboRumble/ReportedProblems" class=wikipagelink>RoboRumble/ReportedProblems</a><br>
+<a href="robowiki@CompressedSerialization" class=wikipagelink>CompressedSerialization</a><br>
+<a href="robowiki@MSWindows" class=wikipagelink>MSWindows</a><br>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
 <b>The Bug:</b><br> 
-Under JRE 1.4.2.x, Any bot trying to access data from the disk "gains" <b>eventually</b> a SecurityException<a href="robowiki?action=edit&id=SecurityException" class=wikipageedit>?</a> that disables the bot even if it's (the Exception) caugth. 
+Under JRE 1.4.2.x, Any bot trying to access data from the disk "gains" <b>eventually</b> a SecurityException<a href="robowiki@action=edit&id=SecurityException" class=wikipageedit>?</a> that disables the bot even if it's (the Exception) caugth. 
 <p>
 <hr noshade class=wikiline size=1>
 <p>
@@ -24,43 +24,43 @@ Since it was working and now ain't no more...
 <p>
 <b>So what do we do?</b><br>
 <p>
-There is a possible solution posted at <a href="robowiki?MSWindows" class=wikipagelink>MSWindows</a> page:
+There is a possible solution posted at <a href="robowiki@MSWindows" class=wikipagelink>MSWindows</a> page:
 <p>
-There is a work around that has been posted for the file saving issue that applies to at least JDK 1.4.2_02. Install and chage the batch scripts that start any Robocode instance by adding <code>"-Dsun.io.useCanonCaches=false" (ie: java -Dsun.io.useCanonCaches=false -Xmx256M -jar robocode.jar)</code>. I have tested file savings with Roboleague, Robocode, and RR@H and they all seem to work (no Exceptions reported so far). -- <a href="robowiki?Sparafucil3" class=wikipagelink>Sparafucil3</a> (i think...)
+There is a work around that has been posted for the file saving issue that applies to at least JDK 1.4.2_02. Install and chage the batch scripts that start any Robocode instance by adding <code>"-Dsun.io.useCanonCaches=false" (ie: java -Dsun.io.useCanonCaches=false -Xmx256M -jar robocode.jar)</code>. I have tested file savings with Roboleague, Robocode, and RR@H and they all seem to work (no Exceptions reported so far). -- <a href="robowiki@Sparafucil3" class=wikipagelink>Sparafucil3</a> (i think...)
 <p>
-Now if we could figure out that old Serialization problem Paul had on the RR, we'd be set (think this would do it?) -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+Now if we could figure out that old Serialization problem Paul had on the RR, we'd be set (think this would do it?) -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-Robocode was reporting it as a "Security Exception" because as far as it was concerned you were trying to write a file outside of it's sand box. If you follow the link on the <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a> regarding this you will find that whats happening is that the JVM is having a hard time providing the correct file name (I specifically think it is having a hard time with mixed case words). Your bot then tries to write to a file that Robocode does not know about so it raises a security exception. If Paul was serializing to disk then I would be that this is the same issue he was having too. -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+Robocode was reporting it as a "Security Exception" because as far as it was concerned you were trying to write a file outside of it's sand box. If you follow the link on the <a href="robowiki@RobocodeRepository" class=wikipagelink>RobocodeRepository</a> regarding this you will find that whats happening is that the JVM is having a hard time providing the correct file name (I specifically think it is having a hard time with mixed case words). Your bot then tries to write to a file that Robocode does not know about so it raises a security exception. If Paul was serializing to disk then I would be that this is the same issue he was having too. -- <a href="robowiki@Sparafucil3" class=wikipagelink>jim</a>
 <p>
-No - the serialization problem I had/have was communicating between bots in a team - I could serialize to file ok.  but in order to send messages between bots reliably I had to covert a byte array to a string to send the message (and reverse the operation when recieving).  I think it was a hi/low byte probelm but there is a workaround.  --  <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+No - the serialization problem I had/have was communicating between bots in a team - I could serialize to file ok.  but in order to send messages between bots reliably I had to covert a byte array to a string to send the message (and reverse the operation when recieving).  I think it was a hi/low byte probelm but there is a workaround.  --  <a href="robowiki@Paul_Evans" class=wikipagelink>Paul Evans</a>
 <p>
-Yeah, so if it's purely a matter of file I/O, it probably doesn't help, because I think team messages just get serialized and deserialized through piped I/O streams. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+Yeah, so if it's purely a matter of file I/O, it probably doesn't help, because I think team messages just get serialized and deserialized through piped I/O streams. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-I forgot to mention that with <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a> I needed to modify the <code>launcher.properties</code> file. I changed the line <code>user.cmdline=</code> to <code>user.cmdline=-Dsun.io.useCanonCaches=false</code>. I think this file specifies properties to the launch of the robocode engine that it uses. Sorry about that. Also, RR@H still managed to freeze last night but it was after 50 iterations, which is 4 times more than I have ever managed to run before. -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+I forgot to mention that with <a href="robowiki@RoboLeague" class=wikipagelink>RoboLeague</a> I needed to modify the <code>launcher.properties</code> file. I changed the line <code>user.cmdline=</code> to <code>user.cmdline=-Dsun.io.useCanonCaches=false</code>. I think this file specifies properties to the launch of the robocode engine that it uses. Sorry about that. Also, RR@H still managed to freeze last night but it was after 50 iterations, which is 4 times more than I have ever managed to run before. -- <a href="robowiki@Sparafucil3" class=wikipagelink>jim</a>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
-I modified my batch file as explained above, I'm using java 1.4.1,  and I *still* get this bug. Help! Is there anything else I can do as a person who runs the RR@H client to stop this? Is there anything I can do as a bot author to prevent this bug from affecting their ratings? --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+I modified my batch file as explained above, I'm using java 1.4.1,  and I *still* get this bug. Help! Is there anything else I can do as a person who runs the RR@H client to stop this? Is there anything I can do as a bot author to prevent this bug from affecting their ratings? --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
-Did you modify the batch script that starts RR@H too? I have not had this problem except with bots that get downloaded by the RR@H client after it has been running. I think I have read elsewhere that this is an issue that Albert is aware of but can not fix. The only solution at this time is to restart. If the batch script were modified to restart if java stops a System.exit() could be added if anything is downloaded and then you should not see this anymore. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+Did you modify the batch script that starts RR@H too? I have not had this problem except with bots that get downloaded by the RR@H client after it has been running. I think I have read elsewhere that this is an issue that Albert is aware of but can not fix. The only solution at this time is to restart. If the batch script were modified to restart if java stops a System.exit() could be added if anything is downloaded and then you should not see this anymore. -- <a href="robowiki@Jim" class=wikipagelink>jim</a>
 <p>
-As a recent data saving bot author I took the extra effort to minimise the effect of this bug by only loading/saving files in the first and last round. For a very long time I ran the RR@H client without the bug workaround because I used java 1.3 in my main testing computer and wasn't aware of the implications of this bug. Anyway, the playing field is even, until there is a defenitive solution you'll have to weight the pros and cons of data saving. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+As a recent data saving bot author I took the extra effort to minimise the effect of this bug by only loading/saving files in the first and last round. For a very long time I ran the RR@H client without the bug workaround because I used java 1.3 in my main testing computer and wasn't aware of the implications of this bug. Anyway, the playing field is even, until there is a defenitive solution you'll have to weight the pros and cons of data saving. -- <a href="robowiki@ABC" class=wikipagelink>ABC</a>
 <p>
 ABC, if I load data at the end of round one after I've already won or lost, will that affect my score? --[[David Alves]
 <p>
-No, it won't. You will get disabled but your score will not be affected. One of Shadow's latest versions did save at the end of every round. It may affect your opponent's score tough, because any bullet still in the air is a potential kill for him. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+No, it won't. You will get disabled but your score will not be affected. One of Shadow's latest versions did save at the end of every round. It may affect your opponent's score tough, because any bullet still in the air is a potential kill for him. -- <a href="robowiki@ABC" class=wikipagelink>ABC</a>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
-if you are silly (like me) and copy/paste the above fix, then don't forget to get rid of the ? generated by the Wiki engine :D ...... --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+if you are silly (like me) and copy/paste the above fix, then don't forget to get rid of the ? generated by the Wiki engine :D ...... --<a href="robowiki@Vic" class=wikipagelink>Vic</a>
 <p>
-Anyone who finds <a href="robowiki?Vic" class=wikipagelink>Vic</a>'s remark peculiar should know that I have removed the questionmark he's talking about. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Anyone who finds <a href="robowiki@Vic" class=wikipagelink>Vic</a>'s remark peculiar should know that I have removed the questionmark he's talking about. =) -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-There goes my joke ;-) --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+There goes my joke ;-) --<a href="robowiki@Vic" class=wikipagelink>Vic</a>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
-Where do I add this fix for the RR client? In roborumble.bat? --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+Where do I add this fix for the RR client? In roborumble.bat? --<a href="robowiki@Vic" class=wikipagelink>Vic</a>
 <p>
 Yep. Just add "-Dsun.io.useCanonCaches=false" in any of yours .bat... Here is my roborumble.bat:
 <pre>
@@ -69,61 +69,61 @@ cd robots
 java -Dsun.io.useCanonCaches=false -Xmx256M -cp .;../robocode.jar;../codesize.jar; roborumble.RoboRumbleAtHome ./roborumble/roborumble.txt
 goto run
 </pre>
-It would be a good idea if the clients already had this... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+It would be a good idea if the clients already had this... -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 <p>
-Ok, thanx. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+Ok, thanx. --<a href="robowiki@Vic" class=wikipagelink>Vic</a>
 <p>
-Does this happen in 1.5? --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+Does this happen in 1.5? --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
-Good question. don´t know... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+Good question. don´t know... -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 <p>
 Downloaded and tested JRE 1.5 here. The result is even worst with it. It seems to happen 100% (10/10). So, the bots accessing files are geting disabled at least one round in JRE 1.5...<br>
-The "-Dsun.io.useCanonCaches=false" works fine and correct that issue also for 1.5. <b>@ALL: PLEASE UPDATE YOUR ROBORUMBLE.BAT FILES TO INCLUDE THE "-Dsun.io.useCanonCaches=false".</b> -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+The "-Dsun.io.useCanonCaches=false" works fine and correct that issue also for 1.5. <b>@ALL: PLEASE UPDATE YOUR ROBORUMBLE.BAT FILES TO INCLUDE THE "-Dsun.io.useCanonCaches=false".</b> -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 <p>
 Tested a lil better here, and it isnt 100%, but only eventually that it happens with JRE 1.5.<br>
 But happens.<br>
-Since i have no control in foreign´s .bat configuration, I have implemented a radical solution: a pull-the-pin-and-swallow-the-grenade strategy, idea inspirated in <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a> (credits to him). If <a href="robowiki?SS" class=wikipagelink>SS</a> is disabled trying to read data in the first round, it will activate a self-destruction mechanism, and self-disable in all other rounds also. Im counting on the server rejecting those 100% scoring that the enemies will get in this match.<br>
-So, if <a href="robowiki?SS" class=wikipagelink>SS</a> is getting disabled in your client, please update your roborumble.bat file as above. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>  
+Since i have no control in foreign´s .bat configuration, I have implemented a radical solution: a pull-the-pin-and-swallow-the-grenade strategy, idea inspirated in <a href="robowiki@Jonathan" class=wikipagelink>Jonathan</a> (credits to him). If <a href="robowiki@SS" class=wikipagelink>SS</a> is disabled trying to read data in the first round, it will activate a self-destruction mechanism, and self-disable in all other rounds also. Im counting on the server rejecting those 100% scoring that the enemies will get in this match.<br>
+So, if <a href="robowiki@SS" class=wikipagelink>SS</a> is getting disabled in your client, please update your roborumble.bat file as above. -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>  
 <p>
-Why don't you just stop reading and writing data? It must be less error prone than the above strategy. A strategy which reminds me of those Worms I used to play so much on my Dreamcast. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Why don't you just stop reading and writing data? It must be less error prone than the above strategy. A strategy which reminds me of those Worms I used to play so much on my Dreamcast. =) -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Because i think that data saving and mining can be also a valuable and valid strategy, and (mostly important:) im not prepared to throw away all my beautyfull data compression :). (I never played Worm, so i cant say about it...) -- <a href="robowiki?Axe" class=wikipagelink>Axe</a> 
+Because i think that data saving and mining can be also a valuable and valid strategy, and (mostly important:) im not prepared to throw away all my beautyfull data compression :). (I never played Worm, so i cant say about it...) -- <a href="robowiki@Axe" class=wikipagelink>Axe</a> 
 <p>
-But i can say that remembers me the Orson Scott Card book "Ender´s game"... If u havent read, u should (<a href="robowiki?Vic" class=wikipagelink>Vic</a> agree, right?)... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+But i can say that remembers me the Orson Scott Card book "Ender´s game"... If u havent read, u should (<a href="robowiki@Vic" class=wikipagelink>Vic</a> agree, right?)... -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 <p>
-<a href="robowiki?Paul" class=wikipagelink>Paul</a> agrees also. -- <a href="robowiki?Paul" class=wikipagelink>Paul</a>
+<a href="robowiki@Paul" class=wikipagelink>Paul</a> agrees also. -- <a href="robowiki@Paul" class=wikipagelink>Paul</a>
 <p>
-Thats enought for me. :) -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+Thats enought for me. :) -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 <p>
-@Axe: Have you tried wrapping the save in a try catch and simply catching the error rather than self destructing? Seems like this would at least allow you to continue. I feel the same as you do about saved data but I think your approach is a little too radical and runs the risk that you get a really poor score. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+@Axe: Have you tried wrapping the save in a try catch and simply catching the error rather than self destructing? Seems like this would at least allow you to continue. I feel the same as you do about saved data but I think your approach is a little too radical and runs the risk that you get a really poor score. -- <a href="robowiki@Jim" class=wikipagelink>jim</a>
 <p>
-Self destruction seems risky. Particularly when I constantly question why the ... the server is disregarding shut out battles anyway. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Self destruction seems risky. Particularly when I constantly question why the ... the server is disregarding shut out battles anyway. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-@<a href="robowiki?Jim" class=wikipagelink>Jim</a>: that SecurityException<a href="robowiki?action=edit&id=SecurityException" class=wikipageedit>?</a> even if it is caught disables your bot. (But if u know how to catch it without disabling the bot, pls tell me). @<a href="robowiki?PEZ" class=wikipagelink>PEZ</a> I think that one of the reasons for the server disregarding these results is to protect ranking against clients malfunction. At least thats my assumption... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+@<a href="robowiki@Jim" class=wikipagelink>Jim</a>: that SecurityException<a href="robowiki@action=edit&id=SecurityException" class=wikipageedit>?</a> even if it is caught disables your bot. (But if u know how to catch it without disabling the bot, pls tell me). @<a href="robowiki@PEZ" class=wikipagelink>PEZ</a> I think that one of the reasons for the server disregarding these results is to protect ranking against clients malfunction. At least thats my assumption... -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 <p>
-In what way could a client malfunction that would cause a shutout result? And couldn't the RR client itself set that environment option in run time instead of relying on the .bat file to do it? If someone looks at that I could tweak the server to accept results only from clients updated in this way. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+In what way could a client malfunction that would cause a shutout result? And couldn't the RR client itself set that environment option in run time instead of relying on the .bat file to do it? If someone looks at that I could tweak the server to accept results only from clients updated in this way. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Btw: I never said that this self-destruction is the best solution. The best solution is to have properly configured clients. But that is obviously out of my control... This is the <b>only</b> solution that i found. If someone come with other solution, ill be very gratefull. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a> 
+Btw: I never said that this self-destruction is the best solution. The best solution is to have properly configured clients. But that is obviously out of my control... This is the <b>only</b> solution that i found. If someone come with other solution, ill be very gratefull. -- <a href="robowiki@Axe" class=wikipagelink>Axe</a> 
 <p>
-Hmmm, I think I just proposed a solution? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Hmmm, I think I just proposed a solution? -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-I posted it in a edit conflict... That solution of yours is great. But how to assure that everybody is running the "good" client? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+I posted it in a edit conflict... That solution of yours is great. But how to assure that everybody is running the "good" client? -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 <p>
-I mean: this is the same solution of including it in the .bat. If everybody include it... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+I mean: this is the same solution of including it in the .bat. If everybody include it... -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 <p>
 Well, when the results are uploaded the client gives a version number. I could just make the server require the client to use a different version identifier than it uses today. That's the easy part. The tricky one might be to find out and implement the setting of that environment option at runtime. 
 <p>
 If you trusted everyone included the .bat change then you wouldn't make your bot swallow a granade with the pin pulled out, would you?
 <p>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Bull´s eye! -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+Bull´s eye! -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 <p>
-But it would be enought for me if everybody says that their environment are ok, an if we include this in the downloadable clients... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+But it would be enought for me if everybody says that their environment are ok, an if we include this in the downloadable clients... -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 <p>
-OK. But I know that I, for one, was bloody sure I was using that command line option in my clients. Until I checked yesterday. And I wasn't in the most often used one. Of cousre I do now, but anyway. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+OK. But I know that I, for one, was bloody sure I was using that command line option in my clients. Until I checked yesterday. And I wasn't in the most often used one. Of cousre I do now, but anyway. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <UL >
-<li> Thanks... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<li> Thanks... -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 </UL>
 <p>
 <hr noshade class=wikiline size=1>
@@ -154,10 +154,10 @@ catch (Exception ex) { }
 This sets the default value if it finds none set and can be executed multiple times without disabling any robot.
 The only problem could be if the flag were set to true when starting the VM - in which case the boolean value would be set to false.
 <p>
---EventHorizon<a href="robowiki?action=edit&id=EventHorizon" class=wikipageedit>?</a>
+--EventHorizon<a href="robowiki@action=edit&id=EventHorizon" class=wikipageedit>?</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=JRE_1.4.2_SecurityException_Bug" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=JRE_1.4.2_SecurityException_Bug">View other revisions</a><br>Last edited February 6, 2007 11:46 EST by <a href="robowiki?EventHorizon" title="ID 8922 from proxy5-5.adl2.internode.on.net">EventHorizon</a> <a href="robowiki?action=browse&diff=1&id=JRE_1.4.2_SecurityException_Bug">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=JRE_1.4.2_SecurityException_Bug" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=JRE_1.4.2_SecurityException_Bug">View other revisions</a><br>Last edited February 6, 2007 11:46 EST by <a href="robowiki@EventHorizon" title="ID 8922 from proxy5-5.adl2.internode.on.net">EventHorizon</a> <a href="robowiki@action=browse&diff=1&id=JRE_1.4.2_SecurityException_Bug">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

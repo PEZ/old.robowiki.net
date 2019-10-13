@@ -3,8 +3,8 @@
 <META NAME='KEYWORDS' CONTENT='Movement, Code, Snippet, Go, To'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/CodeSnippetGoTo">Movement/CodeSnippetGoTo</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Movement" class=wikipagelink>Movement</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext>If you ever find you need a function for moving to a specific point on the battle field, while not wasting too much time turning the robot around, use something like this (which is code from <a href="robowiki?Mako" class=wikipagelink>Mako</a>):
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/CodeSnippetGoTo">Movement/CodeSnippetGoTo</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Movement" class=wikipagelink>Movement</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>If you ever find you need a function for moving to a specific point on the battle field, while not wasting too much time turning the robot around, use something like this (which is code from <a href="robowiki@Mako" class=wikipagelink>Mako</a>):
 <pre>
     private void goTo(Point2D point) {
         double distance = location.distance(point);
@@ -25,7 +25,7 @@
 <p>
 It is assumed you keep your robots' position as a Point2D and call it "location". But it is reasonably simple to modify this to just use coordinates instead.
 <p>
-If you use it you'll find you want <a href="robowiki?WallAvoidance" class=wikipagelink>WallAvoidance</a> as well. I use this function for this:
+If you use it you'll find you want <a href="robowiki@WallAvoidance" class=wikipagelink>WallAvoidance</a> as well. I use this function for this:
 <pre>
     private void translateInsideField(Point2D point, double margin) {
         double X = Math.max(margin, Math.min(fieldRectangle.getWidth() - margin, point.getX()));
@@ -58,14 +58,14 @@ To be complete here's the absoluteBearing() and normalRelativeAngle() functions 
             return relativeAngle;
     }
 </pre>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 <hr noshade class=wikiline size=1>
-As this using setTurn and setAhead, doesn't that mean it will go round the corners at a curve, rather than stop and turn?  If so, doesn't that make the distance slightly too short? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+As this using setTurn and setAhead, doesn't that mean it will go round the corners at a curve, rather than stop and turn?  If so, doesn't that make the distance slightly too short? -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-Hang on, not just the distance, the angle too... -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+Hang on, not just the distance, the angle too... -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-Ok, i've just run a little test, and it seems to not be very acruate.  I may have a bug in the code, but i don't think so.  I'll put it here so you can check: <a href="robowiki?Movement/GoToTester" class=wikipagelink>/GoToTester</a>.  The results i got were:
+Ok, i've just run a little test, and it seems to not be very acruate.  I may have a bug in the code, but i don't think so.  I'll put it here so you can check: <a href="robowiki@Movement/GoToTester" class=wikipagelink>/GoToTester</a>.  The results i got were:
 <p>
 <pre>
 Going to:617.4033989160434, 192.59685274255
@@ -84,11 +84,11 @@ Going to:340.0873017231276, 256.2230939786768
 Got to: 113.23360477474912, 158.31503003203935
 </pre>
 <p>
-It seems to be very inconsistant.  The 1st move is almost perfect, but some are nowhere near.  This is part of the reason i think i may have a bug in the code. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+It seems to be very inconsistant.  The 1st move is almost perfect, but some are nowhere near.  This is part of the reason i think i may have a bug in the code. -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-I too think there's a bug in the goto-code. But not that huge. I often see my bots turning around very much, something that should be prevented by this function... As for your results I think it's because you don't take into account that both getturnremaining() and getdistanceremaining() can return negative numbers. In fact, they often do with this goto-function giving the movement commands. Take a look at <a href="robowiki?Movement/GoToBot" class=wikipagelink>/GoToBot</a> for a bot resembling your testingbot. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+I too think there's a bug in the goto-code. But not that huge. I often see my bots turning around very much, something that should be prevented by this function... As for your results I think it's because you don't take into account that both getturnremaining() and getdistanceremaining() can return negative numbers. In fact, they often do with this goto-function giving the movement commands. Take a look at <a href="robowiki@Movement/GoToBot" class=wikipagelink>/GoToBot</a> for a bot resembling your testingbot. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-I modified <a href="robowiki?GoToBot" class=wikipagelink>GoToBot</a> to get my testing bot, hence it having the same name.  I'll change the &gt;0 to !=0 and that should fix it, yes? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+I modified <a href="robowiki@GoToBot" class=wikipagelink>GoToBot</a> to get my testing bot, hence it having the same name.  I'll change the &gt;0 to !=0 and that should fix it, yes? -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
 With that change it is better, but still not perfect.  I guess that is the curved corners fault.
 <p>
@@ -113,11 +113,11 @@ Going to:321.2752173956358, 61.38191837847893
 Got to: 321.60480206159724, 61.271263456182965
 </pre>
 <p>
--- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+-- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-It's not supposed to be perfect. The shortcomings are discussed in a little more detail on the page <a href="robowiki?Movement/CodeSnippetBasicGoTo" class=wikipagelink>/CodeSnippetBasicGoTo</a>. But looking at your tests I think it looks close enough. What I do to make it more accurate is to keep the current destination as a member variable of the class and then keep calling goTo() (either in the run() method or when a robot is scanned) with that destination until <em>Math.abs(getDistanceRemaining()) &lt; ARRIVED_THRESHOLD</em>. --<a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+It's not supposed to be perfect. The shortcomings are discussed in a little more detail on the page <a href="robowiki@Movement/CodeSnippetBasicGoTo" class=wikipagelink>/CodeSnippetBasicGoTo</a>. But looking at your tests I think it looks close enough. What I do to make it more accurate is to keep the current destination as a member variable of the class and then keep calling goTo() (either in the run() method or when a robot is scanned) with that destination until <em>Math.abs(getDistanceRemaining()) &lt; ARRIVED_THRESHOLD</em>. --<a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Alright, Im planning on implementing a GoTo<a href="robowiki?action=edit&id=GoTo" class=wikipageedit>?</a> system for all of my movement (who knows if it will work).  My thought was to use a custom event system to handle accuracy, so that when goTo was called it would remove the previous custom event for goto and add a new one, and this new one would, in turn, call go to every time it was not in position.  But I am starting to confuse myself more when I try to implement it.  So how would I make a method, that when called would remove all custom events of a certain type, and then add a custom event of that type (well actually it would create a new object of type condition that would add itself as a custom event)?? -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+Alright, Im planning on implementing a GoTo<a href="robowiki@action=edit&id=GoTo" class=wikipageedit>?</a> system for all of my movement (who knows if it will work).  My thought was to use a custom event system to handle accuracy, so that when goTo was called it would remove the previous custom event for goto and add a new one, and this new one would, in turn, call go to every time it was not in position.  But I am starting to confuse myself more when I try to implement it.  So how would I make a method, that when called would remove all custom events of a certain type, and then add a custom event of that type (well actually it would create a new object of type condition that would add itself as a custom event)?? -- <a href="robowiki@Jokester" class=wikipagelink>Jokester</a>
 <p>
 Not that Jokester will see this answer maybe. But I would probably do something like this:
 <pre>
@@ -144,18 +144,18 @@ class GotoEvent extends Condition {
 </pre>
 Completely untested, but it seems it should work? There's no test to see if we have reached the destination, but it's not strictly necessary anyway I think. Then again I don't see why you would need an event like this really. Why not just keep track of where you want to go and keep calling goTo() in the run() or scannedRobot() methods?
 <p>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 <p>
-I've experimented with the GoTo<a href="robowiki?action=edit&id=GoTo" class=wikipageedit>?</a> by making my bot going to the center of the battlefield, the faults of the above code
-is that it makes the robot go to the target way too fast and thus making turns very soft, I solved that by using setMaxVelocity<a href="robowiki?action=edit&id=MaxVelocity" class=wikipageedit>?</a>()
-My current forumla (in radians): setMaxVelocity<a href="robowiki?action=edit&id=MaxVelocity" class=wikipageedit>?</a>(8-(angle/(Math.PI/4))*8)
+I've experimented with the GoTo<a href="robowiki@action=edit&id=GoTo" class=wikipageedit>?</a> by making my bot going to the center of the battlefield, the faults of the above code
+is that it makes the robot go to the target way too fast and thus making turns very soft, I solved that by using setMaxVelocity<a href="robowiki@action=edit&id=MaxVelocity" class=wikipageedit>?</a>()
+My current forumla (in radians): setMaxVelocity<a href="robowiki@action=edit&id=MaxVelocity" class=wikipageedit>?</a>(8-(angle/(Math.PI/4))*8)
 If you are interested in the full code, give me a call.
 -- Avihoo Ilan (this is my first time in the robowiki)
 <p>
-I don't see the accuraccy of this function to much of a problem as any decent bot using it will constantly picking a new point to goto, thus it will all blend togeather. -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+I don't see the accuraccy of this function to much of a problem as any decent bot using it will constantly picking a new point to goto, thus it will all blend togeather. -- <a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 <p>
-<H4>Smallest <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a></H4>
+<H4>Smallest <a href="robowiki@CodeSize" class=wikipagelink>CodeSize</a></H4>
 
 <pre>
 	private void goTo(double destinationX, double destinationY) {
@@ -168,7 +168,7 @@ I don't see the accuraccy of this function to much of a problem as any decent bo
 	}
 </pre>
 <p>
--- <a href="robowiki?Stelokim" class=wikipagelink>Stelokim</a>
+-- <a href="robowiki@Stelokim" class=wikipagelink>Stelokim</a>
 <p>
 Someone can test this if they're interested, but assuming you call this every tick, it should safely shrink to:
 <pre>
@@ -180,11 +180,11 @@ private void goTo(int x, int y) {
     setAhead(Math.hypot(x, y) * Math.cos(a));
 }
 </pre>
-It will not start moving full speed until generally pointing in the correct direction (also depending on how far away the go-to point is), but that may be considered worse or a feature depending! -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+It will not start moving full speed until generally pointing in the correct direction (also depending on how far away the go-to point is), but that may be considered worse or a feature depending! -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <p>
-I just edited the snippet above to make it smaller, and it has been tested now (it needed one change)!  Using ints instead of doubles makes for smaller codesize arithmetic. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+I just edited the snippet above to make it smaller, and it has been tested now (it needed one change)!  Using ints instead of doubles makes for smaller codesize arithmetic. -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <p>
-<H4>Smallest <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> for <strong><a href="robowiki?ExtendsRobot" class=wikipagelink>ExtendsRobot</a></strong></H4>
+<H4>Smallest <a href="robowiki@CodeSize" class=wikipagelink>CodeSize</a> for <strong><a href="robowiki@ExtendsRobot" class=wikipagelink>ExtendsRobot</a></strong></H4>
 
 <pre>
 	private void goTo(double destinationX, double destinationY) {
@@ -197,11 +197,11 @@ I just edited the snippet above to make it smaller, and it has been tested now (
 		ahead(Math.hypot(destinationX, destinationY) * (angle == turnAngle ? 1 : -1));
 	}</pre>
 <p>
--- <a href="robowiki?Stelokim" class=wikipagelink>Stelokim</a>
+-- <a href="robowiki@Stelokim" class=wikipagelink>Stelokim</a>
 <p>
-What about the driveTo() code from the <a href="robowiki?BeginnersFAQ" class=wikipagelink>BeginnersFAQ</a> page? Im too lazy to check if it turns 90 degrees at most, and i'm not a nano/micro code expert, but it should...
+What about the driveTo() code from the <a href="robowiki@BeginnersFAQ" class=wikipagelink>BeginnersFAQ</a> page? Im too lazy to check if it turns 90 degrees at most, and i'm not a nano/micro code expert, but it should...
 <p>
-<H4><strong>driveTo()</strong> - from <a href="robowiki?DuelistMicro" class=wikipagelink>DuelistMicro</a> as stated on the <a href="robowiki?BeginnersFAQ" class=wikipagelink>BeginnersFAQ</a> page</H4>
+<H4><strong>driveTo()</strong> - from <a href="robowiki@DuelistMicro" class=wikipagelink>DuelistMicro</a> as stated on the <a href="robowiki@BeginnersFAQ" class=wikipagelink>BeginnersFAQ</a> page</H4>
 
 <pre>
 driveTo(double nextX, double nextY){
@@ -209,50 +209,50 @@ driveTo(double nextX, double nextY){
   setTurnRightRadians?(normalizedTurnAngle? =  Math.atan(Math.tan(turnAngle = ((Math.atan2(nextX - myX, nextY - myY) - setHeadingRadians()) + (7.0 *  Math.PI)) % (2.0 * Math.PI) -  Math.PI)));
   setAhead((normalizedTurnAngle? == turnAngle ? 1.0 : -1.0) * (java.awt.geom.Point2D.Double.distance(myX, myY, nextX, nextY)));}
 </pre>
---<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+--<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
-Question: what is the best system/function/algorithm for knowing how much to slow for a turn, such that it optimizes the time it takes to reach a given destination? -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+Question: what is the best system/function/algorithm for knowing how much to slow for a turn, such that it optimizes the time it takes to reach a given destination? -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <p>
-Maybe solve iteratively? But usually it doesn't much matter that you land at a precise location, does it matter in this case? --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+Maybe solve iteratively? But usually it doesn't much matter that you land at a precise location, does it matter in this case? --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
-I want to break it into a function if I can.  I'll be using it a lot of times per turn, for my surfing.  So yes, from what I hear, absolute precision is imperative in surfing.  Well, precise predictions, that is.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+I want to break it into a function if I can.  I'll be using it a lot of times per turn, for my surfing.  So yes, from what I hear, absolute precision is imperative in surfing.  Well, precise predictions, that is.  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <p>
-Precisely predicting where you will drive to is important. Precisely driving to a given point is not important. At least I haven't had a reason to precisely drive to a certain point as quickly as possible yet. It's more like, "If I choose to go left for the next 12 turns in row, exactly where will I end up?" rather than "How can I get to exactly there as quickly as possible?". --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+Precisely predicting where you will drive to is important. Precisely driving to a given point is not important. At least I haven't had a reason to precisely drive to a certain point as quickly as possible yet. It's more like, "If I choose to go left for the next 12 turns in row, exactly where will I end up?" rather than "How can I get to exactly there as quickly as possible?". --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
-With my style <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> that becomes more important, though I doubt it's worth a <strong>whole</strong> lot.  I plot my course considering whether I can reach certain points on incoming <a href="robowiki?Wave" class=wikipagelink>waves</a>.  If I have an optimal driving technique, I will be able to reach more of those points, creating more possible paths to choose from.  And maybe one of those will be the best choice!  There are a lot of other things I need to do that are more important in my surfing, but I would like to implement this at some point.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+With my style <a href="robowiki@WaveSurfing" class=wikipagelink>WaveSurfing</a> that becomes more important, though I doubt it's worth a <strong>whole</strong> lot.  I plot my course considering whether I can reach certain points on incoming <a href="robowiki@Wave" class=wikipagelink>waves</a>.  If I have an optimal driving technique, I will be able to reach more of those points, creating more possible paths to choose from.  And maybe one of those will be the best choice!  There are a lot of other things I need to do that are more important in my surfing, but I would like to implement this at some point.  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <p>
-I doubt that this will help, but ... looks up the <a href="robowiki?GamePhysics" class=wikipagelink>GamePhysics</a> page and does algebra ... <code>setMaxVelocity((Math.PI / 18 - Math.min(Math.abs(getTurnRemainingRadians()), Math.PI / 18)) / (Math.PI / 240))</code> should find the fastest way to turn to face a given direction. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+I doubt that this will help, but ... looks up the <a href="robowiki@GamePhysics" class=wikipagelink>GamePhysics</a> page and does algebra ... <code>setMaxVelocity((Math.PI / 18 - Math.min(Math.abs(getTurnRemainingRadians()), Math.PI / 18)) / (Math.PI / 240))</code> should find the fastest way to turn to face a given direction. -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 <p>
-Wow Aaron ... can you explain that? -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+Wow Aaron ... can you explain that? -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <UL >
-<li> Wait ... the fastest way to turn to face a given direction is <code>setMaxVelocity(0)</code>.  Is that what you meant?  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Wait ... the fastest way to turn to face a given direction is <code>setMaxVelocity(0)</code>.  Is that what you meant?  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <UL >
-<li> No. For turn amounts less than the maximum amount that a bot can turn in one tick (that is, less than PI / 18 radians), the bot will move at &gt; 0 velocity when using this formula. At least, it should... -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
-<li> Oh, I see.  Well, for that you should set your max velocity to what it should be <em>next</em> tick.  Not sure if there would be any other complications.  But yeah, that's at least a step in the right direction. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
-<li> Does <code>getTurnRemainingRadians()</code> return the turn remaining for this tick, or next tick? The order-of-processing stuff always confuses me. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
-<li> If you've called setTurnXxx<a href="robowiki?action=edit&id=TurnXxx" class=wikipageedit>?</a>(), it returns whatever you passed that.  If not, it returns whatever is still "unturned" from <strike>previous calls</strike> the previous call to setTurnXxx<a href="robowiki?action=edit&id=TurnXxx" class=wikipageedit>?</a>(). -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> No. For turn amounts less than the maximum amount that a bot can turn in one tick (that is, less than PI / 18 radians), the bot will move at &gt; 0 velocity when using this formula. At least, it should... -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
+<li> Oh, I see.  Well, for that you should set your max velocity to what it should be <em>next</em> tick.  Not sure if there would be any other complications.  But yeah, that's at least a step in the right direction. -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
+<li> Does <code>getTurnRemainingRadians()</code> return the turn remaining for this tick, or next tick? The order-of-processing stuff always confuses me. -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
+<li> If you've called setTurnXxx<a href="robowiki@action=edit&id=TurnXxx" class=wikipageedit>?</a>(), it returns whatever you passed that.  If not, it returns whatever is still "unturned" from <strike>previous calls</strike> the previous call to setTurnXxx<a href="robowiki@action=edit&id=TurnXxx" class=wikipageedit>?</a>(). -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 </UL>
 </UL>
 <p>
-Great! <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>! Now I feel like using that:) No more braking hard!! e.g. <code>setMaxVelocity(Math.abs(getTurnRemaining()) &gt; 30 ? 0 : 8); // Hit the brake pedal hard if we need to turn sharply</code>
+Great! <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>! Now I feel like using that:) No more braking hard!! e.g. <code>setMaxVelocity(Math.abs(getTurnRemaining()) &gt; 30 ? 0 : 8); // Hit the brake pedal hard if we need to turn sharply</code>
 <p>
-For <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> you are staying pretty much perpendicular, aren't you? Since this doesn't require much turning, I'm guessing that you would only reduce your max escape angle by slowing down. I fooled around with this in the early days of <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a>, and it only added another place for bugs to creep in. You have to remember that you may get to a better escape angle by not slowing down, and not turning as much either. The only place I can see that slowing down would help would be for avoiding wall hits, although those are 
-easily avoided without this hack. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+For <a href="robowiki@WaveSurfing" class=wikipagelink>WaveSurfing</a> you are staying pretty much perpendicular, aren't you? Since this doesn't require much turning, I'm guessing that you would only reduce your max escape angle by slowing down. I fooled around with this in the early days of <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a>, and it only added another place for bugs to creep in. You have to remember that you may get to a better escape angle by not slowing down, and not turning as much either. The only place I can see that slowing down would help would be for avoiding wall hits, although those are 
+easily avoided without this hack. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <UL >
-<li> I wish I had an "easy" way to avoid wall hits :(.   Well, I mean, I do, but it won't be so effective if I ever get my surfing to run smoothly <em>through</em> a wave (rather than stopping at every one).  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
-<li> So does your point generation not include <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>? That shouldn't be difficult to implement. I did a lot of work trying to get <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> to not stop at each wave, but it never paid off. If I had to try again, I would consider the extra bins that get covered due to not stopping, and evaluate if it is safer to continue at that end point or to stop just before. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<li> Nope, no <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>.  At least not yet.  Given a <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> and the angle of my bot's travel, it projects the intersection &amp; determines if it's reachable.  So yes, I stay pretty much perpendicular.  But, it inbounds projected points along the GF angle, so it will travel along the wall, just in a sharp angle, not smoothly.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
-<li> Are you saying, "go directly to the end point", or "follow the path of the points"? I found the latter worked better when using <a href="robowiki?PrecisePrediction" class=wikipagelink>PrecisePrediction</a> to create the points, but it seemslike the former would work better in your situation, otherwise your bot won't be able to turn sharp enough at the walls. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
-<li> Um, "go directly to the end point", I guess.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> I wish I had an "easy" way to avoid wall hits :(.   Well, I mean, I do, but it won't be so effective if I ever get my surfing to run smoothly <em>through</em> a wave (rather than stopping at every one).  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
+<li> So does your point generation not include <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a>? That shouldn't be difficult to implement. I did a lot of work trying to get <a href="robowiki@DrussGT" class=wikipagelink>DrussGT</a> to not stop at each wave, but it never paid off. If I had to try again, I would consider the extra bins that get covered due to not stopping, and evaluate if it is safer to continue at that end point or to stop just before. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> Nope, no <a href="robowiki@WallSmoothing" class=wikipagelink>WallSmoothing</a>.  At least not yet.  Given a <a href="robowiki@GuessFactor" class=wikipagelink>GuessFactor</a> and the angle of my bot's travel, it projects the intersection &amp; determines if it's reachable.  So yes, I stay pretty much perpendicular.  But, it inbounds projected points along the GF angle, so it will travel along the wall, just in a sharp angle, not smoothly.  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
+<li> Are you saying, "go directly to the end point", or "follow the path of the points"? I found the latter worked better when using <a href="robowiki@PrecisePrediction" class=wikipagelink>PrecisePrediction</a> to create the points, but it seemslike the former would work better in your situation, otherwise your bot won't be able to turn sharp enough at the walls. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> Um, "go directly to the end point", I guess.  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 </UL>
 <p>
 The other thing is, at least in a normal surfer, the only place this code would kick in is near a corner 
-(because of the sharp wallsmoothing turns). Guess what kind of segmentation your gun needs to hit a bot that always slows down in the corner? =) -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+(because of the sharp wallsmoothing turns). Guess what kind of segmentation your gun needs to hit a bot that always slows down in the corner? =) -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Movement" class=wikipagelink>Movement</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=Movement/CodeSnippetGoTo" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Movement/CodeSnippetGoTo">View other revisions</a><br>Last edited October 21, 2007 20:08 EST by <a href="robowiki?Simonton" title="ID 12045 from 24-247-40-190.dhcp.mrqt.mi.charter.com">Simonton</a> <a href="robowiki?action=browse&diff=1&id=Movement/CodeSnippetGoTo">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Movement" class=wikipagelink>Movement</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=Movement/CodeSnippetGoTo" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=Movement/CodeSnippetGoTo">View other revisions</a><br>Last edited October 21, 2007 20:08 EST by <a href="robowiki@Simonton" title="ID 12045 from 24-247-40-190.dhcp.mrqt.mi.charter.com">Simonton</a> <a href="robowiki@action=browse&diff=1&id=Movement/CodeSnippetGoTo">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

@@ -3,8 +3,8 @@
 <META NAME='KEYWORDS' CONTENT='Linear, Targeting, Nano, Linear, Targeting'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/NanoLinearTargeting">LinearTargeting/NanoLinearTargeting</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext>This code gives decent <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a> with a very small code size. However, the aim is slightly imprecise and it ignores walls. The basic code is used in a lot of <a href="robowiki?NanoBots" class=wikipagelink>NanoBots</a>:
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/NanoLinearTargeting">LinearTargeting/NanoLinearTargeting</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@LinearTargeting" class=wikipagelink>LinearTargeting</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>This code gives decent <a href="robowiki@LinearTargeting" class=wikipagelink>LinearTargeting</a> with a very small code size. However, the aim is slightly imprecise and it ignores walls. The basic code is used in a lot of <a href="robowiki@NanoBots" class=wikipagelink>NanoBots</a>:
 <p>
 <pre>double absoluteBearing = getHeadingRadians() + e.getBearingRadians();
 setTurnGunRightRadians(Utils.normalRelativeAngle(absoluteBearing - getGunHeadingRadians() + 
@@ -14,7 +14,7 @@ setTurnGunRightRadians(Utils.normalRelativeAngle(absoluteBearing - getGunHeading
 <p>
 <b> How It Works: </b>
 <p>
-We first find the other robot's <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a> (how fast the other robot is moving parallel to you) with <pre>e.getVelocity() * Math.sin(e.getHeadingRadians() - absoluteBearing)</pre>
+We first find the other robot's <a href="robowiki@LateralVelocity" class=wikipagelink>LateralVelocity</a> (how fast the other robot is moving parallel to you) with <pre>e.getVelocity() * Math.sin(e.getHeadingRadians() - absoluteBearing)</pre>
 To find an approximate angle offset, you assume they'll continue moving parallel with you at their lateral velocity until your bullet reaches them, giving you a triangle like this:    
 <p>
 <PRE >
@@ -33,12 +33,12 @@ So you're angle offset is
 <pre> asin((lateral velocity * bullet travel time) / (bulletSpeed velocity * bulllet travel time)) = asin(lateral velocity / bullet speed) </pre>
 It turns out that asin(lateral velocity / bullet speed) is almost exactly the same as (lateral velocity / bullet speed), so we get rid of the asin for some more code size. The above code uses 13.0 for bullet speed, but this actually results in aiming that works better for a slightly lower speed than 13 because of the distortion from removing asin. 
 <p>
-Finally, we add the offset to the absolute bearing to get the firing angle, and subtract the gun heading to get the gun turn. -- <a href="robowiki?Kev" class=wikipagelink>Kev</a>
+Finally, we add the offset to the absolute bearing to get the firing angle, and subtract the gun heading to get the gun turn. -- <a href="robowiki@Kev" class=wikipagelink>Kev</a>
 <p>
 <p>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=LinearTargeting/NanoLinearTargeting" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=LinearTargeting/NanoLinearTargeting">View other revisions</a><br>Last edited October 24, 2006 14:08 EST by <a href="robowiki?Bayen" title="ID 8212 from pc249.dasd.org">Bayen</a> <a href="robowiki?action=browse&diff=1&id=LinearTargeting/NanoLinearTargeting">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@LinearTargeting" class=wikipagelink>LinearTargeting</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=LinearTargeting/NanoLinearTargeting" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=LinearTargeting/NanoLinearTargeting">View other revisions</a><br>Last edited October 24, 2006 14:08 EST by <a href="robowiki@Bayen" title="ID 8212 from pc249.dasd.org">Bayen</a> <a href="robowiki@action=browse&diff=1&id=LinearTargeting/NanoLinearTargeting">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

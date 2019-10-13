@@ -3,25 +3,25 @@
 <META NAME='KEYWORDS' CONTENT='Advancing, Velocity'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=AdvancingVelocity">AdvancingVelocity</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext>The speed at which your opponent is moving toward you, perpendicular to <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a>.  If you stand still, <a href="robowiki?RamFire" class=wikipagelink>RamFire</a> usually has an <a href="robowiki?AdvancingVelocity" class=wikipagelink>AdvancingVelocity</a> of 8 and <a href="robowiki?MyFirstRobot" class=wikipagelink>MyFirstRobot</a> will probably normally have an <a href="robowiki?AdvancingVelocity" class=wikipagelink>AdvancingVelocity</a> of close to 0.  A robot moving straight away from you would have an <a href="robowiki?AdvancingVelocity" class=wikipagelink>AdvancingVelocity</a> of -8.
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=AdvancingVelocity">AdvancingVelocity</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>The speed at which your opponent is moving toward you, perpendicular to <a href="robowiki@LateralVelocity" class=wikipagelink>LateralVelocity</a>.  If you stand still, <a href="robowiki@RamFire" class=wikipagelink>RamFire</a> usually has an <a href="robowiki@AdvancingVelocity" class=wikipagelink>AdvancingVelocity</a> of 8 and <a href="robowiki@MyFirstRobot" class=wikipagelink>MyFirstRobot</a> will probably normally have an <a href="robowiki@AdvancingVelocity" class=wikipagelink>AdvancingVelocity</a> of close to 0.  A robot moving straight away from you would have an <a href="robowiki@AdvancingVelocity" class=wikipagelink>AdvancingVelocity</a> of -8.
 <p>
 The formula for calculating this is:
 <pre>
 	double advancingvelocity = -Math.cos(e.getHeadingRadians()-absbearing)*e.getVelocity();
 </pre>
-absbearing is the absolute bearing to your target.  If you take off the negative sign, I suppose it would be the retreating velocity.  --<a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+absbearing is the absolute bearing to your target.  If you take off the negative sign, I suppose it would be the retreating velocity.  --<a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
 <hr noshade class=wikiline size=1>
 <H4>Questions / Comments</H4>
 
 <p>
-I tried using the sign of the advancing velocity in <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> version 1.9.6.10. But I think maybe I did that segmentation the wrong way. This is the relevant code:
+I tried using the sign of the advancing velocity in <a href="robowiki@CassiusClay" class=wikipagelink>CassiusClay</a> version 1.9.6.10. But I think maybe I did that segmentation the wrong way. This is the relevant code:
 <pre>
 	double approachVelocity = e.getVelocity() * -Math.cos(e.getHeadingRadians() - enemyBearing);
 	wave.approachSignIndex = 1 + (approachVelocity == 0 ? 0 : PUtils.sign(approachVelocity));
 </pre>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 This is how I calculate advancing velocity, so assuming enemyBearing above is the abs bearing then it's exactly the same.
 <pre>
@@ -33,14 +33,14 @@ double advancingvelocity = -Math.cos(enemyHeading-absBearingToEnemy)*enemyVeloci
 </pre>
 But most of all I think comparing that double to 0 is way to restrictive. Have some margin instead perhaps? This is coming from somone with 50 less score of course though...
 <p>
--- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+-- <a href="robowiki@Pulsar" class=wikipagelink>Pulsar</a>
 <p>
-Yes, I always forget about the danger in comparing doubles to 0. But in this case it might hold since it's a true zero value in the velocity reading I want to check for. I'll test with some debug outputting now. Thanks! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Yes, I always forget about the danger in comparing doubles to 0. But in this case it might hold since it's a true zero value in the velocity reading I want to check for. I'll test with some debug outputting now. Thanks! -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Yup. You are entirely right. I get very few hits in the middle bucket the above way. In fact I get exactly what I asked for when thinking zero velocity would be the mid bucket. That's not very good... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Yup. You are entirely right. I get very few hits in the middle bucket the above way. In fact I get exactly what I asked for when thinking zero velocity would be the mid bucket. That's not very good... -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=AdvancingVelocity" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=AdvancingVelocity">View other revisions</a><br>Last edited August 7, 2004 10:52 EST by <a href="robowiki?PEZ" title="ID 3032 from 192.168.0.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=AdvancingVelocity">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=AdvancingVelocity" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=AdvancingVelocity">View other revisions</a><br>Last edited August 7, 2004 10:52 EST by <a href="robowiki@PEZ" title="ID 3032 from 192.168.0.xxx">PEZ</a> <a href="robowiki@action=browse&diff=1&id=AdvancingVelocity">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

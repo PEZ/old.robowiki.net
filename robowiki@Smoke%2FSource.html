@@ -3,7 +3,7 @@
 <META NAME='KEYWORDS' CONTENT='Smoke, Source'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Source">Smoke/Source</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Smoke" class=wikipagelink>Smoke</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/Source">Smoke/Source</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Smoke" class=wikipagelink>Smoke</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext><pre>
 
 package cx.micro;
@@ -247,19 +247,19 @@ public class Smoke extends AdvancedRobot {
 <p>
 <hr noshade class=wikiline size=1>
 iiley, two questions:<br>1) why do you compare waves that are separated by '7' in your 'wavelist'? Is this the result of an empirical test?<br>2) how are you certain that the waves you compare with also have hit?<br>
-Thanks! --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+Thanks! --<a href="robowiki@Loki" class=wikipagelink>Loki</a>
 <p>
 for questions 1: Yes it is a empirical test, but i still have a reason, a bot want to accclerate to max velocity must need 8 ticks, In old version Smoke, I use 8, but then i use 7 for careful pattern(I think less than 8 should be alright).<br>
 for questions 2: Sorry that i don't understand you from my English, It's a long complex sentence, can you split the sentence for me ~:} Oh, just so sorry.
 <p>
--- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+-- <a href="robowiki@Iiley" class=wikipagelink>iiley</a>
 <p>
 For questions 2: I am guessing are you talking about this:
 <pre>
  				//is a hitted wave
 				if ((wave = (MicroWave) waves.get(i)).startPosition.x &lt; 10) {
 </pre>
--- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+-- <a href="robowiki@Iiley" class=wikipagelink>iiley</a>
 <p>
 Hi iiley, please don't apologise for your English, i think it's a problem of my english! 
 In my second question i was referring to this part 
@@ -269,7 +269,7 @@ In my second question i was referring to this part
 								/ (div = div * 2 + 1);
 </pre>
 You compare wave(i) with other waves(j). How do you know these waves(j) have hit the opponent? I think if they have not hit, your calculation of the best value goes wrong. Because the values of compareValue for these waves that have not hit are meaningless as they still contain the initial values. Or do i understand this part wrong?
---<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+--<a href="robowiki@Loki" class=wikipagelink>Loki</a>
 <p>
 comVal is incremented inside this loop:
 <pre>
@@ -277,14 +277,14 @@ comVal is incremented inside this loop:
 </pre>
 In a 800x600 battle field any wave has hit after 71 ticks.
 <p>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-PEZ was right, and i don't care whether waves(j) have hit the opponent, i just care waves(i). Do you know my meanning? I just need waves(j)'s compareValue, and compareValue is not relative to whether it have hit opponent, but startPosition does.(startPosition.x was the hit angle when the wave have hit opponent)  -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+PEZ was right, and i don't care whether waves(j) have hit the opponent, i just care waves(i). Do you know my meanning? I just need waves(j)'s compareValue, and compareValue is not relative to whether it have hit opponent, but startPosition does.(startPosition.x was the hit angle when the wave have hit opponent)  -- <a href="robowiki@Iiley" class=wikipagelink>iiley</a>
 <p>
-ok, so the 71 is optimised/fixed for standard RR battles. As 0 &lt;= j &lt;= 70, i-j are always 'older' waves which must have past the opponent. I will rewrite this code in Mega bot size ;) without all the reuse of variables, just for my own understanding. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+ok, so the 71 is optimised/fixed for standard RR battles. As 0 &lt;= j &lt;= 70, i-j are always 'older' waves which must have past the opponent. I will rewrite this code in Mega bot size ;) without all the reuse of variables, just for my own understanding. --<a href="robowiki@Loki" class=wikipagelink>Loki</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Smoke" class=wikipagelink>Smoke</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=Smoke/Source" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Smoke/Source">View other revisions</a><br>Last edited October 28, 2004 14:18 EST by <a href="robowiki?Loki" title="ID 3612 from 212.41.142.205">Loki</a> <a href="robowiki?action=browse&diff=1&id=Smoke/Source">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Smoke" class=wikipagelink>Smoke</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=Smoke/Source" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=Smoke/Source">View other revisions</a><br>Last edited October 28, 2004 14:18 EST by <a href="robowiki@Loki" title="ID 3612 from 212.41.142.205">Loki</a> <a href="robowiki@action=browse&diff=1&id=Smoke/Source">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

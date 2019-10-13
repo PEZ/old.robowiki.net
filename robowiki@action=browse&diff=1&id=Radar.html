@@ -3,12 +3,12 @@
 <META NAME='KEYWORDS' CONTENT='Radar'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Radar">Radar</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=Radar">Radar</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><b>Difference (from prior major revision)</b>
 (no other diffs)<br> <br><strong>Added: 150a151</strong><br><table width="95%" bgcolor=#cfffcf class=wikidiffnew><tr><td>
-      set<a href="robowiki?TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>(radarTurn);<br></td></tr></table>
+      set<a href="robowiki@TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>(radarTurn);<br></td></tr></table>
 <hr class=wikilinediff>
-<div class=wikitext><h2><a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a></h2>
+<div class=wikitext><h2><a href="robowiki@OneOnOne" class=wikipagelink>OneOnOne</a></h2>
 <p>
 <p>
 The simplest situation for radar. Typically accomplished with the use of a radar lock.
@@ -18,14 +18,14 @@ The simplest situation for radar. Typically accomplished with the use of a radar
 <PRE >
  run()
  {
-     set<a href="robowiki?TurnRadarRight" class=wikipagelink>TurnRadarRight</a>(Double.POSITIVE_INFINITY);
+     set<a href="robowiki@TurnRadarRight" class=wikipagelink>TurnRadarRight</a>(Double.POSITIVE_INFINITY);
  }
 </PRE>
 <p>
 <PRE >
- on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e)
+ on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e)
  {
-     set<a href="robowiki?TurnRadarLeft" class=wikipagelink>TurnRadarLeft</a>(getRadarTurnRemaining<a href="robowiki?action=edit&id=RadarTurnRemaining" class=wikipageedit>?</a>());
+     set<a href="robowiki@TurnRadarLeft" class=wikipagelink>TurnRadarLeft</a>(getRadarTurnRemaining<a href="robowiki@action=edit&id=RadarTurnRemaining" class=wikipageedit>?</a>());
  }
 </PRE>
 <p>
@@ -43,13 +43,13 @@ Disadvantages:
 <h3>Lazy Lock</h3>
 Points radar at enemy's last seen position. This is "lazy" because this is the minimum turn necessary (within 2px) to stay locked on.
 <PRE >
- boolean needManualScan<a href="robowiki?action=edit&id=ManualScan" class=wikipageedit>?</a> = false;
+ boolean needManualScan<a href="robowiki@action=edit&id=ManualScan" class=wikipageedit>?</a> = false;
  run() {
      do {
          //... other code...
-         if (getRadarTurnRemaining<a href="robowiki?action=edit&id=RadarTurnRemaining" class=wikipageedit>?</a>() == 0 &amp;&amp; !needManualScan<a href="robowiki?action=edit&id=ManualScan" class=wikipageedit>?</a>)
+         if (getRadarTurnRemaining<a href="robowiki@action=edit&id=RadarTurnRemaining" class=wikipageedit>?</a>() == 0 &amp;&amp; !needManualScan<a href="robowiki@action=edit&id=ManualScan" class=wikipageedit>?</a>)
              // We haven't told our radar to spin
-             set<a href="robowiki?TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>(Double.PositiveInfinity<a href="robowiki?action=edit&id=PositiveInfinity" class=wikipageedit>?</a>);
+             set<a href="robowiki@TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>(Double.PositiveInfinity<a href="robowiki@action=edit&id=PositiveInfinity" class=wikipageedit>?</a>);
          // This can replace execute() because it is a blocking call.
          scan();
      } while (true);
@@ -57,13 +57,13 @@ Points radar at enemy's last seen position. This is "lazy" because this is the m
 </PRE>
 <p>
 <PRE >
- on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {
-     double radarTurn = robocode.util.Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(
-         e.getBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a>() + get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>() - getRadarHeadingRadians<a href="robowiki?action=edit&id=RadarHeadingRadians" class=wikipageedit>?</a>() );
-     set<a href="robowiki?TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>(radarTurn);
+ on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {
+     double radarTurn = robocode.util.Utils.normal<a href="robowiki@RelativeAngle" class=wikipagelink>RelativeAngle</a>(
+         e.getBearingRadians<a href="robowiki@action=edit&id=BearingRadians" class=wikipageedit>?</a>() + get<a href="robowiki@HeadingRadians" class=wikipagelink>HeadingRadians</a>() - getRadarHeadingRadians<a href="robowiki@action=edit&id=RadarHeadingRadians" class=wikipageedit>?</a>() );
+     set<a href="robowiki@TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>(radarTurn);
      // If we want to keep receiving <code>ScannedRobotEvent</code>s after
      // telling our radar to spin by 0, we will need to call scan() manually
-     needManualScan<a href="robowiki?action=edit&id=ManualScan" class=wikipageedit>?</a> = radarTurn == 0;
+     needManualScan<a href="robowiki@action=edit&id=ManualScan" class=wikipageedit>?</a> = radarTurn == 0;
  }
 </PRE>
 <p>
@@ -71,15 +71,15 @@ If you can stand losing your lock whenever you stop moving, you can save some co
 <p>
 While it looks like a precarious lock, it can never be lost. Robots can only move a max of 8px/turn. Even if you both move at full speed in opposite directions, your enemy can only move 16px relative to you each turn. Robots are 18px from centre to edge, so the rear few pixels of the enemy will always be visible where its old centre used to be.
 <p>
---<a href="robowiki?Duyn" class=wikipagelink>duyn</a>
+--<a href="robowiki@Duyn" class=wikipagelink>duyn</a>
 <p>
-<h3><a href="robowiki?Radar/RadarBot" class=wikipagelink>RadarBot</a> Lock</h3>
-By <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<h3><a href="robowiki@Radar/RadarBot" class=wikipagelink>RadarBot</a> Lock</h3>
+By <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 <p>
 <PRE >
- private int timeSinceLastScan<a href="robowiki?action=edit&id=SinceLastScan" class=wikipageedit>?</a> = 10;
- static double enemyAbsoluteBearing<a href="robowiki?action=edit&id=AbsoluteBearing" class=wikipageedit>?</a>;
+ private int timeSinceLastScan<a href="robowiki@action=edit&id=SinceLastScan" class=wikipageedit>?</a> = 10;
+ static double enemyAbsoluteBearing<a href="robowiki@action=edit&id=AbsoluteBearing" class=wikipageedit>?</a>;
  run()
  {
      do {
@@ -90,21 +90,21 @@ By <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
 </PRE>
 <p>
 <PRE >
- on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {
-     enemyAbsoluteBearing<a href="robowiki?action=edit&id=AbsoluteBearing" class=wikipageedit>?</a> = get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>() + e.getBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a>();
-     timeSinceLastScan<a href="robowiki?action=edit&id=SinceLastScan" class=wikipageedit>?</a> = 0;
+ on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {
+     enemyAbsoluteBearing<a href="robowiki@action=edit&id=AbsoluteBearing" class=wikipageedit>?</a> = get<a href="robowiki@HeadingRadians" class=wikipagelink>HeadingRadians</a>() + e.getBearingRadians<a href="robowiki@action=edit&id=BearingRadians" class=wikipageedit>?</a>();
+     timeSinceLastScan<a href="robowiki@action=edit&id=SinceLastScan" class=wikipageedit>?</a> = 0;
  }
 </PRE>
 <p>
 <PRE >
  doScanner() {
-     timeSinceLastScan<a href="robowiki?action=edit&id=SinceLastScan" class=wikipageedit>?</a>++;
+     timeSinceLastScan<a href="robowiki@action=edit&id=SinceLastScan" class=wikipageedit>?</a>++;
      double radarOffset = Double.POSITIVE_INFINITY;
-     if(timeSinceLastScan<a href="robowiki?action=edit&id=SinceLastScan" class=wikipageedit>?</a> &lt; 3) {
-         radarOffset = robocode.util.Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(getRadarHeadingRadians<a href="robowiki?action=edit&id=RadarHeadingRadians" class=wikipageedit>?</a>() - enemyAbsoluteBearing<a href="robowiki?action=edit&id=AbsoluteBearing" class=wikipageedit>?</a>);
+     if(timeSinceLastScan<a href="robowiki@action=edit&id=SinceLastScan" class=wikipageedit>?</a> &lt; 3) {
+         radarOffset = robocode.util.Utils.normal<a href="robowiki@RelativeAngle" class=wikipagelink>RelativeAngle</a>(getRadarHeadingRadians<a href="robowiki@action=edit&id=RadarHeadingRadians" class=wikipageedit>?</a>() - enemyAbsoluteBearing<a href="robowiki@action=edit&id=AbsoluteBearing" class=wikipageedit>?</a>);
          radarOffset += sign(radarOffset) * 0.02;
      }
-     set<a href="robowiki?TurnRadarLeftRadians" class=wikipagelink>TurnRadarLeftRadians</a>(radarOffset);
+     set<a href="robowiki@TurnRadarLeftRadians" class=wikipagelink>TurnRadarLeftRadians</a>(radarOffset);
  }
 </PRE>
 <p>
@@ -123,9 +123,9 @@ Disadvantages
 <li> Large code size
 </UL>
 <p>
-There is no need for the sign(double) function. The Math.signum() already exists and works better. It will return 0 if v = 0, which is probably desirable (if radarOffset is 0 then it will move +0.02 degrees. Not much, but could throw off further calculations). -- <a href="robowiki?Aziz" class=wikipagelink>Aziz</a>
+There is no need for the sign(double) function. The Math.signum() already exists and works better. It will return 0 if v = 0, which is probably desirable (if radarOffset is 0 then it will move +0.02 degrees. Not much, but could throw off further calculations). -- <a href="robowiki@Aziz" class=wikipagelink>Aziz</a>
 <UL >
-<li> <code>Math.signum</code> doesn't do what we want here. If radarOffset is 0, <code>Math.signum(radarOffset) * 0.02 == 0</code> so it will move the radar by 0. This can cause you to lose your lock if you don't have a well-placed call to scan() in your run(). See the API docs on scan() if you want to know why.--<a href="robowiki?Duyn" class=wikipagelink>duyn</a>
+<li> <code>Math.signum</code> doesn't do what we want here. If radarOffset is 0, <code>Math.signum(radarOffset) * 0.02 == 0</code> so it will move the radar by 0. This can cause you to lose your lock if you don't have a well-placed call to scan() in your run(). See the API docs on scan() if you want to know why.--<a href="robowiki@Duyn" class=wikipagelink>duyn</a>
 </UL>
 <p>
 <p>
@@ -138,8 +138,8 @@ There is no need for the sign(double) function. The Math.signum() already exists
 </PRE>
 <p>
 <PRE >
-         if (getRadarTurnRemaining<a href="robowiki?action=edit&id=RadarTurnRemaining" class=wikipageedit>?</a>() == 0)
-             set<a href="robowiki?TurnRadarRight" class=wikipagelink>TurnRadarRight</a>(Double.POSITIVE_INFINITY);
+         if (getRadarTurnRemaining<a href="robowiki@action=edit&id=RadarTurnRemaining" class=wikipageedit>?</a>() == 0)
+             set<a href="robowiki@TurnRadarRight" class=wikipagelink>TurnRadarRight</a>(Double.POSITIVE_INFINITY);
          execute();
      } while (true);
  }
@@ -147,10 +147,10 @@ There is no need for the sign(double) function. The Math.signum() already exists
 <p>
 <PRE >
  static final double FACTOR = 2.1;
- on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {
-     double absBearing = e.getBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a>() + get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>();
-     set<a href="robowiki?TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>( FACTOR*
-         robocode.util.Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(absBearing - getRadarHeadingRadians<a href="robowiki?action=edit&id=RadarHeadingRadians" class=wikipageedit>?</a>()) );
+ on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {
+     double absBearing = e.getBearingRadians<a href="robowiki@action=edit&id=BearingRadians" class=wikipageedit>?</a>() + get<a href="robowiki@HeadingRadians" class=wikipagelink>HeadingRadians</a>();
+     set<a href="robowiki@TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>( FACTOR*
+         robocode.util.Utils.normal<a href="robowiki@RelativeAngle" class=wikipagelink>RelativeAngle</a>(absBearing - getRadarHeadingRadians<a href="robowiki@action=edit&id=RadarHeadingRadians" class=wikipageedit>?</a>()) );
  }
 </PRE>
 <p>
@@ -170,19 +170,19 @@ FACTOR determines behaviour:
 <p>
 A FACTOR &lt; 1.0 is just silly as you're barely spinning your radar enough to see your target again.
 <p>
---<a href="robowiki?Duyn" class=wikipagelink>duyn</a>
+--<a href="robowiki@Duyn" class=wikipagelink>duyn</a>
 <h4>HELP!</h4>
 <p>Hi,</p>
 I'm using the factor lock for my bot, but every time I try and compile it, it says:
 Compiling...
-/home/vincent/.robocode/robots/vvk/MyOneonOne<a href="robowiki?action=edit&id=Radar/MyOneonOne" class=wikipageedit>?</a>.java:33: ';' expected
+/home/vincent/.robocode/robots/vvk/MyOneonOne<a href="robowiki@action=edit&id=Radar/MyOneonOne" class=wikipageedit>?</a>.java:33: ';' expected
 <PRE >
         run(){
 </PRE>
 If you could help me, that would be great, thanks.
 Vvkuyck
 <p>
-You are probably missing an opening or closing bracket ( or ). -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+You are probably missing an opening or closing bracket ( or ). -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <p>
 <h3>Spotlight Lock</h3>
 <p>
@@ -190,22 +190,22 @@ Keeps a lock just wide enough to keep the enemy bathed in your radar.
 <p>
 <PRE >
  run() {
-     set<a href="robowiki?TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>(Double.POSITIVE_INFINITY);
+     set<a href="robowiki@TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>(Double.POSITIVE_INFINITY);
  }
 </PRE>
 <p>
 <PRE >
- on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {
-     double radarTurn = robocode.util.Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(
-         e.getBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a>() + get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>() - getRadarHeadingRadians<a href="robowiki?action=edit&id=RadarHeadingRadians" class=wikipageedit>?</a>() );
+ on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {
+     double radarTurn = robocode.util.Utils.normal<a href="robowiki@RelativeAngle" class=wikipagelink>RelativeAngle</a>(
+         e.getBearingRadians<a href="robowiki@action=edit&id=BearingRadians" class=wikipageedit>?</a>() + get<a href="robowiki@HeadingRadians" class=wikipagelink>HeadingRadians</a>() - getRadarHeadingRadians<a href="robowiki@action=edit&id=RadarHeadingRadians" class=wikipageedit>?</a>() );
      radarTurn += Math.signum(radarTurn)*Math.atan(getWidth()/e.getDistance());
-     set<a href="robowiki?TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>(radarTurn);
+     set<a href="robowiki@TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>(radarTurn);
  }
 </PRE>
 <p>
 Makes your robot look smarter by only scanning as much as necessary. Otherwise, no real advantage over Factor Lock (above).
 <p>
---<a href="robowiki?Duyn" class=wikipagelink>duyn</a>
+--<a href="robowiki@Duyn" class=wikipagelink>duyn</a>
 <p>
 <h2>Melee</h2>
 <p>
@@ -218,7 +218,7 @@ More complicated. The basic method (although not nessecarily most effective) is 
 <PRE >
  run()
  {
-     set<a href="robowiki?TurnRadarRight" class=wikipagelink>TurnRadarRight</a>(Double.POSITIVE_INFINITY);
+     set<a href="robowiki@TurnRadarRight" class=wikipagelink>TurnRadarRight</a>(Double.POSITIVE_INFINITY);
  }
 </PRE>
 <p>
@@ -232,7 +232,7 @@ The radar I use in melee performs a 'sweep' after every bullet I fire and then l
 <p>
 <p>
 <PRE >
- public void on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {
+ public void on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {
 </PRE>
 <p>
 <PRE >
@@ -240,35 +240,35 @@ The radar I use in melee performs a 'sweep' after every bullet I fire and then l
 </PRE>
 <p>
 <PRE >
-     double radaroffset = Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>( get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>() + e.getBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a>() - getRadarHeadingRadians<a href="robowiki?action=edit&id=RadarHeadingRadians" class=wikipageedit>?</a>());
-     set<a href="robowiki?TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>( Double.NEGATIVE_INFINITY * radaroffset);  // continue in the same direction
+     double radaroffset = Utils.normal<a href="robowiki@RelativeAngle" class=wikipagelink>RelativeAngle</a>( get<a href="robowiki@HeadingRadians" class=wikipagelink>HeadingRadians</a>() + e.getBearingRadians<a href="robowiki@action=edit&id=BearingRadians" class=wikipageedit>?</a>() - getRadarHeadingRadians<a href="robowiki@action=edit&id=RadarHeadingRadians" class=wikipageedit>?</a>());
+     set<a href="robowiki@TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>( Double.NEGATIVE_INFINITY * radaroffset);  // continue in the same direction
 </PRE>
 <p>
 <PRE >
-     if (get<a href="robowiki?GunHeat" class=wikipagelink>GunHeat</a>() == 0.0) {
+     if (get<a href="robowiki@GunHeat" class=wikipagelink>GunHeat</a>() == 0.0) {
          setFire( bulletpower);
      }
      else {
          // when not firing, overrule spinning radar with radarlock mechanism
          // 2.2 means a slowly widening arc, 2.0 constant arc, 1.8 slowly narrowing arc, 1.0 is needle arc (but can miss non-moving targets)
-         set<a href="robowiki?TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>( 2.2 * radaroffset);
+         set<a href="robowiki@TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>( 2.2 * radaroffset);
      }
  }
 </PRE>
 <p>
 <PRE >
- public void onRobotDeath<a href="robowiki?action=edit&id=RobotDeath" class=wikipageedit>?</a>(RobotDeathEvent<a href="robowiki?action=edit&id=RobotDeathEvent" class=wikipageedit>?</a> e) {
+ public void onRobotDeath<a href="robowiki@action=edit&id=RobotDeath" class=wikipageedit>?</a>(RobotDeathEvent<a href="robowiki@action=edit&id=RobotDeathEvent" class=wikipageedit>?</a> e) {
      // If current target dies, force to find another, so spin radar
      if (target.name.equals( e.getName())) {  // Change this to your own target-administration
          // implement your own "remove current target from your administration"
- 	set<a href="robowiki?TurnRadarRight" class=wikipagelink>TurnRadarRight</a>( Double.POSITIVE_INFINITY);
+ 	set<a href="robowiki@TurnRadarRight" class=wikipagelink>TurnRadarRight</a>( Double.POSITIVE_INFINITY);
      }
  }
 </PRE>
 <p>
 <p>
 <p>
-There are more meleebots using this type of radar, although the implementation may vary. Ofcourse you need to implement your own startup-behaviour and targetselection. Note that this snippet is written without the sourcecode at hand. The intention of this radar should be clear though. --<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+There are more meleebots using this type of radar, although the implementation may vary. Ofcourse you need to implement your own startup-behaviour and targetselection. Note that this snippet is written without the sourcecode at hand. The intention of this radar should be clear though. --<a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
 <p>
 I tried making a bot which used what I guess is called an 'Efficient'(just kidding) radar...and failed miserably.
 If anybody actually cares and would like to look at my atrocious code, I'll make it a little more...errr....readable.
@@ -285,7 +285,7 @@ My question is, what's wrong this?
  run()
  {
  while(true){    
- set<a href="robowiki?TurnRadarRight" class=wikipagelink>TurnRadarRight</a>(360);
+ set<a href="robowiki@TurnRadarRight" class=wikipagelink>TurnRadarRight</a>(360);
  **execute();**
  }
  }
@@ -296,7 +296,7 @@ My question is, what's wrong this?
 <p>
 The execute() was missing so it should have turned one time each round. --gez
 <p>
-It works well on <a href="robowiki?CrazyTracker" class=wikipagelink>CrazyTracker</a> (I think) and I haven't detected any slippage (although it could be there, hiding...). --Bayen
+It works well on <a href="robowiki@CrazyTracker" class=wikipagelink>CrazyTracker</a> (I think) and I haven't detected any slippage (although it could be there, hiding...). --Bayen
 <p>
 If that's all you do with the radar, it will continually move around in a circle. Many tanks, especially in 1v1, focus the radar on a single target so that they scan it every frame, instead of just every time the radar passes by. -- Voidious
 <p>
@@ -304,13 +304,13 @@ Yes, with a constant spinning you will only see your enemy 1 out of every 8 tick
 <p>
 Can you miss robots with your radar because I find that my robot will not notice another robot that is behind something else. -- Kinsen
 <UL >
-<li> Perhaps you could do something like <a href="robowiki?Radar/getAllEvents" class=wikipagelink>this</a> --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<li> Perhaps you could do something like <a href="robowiki@Radar/getAllEvents" class=wikipagelink>this</a> --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 </UL>
-You should get an on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>? event for every bot that is present in your radar-arc, there is no 'radar-shadow' generated by another bot. However, if you do a call to clearAllEvents<a href="robowiki?action=edit&id=AllEvents" class=wikipageedit>?</a>?(), all pending events are removed. Just print out the time and the name of the scanned bot in the on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>? event to check whether you miss some. Also, the radar has a reach of 1200, so in melee it is possible that a bot is out of range. -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+You should get an on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a>? event for every bot that is present in your radar-arc, there is no 'radar-shadow' generated by another bot. However, if you do a call to clearAllEvents<a href="robowiki@action=edit&id=AllEvents" class=wikipageedit>?</a>?(), all pending events are removed. Just print out the time and the name of the scanned bot in the on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a>? event to check whether you miss some. Also, the radar has a reach of 1200, so in melee it is possible that a bot is out of range. -- <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
 <p>
-ScannedRobotEvents<a href="robowiki?action=edit&id=ScannedRobotEvents" class=wikipageedit>?</a> are sorted by distance. The first events you get are the ones closest to you. So if you call execute() or fire() or whatever in your on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> handler, you will always be acting on the <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> for the robot closest to you, and ones behind it will effectively be "shadowed". --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+ScannedRobotEvents<a href="robowiki@action=edit&id=ScannedRobotEvents" class=wikipageedit>?</a> are sorted by distance. The first events you get are the ones closest to you. So if you call execute() or fire() or whatever in your on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a> handler, you will always be acting on the <a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> for the robot closest to you, and ones behind it will effectively be "shadowed". --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
-I know some people do the majority of their logic off of the on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> method, and this seems like a good argument against that approach.  However, it's not an issue until you want to take on more than one opponent at a time and / or have allies.  When I started designing Ugluk I favored melee battles (since they are fun to watch) so I have always accomodated multiple opponents.  The scanned robot events update the internal target data, and the targeting and movement are based on the entire enemy picture. -- Martin
+I know some people do the majority of their logic off of the on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a> method, and this seems like a good argument against that approach.  However, it's not an issue until you want to take on more than one opponent at a time and / or have allies.  When I started designing Ugluk I favored melee battles (since they are fun to watch) so I have always accomodated multiple opponents.  The scanned robot events update the internal target data, and the targeting and movement are based on the entire enemy picture. -- Martin
 <p>
 I use something like this, its a tight and almost non-slipping radar lock (the almost is just for safety, as I personally haven't seen it slip ever). The radar sags a bit at times (only catching the backend of a fast moving opponent) but its better then the infinity lock without taking up alot of room.
 <pre>
@@ -326,7 +326,7 @@ I use something like this, its a tight and almost non-slipping radar lock (the a
 		setTurnRadarLeftRadians(radarOffset);
 	}
 </pre>
--- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+-- <a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 <p>
 It seems like a good radar but it dosen't spin when you're not locked, so you can't actually lock unless you have some extra code.  What do I do to fix this?
 <p>
@@ -337,34 +337,34 @@ if(getRadarTurnRemaining() == 0.0)
     setTurnRadarRight(Double.POSITIVE_INFINITY);
 </pre>
 <p>
-And welcome to robowiki! Make a page for yourself, tell us about your bots =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+And welcome to robowiki! Make a page for yourself, tell us about your bots =) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <p>
 <p>
--- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+-- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
 <p>
-With Perpy, I just do circular targeting with my radar, basically. On the timescales that we're talking about, you won't miss. If I don't have an enemy, I just spin the radar until I find one. Every time I lose track of the enemy (Which doesn't happen all that often), I reverse the direction that I'm spinning the radar in - that seems to help find bots once I've lost them. --<a href="robowiki?Jp" class=wikipagelink>Jp</a>.
+With Perpy, I just do circular targeting with my radar, basically. On the timescales that we're talking about, you won't miss. If I don't have an enemy, I just spin the radar until I find one. Every time I lose track of the enemy (Which doesn't happen all that often), I reverse the direction that I'm spinning the radar in - that seems to help find bots once I've lost them. --<a href="robowiki@Jp" class=wikipagelink>Jp</a>.
 <p>
 <p>
-I always see these very smooth wide radars that keep the enemy in the center of its beam without being very very thin. Bots such as DT 1.91, Tron 2.01, Yngwie 1.0, <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a> 1.2, and several others. I consider this smooth lock, the "perfect" radar lock. I have managed this, and it seems ratehr effective but I would like to know how effective this type of lock is. -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+I always see these very smooth wide radars that keep the enemy in the center of its beam without being very very thin. Bots such as DT 1.91, Tron 2.01, Yngwie 1.0, <a href="robowiki@TheArtOfWar" class=wikipagelink>TheArtOfWar</a> 1.2, and several others. I consider this smooth lock, the "perfect" radar lock. I have managed this, and it seems ratehr effective but I would like to know how effective this type of lock is. -- <a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 <p>
-Yeah, that should be the best, assuming you're just talking 1v1. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+Yeah, that should be the best, assuming you're just talking 1v1. -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <p>
 Having a really tight radar arc is more of a coolness thing.  All the big boys are doing it (at least the ones who still play). -- Martin
 <p>
-I just thought of an idea for a fairly simple radar lock.  I haven't coded it yet, but what you would do was to turn the radar at the enemy who you haven't seen for the longest amount of time.  If you keep track of where everyone is, this should be pretty efficent (not too much extra spinning) and give you equal data on every enemy.  I will use this once I get around to making a melee bot.  --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+I just thought of an idea for a fairly simple radar lock.  I haven't coded it yet, but what you would do was to turn the radar at the enemy who you haven't seen for the longest amount of time.  If you keep track of where everyone is, this should be pretty efficent (not too much extra spinning) and give you equal data on every enemy.  I will use this once I get around to making a melee bot.  --<a href="robowiki@Bayen" class=wikipagelink>Bayen</a>
 <p>
-That would require you to keep track of all the enemies, and how would you know where the enemy is to be able to scan it? -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+That would require you to keep track of all the enemies, and how would you know where the enemy is to be able to scan it? -- <a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 <p>
-If this was based on the last position that you saw each enemy at, the result would be spinning your radar in the same direction at all times - unless you're in a corner, where you might have optimal scanning by going back and forth... It's a lot easier in 2v2, but <a href="robowiki?LuminariousDuo" class=wikipagelink>LuminariousDuo</a> does optimal scanning like this. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+If this was based on the last position that you saw each enemy at, the result would be spinning your radar in the same direction at all times - unless you're in a corner, where you might have optimal scanning by going back and forth... It's a lot easier in 2v2, but <a href="robowiki@LuminariousDuo" class=wikipagelink>LuminariousDuo</a> does optimal scanning like this. -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <p>
 It depends on what you are trying to accomplish.  If you want to avoid being near opponents, you are probably best off just spinning the radar in one direction for the entire round (or until your goals change).  If you are trying to kill one person at a time, you should just sweep over the single opponent every turn until he's dead.  If you are trying to avoid bad situations while attacking favorable targets, you need to delve into what you need your radar for.  Unless you are doing pattern matching, you really only need to sweep your opponent for two turns prior to the turn you fire.  If you are using waves, you will also want to sweep over your target while the wave is crashing over them.  If they dive into the wave, you may miss it if your radar is focused elsewhere.  My melee radar just does a full circle sweep immediately upon firing a wave, during which I evaluate my present target choice against all of the opportunities presented.  At the end of the full circle sweep my radar swing back to my (possible new) target until I fire again.  -- Martin
 <p>
-If it's only a couple of ticks, I could use a simple linear prediction on all of the bots that I am keeping track of.  It shouldn't be too far off in the small amounts of time. --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+If it's only a couple of ticks, I could use a simple linear prediction on all of the bots that I am keeping track of.  It shouldn't be too far off in the small amounts of time. --<a href="robowiki@Bayen" class=wikipagelink>Bayen</a>
 <p>
-In the beginning of the round, I spin the radar toward where I cover the most battlefield. I also use a melee radar lock in <a href="robowiki?Smash" class=wikipagelink>Smash</a>. Here is the radar part of the code:<br>
+In the beginning of the round, I spin the radar toward where I cover the most battlefield. I also use a melee radar lock in <a href="robowiki@Smash" class=wikipagelink>Smash</a>. Here is the radar part of the code:<br>
 <pre>
 run(){
         int direction=sign(Utils.normalRelativeAngle(calcAngle(new Point2D.Double(getX(),getY()),new Point2D.Double(getBattleFieldWidth()/2,getBattleFieldHeight()/2))-getRadarHeadingRadians()));
@@ -391,21 +391,21 @@ public void onScannedRobot(ScannedRobotEvent e){
         //other onScannedRobot code
 }
 </pre>
---<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+--<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-What does scan() do? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+What does scan() do? --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-See Help -&gt; Robocode API -&gt; Robot -&gt; scan(). I don't use it, so I don't have more info than that.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+See Help -&gt; Robocode API -&gt; Robot -&gt; scan(). I don't use it, so I don't have more info than that.  -- <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
 <p>
 scan()<br>
 public void scan()<br>
-Look for other robots. This method is called automatically by the game, as long as you are moving, turning, turning your gun, or turning your radar. There are 2 reasons to call scan() manually: 1 - You want to scan after you stop moving 2 - You want to interrupt the on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> event. This is more likely. If you are in on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>, and call scan(), and you still see a robot, then the system will interrupt your on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> event immediately and start it from the top. This call executes immediately. Scan will cause on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(robocode.<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>) to be called if you see a robot. 
+Look for other robots. This method is called automatically by the game, as long as you are moving, turning, turning your gun, or turning your radar. There are 2 reasons to call scan() manually: 1 - You want to scan after you stop moving 2 - You want to interrupt the on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a> event. This is more likely. If you are in on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a>, and call scan(), and you still see a robot, then the system will interrupt your on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a> event immediately and start it from the top. This call executes immediately. Scan will cause on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a>(robocode.<a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>) to be called if you see a robot. 
 <p>
 I still don't really get what scan() does. Does it turn the radar 360? Or does it somehow instantly look for robot without turning radar?
---<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+--<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
 Nvm, scan() just looks for any robots that are within the radar arc. scan() is called every tick for each robot, i guess. In other words, the radar by itself wouldn't see anything. scan() "opens the eyes" of the robots. The description is above. So, if you are not moving, turning, turning your gun, or turning your radar, you can't see anything, unless you call it manually.
---<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+--<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
 I developed this for my new bot Genesis. Its probably been done before, but its not listed here. This radar fixes onto the arc width of the enemy robot, and also compensates for lateral movement of the enemy so that it doesn't slip off. Meaning the edges of the radar arc when it reachs the enemy will directly light up with its edges, no matter its speed. (its fancy)
 <p>
@@ -426,14 +426,14 @@ public void onScannedRobot(ScannedRobotEvent e){
 }
 </pre>
 <p>
---<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+--<a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 <p>
-I think <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> uses something similar to this --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+I think <a href="robowiki@GrubbmGrb" class=wikipagelink>GrubbmGrb</a> uses something similar to this --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-According to <a rel="nofollow" href="http://www-128.ibm.com/developerworks/library/j-robowrap.html">[this]</a>, <a href="robowiki?Yngwie" class=wikipagelink>Yngwie</a> "determines which robots are close or dangerous and tries to effectively scan these as often as possible". When i ran it in a battle (slowly) and turned on visible scanned arcs, it did exactly that: When some bots are close to it, it scans those only (ignores the other bots). Does anyone else think this is a good radar to use? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+According to <a rel="nofollow" href="http://www-128.ibm.com/developerworks/library/j-robowrap.html">[this]</a>, <a href="robowiki@Yngwie" class=wikipagelink>Yngwie</a> "determines which robots are close or dangerous and tries to effectively scan these as often as possible". When i ran it in a battle (slowly) and turned on visible scanned arcs, it did exactly that: When some bots are close to it, it scans those only (ignores the other bots). Does anyone else think this is a good radar to use? --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
 <p>
-This can't be answered in general. As an example for <a href="robowiki?Aleph" class=wikipagelink>Aleph</a> it is crucial that it has a continuous scanhistory for the gun to work nicely. So I tried to make the radar scan all bots as effectively as possible until shortly before a shot is fired, then only the target is scanned. I did it something like this: For any bot on the field the clockwise angle to the next bot is determined (next in the sense of smallest clockwise angle difference). If bot A has the biggest of these angles and the angle is larger then x=180 degrees (to bot B) it is better not to make a full radar turn but to just scan from bot A to B (anticlockwise) then reverse the radar direction... (even a smaller angle then 180 for x could be reasonable because the scan angle is somewhere around 40 degrees itself (not sure about the 40 degrees though;))) -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+This can't be answered in general. As an example for <a href="robowiki@Aleph" class=wikipagelink>Aleph</a> it is crucial that it has a continuous scanhistory for the gun to work nicely. So I tried to make the radar scan all bots as effectively as possible until shortly before a shot is fired, then only the target is scanned. I did it something like this: For any bot on the field the clockwise angle to the next bot is determined (next in the sense of smallest clockwise angle difference). If bot A has the biggest of these angles and the angle is larger then x=180 degrees (to bot B) it is better not to make a full radar turn but to just scan from bot A to B (anticlockwise) then reverse the radar direction... (even a smaller angle then 180 for x could be reasonable because the scan angle is somewhere around 40 degrees itself (not sure about the 40 degrees though;))) -- <a href="robowiki@Rozu" class=wikipagelink>rozu</a>
 <p>
 <p>
 Here is a easier but still fancy radar setup for one on one. This version can do the same as above, if you want, but doesn't ahve to and it doesn't require a global vairable to work correctly. Again this was not depicted here, this can be the starting bed for more complex melee radars, which would require a +/- spin however much to a certain enemies last angle, etc.
@@ -457,27 +457,27 @@ public void onScannedRobot(ScannedRobotEvent e) {
 }
 </pre>
 <p>
---<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+--<a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 <p>
-Is there any such thing as a 100% radar lock (was looking at the <a href="robowiki?Radar/Old" class=wikipagelink>Radar/Old</a> page)? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+Is there any such thing as a 100% radar lock (was looking at the <a href="robowiki@Radar/Old" class=wikipagelink>Radar/Old</a> page)? --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-Edit: is there any such thing as a 100% radar lock for 1v1, with melee just use the 1v1 lock right before firing --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+Edit: is there any such thing as a 100% radar lock for 1v1, with melee just use the 1v1 lock right before firing --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
 I guess there is a 100% radar lock as long as you're at least 20 away, since the most a bot could move in one tick if it's at distance 18 is <code>atan(8/18)</code> which equals about 23.9 (degrees). With <code>atan(8/20)</code> the angle is about 21.8 (degrees) which a radar could handle (feel free to tell me if there's a problem with the trig) 
 <p>
-I am now thinking of making a radar similar to what Jokester mentioned (see <a href="robowiki?Radar/Old" class=wikipagelink>Radar/Old</a> page), so far my ideas are to consider the benifit of spinning the radar to the left 45 (e.g. the number of bots between radarheading and radarheading-pi/4 and take into account their energy, distance, etc.) and in the other way --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+I am now thinking of making a radar similar to what Jokester mentioned (see <a href="robowiki@Radar/Old" class=wikipagelink>Radar/Old</a> page), so far my ideas are to consider the benifit of spinning the radar to the left 45 (e.g. the number of bots between radarheading and radarheading-pi/4 and take into account their energy, distance, etc.) and in the other way --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-I haven't seen this in the wiki but my question is where should i use the execute() command, as i find that using it in different places can have a big effect on how my robot works. I noticed this by Watching my Radar arc if execute was called twice the radar would not function properly but if i use it only one my fire rate drops drammatically, i am using a simple oscillating radar and i just don't understand why there is such a difference --[Irish Sean]<a href="robowiki?action=edit&id=Irish_Sean" class=wikipageedit>?</a> 
+I haven't seen this in the wiki but my question is where should i use the execute() command, as i find that using it in different places can have a big effect on how my robot works. I noticed this by Watching my Radar arc if execute was called twice the radar would not function properly but if i use it only one my fire rate drops drammatically, i am using a simple oscillating radar and i just don't understand why there is such a difference --[Irish Sean]<a href="robowiki@action=edit&id=Irish_Sean" class=wikipageedit>?</a> 
 <p>
-In Robocode, there are both blocking and non-blocking calls. Blocking calls (like ahead, back) end your turn, while non-blocking calls (setAhead, set<a href="robowiki?TurnRadarRight" class=wikipagelink>TurnRadarRight</a>) just set things to happen when you finish your turn. The call to execute() finishes your turn and executes all the commands you had queued with the setXXX commands. Some bots never call execute, particularly <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a>-restricted bots that call a blocking call like turnRadarRight as part of their radar lock (it's like set<a href="robowiki?TurnRadarRight" class=wikipagelink>TurnRadarRight</a> + execute in one). So, the short answer is, I'd put execute() in a do-while loop in my run() method and use only setXXX commands, but it's not the only way to do things. 
+In Robocode, there are both blocking and non-blocking calls. Blocking calls (like ahead, back) end your turn, while non-blocking calls (setAhead, set<a href="robowiki@TurnRadarRight" class=wikipagelink>TurnRadarRight</a>) just set things to happen when you finish your turn. The call to execute() finishes your turn and executes all the commands you had queued with the setXXX commands. Some bots never call execute, particularly <a href="robowiki@CodeSize" class=wikipagelink>CodeSize</a>-restricted bots that call a blocking call like turnRadarRight as part of their radar lock (it's like set<a href="robowiki@TurnRadarRight" class=wikipagelink>TurnRadarRight</a> + execute in one). So, the short answer is, I'd put execute() in a do-while loop in my run() method and use only setXXX commands, but it's not the only way to do things. 
 <p>
 In your case, I bet you're using a blocking call and execute, so you are skipping every other turn. Hope that helps. And hey, welcome, make yourself a wiki page! =)  We love <strike>fresh blood</strike> to see new faces around here!
 <p>
--- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+-- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <p>
 Ok, to me this seems a good concept 'in my head' but when I put it into practise I get slippage at the boundaries of the segments 45deg apart.
 <p>
-basically, spin the radar 45. If you get an on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>, then spin 45 the other way.  So, if you see a robot, you should see it again next time as you scan right back over it. If you dont, you keep going in your current direction untill you do.
+basically, spin the radar 45. If you get an on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a>, then spin 45 the other way.  So, if you see a robot, you should see it again next time as you scan right back over it. If you dont, you keep going in your current direction untill you do.
 <p>
 But, as I say, as the enemy bot approaches the 45deg boundaries, sometimes it will slip out of the radar, sometimes the radar keeps it.
 <p>
@@ -485,18 +485,18 @@ Is there a way to avoid my boundary issues?
 <p>
 ..I'd like to get this to work or understand why it wont rather than stealing any ready-mix radars out there :)
 <p>
--- <a href="robowiki?YellowAlienBaby" class=wikipagelink>YellowAlienBaby</a>
+-- <a href="robowiki@YellowAlienBaby" class=wikipagelink>YellowAlienBaby</a>
 <p>
-Mr. Yellow Baby: the concept you are speaking of is exactly that of the "infinity lock" at the top of this page.  The slippage comes when your opponent has a small fraction of his bot inside your boundary, then moves completely out of the boundary on the next tick, just as you try to scan that same area again.    The trick is to keep him in the center of your scan arc, meaning that you should never try to scan more than 45/2 degrees past him in any direction, because once you scan more than 45 degrees past where he will be next tick, you've lost him.  Hope this helps.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+Mr. Yellow Baby: the concept you are speaking of is exactly that of the "infinity lock" at the top of this page.  The slippage comes when your opponent has a small fraction of his bot inside your boundary, then moves completely out of the boundary on the next tick, just as you try to scan that same area again.    The trick is to keep him in the center of your scan arc, meaning that you should never try to scan more than 45/2 degrees past him in any direction, because once you scan more than 45 degrees past where he will be next tick, you've lost him.  Hope this helps.  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <p>
 Ahh. Simple, but thanks for explaining. I had realised the conditions it happened in, I was just jumping through hoops to try and figure out how to compensate for it - (was he going clockwise or anticlockwise around me and should I switch direction etc..) - but I was convinced a full 45deg scan should work..
 <p>
--- <a href="robowiki?YellowAlienBaby" class=wikipagelink>YellowAlienBaby</a> 
+-- <a href="robowiki@YellowAlienBaby" class=wikipagelink>YellowAlienBaby</a> 
 <p>
-My 'fancy' radar snippets above do exactly this, keeping the robot in the center of the field, and with enough work it can be balanced in such a way escape is impossible. On my newer bots I just cheat by still determining it by distance but dumping a 8 into it to make up for maximum robot velocity, instead of trying to guess the lateral movement (however much cooler it looks when it works). --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+My 'fancy' radar snippets above do exactly this, keeping the robot in the center of the field, and with enough work it can be balanced in such a way escape is impossible. On my newer bots I just cheat by still determining it by distance but dumping a 8 into it to make up for maximum robot velocity, instead of trying to guess the lateral movement (however much cooler it looks when it works). --<a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 <p>
 <hr noshade class=wikiline size=1>
-I would have a MeleeBot<a href="robowiki?action=edit&id=MeleeBot" class=wikipageedit>?</a> by now but my advanced radar system sometimes just plain fails. It will be going just fine the it just dies, not even falling back to a simple spin (as it should), it doesn't throw any errors or anything, so i'm a tad confused. However when it does work, it works very well! It uses the method to scan for the bot it hasn't seen the longest, which I would think is a rather common style of melee radar. Soon as this progresses farther I will continue working on my pathfinding system. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+I would have a MeleeBot<a href="robowiki@action=edit&id=MeleeBot" class=wikipageedit>?</a> by now but my advanced radar system sometimes just plain fails. It will be going just fine the it just dies, not even falling back to a simple spin (as it should), it doesn't throw any errors or anything, so i'm a tad confused. However when it does work, it works very well! It uses the method to scan for the bot it hasn't seen the longest, which I would think is a rather common style of melee radar. Soon as this progresses farther I will continue working on my pathfinding system. --<a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 <p>
 <p>
 I don't know how often this happens, but I accidently coded something that works better than intended. I wanted to make a radar which focuses on one enemy keeping him in the middle of a 45 degree arc. I tried different ways wich didn't work too good or at all and I tried this which as I thought shouldn't work:
@@ -504,7 +504,7 @@ I don't know how often this happens, but I accidently coded something that works
 private byte radarDir=1;
 ..
 <p>
-public void on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {
+public void on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {
 <PRE >
                 ..
 		focusRadar(e);
@@ -512,10 +512,10 @@ public void on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a
 	}
 </PRE>
 <p>
-public void focusRadar(<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e){
+public void focusRadar(<a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e){
 <PRE >
-		double enemyDir=normalRad(get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>() - getRadarHeadingRadians<a href="robowiki?action=edit&id=RadarHeadingRadians" class=wikipageedit>?</a>()) + e.getBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a>();
-		set<a href="robowiki?TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>(normalRad(enemyDir-(radarDir*PI/8)));
+		double enemyDir=normalRad(get<a href="robowiki@HeadingRadians" class=wikipagelink>HeadingRadians</a>() - getRadarHeadingRadians<a href="robowiki@action=edit&id=RadarHeadingRadians" class=wikipageedit>?</a>()) + e.getBearingRadians<a href="robowiki@action=edit&id=BearingRadians" class=wikipageedit>?</a>();
+		set<a href="robowiki@TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>(normalRad(enemyDir-(radarDir*PI/8)));
 		radarDir*=-1;
 	}
 </PRE>
@@ -528,22 +528,22 @@ PS. I have an execute(); method at the end of run() and thats it.
 <p>
 -- Infestor
 <p>
-Seems to me like this should keep the enemy in the middle of a PI/4 arc (which you're saying it does, right?).  Your variable <code>enemyDir</code> is the amount to turn the radar to focus directly on the enemy.  Then you alternately add or subtract PI/8 from that each time he's scanned.  Make sense?  A couple notes: that first "normalRad" call is unneccesary, since the total result will be normalized inside the setTurn method, enemyDir is a bit of a misleading name (which I'm sure you figured out), and making radarDir a byte is really unnecessary (it's just going to be converted to a double every time you use it in the setTurn argument list).  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+Seems to me like this should keep the enemy in the middle of a PI/4 arc (which you're saying it does, right?).  Your variable <code>enemyDir</code> is the amount to turn the radar to focus directly on the enemy.  Then you alternately add or subtract PI/8 from that each time he's scanned.  Make sense?  A couple notes: that first "normalRad" call is unneccesary, since the total result will be normalized inside the setTurn method, enemyDir is a bit of a misleading name (which I'm sure you figured out), and making radarDir a byte is really unnecessary (it's just going to be converted to a double every time you use it in the setTurn argument list).  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <UL >
-<li> Ah, so the place where your staying has internet! (assuming you're still on that vacation :) --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
-<li> Yes, yes it does.  And yes, yes I am :).  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Ah, so the place where your staying has internet! (assuming you're still on that vacation :) --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
+<li> Yes, yes it does.  And yes, yes I am :).  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 </UL>
 <hr noshade class=wikiline size=1>
 Not sure how to ask this but is there any actual way to detect that you have not scanned any bot? I mean this as in they moved out of you radar's reach.I ask as i want to make a simple method to reset the radar to sweep when no target it scanned as my (quick) firing method current locks the radar in the last bots place. -- gEE7
 <p>
 <UL >
-<li> Sure. In your run method, you normally have an infinite loop, like <code>while (true) { /* do whatever */ execute(); }</code> - the "do whatever" will happen each tick, then execute() advances to the next tick. Well, you can have a boolean (e.g., "scannedThisTick") and set it to false in the run method, then set it to true in onScannedRobot. I hope that helps. Also, welcome to the wiki! Feel free to make a page for yourself and your bots. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> Sure. In your run method, you normally have an infinite loop, like <code>while (true) { /* do whatever */ execute(); }</code> - the "do whatever" will happen each tick, then execute() advances to the next tick. Well, you can have a boolean (e.g., "scannedThisTick") and set it to false in the run method, then set it to true in onScannedRobot. I hope that helps. Also, welcome to the wiki! Feel free to make a page for yourself and your bots. -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <li> Yes this method works fine. Just to point out anyone else wanting to do this you need to do the if false test on "scannedThisTick" at the begining of the while(true) and set it to false at the end due to robocode's processing loop... and its only useful if your using really big battlefields. Thanks a lot for that Voidious it helped alot. I guess i'll finish my bot before making a page. -- gEE7
 </UL>
 <p>
 <hr noshade class=wikiline size=1>
 <p>
-Over at <a href="robowiki?NightAndDay" class=wikipagelink>NightAndDay</a>, <a href="robowiki?Voidious" class=wikipagelink>Voidious</a> and <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a> were discussing melee radars, so I just thought I should throw this out here... this is the radar I'm using in my upcoming minibot. In addition to scanning for the oldest enemy in melee, it also seems to be a perfect radar in 1v1. I haven't really tried to compact its codesize yet.
+Over at <a href="robowiki@NightAndDay" class=wikipagelink>NightAndDay</a>, <a href="robowiki@Voidious" class=wikipagelink>Voidious</a> and <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a> were discussing melee radars, so I just thought I should throw this out here... this is the radar I'm using in my upcoming minibot. In addition to scanning for the oldest enemy in melee, it also seems to be a perfect radar in 1v1. I haven't really tried to compact its codesize yet.
 <p>
 <pre>
 private Map&lt;String, RobotRecording&gt; enemies = new HashMap&lt;String, RobotRecording&gt;();
@@ -589,7 +589,7 @@ public void onRobotDeath(RobotDeathEvent e) {
 }
 </pre>
 <p>
--- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+-- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 <p>
 I wanna play!!  Codesize = 176 (w/ jikes).
 <pre>
@@ -653,27 +653,27 @@ public class MeleeRadar extends AdvancedRobot {
 	}
 }
 </pre>
-Hmm - except now that I think about it I this will throw an exception when it wins and scanInfo has zero elements.  Better put that in a try-catch, I guess.  It looks like that makes codesize 180.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+Hmm - except now that I think about it I this will throw an exception when it wins and scanInfo has zero elements.  Better put that in a try-catch, I guess.  It looks like that makes codesize 180.  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <p>
 <UL >
-<li> Using Collections.min()... that's clever. I wouldn't have thought of that. But, is it really smaller than just using a loop? -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li> Using Collections.min()... that's clever. I wouldn't have thought of that. But, is it really smaller than just using a loop? -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 </UL>
 <p>
 <UL >
-<li> Also, it doesn't seem to work very well; it sometimes tries to scan for a robot, but scans in one place forever whenever that bot happens to be farther away laterally than it was previously. To see the problem, put it in a 1000x1000 battlefield with three copies of <a href="robowiki?Walls" class=wikipagelink>Walls</a>. Why do you think I needed the scanTarget and scanDirection variables? -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li> Also, it doesn't seem to work very well; it sometimes tries to scan for a robot, but scans in one place forever whenever that bot happens to be farther away laterally than it was previously. To see the problem, put it in a 1000x1000 battlefield with three copies of <a href="robowiki@Walls" class=wikipagelink>Walls</a>. Why do you think I needed the scanTarget and scanDirection variables? -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 </UL>
 <p>
 <p>
 <UL >
-<li> Hmm, I see your point.  Everyone was making cool melee radar, I just wanted to join the fun.  Looks like I loose :(.  But anyway, if I remember right, using Collections.min() is slightly smaller than using a loop.  Unless, of course, you have to make the loop anyway for some other purpose, like minimum risk movement ... -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Hmm, I see your point.  Everyone was making cool melee radar, I just wanted to join the fun.  Looks like I loose :(.  But anyway, if I remember right, using Collections.min() is slightly smaller than using a loop.  Unless, of course, you have to make the loop anyway for some other purpose, like minimum risk movement ... -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 </UL>
 <p>
 <UL >
-<li> It seems my trick for only adjusting your radar turn in the <code>onScannedRobot</code> is what makes me not susceptible to something similar to this. Also, my radar adjusts to a perfect 1v1 radar when there is only 1 enemy, because I'm using the magical '2' multiplier on the difference of the angle. That Collections.min() looks neat, if I need extra codesize I'll give it a try =). -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> It seems my trick for only adjusting your radar turn in the <code>onScannedRobot</code> is what makes me not susceptible to something similar to this. Also, my radar adjusts to a perfect 1v1 radar when there is only 1 enemy, because I'm using the magical '2' multiplier on the difference of the angle. That Collections.min() looks neat, if I need extra codesize I'll give it a try =). -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 </UL>
 <p>
 <UL >
-<li> As I said, my radar is perfect in 1v1, though for a different reason (it always adjusts to find the one out of eight possible sweeps that contains the center of the enemy). I've tried different combinations of placing the radar code in the run() method, onScannedRobot(), and a custom event that executes before onScannedRobot(); for full melee performance, and not just <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a>, you need at least one global variable - scanTarget, which solves the problem you mentioned about robots being out of range in melee. Introducing scanDirection and placing the radar movement in run() saves having to invoke a setRadarTurnRight(Double.POSITIVE_INFINITY) at the beginning of the round. I'm not sure if it is really any smaller to do it that way, though. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li> As I said, my radar is perfect in 1v1, though for a different reason (it always adjusts to find the one out of eight possible sweeps that contains the center of the enemy). I've tried different combinations of placing the radar code in the run() method, onScannedRobot(), and a custom event that executes before onScannedRobot(); for full melee performance, and not just <a href="robowiki@TwinDuel" class=wikipagelink>TwinDuel</a>, you need at least one global variable - scanTarget, which solves the problem you mentioned about robots being out of range in melee. Introducing scanDirection and placing the radar movement in run() saves having to invoke a setRadarTurnRight(Double.POSITIVE_INFINITY) at the beginning of the round. I'm not sure if it is really any smaller to do it that way, though. -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 </UL>
 <p>
 I wanna play too. Codesize 173, and it works. ;-) Can anyone beat that? 
@@ -729,9 +729,9 @@ public class DavesTinyOptimalMeleeScan extends TeamRobot{
 </pre>
 <p>
 Note: Voidious asked about licensing. Feel free to use it and change it, with or without credit. Credit would be appreciated though. =)
---<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+--<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
-Nice concept!  I ought to be able to shrink that a bit.  Let's see here ... *hack, hack, tinker*.  Ah - here's a version at 156. --<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+Nice concept!  I ought to be able to shrink that a bit.  Let's see here ... *hack, hack, tinker*.  Ah - here's a version at 156. --<a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <pre>
 package simonton.tutorial;
 
@@ -780,31 +780,31 @@ public class DavesTinyOptimalMeleeScan extends TeamRobot {
 }
 </pre>
 <p>
-Very nicely done. I missed the fact that access-ordered LinkedHashMaps<a href="robowiki?action=edit&id=LinkedHashMaps" class=wikipageedit>?</a> are ordered with the least recently used first and the most recently used last. I thought it was most recently used at the head of the list, which would make it hard to get the oldest. =) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+Very nicely done. I missed the fact that access-ordered LinkedHashMaps<a href="robowiki@action=edit&id=LinkedHashMaps" class=wikipageedit>?</a> are ordered with the least recently used first and the most recently used last. I thought it was most recently used at the head of the list, which would make it hard to get the oldest. =) --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
-Using a linked list.....why didn't I think of that? Very smart! The one thing that I think we (all) haven't managed to figure out is how to decide to skip bots that are further than 1200 away, and thus 'out of range'. I was considering ignoring bots that I haven't scanned in the last x ticks, unless Math.random() &lt; k, but I'm not sure how well that would work, and its 2 more variables that need to be tuned. Any ideas? Another point: once you start storing things like movement patterns in the HashMap<a href="robowiki?action=edit&id=HashMap" class=wikipageedit>?</a>, it means that you can't remove the objects in the onRobotDeath<a href="robowiki?action=edit&id=RobotDeath" class=wikipageedit>?</a>, but instead have to mark the object as 'dead'. This means that at the beginning of every round you have to mark every single one as 'alive'. It also means that you can't just use the last entry in the <a href="robowiki?LinkedList" class=wikipagelink>LinkedList</a>, because that entry will be dead most of the time, so you <em>have</em> to use a loop. I can't remember where I read this, but: In theory, practice and theory are the same. In practice, they're not. =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+Using a linked list.....why didn't I think of that? Very smart! The one thing that I think we (all) haven't managed to figure out is how to decide to skip bots that are further than 1200 away, and thus 'out of range'. I was considering ignoring bots that I haven't scanned in the last x ticks, unless Math.random() &lt; k, but I'm not sure how well that would work, and its 2 more variables that need to be tuned. Any ideas? Another point: once you start storing things like movement patterns in the HashMap<a href="robowiki@action=edit&id=HashMap" class=wikipageedit>?</a>, it means that you can't remove the objects in the onRobotDeath<a href="robowiki@action=edit&id=RobotDeath" class=wikipageedit>?</a>, but instead have to mark the object as 'dead'. This means that at the beginning of every round you have to mark every single one as 'alive'. It also means that you can't just use the last entry in the <a href="robowiki@LinkedList" class=wikipagelink>LinkedList</a>, because that entry will be dead most of the time, so you <em>have</em> to use a loop. I can't remember where I read this, but: In theory, practice and theory are the same. In practice, they're not. =) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <p>
 <p>
-Well my version (and Simonton's) will just spin in complete circles if they can't find a bot. I think that's probably a good enough solution. Anything else would be complicated, and might not work in some obscure corner case. Incidentally, it's not exactly a linked list, it's a LinkedHashMap<a href="robowiki?action=edit&id=LinkedHashMap" class=wikipageedit>?</a>. It's still a Map, so you can still do get() and remove() by providing the bot name (key), but it keeps a sorted list of keys internally so that iteration is fast and ordered. My initial thought was to use a linked list, removing a bot and then re-adding it at the top whenever it was found to make sure the list was in order of most-recently-used to least-recently-used. But LinkedHashMap<a href="robowiki?action=edit&id=LinkedHashMap" class=wikipageedit>?</a> gives you the best of both worlds, you can get() and remove() things by key, but you don't have the unpredictable iteration order of a regular hash map. As for needing to mark things as dead, well yeah... If you were really going to use this in a bot you'd also store the coordinates of the enemy instead of the angle to them, to account for your own movement... But this was just an exercise in <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> reduction. =) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+Well my version (and Simonton's) will just spin in complete circles if they can't find a bot. I think that's probably a good enough solution. Anything else would be complicated, and might not work in some obscure corner case. Incidentally, it's not exactly a linked list, it's a LinkedHashMap<a href="robowiki@action=edit&id=LinkedHashMap" class=wikipageedit>?</a>. It's still a Map, so you can still do get() and remove() by providing the bot name (key), but it keeps a sorted list of keys internally so that iteration is fast and ordered. My initial thought was to use a linked list, removing a bot and then re-adding it at the top whenever it was found to make sure the list was in order of most-recently-used to least-recently-used. But LinkedHashMap<a href="robowiki@action=edit&id=LinkedHashMap" class=wikipageedit>?</a> gives you the best of both worlds, you can get() and remove() things by key, but you don't have the unpredictable iteration order of a regular hash map. As for needing to mark things as dead, well yeah... If you were really going to use this in a bot you'd also store the coordinates of the enemy instead of the angle to them, to account for your own movement... But this was just an exercise in <a href="robowiki@CodeSize" class=wikipagelink>CodeSize</a> reduction. =) --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
 <UL >
-<li> Yeah, but the problem with using a LinkedHashMap<a href="robowiki?action=edit&id=LinkedHashMap" class=wikipageedit>?</a> and only looking at the <em>last</em> entry (or first) is that, if you can't remove dead bots because you need to keep the objects for other reasons (eg. targeting data), then this method will have to use a loop to sort through each bot, which takes more <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a>. But as an exercise in <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> reduction, with Radar being the only requirement, this is definately the best option. =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> Yeah, but the problem with using a LinkedHashMap<a href="robowiki@action=edit&id=LinkedHashMap" class=wikipageedit>?</a> and only looking at the <em>last</em> entry (or first) is that, if you can't remove dead bots because you need to keep the objects for other reasons (eg. targeting data), then this method will have to use a loop to sort through each bot, which takes more <a href="robowiki@CodeSize" class=wikipagelink>CodeSize</a>. But as an exercise in <a href="robowiki@CodeSize" class=wikipagelink>CodeSize</a> reduction, with Radar being the only requirement, this is definately the best option. =) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 </UL>
 <p>
-(edit conflict) Wait a minute, let me see if I understand this... creating a seemingly redundant local variable is <em>smaller</em> than accessing a global variable directly? Man, I'm never going to learn to be a codesize writer... -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+(edit conflict) Wait a minute, let me see if I understand this... creating a seemingly redundant local variable is <em>smaller</em> than accessing a global variable directly? Man, I'm never going to learn to be a codesize writer... -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 <p>
 <UL >
-<li> Yeah, I think if you use the global variable more than about 3 times it becomes cheaper to assign it to a local variable first. Ugly as hell, but all is fair in love and Robocode =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> Yeah, I think if you use the global variable more than about 3 times it becomes cheaper to assign it to a local variable first. Ugly as hell, but all is fair in love and Robocode =) -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 </UL>
 <p>
-You want to really blow your mind, how about this: The first few local variables you make inside a method are cheaper to access than the subsequent ones...  --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+You want to really blow your mind, how about this: The first few local variables you make inside a method are cheaper to access than the subsequent ones...  --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <UL >
-<li> A fact well documented (and even explained) at <a href="robowiki?CodeSize/WritingSmallCode" class=wikipagelink>CodeSize/WritingSmallCode</a>. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
-<li> Ok, maybe *well* documented is a stretch.  Let's just say it's mentioned and a semi-understandable explanation is there :). -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> A fact well documented (and even explained) at <a href="robowiki@CodeSize/WritingSmallCode" class=wikipagelink>CodeSize/WritingSmallCode</a>. -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
+<li> Ok, maybe *well* documented is a stretch.  Let's just say it's mentioned and a semi-understandable explanation is there :). -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 </UL>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=Radar" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Radar">View other revisions</a><br>Last edited January 26, 2009 1:24 EST by 189104181055.user.veloxzone.com.br <a href="robowiki?action=browse&diff=1&id=Radar">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=Radar" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=Radar">View other revisions</a><br>Last edited January 26, 2009 1:24 EST by 189104181055.user.veloxzone.com.br <a href="robowiki@action=browse&diff=1&id=Radar">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

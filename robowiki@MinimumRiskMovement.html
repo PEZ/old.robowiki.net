@@ -3,25 +3,25 @@
 <META NAME='KEYWORDS' CONTENT='Minimum, Risk, Movement'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=MinimumRiskMovement">MinimumRiskMovement</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext>A very effective type of <a href="robowiki?Melee" class=wikipagelink>Melee</a> movement that is not completely unlike <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a> in implementation.  The idea is to pick a series of points that you could go to next, and rate each one with a 'risk factor', then move to the lowest-risk location.
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=MinimumRiskMovement">MinimumRiskMovement</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>A very effective type of <a href="robowiki@Melee" class=wikipagelink>Melee</a> movement that is not completely unlike <a href="robowiki@AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a> in implementation.  The idea is to pick a series of points that you could go to next, and rate each one with a 'risk factor', then move to the lowest-risk location.
 <p>
 Some of the robots that use this basic system in melee, whether or not the authors call it that (correct me if I'm wrong, add some if you know of more):
 <UL >
-<li> <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a>
-<li> <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a>
-<li> <a href="robowiki?GlowBlowMelee" class=wikipagelink>GlowBlowMelee</a>
-<li> <a href="robowiki?Tron" class=wikipagelink>Tron</a>
-<li> <a href="robowiki?Shadow" class=wikipagelink>Shadow</a>
-<li> <a href="robowiki?DuelistMiniMelee" class=wikipagelink>DuelistMiniMelee</a>
-<li> Maybe <a href="robowiki?Troodon" class=wikipagelink>Troodon</a>.  I haven't looked at the code, but when I first implemented it, my movement reminded me of <a href="robowiki?Troodon" class=wikipagelink>Troodon</a>.
-<li> <a href="robowiki?Vapour" class=wikipagelink>Vapour</a>
-<li> <a href="robowiki?Griezel" class=wikipagelink>Griezel</a>
+<li> <a href="robowiki@FloodHT" class=wikipagelink>FloodHT</a>
+<li> <a href="robowiki@HawkOnFire" class=wikipagelink>HawkOnFire</a>
+<li> <a href="robowiki@GlowBlowMelee" class=wikipagelink>GlowBlowMelee</a>
+<li> <a href="robowiki@Tron" class=wikipagelink>Tron</a>
+<li> <a href="robowiki@Shadow" class=wikipagelink>Shadow</a>
+<li> <a href="robowiki@DuelistMiniMelee" class=wikipagelink>DuelistMiniMelee</a>
+<li> Maybe <a href="robowiki@Troodon" class=wikipagelink>Troodon</a>.  I haven't looked at the code, but when I first implemented it, my movement reminded me of <a href="robowiki@Troodon" class=wikipagelink>Troodon</a>.
+<li> <a href="robowiki@Vapour" class=wikipagelink>Vapour</a>
+<li> <a href="robowiki@Griezel" class=wikipagelink>Griezel</a>
 </UL>
 <p>
 <strong>Calculating the Risk Factor for a point/movement</strong>
 <p>
-For <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a>, the system for this is somewhat like finding the magnitude of a force in an <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a> system.  For each enemy, I use a base risk of a certain point is energy/distance<sup>2</sup>.  Other things I take into account for each enemy:
+For <a href="robowiki@FloodHT" class=wikipagelink>FloodHT</a>, the system for this is somewhat like finding the magnitude of a force in an <a href="robowiki@AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a> system.  For each enemy, I use a base risk of a certain point is energy/distance<sup>2</sup>.  Other things I take into account for each enemy:
 <UL >
 <li> would I be the closest enemy to them at that point?
 <li> have they shot me recently?
@@ -29,7 +29,7 @@ For <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a>, the system for th
 </UL>
 Other things I could add in the future:
 <UL >
-<li> what is my lateral angle to them?  (higher risk to go toward/away than to move perpendicular to them, the dev version of <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a> already does this at least some of the time)
+<li> what is my lateral angle to them?  (higher risk to go toward/away than to move perpendicular to them, the dev version of <a href="robowiki@FloodHT" class=wikipagelink>FloodHT</a> already does this at least some of the time)
 </UL>
 Other things I take into account aside from my enemies:
 <UL >
@@ -40,7 +40,7 @@ Other things I take into account aside from my enemies:
 <p>
 <strong>Picking points to try</strong>
 <p>
-It's important to pick a good range of practical places to go to for this to work well.  Applying a force to the walls is unnecessary if you always just pick points within the battlefield.  I believe that <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a> picks several points around him in regular angular offsets at random distances.  The next version of <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a> will do this at least some of the time.  <a href="robowiki?Tron" class=wikipagelink>Tron</a> obviously picks 4 points, at pretty much uniform distance, up, down, left and right.  He also avoids head-on aim like the plague.  <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a> 0.8 uses a divide-and-conquer sort of system.  He divides the battlefield up into 16 rectangles, and rates each one based on the risk of its center point.  If he's far away from that point, he goes to it, otherwise he splits that rectangle up into 16 more rectanges and rates them and goes to that point (or continues to subdivide until it just doesn't make a difference anymore).  The dev version does this at the beginning of the battle to get situated and then starts picking points around him at a distance.
+It's important to pick a good range of practical places to go to for this to work well.  Applying a force to the walls is unnecessary if you always just pick points within the battlefield.  I believe that <a href="robowiki@HawkOnFire" class=wikipagelink>HawkOnFire</a> picks several points around him in regular angular offsets at random distances.  The next version of <a href="robowiki@FloodHT" class=wikipagelink>FloodHT</a> will do this at least some of the time.  <a href="robowiki@Tron" class=wikipagelink>Tron</a> obviously picks 4 points, at pretty much uniform distance, up, down, left and right.  He also avoids head-on aim like the plague.  <a href="robowiki@FloodHT" class=wikipagelink>FloodHT</a> 0.8 uses a divide-and-conquer sort of system.  He divides the battlefield up into 16 rectangles, and rates each one based on the risk of its center point.  If he's far away from that point, he goes to it, otherwise he splits that rectangle up into 16 more rectanges and rates them and goes to that point (or continues to subdivide until it just doesn't make a difference anymore).  The dev version does this at the beginning of the battle to get situated and then starts picking points around him at a distance.
 <p>
 <hr noshade class=wikiline size=1>
 <strong>Comments / Questions</strong>
@@ -54,13 +54,13 @@ I have tried this but it's very hard to set the importance of each parameters. I
 <li>lateral angle
 </UL>
 I think setting the importance of each parameter could be a job for a genetic search. I read something about it that can be found here <a rel="nofollow" href="http://computing.dcu.ie/~humphrys/">http://computing.dcu.ie/~humphrys/</a> in the abstract paper (not the whole thesis). The article is about action selection and each point can be considered as an action.
-I didn't implement the Genetic Algorithm as I had no simple idea on how to do it (how to build fitness... and if you must implements a robocode controller it's quite hard to do and take much time) but if you have one... --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+I didn't implement the Genetic Algorithm as I had no simple idea on how to do it (how to build fitness... and if you must implements a robocode controller it's quite hard to do and take much time) but if you have one... --<a href="robowiki@Synnalagma" class=wikipagelink>Synnalagma</a>
 <p>
-I may try to put <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a>'s melee system into a Mini one of these times, and then it may help to see some code for it.  I start with energy/distance<sup>2</sup> for each enemy and then multiply it by constants if that robot has shot me recently, or if I would become the closest enemy to them... Then I add something divided by the distance to the center squared and the distance from me squared.  Then I multiply by some function of distance from me to avoid picking points in an opposite corner.  In the dev version of <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a>, if I'm picking a point close to me (meaning that I'm as concerned about not getting hit as much as with getting to the best place), I also multiply the number for each enemy by the cosine of the difference of the angles or something like that, which seems to get me oscillating laterally to the closest/most dangerous enemies. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+I may try to put <a href="robowiki@FloodHT" class=wikipagelink>FloodHT</a>'s melee system into a Mini one of these times, and then it may help to see some code for it.  I start with energy/distance<sup>2</sup> for each enemy and then multiply it by constants if that robot has shot me recently, or if I would become the closest enemy to them... Then I add something divided by the distance to the center squared and the distance from me squared.  Then I multiply by some function of distance from me to avoid picking points in an opposite corner.  In the dev version of <a href="robowiki@FloodHT" class=wikipagelink>FloodHT</a>, if I'm picking a point close to me (meaning that I'm as concerned about not getting hit as much as with getting to the best place), I also multiply the number for each enemy by the cosine of the difference of the angles or something like that, which seems to get me oscillating laterally to the closest/most dangerous enemies. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-Just some though : The problem with this is that in some case you don't really choose between action : imagine a bot that has two task putting out fire and collecting trash there's a fire in the north east and a trash in the south west maybe with this you'll go to north-west or south-east since it maximise your function but this it's not a choice. It's better to go to the fire and then to the trash (or inverse). So I though about that imagine each parameter is an agent rating each action then you choose to execute the agent that will suffer the most if it is not choosen. suffering is BestAction<a href="robowiki?action=edit&id=BestAction" class=wikipageedit>?</a> - currentAction so there a place for opportunism and you really make a choice. main idea found on the article cited. --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+Just some though : The problem with this is that in some case you don't really choose between action : imagine a bot that has two task putting out fire and collecting trash there's a fire in the north east and a trash in the south west maybe with this you'll go to north-west or south-east since it maximise your function but this it's not a choice. It's better to go to the fire and then to the trash (or inverse). So I though about that imagine each parameter is an agent rating each action then you choose to execute the agent that will suffer the most if it is not choosen. suffering is BestAction<a href="robowiki@action=edit&id=BestAction" class=wikipageedit>?</a> - currentAction so there a place for opportunism and you really make a choice. main idea found on the article cited. --<a href="robowiki@Synnalagma" class=wikipagelink>Synnalagma</a>
 <p>
-So are you thinking of something like a maximum-benefit thing rather than minimum risk? -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+So are you thinking of something like a maximum-benefit thing rather than minimum risk? -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
 <strong>Suffering selection</strong>
 <p>
@@ -88,40 +88,40 @@ But it would be better to go to a1 or e1 directly and then to the other one. Thi
 An another way to choose the action to execute is to compute the <i>suffering</i> of this agent if it's not choosen. the suffering is computed this way take the difference of the bettest action for this agent and the value for it's current action. Then you choose the action of the agent wich will have the biggest suffering if it's not executed. In this case you choose a real action as it's one proposed by one of the agent. Here going to fire or trash before.
 There's also a place for opportunism since an agent could not really suffer by not be executed.
 <p>
-Hope that was understandable but i've got a poor english. --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+Hope that was understandable but i've got a poor english. --<a href="robowiki@Synnalagma" class=wikipagelink>Synnalagma</a>
 <p>
 <p>
 I'm trying to implement something like this right now. How can you tell if a bot fires on you?-Andrew
 <p>
-In melee? <a href="robowiki?GlowBlowMelee" class=wikipagelink>GlowBlowMelee</a> nows it when he gets hit:). I just mean that you can't really now it before if you turn your radar all the time (because you have to compare the energy-difference between two ticks to now that the other bot is firing). But in some situations you can do it like in a <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> battle if an other bot is very close (in this case you can also be pretty sure that he is shooting in your direction). -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+In melee? <a href="robowiki@GlowBlowMelee" class=wikipagelink>GlowBlowMelee</a> nows it when he gets hit:). I just mean that you can't really now it before if you turn your radar all the time (because you have to compare the energy-difference between two ticks to now that the other bot is firing). But in some situations you can do it like in a <a href="robowiki@OneOnOne" class=wikipagelink>OneOnOne</a> battle if an other bot is very close (in this case you can also be pretty sure that he is shooting in your direction). -- <a href="robowiki@Rozu" class=wikipagelink>rozu</a>
 <p>
-Even if you lock your radar on a particular enemy, you won't know when he fires because the energy drop can come from another bot's bullet hitting him. Maybe a statistical algorithm could calculate the probability of a bot firing each tick, but I don't know if that info would be of much use... A melee battle is packed with bullets flying all over, a good movement is one that looks like it is dodging them as if it would know where they are. :) -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+Even if you lock your radar on a particular enemy, you won't know when he fires because the energy drop can come from another bot's bullet hitting him. Maybe a statistical algorithm could calculate the probability of a bot firing each tick, but I don't know if that info would be of much use... A melee battle is packed with bullets flying all over, a good movement is one that looks like it is dodging them as if it would know where they are. :) -- <a href="robowiki@ABC" class=wikipagelink>ABC</a>
 <p>
-Though the energy drop from a bullet hit is often larger than 3. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Though the energy drop from a bullet hit is often larger than 3. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-If the bullet hitting the target is power between .1 and .75 inclusive it'll be in the range where it can be mistaken for a shot, otherwise it won't be. On the plus side, bullets this weak are kind of rare, and in <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> you can know for sure if there are any bullets this weak in the air (at least ones that can hit your target) since they would've had to come from you. In melee you're probably better off not trying to dodge too much or you'll find yourself quickly ruling out all the possible directions of movement (if you assume every bot is firing at you you'll get to try to dodge all the 20-30 bullets that are in the air at any one time). -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+If the bullet hitting the target is power between .1 and .75 inclusive it'll be in the range where it can be mistaken for a shot, otherwise it won't be. On the plus side, bullets this weak are kind of rare, and in <a href="robowiki@OneOnOne" class=wikipagelink>OneOnOne</a> you can know for sure if there are any bullets this weak in the air (at least ones that can hit your target) since they would've had to come from you. In melee you're probably better off not trying to dodge too much or you'll find yourself quickly ruling out all the possible directions of movement (if you assume every bot is firing at you you'll get to try to dodge all the 20-30 bullets that are in the air at any one time). -- <a href="robowiki@Kuuran" class=wikipagelink>Kuuran</a>
 <p>
 Can you tell me if this finds the angle i should turn to get to point (destinationx,destinationy)? I came up with: 
-setTurnRightRadians<a href="robowiki?action=edit&id=TurnRightRadians" class=wikipageedit>?</a>(Math.PI/2-Math.atan((destinationy-getY())/(getX()-destinationx)));
---<a href="robowiki?Andrew" class=wikipagelink>Andrew</a>
+setTurnRightRadians<a href="robowiki@action=edit&id=TurnRightRadians" class=wikipageedit>?</a>(Math.PI/2-Math.atan((destinationy-getY())/(getX()-destinationx)));
+--<a href="robowiki@Andrew" class=wikipagelink>Andrew</a>
 <p>
-I think it's <tt>setTurnRightRadians<a href="robowiki?action=edit&id=TurnRightRadians" class=wikipageedit>?</a>(robocode.util.Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(Math.atan2(destinationx-getX(), destinationy-getY())-get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>()));</tt> that you're looking for.  Of course, if the turn is more than 90 degrees, it makes sense to adjust it by 180 degrees and go backward. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+I think it's <tt>setTurnRightRadians<a href="robowiki@action=edit&id=TurnRightRadians" class=wikipageedit>?</a>(robocode.util.Utils.normal<a href="robowiki@RelativeAngle" class=wikipagelink>RelativeAngle</a>(Math.atan2(destinationx-getX(), destinationy-getY())-get<a href="robowiki@HeadingRadians" class=wikipagelink>HeadingRadians</a>()));</tt> that you're looking for.  Of course, if the turn is more than 90 degrees, it makes sense to adjust it by 180 degrees and go backward. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-this seems to vaguely work. but not be accurate enough. i am using it to go to a destination point i choose --<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+this seems to vaguely work. but not be accurate enough. i am using it to go to a destination point i choose --<a href="robowiki@Andrew" class=wikipagelink>andrew</a>
 <p>
-You need to continiously (every tick or so) do it to actually arrive at the destination point. Look at <a href="robowiki?GoToBot" class=wikipagelink>GoToBot</a> for some more code and discussion on the subject. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+You need to continiously (every tick or so) do it to actually arrive at the destination point. Look at <a href="robowiki@GoToBot" class=wikipagelink>GoToBot</a> for some more code and discussion on the subject. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-thanks. what exactly is atan2 though? --<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+thanks. what exactly is atan2 though? --<a href="robowiki@Andrew" class=wikipagelink>andrew</a>
 <p>
-atan2() returns the base angle of a triangle with the sides X and Y. It could be used as a way to find out the absolute bearing between two points. You could use plain atan() for this too, but you'll have to account for the sign of the Y distance yourself then. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+atan2() returns the base angle of a triangle with the sides X and Y. It could be used as a way to find out the absolute bearing between two points. You could use plain atan() for this too, but you'll have to account for the sign of the Y distance yourself then. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Just beware that the sintaxe is: atan2(<b>Y</b>,<b>X</b>), and not X,Y as usual... I'm saying that because i've got myself trapped in that a <b>lot</b> of times... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+Just beware that the sintaxe is: atan2(<b>Y</b>,<b>X</b>), and not X,Y as usual... I'm saying that because i've got myself trapped in that a <b>lot</b> of times... -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 <p>
-you mean the other way around--<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+you mean the other way around--<a href="robowiki@Andrew" class=wikipagelink>andrew</a>
 <p>
-The syntax is <tt>Math.atan2(Y, X)</tt> unless you're dealing with robocode. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+The syntax is <tt>Math.atan2(Y, X)</tt> unless you're dealing with robocode. -- <a href="robowiki@Kuuran" class=wikipagelink>Kuuran</a>
 <p>
-=) Looks like Axe trapped himself over again! Because of this peculiarity of <a href="robowiki?ClockMath" class=wikipagelink>ClockMath</a> I recommend you to implement these two functions in all your bots.
+=) Looks like Axe trapped himself over again! Because of this peculiarity of <a href="robowiki@ClockMath" class=wikipagelink>ClockMath</a> I recommend you to implement these two functions in all your bots.
 <pre>
     static double absoluteBearing(Point2D source, Point2D target) {
         return Math.atan2(target.getX() - source.getX(), target.getY() - source.getY());
@@ -134,13 +134,13 @@ The syntax is <tt>Math.atan2(Y, X)</tt> unless you're dealing with robocode. -- 
 </pre>
 Look in the source of any of my bots to see how they're used. The second function is ill named, but I have never figured out what the name should be. =)
 <p>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-<a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a> calls the latter function <tt>projectPoint()</tt> - projects a point starting from <tt>sourceLocation</tt>, <tt>length</tt> pixels in the direction of <tt>angle</tt>. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<a href="robowiki@Coriantumr" class=wikipagelink>Coriantumr</a> calls the latter function <tt>projectPoint()</tt> - projects a point starting from <tt>sourceLocation</tt>, <tt>length</tt> pixels in the direction of <tt>angle</tt>. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-Yes, that's better. Maybe <pre>static Point2D project(Point2D sourceLocation, double angle, double length)</pre> is a good signature. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Yes, that's better. Maybe <pre>static Point2D project(Point2D sourceLocation, double angle, double length)</pre> is a good signature. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-can someone help me come up with a way to move sinusoidaly to a point. so instead of moving in a strait line in a point  it osscilates to it. this math is to complicated for me --<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+can someone help me come up with a way to move sinusoidaly to a point. so instead of moving in a strait line in a point  it osscilates to it. this math is to complicated for me --<a href="robowiki@Andrew" class=wikipagelink>andrew</a>
 <p>
 I guess the easiest way is to face the point, and then do this:
 <p>
@@ -154,11 +154,11 @@ while (!nearDestination()) {
 }
 stop();
 <p>
-You will need to write some code to work out when you have passed the destination point (prehaps something along the lines of the desitination being between your starting point and your current point), but it should work ok. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+You will need to write some code to work out when you have passed the destination point (prehaps something along the lines of the desitination being between your starting point and your current point), but it should work ok. -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
 Is this Even implantmentable into a Normal Robot? - Error
 <p>
-In theory: yes, but I don't think it would be as effective as an EAR bot --<a href="robowiki?UnderDark" class=wikipagelink>UnderDark</a>
+In theory: yes, but I don't think it would be as effective as an EAR bot --<a href="robowiki@UnderDark" class=wikipagelink>UnderDark</a>
 <p>
 <pre>
 import robocode.*;
@@ -309,9 +309,9 @@ public class Smash extends AdvancedRobot
 	}
 }
 </pre>
-The robot doesn't seem to "recognize" that set<a href="robowiki?AdjustGunForRobotTurn" class=wikipagelink>AdjustGunForRobotTurn</a>(true); is there and set<a href="robowiki?AdjustRadarForGunTurn" class=wikipagelink>AdjustRadarForGunTurn</a>(true); is there either. The firepower is also strange. (Try it in a battle with sittingduck). But if i comment out the "doGunning()" it does seem to adjust the gun. Does anyone know why? --Starrynte
+The robot doesn't seem to "recognize" that set<a href="robowiki@AdjustGunForRobotTurn" class=wikipagelink>AdjustGunForRobotTurn</a>(true); is there and set<a href="robowiki@AdjustRadarForGunTurn" class=wikipagelink>AdjustRadarForGunTurn</a>(true); is there either. The firepower is also strange. (Try it in a battle with sittingduck). But if i comment out the "doGunning()" it does seem to adjust the gun. Does anyone know why? --Starrynte
 <p>
-Why don't you think it recognizes those commands? When I run this tank, it looks pretty clear to me that the radar stays focused on the enemy independent of the tank's movement, and the gun doesn't turn with the tank or the radar. Are you seeing something different, or what did you think those commands should do? Also, what is it about the fire power that seems strange? I ran it against <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a>, and the fire power seemed right, generally the 1300 / distance being the minimum in that expression. Note that fire power maxes out at 3.0, so it will be 3.0 if you set it to more than that. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+Why don't you think it recognizes those commands? When I run this tank, it looks pretty clear to me that the radar stays focused on the enemy independent of the tank's movement, and the gun doesn't turn with the tank or the radar. Are you seeing something different, or what did you think those commands should do? Also, what is it about the fire power that seems strange? I ran it against <a href="robowiki@SittingDuck" class=wikipagelink>SittingDuck</a>, and the fire power seemed right, generally the 1300 / distance being the minimum in that expression. Note that fire power maxes out at 3.0, so it will be 3.0 if you set it to more than that. -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <p>
 The problem isn't with the setAdjust() commands. You're not taking into accout that the bearing to the enemy changes as your robot's position changes. This means target.bearing won't be accurate because your bot will be using the bearing from when it last scanned the target instead the real one. A simple fix would be changing the doGunning() method to:
 <pre>
@@ -325,7 +325,7 @@ if(target.location != null){
 }
 </pre>
 <p>
-I hope this helps -- <a href="robowiki?Kev" class=wikipagelink>Kev</a>
+I hope this helps -- <a href="robowiki@Kev" class=wikipagelink>Kev</a>
 <p>
 That is the problem. Thnx! --Starrynte
 <p>
@@ -392,52 +392,52 @@ double evaluate(Point2D.Double destination){
 		return risk;
 	}
 </pre>
-Above is my movement code and risk function. When I run my bot, it doesn't move at all. If i remove the lastPosition line in the doMovement() and evaluate(), then it does move. Does anyone know how to fix??? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+Above is my movement code and risk function. When I run my bot, it doesn't move at all. If i remove the lastPosition line in the doMovement() and evaluate(), then it does move. Does anyone know how to fix??? --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-If just the lastPosition.setLocation(myX,myY) line in doMovement() isn't commented out, it doesn't move. --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+If just the lastPosition.setLocation(myX,myY) line in doMovement() isn't commented out, it doesn't move. --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-Everything is weird! The gun can't hit sample.Fire! The gun uses linear targeting when the target's 'headDelta' is less than 0.0001, otherwise it uses HOT. The above problem also still exists. The code can be found at <a href="robowiki?Starrynte/Smash" class=wikipagelink>Starrynte/Smash</a>. --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+Everything is weird! The gun can't hit sample.Fire! The gun uses linear targeting when the target's 'headDelta' is less than 0.0001, otherwise it uses HOT. The above problem also still exists. The code can be found at <a href="robowiki@Starrynte/Smash" class=wikipagelink>Starrynte/Smash</a>. --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-OK, I think what you need to do is normalize headDelta to between pi and -pi (using normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>) then check if Math.abs(headDelta) &lt; .0001. --<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a>
+OK, I think what you need to do is normalize headDelta to between pi and -pi (using normal<a href="robowiki@RelativeAngle" class=wikipagelink>RelativeAngle</a>) then check if Math.abs(headDelta) &lt; .0001. --<a href="robowiki@Wcsv" class=wikipagelink>wcsv</a>
 <p>
-It doesn't help the gun or the movement. It still can't hit sample.Fire, and the movement is still weird. --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+It doesn't help the gun or the movement. It still can't hit sample.Fire, and the movement is still weird. --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-Basically what happens when it's 1v1 against Fire is that the 'bot will "vibrate" (turning a little past perpendicular one way, then the other way, etc, etc) and the gun "vibrates" with the 'bot. It's almost as is <pre>setAdjustGunForRobotTurn(true);</pre> did not exist, and the bearing to the enemy changes every tick. Notice i've commented out the lastPosition line in doMovement() and evaluate(), because there is still a problem (see above)--<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+Basically what happens when it's 1v1 against Fire is that the 'bot will "vibrate" (turning a little past perpendicular one way, then the other way, etc, etc) and the gun "vibrates" with the 'bot. It's almost as is <pre>setAdjustGunForRobotTurn(true);</pre> did not exist, and the bearing to the enemy changes every tick. Notice i've commented out the lastPosition line in doMovement() and evaluate(), because there is still a problem (see above)--<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-Does it go wrong on everyone's computer or is it just my comp? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+Does it go wrong on everyone's computer or is it just my comp? --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-This probably isn't the problem, but you should make sure to update your info (your position, energy etc) before you use it each tick. Right now you are using your old position to calculate the enemy position (remember that events are processed before your run loop executes each tick). I've got no time to test this code right now, but maybe later in the week.--<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a>
+This probably isn't the problem, but you should make sure to update your info (your position, energy etc) before you use it each tick. Right now you are using your old position to calculate the enemy position (remember that events are processed before your run loop executes each tick). I've got no time to test this code right now, but maybe later in the week.--<a href="robowiki@Wcsv" class=wikipagelink>wcsv</a>
 <p>
-I just figured it out last week, but I think <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a> has this bug in its wave surfer. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+I just figured it out last week, but I think <a href="robowiki@FloodHT" class=wikipagelink>FloodHT</a> has this bug in its wave surfer. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-Where should I update the info? If i update it after execute() it doesn't do anything. --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+Where should I update the info? If i update it after execute() it doesn't do anything. --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-At the beginning of whatever event handler the information is needed in (probably on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>).  When execute() returns, all the event handlers for that turn will already have been called. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+At the beginning of whatever event handler the information is needed in (probably on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a>).  When execute() returns, all the event handlers for that turn will already have been called. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-Thnx wcsv and Kawigi, the gun problem is fixed. Now, the movement problem from above is left --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+Thnx wcsv and Kawigi, the gun problem is fixed. Now, the movement problem from above is left --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-Whenever my bot hits another bot that rams, like Spinbot or <a href="robowiki?RamFire" class=wikipagelink>RamFire</a>, it gets disabled because it makes too many calls to getXXX() methods. The only getXXX() method I call is e.getVelocity(). It gets really annoying because <a href="robowiki?RamFire" class=wikipagelink>RamFire</a> just rams it for a few ticks then it gets disabled. If anyone knows how to fix...thnx (code will be posted at <a href="robowiki?Starrynte/Smash" class=wikipagelink>Starrynte/Smash</a>) --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+Whenever my bot hits another bot that rams, like Spinbot or <a href="robowiki@RamFire" class=wikipagelink>RamFire</a>, it gets disabled because it makes too many calls to getXXX() methods. The only getXXX() method I call is e.getVelocity(). It gets really annoying because <a href="robowiki@RamFire" class=wikipagelink>RamFire</a> just rams it for a few ticks then it gets disabled. If anyone knows how to fix...thnx (code will be posted at <a href="robowiki@Starrynte/Smash" class=wikipagelink>Starrynte/Smash</a>) --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-Ramming problem from above fixed. Now for the movement problem. --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+Ramming problem from above fixed. Now for the movement problem. --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-I used lastPosition in another bot, and it worked, but when i use it in this bot, it sits still. --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+I used lastPosition in another bot, and it worked, but when i use it in this bot, it sits still. --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
 According to <a rel="nofollow" href="http://java.sun.com/j2se/1.3/docs/api/java/awt/geom/Rectangle2D.Double.html">http://java.sun.com/j2se/1.3/docs/api/java/awt/geom/Rectangle2D.Double.html</a>, when you make a Rectangle2D.Double, the x,y coordinate is the <b>upper-left</b> corner of the rectangle. Is that different in robocode? If not, is this the right way to construct it:
 <pre>
 field=new Rectangle2D.Double(36,getBattleFieldHeight()-36,getBattleFieldWidth()-72,getBattleFieldHeight()-72);
 </pre>
---<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+--<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 <p>
-I made a new bot called Lightning, it's based on Smash, but it doesn't move at all when i run it! Also, in the first round, it says <pre>You cannot call fire(NaN)</pre>--<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>/<a href="robowiki?Starrynte/Lightning" class=wikipagelink>Lightning</a>
+I made a new bot called Lightning, it's based on Smash, but it doesn't move at all when i run it! Also, in the first round, it says <pre>You cannot call fire(NaN)</pre>--<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>/<a href="robowiki@Starrynte/Lightning" class=wikipagelink>Lightning</a>
 <p>
-Does it say that near the beginning of the round, or toward the end? -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+Does it say that near the beginning of the round, or toward the end? -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-fire(<a href="robowiki?NaN" class=wikipagelink>NaN</a>) happens because you have called fire with a <a href="robowiki?NaN" class=wikipagelink>NaN</a> parameter. Looking at your firepower evaluation algoritum, it looks like the base, getTime()-target.ctime, is causing you problems, as there may be a time when you fire on the same tick as you scan, causing the base to be 0, and therefore a <a href="robowiki?NaN" class=wikipagelink>NaN</a>. One solution is to do getTime()-target.ctime+1 instead, or use another base. --<a href="robowiki?Nfwu" class=wikipagelink>Nfwu</a>
+fire(<a href="robowiki@NaN" class=wikipagelink>NaN</a>) happens because you have called fire with a <a href="robowiki@NaN" class=wikipagelink>NaN</a> parameter. Looking at your firepower evaluation algoritum, it looks like the base, getTime()-target.ctime, is causing you problems, as there may be a time when you fire on the same tick as you scan, causing the base to be 0, and therefore a <a href="robowiki@NaN" class=wikipagelink>NaN</a>. One solution is to do getTime()-target.ctime+1 instead, or use another base. --<a href="robowiki@Nfwu" class=wikipagelink>Nfwu</a>
 <p>
-Ok, I will change it to Math.max(getTime()-target.ctime,1); --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+Ok, I will change it to Math.max(getTime()-target.ctime,1); --<a href="robowiki@Starrynte" class=wikipagelink>Starrynte</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=MinimumRiskMovement" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=MinimumRiskMovement">View other revisions</a><br>Last edited December 16, 2007 23:01 EST by <a href="robowiki?AaronR" title="ID 12875 from 109.187.121.70.cfl.res.rr.com">AaronR</a> <a href="robowiki?action=browse&diff=1&id=MinimumRiskMovement">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=MinimumRiskMovement" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=MinimumRiskMovement">View other revisions</a><br>Last edited December 16, 2007 23:01 EST by <a href="robowiki@AaronR" title="ID 12875 from 109.187.121.70.cfl.res.rr.com">AaronR</a> <a href="robowiki@action=browse&diff=1&id=MinimumRiskMovement">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

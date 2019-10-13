@@ -3,15 +3,15 @@
 <META NAME='KEYWORDS' CONTENT='Shadow, Shadows, Melee, Gun'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/ShadowsMeleeGun">Shadow/ShadowsMeleeGun</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Shadow" class=wikipagelink>Shadow</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/ShadowsMeleeGun">Shadow/ShadowsMeleeGun</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Shadow" class=wikipagelink>Shadow</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext>How did I get a big boost in melee gun performance without changing the fundamental way the gun works?
 <p>
 Glad you asked! :)
 <p>
-If you have a working <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> melee gun, here's the recipe: 
+If you have a working <a href="robowiki@DynamicClustering" class=wikipagelink>DynamicClustering</a> melee gun, here's the recipe: 
 <p>
 <UL >
-<li>Speed it up. A KDTree (<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>'s is what I used) and a fast play-it-forward method are good bets.
+<li>Speed it up. A KDTree (<a href="robowiki@Simonton" class=wikipagelink>Simonton</a>'s is what I used) and a fast play-it-forward method are good bets.
 <li>Compute the 10 best firing solutions for each of the enemies on the field, yes, <em>all</em> of them.
 <li>Collect them all in a big array of angle/tolerance. Also keep the hitting distance for each one.
 <li>Select the angle with the biggest probability of hitting, weighting them by the inverse distance.
@@ -20,36 +20,36 @@ If you have a working <a href="robowiki?DynamicClustering" class=wikipagelink>Dy
 <p>
 <hr noshade class=wikiline size=1>
 <p>
-Just watching this gun work in a <a href="robowiki?SampleBotMeleeChallenge" class=wikipagelink>SampleBotMeleeChallenge</a> is a treat. If you ever watched some melee battles, you will realise this gun implements several ideas you already had when watching them:
+Just watching this gun work in a <a href="robowiki@SampleBotMeleeChallenge" class=wikipagelink>SampleBotMeleeChallenge</a> is a treat. If you ever watched some melee battles, you will realise this gun implements several ideas you already had when watching them:
 <p>
 Swarm targeting: Why does my bot always choose that lonely target when it could be targeting that tight pack in the other corner?
 <p>
-Prey on the weak: Why waste my energy trying to hit Aleph when <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a> is there just a little bit further asking to be killed?
+Prey on the weak: Why waste my energy trying to hit Aleph when <a href="robowiki@SittingDuck" class=wikipagelink>SittingDuck</a> is there just a little bit further asking to be killed?
 <p>
 Wasting energy is bad for survival: If it doesn't hit Aleph, will it still hit someone behind him and give you your energy back, or will it got to waste against a wall?
 <p>
 Simple (20 minutes work), effective (10% hitrate increase), cool to watch. This is why I love this game! :)
 <p>
--- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+-- <a href="robowiki@ABC" class=wikipagelink>ABC</a>
 <p>
-Amazing how you can see the problems, but the answer just doesn't click. I bet if you did some heavy <a href="robowiki?BinSmoothing" class=wikipagelink>BinSmoothing</a> it would help even more for hitting those clumps. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+Amazing how you can see the problems, but the answer just doesn't click. I bet if you did some heavy <a href="robowiki@BinSmoothing" class=wikipagelink>BinSmoothing</a> it would help even more for hitting those clumps. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <p>
-Brilliant! My not-so-super-secret melee <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> minibot is currently being modified to use a play-it-forward algorithm, so I'll see if I can fit this in without making the ultimate <a href="robowiki?SlowBot" class=wikipagelink>SlowBot</a>. =) -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+Brilliant! My not-so-super-secret melee <a href="robowiki@DynamicClustering" class=wikipagelink>DynamicClustering</a> minibot is currently being modified to use a play-it-forward algorithm, so I'll see if I can fit this in without making the ultimate <a href="robowiki@SlowBot" class=wikipagelink>SlowBot</a>. =) -- <a href="robowiki@AaronR" class=wikipagelink>AaronR</a>
 <p>
-Just a question, how can you do a PlayIt<a href="robowiki?action=edit&id=PlayIt" class=wikipageedit>?</a> Forward with missed scan? Or you just interpolated? And does this work for GF, too?  --<a href="robowiki?Nat" class=wikipagelink>Nat</a>
+Just a question, how can you do a PlayIt<a href="robowiki@action=edit&id=PlayIt" class=wikipageedit>?</a> Forward with missed scan? Or you just interpolated? And does this work for GF, too?  --<a href="robowiki@Nat" class=wikipagelink>Nat</a>
 <p>
-Yes, you can interpolate. If you use a 'fast' play it forward method that uses uses absolute locations you can just linearly interpolate because any error will be completely corrected the next time a real scan is read. I wouldn't suggest using GF for melee, although it definitely works... <a href="robowiki?Kev" class=wikipagelink>Kev</a>'s bot for example. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+Yes, you can interpolate. If you use a 'fast' play it forward method that uses uses absolute locations you can just linearly interpolate because any error will be completely corrected the next time a real scan is read. I wouldn't suggest using GF for melee, although it definitely works... <a href="robowiki@Kev" class=wikipagelink>Kev</a>'s bot for example. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <p>
-I'm trying some DC-GF in melee. I know it definitely works because of Conriantumr<a href="robowiki?action=edit&id=Conriantumr" class=wikipageedit>?</a>, which do interpolate, too. About the "And does this work for GF, too", I don't mean interpolate, I mean to project each GF and do same thing as ABS mentioned. Another thing, if I put 100 Shadows into one 1000x1000 battle, will it skip a ton of turns? --<a href="robowiki?Nat" class=wikipagelink>Nat</a>
+I'm trying some DC-GF in melee. I know it definitely works because of Conriantumr<a href="robowiki@action=edit&id=Conriantumr" class=wikipageedit>?</a>, which do interpolate, too. About the "And does this work for GF, too", I don't mean interpolate, I mean to project each GF and do same thing as ABS mentioned. Another thing, if I put 100 Shadows into one 1000x1000 battle, will it skip a ton of turns? --<a href="robowiki@Nat" class=wikipagelink>Nat</a>
 <p>
-Yes, this method would work with GFs instead, the trouble is it won't hit bots like Walls Spinbot etc as well as PIF. You just need to turn it into an absolute angle, stick them all in an array or some other equivalent, and weight them by distance. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+Yes, this method would work with GFs instead, the trouble is it won't hit bots like Walls Spinbot etc as well as PIF. You just need to turn it into an absolute angle, stick them all in an array or some other equivalent, and weight them by distance. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <p>
-And about 100 Shadows.... well only one robot runs at once but Shadow may get crazy if trying to process all those enemies at once, but you know... how about you just try it? :D -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+And about 100 Shadows.... well only one robot runs at once but Shadow may get crazy if trying to process all those enemies at once, but you know... how about you just try it? :D -- <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>
 <p>
-I've got the result, it doesn't not skips any turns more than usual, but I don't know if I run for 10 rounds because it can run at 1 TPS and throws OutOfMemoryError<a href="robowiki?action=edit&id=OutOfMemoryError" class=wikipageedit>?</a> at time 30 :-) --<a href="robowiki?Nat" class=wikipagelink>Nat</a>
+I've got the result, it doesn't not skips any turns more than usual, but I don't know if I run for 10 rounds because it can run at 1 TPS and throws OutOfMemoryError<a href="robowiki@action=edit&id=OutOfMemoryError" class=wikipageedit>?</a> at time 30 :-) --<a href="robowiki@Nat" class=wikipagelink>Nat</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Shadow" class=wikipagelink>Shadow</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=Shadow/ShadowsMeleeGun" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Shadow/ShadowsMeleeGun">View other revisions</a><br>Last edited March 29, 2009 6:11 EST by <a href="robowiki?Nat" title="ID 17245 from ppp-58-8-252-208.revip2.asianet.co.th">Nat</a> <a href="robowiki?action=browse&diff=1&id=Shadow/ShadowsMeleeGun">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Shadow" class=wikipagelink>Shadow</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=Shadow/ShadowsMeleeGun" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=Shadow/ShadowsMeleeGun">View other revisions</a><br>Last edited March 29, 2009 6:11 EST by <a href="robowiki@Nat" title="ID 17245 from ppp-58-8-252-208.revip2.asianet.co.th">Nat</a> <a href="robowiki@action=browse&diff=1&id=Shadow/ShadowsMeleeGun">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

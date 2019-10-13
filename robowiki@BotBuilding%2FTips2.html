@@ -3,7 +3,7 @@
 <META NAME='KEYWORDS' CONTENT='Bot, Building, Tips2'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Tips2">BotBuilding/Tips2</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?BotBuilding" class=wikipagelink>BotBuilding</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/Tips2">BotBuilding/Tips2</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@BotBuilding" class=wikipagelink>BotBuilding</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext>Here are some general 'milestones' that were important (to me) along the way:
 <p>
 <ol>
@@ -36,7 +36,7 @@ I put debugging first because it's that important.  Some things I did that you m
 <li>most of my classes have a 'public void debug()' method that formats debugging information (i.e. member field values) and sends it to the 'self-debugging' mechanism.  It makes displaying debug information a breeze.  I just tell objects to debug themselves.</li>
 </ul>
 <p>
--- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin Alan Pedersen</a>
+-- <a href="robowiki@Martin_Alan_Pedersen" class=wikipagelink>Martin Alan Pedersen</a>
 <p>
 Q: How does firing at an opponent work?
 <p>
@@ -44,26 +44,26 @@ A:  Let’s start with a basic example:  Turn 29, you instruct your gun to turn x 
 <p>
 Now let’s give some context to all of that.  The instruction to fire is processed before the instructions to move or turn your gun.  This means that you cannot aim and fire in the same turn, so you must aim one turn and fire the next.  Your tank will also move once before firing (the same turn you are aiming).  Your opponent will also be moving while you are aiming, possibly changing speed and heading.  Your data will always be one turn old between deciding where to shoot and shooting.
 <p>
-Second illustration:  In turn 29, you receive a <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>, and use the data to determine the enemy robot’s position.  Afterward, using your movement strategy, you determine where your own robot should go and what position it will be in turn 30 as a result of movement instructions.  Analyzing your opponents position and behavior, you decide what bullet power to use and angle to fire at from your future (Turn 30) position.  To conclude turn 29, you tell the <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> super class to set the throttle (Ahead) and adjust the tank’s chassis, gun, and radar headings, concluding with the execute() blocking call.
+Second illustration:  In turn 29, you receive a <a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>, and use the data to determine the enemy robot’s position.  Afterward, using your movement strategy, you determine where your own robot should go and what position it will be in turn 30 as a result of movement instructions.  Analyzing your opponents position and behavior, you decide what bullet power to use and angle to fire at from your future (Turn 30) position.  To conclude turn 29, you tell the <a href="robowiki@AdvancedRobot" class=wikipagelink>AdvancedRobot</a> super class to set the throttle (Ahead) and adjust the tank’s chassis, gun, and radar headings, concluding with the execute() blocking call.
 <p>
-In turn 30, you receive another <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>, decide where to move, and how to aim (since you may as well keep aiming to keep your gun close to where it will need to be when you can fire again).  To conclude turn 30, in addition to the previous instructions, you call setFire with the bullet power chosen in Turn 29.
+In turn 30, you receive another <a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>, decide where to move, and how to aim (since you may as well keep aiming to keep your gun close to where it will need to be when you can fire again).  To conclude turn 30, in addition to the previous instructions, you call setFire with the bullet power chosen in Turn 29.
 <p>
-On the server side of Turn 31 (before you are returned control of your robot), the new bullet is fired from your cool gun and travels one bulletVelocity (translated from bulletPower) length, and all other bullets are also moved.  Then all bot position and chassis heading changes are processed.  Then guns are rotated, and finally radars, resulting in <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>s for Turn 31.
+On the server side of Turn 31 (before you are returned control of your robot), the new bullet is fired from your cool gun and travels one bulletVelocity (translated from bulletPower) length, and all other bullets are also moved.  Then all bot position and chassis heading changes are processed.  Then guns are rotated, and finally radars, resulting in <a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>s for Turn 31.
 <p>
--- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin Alan Pedersen</a>
+-- <a href="robowiki@Martin_Alan_Pedersen" class=wikipagelink>Martin Alan Pedersen</a>
 <p>
 <hr>
 <p>
 [Along the lines of debugging, I would also add a couple key things from my experiences:
 <UL >
-<li> <strike>Try <a href="robowiki?RobocodeGL" class=wikipagelink>RobocodeGL</a> or <a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a></strike> Use the graphical features now built into Robocode ... Being able to draw on the screen can make debugging a LOT easier than it is when you're just reading a bunch of numbers from the console and piecing together what they mean.
-<li> Test methods and modules, even at the most basic level. Robocode can get addictive! If you're trying to push something out, you might think, "this is so simple, it _obviously_ works, so I won't test it." These bugs can be very hard to find, too, and may ruin an otherwise well-designed system. It reminds me of a quote by Steve McConnell<a href="robowiki?action=edit&id=McConnell" class=wikipageedit>?</a>: "It's hard enough to find an error in your code when you're looking for it; it's even harder when you've assumed your code is error-free."
+<li> <strike>Try <a href="robowiki@RobocodeGL" class=wikipagelink>RobocodeGL</a> or <a href="robowiki@RobocodeSG" class=wikipagelink>RobocodeSG</a></strike> Use the graphical features now built into Robocode ... Being able to draw on the screen can make debugging a LOT easier than it is when you're just reading a bunch of numbers from the console and piecing together what they mean.
+<li> Test methods and modules, even at the most basic level. Robocode can get addictive! If you're trying to push something out, you might think, "this is so simple, it _obviously_ works, so I won't test it." These bugs can be very hard to find, too, and may ruin an otherwise well-designed system. It reminds me of a quote by Steve McConnell<a href="robowiki@action=edit&id=McConnell" class=wikipageedit>?</a>: "It's hard enough to find an error in your code when you're looking for it; it's even harder when you've assumed your code is error-free."
 </UL>
 <p>
--- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+-- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?BotBuilding" class=wikipagelink>BotBuilding</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=BotBuilding/Tips2" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=BotBuilding/Tips2">View other revisions</a><br>Last edited January 7, 2008 23:38 EST by <a href="robowiki?Martin_Alan_Pedersen" title="ID 13117 from 208.147.70.132">Martin Alan Pedersen</a> <a href="robowiki?action=browse&diff=1&id=BotBuilding/Tips2">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@BotBuilding" class=wikipagelink>BotBuilding</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=BotBuilding/Tips2" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=BotBuilding/Tips2">View other revisions</a><br>Last edited January 7, 2008 23:38 EST by <a href="robowiki@Martin_Alan_Pedersen" title="ID 13117 from 208.147.70.132">Martin Alan Pedersen</a> <a href="robowiki@action=browse&diff=1&id=BotBuilding/Tips2">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

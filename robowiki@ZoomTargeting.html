@@ -3,45 +3,45 @@
 <META NAME='KEYWORDS' CONTENT='Zoom, Targeting'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=ZoomTargeting">ZoomTargeting</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?ZoomTargeting" class=wikipagelink>ZoomTargeting</a> is a hybrid of <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> and a new form of <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> and should combine the best of both worlds. It uses <a href="robowiki?SegmentedData" class=wikipagelink>SegmentedData</a> (currently 6 dimensions) and gets this data using a variant of <a href="robowiki?Wave" class=wikipagelink>Wave</a>s.
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=ZoomTargeting">ZoomTargeting</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki@ZoomTargeting" class=wikipagelink>ZoomTargeting</a> is a hybrid of <a href="robowiki@StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> and a new form of <a href="robowiki@PatternMatching" class=wikipagelink>PatternMatching</a> and should combine the best of both worlds. It uses <a href="robowiki@SegmentedData" class=wikipagelink>SegmentedData</a> (currently 6 dimensions) and gets this data using a variant of <a href="robowiki@Wave" class=wikipagelink>Wave</a>s.
 <p>
-Its <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> properties should make sure that
+Its <a href="robowiki@StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> properties should make sure that
 <UL >
 <li>it is very good at long term learning and continues to improve even in very long matches
-<li>it can exploit weaknesses such as spikes in the enemies <a href="robowiki?MovementProfile" class=wikipagelink>MovementProfile</a>
-<li>it can do a good educated guess when <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> fails (when there's not enough data in the microsegment)
+<li>it can exploit weaknesses such as spikes in the enemies <a href="robowiki@MovementProfile" class=wikipagelink>MovementProfile</a>
+<li>it can do a good educated guess when <a href="robowiki@PatternMatching" class=wikipagelink>PatternMatching</a> fails (when there's not enough data in the microsegment)
 </UL>
 <p>
-Its <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> properties ensure that 
+Its <a href="robowiki@PatternMatching" class=wikipagelink>PatternMatching</a> properties ensure that 
 <UL >
 <li>it adapts very fast to new enemies or situations.
 <li>it can exploit weaknesses such as dodging and other types of repetitive movement
 <li>it can get a reasonably high hitrate early on in a match if there is no stored data
-<li>it can be more accurate than <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> (if there's enough data in the microsegment)
+<li>it can be more accurate than <a href="robowiki@StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> (if there's enough data in the microsegment)
 </UL>
 <p>
-The new thing is that this targeting method basically zooms in (more <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a>) or out (more <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a>) depending on the amount of data it has and the zoom level's segment size. Currently I use 8 zoom levels with increasing segment sizes. <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> takes place in what I call the <a href="robowiki?MicroSegments" class=wikipagelink>MicroSegments</a>. In these tiny segments even only 1 previously reported angle is enough to deliver a firing angle with a high probability of hitting the enemy. <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> takes place when you zoom out, in the MacroSegments<a href="robowiki?action=edit&id=MacroSegments" class=wikipageedit>?</a>. The segments here are much larger and contain more data to do statistical calculations with. Learning speed increases when the zoom level increases. 
+The new thing is that this targeting method basically zooms in (more <a href="robowiki@PatternMatching" class=wikipagelink>PatternMatching</a>) or out (more <a href="robowiki@StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a>) depending on the amount of data it has and the zoom level's segment size. Currently I use 8 zoom levels with increasing segment sizes. <a href="robowiki@PatternMatching" class=wikipagelink>PatternMatching</a> takes place in what I call the <a href="robowiki@MicroSegments" class=wikipagelink>MicroSegments</a>. In these tiny segments even only 1 previously reported angle is enough to deliver a firing angle with a high probability of hitting the enemy. <a href="robowiki@StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> takes place when you zoom out, in the MacroSegments<a href="robowiki@action=edit&id=MacroSegments" class=wikipageedit>?</a>. The segments here are much larger and contain more data to do statistical calculations with. Learning speed increases when the zoom level increases. 
 <p>
-The <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> algorithm that I use differs greatly from traditional PatternMatchers<a href="robowiki?action=edit&id=PatternMatchers" class=wikipageedit>?</a>. You might even argue if it is <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> at all. I call it <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> because it matches to a very specific situation. As a result it performs very well against bots that other PM guns perform well against :-). A situation is basically a very small segment with a lot of dimensions. Currently I use 6 dimensions, but if I can solve a memory issue I will use even more. I might even try a dimension that uses the movement history to make it a more official pattern matcher :-). In practise, this algorithm is a bit less accurate against truly predictable movers like <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> or <a href="robowiki?PatternBot" class=wikipagelink>PatternBot</a>, but more effective against random movers. And since none of the top bots are truly predictable.........
+The <a href="robowiki@PatternMatching" class=wikipagelink>PatternMatching</a> algorithm that I use differs greatly from traditional PatternMatchers<a href="robowiki@action=edit&id=PatternMatchers" class=wikipageedit>?</a>. You might even argue if it is <a href="robowiki@PatternMatching" class=wikipagelink>PatternMatching</a> at all. I call it <a href="robowiki@PatternMatching" class=wikipagelink>PatternMatching</a> because it matches to a very specific situation. As a result it performs very well against bots that other PM guns perform well against :-). A situation is basically a very small segment with a lot of dimensions. Currently I use 6 dimensions, but if I can solve a memory issue I will use even more. I might even try a dimension that uses the movement history to make it a more official pattern matcher :-). In practise, this algorithm is a bit less accurate against truly predictable movers like <a href="robowiki@SpinBot" class=wikipagelink>SpinBot</a> or <a href="robowiki@PatternBot" class=wikipagelink>PatternBot</a>, but more effective against random movers. And since none of the top bots are truly predictable.........
 <p>
-There is a nice side-effect to using <a href="robowiki?MicroSegments" class=wikipagelink>MicroSegments</a>: I keep track of the number of Segments ('situations') that are used. This number increases more rapidly as the enemy has better movement. I am guessing this Segment count (say after 1000 rounds) could be a nice alternative Movement Index.
+There is a nice side-effect to using <a href="robowiki@MicroSegments" class=wikipagelink>MicroSegments</a>: I keep track of the number of Segments ('situations') that are used. This number increases more rapidly as the enemy has better movement. I am guessing this Segment count (say after 1000 rounds) could be a nice alternative Movement Index.
 <p>
--- <a href="robowiki?Vic_Stewart" class=wikipagelink>Vic Stewart</a>
+-- <a href="robowiki@Vic_Stewart" class=wikipagelink>Vic Stewart</a>
 <p>
 How far are you in developing this awesome gun?
 <p>
 <UL >
 <li>The next step is to implement the Statistical calculations of the macrosegments.
-<li>decide whether to fire a <a href="robowiki?Wave" class=wikipagelink>Wave</a> every scan or along with a bullet.
+<li>decide whether to fire a <a href="robowiki@Wave" class=wikipagelink>Wave</a> every scan or along with a bullet.
 <li>better memory management
 </UL>
 <p>
 Yeah, yeah, yeah..... You talk the talk, but does it walk the walk?
 <p>
 <UL >
-<li>So far the results are very encouraging. I was unsure if the new <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> algo would work, but it does! For instance, it beats all but one of the samplebots in a 10 round match, without stored data, whilst being stationary. (only <a href="robowiki?TrackFire" class=wikipagelink>TrackFire</a> is a problem but that's due to a known bug)
-<li>I tested against one of the challengers in the <a href="robowiki?PatternMatcherChallenge" class=wikipagelink>PatternMatcherChallenge</a> and with just the new <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> algo I got its index down from 32% to 25%. I wonder what will happen when I add the <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> part....
+<li>So far the results are very encouraging. I was unsure if the new <a href="robowiki@PatternMatching" class=wikipagelink>PatternMatching</a> algo would work, but it does! For instance, it beats all but one of the samplebots in a 10 round match, without stored data, whilst being stationary. (only <a href="robowiki@TrackFire" class=wikipagelink>TrackFire</a> is a problem but that's due to a known bug)
+<li>I tested against one of the challengers in the <a href="robowiki@PatternMatcherChallenge" class=wikipagelink>PatternMatcherChallenge</a> and with just the new <a href="robowiki@PatternMatching" class=wikipagelink>PatternMatching</a> algo I got its index down from 32% to 25%. I wonder what will happen when I add the <a href="robowiki@StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> part....
 </UL>
 <p>
 Sounds great, can I help in anyway?
@@ -53,19 +53,19 @@ Sounds great, can I help in anyway?
 <hr noshade class=wikiline size=1>
 </p>
 <p>
-<a href="robowiki?ZoomTargeting/MemoryIssue" class=wikipagelink>/MemoryIssue</a>
-<a href="robowiki?ZoomTargeting/MultipleChoiceIssue" class=wikipagelink>/MultipleChoiceIssue</a>
+<a href="robowiki@ZoomTargeting/MemoryIssue" class=wikipagelink>/MemoryIssue</a>
+<a href="robowiki@ZoomTargeting/MultipleChoiceIssue" class=wikipagelink>/MultipleChoiceIssue</a>
 <p>
 <p>
 <hr noshade class=wikiline size=1>
 </p>
 I am developing the gun in various stages:
 <p>
-<a href="robowiki?ZoomTargeting/stage1" class=wikipagelink>/stage1</a>
-/stage2<a href="robowiki?action=edit&id=ZoomTargeting/stage2" class=wikipageedit>?</a>
+<a href="robowiki@ZoomTargeting/stage1" class=wikipagelink>/stage1</a>
+/stage2<a href="robowiki@action=edit&id=ZoomTargeting/stage2" class=wikipageedit>?</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=ZoomTargeting" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=ZoomTargeting">View other revisions</a><br>Last edited August 20, 2003 9:02 EST by <a href="robowiki?Vic_Stewart" title="ID 1369 from cp386404-a.landg1.lb.home.nl">Vic Stewart</a> <a href="robowiki?action=browse&diff=1&id=ZoomTargeting">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=ZoomTargeting" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=ZoomTargeting">View other revisions</a><br>Last edited August 20, 2003 9:02 EST by <a href="robowiki@Vic_Stewart" title="ID 1369 from cp386404-a.landg1.lb.home.nl">Vic Stewart</a> <a href="robowiki@action=browse&diff=1&id=ZoomTargeting">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

@@ -3,17 +3,17 @@
 <META NAME='KEYWORDS' CONTENT='Dust, Bunny'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=DustBunny">DustBunny</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext>My <a href="robowiki?NanoBots" class=wikipagelink>NanoBots</a> Anti-gravity bot.  The new version saved enough space in the anti-gravity code to add a simple reduced linear aim over distance gun, simple lock onto closest target code, and some fire/energy control.  This bots does very well against more advanced robots, but gets beat by the best of the Melee <a href="robowiki?NanoBots" class=wikipagelink>NanoBots</a>.  Still, this bot is very strong for what it is.
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=DustBunny">DustBunny</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>My <a href="robowiki@NanoBots" class=wikipagelink>NanoBots</a> Anti-gravity bot.  The new version saved enough space in the anti-gravity code to add a simple reduced linear aim over distance gun, simple lock onto closest target code, and some fire/energy control.  This bots does very well against more advanced robots, but gets beat by the best of the Melee <a href="robowiki@NanoBots" class=wikipagelink>NanoBots</a>.  Still, this bot is very strong for what it is.
 <p>
 Just finishing version 2.1.  Improved wall avoidance, better movement, and better energy control.  I'll upload tomorrow.  Kinda fun to watch it wander around :)
 - Mike
 <p>
 ---
 <p>
-Behold, <a href="robowiki?DustBunny" class=wikipagelink>DustBunny</a> 3.0 in all its Anti-grav glory.
+Behold, <a href="robowiki@DustBunny" class=wikipagelink>DustBunny</a> 3.0 in all its Anti-grav glory.
 <p>
-public class <a href="robowiki?DustBunny" class=wikipagelink>DustBunny</a> extends <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>
+public class <a href="robowiki@DustBunny" class=wikipagelink>DustBunny</a> extends <a href="robowiki@AdvancedRobot" class=wikipagelink>AdvancedRobot</a>
 {
 <PRE >
 	static final double GUN_FACTOR = 50;
@@ -30,7 +30,7 @@ public class <a href="robowiki?DustBunny" class=wikipagelink>DustBunny</a> exten
 	public void run() 
 	{
 		// do this to hit stationary targets
-		set<a href="robowiki?AdjustGunForRobotTurn" class=wikipagelink>AdjustGunForRobotTurn</a>(true);
+		set<a href="robowiki@AdjustGunForRobotTurn" class=wikipagelink>AdjustGunForRobotTurn</a>(true);
 </PRE>
 <p>
 <PRE >
@@ -40,16 +40,16 @@ public class <a href="robowiki?DustBunny" class=wikipagelink>DustBunny</a> exten
 <p>
 <PRE >
 		// Do infinite radar.  Saves much space (thanks Dr. Loco!)
-		turnRadarRightRadians<a href="robowiki?action=edit&id=RadarRightRadians" class=wikipageedit>?</a>(Double.POSITIVE_INFINITY);
+		turnRadarRightRadians<a href="robowiki@action=edit&id=RadarRightRadians" class=wikipageedit>?</a>(Double.POSITIVE_INFINITY);
 	}
 </PRE>
 <p>
 <PRE >
-	public void on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) 
+	public void on<a href="robowiki@ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki@ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) 
 	{
 		// Get Abs bearing for aiming routines (and A-Grav)
 		// and distance for just about everything else :)
-		double	absoluteBearing = e.getBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a>() + get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>();
+		double	absoluteBearing = e.getBearingRadians<a href="robowiki@action=edit&id=BearingRadians" class=wikipageedit>?</a>() + get<a href="robowiki@HeadingRadians" class=wikipagelink>HeadingRadians</a>();
 		double  distance = e.getDistance();
 </PRE>
 <p>
@@ -62,10 +62,10 @@ public class <a href="robowiki?DustBunny" class=wikipagelink>DustBunny</a> exten
 <PRE >
 		// Get our turn angle - factor in distance from each wall every time so we get
 		// pushed towards the center when close to the walls.  This took a long time to come up with.
-		setTurnRightRadians<a href="robowiki?action=edit&id=TurnRightRadians" class=wikipageedit>?</a>(Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(
-			Math.atan2(xForce + 1/getX() - 1/(getBattleFieldWidth<a href="robowiki?action=edit&id=BattleFieldWidth" class=wikipageedit>?</a>() - getX()), 
-					   yForce + 1/getY() - 1/(getBattleFieldHeight<a href="robowiki?action=edit&id=BattleFieldHeight" class=wikipageedit>?</a>() - getY()))
-						- get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>()) );
+		setTurnRightRadians<a href="robowiki@action=edit&id=TurnRightRadians" class=wikipageedit>?</a>(Utils.normal<a href="robowiki@RelativeAngle" class=wikipagelink>RelativeAngle</a>(
+			Math.atan2(xForce + 1/getX() - 1/(getBattleFieldWidth<a href="robowiki@action=edit&id=BattleFieldWidth" class=wikipageedit>?</a>() - getX()), 
+					   yForce + 1/getY() - 1/(getBattleFieldHeight<a href="robowiki@action=edit&id=BattleFieldHeight" class=wikipageedit>?</a>() - getY()))
+						- get<a href="robowiki@HeadingRadians" class=wikipagelink>HeadingRadians</a>()) );
 </PRE>
 <p>
 <PRE >
@@ -75,15 +75,15 @@ public class <a href="robowiki?DustBunny" class=wikipagelink>DustBunny</a> exten
 <p>
 <PRE >
 		// If we need to turn hard, slow down
-		setMaxVelocity<a href="robowiki?action=edit&id=MaxVelocity" class=wikipageedit>?</a>( 420 / getTurnRemaining<a href="robowiki?action=edit&id=TurnRemaining" class=wikipageedit>?</a>() );
+		setMaxVelocity<a href="robowiki@action=edit&id=MaxVelocity" class=wikipageedit>?</a>( 420 / getTurnRemaining<a href="robowiki@action=edit&id=TurnRemaining" class=wikipageedit>?</a>() );
 </PRE>
 <p>
 <PRE >
 		// If we're at 0 and pointed at a target, fire.
-		if(get<a href="robowiki?GunHeat" class=wikipagelink>GunHeat</a>() == 0)
+		if(get<a href="robowiki@GunHeat" class=wikipagelink>GunHeat</a>() == 0)
 		{
 			//  Use some energy smarts and reset distance targeting
-			set<a href="robowiki?FireBullet" class=wikipagelink>FireBullet</a>(getEnergy() * GUN_FACTOR / distance);
+			set<a href="robowiki@FireBullet" class=wikipagelink>FireBullet</a>(getEnergy() * GUN_FACTOR / distance);
 			lastDistance = Double.POSITIVE_INFINITY;
 		}
 </PRE>
@@ -102,44 +102,44 @@ public class <a href="robowiki?DustBunny" class=wikipagelink>DustBunny</a> exten
 		if(lastTarget == e.getName())
 		{
 			// Radar lock as we approach shooting time
-			if(get<a href="robowiki?GunHeat" class=wikipagelink>GunHeat</a>() &lt; 1)
+			if(get<a href="robowiki@GunHeat" class=wikipagelink>GunHeat</a>() &lt; 1)
 			{
 				// Let this var be equal the the absolute bearing now...
 				// and set the radar.
-				set<a href="robowiki?TurnRadarLeft" class=wikipagelink>TurnRadarLeft</a>(getRadarTurnRemaining<a href="robowiki?action=edit&id=RadarTurnRemaining" class=wikipageedit>?</a>());
+				set<a href="robowiki@TurnRadarLeft" class=wikipagelink>TurnRadarLeft</a>(getRadarTurnRemaining<a href="robowiki@action=edit&id=RadarTurnRemaining" class=wikipageedit>?</a>());
 			}
 </PRE>
 <p>
 <PRE >
 			// Aim directly at target.
-			setTurnGunRightRadians<a href="robowiki?action=edit&id=TurnGunRightRadians" class=wikipageedit>?</a>(Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(absoluteBearing - getGunHeadingRadians<a href="robowiki?action=edit&id=GunHeadingRadians" class=wikipageedit>?</a>()));
+			setTurnGunRightRadians<a href="robowiki@action=edit&id=TurnGunRightRadians" class=wikipageedit>?</a>(Utils.normal<a href="robowiki@RelativeAngle" class=wikipagelink>RelativeAngle</a>(absoluteBearing - getGunHeadingRadians<a href="robowiki@action=edit&id=GunHeadingRadians" class=wikipageedit>?</a>()));
 		}
 	}
 </PRE>
 }
 <p>
 The update makes this bot a melee and 1v1 contender again.  It can actually beat Dr.Bob 1v1 (and Moebius for that matter).
---<a href="robowiki?Miked0801" class=wikipagelink>Miked0801</a>
+--<a href="robowiki@Miked0801" class=wikipagelink>Miked0801</a>
 <p>
-Although the jar is versioned as 3.0, in the properties it says 2.0. Therefor RR@Home says 'Downloaded file is wrong or corrupted'. Welcome back btw, Moebius was for quite a while in my testbed.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+Although the jar is versioned as 3.0, in the properties it says 2.0. Therefor RR@Home says 'Downloaded file is wrong or corrupted'. Welcome back btw, Moebius was for quite a while in my testbed.  -- <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
 <p>
-Strange.  I'll check it out.  BTW, 3.1 is uploaded now.  I'll see if it has the same issues. --<a href="robowiki?Miked0801" class=wikipagelink>Miked0801</a>
+Strange.  I'll check it out.  BTW, 3.1 is uploaded now.  I'll see if it has the same issues. --<a href="robowiki@Miked0801" class=wikipagelink>Miked0801</a>
 <p>
-Same story with 3.1. Did you package it with 1.0.6? That is what the properties file says. In Robocode itself it is listed as mld.<a href="robowiki?DustBunny" class=wikipagelink>DustBunny</a> 2.0, but the filename is mld.[DustBunny 3]<a href="robowiki?action=edit&id=DustBunny_3" class=wikipageedit>?</a>.1.jar. Maybe you should remove/rename the properties file and re-package it completely.    -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+Same story with 3.1. Did you package it with 1.0.6? That is what the properties file says. In Robocode itself it is listed as mld.<a href="robowiki@DustBunny" class=wikipagelink>DustBunny</a> 2.0, but the filename is mld.[DustBunny 3]<a href="robowiki@action=edit&id=DustBunny_3" class=wikipageedit>?</a>.1.jar. Maybe you should remove/rename the properties file and re-package it completely.    -- <a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
 <p>
-(Edit Conflict) Same issue with 3.1 - the <a href="robowiki?DustBunny" class=wikipagelink>DustBunny</a>.properties file says 2.0. Are you using Robocode to package it? I took a sec to rezip it into a 3.1b if you want to update its RR entries: <a rel="nofollow" href="http://www.dijitari.com/void/robocode/mld.DustBunny_3.1b.jar">[mld.DustBunny_3.1b.jar]</a> -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a> 
+(Edit Conflict) Same issue with 3.1 - the <a href="robowiki@DustBunny" class=wikipagelink>DustBunny</a>.properties file says 2.0. Are you using Robocode to package it? I took a sec to rezip it into a 3.1b if you want to update its RR entries: <a rel="nofollow" href="http://www.dijitari.com/void/robocode/mld.DustBunny_3.1b.jar">[mld.DustBunny_3.1b.jar]</a> -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a> 
 <p>
-Yes, I'm using Robocode to package it up.  It was modified from 2.0, but I changed it to 3.1 in the packaging dialog.  If you could upload it for me correctly, I would greatly appreciate it. If you could tell me why it isn't working, that would be better yet :) --<a href="robowiki?Miked0801" class=wikipagelink>Miked0801</a>
+Yes, I'm using Robocode to package it up.  It was modified from 2.0, but I changed it to 3.1 in the packaging dialog.  If you could upload it for me correctly, I would greatly appreciate it. If you could tell me why it isn't working, that would be better yet :) --<a href="robowiki@Miked0801" class=wikipagelink>Miked0801</a>
 <p>
-Wait!  That version you have named 3.1b is based from Dustbunny 3.0!  If you could modify it from my version 3.1, that would be even better.  3.1 is MUCH better than 3.0.  --<a href="robowiki?Miked0801" class=wikipagelink>Miked0801</a>
+Wait!  That version you have named 3.1b is based from Dustbunny 3.0!  If you could modify it from my version 3.1, that would be even better.  3.1 is MUCH better than 3.0.  --<a href="robowiki@Miked0801" class=wikipagelink>Miked0801</a>
 <p>
-Actually, upon further investigation, it is based on <a href="robowiki?DustBunny" class=wikipagelink>DustBunny</a> 2.0! :) The <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a> page still sends 2.0 when you hit "Download": <a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=833">http://www.robocoderepository.com/BotDetail.jsp?id=833</a> ... <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> must be renaming this to _3.1 because that's the bot's name in the listing. Did you upload the new one to the repository? Anyway, if you need me to host it, you can e-mail it to me (<a href="robowiki?ContactInfo" class=wikipagelink>ContactInfo</a>) and I can post it to the rumble once I upload it. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+Actually, upon further investigation, it is based on <a href="robowiki@DustBunny" class=wikipagelink>DustBunny</a> 2.0! :) The <a href="robowiki@RobocodeRepository" class=wikipagelink>RobocodeRepository</a> page still sends 2.0 when you hit "Download": <a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp@id=833">http://www.robocoderepository.com/BotDetail.jsp?id=833</a> ... <a href="robowiki@RoboRumble" class=wikipagelink>RoboRumble</a> must be renaming this to _3.1 because that's the bot's name in the listing. Did you upload the new one to the repository? Anyway, if you need me to host it, you can e-mail it to me (<a href="robowiki@ContactInfo" class=wikipagelink>ContactInfo</a>) and I can post it to the rumble once I upload it. -- <a href="robowiki@Voidious" class=wikipagelink>Voidious</a>
 <p>
-Bot ID Now correctly listed in the participants pages :) --<a href="robowiki?Miked0801" class=wikipagelink>Miked0801</a>
+Bot ID Now correctly listed in the participants pages :) --<a href="robowiki@Miked0801" class=wikipagelink>Miked0801</a>
 PS, I just found another 7 bytes to play with.  I'll stew on that for a few days :)
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=DustBunny" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=DustBunny">View other revisions</a><br>Last edited September 28, 2007 2:48 EST by <a href="robowiki?Miked0801" title="ID 12104 from 12.110.83.132">Miked0801</a> <a href="robowiki?action=browse&diff=1&id=DustBunny">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=DustBunny" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=DustBunny">View other revisions</a><br>Last edited September 28, 2007 2:48 EST by <a href="robowiki@Miked0801" title="ID 12104 from 12.110.83.132">Miked0801</a> <a href="robowiki@action=browse&diff=1&id=DustBunny">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

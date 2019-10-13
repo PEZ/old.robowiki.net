@@ -3,7 +3,7 @@
 <META NAME='KEYWORDS' CONTENT='Code, Snippets, Deep, Recursion'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/DeepRecursion">CodeSnippets/DeepRecursion</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?CodeSnippets" class=wikipagelink>CodeSnippets</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/DeepRecursion">CodeSnippets/DeepRecursion</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@CodeSnippets" class=wikipagelink>CodeSnippets</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext>Beautiful.
 <pre>
 for (int i = 0; i &lt; data.length; i++) {
@@ -30,11 +30,11 @@ for (int i = 0; i &lt; data.length; i++) {
 	}
 }
 </pre>
--- <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+-- <a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
-Nice variable names! =) I have lots of that kind of loops in earlier bots. I have always kept thinking there must be a much more generic way of doing it. Like recursing down the dimensions or something. I have never succeeded in doing it though. Always get stuck on some illegal cast issue and the like. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Nice variable names! =) I have lots of that kind of loops in earlier bots. I have always kept thinking there must be a much more generic way of doing it. Like recursing down the dimensions or something. I have never succeeded in doing it though. Always get stuck on some illegal cast issue and the like. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-You could use recursion with <tt>Array.get()</tt>. I like this better though. :-) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+You could use recursion with <tt>Array.get()</tt>. I like this better though. :-) --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
 I think I like this better:
 <pre>
@@ -83,9 +83,9 @@ Note that this example includes usage and reporting. To just do the filling this
 	}
     }
 </pre>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-I've done similar stuff to this in <a href="robowiki?FloodGrapher" class=wikipagelink>FloodGrapher</a>, but it has alway looked more like this:
+I've done similar stuff to this in <a href="robowiki@FloodGrapher" class=wikipagelink>FloodGrapher</a>, but it has alway looked more like this:
 <pre>
 	static void fillRecursive(Object o, float v)
 	{
@@ -97,11 +97,11 @@ I've done similar stuff to this in <a href="robowiki?FloodGrapher" class=wikipag
 				fillRecursive(((Object[])o)[i], v);
 	}
 </pre>
--- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+-- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
 Your code might be efficient, but where's the entertainment value? :-)
 <p>
-Kawigi, does your snippet work? Always when I've tried something like that I've got illegal cast errors. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Kawigi, does your snippet work? Always when I've tried something like that I've got illegal cast errors. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 i do it like this:
 <PRE >
@@ -130,7 +130,7 @@ i do it like this:
 every Object[][][]...... is an Object[], so i can traverse the levels.
 in action, it looks like:
 <PRE >
-    CollectionUtils<a href="robowiki?action=edit&id=CollectionUtils" class=wikipageedit>?</a>.forEach(segments, new CollectionUtils<a href="robowiki?action=edit&id=CollectionUtils" class=wikipageedit>?</a>.Action&lt;Segment,Segment&gt;()
+    CollectionUtils<a href="robowiki@action=edit&id=CollectionUtils" class=wikipageedit>?</a>.forEach(segments, new CollectionUtils<a href="robowiki@action=edit&id=CollectionUtils" class=wikipageedit>?</a>.Action&lt;Segment,Segment&gt;()
     {
       public Segment forThis(Segment segment)
       {
@@ -158,24 +158,24 @@ This is almost certainly faster and more efficient, especially if your nesting i
 ~Pog
 <p>
 I'm not sure that would be faster. I would expect most compilers to emit bytecode that does
-exactly the same. -- <a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+exactly the same. -- <a href="robowiki@Dummy" class=wikipagelink>Dummy</a>
 <p>
-Multi-dimensional Java arrays aren't one long 1D array, but an array of the first dimension containing pointers to arrays of the second dimension, which in turn contain pointers to arrays of the third dimension, etc. I think you could even replace them with something of a completely different type. Anyway, it results in a whole lot of memory accesses. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a> (noticed this in my inbox)
+Multi-dimensional Java arrays aren't one long 1D array, but an array of the first dimension containing pointers to arrays of the second dimension, which in turn contain pointers to arrays of the third dimension, etc. I think you could even replace them with something of a completely different type. Anyway, it results in a whole lot of memory accesses. -- <a href="robowiki@Jonathan" class=wikipagelink>Jonathan</a> (noticed this in my inbox)
 <p>
 Ah, I see why they do that. I guess it is necessary when the arrays in the 2nd dimension (or 3rd, 4th...) are not all the same size. (e.g. array[0][] = new int[5]; array[1][] = new int[8];)
 On the other hand, it shouldn't be too hard for compilers to recognize declarations like in Pog's example and create a 1D array anyway.
-Aw, well. I'm not exactly a compiler expert. --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+Aw, well. I'm not exactly a compiler expert. --<a href="robowiki@Dummy" class=wikipagelink>Dummy</a>
 <p>
 I think you overestimate the power of the compiler - it might (at best) unroll the loops. Java has to bounds-check each seperate level of access, for example, making it highly improbable the compiler would optimise out the nesting, and in addition meaning that the super-nested version at the top of this discussion needs to do 10 array bounds checks for every element access!
 ~Pog
 <p>
 Sorry, my bad. I didn't realize that you meant it as an optimization to the code on top of this page with all the for loops :-p. I was only comparing flatarray[a*9+b*3+c] to deepArray[a][b][c]. 
-I'm fairly certain that multidimensional arrays are allocated in one big 1D array in C (I could be wrong), so that's why I thought it should be possible in JAVA as well. :-p --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+I'm fairly certain that multidimensional arrays are allocated in one big 1D array in C (I could be wrong), so that's why I thought it should be possible in JAVA as well. :-p --<a href="robowiki@Dummy" class=wikipagelink>Dummy</a>
 <p>
-Assuming that you know already the length of the arrays, there is a /much/ easier way to do this. Also for optimizations sake if you can store the lengths outside the for loops and use them instead of arrayhere.length(), saves time, saves codesize im sure. -- <a href="robowiki?Krillr" class=wikipagelink>Krillr</a>
+Assuming that you know already the length of the arrays, there is a /much/ easier way to do this. Also for optimizations sake if you can store the lengths outside the for loops and use them instead of arrayhere.length(), saves time, saves codesize im sure. -- <a href="robowiki@Krillr" class=wikipagelink>Krillr</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?CodeSnippets" class=wikipagelink>CodeSnippets</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=CodeSnippets/DeepRecursion" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=CodeSnippets/DeepRecursion">View other revisions</a><br>Last edited July 29, 2006 10:39 EST by 1Cust7997.an3.sea18.da.uu.net <a href="robowiki?action=browse&diff=1&id=CodeSnippets/DeepRecursion">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@CodeSnippets" class=wikipagelink>CodeSnippets</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=CodeSnippets/DeepRecursion" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=CodeSnippets/DeepRecursion">View other revisions</a><br>Last edited July 29, 2006 10:39 EST by 1Cust7997.an3.sea18.da.uu.net <a href="robowiki@action=browse&diff=1&id=CodeSnippets/DeepRecursion">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

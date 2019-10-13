@@ -3,7 +3,7 @@
 <META NAME='KEYWORDS' CONTENT='Is, The, Bot, Better, Or, Worse'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=IsTheBotBetterOrWorse">IsTheBotBetterOrWorse</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=IsTheBotBetterOrWorse">IsTheBotBetterOrWorse</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext>This is an extract of a post I made some time ago in the forums about checking if there is a clear difference between bots. The objective was to have some test that avoids having to run 200+ battles to check if a bot is better or not.
 <p>
 The approach here is to make a simple statistical test to see if we can say the scores are significantly different or not. Note that if you use it and it says that there is no significant difference, it does not mean that the bots are equal, but that you have to run more battles :-)
@@ -11,7 +11,7 @@ The approach here is to make a simple statistical test to see if we can say the 
 Here it goes, a formula to check if a bot is better than another:
 <p>
 <PRE >
- if ((Winner Score - Loser Score)/Number<a href="robowiki?action=edit&id=IsTheBotBetterOrWorse/Number" class=wikipageedit>?</a> of rounds)/(120/sqrt(Number of rounds)) &gt; 1,28 then you can say Winner is better than Loser.
+ if ((Winner Score - Loser Score)/Number<a href="robowiki@action=edit&id=IsTheBotBetterOrWorse/Number" class=wikipageedit>?</a> of rounds)/(120/sqrt(Number of rounds)) &gt; 1,28 then you can say Winner is better than Loser.
  if not, there is not enough data to conclude that ... ¿may be you must run more battles?
 </PRE>
 <p>
@@ -24,21 +24,21 @@ a) Confidence level is 90% (assuming Winner can be equal or better than loser, b
 b) There is no clear way to calculate variance, because Robocode gives accumulated results. But if you think about it, you will see that the standard deviation is between 60 and 180, so I used the mean point (120).
 c) I assume that bots perform ideally at the same level in all rounds, but this may not be true (ie. learning bots that store results from round to round).
 <p>
-One example: <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> vs. Duelist.
+One example: <a href="robowiki@SandboxDT" class=wikipagelink>SandboxDT</a> vs. Duelist.
 <p>
 There are 2 battles:
 <p>
 a) The first one is the 100 round battle on the Duels site, where Duelist beat Sandbox 1.2 8121-7537.
 <p>
-Applying the formula: ((8121-7537)/100)/(120/10) = 0.487 -&gt; You cannot conclude Duelist is better than <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> 1.2.
+Applying the formula: ((8121-7537)/100)/(120/10) = 0.487 -&gt; You cannot conclude Duelist is better than <a href="robowiki@SandboxDT" class=wikipagelink>SandboxDT</a> 1.2.
 <p>
-b) The second one is the result posted yesterday, where SandoxDT<a href="robowiki?action=edit&id=SandoxDT" class=wikipageedit>?</a> 1.3 beat Duelist 79205-78326 in a 1000 rounds battle.
+b) The second one is the result posted yesterday, where SandoxDT<a href="robowiki@action=edit&id=SandoxDT" class=wikipageedit>?</a> 1.3 beat Duelist 79205-78326 in a 1000 rounds battle.
 <p>
-Applying the formula: ((79205-78326)/1000)/(120/1000^0.5) = 0.23 -&gt; You cannot conclude SandoxDT<a href="robowiki?action=edit&id=SandoxDT" class=wikipageedit>?</a> is better than Duelist.
+Applying the formula: ((79205-78326)/1000)/(120/1000^0.5) = 0.23 -&gt; You cannot conclude SandoxDT<a href="robowiki@action=edit&id=SandoxDT" class=wikipageedit>?</a> is better than Duelist.
 <p>
--- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+-- <a href="robowiki@Albert" class=wikipagelink>Albert</a>
 <p>
-I'm having trouble remembering some of the statistical basis for this stuff, but I'd like to apply it elsewhere.  Could someone explain maybe how you can 'rate' the validity of data given the sample size, standard deviation, and other basic stuff like that?  Basically I want to know something like a confidence interval. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+I'm having trouble remembering some of the statistical basis for this stuff, but I'd like to apply it elsewhere.  Could someone explain maybe how you can 'rate' the validity of data given the sample size, standard deviation, and other basic stuff like that?  Basically I want to know something like a confidence interval. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
 The margin of error formula looks like this:
 <p>
@@ -64,11 +64,11 @@ A 95% confidence interval, as applied to margin of error, means that 19 out of e
 <p>
 I hope this is at least a good summary.  I learned all of this stuff while researching for a little utility I wrote that fights two bots together for only the number of battles necessary for one of them to come out as the winner with 99.9% confidence (or some other confidence that I specify).  It works very well, and I can even specify a minimum number of battles, but it has the downside that the answer is a little bit questionable when a lot of bot learning is going on.
 <p>
--- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+-- <a href="robowiki@Nano" class=wikipagelink>nano</a>
 <p>
-Within which interval can the margin of error be expected for a successful test?  -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Within which interval can the margin of error be expected for a successful test?  -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Is there a way to figure out what my confidence interval is that my estimate is even valid? -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+Is there a way to figure out what my confidence interval is that my estimate is even valid? -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
 In my utility, I run margin of error on both bots' scores after every round, and if their margins do not overlap, I declare the test to be complete.  That is how you know if your test is successful.  For instance, if a bot has an estimated win percentage of 0.65 with a margin of error of 0.10, and the other bot has an estimated win percentage of 0.35 (it will have the same margin of error), then the lowest the first bot's percentage could be is 0.55, and the highest the second bot's percentage could be is 0.45.  Since they do not overlap, the first bot is better than the second bot (according to the estimates).
 <p>
@@ -78,10 +78,10 @@ I hope this makes sense.  It's a pretty hairy topic to discuss since it seems to
 <p>
 As an aside, I use a system like this to control my virtual guns.  The amount I use each gun is based on the amount that its margin of error overlaps with the best (estimated) gun.
 <p>
--- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+-- <a href="robowiki@Nano" class=wikipagelink>nano</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=IsTheBotBetterOrWorse" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=IsTheBotBetterOrWorse">View other revisions</a><br>Last edited May 5, 2006 7:18 EST by <a href="robowiki?Florent" title="ID 6630 from ns.capgemini.fr">Florent</a> <a href="robowiki?action=browse&diff=1&id=IsTheBotBetterOrWorse">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=IsTheBotBetterOrWorse" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=IsTheBotBetterOrWorse">View other revisions</a><br>Last edited May 5, 2006 7:18 EST by <a href="robowiki@Florent" title="ID 6630 from ns.capgemini.fr">Florent</a> <a href="robowiki@action=browse&diff=1&id=IsTheBotBetterOrWorse">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>

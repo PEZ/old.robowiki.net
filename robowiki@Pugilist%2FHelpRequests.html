@@ -3,8 +3,8 @@
 <META NAME='KEYWORDS' CONTENT='Pugilist, Help, Requests'/>
 <LINK REL="stylesheet" HREF="/robodocs/wiki.css">
 </HEAD><BODY BGCOLOR="white">
-<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/HelpRequests">Pugilist/HelpRequests</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<hr class=wikilineheader></div><div class=wikitext>I need some help with my implementation of fast-learning <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>. <a href="robowiki?SilverSurfer" class=wikipagelink>SilverSurfer</a> 1.17.x shows that it can mean a huge difference in rating to get this to work. Pugilist 1.6.4.4 and 1.7.6 shows that it can be a huge difference in a bad way if you fail to get it to work though...
+<div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/HelpRequests">Pugilist/HelpRequests</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Pugilist" class=wikipagelink>Pugilist</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I need some help with my implementation of fast-learning <a href="robowiki@WaveSurfing" class=wikipagelink>WaveSurfing</a>. <a href="robowiki@SilverSurfer" class=wikipagelink>SilverSurfer</a> 1.17.x shows that it can mean a huge difference in rating to get this to work. Pugilist 1.6.4.4 and 1.7.6 shows that it can be a huge difference in a bad way if you fail to get it to work though...
 <p>
 This is what I do for fast learning in 1.7.6. I have an unsegmented visits array that I shadow the segmented stats in. Like so:
 <pre>
@@ -24,15 +24,15 @@ That's in contrast to the way it's done in 1.6.4.4 which simply does:
 </pre>
 Anyone see if/where I am doing something wrong?
 <p>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-I see nothing wrong with that code. Maybe you are giving too little importance to the unsegmented data? The way you have it, you only use the fast learning data while there is no segmented data available, since "fastLearningVisits<a href="robowiki?action=edit&id=LearningVisits" class=wikipageedit>?</a>[i]/Pugilist<a href="robowiki?action=edit&id=Pugilist/Pugilist" class=wikipageedit>?</a>.enemyHits" will allways be &lt; 1. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+I see nothing wrong with that code. Maybe you are giving too little importance to the unsegmented data? The way you have it, you only use the fast learning data while there is no segmented data available, since "fastLearningVisits<a href="robowiki@action=edit&id=LearningVisits" class=wikipageedit>?</a>[i]/Pugilist<a href="robowiki@action=edit&id=Pugilist/Pugilist" class=wikipageedit>?</a>.enemyHits" will allways be &lt; 1. -- <a href="robowiki@ABC" class=wikipagelink>ABC</a>
 <p>
-Yes, that's by intention. But that's not to say it's the right thing to do... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Yes, that's by intention. But that's not to say it's the right thing to do... -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-I don't think there is an absolut "right thing to do" ;). You could try canging it to "fastLearnigVisits<a href="robowiki?action=edit&id=LearnigVisits" class=wikipageedit>?</a>/numSegs + visits" like I do, or "fastLearnigVisits<a href="robowiki?action=edit&id=LearnigVisits" class=wikipageedit>?</a>*someFactor + visits" like Axe does... -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+I don't think there is an absolut "right thing to do" ;). You could try canging it to "fastLearnigVisits<a href="robowiki@action=edit&id=LearnigVisits" class=wikipageedit>?</a>/numSegs + visits" like I do, or "fastLearnigVisits<a href="robowiki@action=edit&id=LearnigVisits" class=wikipageedit>?</a>*someFactor + visits" like Axe does... -- <a href="robowiki@ABC" class=wikipagelink>ABC</a>
 <p>
-Well, I define "right thing to do" == "gains you more rating points" =) I'll try it your way first, since it makes sense. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Well, I define "right thing to do" == "gains you more rating points" =) I'll try it your way first, since it makes sense. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 Don't know much about right or wrong, but tht's what i do in SS:
 <pre>
@@ -62,47 +62,47 @@ That was originally based on a similar Jamougha's method (Credits for him). But 
 <TR VALIGN='CENTER' ><td colspan='0.5'>2.17.3</td><td colspan="0.5"> 0 </td><td colspan="0.5"> 1 </td><td colspan="0.5"> 0 </td><td colspan="0.5"> 1978.45 </td><td colspan="0.5"></td></TR>
 </TABLE>
 <p>
-Hope this help u... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+Hope this help u... -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 <p>
-97 bins? Why did you chose such a big number? -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+97 bins? Why did you chose such a big number? -- <a href="robowiki@ABC" class=wikipagelink>ABC</a>
 <p>
-The number of bins probably doesn't matter as long as you compensate with enough smoothing. Interestingly enough I ended up with the same smoothing function as <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a> did. Not a total coinsidence though, since it was Jam who hinted at me to try smoothing when reading rather than when writing. Just until a few days ago I did Math.sqrt() instead of Math.pow(x, 0.5). This is of course the same, but my intention was to open up for experimenting with different coefficients.
+The number of bins probably doesn't matter as long as you compensate with enough smoothing. Interestingly enough I ended up with the same smoothing function as <a href="robowiki@Jamougha" class=wikipagelink>Jamougha</a> did. Not a total coinsidence though, since it was Jam who hinted at me to try smoothing when reading rather than when writing. Just until a few days ago I did Math.sqrt() instead of Math.pow(x, 0.5). This is of course the same, but my intention was to open up for experimenting with different coefficients.
 <p>
-Since the rating points of a particular bot can vary some 10 points from one day to another (today <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a> had 2044 points, for instance, some days ago it read 1951) I guess what your table says it apart from going totally unsegmented it doesn't matter much how you weight your data. This is surprising like hell to me. I would expect 2.17.2 and 2.17.3 to be about the same thing since the unsegmented stats would always outnumber the segmented dittos. Anyone, please explain this to me. I'm baffled.
+Since the rating points of a particular bot can vary some 10 points from one day to another (today <a href="robowiki@RaikoMX" class=wikipagelink>RaikoMX</a> had 2044 points, for instance, some days ago it read 1951) I guess what your table says it apart from going totally unsegmented it doesn't matter much how you weight your data. This is surprising like hell to me. I would expect 2.17.2 and 2.17.3 to be about the same thing since the unsegmented stats would always outnumber the segmented dittos. Anyone, please explain this to me. I'm baffled.
 <p>
 You don't do any edge smoothing protection at all? Have you tried adding some? Since your smoothing is so massive you might find some rating points with it. Or you might not. But for P it makes a difference anyway.
 <p>
--- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 I agree the number of bins shouldn't matter much, but my experiments tell me it does.
 <p>
-About the smoothing formula, maybe Jamougha has his reasons, but I don't really understand why the sqrt. I use 1/Math<a href="robowiki?action=edit&id=Pugilist/Math" class=wikipageedit>?</a>.pow(dist, 2) anywhere I want an inverse proportion to distance (bin distance, in this case), the gravitational formula works best for me in almost every case, nature is always right ;). I have also used Gaussian smoothing (visits[i] * Math.exp(Math.pow(i - index, 2) / -k) successfully.
+About the smoothing formula, maybe Jamougha has his reasons, but I don't really understand why the sqrt. I use 1/Math<a href="robowiki@action=edit&id=Pugilist/Math" class=wikipageedit>?</a>.pow(dist, 2) anywhere I want an inverse proportion to distance (bin distance, in this case), the gravitational formula works best for me in almost every case, nature is always right ;). I have also used Gaussian smoothing (visits[i] * Math.exp(Math.pow(i - index, 2) / -k) successfully.
 <p>
 What I read from SS's table is that the flattener is not very important, the segmented statistics are the most important ones, and that the unsegmented statistic also help. The small difference whith the increased unsegmented weight may be explained by the small number of rounds in the rumble, a long term battle might tell a different story...
 <p>
--- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+-- <a href="robowiki@ABC" class=wikipagelink>ABC</a>
 <p>
-Gravitational you say? That makes so much sense. I'll try it right away. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Gravitational you say? That makes so much sense. I'll try it right away. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <UL >
-<li> not only gravitational, other things magnetic fields use it too (as a matter of fact God seems to like this formula a lot:) -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<li> not only gravitational, other things magnetic fields use it too (as a matter of fact God seems to like this formula a lot:) -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 </UL>
 <p>
 The hight number of bins have historical reasons, I started wanting a good resolution at bigger distances for my AM (at dist=800 and pwr=3.0, 97 bins give me a resolution of ~15...), and now that is working, i am too afraid to change this (maybe i'll test fewer bins later). I have to remember, also, that i compensate the bot width when hitted (for example: if i am hit by a wave with the "resolution" of 10, i'll mark hitten not just the hitten bin, but also two for the left and two for the right). <br>
 About the tests, i'm not ready to say that the flattener is not important, i'll make a test weighting it higher (0.5 maybe)...<br>
-About the edge-smoothing protection, no i ain't using nothing yet, but i think that it would be a good test, what are u using for that "edge-protection"? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a> 
+About the edge-smoothing protection, no i ain't using nothing yet, but i think that it would be a good test, what are u using for that "edge-protection"? -- <a href="robowiki@Axe" class=wikipagelink>Axe</a> 
 <p>
 <p>
-<a href="robowiki?ABC" class=wikipagelink>ABC</a> asked the same on the main <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a> page. Check it out. My guess is that the flattener is unimportant as long as it gets a low enough weight. After that it's just bad. (Just a guess. I would very much like to see you test it.) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<a href="robowiki@ABC" class=wikipagelink>ABC</a> asked the same on the main <a href="robowiki@Pugilist" class=wikipagelink>Pugilist</a> page. Check it out. My guess is that the flattener is unimportant as long as it gets a low enough weight. After that it's just bad. (Just a guess. I would very much like to see you test it.) -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 Thanks, just saw the main page, but where u use 2 or 3 extra bins, i'll have to use a dozen (given my 97 bins again...)... I was thinking in an approach (try not to laught too laud, please):
-Take bin graph with all bins set to 1 for example. This will give you a perfect horizontal line at +1.0, correct? If we apply our smoothing function on it, it would end up with a graph like an inverted U (curve), right? The problem is that a "smoothed" graph for a line should stay a line... I am thinking of apply another factor to that smoothing that would give a higher weith to the edge bins, and a lower weight for the middle bins. That way i can "flatten" the inverred U. Does it make any sense to you both? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+Take bin graph with all bins set to 1 for example. This will give you a perfect horizontal line at +1.0, correct? If we apply our smoothing function on it, it would end up with a graph like an inverted U (curve), right? The problem is that a "smoothed" graph for a line should stay a line... I am thinking of apply another factor to that smoothing that would give a higher weith to the edge bins, and a lower weight for the middle bins. That way i can "flatten" the inverred U. Does it make any sense to you both? -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 <p>
-It sounds like a much better approach than mine. Please let me know if you can do it with less than 10 bytes. =) However adding a dozen bins or just 2 or 3 is equivalent. Same code I mean. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+It sounds like a much better approach than mine. Please let me know if you can do it with less than 10 bytes. =) However adding a dozen bins or just 2 or 3 is equivalent. Same code I mean. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <UL >
-<li> But more processing (SS is a very <a href="robowiki?SlowBot" class=wikipagelink>SlowBot</a> as it is). I think that that (mine) approach it wont cost much (in bytes or even processing), since it´s just a multiplier factor for the bin after smoothed... The problem is how to calculate that factor (it would lead probably to an equation function of the "distance from GF0") -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<li> But more processing (SS is a very <a href="robowiki@SlowBot" class=wikipagelink>SlowBot</a> as it is). I think that that (mine) approach it wont cost much (in bytes or even processing), since it´s just a multiplier factor for the bin after smoothed... The problem is how to calculate that factor (it would lead probably to an equation function of the "distance from GF0") -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 <li> Yeah, that sounds like it makes sense. Let's see if I can figure something out. *starts Excel*... -- [[PEZ]
-<li> Seeming to me harder than i thought... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
-<li> To me too. Though I have an excuse since it's really late here. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<li> Seeming to me harder than i thought... -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
+<li> To me too. Though I have an excuse since it's really late here. =) -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 </UL>
 <p>
 PEZ, is this code needed in Pugilist 2.0.9 ?
@@ -112,19 +112,19 @@ PEZ, is this code needed in Pugilist 2.0.9 ?
 </pre>
 I saw it will never be true.
 <PRE >
-  -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+  -- <a href="robowiki@Iiley" class=wikipagelink>iiley</a>
 </PRE>
 <p>
-Whoa! No, it's not needed as it stands now of course. Must have been a late night hack that! But for the sake of <a href="robowiki?FeederOfRavens" class=wikipagelink>FeederOfRavens</a> I think you should let it be so that we have the comparison to Pugilist as intact as possible. And thanks for alerting me to this. I could either remove it and save bytes or I can fix it and just maybe earn some extra rating points. With <a href="robowiki?Pear" class=wikipagelink>Pear</a> and <a href="robowiki?YALT" class=wikipagelink>YALT</a> pushing P is in danger of losing its top-10 position. Not that I will be able to keep P there once you and David get your surfing bugs sorted away. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Whoa! No, it's not needed as it stands now of course. Must have been a late night hack that! But for the sake of <a href="robowiki@FeederOfRavens" class=wikipagelink>FeederOfRavens</a> I think you should let it be so that we have the comparison to Pugilist as intact as possible. And thanks for alerting me to this. I could either remove it and save bytes or I can fix it and just maybe earn some extra rating points. With <a href="robowiki@Pear" class=wikipagelink>Pear</a> and <a href="robowiki@YALT" class=wikipagelink>YALT</a> pushing P is in danger of losing its top-10 position. Not that I will be able to keep P there once you and David get your surfing bugs sorted away. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-I removed it from <a href="robowiki?FeederOfRavens" class=wikipagelink>FeederOfRavens</a> sm to save bytes to made it a mini, It is same to current version of Pugilist, well i'll try to compress other code to save it.  -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+I removed it from <a href="robowiki@FeederOfRavens" class=wikipagelink>FeederOfRavens</a> sm to save bytes to made it a mini, It is same to current version of Pugilist, well i'll try to compress other code to save it.  -- <a href="robowiki@Iiley" class=wikipagelink>iiley</a>
 <p>
-Yes, I said that wrongly. What I meant was, "don't <em>fix</em> it in <a href="robowiki?FoR" class=wikipagelink>FoR</a>". Removing it doesn't matter since that test never evaluates to true. And if it did, it wouldn't change anything anyway. It's one of the most stupid pieces of code I have ever seen actually. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+Yes, I said that wrongly. What I meant was, "don't <em>fix</em> it in <a href="robowiki@FoR" class=wikipagelink>FoR</a>". Removing it doesn't matter since that test never evaluates to true. And if it did, it wouldn't change anything anyway. It's one of the most stupid pieces of code I have ever seen actually. =) -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-OK~ ;]  -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+OK~ ;]  -- <a href="robowiki@Iiley" class=wikipagelink>iiley</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
-<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
-<a href="robowiki?action=edit&id=Pugilist/HelpRequests" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Pugilist/HelpRequests">View other revisions</a><br>Last edited October 22, 2004 7:58 EST by <a href="robowiki?Iiley" title="ID 3636 from 211.98.28.104">Iiley</a> <a href="robowiki?action=browse&diff=1&id=Pugilist/HelpRequests">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+<a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Pugilist" class=wikipagelink>Pugilist</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki@action=edit&id=Pugilist/HelpRequests" class=wikipageedit>Edit text of this page</a> | <a href="robowiki@action=history&id=Pugilist/HelpRequests">View other revisions</a><br>Last edited October 22, 2004 7:58 EST by <a href="robowiki@Iiley" title="ID 3636 from 211.98.28.104">Iiley</a> <a href="robowiki@action=browse&diff=1&id=Pugilist/HelpRequests">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
 </body>
 </html>
