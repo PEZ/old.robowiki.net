@@ -48,8 +48,8 @@ You can see that you can calculate the new (relative) X/Y position at t=T by add
 <p>
 <PRE >
  (this is not a java code snippet)
- ( 5 )	newX(T) = relativeX + <img src="http://kcl.kwokkie.net/klli87/images/_sum.gif"> enemyVelocity*sin(initialHeading + t*turnrate)
- ( 6 )	newY(T) = relativeY + <img src="http://kcl.kwokkie.net/klli87/images/_sum.gif"> enemyVelocity*cos(initialHeading + t*turnrate)
+ ( 5 )	newX(T) = relativeX + <img src="https://kcl.kwokkie.net/klli87/images/_sum.gif"> enemyVelocity*sin(initialHeading + t*turnrate)
+ ( 6 )	newY(T) = relativeY + <img src="https://kcl.kwokkie.net/klli87/images/_sum.gif"> enemyVelocity*cos(initialHeading + t*turnrate)
 </PRE>
 <p>
 <p>
@@ -57,8 +57,8 @@ Space and time is not continuous in Robocode, but the discreet steps are small e
 <p>
 <PRE >
  (this is not a java code snippet)
- ( 7 )	newX(T) = relativeX + enemyVelocity * <img src="http://kcl.kwokkie.net/klli87/images/_integral.gif"> sin(initialHeading + t*turnrate) dt
- ( 8 )	newY(T) = relativeY + enemyVelocity * <img src="http://kcl.kwokkie.net/klli87/images/_integral.gif"> cos(initialHeading + t*turnrate) dt
+ ( 7 )	newX(T) = relativeX + enemyVelocity * <img src="https://kcl.kwokkie.net/klli87/images/_integral.gif"> sin(initialHeading + t*turnrate) dt
+ ( 8 )	newY(T) = relativeY + enemyVelocity * <img src="https://kcl.kwokkie.net/klli87/images/_integral.gif"> cos(initialHeading + t*turnrate) dt
 </PRE>
 <p>
 <p>
@@ -71,7 +71,7 @@ integrating from t=0 to t=T wich results in: (<u>watch the +/- signs!! and where
 <p>
 <p>
 Just fill in T in the above and you can predict your circular-moving target's position at time T!
-Now to predict at wich time your bullet is going to hit your target. The time it would take for your bullet to travel to the target's <i>current</i> position is a good guess to start with. So your first guess would be T = enemyDistance/bulletSpeed. If we plug this T in formulae (9) and (10), we have a prediction of the target's new (relative) position at time T. But since the target will be moving around, rather than playing sittingDuck, this is a rather poor approximation of the time T we are after. We can improve our approximation by calculating the time it would take for your bullet to reach the <u>previously predicted</u> position. This new T can then in turn be used to calculate a better predicted position, wich, in turn, can be used to calculate an even better approximation of the actual time T, etc...etc...  I myself have never used this iteration technique, but I remember reading somewhere(RoboCodeRepository<a href="robowiki@action=edit&id=RoboCodeRepository" class=wikipageedit>?</a> forums?) that 4 or 5 of these iterations should be good enough. Alisdair Owens, the author of Nicator and the <a href="robowiki@OtherPeoplesRobots" class=wikipagelink>[SnippetBot tutorial]</a>, wrote an article for "Secrets of the Robocode master" about circular targeting with iteration. You can find it here: <a rel="nofollow" href="http://www-106.ibm.com/developerworks/library/j-circular/">http://www-106.ibm.com/developerworks/library/j-circular/</a>
+Now to predict at wich time your bullet is going to hit your target. The time it would take for your bullet to travel to the target's <i>current</i> position is a good guess to start with. So your first guess would be T = enemyDistance/bulletSpeed. If we plug this T in formulae (9) and (10), we have a prediction of the target's new (relative) position at time T. But since the target will be moving around, rather than playing sittingDuck, this is a rather poor approximation of the time T we are after. We can improve our approximation by calculating the time it would take for your bullet to reach the <u>previously predicted</u> position. This new T can then in turn be used to calculate a better predicted position, wich, in turn, can be used to calculate an even better approximation of the actual time T, etc...etc...  I myself have never used this iteration technique, but I remember reading somewhere(RoboCodeRepository<a href="robowiki@action=edit&id=RoboCodeRepository" class=wikipageedit>?</a> forums?) that 4 or 5 of these iterations should be good enough. Alisdair Owens, the author of Nicator and the <a href="robowiki@OtherPeoplesRobots" class=wikipagelink>[SnippetBot tutorial]</a>, wrote an article for "Secrets of the Robocode master" about circular targeting with iteration. You can find it here: <a rel="nofollow" href="https://www-106.ibm.com/developerworks/library/j-circular/">https://www-106.ibm.com/developerworks/library/j-circular/</a>
 <p>
 Another method is to start at T=0, and keep increasing with T with 1. Every time you increase your T, compare the distance your bullet would travel in T timeframes, with the distance between you and the predicted position of your target at time T. Stop when your bullet reaches your target, and you'll have a predicted position! Because the position of the target is calculated step-by-step anyway, we don't need formulae (9) and (10) and will be performing the summations (5) and (6) step by step as well. 
 You can find an example from this in  <a href="robowiki@CodeSnippets" class=wikipagelink>CodeSnippets</a> section. It's the source-code from my bot <a href="robowiki@CodeSnippets/Nano_Circular_Linear_Predictor" class=wikipagelink>Nano Circular Linear Predictor</a>, a bot I built just to prove that a circular predictor fits into a <a href="robowiki@NanoBot" class=wikipagelink>NanoBot</a>. :-)
@@ -83,7 +83,7 @@ Note that the step-by-step method can be used for both <a href="robowiki@Circula
 <b><u>Related Links:</u></b>
 <UL >
 <li> <a href="robowiki@CodeSnippets/Nano_Circular_Linear_Predictor" class=wikipagelink>Circular targeting example-code</a>
-<li> Alisdair Owen's <a rel="nofollow" href="http://www-106.ibm.com/developerworks/library/j-circular/">[circular targeting tutorial]</a> with iteration
+<li> Alisdair Owen's <a rel="nofollow" href="https://www-106.ibm.com/developerworks/library/j-circular/">[circular targeting tutorial]</a> with iteration
 </UL>
 <p>
 <hr noshade class=wikiline size=1>

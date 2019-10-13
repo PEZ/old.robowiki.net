@@ -46,7 +46,7 @@ I tried, but I'm unable to follow it ... has somebody checked it already? May be
 <p>
 Ok, after much testing I think I managed to download the bots from the <a href="robowiki@RobocodeRepository" class=wikipagelink>RobocodeRepository</a> :-) -- <a href="robowiki@Albert" class=wikipagelink>Albert</a>
 <p>
-This is mega-exciting! When you read the particpants list, please use the URL <a rel="nofollow" href="http://robowiki.dyndns.org/@RoboRumble/Participants">http://robowiki.dyndns.org/?RoboRumble/Participants</a> rather than <a rel="nofollow" href="http://robowiki.dyndns.org/perl/robowiki@RoboRumble/Participants">http://robowiki.dyndns.org/perl/robowiki?RoboRumble/Participants</a> since the latter might stop to work. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
+This is mega-exciting! When you read the particpants list, please use the URL <a rel="nofollow" href="https://robowiki.dyndns.org/@RoboRumble/Participants">https://robowiki.dyndns.org/?RoboRumble/Participants</a> rather than <a rel="nofollow" href="https://robowiki.dyndns.org/perl/robowiki@RoboRumble/Participants">https://robowiki.dyndns.org/perl/robowiki?RoboRumble/Participants</a> since the latter might stop to work. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 Ok, we seem to have the client side working reasonably well.  Is there any progress on the server?  If there is anything i can do to help, let me know, but understand that i have limited programming knowledge, and almost no java knowledge. -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
@@ -71,7 +71,7 @@ I would agree.  You don't want to store data in XML anyway, you want a database 
 I'w upload the results using the following URL:
 <p>
 <pre>
-http://theserver/thepage?game=roborumble&amp;rounds=10&amp;field=800x600&amp;user=USERID&amp;time=1062015727040&amp;fname=apv.Aspid 1.7&amp;fscore=1000&amp;fbulletd=500&amp;fsurvival=6&amp;sname=apv.MicroAspid 1.6&amp;sscore=999&amp;sbulletd=490&amp;ssurvival=4
+https://theserver/thepage?game=roborumble&amp;rounds=10&amp;field=800x600&amp;user=USERID&amp;time=1062015727040&amp;fname=apv.Aspid 1.7&amp;fscore=1000&amp;fbulletd=500&amp;fsurvival=6&amp;sname=apv.MicroAspid 1.6&amp;sscore=999&amp;sbulletd=490&amp;ssurvival=4
 </pre>
 <p>
 <UL >
@@ -88,7 +88,7 @@ Shouldn't we pick something more extensible? This way we won't be able to upload
 <p>
 Better:
 <pre>
-http://theserver/thepage?version=1&amp;result=roborumble,10,800,600,USERID,1062015727040,2,apv.Aspid1.7,1000,500,6,apv.MicroAspid .6,999,490,4
+https://theserver/thepage?version=1&amp;result=roborumble,10,800,600,USERID,1062015727040,2,apv.Aspid1.7,1000,500,6,apv.MicroAspid .6,999,490,4
 </pre>
 <p>
 notice the version for future expansion, the 2 indicating two result-lines, and the discarding of superfluous labels (This should keep us from hitting the max-GET length).
@@ -104,11 +104,11 @@ I'w keep the field names, because I think we are far away from max-length and it
 <p>
 Just using the URL seems simplist.  Simple is usually good. -- <a href="robowiki@Tango" class=wikipagelink>Tango</a>
 <p>
-The most obvious place to look for restrictions of the length of a URL request would be in the internet RFC defining the protocol(s) in question.  For HTTP 1.1 this is <a href="http://www.faqs.org/rfcs/rfc2068.html">RFC 2068</a>. (<a rel="nofollow" href="http://www.faqs.org/rfcs/rfc2068.html">[here]</a>).  The RFC does not explicitly limit the length of the URL to anything -- ie, as defined by 2068, the length of a URL is unbounded.  There is a suggestion made in section 3.2.1 that some proxy servers limit the length of the URL to 255 characters. 
+The most obvious place to look for restrictions of the length of a URL request would be in the internet RFC defining the protocol(s) in question.  For HTTP 1.1 this is <a href="https://www.faqs.org/rfcs/rfc2068.html">RFC 2068</a>. (<a rel="nofollow" href="https://www.faqs.org/rfcs/rfc2068.html">[here]</a>).  The RFC does not explicitly limit the length of the URL to anything -- ie, as defined by 2068, the length of a URL is unbounded.  There is a suggestion made in section 3.2.1 that some proxy servers limit the length of the URL to 255 characters. 
 <p>
 Albert's string was already 213 characters long. We might get into trouble with some proxies.
 <p>
-<a rel="nofollow" href="http://www.javaworld.com/javaworld/javatips/jw-javatip34.html">[Example code using POST]</a>
+<a rel="nofollow" href="https://www.javaworld.com/javaworld/javatips/jw-javatip34.html">[Example code using POST]</a>
 <p>
 -- <a href="robowiki@FnH" class=wikipagelink>FnH</a>
 <p>
@@ -132,7 +132,7 @@ OK, the we will POST the results. But I insist, the first thing we need is ANY s
 <p>
 Given the input that will be sent, I could give it a shot.  It doesn't even necessarily <strong>need</strong> to be in the param=value&amp;param2=value2 format or anything, either, that's just how it's sent from web-forms. -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
 <p>
-If you like a test that you can post data to a http server you could always use a wiki page I think. A URL like: <a rel="nofollow" href="http://robowiki.dyndns.org/perl/robowiki@action=edit&amp;id=RoboRumble/ResultsPostingTest">http://robowiki.dyndns.org/perl/robowiki?action=edit&amp;id=RoboRumble/ResultsPostingTest</a> would do the trick. If you place the data inside &lt;pre&gt;&lt;/pre&gt; tags it should also be quite readable. For anyone who like to experiment with a server side agent you can always install Tomcat locally and get Roborumble to post to your local Tomcat. I'll go do that check now if I have Tomcat on the server or not. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
+If you like a test that you can post data to a http server you could always use a wiki page I think. A URL like: <a rel="nofollow" href="https://robowiki.dyndns.org/perl/robowiki@action=edit&amp;id=RoboRumble/ResultsPostingTest">https://robowiki.dyndns.org/perl/robowiki?action=edit&amp;id=RoboRumble/ResultsPostingTest</a> would do the trick. If you place the data inside &lt;pre&gt;&lt;/pre&gt; tags it should also be quite readable. For anyone who like to experiment with a server side agent you can always install Tomcat locally and get Roborumble to post to your local Tomcat. I'll go do that check now if I have Tomcat on the server or not. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 OK, I managed to install Tomcat in my computer, so I can start developing the server side now. I got some examples and doesn't seems complicated. -- <a href="robowiki@Albert" class=wikipagelink>Albert</a>
 </div><hr class=wikilinefooter>

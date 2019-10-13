@@ -26,10 +26,10 @@
 <UL >
 <li> <a href="robowiki@NeuraLib" class=wikipagelink>NeuraLib</a> a BPN library codesize 603
 <li> <a href="robowiki@NRLIBJ" class=wikipagelink>NRLIBJ</a> (A BPN java package)/ Added some code for saving and loading with DataStream<a href="robowiki@action=edit&id=DataStream" class=wikipageedit>?</a> and new Node class (for output between -1 and 1 )<a href="robowiki@Synnalagma" class=wikipagelink>Synnalagma</a>
-<li> TDNN class - <a rel="nofollow" href="http://www.geocities.com/chen_levkovich/tdlearningproject.html">http://www.geocities.com/chen_levkovich/tdlearningproject.html</a> .You can get a modified class adapted to Robocode (ie. correct I/O) in <a href="robowiki@NeuralTargeting/TDNN" class=wikipagelink>NeuralTargeting/TDNN</a>.
+<li> TDNN class - <a rel="nofollow" href="https://www.geocities.com/chen_levkovich/tdlearningproject.html">https://www.geocities.com/chen_levkovich/tdlearningproject.html</a> .You can get a modified class adapted to Robocode (ie. correct I/O) in <a href="robowiki@NeuralTargeting/TDNN" class=wikipagelink>NeuralTargeting/TDNN</a>.
 <li> Some links to good on-line resources about NN are posted in the last section of this page.
-<li> Another interesting link on a project to build NN in Java. <a rel="nofollow" href="http://www.jooneworld.com/">http://www.jooneworld.com/</a>
-<li> Self Organising Maps(SOM) is an other type of NN. The library is available at sourceforge. <a rel="nofollow" href="http://sourceforge.net/projects/jsomap/">http://sourceforge.net/projects/jsomap/</a>
+<li> Another interesting link on a project to build NN in Java. <a rel="nofollow" href="https://www.jooneworld.com/">https://www.jooneworld.com/</a>
+<li> Self Organising Maps(SOM) is an other type of NN. The library is available at sourceforge. <a rel="nofollow" href="https://sourceforge.net/projects/jsomap/">https://sourceforge.net/projects/jsomap/</a>
 <li> Evolving <a href="robowiki@NeuralNetwork" class=wikipagelink>NeuralNetwork</a> using Genetic algorithm <a href="robowiki@EANN" class=wikipagelink>EANN</a>
 </UL>
 <p>
@@ -88,7 +88,7 @@ This neural net thing is really fun. Thanks for pointing me to the NRJLIB. Now I
 <p>
 I just uploaded the following image to demonstrate how effective <a href="robowiki@NeuralTargeting" class=wikipagelink>NeuralTargeting</a> can be:
 <p>
-<img src="http://students.cs.byu.edu/~kawigi/robots/aiming.gif">
+<img src="https://students.cs.byu.edu/~kawigi/robots/aiming.gif">
 <p>
 Data is from <a href="robowiki@ScruchiPu" class=wikipagelink>ScruchiPu</a> ploted using <a href="robowiki@RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a>. The green dots are the predicted bearing (to fire) and the white lines are the right bearing to hit (ie. when the green dots are between the lines, you will hit). Graphs are for <a href="robowiki@SpinBot" class=wikipagelink>SpinBot</a>, Moebius and Sandbox. The first two have an almost deterministic behaviour, and <a href="robowiki@ScruchiPu" class=wikipagelink>ScruchiPu</a> gets almost a 100% hit rate on them. Sandbox has a quite complex movement, with lots of randomnes, but the NN still gets some good prediction power (of course, some times fails completely, and other times it only manages to get the general movement but in an unprecise way...) -- <a href="robowiki@Albert" class=wikipagelink>Albert</a>
 <p>
@@ -101,7 +101,7 @@ It shows in green the relative bearing to fire over time (relativeBearing + enem
 Could you make a graph like that on <a href="robowiki@Ares" class=wikipagelink>Ares</a> as well? Since it has some quite determenistic patterns, but seems to have quite a few of them. Orca can easily learn it's <a href="robowiki@StopAndGo" class=wikipagelink>StopAndGo</a> thingy, but it's wide oscillation movement is much harder. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
 <hr noshade class=wikiline size=1>
-Just take a look into <a rel="nofollow" href="http://www.geocities.com/albert_pv/images.html">http://www.geocities.com/albert_pv/images.html</a>
+Just take a look into <a rel="nofollow" href="https://www.geocities.com/albert_pv/images.html">https://www.geocities.com/albert_pv/images.html</a>
 <hr noshade class=wikiline size=1>
 <p>
 <a href="robowiki@ScruchiPu" class=wikipagelink>ScruchiPu</a> beats Ares 6030-2539. A curious effect is that the more the net lears about oscillating and corners movement, the worst performs agains stop and go movement (it gets almost a 100% on it during the first rounds, then degrades). Probably it is some kind of interference between patterns. The good thing is that it seems that the network is able to store differnt patterns at once, and use them as needed. FYI, the network I'm using is a little bit different from <a href="robowiki@ScruchiPu" class=wikipagelink>ScruchiPu</a> 0.7, because I tried it with development version. -- <a href="robowiki@Albert" class=wikipagelink>Albert</a>
@@ -131,7 +131,7 @@ Ok then, not the newest which oscollates at 90 degrees bearing with a bit of ran
 <p>
 In response to the comment waaay up top there, Albert, don't undersell your creation. :) One of the strong points of neural nets is that they can take fuzzy input and return hard numbers (similarly to statistics), so if patterns aren't entirely deterministic it shouldn't matter, the randomness will weed itself out given some time to learn. However, I've been running <a href="robowiki@ScruchiPu" class=wikipagelink>ScruchiPu</a> against just about everything in my library, and I've noticed a trend you might be able to reproduce: he peaks in targetting within the first 50 or so rounds, then he actually begins to target less and less effectively. If I had to take a shot in the dark, I'd say he's overfitting, that is, memorizing exact patterns instead of learning general trends.
 <p>
-You can combat that a little with the error term, and more effectively with some others methods, see: <a rel="nofollow" href="ftp://ftp.sas.com/pub/neural/FAQ3.html#A_over">ftp://ftp.sas.com/pub/neural/FAQ3.html#A_over</a> and <a rel="nofollow" href="http://www.mathworks.com/access/helpdesk/help/toolbox/nnet/backpr15.shtml">http://www.mathworks.com/access/helpdesk/help/toolbox/nnet/backpr15.shtml</a> for something more in-depth on it. -- <a href="robowiki@Kuuran" class=wikipagelink>Kuuran</a>
+You can combat that a little with the error term, and more effectively with some others methods, see: <a rel="nofollow" href="ftp://ftp.sas.com/pub/neural/FAQ3.html#A_over">ftp://ftp.sas.com/pub/neural/FAQ3.html#A_over</a> and <a rel="nofollow" href="https://www.mathworks.com/access/helpdesk/help/toolbox/nnet/backpr15.shtml">https://www.mathworks.com/access/helpdesk/help/toolbox/nnet/backpr15.shtml</a> for something more in-depth on it. -- <a href="robowiki@Kuuran" class=wikipagelink>Kuuran</a>
 <p>
 Hmmm, there seems to be a lot to learn if the net should be effective. I did manage to make one that quickly learnt the movement of <a href="robowiki@Walls" class=wikipagelink>Walls</a>. Then it turned out that it learnt the movement equally well if I fed random numbers as input. Very good! The output should be constant... -- <a href="robowiki@Tobe" class=wikipagelink>Tobe</a>
 <p>
@@ -163,7 +163,7 @@ I thing NN are very good at classification and function estimation. The targetti
 <p>
 Yup, I think movement classification could be one of the very best uses of NNs. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-I'm now very busy but i like to contribute. There is an open source NN package <a rel="nofollow" href="http://sourceforge.net/projects/jsomap/">http://sourceforge.net/projects/jsomap/</a>. It is SOM type of NN which is good for classifcation. May be it is possible to make an implementaion by using that package and an open bot which uses pattern matching. The pattern in puts can be the inputs for training. SSO<a href="robowiki@action=edit&id=SSO" class=wikipageedit>?</a>
+I'm now very busy but i like to contribute. There is an open source NN package <a rel="nofollow" href="https://sourceforge.net/projects/jsomap/">https://sourceforge.net/projects/jsomap/</a>. It is SOM type of NN which is good for classifcation. May be it is possible to make an implementaion by using that package and an open bot which uses pattern matching. The pattern in puts can be the inputs for training. SSO<a href="robowiki@action=edit&id=SSO" class=wikipageedit>?</a>
 <p>
 Please hack away on <a href="robowiki@OrcaM" class=wikipagelink>OrcaM</a>. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <hr noshade class=wikiline size=2>
@@ -229,7 +229,7 @@ Maybe since the classification is unsupervised and automatic it doesn't matter w
 </UL>
 -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-Kohonen's aren't the most reliable classification by far. Play with <a rel="nofollow" href="http://www.hav.com/nnhtml.htm">[this]</a> awhile and you'll see it takes minimal modification for it to misclassify everything, and it's pre-trained. -- <a href="robowiki@Kuuran" class=wikipagelink>Kuuran</a>
+Kohonen's aren't the most reliable classification by far. Play with <a rel="nofollow" href="https://www.hav.com/nnhtml.htm">[this]</a> awhile and you'll see it takes minimal modification for it to misclassify everything, and it's pre-trained. -- <a href="robowiki@Kuuran" class=wikipagelink>Kuuran</a>
 <p>
 Second note: You may also have far more luck with a Hopfield than a Kohonen. Kohonens are for pattern classification like identifying a noisy image of a letter as being the letter. Hopfields are better for associating patterns, and are also unsupervised learning nets. Hopfields are also far simpler. -- <a href="robowiki@Kuuran" class=wikipagelink>Kuuran</a>
 <p>
@@ -255,7 +255,7 @@ I have done some more work with Kohonen map's lately, as I feel that I am gettin
 </UL>
 </UL>
 <p>
-Its been awhile since I have popped in, but I have the itch again, so I read up some more, <a rel="nofollow" href="http://ftp.vub.ac.be/~cgershen/cogs/doc/FCS-ANN-tutorial.htm">[here]</a> is a intro to ANN's for those whose minds just cannot grasp the massiveness that are ANN's right away (like me). Enjoy. --<a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
+Its been awhile since I have popped in, but I have the itch again, so I read up some more, <a rel="nofollow" href="https://ftp.vub.ac.be/~cgershen/cogs/doc/FCS-ANN-tutorial.htm">[here]</a> is a intro to ANN's for those whose minds just cannot grasp the massiveness that are ANN's right away (like me). Enjoy. --<a href="robowiki@Chase-san" class=wikipagelink>Chase-san</a>
 </div><hr class=wikilinefooter>
 <div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
 <a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>

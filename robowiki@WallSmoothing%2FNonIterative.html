@@ -20,7 +20,7 @@ Here's how it's done:
 <li> Presto! Non-Iterative wall smoothing courtesy of our good friend Pythagoras.
 </OL>
 <p>
-<img src="http://davidalves.net/robocode/images/wallsmooth1.png"> <img src="http://davidalves.net/robocode/images/wallsmooth2.png"> 
+<img src="https://davidalves.net/robocode/images/wallsmooth1.png"> <img src="https://davidalves.net/robocode/images/wallsmooth2.png"> 
 <p>
 <p>
 You may wonder why step 1 is in there. As you can see in the image above, our bot (blue circle) is 100 units away from the enemy (red circle). Even though the stick length is set to 150, giving us the outer dim blue circle, our destinations are projected out only 100 units, because the enemy is closer than the stick length setting. The reason for this is shown in the right-hand image above. Since our wallsmoothed destinations are at the intersection of the gray lines and the dim blue circle (which has a radius equal to our stick length), there simply aren't any good wallsmoothed destinations that allow us to continue traveling clockwise. This algorithm would happily decide that a point must be found on the top wall, and would choose the intersection of the blue circle and the gray line. Although we asked for a clockwise destination, the algorithm would travel to far, and end up picking a point that makes us drive counter-clockwise around the enemy. By setting the stick length equal to the distance to the enemy when the stick is longer than the enemy distance, we ensure that we can always smooth clockwise or counterclockwise regardless of our position or the enemy's.

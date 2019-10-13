@@ -32,10 +32,10 @@ Not sure if this is the right place but here goes: I've created a <a href="robow
 <strong>Beta Test New RR@H server</strong>
 Please test out the new RR@H server and give me your feedback.  You can point your RR@H client to the upload url if you like and upload battles. However be warned that the battles currently on the server are for testing only and will be wiped before it goes live. 
 <p>
-View rankings: <a rel="nofollow" href="http://davidalves.net/rumble/rankings@game=roborumble">http://davidalves.net/rumble/rankings?game=roborumble</a> <br>
-View system status: <a rel="nofollow" href="http://davidalves.net/rumble/status">http://davidalves.net/rumble/status</a> <br>
-RR@H Upload URL:  <a rel="nofollow" href="http://davidalves.net/rumble/uploadresults">http://davidalves.net/rumble/uploadresults</a> <br>
-RR@H rating file download URL: <a rel="nofollow" href="http://davidalves.net/rumble/ratingsfile">http://davidalves.net/rumble/ratingsfile</a> <br>
+View rankings: <a rel="nofollow" href="https://davidalves.net/rumble/rankings@game=roborumble">https://davidalves.net/rumble/rankings?game=roborumble</a> <br>
+View system status: <a rel="nofollow" href="https://davidalves.net/rumble/status">https://davidalves.net/rumble/status</a> <br>
+RR@H Upload URL:  <a rel="nofollow" href="https://davidalves.net/rumble/uploadresults">https://davidalves.net/rumble/uploadresults</a> <br>
+RR@H rating file download URL: <a rel="nofollow" href="https://davidalves.net/rumble/ratingsfile">https://davidalves.net/rumble/ratingsfile</a> <br>
 <p>
 <strong>Bugs:</strong>
 <p>
@@ -113,7 +113,7 @@ But I think David meant he doesn't store those 60000 battles in memory. A battle
 Exactly, battles are not stored in memory, they are used to update the ratings, then saved to the database. I don't have an app that could check out the mem usage... and it might not be easy to do since this is running within Resin, not as a standalone app. Do you have any suggestions on how to figure out what's wrong? Know of a program that can examine memory usage of java apps and will work with Resin on Linux? --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
 <p>
 Well any object is created stored in the memory anyway... If you create sql statements, than you store the statement if you mean that. 
-Try this link <a rel="nofollow" href="http://profiler.netbeans.org/">http://profiler.netbeans.org/</a> it may help. It inclued features like # Memory profiling, # Memory leak debugging -- SSO
+Try this link <a rel="nofollow" href="https://profiler.netbeans.org/">https://profiler.netbeans.org/</a> it may help. It inclued features like # Memory profiling, # Memory leak debugging -- SSO
 <p>
 (edit conflict!) David, u probably need something far more sophisticated than that (and also u probably know about that function, but i take the risk of raining in wet soil), but sometime ago i used the function bellow to print the alocated &amp; free mem in virtual machine:
 <pre>
@@ -132,7 +132,7 @@ Garbage collector invoking only reduces the free memory in VM, iirc. Also GC isn
 <p>
 Another question: Does the RR@Home access any native routines? If so, the GC don´t collect them, and they might be a source of memory leak. Also uncorrectly closed socket connections might be the reason (be sure that all access to sockets are in a try/catch/finally block and that the finally shut down the socket &amp; streams. DB connections also might be dangerous... -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 <p>
-Thanks for the suggestions everyone. Axe: <a rel="nofollow" href="http://davidalves.net/rumble/status">http://davidalves.net/rumble/status</a> already shows the free, total, and used memory. It also has a log and some information about # of battles / robots in the db. That's how I know the memory usage is going up by 1k per battle. I'm not accessing any native routines, however I am using a database connection. All database calls are already in try / catch / finally blocks to make sure I don't leave a trail of open db connections. You might be right about the sockets, but I'm not responsible for those, that's resin's responsibility, right@ The servlet writer shouldn't need to worry about closing the http socket... --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+Thanks for the suggestions everyone. Axe: <a rel="nofollow" href="https://davidalves.net/rumble/status">https://davidalves.net/rumble/status</a> already shows the free, total, and used memory. It also has a log and some information about # of battles / robots in the db. That's how I know the memory usage is going up by 1k per battle. I'm not accessing any native routines, however I am using a database connection. All database calls are already in try / catch / finally blocks to make sure I don't leave a trail of open db connections. You might be right about the sockets, but I'm not responsible for those, that's resin's responsibility, right@ The servlet writer shouldn't need to worry about closing the http socket... --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
 <p>
 Well, i actually know zero about resin. But i know whom knows something about it, and i´ll try to understand it later. U are probably right, if it is resin´s responsability to manage sockets, it probably do it well, otherelse people around the world would be shouting by now... As i said: memory leaks are ARGHHH!! -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 <p>
@@ -152,9 +152,9 @@ I knew you would know that. Thanks! --<a href="robowiki@David_Alves" class=wikip
 <p>
 David, could the ratings be weird because the ranking table contains all version of every bot that has participated? There are tons of CC's there. If a particular bot thinks CC is relaitively easy then it's rating will be boosted. And vice versa. -- <a href="robowiki@PEZ" class=wikipagelink>PEZ</a>
 <p>
-<a href="robowiki@David" class=wikipagelink>David</a>, i found a IBM tool that is suposed to help in memory leaks problems, by giving access to snapshots of the heap... Haven't test it yet, but it sounds very interesting... The link: <a rel="nofollow" href="http://www.alphaworks.ibm.com/tech/heaproots">http://www.alphaworks.ibm.com/tech/heaproots</a> -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
+<a href="robowiki@David" class=wikipagelink>David</a>, i found a IBM tool that is suposed to help in memory leaks problems, by giving access to snapshots of the heap... Haven't test it yet, but it sounds very interesting... The link: <a rel="nofollow" href="https://www.alphaworks.ibm.com/tech/heaproots">https://www.alphaworks.ibm.com/tech/heaproots</a> -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 <p>
-<a href="robowiki@David" class=wikipagelink>David</a>, take a look at this whitepaper: <a rel="nofollow" href="http://developers.sun.com/techtopics/mobility/midp/articles/garbagecollection2/#2.1">http://developers.sun.com/techtopics/mobility/midp/articles/garbagecollection2/#2.1</a>
+<a href="robowiki@David" class=wikipagelink>David</a>, take a look at this whitepaper: <a rel="nofollow" href="https://developers.sun.com/techtopics/mobility/midp/articles/garbagecollection2/#2.1">https://developers.sun.com/techtopics/mobility/midp/articles/garbagecollection2/#2.1</a>
 I think that it might explain the problems in RR@Home server... -- <a href="robowiki@Axe" class=wikipagelink>Axe</a>
 <p>
 Thanks Axe! :) --<a href="robowiki@David_Alves" class=wikipagelink>David Alves</a>
@@ -166,7 +166,7 @@ Yes, please share your version of the client. <a href="robowiki@Jim" class=wikip
 I can send you the altered .java files so you can take a look at them. The changes I did was at 6 am, so I didn't care too much if the code wasn't good.
 But then you can check them out, maybe clean up my mess, and publish it :) -- <a href="robowiki@Toz" class=wikipagelink>Toz</a>
 <p>
-You can find the modified version of RR@H I am running at <a rel="nofollow" href="http://www.stud.ntnu.no/~steffent/robot/">http://www.stud.ntnu.no/~steffent/robot/</a>
+You can find the modified version of RR@H I am running at <a rel="nofollow" href="https://www.stud.ntnu.no/~steffent/robot/">https://www.stud.ntnu.no/~steffent/robot/</a>
 I also added a property in the "roborumble.txt" file if you want to start counting at 0 or 1.
 It also have updated references to "pezius.com/rumble/servlet/", and a describing default nick.
 The modified class files are: battlesengine/BattlesRunner<a href="robowiki@action=edit&id=RoboRumble/BattlesRunner" class=wikipageedit>?</a>.class, RoboRumbleAtHome<a href="robowiki@action=edit&id=RoboRumbleAtHome" class=wikipageedit>?</a>.class and netengine/BotsDownload<a href="robowiki@action=edit&id=RoboRumble/BotsDownload" class=wikipageedit>?</a>.class. The last one is barely touched.

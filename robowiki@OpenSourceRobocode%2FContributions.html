@@ -48,16 +48,16 @@ I'm working on some UI and editor cleanup/improvements around Robocode.  So far:
 <p>
 Contrived picture of my version of the editor:
 <p>
-<img src="http://robocode.yajags.com/RobocodeEditor.png">
+<img src="https://robocode.yajags.com/RobocodeEditor.png">
 <p>
 Ok, I just uploaded my changes to my lovely bit of Robocode web space (a.k.a. the <a href="robowiki@RobocodeLittleLeague" class=wikipagelink>RobocodeLittleLeague</a> site).  This is my UI improvements, the enhanced editor, and my fix for the <a href="robowiki@HyperThreading" class=wikipagelink>HyperThreading</a> hang bug.  Please post here if you've tested any of these new features and also any thoughts about it if you have any (I'm trying to track how well tested these changes are so that if it happens to all work, I can say it's been used by some number of active Robocoders for their normal Robocode activities).  I've also tested it a good amount and everything seems to be good.  One thing that's still maybe undertested by me is Find / Replace.
 <p>
 <DL >
-<dt><dd> My version of robocode.jar is at <a rel="nofollow" href="http://robocode.yajags.com/newrobocode.jar">http://robocode.yajags.com/newrobocode.jar</a> (I just put it in my robocode directory and make robocode.bat or robocode.sh point to that jar instead of robocode.jar).  Source isn't included in this jar.
+<dt><dd> My version of robocode.jar is at <a rel="nofollow" href="https://robocode.yajags.com/newrobocode.jar">https://robocode.yajags.com/newrobocode.jar</a> (I just put it in my robocode directory and make robocode.bat or robocode.sh point to that jar instead of robocode.jar).  Source isn't included in this jar.
 </DL>
 <p>
 <DL >
-<dt><dd> My source changes to the robocode project (for anyone who wants to build it with other changes they've made) are at <a rel="nofollow" href="http://robocode.yajags.com/robocodeChanges.jar">http://robocode.yajags.com/robocodeChanges.jar</a> .  This is just a jar of the changed files that you can just extract into your robocode cvs root as long as you don't have changes in any of the same files I do (you can run jar -tf robocodeChanges.jar to see what files are in there).  This isn't a diff patch, so if you do have changes in one of the same files I have changes in, you will need to merge them manually.  No binaries in this jar.
+<dt><dd> My source changes to the robocode project (for anyone who wants to build it with other changes they've made) are at <a rel="nofollow" href="https://robocode.yajags.com/robocodeChanges.jar">https://robocode.yajags.com/robocodeChanges.jar</a> .  This is just a jar of the changed files that you can just extract into your robocode cvs root as long as you don't have changes in any of the same files I do (you can run jar -tf robocodeChanges.jar to see what files are in there).  This isn't a diff patch, so if you do have changes in one of the same files I have changes in, you will need to merge them manually.  No binaries in this jar.
 </DL>
 <p>
 -- <a href="robowiki@Kawigi" class=wikipagelink>Kawigi</a>
@@ -115,7 +115,7 @@ Secondly the output window obviously has  thread bug somewhere.
 I haven't looked at the code myself but if anything is copying the old text, adding the new one and inserting it back in there are obviosuly at least two threads trying to do this and sometimes get duplicated output. Otherwise it might just be a event dispatcher thread and normal thread issue. Example output with problem: <a href="robowiki@OpenSourceRobocode/OutputProblem" class=wikipagelink>/OutputProblem</a>
 Any ideas? I think this is related to being unable to debug robocde correctly with a debugger as some threads states are not controlled correctly somewhere. --<a href="robowiki@Pulsar" class=wikipagelink>Pulsar</a>
 <p>
-The second problem is introduced by Mat Nelson with the introduction of v1.0.7, see <a rel="nofollow" href="http://sourceforge.net/tracker/index.php@func=detail&amp;aid=1150818&amp;group_id=37202&amp;atid=419486">http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1150818&amp;group_id=37202&amp;atid=419486</a>   When you can find the right wait(10000)'s and alter them back to synchronized wait(), I think the output window problems will be solved. If it will be compatible with Kawigi's update I do not know. --<a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
+The second problem is introduced by Mat Nelson with the introduction of v1.0.7, see <a rel="nofollow" href="https://sourceforge.net/tracker/index.php@func=detail&amp;aid=1150818&amp;group_id=37202&amp;atid=419486">https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1150818&amp;group_id=37202&amp;atid=419486</a>   When you can find the right wait(10000)'s and alter them back to synchronized wait(), I think the output window problems will be solved. If it will be compatible with Kawigi's update I do not know. --<a href="robowiki@GrubbmGait" class=wikipagelink>GrubbmGait</a>
 <p>
 Is the actual source code available for Robocode 1.0.7?  I have checked SourceForge<a href="robowiki@action=edit&id=SourceForge" class=wikipageedit>?</a> and even Kawigi's jar and all I am seeing is class files.  And Java files available?  I figgured that was the purpose of open source, so maybe I am just not seeing it.  -- <a href="robowiki@Martin_Alan_Pedersen" class=wikipagelink>Martin Alan Pedersen</a>
 <p>

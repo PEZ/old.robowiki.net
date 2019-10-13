@@ -12,7 +12,7 @@ Well... I might be able to help but I have a couple questions to clarify the pro
 <p>
 The answer is yes to both, though the latter is a simplifying assumption ;).  --<a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 <p>
-Alright, basically what you're looking for, is a way to determine the <a rel="nofollow" href="http://en.wikipedia.org/wiki/Transformation_matrix#Affine_transformations">[affine transformation matrix]</a> (an affine transformation is a transformation that essentially fits the same constraints that this simplified case of elastic stretching has) corresponding to known distortion of 4 known points. From that matrix one can easily determine the distorted location of any other point. I'll work up a nice solution to the 2-dimensional (I assume 2-dimensional is what you're wanting) form of the problem, which should be understandable without needing a background with linear algebra, tomorrow. Tonight I am tired :) -- <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>
+Alright, basically what you're looking for, is a way to determine the <a rel="nofollow" href="https://en.wikipedia.org/wiki/Transformation_matrix#Affine_transformations">[affine transformation matrix]</a> (an affine transformation is a transformation that essentially fits the same constraints that this simplified case of elastic stretching has) corresponding to known distortion of 4 known points. From that matrix one can easily determine the distorted location of any other point. I'll work up a nice solution to the 2-dimensional (I assume 2-dimensional is what you're wanting) form of the problem, which should be understandable without needing a background with linear algebra, tomorrow. Tonight I am tired :) -- <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>
 <p>
 I'm not sure this problem can be described by an affine transform.  If the points can be moved in arbitrary directions by arbitrary distances, then I'd say I'm sure its not an affine transform.  The points can move in this way while still allowing the stretching of the material to be linear between the points.  But even if the transform isn't affine, as long as the shape is still convex it should be possible to find a solution.
 <p>
@@ -209,10 +209,10 @@ Well, alright. Here's some java code, that using a few functions in <a href="rob
 Here's some more explanation: Like I was saying before the type of transform we're talking about should be possible to describe with:
 <br> newX = a*oldX + b*oldY + c*oldX*oldY + d
 <br> newY = e*oldX + f*oldY + g*oldX*oldY + h
-<br>where the coefficents in front, letters a to h, are unknown variables. We know four known sets of values for oldX, newX and such, so we can create something known as a <a rel="nofollow" href="http://en.wikipedia.org/wiki/System_of_linear_equations">[system of linear equations]</a>. Such systems can be solved by putting everything except the coefficients into what is known as an <a rel="nofollow" href="http://en.wikipedia.org/wiki/Augmented_matrix">[augmented matrix]</a> to look like an array consisting of lines, in this case looking like:
+<br>where the coefficents in front, letters a to h, are unknown variables. We know four known sets of values for oldX, newX and such, so we can create something known as a <a rel="nofollow" href="https://en.wikipedia.org/wiki/System_of_linear_equations">[system of linear equations]</a>. Such systems can be solved by putting everything except the coefficients into what is known as an <a rel="nofollow" href="https://en.wikipedia.org/wiki/Augmented_matrix">[augmented matrix]</a> to look like an array consisting of lines, in this case looking like:
 <br> [ oldX, oldY, oldX*oldY, 1, newX ]
 <br> or [ oldX, oldY, oldX*oldY, 1, newY]
-<br> When using all 4 known points, we can construct a 4x5 augmented matrix for finding coefficients for newX values, and another for finding coefficients for newY values. To find the values of the coefficients, each matrix is then manipulated into what is called <a rel="nofollow" href="http://en.wikipedia.org/wiki/Row_echelon_form">[row echelon form]</a>, via a process such as <a rel="nofollow" href="http://en.wikipedia.org/wiki/Gaussian_elimination">[gaussian elimination]</a>. After such manipulation, the matrix should look like:
+<br> When using all 4 known points, we can construct a 4x5 augmented matrix for finding coefficients for newX values, and another for finding coefficients for newY values. To find the values of the coefficients, each matrix is then manipulated into what is called <a rel="nofollow" href="https://en.wikipedia.org/wiki/Row_echelon_form">[row echelon form]</a>, via a process such as <a rel="nofollow" href="https://en.wikipedia.org/wiki/Gaussian_elimination">[gaussian elimination]</a>. After such manipulation, the matrix should look like:
 <TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
 <TR VALIGN='CENTER' ><td colspan='0.5'> 1 </td><td colspan="0.5"> 0 </td><td colspan="0.5"> 0 </td><td colspan="0.5"> 0 </td><td colspan="0.5"> a </td><td colspan="0.5"></td></TR>
 <TR VALIGN='CENTER' ><td colspan='0.5'> 0 </td><td colspan="0.5"> 1 </td><td colspan="0.5"> 0 </td><td colspan="0.5"> 0 </td><td colspan="0.5"> b </td><td colspan="0.5"></td></TR>
@@ -222,7 +222,7 @@ Here's some more explanation: Like I was saying before the type of transform we'
 where in the place of the letters, the desired coefficients will be. You then take these coefficients from each solved matrix, and feeds them back into:
 <br> newX = a*oldX + b*oldY + c*oldX*oldY + d
 <br> newY = e*oldX + f*oldY + g*oldX*oldY + h
-<br> and finds the new coordinates of the point. For more information on systems of linear equations like this, I suggest you look at resources like <a rel="nofollow" href="http://en.wikibooks.org/wiki/Linear_algebra">[this]</a> or ideally some first year university textbooks in linear algebra if you can get your hands on any. Do things make any more sense now, or does it all seem like black magic still?
+<br> and finds the new coordinates of the point. For more information on systems of linear equations like this, I suggest you look at resources like <a rel="nofollow" href="https://en.wikibooks.org/wiki/Linear_algebra">[this]</a> or ideally some first year university textbooks in linear algebra if you can get your hands on any. Do things make any more sense now, or does it all seem like black magic still?
 <br>-- <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a> <i>(Bah, had to split this into 3 revisions to avoid the wrath of the anti-wikispam measures that don't like my wikipedia-links)</i>
 <p>
 <UL >
@@ -417,7 +417,7 @@ Very fun test app! As far as that issue, I'm not 100% sure of what the issue is 
 </UL>
 <p>
 <UL >
-<li> You weren't kidding!!  I plugged those two equations into <a rel="nofollow" href="http://www.hostsrv.com/webmab/app1/MSP/quickmath/02/pageGenerate@site=quickmath&amp;s1=equations&amp;s2=solve&amp;s3=advanced">[This page]</a>, and the solution was many lines long! -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
+<li> You weren't kidding!!  I plugged those two equations into <a rel="nofollow" href="https://www.hostsrv.com/webmab/app1/MSP/quickmath/02/pageGenerate@site=quickmath&amp;s1=equations&amp;s2=solve&amp;s3=advanced">[This page]</a>, and the solution was many lines long! -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 </UL>
 <p>
 Well, I spent most of the evening figuring equations &amp; simplifying results I got out of the a solver, and translating that to code.  It doesn't work.  I have no idea where to start fixing it.  I'm sad.  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
@@ -706,7 +706,7 @@ I think i have a more elegant solution. but i have one question. You say you hav
 <li> Lol.  That's pretty much what I was thinking I would do it if only linear stetching is available.  What you described is two different rectangles side-by-side with different linear stretching.  It could produce an image that was narrowed on one side of a line, then suddenly bloated on the other.  What I am thinking of as non-linear stretching would produce an image that gradually changed from narrowed on one side to bloated on the other.  What do these planar homographies do when you feed them extra points? -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a>
 </UL>
 <p>
-I'm just thinking, they must have all the code for this already in the <a rel="nofollow" href="http://compiz.org/">[Compiz]</a> Desktop Manager to transform all the points from the regular 'square' windows to the floppy 'rubber' windows. They also have non-linear stretching, where the insides bow inwards. Take a look, all that stuff is open source. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
+I'm just thinking, they must have all the code for this already in the <a rel="nofollow" href="https://compiz.org/">[Compiz]</a> Desktop Manager to transform all the points from the regular 'square' windows to the floppy 'rubber' windows. They also have non-linear stretching, where the insides bow inwards. Take a look, all that stuff is open source. -- <a href="robowiki@Skilgannon" class=wikipagelink>Skilgannon</a>
 <p>
 <UL >
 <li> Well, as I understand it, Compiz wouldn't have any of the code for that actually, because OpenGL would be doing that kind of dirty work. One of those software implementations of OpenGL may have this kind of code though. -- <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>
@@ -877,7 +877,7 @@ public class PlanarHomography {
 <p>
 To use this with your elastic rectangle problem replace the stretched and unStretched array with your coordinates be sure the correct corners match up. And to get where you point is on the unstretched rectangle just pass that point to the map function, make sure you specify it as a Homogeneous Coordinate the third componenet == 1. This problem and the math can also be extented into 3 space -- <a href="robowiki@Gorded" class=wikipagelink>Gorded</a>
 <p>
-Check <a rel="nofollow" href="http://download.java.net/media/jai/javadoc/1.1.3/jai-apidocs/index.html">[this]</a> out, the method WarpPolynomial<a href="robowiki@action=edit&id=WarpPolynomial" class=wikipageedit>?</a>.createWarp.  (It was easier than delving into the math ...)  I'll let you all know how it goes.  Oh - and there's a demo <a rel="nofollow" href="http://java.sun.com/developer/onlineTraining/javaai/jai/index.html">[here]</a>, it's the last link in the top frame.  I had to copy-paste the source into eclipse to get it to work.  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a> 
+Check <a rel="nofollow" href="https://download.java.net/media/jai/javadoc/1.1.3/jai-apidocs/index.html">[this]</a> out, the method WarpPolynomial<a href="robowiki@action=edit&id=WarpPolynomial" class=wikipageedit>?</a>.createWarp.  (It was easier than delving into the math ...)  I'll let you all know how it goes.  Oh - and there's a demo <a rel="nofollow" href="https://java.sun.com/developer/onlineTraining/javaai/jai/index.html">[here]</a>, it's the last link in the top frame.  I had to copy-paste the source into eclipse to get it to work.  -- <a href="robowiki@Simonton" class=wikipagelink>Simonton</a> 
 <p>
 <H1>Question</H1>
 

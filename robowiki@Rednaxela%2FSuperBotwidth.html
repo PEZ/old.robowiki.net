@@ -5,17 +5,17 @@
 </HEAD><BODY BGCOLOR="white">
 <div class=wikiheader><h1><a href="robowiki@Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki@back=/SuperBotwidth">Rednaxela/SuperBotwidth</a></h1><a href="robowiki@Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a> | <a href="robowiki@Changes" class=wikipagelink>Changes</a> | <a href="robowiki@action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
 <hr class=wikilineheader></div><div class=wikitext>Well, while working on my new 1v1 bot, the thought came to me, that one aspect of existing top bots that may be sub-optimal, may be how botwidth is handled. 
-<br><img src="http://homepages.ucalgary.ca/~agschult/images/wave1.png"><br>
+<br><img src="https://homepages.ucalgary.ca/~agschult/images/wave1.png"><br>
 So, let's say you have a bullet wave passing a bot, like shown above. In every case I've heard of, people would just take the angular width of the bot and leave it at that. And that's perfectly accurate and fine when the enemy bot isn't moving. The thing is though, that method "forgets" that bots have depth and can move.
-<br><img src="http://homepages.ucalgary.ca/~agschult/images/wave2.png"><br>
+<br><img src="https://homepages.ucalgary.ca/~agschult/images/wave2.png"><br>
 So for a more accurate (though significantly more complicated) method, I'm instead going to evaluate the range of points the bullet could hit the bot at, for every tick where the bullet wave is passing the bot. To do this on a given tick, I find<br>
 1) intrsections between the square and the bullet wave<br>
 2) intersections between the square and where the bullet wave was last tick<br>
 3) any corners of the square that lie between these two circles<br>
 I then evaluate the angles of all of these points, and find the range they are within (in the diagram above the red region). This gives the full range of angles that could have hit the bot at that particular tick in time.
-<br><img src="http://homepages.ucalgary.ca/~agschult/images/wave3.png"><br>
+<br><img src="https://homepages.ucalgary.ca/~agschult/images/wave3.png"><br>
 So  in the next tick, the bot has moved and the wave has advanced. So I calculate this range of angles the same way again, and create an augmented range.
-<br><img src="http://homepages.ucalgary.ca/~agschult/images/wave4.png"><br>
+<br><img src="https://homepages.ucalgary.ca/~agschult/images/wave4.png"><br>
 This is repeated for every tick until the wave has left the bot, and the final augmented range, is the full range of angles (and thus <a href="robowiki@GuessFactors" class=wikipagelink>GuessFactors</a>) that could have hit the bot, in a more accurate way than plain botwidth, and correctly accounts for considerations such as that a moving bot can be hit by a greater range of angles than a still bot, because it may be hit on it's side by a bullet that started to pass by it that the bot then ran into.
 <p>
 I've implemented the bulk of this in my 1v1 bot in progress. The tricky part was doing the square-circle intersections which were bothersome, but is not that complex besides that. I'm not sure how much benefit this will have in the actual battlefield, however you can never be too accurate when it comes to <a href="robowiki@WaveSurfing" class=wikipagelink>WaveSurfing</a>, <a href="robowiki@GuessFactors" class=wikipagelink>GuessFactors</a> and such things. I suppose. And questions/comments? Has this already been done before and I just didn't know about it?
@@ -33,7 +33,7 @@ Thanks! Well, one note that comes to mind that may have an impact, is that when 
 --<a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>
 <p>
 Well, because I was bored and like my excessive diagrams, I made a little animation to help elaborate on how I think this could work with <a href="robowiki@WaveSurfing" class=wikipagelink>WaveSurfing</a>.
-<br><img src="http://homepages.ucalgary.ca/~agschult/images/risk.gif"><br>
+<br><img src="https://homepages.ucalgary.ca/~agschult/images/risk.gif"><br>
 Precise prediction would be done over the whole course of the bullet passing over the robot, and for each tick, the the danger is evaluated on sections of the robot that could be hit on that particular tick. Similar to how many bots handle surfing multiple waves at once, it would apply a weighting to parts that would be hit first. When the wave is *actually* passing over the bot, <a href="robowiki@GuessFactors" class=wikipagelink>GuessFactors</a> that are already known to be safe will be given no danger weighting (see parts in the animation becoming black again). One note is that this animation is for an unmoving bot, and that it could look a bit more interesting in cases of a moving bot. In some ways, I think this method to enhance <a href="robowiki@WaveSurfing" class=wikipagelink>WaveSurfing</a> kinda reminds me of aerodynamics and hydrodynamics, in that it more fully follows the "flow" of danger around the bot and accounts for parts of the bot "shadowing" other parts of the bot and such :)
 <p>
 -- <a href="robowiki@Rednaxela" class=wikipagelink>Rednaxela</a>
