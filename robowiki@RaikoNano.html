@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RaikoNano - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Raiko, Nano'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=RaikoNano">RaikoNano</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package wiki.nano;
+import robocode.*;
+import robocode.util.Utils;
+import java.awt.geom.Rectangle2D;
+
+public class RaikoNano extends AdvancedRobot {
+	static double direction = 1, bulletVelocity;
+	
+	public void run() {
+		setTurnRadarRight(Double.POSITIVE_INFINITY);
+	}
+	
+	public void onScannedRobot(ScannedRobotEvent e) {
+		double v1, v2, offset = 2;
+		
+		setTurnGunRightRadians(Utils.normalRelativeAngle((v1 = getHeadingRadians() + e.getBearingRadians()) + 
+			Math.random() * e.getVelocity() / 13 * Math.sin(e.getHeadingRadians() - v1) - getGunHeadingRadians()));
+		
+		while(!new Rectangle2D.Double(18,18,764,564).
+			contains(getX() + 160 * Math.sin(v2 = v1 + direction * (offset -= .02)), getY() + 160 * Math.cos(v2)));
+		
+		setFire(Math.min(1100 / (v1 = e.getDistance()), getEnergy()/6));
+		if(Math.random() &gt; Math.pow(v1 = 0.5952 * bulletVelocity / v1, v1) || offset &lt; 0.7) {
+			direction = -direction;
+		}
+		
+		setAhead(1000 * Math.cos(v2 -= getHeadingRadians()));
+		setTurnRightRadians(Math.tan(v2));
+		setTurnRadarLeft(getRadarTurnRemaining());
+	}
+	
+	public void onHitByBullet(HitByBulletEvent e) {
+		bulletVelocity = e.getVelocity();
+	}
+}
+</pre>
+<p>
+This could be what you get if you try to shrink Raiko into a <a href="robowiki?NanoBot" class=wikipagelink>NanoBot</a> (248 bytes). I put it into the wiki package because nearly everything is borrowed from Raiko, thus I didn't want to release it. So <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>, you can release it if you think it is worth it ;-) -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+<p>
+Lol - when I saw this I thought I was in a time warp - <a href="robowiki?RaikoNano" class=wikipagelink>RaikoNano</a> was supposed to be tomorrows's release. ;-)  But this is much more beautiful than my implementations.  I would never have thought of using onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a> to get the opponent's firepower, for sure!  So why not, let's release it as a wiki bot.  Seeing as you created it, do you want to pick a new name for it? :-) -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+By the way, I think direction = -direction is smaller than direction *= -1.  And I detect I think that it would use the musashi trick until it got hit (because the velocity would be 0)? -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Which wouldn't be the <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a>. But still avoid head-on fire a while and very much like what I do in dev T. Was it by intention you implemented head-on-avoidance <a href="robowiki?Rozu" class=wikipagelink>rozu</a>? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+@ <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, no it wasn't by accident, but it isn't so useful at the moment. Before "bulletVelocity" has not been static to use head-on-avoidance, but this is a problem against bots with better guns.
+<p>
+@ <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>, it is a nano version of Raiko, so... but if you want to release tomorrow a bot with the same name it surely should be changed (but I have no ideas for a name). If you will not release it, it should of course keep this name to stay in relation with its bigger brothers.
+<p>
+@ <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>, just change it if you now how to make the code smaller (with <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a> permission it's now a wiki bot) -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+<p>
+<a href="robowiki?Rozu" class=wikipagelink>rozu</a>, well in that case I think it's probably the worthiest nano-contender to the Raiko name. :-)  My attempts have ranged from nano pattern matchers over Raiko movement to nano-adaptive movers, but this is certainly closer to Raiko.  I'll release it tonight.
+<p>
+<a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>, thanks and changed. :-) -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+I just updated this bot because I could find some bytes. I didn't really know where to spend them so I put them into <a href="robowiki?EnergyManagement" class=wikipagelink>EnergyManagement</a>. -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+<p>
+Hey, nice one, you managed to push it past TAoW<a href="robowiki?action=edit&id=TAoW" class=wikipageedit>?</a>!  100th place exactly. -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RaikoNano" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RaikoNano">View other revisions</a><br>Last edited October 10, 2007 2:52 EST by <a href="robowiki?Voidious" title="ID 8561 from cpe-204-210-154-119.hvc.res.rr.com">Voidious</a> <a href="robowiki?action=browse&diff=1&id=RaikoNano">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

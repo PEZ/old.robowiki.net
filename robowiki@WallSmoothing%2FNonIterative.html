@@ -1,0 +1,244 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>WallSmoothing/NonIterative - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Wall, Smoothing, Non, Iterative'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/NonIterative">WallSmoothing/NonIterative</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><strong>Warning</strong>
+This page assumes a good knowledge of <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>. If you're not completely sure what it is, check the <a href="robowiki?WallSmoothing/Introduction" class=wikipagelink>/Introduction</a> first. =)
+<p>
+As far as I know, every method of <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> published so far has used iteration. Due to the expensive operations involved (sin, cos, tan, atan, and sqrt), it would be best to avoid this. The code below started with me realizing that there's no reason to have to do wallsmoothing using iteration, we can use the pythagorean theorem to find a wallsmoothed without using such costly operations.
+<p>
+Here's how it's done:
+<p>
+<OL >
+<li> If the enemy is closer than the desired smoothing radius ("stick length"), then set the stick length to be equal to the distance to the enemy. More on why we do that later.
+<li> Project our destination point normally, either clockwise or counterclockwise. If it's on the drivable area of the field, just return that point.
+<li> Check which walls need to be smoothed, top or bottom and left or right. It gets a little tricky if two of them need to be smoothed.
+<li> If two walls need to be smoothed, check if we're going clockwise or counterclockwise. If we're going clockwise for example, and we're smoothing in the top right corner, we need to smooth against the right wall, since it's further clockwise than the top wall.
+<li> Make a triangle using our "stick" as the hypotenuse. One side will be a perpendicular dropped to the wall. The other side will be how far up or down the wall we need to go. Since we know the length of the hypotenuse and the perpendicular line segment that we dropped, we can calculate the third side.
+<li> Presto! Non-Iterative wall smoothing courtesy of our good friend Pythagoras.
+</OL>
+<p>
+<img src="http://davidalves.net/robocode/images/wallsmooth1.png"> <img src="http://davidalves.net/robocode/images/wallsmooth2.png"> 
+<p>
+<p>
+You may wonder why step 1 is in there. As you can see in the image above, our bot (blue circle) is 100 units away from the enemy (red circle). Even though the stick length is set to 150, giving us the outer dim blue circle, our destinations are projected out only 100 units, because the enemy is closer than the stick length setting. The reason for this is shown in the right-hand image above. Since our wallsmoothed destinations are at the intersection of the gray lines and the dim blue circle (which has a radius equal to our stick length), there simply aren't any good wallsmoothed destinations that allow us to continue traveling clockwise. This algorithm would happily decide that a point must be found on the top wall, and would choose the intersection of the blue circle and the gray line. Although we asked for a clockwise destination, the algorithm would travel to far, and end up picking a point that makes us drive counter-clockwise around the enemy. By setting the stick length equal to the distance to the enemy when the stick is longer than the enemy distance, we ensure that we can always smooth clockwise or counterclockwise regardless of our position or the enemy's.
+<p>
+<strong>Cool stuff</strong>
+<UL >
+<li> At best, this method will use 2 slow operations: 1 sin and 1 cos. (That's if no wallsmoothing is needed)
+<li> At worst, it will use 3 slow operations: 1 sin, 1 cos, and 1 sqrt. That's all!
+<li> This method returns a precise answer. Your wall smoothed destination will be exactly 18 units from the wall, and exactly 150 pixels from your position. Or whatever you change those values to be. =) 
+</UL>
+<p>
+The code:
+<p>
+<pre>
+// orbitCenter is the point we are orbiting, position is our current position, direction is our orbit direction (clockwise or counterclockwise), distance to orbit center is the distance to the orbit center.
+public Point2D.Double fastWallSmooth(Point2D.Double orbitCenter, Point2D.Double position, double direction, double distanceToOrbitCenter){
+	final double MARGIN = 18;
+	final double STICK_LENGTH = 150;
+	
+	double fieldWidth = getBattleFieldWidth(), fieldHeight = getBattleFieldHeight();
+	
+	double stick = Math.min(STICK_LENGTH, distanceToOrbitCenter);
+	double stickSquared = square(stick);
+	
+	int LEFT = -1, RIGHT = 1, TOP = 1, BOTTOM = -1;
+	
+	int topOrBottomWall = 0;
+	int leftOrRightWall = 0;
+	
+	double desiredAngle = Utils.normalAbsoluteAngle(absoluteAngle(position, orbitCenter) - direction * Math.PI / 2.0);
+	Point2D.Double projected = projectPoint(position, desiredAngle, stick);
+	if(projected.x &gt;= 18 &amp;&amp; projected.x &lt;= fieldWidth - 18 &amp;&amp; projected.y &gt;= 18 &amp;&amp; projected.y &lt;= fieldHeight - 18)
+		return projected;
+	
+	if(projected.x  &gt; fieldWidth - MARGIN || position.x  &gt; fieldWidth - stick - MARGIN) leftOrRightWall = RIGHT;
+	else if (projected.x &lt; MARGIN || position.x &lt; stick + MARGIN) leftOrRightWall = LEFT;
+	
+	if(projected.y &gt; fieldHeight - MARGIN || position.y &gt; fieldHeight - stick - MARGIN) topOrBottomWall = TOP;
+	else if (projected.y &lt; MARGIN || position.y &lt; stick + MARGIN) topOrBottomWall = BOTTOM;
+	
+	if(topOrBottomWall == TOP){
+		if(leftOrRightWall == LEFT){
+			if(direction &gt; 0)
+				//smooth against top wall
+				return new Point2D.Double(position.x + direction * Math.sqrt(stickSquared - square(fieldHeight - MARGIN - position.y)), fieldHeight - MARGIN);
+			else
+				//smooth against left wall
+				return new Point2D.Double(MARGIN, position.y + direction * Math.sqrt(stickSquared - square(position.x - MARGIN)));
+				
+		} else if(leftOrRightWall == RIGHT){
+			if(direction &gt; 0)
+				//smooth against right wall
+				return new Point2D.Double(fieldWidth - MARGIN, position.y - direction * Math.sqrt(stickSquared - square(fieldWidth - MARGIN - position.x)));
+			else 
+				//smooth against top wall
+				return new Point2D.Double(position.x + direction * Math.sqrt(stickSquared - square(fieldHeight - MARGIN - position.y)), fieldHeight - MARGIN);
+			
+		}
+		//Smooth against top wall
+		return new Point2D.Double(position.x + direction * Math.sqrt(stickSquared - square(fieldHeight - MARGIN - position.y)), fieldHeight - MARGIN); 
+	} else if(topOrBottomWall == BOTTOM){
+		if(leftOrRightWall == LEFT){
+			if(direction &gt; 0)
+				//smooth against left wall
+				return new Point2D.Double(MARGIN, position.y + direction * Math.sqrt(stickSquared - square(position.x - MARGIN)));
+			else
+				//smooth against bottom wall
+				return new Point2D.Double(position.x - direction * Math.sqrt(stickSquared - square(position.y - MARGIN)), MARGIN);
+		} else if(leftOrRightWall == RIGHT){
+			if(direction &gt; 0)
+				//smooth against bottom wall
+				return new Point2D.Double(position.x - direction * Math.sqrt(stickSquared - square(position.y - MARGIN)), MARGIN);
+			else
+				//smooth against right wall
+				return new Point2D.Double(fieldWidth - MARGIN, position.y - direction * Math.sqrt(stickSquared - square(fieldWidth - MARGIN - position.x)));
+				
+		}
+		//Smooth against bottom wall
+		return new Point2D.Double(position.x - direction * Math.sqrt(stickSquared - square(position.y - MARGIN)), MARGIN);
+	}
+	
+	if(leftOrRightWall == LEFT){
+		//smooth against left wall
+		return new Point2D.Double(MARGIN, position.y + direction * Math.sqrt(stickSquared - square(position.x - MARGIN)));
+	} else if(leftOrRightWall == RIGHT){
+		//smooth against right wall
+		return new Point2D.Double(fieldWidth - MARGIN, position.y - direction * Math.sqrt(stickSquared - square(fieldWidth - MARGIN - position.x)));
+	}
+	
+	throw new RuntimeException("This code should be unreachable. position = " + position.x + ", " + position.y + "  orbitCenter = " + orbitCenter.x + ", " + orbitCenter.y + " direction = " + direction);
+}
+
+public static Point2D.Double projectPoint(Point2D.Double origin, double angle, double distance){
+	return new Point2D.Double(origin.x + distance * Math.sin(angle), origin.y + distance * Math.cos(angle));
+}
+
+public static double absoluteAngle(Point2D.Double origin, Point2D.Double target) {
+    return Math.atan2(target.x - origin.x, target.y - origin.y);
+}
+
+public double square(double x){
+	return x*x;
+}
+</pre>
+<p>
+--David Alves
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+For what it's worth, my published <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> method does use iteration, but will only loop a maximum of two times in any situation, I think. I just put the 25-loop limit on the iteration as a form of personal infinite-loop paranoia. I'll take a closer look at yours when the alcohol wears off... ;) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I added a line to the end of your method which prints out the value of g right before the function returns. It was always 26. Perhaps I'm not passing your method the right parameters? I can send you the code to check if you like. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Yikes! I will look into this. I might be just ganking your method soon if that's the case... -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Ok - as implemented in Dookious, I just ran a couple matches and the value of g is never greater than 2. Maybe something got lost in translation when I posted it on the wiki; I'll take a look later when I get a chance. Thanks for the heads up on that. If you want me to check the code, feel free to e-mail to me, my e-mails on the <a href="robowiki?ContactInfo" class=wikipagelink>ContactInfo</a> page. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Here's a version that's a bit cleaner to look at, if anyone is interested.  It is geared for driving at a given heading, not toward a given point. 
+<pre>
+    HALF_PI = Math.PI / 2;
+    WALKING_STICK = 120;
+    WALL_MARGIN = 18;
+    S = WALL_MARGIN;
+    W = WALL_MARGIN;
+    N = 600 - WALL_MARGIN;
+    E = 800 - WALL_MARGIN;
+
+    // angle = the angle you'd like to go if there weren't any walls
+    // oDir  =  1 if you are currently orbiting the enemy clockwise
+    //         -1 if you are currently orbiting the enemy counter-clockwise
+    // returns the angle you should travel to avoid walls
+    double smooth(double angle, int oDir) {
+        angle = smoothWest(N - getY(), angle - HALF_PI, oDir) + HALF_PI;
+        angle = smoothWest(E - getX(), angle + Math.PI, oDir) - Math.PI;
+        angle = smoothWest(getY() - S, angle + HALF_PI, oDir) - HALF_PI;
+        angle = smoothWest(getX() - W, angle, oDir);
+        
+        // for bots that could calculate an angle that is pointing pretty far
+        // into a corner, these three lines may be necessary when travelling
+        // counter-clockwise (since the smoothing above may have moved the 
+        // walking stick into another wall)
+        angle = smoothWest(getY() - S, angle + HALF_PI, oDir) - HALF_PI;
+        angle = smoothWest(E - getX(), angle + Math.PI, oDir) - Math.PI;
+        angle = smoothWest(N - getY(), angle - HALF_PI, oDir) + HALF_PI;
+        
+        return angle;
+    }
+
+    // smooths agains the west wall
+    double smoothWest(double dist, double angle, int oDir) {
+        if (dist &lt; -WALKING_STICK * Math.sin(angle)) {
+            return Math.acos(oDir * dist / WALKING_STICK) - oDir * HALF_PI;
+        }
+        return angle;
+    }
+</pre>
+-- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Well done, much cleaner then my prototype version I have bee working on, and with half the code. I guess I have a ways to go, think you can build a better wall distance function too? --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Small notes there Simonton, it doesn't seem to work counter clockwise, and it kinda sticks in the upper left corner on approach. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Oops!  I should know better than to adapt my code to something more standard without testing it first.  There, try that :).  Oh ... and what's a "wall distance function"?  Oh wait ... the distance forward to a wall?  Um, hold on a minute ...  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Not sure, but Chase-san might be referring to the "orbital" wall distance style that a lot of bots use: assuming the enemy tank continues in a standard orbit, at what GF would it be when it hits a wall? <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> and Dookious do it with brute force, checking every .01 GFs until they find a projected enemy location off the map. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Works great, minor problems in Genesis, but those are my fault. This method will soon probably replace all the other methods just cause its so much faster then the smallest but still small itself.
+<p>
+Another note, the method seems to act oddly at some stick sizes, have you tested more then 120? --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+No, that sounds strange.  How much larger?  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Actually no, I ran a test, it just seems i'm used to other kinds of smoothing. Its just working too well, making me think its not working correctly. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+I just tested this code, it works better than almost all other wall smoothing functions I have tried, except for the persistent sticking bug Chase-san noted. I have seen the bot get stuck when going counter-clockwise in the upper-left corner, and possibly when going clockwise in the lower-right corner. Do you have any idea what is causing this? --<a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<p>
+Hmm.  I use a variation of this in <a href="robowiki?WeeksOnEnd" class=wikipagelink>WeeksOnEnd</a>, so I can't run it right now to see (not enough time to create a bot to use it).  I thought I tested it before ... maybe I can be of more help later, but probably not right away.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Thanks anyway. If you do go hunting for the bug, here is what I have figured out:
+<UL >
+<li> It always occurs when going counter-clockwise.
+<li> The bot can get stuck in any corner, but most frequently in the upper-left corner.
+<li> When it does get stuck, the bot can sometimes escape by reversing direction, this is why the bug is not visible in a typical bot.
+</UL>
+<p>
+The easiest way I have found to reproduce this bug is to create a bot that always moves counter-clockwise and keep running rounds until it starts a round very close to or inside the smoothing radius in the upper-left corner, at which point it will just vibrate back and forth. If you then make the bot reverse direction, it may shoot off on a diagonal instead of moving clockwise normally - a response very similar to what happens in other wall-smoothing algorithms if you try to head in one direction with the angle and the other with the orientation.
+<p>
+-- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<p>
+You could just program the bot, so that when your bot is within radius r (the smoothing radius) of the wall to move outside it, then allow the smoother to work as normal (though, this could lead to a pattern matcher catching on, though it is a rather small window). Since I assume this happens near the corners, move along the wall a little ways, not out into the field (it can look rather innocent if you move that way, even to a patternmatcher).
+<p>
+An easier way, though I doupt that there is an easy way to fix the bug in the method, without something of that sort anyway. Perhaps a check, and if within, use the radius to the wall your heading towards (maybe 8 less, to make up for velocity), make sure only to check if say, 5 or more within the radius, to allow room for error.
+<p>
+--<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Oh, wow, sorry, I totally forgot about this.  I also never saw you latest post, <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>.  Um, I may be able to check this out tonight.  By the way, if you look at the opening .battle file you'll see a way to specify the starting position of a bot, which sounds like an easier way to re-produce the bug :).  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Alrighty.  I was unable to replicate the getting stuck behavior, but I did find a bug.  I should like you to add the three new lines above &amp; let me know if it fixes your problem.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Well, it seems this "bug" was my fault all along. The code I was using looked like this:
+<p>
+<pre>
+  public void onScannedRobot(ScannedRobotEvent e) {
+	double angle = smooth(getHeadingRadians(), -1);
+	setBackAsFront(angle);
+  }
+</pre>
+<p>
+So one quarter or so of the time the bot was doing exactly what I said before: "trying to head in one direction with the angle and the other with the orientation". As long as you feed the method legal input, it seems to work correctly. However, I found another bug: the stick size is too small, and some bots will frequently hit the second or third wall they encounter. Changing the stick size to the other common value of 160 removes this problem.
+<p>
+-- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<p>
+Ah.  That would do it.  And you're right, that stick size is a bit small.  123 is the minimum to guarantee missing the wall, IF you never approach the wall at greater than a 90 degree angle (actually 122.something).  If you are retreating from the enemy at the same time as approaching the wall, there will be times that you need a longer stick.  Also, again, those three new lines above may be necessary depending on the way you calculate your desired angle, as mentioned in the new comments.  Happy smoothing!  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=WallSmoothing/NonIterative" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=WallSmoothing/NonIterative">View other revisions</a><br>Last edited July 3, 2007 4:47 EST by <a href="robowiki?Simonton" title="ID 11364 from 68.165.68.2">Simonton</a> <a href="robowiki?action=browse&diff=1&id=WallSmoothing/NonIterative">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

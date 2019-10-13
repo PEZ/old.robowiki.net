@@ -1,0 +1,218 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>NanoLauLectrik - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Nano, Lau, Lectrik'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=NanoLauLectrik">NanoLauLectrik</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>The first of a new generation of bots.
+<p>
+I released it as "the first nanobot with a pattern matcher". It is not completely true (Cyclops uses also a pattern matcher and it is older than <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a>) but there are not many of them. In any case, it was the first real killer pattern matcher, and leaded the way for a new generation of nano bots.
+<p>
+It is designed for 1vs1 only, and features a nanonized <a href="robowiki?PatternMatching" class=wikipagelink>pattern matcher</a>. 
+<p>
+<a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a> got a clear win in the Minibot Challenge (Feb 16) !!!
+<p>
+<b><a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a> 0.9 released!</b> Features an state-of-the-art variable-pattern-size nanonized pattern matcher. 
+<p>
+<b><a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a> 1.0 released!</b> With improved movement. Source code available. 
+<p>
+<a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a> 1.0 goes up +35 positions in the Eternal Rumble and becomes the #1 nanobot (Apr 26) !!! It also scores the best score ever for a nanobot and enters the Hall of Fame !!!
+<p>
+<a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a> 1.0 wins the Rookie 1v1 league in the Robocode Outpost.
+<p>
+Old as it is (I have not updated it since Apr 2003) it won the  <a href="robowiki?RobocodeLittleLeague" class=wikipagelink>RobocodeLittleLeague</a> (nanobots) -- 21/9/2003.
+<p>
+It's nice to see that the new entrants to Nanos competition at RR@H helped <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a> and now it is second. With all my bots without serious updates because lack of time, this is the only one that stands and even goes up. (26/3/2004). -- Albert
+<p>
+Won the <a href="robowiki?RobocodeLittleLeague" class=wikipagelink>RobocodeLittleLeague</a> (Nanos 1v1) on 2004-04-24, 2004-06-26, 2004-07-03 and 2005-08-13. 
+<p>
+-- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+<p>
+<a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a> is just a gun. For movement, it uses a very simple Oscillator<a href="robowiki?action=edit&id=Oscillator" class=wikipageedit>?</a>. Starting from version 1.0, it features a complex Oscillator<a href="robowiki?action=edit&id=Oscillator" class=wikipageedit>?</a>.
+<p>
+<H4>How does it fire?</H4>
+
+<p>
+It uses a nanonized symbolic <a href="robowiki?PatternMatcher" class=wikipagelink>PatternMatcher</a>. 
+<p>
+Now that it won the Minibot Challenge, here it goes the code for the nanonized symbolic pattern matcher (for version 0.8):
+<pre>
+//This is the information you keep for the pattern matcher
+static int n;
+static double ev[] = new double[50000];
+static StringBuffer pattern = new StringBuffer();
+
+//This code goes into the ScannedBot event
+//ev contains the accumulated perpendicular velocity of the enemy
+//pattern contains the velocity of the enemy
+//the pattern matcher calculates the best gun bearing to fire based on target previous movements
+double targetBearing;
+setTurnRadarRightRadians(Math.sin((targetBearing = e.getBearingRadians() + getHeadingRadians()) - getRadarHeadingRadians()));
+ev[++n] = ev[n - 1] + e.getVelocity() * Math.sin(e.getHeadingRadians() - targetBearing);
+pattern.append(Character.forDigit((int)e.getVelocity() + 8, 20));
+int pointer = pattern.toString().indexOf(pattern.substring(Math.max(pattern.length() - 10, 0))) + 9;
+setTurnGunRightRadians(Math.sin(((ev[Math.min(pointer + (int)e.getDistance() / 11, n)] - ev[pointer]) / e.getDistance () + targetBearing) - getGunHeadingRadians()));
+setFire(3);
+</pre>
+Note that for matching the patterns, it translates the data into a set of symbols (that's why it is a symbolic pattern matcher) and then uses the java built-in functions to find the right pattern.
+<p>
+For a variable pattern-size pattern matcher (like the one featured on <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a> 0.9), just replace the lines 3-5 above with the following code:
+<pre>
+int pointer;
+ev[++n] = ev[n-1] + (pointer = (int) (e.getVelocity()*Math.sin(e.getHeadingRadians()-targetBearing)));
+pattern.append((char)pointer);	
+//AIMING &amp; FIRING
+int len = 30;
+do { pointer = pattern.lastIndexOf(pattern.substring(Math.max(pattern.length()-len,0)),pattern.length()-100);
+} while (--len*pointer &lt; -1); 
+pointer += len;
+</pre>
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+<p>
+No dodging at all.
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+<p>
+It is a <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> bot. It hasn`t melee strategy.
+<p>
+<H4>Where did you get the name?</H4>
+
+<p>
+... It is a kind of private joke ...
+<p>
+<H4>Can I use your code?</H4>
+
+<p>
+Code is open source for version 0.9. Please, if you use it give credit, and if you use it in a significant portion of your bot (ie. the gun), make your bot open sorce.
+<p>
+<H4>What's next for your robot?</H4>
+
+<p>
+First, wait and see you it does against real enemies.
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+<p>
+NA. I developed a new pattern matching technology for it, so some bots in the future will be based on it.
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Other peoples comments</H4>
+
+Thanks for sharing the code for the nano pattern matcher. I truly appreciate it and I think I will make yet another try at doing my pattern matching symbolic. I noticed that you might be able to save a few bytes there. You calculate:
+<pre>targetBearing = e.getBearingRadians() + getHeadingRadians()) - getRadarHeadingRadians()</pre>
+And then on the next line do:
+<pre>Math.sin(e.getHeadingRadians() - targetBearing)</pre>
+It seems that the second line could be:
+<pre>Math.sin(e.getBearingRadians())</pre>
+But then again, I don't know nothing about making nano-code. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Realize that one is e.get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>(enemy heading) and the other get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>(my heading) so I can not eliminate it. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Ah, yes that little "e." actually means something. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+My goodness, someone usign Java's built in functions for something useful.  Makes me wish I knew Java better than as a watered down version of C... ;)  --Mike Dorgan <a href="robowiki?Miked0801" class=wikipagelink>miked0801</a>
+<p>
+Ok, my version of the pattern matching lives in my <a href="robowiki?Moebius" class=wikipagelink>Moebius</a> robot page.  Slightly smaller and slightly better.  -- <a href="robowiki?Miked0801" class=wikipagelink>Miked0801</a>
+<p>
+Great job! I have been thinking about some kind of symbolic representation of logged enemy moves since working on <a href="robowiki?Relativity" class=wikipagelink>Relativity</a>, but I never managed to sort it out because I got stuck on combining velocity and turn. Then when I used the
+<pre>e.getVelocity() * Math.sin(e.getHeadingRadians() - targetBearing)</pre>
+construct in Calypso<a href="robowiki?action=edit&id=Calypso" class=wikipageedit>?</a> I had the feeling that a nano pattern matcher was close, but it still didn't connect in my brain. Very well done, Albert! Thanks for sharing it! -- <a href="robowiki?Tobe" class=wikipagelink>tobe</a>
+<p>
+Hey i've heard alot of great things about this bot and would like to go one on one with it, but the repository is down. Does anyone know a link to the .jar so i could battle it.
+<p>
+<hr noshade class=wikiline size=1>
+We all know the intermittent problem this system has with opponents in corners. I'm attempting to track it down once and for all with <a href="robowiki?NanoSatan" class=wikipagelink>NanoSatan</a>, but so far I haven't been able to do it. On the up side, I have had one breakthrough, I /think/, so I'm going to share it in the hope that we can beat this together.
+<p>
+The problem originates in the pattern matcher itself, and not any supplementary code. I've been able to backtrack as far as the equivalent of this line from <a href="robowiki?Moebius" class=wikipagelink>Moebius</a>:
+<p>
+<pre>
+	// Aim at target (asin() in front of sin would be better, but no room at 3 byte cost.)
+	setTurnGunRightRadians(Math.sin( 
+		(arcLength[matchIndex+((int)(e.getDistance()/BULLET_SPEED))]-arcLength[matchIndex])/e.getDistance() +
+		targetBearing - getGunHeadingRadians() ));
+</pre>
+<p>
+More specifically, I know that it isn't the sin function or anything to do with it. The subtraction of the two arc lengths yields an enormous length of arc change as being upcoming. It keeps doing this consistently, with the exact same change predicted every time. I'm somewhat unsure as to what could cause a change in arc length as big as the one observed, I can't imagine a robot could move fast enough unless it was in contact with me and swinging around me.
+<p>
+It's obviously triggering a false pattern recognition, but I can't imagine the situation where a robot is sitting still for that long, then moves a radian's worth of arc around me, it certainly doesn't come up in the tests before this happens. I do currently have a theory as to how to combat it, however. It occured to me while writing this. I'm implementing it in <a href="robowiki?NanoSatan" class=wikipagelink>NanoSatan</a> development and seeing how it pans out, I'll keep everyone updated. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Update: I now know the exact cause of the bug. I don't believe there's any way to fight it and still let the gun fight in a nano, unfortunately. Looks like I'll have to spent more bytes on movement to compensate. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+What's causing the bug then? I have a similar issue in my AngularTargeting/Factor<a href="robowiki?action=edit&id=AngularTargeting/Factor" class=wikipageedit>?</a> bots. Where <a href="robowiki?Walls" class=wikipagelink>Walls</a> often get delta bearings larger than the supposed maximum. I believe the maximum delta bearing in a tick should be some 44 degrees. But with walls I now and then measure delta bearings of 70 or even 100 degrees. For the momenbt I just disregard mesures over the maximum. Is this at all similar to your nano-pattern-matcher probs? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It's similar, I don't know if the cause if the same or not, though. I know I had this problem before with a non-standard linear targetting I tried to squeeze into one of my bots, but the cause there was completely different. My current working theory, which I am 99 percent sure of, and have some empirical data to back, is as follows: The bot is recording the standstill of a disabled or corner-stuck bot at the end of the round, then it records the sharp movement at the start of the next round. This pattern, being recent, matches when it reaches it's standstill in the corner, and the movement from the beginning of the next round is predicted. It also explains why it's much more common with bots like <a href="robowiki?Corners" class=wikipagelink>Corners</a> than bots who just occasionally get stuck in corners, like <a href="robowiki?Moebius" class=wikipagelink>Moebius</a>.
+<p>
+I should also add that the corners problem will occur for an entirely different reason if a bot is in the corner and the pattern matcher is in the far corner. The pattern matcher looks for the latest occurance of the not moving pattern, which will be very recent, and then looks ahead however far the bullet would need to reach the target. However, the factor set in all the bots I've seen using this targetting means, on an 800x600 field, they wouldn't yet have data for the point they actually need. This is the tradeoff for it learning pattern-changing bots before round 50. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+You can fix this problem by changing the "pattern.length()-100" part of the code to a bigger number (ie. 120) so it will always have data. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+The latter, yes, not the former, and it sacrifices learning speed on bots that change every round. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I think the trick with n was actually mike's trick, I don't recall exactly. Anyway, there's another one that saves you quite a few bytes. Give me your email or something and I'll send you <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a> as codesize 236. :) (or just e-mail me: kuuran at idirect dot ca) -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I've had this exact same problem (as PEZ) with my waves not being able to reach Walls sometimes (meaning that Walls moves farther than the supposed maximum).  Someone needs to figure out why this happens.  Till then though, I just multiply my maximum angle constant by 1.2.  That seems to be able to always hit Walls. -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+I did that as well, but then removed it since it only helps against Walls (or so I figured). Reasonable movement (as fits in a micro or mini) can outsurvive Walls without high hitting rate against it. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+What are you using as your maximum angle for your waves?  I think I've been using Math.asin(8/bulletv) and it only seems to go off occasionally (rarely enough that I blame it on the turn-based movement).  -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Whee... here's my first shot at a second-generation <a href="robowiki?NanoSatan" class=wikipagelink>NanoSatan</a>. Still lots to be tweaked:<pre>
+1st: apv.NanoLauLectrik 1.0	8478	2450	490	4948	585	4	0	56	46	0
+2nd: arthord.NanoSatanPlus	8289	2300	460	4944	584	0	0	53	49	0
+</pre>-- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Well, here's the math I used to generate my maximum angle.  Someone please let me know where it's wrong.
+First, the equation for the arc-length of a circle is:
+<PRE >
+ s = rT
+</PRE>
+Where s is the arc-length, r is the radius of the circle, and T (usually called theta) is the angle of the arc.
+Rearranged to solve for theta, it becomes:
+<PRE >
+ T = s / r
+</PRE>
+Now, in our case, the arc-length is the maximum distance that our enemy could travel in the amount of time it will take for our bullet to get there.  So, if b is our bullet's speed, d is the distance to the enemy, and 8 is the maximum velocity, then the equation becomes:
+<PRE >
+ T = (8 * (d / b)) / r
+</PRE>
+The variable r is, of course, just the distance to the enemy, so:
+<PRE >
+ T = (8 * (d / b)) / d
+</PRE>
+Which, when the d's divide out, becomes:
+<PRE >
+ T = 8 / b
+</PRE>
+So, in the case that the bullet speed is 11, T is 8/11, or about 41.67 degrees.
+That means that the total range of bearing-change that a bot could fall into for any distance with a bullet power of 3 is (-41.67, 41.67).
+<p>
+Now that I look back on it, I believe my mistake is the assumption that perpendicular motion (where the circle is centered on our bot, with the enemy orbiting) will always create the maximum angle change.  Now that I think about it, if a bot is moving at an angle <i>toward</i> my bot, it may be possible that that could (in many cases) create a larger maximum angle.
+<p>
+In any case, multiplying T by 1.15 always (in practice) creates a large enough wave.
+<p>
+I'm curious though if someone can come up with a real equation for finding the maximum angle change.
+<p>
+-- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+It's funny that you say 1.15 - I've been trying to figure out that problem for some time, and I'm sure that an arc is not the answer (just because there's a faster way to get from the start of the arc to the end of it if they follow a straight path).  I took a couple different scenarios.  One of them is the case where the radians from 8/b IS the angle, which I discarded.  If they move laterally from me now and keep going straight (instead of making an arc), they form a right triangle where the hypotenuse is the bullet path, and the sine of the max angle is 8/b.  So internally, I've been using asin(8/bulletv) for awhile.  Another option is if they go toward you such to make a right triangle where the hypotenuse is the line to them and the adjacent leg is the bullet path.  In that case the tangent is 8/b, but that seems to give smaller angles than the arc, not larger.
+<p>
+So my question now is whether the maximum angle is determined by moving even further away from your opponent?  So I was thinking this morning about how you'd generalize this to non-right triangles (using the law of sines).  Basically what I decided is that the sine of the max angle divided by the sine of some angle x (the angle your opponent moves in relative to you) equals 8/bulletv, and we want to find some x that will give us the highest possible max angle.  So, if:
+<p>
+sin(maxangle) = sin(x)*8/bulletv
+<p>
+Then we want to pick the x with the biggest sine.  The largest possible sine is 1, which is at 90 degrees, so it appears my asin(8/b) answer WAS in fact correct.  Occasionally, someone still gets out of that window, which I blame on the tick-based physics in Robocode, although if I make sure to consider that the bullet isn't fired until the time after I call setFire, this stays down enough for me to blame it on the ticks. 
+<p>
+The reason I say it's funny you came up with 1.15 is that in order to compensate, I changed it to asin(10/bulletv), which comes out to about 1.14 for power-3 bullets.
+-- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=NanoLauLectrik" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=NanoLauLectrik">View other revisions</a><br>Last edited July 20, 2007 21:11 EST by <a href="robowiki?Skillgannnon" title="ID 11191 from ctb-cache4-vif1.saix.net">Skillgannnon</a> <a href="robowiki?action=browse&diff=1&id=NanoLauLectrik">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

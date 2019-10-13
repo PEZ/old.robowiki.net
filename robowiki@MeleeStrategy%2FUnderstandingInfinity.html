@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>MeleeStrategy/UnderstandingInfinity - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Melee, Strategy, Understanding, Infinity'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/UnderstandingInfinity">MeleeStrategy/UnderstandingInfinity</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?MeleeStrategy" class=wikipagelink>MeleeStrategy</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Infinity is just a very simple Nano bot with little to understand right?  I wish.  The square pattern he uses was found after hundreds of variations, tweaks, and direct competition against mostly Gem and Komorji Ninja.  To wit:
+<p>
+Why SetColor<a href="robowiki?action=edit&id=SetColor" class=wikipageedit>?</a>?  Style does matter :)  I can get 12 bytes or so back at will here.
+<p>
+The Base movement of each leg is 180 units for a good reason.  This amount throws off linear/circular aim bots by stopping and changing direction just enough to make them miss.  It also spreads out my travel area enough to allow me to survive against Head on Aim bots.
+<p>
+The 90 degree turns also tend to minimize the amount of time that I head-on travel at bots - where I'm most vulnerable.  Triangles will repeat the pattern too quickly and get me hurt faster and Pentagons cover too wide an area making me a larger melee target.  Also, non-repeating patterns (patterns that don't repeat back to the same starting location), tend to hit walls a lot and push me out of corners which is death.  Basically, if you don't go back to your starting point, you are traversing a very large circle and will hit lots of walls.
+<p>
+The 500 max aim code was a quick addition from Infinity 2.0 to 2.1.  This 1 change cost me about 10-20% in bullet damage, but nearly doubled my survivability in Melee.  Any shot further than 500 is mostly a waste of energy with my simple gun.  Against the newer crop of corner pattern bots though, it would be effective though so I may need to rethink this a bit.
+<p>
+The opening movement leg is set to forever to make sure that no matter how many times I run into people, eventually I will hit a wall and start my true pattern somewhere on the edge of the map.  Getting out the center is worth taking a long, linear trip early in the match.
+<p>
+The true power of the bot though is the radar lock/management.  I spent a lot of codesize on that code and it pays off.  This code locks onto the closest enemy almost 99% on the time while still keeping a scan of the battlefield between shots.  Of all the code in my bot, this is probably the most important in terms of survivability.  Many melee nano's radar code doesn't reliably lock to the nearest target or worse, slips off at close range.  This is deadly as I can shoot more often and more accurately for free energy at their expense.  When I got this code working, I noticed a HUGE increase in my bots scoring.  In a nutshell, the radar spins until gunheat is less than 1, then it locks onto the closest enemy it is found yet and gets everything aimed right.  There is a bug where it tends to fire wildly for 1 shot if a enemy has just moved into range that I will fix in the next version.
+<p>
+And yes, Infinite spin/lock code will stay locked on target quite well.
+<p>
+The last part is the weapon system.  In a nutshell, I do full linear leading at point-blank range and no leading at all at 500 (max range)  In newer versions, I will add a floor to the range code to allow me to shoot further than 500 without reverse leading.  Anyways, this gun is a cheap way to target aggresive bots early who tend to charge while shooting 0 lead shots at corner pattern movers.
+<p>
+And of course energy management which is part of fire control.  More enemies means shoot harder.  Closer enemies means shoot harder.  Low energy means shoots softer to live longer.  And long-range, don't shoot at all.
+<p>
+That is what 249 bytes of code will get you.  The simple movement leaves room for a good radar lock system and a pretty good gun.
+<p>
+--<a href="robowiki?Miked0801" class=wikipagelink>Miked0801</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?MeleeStrategy" class=wikipagelink>MeleeStrategy</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=MeleeStrategy/UnderstandingInfinity" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=MeleeStrategy/UnderstandingInfinity">View other revisions</a><br>Last edited September 28, 2007 18:06 EST by <a href="robowiki?Miked0801" title="ID 12104 from 12.110.83.132">Miked0801</a> <a href="robowiki?action=browse&diff=1&id=MeleeStrategy/UnderstandingInfinity">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

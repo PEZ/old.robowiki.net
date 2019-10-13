@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>PluggableRobot - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Pluggable, Robot'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=PluggableRobot">PluggableRobot</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H3>Bot Name</H3>
+
+<a href="robowiki?PluggableRobot" class=wikipagelink>PluggableRobot</a>
+<p>
+<H4>Author</H4>
+
+<a href="robowiki?RobertWalker" class=wikipagelink>RobertWalker</a>
+<p>
+<H4>Extends</H4>
+
+<a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>
+<p>
+<H4>What's special about it?</H4>
+
+It's not a standalone robot, really, but a base robot which you can extend. It provides a pluggable architecture and sophisticated event management. I developed it in parallel with my robot that is based on it, <a href="robowiki?RabidWombat" class=wikipagelink>RabidWombat</a>.
+<p>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<a href="robowiki?PluggableRobot/Source" class=wikipagelink>PluggableRobot/Source</a>
+<p>
+<H4>How competitive is it? How does it <a href="robowiki?Movement" class=wikipagelink>move</a>? How does it fire? How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>? How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a> strategy? How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a>?</H4>
+
+It's just an architecture upon which a robot can be built. Without extension, it's pretty much indistinguishable from <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a>.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+Nothing.
+<p>
+<H4>Where did you get the name?</H4>
+
+It's a robot design for a pluggable architecture. <a href="robowiki?PluggableRobot" class=wikipagelink>PluggableRobot</a> made sense.
+<p>
+<H4>Can I use your code?</H4>
+
+Sure, <a href="robowiki?PluggableRobot/Source" class=wikipagelink>help yourself to the source code</a>. I would like to be able to make this into a JAR that can just be dropped into another project, but Robocode doesn't seem to let you do this in development mode. :(
+<p>
+<H4>What's next for your robot?</H4>
+
+The componentization, <a href="robowiki?EventManagement" class=wikipagelink>EventManagement</a> and debug graphics parts are all done. I may want to include some persistence code.
+<p>
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+Since it doesn't fight on its own, no.
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+None directly, although I've culled some ideas from the wiki. The <a href="robowiki?EventManagement" class=wikipagelink>EventManagement</a> page shows some discussion I had with others here that resulted in code that went into it, but <a href="robowiki?PluggableRobot" class=wikipagelink>PluggableRobot</a> is basically an original creation.
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+I think all the big bots use something like this? I mean Shadow does, my (bigger) bots do, who else? Mine in particular handles paint and robot color functions, and in Genesis tracks time, data and properties loading. It overlays it own methods for on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>, handles the radar and does many many other things I mostly forgot about, and it all does this with the data from a interface called 'Constants' (meaning colors, propertie file name, property names and numbers, etc. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+It's not too surprising that the same people that enjoy programming for fun would also tend to build their bots with more modular designs, though some are certainly more "pluggable" than others. (<a href="robowiki?Dookious" class=wikipagelink>Dookious</a> is pretty clean code, IMO, but it would be easier to implement a new <a href="robowiki?Wave" class=wikipagelink>Wave</a>-based gun than a new <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> gun.) In addition to all the usual reasons for doing so (ie, in a profession), with Robocode it has the additional benefit of keeping me more motivated to work on my bots. <a href="robowiki?PrairieWolf" class=wikipagelink>PrairieWolf</a> is a classic (one of the <a href="robowiki?Ancients" class=wikipagelink>Ancients</a>) that uses some kind of pluggable design for its <a href="robowiki?MultiMode" class=wikipagelink>MultiMode</a> strategies. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Yeah, it does not surprise me that modularity would be a popular topic. Here's a bit more about how <a href="robowiki?PluggableRobot" class=wikipagelink>PluggableRobot</a> works. Basically, <a href="robowiki?PluggableRobot" class=wikipagelink>PluggableRobot</a> allows you to register Listeners, Components and Painters.
+<UL >
+<li> I define a listener interface for each of the Robocode events, and any objects which implement the interfaces and register themselves with the bot will be notified of those events. The really nice thing is that <a href="robowiki?PluggableRobot" class=wikipagelink>PluggableRobot</a> gives much better control over the order in which notifications are given; listeners are notified of events in the order that they are registered, and each listener gets the events in the order that the corresponding listener interfaces are declared. So a class with a declaration like <pre>public class MyClass implements EventListener.ScannedRobot, EventListener.Death</pre> will get notified of the <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> *before* the DeathEvent<a href="robowiki?action=edit&id=DeathEvent" class=wikipageedit>?</a>. Pretty handy. All of this happens inside a custom event test as discussed on the <a href="robowiki?EventManagement" class=wikipagelink>EventManagement</a> page. I don't actually make the robot do anything at this stage; this is just for data collection and processing.
+<li> Components are where I actually make the robot do stuff. Each component has a go() method that gets executed in the main loop of the robot. Like the event listeners, they get called in the order that they were registered.
+<li> Similarly, painters have a paint() method that gets called when it's time to paint debug graphics. In the onPaint() method on the robot I inject the Graphics2D object into a custom object I've created called the Hud, which takes care of icky stuff that Graphics2D expects, like downcasting (Is that a word?) from double to int, translating angles to degrees, etc.
+<li> Pluggable robot also defines initializeBattle() and initializeRound() methods.
+</UL>
+-- <a href="robowiki?RobertWalker" class=wikipagelink>RobertWalker</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=PluggableRobot" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=PluggableRobot">View other revisions</a><br>Last edited November 2, 2007 23:07 EST by <a href="robowiki?RobertWalker" title="ID 10744 from mind4.fttp.xmission.com">RobertWalker</a> <a href="robowiki?action=browse&diff=1&id=PluggableRobot">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

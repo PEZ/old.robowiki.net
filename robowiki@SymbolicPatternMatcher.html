@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>SymbolicPatternMatcher - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Symbolic, Pattern, Matcher'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=SymbolicPatternMatcher">SymbolicPatternMatcher</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>A <a href="robowiki?SymbolicPatternMatcher" class=wikipagelink>SymbolicPatternMatcher</a> is a type of pattern matcher that maps the previous states of the enemy movement into a symbolic space (ie. a group of symbols) that represent the different status of the bot, and concatenates them in a serie that represents the change evolution of the robot from one state to the next one. Then just matches the patterns by comparing the last items on the series (that represent the recent history of the enemy status) with the rest of the serie (that represent the past history of the robot).
+<p>
+<PRE >
+ {input variables} -&gt; {symbol} -&gt; {serie of symbols}
+</PRE>
+<p>
+Usually, you represent the symbols using characters and you create the series by concatenating them into an string. 
+<p>
+Note that you will need a function to convert from the input variables into the symbolic space. 
+<p>
+The advantage of using this kind of pattern matchers are:
+<p>
+<UL >
+<li> Once you have translated the enemy history into an series of symbols, you don't need to build a matching function to match the patterns (the function is always equality). It gives you lots of flexibility, beacuse the pattern matcher is always the same, and you just need to change the input variables and the mapping function to make it behave in many different ways.
+<li> You can use the java build in functions to do the matching, so you save space if you are implementing small bots.
+<li> The Java engineers also have put in all rocket science efforts available ino making the search efficient, which makes this kind of matching much faster tham brute force <a href="robowiki?MogBot" class=wikipagelink>MogBot</a> style matching. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</UL>
+<p>
+<a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a> is a good open source example of <a href="robowiki?SymbolicPatternMatcher" class=wikipagelink>SymbolicPatternMatcher</a>. 
+<p>
+--<a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Isn't a possible advantage also that this might lend itself to regular expression searches? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Probably you can, but first you should find a good reason to do it :-) -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Well, one reason to do it is to "blurify" your search.  You could also use it to find the projection pattern if you were projecting future movement with it.  I've thought about doing something like this (assume you are looking for a pattern of length 10 or something for a String called 'pattern'):
+<pre>
+String toMatch = pattern.substring(pattern.length()-10);
+String re = "";
+for (int i=0; i&lt;10; i++)
+{
+	re += "[";
+	for (int j=toMatch.charAt(i)-1; j &lt;= toMatch.charAt(i)+1; j++)
+		//the \u is to match a unicode number by any 4 digit hex number
+		re += "\\u" + padZeros(Integer.toHexString(j), 4);
+	re += "]";
+}
+//don't even pretend to try this part in java 1.3...
+Pattern p = Pattern.compile(re);
+//don't find a match in the last 30 characters of the pattern
+Matcher m = p.matcher(pattern.substring(0, pattern.length()-30));
+//while matches are found:
+while (m.find())
+{
+	int index = m.end();
+	//An aspid-style pattern matcher would (if I understand correctly) figure out
+	//the angle by projecting movement starting at index and store that somewhere.
+	//This loop will iterate through all matches of the pattern in the pattern buffer.
+}
+//now you have all your data, figure out how to fire
+
+.
+.
+.
+
+//pads the front of the input string with zeros to be of length size
+public String padZeros(String str, int size)
+{
+	while (str.length() &lt; size)
+		str = "0" + str;
+	return str;
+}
+</pre>
+Is this a viable idea? -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+That's great!!! I haven't understand anything of the code, but I understand the idea. One of the problems Aspid has is that there is a limit on the number of searches it can make. Probably it could increase them by using it. I'w try as soon as possible :-) -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+The problem right now is that it doesn't easily let characters have more than one value hidden in them, of course I guess that can be done still, you just have to know every character that matches a certain number in the string, which if each character has two parts of data, there may be 9, or maybe you only alow deviation in one direction, so there would be 5.
+<p>
+If you've never thought about that much, the way you could store multiple variables in one character is by using a bitmask - I experimented with an angular symbolic pattern matcher (which may not be so bad, I may really get into that some time here...) which put lateral and advancing velocity into one character.  Since I knew that these both would be between -8 and 8, I turned them into positive ints from 0 to 64 with something like (v*4+32).  Then I designated the first half of the char to be advancing velocity and the second half to be lateral velocity:
+<pre>
+char symbol = (latnum)|(advnum&lt;&lt;8);
+</pre>
+To get them back later, I just said:
+<pre>
+double latv = (symbol&amp;255)/4.0-8;
+double advv = (symbol&gt;&gt;8)/4.0-8;
+</pre>
+To do fuzzy logic on that, I'd have to figure out each number I would want, if I want to allow a deviation of one in either direction, the construction of the regular expression would be like this:
+<pre>
+for (int i=0; i&lt;10; i++)
+{
+	re += "[";
+	int num1 = (toMatch.charAt(i)&amp;255);
+	int num2 = (toMatch.charAt(i)&gt;&gt;8);
+	for (int j=num1-1; j &lt;= num1+1; j++)
+		for (int k=num2-1; k &lt;= num2+1; k++)
+			//the \u is to match a unicode number by any 4 digit hex number
+			re += "\\u" + padZeros(Integer.toHexString(j|(k&lt;&lt;8)), 4);
+	re += "]"
+}
+</pre>
+Note that I forgot to add the end bracket originally.  I fixed the code above, too.
+-- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+You don't need to encode two variables into a single character, just concatenate them into the string. Then, you do your search, and divide the index returned by 2 to get the real "instant". The same logic applies to 3 or more variables. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+That would work, too, I suppose.  The chances of getting an actual match on an odd index would probably be small :-p  -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Encoding variables into a single character would make the regex search faster though. -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+Well, except that it would triple the length of the regex (if done like above).  The nice thing, though, is that it's not a looping-sort of regex, just more options for each character.  And the regex wouldn't be quite as long if you chose to only allow deviation in one variable (i.e. - allow either variable 1 to be off by one, or variable 2, but not both).  Then you have 5 possibilities for each character instead of 9 like I did in the example.  I would also be wary that using two characters *and* using the regex search also makes you more likely to get an incorrect match (i.e.- an odd index). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Just wondering, if you want to use two variables, can't you just load them up into a byte Array and turn that into a string? No point using a whole character variable if you are just going to use scan one at a time anyway. --<a href="robowiki?DragonTamer" class=wikipagelink>DragonTamer</a> 
+<p>
+<a href="robowiki?DragonTamer" class=wikipagelink>DragonTamer</a>, yes, you can.  In Java, a character variable is just two bytes.  In the above code, Kawigi encodes two bytes into one character, and then concatenates it onto the end of a string.  Instead of using the binary operators to encode the character, he could have made a byte array of length 2 and converted it into a String, however, that would be slower.  -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+Just to share, what I did in my pattern matchers was to multiply the value by a fixed 'scale factor' when storing it, and divided by this when retrieving the value. This is a very lightweight method of achieving high accuracy, with a preset (and tunable) amount of 'distance' between the match and the record. --<a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=SymbolicPatternMatcher" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=SymbolicPatternMatcher">View other revisions</a><br>Last edited July 25, 2007 12:55 EST by <a href="robowiki?Skilgannon" title="ID 11213 from ctb-cache4-vif1.saix.net">Skilgannon</a> <a href="robowiki?action=browse&diff=1&id=SymbolicPatternMatcher">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

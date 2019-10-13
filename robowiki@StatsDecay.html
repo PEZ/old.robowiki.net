@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>StatsDecay - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Stats, Decay'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=StatsDecay">StatsDecay</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>One of the problems with <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> is dealing with multi-mode bots like <a href="robowiki?PrairieWolf" class=wikipagelink>PrairieWolf</a> and <a href="robowiki?Ares" class=wikipagelink>Ares</a>. Once you have gotten some data in your stat buffers on these bots they tend to switch mode and your data is useless. After a while you have some average data that probably isn't very effective against any of the modes of the enemy.
+<p>
+One way of dealing  with this problem is by adding some decay to your stats so that you "forget" older data. The most well known approach to this is <a href="robowiki?RollingAverage" class=wikipagelink>RollingAverage</a>s introduced by <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a> with his <a href="robowiki?SandboxLump" class=wikipagelink>SandboxLump</a> eons ago in Robocode time.
+<p>
+If you are using <a href="robowiki?VisitCountStats" class=wikipagelink>VisitCountStats</a> you might get some decay effects out of using <a href="robowiki?VisitCountStats/LimitFileSize" class=wikipagelink>VisitCountStats/LimitFileSize</a>. Other schemes might involve regularly dividing all stat buckets with some value to keep learnt lessons easies to unlearn.
+<hr noshade class=wikiline size=1>
+Much of the following discussion should probably move to other (probably new) pages...
+<p>
+I don't really know how to do it, but i think the best way of doing decay (in a megabot, at least) is to remember when all your visits happened (possibly by starting a new factors array every 100 waves, or something), when predicting, you combine them all, but you also check to see if they predict roughly the same things, and if they don't you forget all the ones older than the oldest to predict about the same as your most recent ones.  The major tweaking would be in choosing how many waves to put in each group, i think.  Does that sound feasible? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+There are lots of ways to do it. Your suggestion sounds doeable though a bit too complicated for anything I would put in my bots. You could also divide all visit counts by some value every so often. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Just dividing the counts by something merely keeps the file sizes small, it doesn't help against bots that change their movement.  My suggestion is designed to detect when i bot has changed its movement, and only decay results then. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+No, it doesn't only give you small files. Let's say you do the dividing operation every 10 waves or something. In round 10 or so the visit counts collected in the beginning of round 1 will have been more or less forgotten. Your scheme might be very hard to implement. You risk throwing away perfectly usable data because of random events make you miss a while with a well trained gun. I have tried a lot of schemes in that direction but in lab tests they never seem to deliver results anywhere near the effort of implementing and maintaining the infrastructure. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Ah yes, i see what you are saying about dividing, however i still don't get this decrementing thing.  The actual differences between each visitcount will be the same (expect for the very small ones which would be -ve, so stay on 0).  My idea would be very hard to implement, and probably wouldn't be worth it, but i think it is the only way to be sure you *don't* throw away usable data.  The current systems all throw away data regardless of how usable it is.  My system may not be perfect, but you can't use that fact against it when the current systems are infinitely worse. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+The decrementing thing is very much like the dividing thing I think. What makes you say the current systems are worse? Have you tried them against yours? <a href="robowiki?DT" class=wikipagelink>DT</a> seems to be dealing with this almost perfectly for one. <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> doesn't have much problems with the multi-mode bots either. Marshmallow is using something like the decrementing scheme above to try to capture changes in behaviour. Though it does this on top of non-decaying data and tries to weight them together. It's rather complicated and hard to maintain. In fact so hard to maintain so I have almost stopped working on M all together. Your scheme is interesting, especially the thought of checking if the systems predict "roughly the same thing". But so far it's only theory and my empirical experience with schemes like this tell me it's hard "to be sure". And it borders rocket sciense to make the judgment about "roughly the same". -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I haven't tried mine at all, it is purely hypothetical.  It's just you said that my system might lose usable data if it makes a mistake, when all your systems lose usable data whether it makes a mistake or not.  Your systems assume that the movement has changed, so it will operate worse against unchanging bots than it would if it didn't decay at all.  If your bot learns fast enough, that isn't a real problem, but it is true nevertheless.  As for judging what is "roughly the same", pattern matchers are doing that all the time, just with current data against remembered data, rather than with 2 different predicitions.  -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I think checking "roughly the same" with pattern matching might be quite different from doing the same judgment with two predictions. Lots of pattern matchers doesn't bother checking "roughy" the same by the way, they just check if it's the same or not. "Roughly" is tricky business when it comes to pattern matching as well. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+If you were to use my idea with GFT it shouldn't be too hard, you could just check that the GFs choosen by each group of data were within 3 factors of eachother, or something.  Or you could do something a little more complicated to take into account 2ndary peaks, but it wouldn't be too hard. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Prove it please. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Define "it" please. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+"wouldn't be too hard." -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+What?  About finding 2ndary peaks?  You could have something that finds the top three peaks in the latest group, and if the older groups top peak isn't one of those three (to within 3 factors) it is lost.  It's simply a matter of running through the findMax method 3 times. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+You'll have to prove that it accurately chooses the right moment to decay old data of course. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+When you're talking about 2nd and 3rd peaks, do you also have to know if they're not just parts of the same peak?  That takes some more analysis than just running through the findmax 3 times, because a peak doesn't normally consist of only one guess factor. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Exactly how it works is part of the implementation, i was only suggesting the concept.  I don't have a gun that needs and decay at the moment (although i should in a few days).  I guess you could smooth the curve using a simple mean smoothing algorithum, and then find maximums and minimums, and if they didn't match in the old and new groups, you scrap the old ones.  -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+This makes sense; smoothing the curve to, say, two robot widths, and then matching peaks within a robot width would seem to work. This does however seem like a very rigid type of decay, rather than a sort of gradual decay, which is prone to devastating loss of data; a temporary enemy malfunction for example could cause you to wipe out all your data when the enemy will continue to function normally on the next round. Other things are like when the bot reacts to a change in your own behaviour; for example, when fighting Cake, if you stop shooting at it it stops moving; if you charge towards it it takes longer strides. There are many things that cause oddities in enemy movement, and it may not be a good idea to make your statistical data decay on this rather than segment on it. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+On the subject of smoothing. Maybe that could instead be handled like the development version of <a href="robowiki?GloomyDark" class=wikipagelink>GloomyDark</a> handles it (using <a href="robowiki?VisitCountStats/Dynamic" class=wikipagelink>VisitCountStats/Dynamic</a>)? About risking to trash valid data. That's the key here, to avoid that. (I am still unconvinced this is easy business and continue to ask for an implemenatational proof.) What if you don't trash the old data, but rather keep it around in the hopes that the particular enemy behaviour they worked for will return? It borders <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> then I guess (at least as they appear in <a href="robowiki?OrcaM/Code" class=wikipagelink>OrcaM/Code</a>, but with a different way of measuring them. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Well in that case its basically segmentation. You're segmenting the data based on when you think the robot has recently assumed a new movement mode. Wasn't segmentation what we were trying to avoid in favor of decay? -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+You can make sure you never lose more data with my system than you would with other systems.  With bots that don't change, you would never lose any data.  It would be good to keep the data on each movement scheme.  Then you would end up with a kind of pattern matching, matching movement curves to stored movement modes. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+You should make an implementation that shows:
+<OL >
+<li> You can avoid losing valid data
+<li> Really can switch data buffers when the enemy switches mode.
+</OL>
+I can make a multi-mode bot for you to test against. It could be like a StatDecayChallenge<a href="robowiki?action=edit&id=StatDecayChallenge" class=wikipageedit>?</a>. Maybe <a href="robowiki?Jim" class=wikipagelink>Jim</a> could unleash a bot with PoisonMovement<a href="robowiki?action=edit&id=PoisonMovement" class=wikipageedit>?</a> that could get included in the challenge as well. As for segmentation vs decay. I never saw where they became competing techniques? I just wonder if <a href="robowiki?StatsDecay" class=wikipagelink>StatsDecay</a> is the right place for a <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> / segmentation technique like this. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I think something like DT's adaptive movement, <a href="robowiki?PrairieWolf" class=wikipagelink>PrairieWolf</a>'s multi-mode movement, and a couple unchanging movements (maybe one bullet-dodging and one not) would be the way to go about testing it. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=StatsDecay" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=StatsDecay">View other revisions</a><br>Last edited October 27, 2003 15:59 EST by <a href="robowiki?PEZ" title="ID 1817 from 192.168.0.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=StatsDecay">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

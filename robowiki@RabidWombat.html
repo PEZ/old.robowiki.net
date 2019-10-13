@@ -1,0 +1,186 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RabidWombat - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Rabid, Wombat'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=RabidWombat">RabidWombat</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><center><img src="http://img249.imageshack.us/img249/3857/rabidwombatbl2.jpg"></center>
+<p>
+<H3>Bot Name</H3>
+
+<a href="robowiki?RabidWombat" class=wikipagelink>RabidWombat</a>
+<p>
+<H4>Author</H4>
+
+<a href="robowiki?RobertWalker" class=wikipagelink>RobertWalker</a>
+<p>
+<H4>Extends</H4>
+
+<a href="robowiki?PluggableRobot" class=wikipagelink>PluggableRobot</a> (which in turn extends <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>)
+<p>
+<H4>What's special about it?</H4>
+
+It's the robot that the <a href="robowiki?PluggableRobot" class=wikipagelink>PluggableRobot</a> architecture was built to support. Hopefully one day that might be considered special.
+<p>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+You can't yet. I want to improve it some more before I release it.
+<p>
+<H4>How competitive is it?</H4>
+
+It's not done yet, so it's not that competitive. It beats the <a href="robowiki?SampleBot" class=wikipagelink>SampleBot</a>s, of course. I've also been pitting it against <a href="robowiki?SpareParts" class=wikipagelink>SpareParts</a> with good success.
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+It uses a variation of <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a>. The enemy robot exerts an attractive or repulsive force on <a href="robowiki?RabidWombat" class=wikipagelink>RabidWombat</a>, depending on how far away it is, in order to maintain a particular distance from the enemy. (It's pretty much working on <a rel="nofollow" href="http://en.wikipedia.org/wiki/Hooke%27s_Law">[Hooke's law]</a>.) That distance grows if <a href="robowiki?RabidWombat" class=wikipagelink>RabidWombat</a> is losing and shrinks if it's winning, so that it'll run away or close in for the kill as appropriate. Walls exert a repulsive force. Bullet dodging is done with force vectors as well.
+<p>
+<H4>How does it fire?</H4>
+
+It has a <a href="robowiki?VirtualGuns" class=wikipagelink>virtual gun array</a> containing (currently) a <a href="robowiki?FastTargeting/HeadOnTargeting" class=wikipagelink>head-on targeting</a> gun, a <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a> gun, a <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> gun and a <a href="robowiki?GuessFactorGun" class=wikipagelink>GuessFactorGun</a>. (I suppose the <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a> gun is probably redundant.) It fires <a href="robowiki?Waves" class=wikipagelink>Waves</a> (for <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>) and <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> (for tracking the success of the various guns) every turn and fires the real bullets with the best gun. Stats decay over time so that it will adapt more readily to changes in enemy behavior. I might add a <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> gun to the array, but if I did I'd probably have to change things around a bit. Currently, all my guns pretend to fire every turn, which from what I understand would be pretty slow for a <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> gun.
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+For the moment, it assumes that the opponent is using <a href="robowiki?FastTargeting/HeadOnTargeting" class=wikipagelink>head-on targeting</a> and runs away from that spot. I'm still somewhat undecided on the final bullet dodging strategy.
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a> strategy?</H4>
+
+<a href="robowiki?RabidWombat" class=wikipagelink>RabidWombat</a> is a one-on-one only bot.
+<p>
+<H4>How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a>?</H4>
+
+<a href="robowiki?RabidWombat" class=wikipagelink>RabidWombat</a> is a one-on-one only bot.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+Currently, it saves gun accuracy, guess factor and energy stats between rounds and nothing between matches. I'm currently working on a testing harness that will allow me to see how tweaks affect a number of performance metrics not reported by the RobocodeResults<a href="robowiki?action=edit&id=RobocodeResults" class=wikipageedit>?</a> class.
+<p>
+<H4>Where did you get the name?</H4>
+
+It sounded cool. Its initials happening to be RW didn't hurt, either.
+<p>
+<H4>Can I use your code?</H4>
+
+For now, <a href="robowiki?RabidWombat" class=wikipagelink>RabidWombat</a> is closed source. I intend to open it up eventually, after I see how well I can get it to perform, or when I get tired of it, whichever comes first.
+<p>
+<H4>What's next for your robot?</H4>
+
+<UL >
+<li> Finish tweaking and testing harness
+<li> Improve <a href="robowiki?DodgingBullets" class=wikipagelink>bullet dodging</a>
+<li> Add a <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> gun
+<li> Take wall bumping into account for virtual gun calculations
+<li> Weight virtual gun stats based on hit probability
+<li> Segment statistics
+<li> Tweak, tweak, tweak...
+</UL>
+<p>
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+<UL >
+<li> For now, I've been pitting <a href="robowiki?RabidWombat" class=wikipagelink>RabidWombat</a> against <a href="robowiki?SpareParts" class=wikipagelink>SpareParts</a>, with good results. I'm looking for another bot to pit it against.
+</UL>
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+<a href="robowiki?PluggableRobot" class=wikipagelink>PluggableRobot</a> was developed in parallel to support <a href="robowiki?RabidWombat" class=wikipagelink>RabidWombat</a>. Other than that, it wasn't directly based on any other robot, although I've culled many ideas from the wiki. I'm trying to be good about giving attribution in the source, so when it's released you can see where I got ideas.
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+<p>
+Segment your GF gun on <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a>, and the linear gun will be redundant.  Also segment it on change in enemy's heading, and circular targeting will be redundant (though I'm not sure whether that one would be useful).  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+For a GF-gun to replace <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a>, you need both heading and change of heading. As alternative also <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a> and <a href="robowiki?AdvancingVelocity" class=wikipagelink>AdvancingVelocity</a> could be used. I still have to see a GF-gun though with more than 75% hitrate against <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a>. <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> does in <em>most</em> cases make the <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a> obsolete, as the hitrate against f.e. Walls would be the same for both methods.   -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+True dat.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+You'd also need bullet time (and a very fine grained one, at that) for either combination, but the strength of <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> doesn't lie in getting high hit rates against <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+True dat, too.
+<hr noshade class=wikiline size=1>
+Thanks for the advice, guys. I've been thinking about modifying my guns so that I can use them to provide possible firing angles that the enemy might be using and compare that against the actual hits. Basically, <a href="robowiki?RabidWombat" class=wikipagelink>RabidWombat</a> would be dodging its own guns. The problem with that strategy is when it's up against another robot with a virtual gun array; pitting <a href="robowiki?RabidWombat" class=wikipagelink>RabidWombat</a> against itself with that setup would have them constantly switching guns and never settling on any one dodging method. Anyone else have experience with making a robot dodge its own guns? -- <a href="robowiki?RobertWalker" class=wikipagelink>RobertWalker</a>
+<p>
+In general, I think dodging your own guns will give you what seems like a pretty powerful <a href="robowiki?RandomMovement" class=wikipagelink>RandomMovement</a>, but not the same level of true bullet dodging as <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> with <a href="robowiki?WaveSurfing/PrecisePrediction" class=wikipagelink>PrecisePrediction</a>. If you're going to the trouble of simulating guns and dodging them, it doesn't seem like much of a step up to just do true <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>, where you use onHitByBullet to update the data in the gun you're dodging instead of just simulating how you'd make it learn. But I think you'll find that you learn a lot trying to implement the fresh ideas you come up with yourself, so I say go for it and let us know how it works out ;) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+<UL >
+<li> I should be more careful: conceptually, it's not much of a step up. Getting <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> working bug-free can quickly become late nights full of <a href="robowiki?WaveSuffering" class=wikipagelink>WaveSuffering</a>! Ask anyone... -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> Also, if you dodge your own gun, persey, enemy mirror movement could make it impossible to hit them! --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<UL >
+<li> Hmm, I think I've been effectively dissuaded. Time to devour that <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> tutorial... -- <a href="robowiki?RobertWalker" class=wikipagelink>RobertWalker</a>
+</UL>
+<li> Dodging <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a> and Linear / <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> alone would have great effect on your performance. It is not a bad idea to try that first just 'to get the hang of it'. After that the <a href="robowiki?WaveSurfing/Tutorial" class=wikipagelink>WaveSurfing/Tutorial</a> is an excellent next step. (I like small steps) -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</UL>
+<p>
+See <a href="robowiki?Vyper" class=wikipagelink>Vyper</a>, <a href="robowiki?Thorn" class=wikipagelink>Thorn</a>, and <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> for examples of how good a non-surfing dodging system can perform. I hope you find the <a href="robowiki?WaveSurfing/Tutorial" class=wikipagelink>WaveSurfing Tutorial</a> useful; I'm sure it could be improved, so please do give feedback on it. As for more advanced surfing systems that you might be able to learn from, I'd recommend <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> (of course =)), <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a>, and <a href="robowiki?Chalk" class=wikipagelink>Chalk</a> as great <a href="robowiki?OpenSource" class=wikipagelink>OpenSource</a> surfers with clean code. <a href="robowiki?Kev" class=wikipagelink>Kev</a>'s <a href="robowiki?WaveSerpent" class=wikipagelink>WaveSerpent</a>, <a href="robowiki?Alcatraz" class=wikipagelink>Alcatraz</a>'s <a href="robowiki?Cyanide" class=wikipagelink>Cyanide</a>, and <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>' PhoenixOS<a href="robowiki?action=edit&id=PhoenixOS" class=wikipageedit>?</a> are probably good references, too, but I can't vouch for them as much just because I haven't looked at them as much. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Most of the bigger ones, ergo the ones listed above can be confusing, misleading, badly formatted, or are just confusing. Thought koduos to PhoenixOS<a href="robowiki?action=edit&id=PhoenixOS" class=wikipageedit>?</a> and <a href="robowiki?Chalk" class=wikipagelink>Chalk</a>. Dookious is just to big in my opinion for someone just starting into it to try and make out. My suggestion however is <a href="robowiki?GresSuffurd" class=wikipagelink>GresSuffurd</a> as its structure is simple, and at the same time, it models closely to the tutorial bot, making it easier to understand. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+<UL >
+<li> Just curious - have you looked since the full rewrite? The movement rewrite is like 1.3x and since... I acknowledge it was a horrible mess before, but I'm pretty happy with it now. Definitely the truth that the best surfers are complex, though. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+PhoenixOS<a href="robowiki?action=edit&id=PhoenixOS" class=wikipageedit>?</a> isn't bad. One of these days I might even go through and comment it. =) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<UL >
+<li> Yah, I found the PowerNeededToKill<a href="robowiki?action=edit&id=PowerNeededToKill" class=wikipageedit>?</a> rather nice, though it had a clause that wasn't needed. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</UL>
+<p>
+Before I go delving into those, I should probably mention that <a href="robowiki?RabidWombat" class=wikipagelink>RabidWombat</a> uses <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a>. So do any of the above-mentioned bots also use <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a>? Has <em>anyone</em> done <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> bots with <a href="robowiki?AntiGravity" class=wikipagelink>AntiGravity</a> <a href="robowiki?DodgingBullets" class=wikipagelink>bullet dodging</a>? -- <a href="robowiki?RobertWalker" class=wikipagelink>RobertWalker</a>
+<p>
+<UL >
+<li> My original attempts at bullet dodging and <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> were in a modified <a href="robowiki?AntiGravity" class=wikipagelink>AntiGravity</a> system, but my code got much simpler and I got much better results when I finally ditched the <a href="robowiki?AntiGravity" class=wikipagelink>AntiGravity</a> stuff. It's certainly possible to do it, though. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+<UL >
+<li> The main problem I've had with anti-gravity bullet dodging is that one tends to run directly away from the bullets instead of moving to the side... of course, this means you just get pummeled into a corner until you're dead. No fun. -- <a href="robowiki?Ne" class=wikipagelink>Ne</a>
+</UL>
+<p>
+<UL >
+<UL >
+<li> True, unless you only use the component of the force that is perpendicular to the enemy, which is what I'm doing. -- <a href="robowiki?RobertWalker" class=wikipagelink>RobertWalker</a>
+</UL>
+</UL>
+<p>
+<UL >
+<li> A quick backlink search on <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a> reveals that <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a> uses <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a> in both <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> and <a href="robowiki?Melee" class=wikipagelink>Melee</a>, so maybe I should look closer there. I <em>could</em> make completely different movement systems for <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> versus <a href="robowiki?Melee" class=wikipagelink>Melee</a>, but I'd rather not because 1) it's a lot more work, of course, and 2) my current <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a> is actually working pretty well in <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a>. Granted it's not beating <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> or <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> or anything, but then I wasn't expecting it to because I'm pretty new to Robocode. However, with only very basic bullet dodging (running away from <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a>), it's regularly beating some bots that I thought would waste it, such as <a href="robowiki?SpareParts" class=wikipagelink>SpareParts</a> and <a href="robowiki?MakoHT" class=wikipagelink>MakoHT</a>, which appears the land <a href="robowiki?RabidWombat" class=wikipagelink>RabidWombat</a> in the middle of the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> pack. Not bad for a newbie bot, I think. Since I'm not really expecting to topple any of the Robocode Goliaths out there, I'm actually pretty pleased with this.
+</UL>
+<p>
+<UL >
+<UL >
+<li> (Edit Conflict) A lot of times, what you want to do with Robocode comes down to how much of your life you're willing to sacrifice for programming Java tanks. =) Sounds like AntiGrav<a href="robowiki?action=edit&id=AntiGrav" class=wikipageedit>?</a> 1-on-1 movement works well for what you want to do right now. <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a> is an <a href="robowiki?Ancients" class=wikipagelink>ancient</a> tank, once one of the absolute greatest and still quite capable in melee. At the higher levels, you definitely need specialized 1v1 or Melee movement to stay competitive, of course. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<UL >
+<li> I have a wife and baby, so I think you can probably guess how much time I have for Java tank programming. :) -- <a href="robowiki?RobertWalker" class=wikipagelink>RobertWalker</a>
+</UL>
+</UL>
+</UL>
+<hr noshade class=wikiline size=1>
+Speaking of the rumble, does the latest Robocode client allow you to run a "local rumble" based on just the bots that you have? I haven't been brave enough to download the newest version. -- <a href="robowiki?RobertWalker" class=wikipagelink>RobertWalker</a>
+<p>
+<UL >
+<li> I don't know how to setup a "local rumble", but there is a program called <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a> that might suit your needs. It's really a must-have Robocode utility, IMO. I use it with 1.07, I'm not sure how it will work with later versions, but we'll need to get it working with 1.3 because I absolutely need to have <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a>! -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+<UL >
+<UL >
+<li> Hmm, I'll have to give <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a> a look. Thanks for the tip. I'm thinking of just going ahead and unleashing <a href="robowiki?RabidWombat" class=wikipagelink>RabidWombat</a> into the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> wild and seeing how it does. It's currently using the Rules class, though, which I'd have to address.
+<UL >
+<li> You can grab the Rules source from the cvs, ergo here: <a rel="nofollow" href="http://robocode.cvs.sourceforge.net/*checkout*/robocode/robocode/robocode/Rules.java?revision=1.9">[Rules.java]</a>. Then just put it into your package itself, updating the package as needed. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</UL>
+</UL>
+</UL>
+<hr noshade class=wikiline size=1>
+As far as white whales go, my testing standard has always been <a href="robowiki?Freya" class=wikipagelink>Freya</a> for melee and <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> for duels.  Freya 0.31 was one of the first bots I downloaded, and <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a> the first robocoder I conversed with.  I think those tanks will give you a good run but are beatable without being a demigod of Robocode. -- Martin
+<p>
+ACtually the first robot I downloaded was Dustbunny and <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a>, and I attempted to beat MX with a chopped version of dustbunnies anti-gravity. Good times.. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Hmm, this actually sounds like an interesting topic for its own page... I'm thinking <a href="robowiki?WorthyOpponents" class=wikipagelink>WorthyOpponents</a>... --<a href="robowiki?RobertWalker" class=wikipagelink>RobertWalker</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RabidWombat" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RabidWombat">View other revisions</a><br>Last edited October 22, 2007 22:29 EST by <a href="robowiki?RobertWalker" title="ID 10744 from mind4.fttp.xmission.com">RobertWalker</a> <a href="robowiki?action=browse&diff=1&id=RabidWombat">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

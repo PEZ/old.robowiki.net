@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>SonAsh - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Son, Ash'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=SonAsh">SonAsh</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package cx.sonnet;
+import robocode.*;
+import java.util.Vector;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+/**
+ *-----------------------------------------------------------------
+ * @author:iiley (iiley@hotmail.com)
+ * http://www.robochina.org
+ * Ash:When you are smoking by the window,you will see the ash flying...
+ * ash is a microbot with the Cigaret's move scheme ... and a similar to Spark's gun.
+ * SonAsh: a sonnet version of Ash,14 lines.Squeezed from FemtoAsh,so it performace same to FemtoAsh.
+ *--------------------version 0.7 2003.9.14--------------
+ * 0.7:first released version.With a mine version symbol PM.
+ * Thanks kawigi for his open source nanobots,i learned much more from his bot FunkyFemto and FunkyMusic.
+ *--------------------version 0.7 2003.9.15--------------
+ * 0.8:Thanx Kawigi that told me how to make this runnalbe in JVM 1.3.
+ *+++++++++++++++++++++++++++++++++Open Source+++++++++++++++++++++++++++
+ *--
+ * This bot is open source.
+ * - Don't just copy-paste the code .
+ * - Don't just copy-paste and then improve.(I don't want to fight modified versions of my own bot)
+ * - Maybe some useful skill in this codes,if you use,Make your bot open source
+ * - And preferably give credit.:)
+ *
+ * If you want to know more or suggest,
+ * email me or post messages on www.robochina.org or www.robocoderepository's forums.
+ * every messages will be pleasent.
+ *--
+ */
+public class SonAsh extends AdvancedRobot
+{
+	private static Object e_energy=new double[1],pattern = new StringBuffer(),nextP,myP,enemyP;
+	public void run( ) {
+		setAdjustGunForRobotTurn(true);
+	    setAdjustRadarForGunTurn(true);
+		while(true){
+			turnRadarRightRadians(1);
+		}
+	} 
+   	public void onScannedRobot( ScannedRobotEvent e ) {
+		double absBearing,edistance,moveDistance,moveAngle,dist=0,index=0,searchlength = 80,power=Math.min(600d/e.getDistance()+0.5d,Math.min(getEnergy()/5d,Math.min(3d,e.getEnergy()/5d)));
+		//--------------movement---------------------
+        if((enemyP=nextPoint((Point2D.Double)(myP=new Point2D.Double(getX(),getY())),absBearing=e.getBearingRadians()+getHeadingRadians(),moveDistance=edistance=e.getDistance()))!=null &amp;&amp; ((double[])e_energy)[0]!=(((double[])e_energy)[0]=e.getEnergy()) &amp;&amp; Math.abs(getDistanceRemaining())&lt;53d){  
+			while(!new Rectangle2D.Double(23D, 23D, getBattleFieldWidth()-46D,  getBattleFieldHeight()-46D).contains((Point2D.Double)(nextP=nextPoint(((Point2D.Double)enemyP),absBearing+(moveAngle=Math.random()*1.6d-0.8d),-(moveDistance-=10d)/Math.cos(moveAngle)))));
+			setAhead((( moveAngle = robocode.util.Utils.normalRelativeAngle(Math.atan2( ((Point2D.Double)nextP).x-((Point2D.Double)myP).x,((Point2D.Double)nextP).y-((Point2D.Double)myP).y) - getHeadingRadians() ) ) == ( moveDistance = Math.atan( Math.tan( moveAngle ) ) ) ? 1 : - 1 )	* ((Point2D.Double)myP).distance(((Point2D.Double)nextP)) );	//move towards point
+			setTurnRightRadians( moveDistance );
+		}
+		//-----------------pattern analyser--------------------
+		if(getGunHeat()&lt;0.4d){
+	    	try{
+		        if(((StringBuffer)pattern).insert(0,new char[]{(char)(e.getHeadingRadians()/0.3927+8),(char)e.getVelocity()})!=null || true)
+	            	while ((index = ((StringBuffer)pattern).indexOf(((StringBuffer)pattern).substring(0, (int)(searchlength-=2)), 1)+1) &lt; 20);
+                while((++dist)*(20d-power*3d) - ((Point2D.Double)myP).distance((Point2D.Double)(enemyP=nextPoint(((Point2D.Double)enemyP),((byte)(((StringBuffer)pattern).toString().charAt((int)(--index)))-8)*0.3927,((byte)((StringBuffer)pattern).toString().charAt((int)(--index))))))&lt;0);
+    		}catch(Exception ee){}
+		}
+		if(getEnergy()&gt;power+0.1) if(setFireBullet(power)==null || true) setTurnGunRightRadians(robocode.util.Utils.normalRelativeAngle(Math.atan2(((Point2D.Double)enemyP).x-((Point2D.Double)myP).x,((Point2D.Double)enemyP).y-((Point2D.Double)myP).y) - getGunHeadingRadians()));
+		//----------------radar------------------------------------
+		setTurnRadarRightRadians(Math.sin(absBearing - getRadarHeadingRadians()));
+		scan();
+    }
+	public static Point2D.Double nextPoint(Point2D.Double originPoint,double angle,double distance){
+		return new Point2D.Double(originPoint.x+Math.sin(angle)*distance,originPoint.y+Math.cos(angle)*distance);
+	}
+}
+</pre>
+<hr noshade class=wikiline size=1>
+I suggest you make this bot compatible with Java 1.3 by adding a .toString() before the .charAt part.  You should have noticed that in FunkyMusic<a href="robowiki?action=edit&id=FunkyMusic" class=wikipageedit>?</a> (which was my 5-line version of <a href="robowiki?FunkyChicken" class=wikipagelink>FunkyChicken</a>). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+OK~~Thanx.~;]  -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+<p>
+This sonnet development doesn't exactly help making our bot code more readable. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+changed. Yes,you are right PEZ,i do not like to make sonnet,i like femto and haiku.~;]sonnet is worse than mini,so you can see there are only 2 or 3 sonnet this time but many femto.  -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+<p>
+Sonnets are much more complex to write than a femto or haiku, that's for sure.  Of course, David and I were agreeing that while the state of the art in nanos always gets simplified and shrunk, the state of the art in line-based bots will continually get more complex. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+That's partly because we now count semicolons I think. In any case, it's even more silly than minibot coding. But fun for a change. I like the immediate trade-off situations when producing haikus. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+...or especially when making femtos.  But you're right.  It's self-code-obfuscation as an art.  I suspect it will be almost comical to look at a <a href="robowiki?Sonnet" class=wikipagelink>Sonnet</a> sometimes. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=SonAsh" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=SonAsh">View other revisions</a><br>Last edited September 15, 2003 14:21 EST by <a href="robowiki?Kawigi" title="ID 1704 from csrouter.dcs.byu.edu">Kawigi</a> <a href="robowiki?action=browse&diff=1&id=SonAsh">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

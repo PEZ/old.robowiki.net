@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>TeamStrategy - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Team, Strategy'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=TeamStrategy">TeamStrategy</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Ok, I'll start by freely admitting that I'm hardly a robocode guru, but I am decent at coming up with ideas - it's the implementation that normally gets me.
+<p>
+Anyway, I intend this to spark discussion, and hopefully get more teams made (there being all of 28 TeamRobots<a href="robowiki?action=edit&id=TeamRobots" class=wikipageedit>?</a> in RR@H - hardly a good testing ground).
+<p>
+So my intial thoughts:
+<UL >
+<li> A good team should never be hit by one of its own bullets, either by plotting the bullets and avoiding moving where they will hit you, or plotting movement and not shooting where you would hit a teammate.
+<li> Intel managemant - if all your bots have a radar, then ideally each should lock a separate target, and share information. That way, you can maintain perfect scan data on every enemy. However, if you are not shooting at all the enemies, perhaps having at least one radar equipped bot per enemy you intend shooting at once, one scanning radar, and the rest droids. It may even be possible to scan with less by efficiently dividing scan areas between all your radar equipped bots.
+<li> The leader has 200 energy, but causes a 30 energy drop to every teammate if it dies. Keeping it alive seems quite important, and the extra energy could make it more suitable to long range shooting. It might even be better to go all the way and make the leader a droid, for the extra 20 energy.
+<li> Target priorities - from my observations, having 2 or more bots shooting at a single enemy, from different angles, makes it MUCH harder for the enemy to avoid being hit, as it considerably reduces the enemy's maximum lateral velocity against at least one shooter.
+<li> Energy management - rather than each bot managing its own energy, might it be more efficient for the team as a whole to manage its energy - for example, if  2 bots could each shoot a <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a>, perhaps the one with least energy should take the shot?
+</UL>
+<p>
+That's all I've come up with for now, but I hope the community can come up with better. That's why we have a wiki, after all! -- <a href="robowiki?CharlieN" class=wikipagelink>CharlieN</a>  
+<p>
+Your point about intel management seems intuitively true, and obviously is best when you can pull it off, but I'm not sure it's the most important thing about radar. Obviously, when your team is equal to or greater than the other team in size, this is the best strategy without a doubt. I imagine it's about 50% of the time that you have the bot that dies first, since it's probably more due to spawn points than actual team skill with as many as 10 bots on the field, so then you need a good backup radar strategy.
+<p>
+Here's some experience from some <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> research a few weeks ago. In <a href="robowiki?LuminariousDuo" class=wikipagelink>LuminariousDuo</a>, I have an optimally sweeping radar and no scan sharing - each bot scans back and forth between the enemies in the fashion that keeps the overall sweep at PI (180 degrees) or less; of course, it locks on when there's only one enemy. I managed to fit a new radar (remember it's <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> restricted) where each bot would scan one enemy and they shared all their scans, but if the enemy team outnumbered my team, it would switch to a spinning radar (not enough <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> room for also having optimal sweeping in that case). Overall, I was gathering over twice as much scan data as before. Much to my surprise, it did not even outperform the old optimal sweeping radar. Perhaps it's when the enemy outnumbers you that having a decent radar strategy is most important? 
+<p>
+Also, the more bots on the field, the more important movement is, and I think movement favors frequently updated data while targeting favors perfect statistical data. (Disclaimer: I'm far from a melee expert. =)) So anyway, that's just my 2 cents. I think scan sharing while locking on all enemy bots is definitely something you should have, but developing a good mode of optimal sweeping when you're behind in numbers is the tough part.
+<p>
+-- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I've been working on a team myself, and the radar strategy I use seems to be working well enough...  It looks something like this:
+<pre>		public void run() {
+			// each turn, find the most outdated scan
+			if(target == null) {
+				Lib.Other oldest = data.getOldest();
+				if(lastTarget == null ||
+						oldest.getSource() == Lib.Other.Source.SCAN ||
+						oldest.getAge(robot) - lastTarget.getAge(robot) &gt; 3) {
+					target = oldest;
+				}
+				else {
+					target = lastTarget;
+				}
+			}
+			// default radar turn is spin in circles forever
+			double radarTurn = Double.POSITIVE_INFINITY;
+			// if (a) we have an oldest enemy
+			//    (b) the scan of them is vaguely recent
+			//    (c) we have at least a little bit of
+			//        data on ALL the robots on the field
+			if(target != null &amp;&amp; 
+					target.getAge(robot) &lt;= 9 &amp;&amp;
+					data.allKnown()) {
+				// turn the radar to the most outdated enemy
+				// to refresh our data on them
+				radarTurn = Utils.normalRelativeAngle(robot.getRadarHeadingRadians()
+						- GeoUtils.getAbsoluteBearing(robot.getLocation(), 
+								target.guess(robot)));
+				
+				// multiply the radar turn by the turn factor
+				// of 2.2 to create a larger arc
+				radarTurn *= 2.2;
+			}
+			// make the turn
+			robot.setTurnRadarLeftRadians(radarTurn);
+			// reset the target
+			lastTarget = target;
+			target = null;
+		}</pre>
+The data is handled in another class (clearly), and so is the communication (the data has all the latest scans of all enemy robots as compiled by all teammates).  The idea is to turn to the enemy who you have the oldest data on, but with a slight bias towards the enemy you're already scanning (so if all the scans are relatively new, the teammates will continue to scan the enemy they're scanning, for more perfect data).  I've wrote a short method to have the robot paint red dots where it thinks the enemies are, and they're almost always right...  What do you think? --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<UL >
+<li> Just changed your code tags to pre tags to fix the formatting -- <a href="robowiki?CharlieN" class=wikipagelink>CharlieN</a>
+</UL>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=TeamStrategy" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=TeamStrategy">View other revisions</a><br>Last edited December 11, 2007 15:09 EST by <a href="robowiki?CharlieN" title="ID 12799 from 77-98-239-54.cable.ubr09.newy.blueyonder.co.uk">CharlieN</a> <a href="robowiki?action=browse&diff=1&id=TeamStrategy">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

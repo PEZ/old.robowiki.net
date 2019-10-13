@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Teams/IdentifyingTheBots - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Teams, Identifying, The, Bots'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/IdentifyingTheBots">Teams/IdentifyingTheBots</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Teams" class=wikipagelink>Teams</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Some times is important to have your bots identified (pe. if you want to send them messages). The problem is that you have to build the identificator, and every bot will try to do it on its own, so you need some logic to get them coordinated. The easier way is to use the bot number that robocode assigns to every one of your bots.
+<p>
+The following function does it:
+<pre>
+static public int getBotNumber(String name) {
+ 	String n = "0";
+ 	int low = name.indexOf("(")+1; int hi = name.lastIndexOf(")");
+ 	if (low &gt;= 0 &amp;&amp; hi &gt;=0) { n = name.substring(low, hi); }
+ 	return Integer.parseInt(n);
+}
+</pre>
+Note that I have not tested it when there is more than one class of bots in a team. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+<hr noshade class=wikiline size=1>
+It won't work if there is more than one class of bots in a team because for each type the numbering starts back at 1. For example:
+<p>
+<DL >
+<dt>ExampleTeam<dd>LeaderBot (no number if there is only one of them)
+<dt><dd>BigBadBot 1
+<dt><dd>BigBadBot 2
+<dt><dd>SmallGoodBot 1
+<dt><dd>SmallGoodBot 2
+</DL>
+<p>
+So how do you deal with a situation like this?
+<pre>
+if(getEnergy()&gt;199.0){ //220 if leader is a droid, 200 otherwise.
+	String[] teammates = getTeammates();
+	Vector v = new Vector();
+	v.add(getName());
+	for(int i = 0; i &lt; teammates.length; i++){
+		v.add(teammates[i]);
+	}
+	
+	teammates = (String[]) v.toArray();
+	try{
+		broadcastMessage(teammates);
+	}catch(Exception e){}
+}</pre>
+<p>
+Then just have all bots store the String[] message and do lookups in that array to get the ID of a bot. (Bot ID = position in array)
+<p>
+--<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Or you could just make sure all of the bots on your team have the same name plus a number... like have Bot1, Bot2, etc.  You could know that Bot1 was the leader, but its name would be the same...  it's a question of simplicity over choosing a name...  --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>, on returning to the wiki!!
+<UL >
+<li> Welcome back! --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+</UL>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Teams" class=wikipagelink>Teams</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Teams/IdentifyingTheBots" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Teams/IdentifyingTheBots">View other revisions</a><br>Last edited September 14, 2007 0:17 EST by <a href="robowiki?Starrynte" title="ID 10964 from adsl-75-62-128-185.dsl.lsan03.sbcglobal.net">Starrynte</a> <a href="robowiki?action=browse&diff=1&id=Teams/IdentifyingTheBots">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

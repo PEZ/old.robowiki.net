@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Recrimpo - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Recrimpo'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Recrimpo">Recrimpo</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><em>"There is an art or rather a knack to flying, it involves throwing yourself at the ground and missing."</em> -- Douglas Adams
+<p>
+Recrimpo - My new robot! -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+2.4 - added wall smoothing and <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a>.  My tests show it's about equal to the previous version, but i think it will actually do much better, because I wasn't testing against head-on-targeters, or near-wall-segmenters, which are the 2 things that should be improved.
+<p>
+2.31 - when copying and pasting the new movement from a test bot to the dev version i also copied a simpler radar system that i had been testing with for simplicity (as radar only really effects my gun, not my movement), and it ended up being the radar used in the packaged version, so i've put the better one back in.  I doubt it will make much difference, but might get a couple of places.
+<p>
+2.3 - new movement again...
+<p>
+2.2 - new movement
+<p>
+version 2.1 - bugfix
+<p>
+version 2.0 - complete rewrite, now with <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> with <a href="robowiki?Waves" class=wikipagelink>Waves</a>
+<p>
+version 1.1 - codesize reduced to 197, now a nanobot!! :-)
+<p>
+<a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=1952">http://www.robocoderepository.com/BotDetail.jsp?id=1952</a>
+<p>
+<H4>Where did you get the name?</H4>
+
+The name is short for "Recreational Impossibilities" which is the heading in the fictional "Hitch Hikers Guide to the Galaxy" under which the above quote comes.
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+It trys to stay perpendicular, and changes direction randomly.
+<H4>How does it fire?</H4>
+
+<a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> with <a href="robowiki?Waves" class=wikipagelink>Waves</a>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+It doesn't.
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+It is only a one-on-one bot.
+<H4>How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a> ?</H4>
+
+See above.
+<H4>What does it save between rounds and matches?</H4>
+
+Guess factors between rounds, nothing between matches.
+<H4>Can I use your code?</H4>
+
+Not yet, but keep asking.
+<H4>What's next for your robot?</H4>
+
+A better movement.
+<H4>What other robot(s) is it based on?</H4>
+
+None. This is the propably the bot all my other bots will be based on.
+<p>
+<hr noshade class=wikiline size=1>
+=== Comments:===
+<p>
+How can you fit <a href="robowiki?Wave" class=wikipagelink>Wave</a>'s in 197 bytes? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I can't.  V 1.1 was 197 bytes, this one is a lot bigger.  I haven't checked it's codesize, but it's probably a megabot, or maybe a big minibot.  The only thing it shares with version 1.1 is the name, really.  -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Ok, it's 1265 bytes, so it's a <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a>. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Ah, but it's still a good size for a <a href="robowiki?Wave" class=wikipagelink>Wave</a> bot. Especially since you probably didn't think all that much about code size when you build it. I think 1265 is about the same size as <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> without movement. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I haven't done anything to shrink codesize, no.  My coding is usually very bad so i could probably get rid of a few 100 bytes if i tried hard enough.  Unfortunately it's ranking seems to have gone down, which is weird.  It briefly went up, and then went down again.  It's currently lost 20 points.  Hopefully with a few more battles it will go back up again. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+You must have at least one huge bug in that bot. Have you tested the gun in the <a href="robowiki?TargetingChallenge" class=wikipagelink>TargetingChallenge</a>? It's a good measure I think. If you can't get your GF gun to beat <a href="robowiki?Gouldingi" class=wikipagelink>Gouldingi</a>'s gun then you have a bug in the gun. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I think you're right... i belive it's somewhere in the using the data bit, rather than the getting the data bit, because the data looks about right... -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Ok, found it.  I changed the number of segments just before releasing it, and forgot to change it in the targetting code.  Stupid mistake.  Should work a little better now. I'll upload it when the repository starts working properly again. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+But you must still have some bugs in that gun. A GF gun should definately be able to beat Gouldingi's gun, not to mention <a href="robowiki?BeerPoet" class=wikipagelink>BeerPoet</a>'s. Bug hunting is hard, but you probably must look at the units of code and what you expect them to return from known input and see if it holds tight. And, sometimes it pays to keep the source open, i know that from experience. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It's a very primative GF gun.  I need to improve the segmentation, for a start.  Just give me time, and it'll get there. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Wow!! either something is amiss, or you really have Ender's number - 97.6% over the first battle... --<a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+Yeah, that happens on a few bots, they crash when they fight me, so i thrash them.  Same happened on Wolverine. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I think the trig is wrong somewhere, i've corrected a few minor bugs, but it still isn't working quite right.  Hopefully it will be all fixed by the end of the weekend. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+OK, i've been staring at the same code for too long, and its all starting to blur before my eyes.  I think it's something wrong in the code that works out of it's going clockwise or anticlockwise, and then using that to work out if it should be a +ve or -ve GF.  I can't see what's wrong, so i'm going to open source it, and if anyone has some spare time, could they please look at it.  I expect it is something simple, so anyone who hasn't been staring at it for ages will probably spot it in no time.  The only thing that will slow them down is the terrible coding style.  It's full of debug code, and has very few comments.  I might tidy it up later today, if you're lucky.  So, if you are bored, please look at <a href="robowiki?Recrimpo/Code" class=wikipagelink>/Code</a>.  Thanks in advance. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+For me, the + or - angle thing was by FAR the hardest part of getting a GF gun to work. I spent days and days and days on it, and I have megs upon megs of useless trigonometric drawings and overlays of the battlefield, and tried all sorts of bogus calculations, and when it finally worked, I never touched it again and just let it work. Unfortunately, I think there's now a bug somewhere in there; if you turn on Fractal's gl graphing, you'll note that there's always peaks at the edges of its graphs. This shouldn't be possible, because I set the range from -60 to 60 for debugging purposes. This means I'll have to revisit my wave to angle conversion stuff and figure out what in the heck is going on; maybe this is another of Fractal's performance problems. In any case, I'm not entirely sure how it works, but I can post some code out of Fractal to show you what I have. Once Fractal knows the angle but isn't sure if it's + or -, it does this (this directly follows its angle finding code). 'angle' is the found angle, and 'then' is a class containing robot data on the enemy at the time the wave was fired. The anglePoints method as used figures out the angle from where Fractal was to where the enemy was at the time the bullet was fired. add() simply adds the data to the given bin angle.
+<p>
+<PRE >
+        if (then.velocity == 0) {
+            //enemy was stopped; add symetrically
+            add(angle, wave.getSize(), 1, 0, wave, data);
+            add(-angle, wave.getSize(), 1, 0, wave, data);
+        } else {
+            double newheading = then.heading + 90 * (<a href="robowiki?BotMath" class=wikipagelink>BotMath</a>.sign(then.velocity) - 1);
+            double origin = <a href="robowiki?BotMath" class=wikipagelink>BotMath</a>.anglePoints(wave.xt,wave.yt,wave.xs,wave.ys);
+                // -(origin - newheading)
+            double sign = <a href="robowiki?BotMath" class=wikipagelink>BotMath</a>.sign(<a href="robowiki?BotMath" class=wikipagelink>BotMath</a>.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(newheading - origin));
+</PRE>
+<p>
+<PRE >
+            angle *= sign;
+            add(angle, wave.getSize(), 2, 0, wave, data);
+        }
+</PRE>
+<p>
+Not sure if that makes any sense, but you multiply the angle by the sign of the the enemy's fixed heading (i.e. if his velocity is negative, turn it 180º) minus the angle from the robot to the enemy at the time the bullet was fired. The thing is that angle is not an absolute value; it could turn out positive or negative, and if it's negative this calculation being negative cancels it out. This is why my calculations are so confusing, and so I'm not sure that I'd be any help in debugging Recrimpo. I can post the angle-finding code if you'd like to see it. In any case, good luck with the debugging!
+<p>
+-- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+I'm missing something here. I just subtract the old angle from the new one to find out the delta and then sign() on this delta tells me if it's clockwise or not. But you can also just use <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a> instead. My tests shows that these (delta bearing and lateral velocity) are very equivalent. <a href="robowiki?RoboGrapherBot" class=wikipagelink>RoboGrapherBot</a> also had the problem with registering peaks at the edges of the graph a while. In my case it turned out I was using the enemy bullet velocity from the last tick when calculating the max escape angle. Once I fixed that I don't even have to use min() or max() to limit the calculated range. I suggest you check your calculated max escape angles against the escape angle reported by the waves. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+Having trouble in the <a href="robowiki?MovementLaboratory" class=wikipagelink>MovementLaboratory</a>? (Since Recrimpo dived some 20 steps when you changed it.) While you work with your gun you migh try using a mirroring movement:
+<pre>
+class MirrorMovement {
+    AdvancedRobot robot;
+
+    public MirrorMovement(AdvancedRobot robot) {
+	this.robot = robot;
+    }
+
+    public void doMove() {
+        robot.goTo(new Point2D.Double(robot.field.getCenterX() - (robot.enemyLocation.getX() - robot.field.getCenterX()),
+	    robot.field.getCenterY() - (robot.enemyLocation.getY() - robot.field.getCenterY())));
+    }
+}
+</pre>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+As it happens, the 20 step dive was when i added mirror movement (actually it wasn't exactly mirror, it was just based on it.  If the current movement doesn't help, i'll try regular mirror)...  I've changed it to an oscilator and my tests (i haven't done many, because i'm too lazy ;-)) show it should be a little better.  I'm waiting for it to get a stable ranking on the RR atm. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I don't know if you're still supposed to be using a stat gun (from what I can tell above you are) but <a href="robowiki?Muffin" class=wikipagelink>Muffin</a> uses <a href="robowiki?Musashi" class=wikipagelink>Musashi</a> style movement on you. I ran a match and watched it, and sure enough, it certainly doesn't seem that you can fire anywhere near guessFactor 1.0, if in fact you're firing anything other than direct. Might want to work out why this is happening and you'll probably see Recrimpo jump up quite a large amount in the rankings. 2.4 doesn't seem to have this issue. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+At the moment Recrimpo has a simple pattern matcher, because the GF gun is very buggy and doesn't seem to work.  I can't work out why though, I've graphed the GFs and compared it to StatistBot<a href="robowiki?action=edit&id=StatistBot" class=wikipageedit>?</a>'s graphs, and although they aren't identical, they do tend to vaguely agree (I put the difference down to segmentation, and suchlike), so I think the error is in the picking the best factor, or in the moving to point in that direction bit... -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Whatever gun it's using 2.41 only hits direct or near it. Put it up against a <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a>ed bot and watch. You might want to check to make sure you aren't mixing radians and degrees somewhere, I usually find that's what causes stuff to not spin for me. As for the GF gun, could be something similar, or maybe your calculation for guess factors is a bit off, might want to compare it to existing work and see if there's some important difference. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Maybe you share the same bug as <a href="robowiki?Falcon" class=wikipagelink>Falcon</a> against <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a> TC. That score sure doesn't look like it should for a working GF gun. No matter which way it's segmented. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I'm not sure there is anything specifically wrong, I just think it's a poorly coded gun.  I intend to start from scratch in the next few days.  I've worked out why the last update on the TC was so small, there's a major bug in the latest segment I added, so I'll fix that and re-run the challenge tomorrow.  -- <a href="robowiki?Tango" class=wikipagelink>Tango</a> (Of course, the movement isn't great either, it needs some tuning)
+<p>
+But even the poorest coded GF gun should nail down <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a> down to an index of at least 95 if it's bug free. It's just a matter of figuring out that there's a HUGE spike at +0.2 something. <a href="robowiki?Falcon" class=wikipagelink>Falcon</a> nails it 100% 4 times out of 5. The 1/5th time there it just doesn't hit it at all. Truly strange. But it's a bug alright. One way to nail bugs is to start from scratch. And, to be honest, I would have started from scratch again if I were you. The code you posted earlier on Recrimpo's gun was a bit on the untidy side of things. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Recrimpo's gun was intended more as a learning experience than a competetive bot, and it's worked for that.  I have a feeling it might work better with LESS segmentation, in the first axis (the GFs).  atm i have 50 bins, and no smoothing, which probably hides spikes, so I will reduce that to 30 and see if it helps at all. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+No, that lost 2% on the TC.  I'll put it back to 50 and try running a TC with a fixed version of the acceleration segment. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I've got just over 80%, but there is certainly something wrong against TAOW.  If I remove it from the challenge and recalculate all the averages I would be just above the 2 versions of Muffin.  I guess I have to watch a few battles now, and see what's going on... -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+If you figure it out, please let me know what it was. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+After graphing the visits my gun records, there is a massive (like 95% of all visits) spike at just over head-on (GF 0.04 to be precise).  This doesn't match what other graphers find...  Time to think now... -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+What happens in <a href="robowiki?Falcon" class=wikipagelink>Falcon</a> is that it most often finds the correct bin, but then all of a sudden, for reasone completely unknown to me it falls back and uses the middle bin all the time. It's as though it throws away the gathered stats completely and then just never picks it up again. Is it that Recrimpo also does something like that? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Check the tutorial page.  I've had an idea. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Recrimpo" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Recrimpo">View other revisions</a><br>Last edited May 4, 2006 23:59 EST by <a href="robowiki?PEZ" title="ID 6286 from 1-1-7-24a.dre.sth.bostream.se">PEZ</a> <a href="robowiki?action=browse&diff=1&id=Recrimpo">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

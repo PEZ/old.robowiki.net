@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RoboRumble/RequestedFeatures - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Robo, Rumble, Requested, Features'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/RequestedFeatures">RoboRumble/RequestedFeatures</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Please add the features you would desire to see in <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>. Try not to discuss implementation or limitations right now. We are simply brain storming right now. Once we get passed this we will go into some review of the existing tools to see how much of the effort they answer. After that we can move onto design and then finally implementation. That sound good? -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+<b>GOAL:</b>To get a stable, reliable, continous and frequent ranking of our bots.
+<p>
+<UL >
+<li> Server
+<UL >
+<li> Allow people to add their bots to one or more rankings -- <a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<li> Keep track of new and updated bots -- <a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<li> Create new Battles
+<li> Delegate battles to run to clients
+<UL >
+<li> Also send relevant new and updated bot jars to clients -- <a href="robowiki?Vic" class=wikipagelink>Vic</a>
+</UL>
+<li> Keep Results and datafiles
+<li> Publish rankings including Eternal Rumble ranking system
+</UL>
+<li> Client
+<UL >
+<li> Connect to server, and get work
+<UL >
+<li> Work includes new and updated bot jars-- <a href="robowiki?Vic" class=wikipagelink>Vic</a>
+</UL>
+<li> The client should be able to run the without staying connected to internet. (if it doesn't has work just figure out which battles would be and run them, then the server ignores the invalid ones). -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<li> Interface with robocode (ala Roboleague, or simply using <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a>)
+<li> Return results
+</UL>
+</UL>
+<p>
+Please complete the list, but don't get into implementation details just yet ... -- <a href="robowiki?FnH" class=wikipagelink>FnH</a>
+<hr noshade class=wikiline size=1>
+How about we agree on the goal of the whole thingy first? I'd say it's to get a stable, reliable, continous and frequent ranking of our bots. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I agree. I can live with the reliable and continous goals also (if it is continous, the need for it to be stable is lower, because a good bot will be on top many days). Once it is clear, I can implement the classes to run the battles. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Personally I am very fond of the stableness of the <a href="robowiki?EternalRumble" class=wikipagelink>EternalRumble</a>. Why, the ELO system works for chess and in tennis they have ATP and such. A bot like DT deserves to not lose the crown even occationally because of freak variations in the ranking system. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+How about several ranking systems? Start off with just 1 (1v1) but then increase it to melee, team etc .. --<a href="robowiki?Wolfman" class=wikipagelink>wolfman</a>
+<p>
+Mini / Micro / Nanobots should have separate leagues. It would be interesting to see how different minibots would do if they didn't have to battle bots in higher weight categories -- <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+There should certainly be different rankings for 1v1, melee and team.  It wouldn't take much extra coding to do the others once 1v1 is complete.  We could also (once everything else is done) transfer things like the targetting competition to it. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+We can add a team competition by just creating another properties file pointing to a different participants list. The battles engine of RR@H supports team competitions (just use team names instead of bot names). About mini/micro/nano competitions, I'm working now to introduce in the clients the concept of "related competition" (a related competition includes a subset of competitiors of the main competition, and uses the main competition matches that correspond to two bots in the related competition. From the server point of view, a related competition is just another normal competition). The advantage will be that we should be able to run mega/mini/micro/nano competitions without additional computing effort. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<hr noshade class=wikiline size=1>
+Could we add total execution time for each bot to the ratings file? That way I could either post special tables to the <a href="robowiki?SlowBots" class=wikipagelink>SlowBots</a> and FastBots<a href="robowiki?action=edit&id=FastBots" class=wikipageedit>?</a> pages or even add a slowbot-index to the rankings table. That would maybe work as a driving force to try keep their bots a bit faster than many of todays bots are. Which would make the RR@H clients to be able to shovel in even more battles. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Good idea.  We could disqualify extremely <a href="robowiki?SlowBots" class=wikipagelink>SlowBots</a> on the grounds that it is unfair on the other bots because they get less battles, and therefore less stable rankings.  That would certainly encorage people to speed up their bots.  -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+<hr noshade class=wikiline size=1>
+Since <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a> is going down quite frequently, what about storing the robots on another server? -- <a href="robowiki?Simonech" class=wikipagelink>Simonech</a>
+<p>
+I think it was what someone suggested on the <a href="robowiki?RoboRumble/Chat" class=wikipagelink>/Chat</a> page as well. I don't think we could use this server for this because it's not strong enough to serve bursts of downloads and still do its job as wiki and <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>@Home results server. Anyone else has the bandwidth and CPU for this? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+I would suggest that the most important thing right now is to simply package everything right now into one easy-to-set-up package, and then advertise at how easy it is to set up so that more people start using it. When I eventually heard of RR@H, I hadn't a clue what it was, and when I finally learned what the concept of the league was, while I thought it was a great idea, I delayed installing it for several weeks because I was worried that it would be a pain to set up.
+<p>
+I could easily package everything along with robocode into one handy zip file that all you do is unzip to the root, and it sets up the latest robocode with latest client packages with server updates into an isolated folder so as not to affect your regular robocode. Then all the user has to do is run the batch file. Then we need to plaster at the top of the main page that RR@H is available in a new incredibly easy-to-install package and create a page to provide an introduction to the project, and we gotta beg robocoderepository.com and robochina.com to make a news article on RR@H on their news pages and add it to the leagues list.
+<p>
+I could easily set all this up by myself by like tomorrow, and I'd love to do it; I just think it's important to get a lot of people to start running the leagues. I'm just worried the software is not enough out of the beta stages to make it that public. I suggest that right now, we need to add to the program a simple server version check: when the client is ran, check on the server to see if it's running the latest version; if not, tell the user that they need to update, and stop the program. That way, if something needs to be updated, you can just change the serverside version number, and all old clients will die and have to be updated. This will allow you to start distributing the software immediately, and will allow you to do major updates and revisions to the software even if many people are using it. Perhaps a later version could come with an automatic updater that would simply download the modified classes, replace the files, and then quit and restart.
+<p>
+If this is already implemented, or when it is, let me know if you want me to set this up. I'd love to setup the easy install package and advertisement for RR@H so we can get as many people as possible to start running the leagues. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+Please package it this way. (If it doesn't violate the Robocode license of course.) The large scale advertisment could maybe wait until we have ironed out the current scalability problem (ehhh <a href="robowiki?RoboRumble/ConcurrentUpdateProblem" class=wikipagelink>/ConcurrentUpdateProblem</a>) and possibly somee other issues. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Is there any plans to support megabots melee in RoboRuble<a href="robowiki?action=edit&id=RoboRuble" class=wikipageedit>?</a> (or if it's already)? I am quite experienced with java development and can help if wanted. --  Axe
+<p>
+There has been some discussion about it, but nothing serious yet. I guess that the first step would be to adjust the battles engine to support melee battles (I never tested it, but it should work if you pass the bots separated by colons). Also, there should be a consensus about battle-field size, number of bots and number of rounds. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+How about a vote? (I'm not all that good with tables here so bear with me...)
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Size</td><td colspan="0.5">1000x1000</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Vuen</td><td colspan="0.5">x</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Albert</td><td colspan="0.5">x</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Simonech</td><td colspan="0.5">x</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>ABC</td><td colspan="0.5">x</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Axe</td><td colspan="0.5">x</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Paul E</td><td colspan="0.5">x</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>rozu</td><td colspan="0.5">x</td></TR>
+</TABLE>
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Rounds</td><td colspan="0.5">35</td><td colspan="0.5">50</td><td colspan="0.5">100</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Vuen</td><td colspan="0.5">x</td><td colspan="1"></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Albert</td><td colspan="0.5">x</td><td colspan="1"></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Simonech</td><td colspan="0.5">x</td><td colspan="1"></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>ABC</td><td colspan="1.5">x</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Axe</td><td colspan="1.5">x</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Paul E</td><td colspan="1.5">x</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>rozu</td><td colspan="1.5">x</td></TR>
+</TABLE>
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Bots</td><td colspan="0.5">10</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Vuen</td><td colspan="0.5">x</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Albert</td><td colspan="0.5">x</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Simonech</td><td colspan="0.5">x</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>ABC</td><td colspan="0.5">x</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Axe</td><td colspan="0.5">x</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Paul E</td><td colspan="0.5">x</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>rozu</td><td colspan="0.5">x</td></TR>
+</TABLE>
+<p>
+There we go. Add your votes to the list =) -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+My votes are added. I think 35 rounds is good to give bots without data a chance to learn and the rest works for ER so should work for us. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Of course I'll be happy with 35 rounds melee rumble (afterall the ER has allways been 10 rounds afaik), it's just that I find 35 rounds too few for 1on1 already... -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+100 rounds would be cool for 1v1. Though we might have to ban some of the pattern matching nanos. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+The eternal rumble scenario of 10 bots 1000 X 1000 is a classic. But for the rounds number my vote is for 100, i think that it would leave more time to the bots to learn (only i dont know if that would be a bit to heavy). Axe.
+<p>
+Yeah, I think that 35 rounds may not leave time for bot to learn, but 100 round for big robots would take many time to complete... of course we cannot get the same performances as 1vs1 even with 35 rounds. -- <a href="robowiki?Simonech" class=wikipagelink>Simonech</a>
+<p>
+Performance won't be bad - you get 45 'result pairs' for each melee battle with 10 bots.  You should consider averaging the results of a pair of bots over more battles as the results of each pairing are, to a small degree, dependent on the other opponents that were being fought.  --  <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<p>
+I think that probably 50 might be a sort of consensus. Although i still think that 100 rounds in a 10bots melee is yet too small, due to the characteristics of a spreaded competition (a data bot will not access to a single data dir, wich increases a lot the time to get it trained). When i talk about this I am talking about a non-restricted (size or anything else) league. I don't have anything against nano, micro or any small bots league (probably we can get a nano melee bots league too), but i prefer the megabots. I am new to roborumble, so after this rounds of discussion what we can do to start this thing? I think i know some of you like Paul Evans, pez and abc from robots packs (by the way, great bot Tron) and other foruns. Do anyone know who is in charge of roborumble? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a> 
+<p>
+Do we! The wiki community is in charge of it. Though <a href="robowiki?Albert" class=wikipagelink>Albert</a> is the guy who has made all the hard work. The way to get this running is to start it. If you want to do this part, start with installing Tomcat (if you don't have it running already) and then download the RR@H client and server packages. They include source. Change the roborumble.txt file to point to your development servlets (there's a commented line in there that works if you place the rumble servlets under the "examples" webapps). Make sure you synchronize this with <a href="robowiki?Albert" class=wikipagelink>Albert</a>. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I've removed my votes above since I don't have any melee bots yet. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+No need to you remove it, your opinion is wellcome. My bot itself, is a melee bot, i don't have any duel bots yet (i'm begining now one, but is only a modified melee). Probably for that reason my point of view was that, my apologies. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+About the server, i was searching for someone to do the hard work :-). I dont have any experience with servlets and web development, actually i develop java non-web apps. Thus it would be a good reason to learning it, i don't have a server available for running it - in my personel pc i can only run the client. I am asking for the good piece of the job: help in programming and testing it :-). Any ideas? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Just for the record. Albert had zilch experience with servlets when he started with the roborumble infrastructure. He had a working system up in a matter of days. Granted, he's a brainiac. But the servlet stuff basics aren't really hard to grasp. About my opinions for the melee setup. I'm never afreaid to share my opinions, I just realized I really don't have enough experience with melee battling to have an opinion. If <a href="robowiki?ABC" class=wikipagelink>ABC</a> and Paul says the bots need 100 rounds to be able to act on lessons learnt, then I am pretty sure that's what they need. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It's not for learning you need 100 rounds or so, but the fact that melee results are much closer than 1v1 and, because there are more variables, it is more likely to have a undeserved run of bad luck.  100 rounds helps smooth out these issues.  --  <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<p>
+Quod Erat Demonstrandum. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+We still have the problem of the server itself... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+It would be good if old versions of a bot get cleaned away immediately when a new version arrives. Right now the rankings are quite littered with old <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a>'es. =) And also the server should not accept results from clients for old versions of a bot when new version exist. A message to the client about the need for a refresh of the participants list could be considered. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Completely agree. The problem is that it means that the server should be able to access the participants, list, and I don't know how to do it :-( Any idea welcome. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Does it? Doesn't the server already look for the older version when  a new version knocks on the door? I imagined it could be the same type of check. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+By the way. The new client works excellently when it comes to quickly giving new and updated bots a good deal of battles. No more waiting for a week to get a stable rating. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+About cleaning the rankings, doesn't the server store the last uploaded battle of a bot? I think it's only a matter of cleaning the bots that don't have battles uploaded past X days... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+I didn't look at it closely but my mathematical intuition tells me that it is really important that we increase the rounds in a melee battle. I think 35 are by far not enough to get stable rankings. if the vote above would be active i'd vote for 100 rounds. sure it takes some time but you get a lot of information out of it, as already told above -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+<p>
+100% agreed, I think you should put your vote up there, so we can nag <a href="robowiki?Albert" class=wikipagelink>Albert</a> about it.. :) -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+ok, my votes are set... -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+<p>
+Even if it can seem strange, melee rankings are more stable than 1v1 ones. Take a look to the momentums and you will notice that they are higher in 1v1 than in melee (the lower the momentums are, the more stable the rankings). It seems that a high number of matches contributes more than a low number of accurated matches to stability... So I don't see it is an issue that forces a change right now. I don't know also how a change to 100 rounds would affect RR@H performance (there are bots that consume huge ammounts of memory as the number of rounds increases). But if you all preffer 100 rouds, it's not a problem to change it. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+I'm not so sure that, in this case, lower momentums are equivalent to more stable rankings. In this case it is probably the small number of entrants and the smaller score differences when compared to 1vs1. The fact is that, if I leave my client running the melee rumble for long periods, bots will change places like crazy and never reach a stable ranking. The problem is that, no matter how good a melee bot is, you can never predict the outcome of a 35 round battle with reasonable certainty. Starting conditions are a very big factor, as is the luck of not being "trapped" soon in the battle. I believe the increased round count would minimise that effect because the difference between a good bot and an ocasionally lucky one would become more apparent in each battle. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+I think it is at least worth a try to increase to 100. Because as far as I could see, today's melee ranking wasn't stable at all (Shadow once got down to place 3...). -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+<p>
+OK then. I'w change the servlet and upload it. Just be aware you all will have to run the clients for longer :-) <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RoboRumble/RequestedFeatures" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RoboRumble/RequestedFeatures">View other revisions</a><br>Last edited January 27, 2004 23:35 EST by <a href="robowiki?Albert" title="ID 2199 from 80.58.32.174.proxycache.rima-tde.net">Albert</a> <a href="robowiki?action=browse&diff=1&id=RoboRumble/RequestedFeatures">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

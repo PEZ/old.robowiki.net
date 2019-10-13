@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>MannyPacquiao - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Manny, Pacquiao'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=MannyPacquiao">MannyPacquiao</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Hrm. I released this as an experiment, but I think I'm going to pull it. How does it score better against all the top 10 general bots than it does against ruc.nano.zealot? This is probably the only bot I've seen with a PBI of over 50, and multiple PBIs of over 30. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<hr noshade class=wikiline size=1>
+Converted to a nano testbed/playground. Check out all the neat stuff this code does (other than, you know, win...):
+<p>
+<pre>
+package arthord;
+import robocode.*;
+import robocode.util.Utils;
+import java.awt.geom.Rectangle2D;
+
+/**
+ * MannyPacquiao
+ */
+public class MannyPacquiao extends AdvancedRobot
+{
+	static int direction = 1; // Direction of movement
+	static boolean flat; // Flattener active?
+	static double bulletVelocity; // Velocity of enemy bullets
+
+	/**
+	 * run: MannyPacquiao's default behavior
+	 */
+	public void run()
+	{
+		// Start round with flattener off
+		flat = false;
+
+		// Constantly block, while also ensuring the radar can re-lock if it slips
+		do
+		{
+			turnRadarRightRadians(1);
+		}
+		while(true);
+	}
+
+	/**
+	 * onScannedRobot: What to do when you see another robot
+	 */
+	public void onScannedRobot(ScannedRobotEvent e)
+	{
+		double absoluteBearing; // The target enemy's absolute bearing in radians
+		double robotHeading; // The robot's absolute heading in radians
+		double enemyDistance = e.getDistance(); // Distance to the enemy
+
+		// Flattener
+		// 0.055 is about equal to NanoSatan's old movement
+		if(flat &amp;&amp; Math.random() &lt; 0.1)
+		{
+			direction = -direction;
+		}
+
+		// Wall smoother
+		// Note the initial angle is + 0.2 not + 0.02,
+		// this forces the robot to back off when possible.
+		double turnAngle = (absoluteBearing = e.getBearingRadians()) + Math.PI/2 + direction * 0.2;
+		while(!new Rectangle2D.Double(18, 18, 764, 564).contains(getX() + 170 * direction * Math.sin((robotHeading = getHeadingRadians()) + (turnAngle -= direction * 0.02)), getY() + 170 * direction * Math.cos(robotHeading + turnAngle)));
+
+		// Move
+		setAhead(direction * 100);
+
+		// Turn robot perpendicular to opponent
+		setTurnRightRadians(Utils.normalRelativeAngle(turnAngle));
+
+		// Lock onto opponent with radar
+		setTurnRadarRightRadians(Utils.normalRelativeAngle((absoluteBearing += robotHeading) - getRadarHeadingRadians()) * 2);
+
+		// Lock onto opponent with gun
+		// Note the method I use here to achieve random aim, the tuning factor is the multiplier
+		setTurnGunRightRadians(Utils.normalRelativeAngle(absoluteBearing - getGunHeadingRadians()) * (e.getEnergy() &gt; 0 ? 5 : 1) );
+
+		// Fire
+		setFire(2);
+	}
+
+	/**
+	 * onHitByBullet: What to do when you're hit by a bullet
+	 */
+	public void onHitByBullet(HitByBulletEvent e)
+	{
+		// Switch to flattener
+		flat = true;
+
+		// Record bullet velocity
+		bulletVelocity = e.getVelocity();
+	}
+}
+</pre>
+<hr noshade class=wikiline size=1>
+Comments:
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=MannyPacquiao" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=MannyPacquiao">View other revisions</a><br>Last edited May 4, 2006 22:00 EST by <a href="robowiki?GrubbmGait" title="ID 6861 from ip219-32-173-82.dyndsl.versatel.nl">GrubbmGait</a> <a href="robowiki?action=browse&diff=1&id=MannyPacquiao">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

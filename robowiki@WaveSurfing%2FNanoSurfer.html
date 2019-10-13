@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>WaveSurfing/NanoSurfer - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Wave, Surfing, Nano, Surfer'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/NanoSurfer">WaveSurfing/NanoSurfer</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Discuss the theoretical NanoSurfer<a href="robowiki?action=edit&id=NanoSurfer" class=wikipageedit>?</a>.
+<hr noshade class=wikiline size=1>
+<p>
+I started this page so I can voice ideas on how to make this theoretical little bot come into being. First of all space is so limited in a nano that to impliment surfing in a nano will require looking at the subject in a completely different way.
+<p>
+First of all, the NanoSurfer<a href="robowiki?action=edit&id=NanoSurfer" class=wikipageedit>?</a> (here by refered to as NS or the Nano from here on) wouldn't have room for the precise prediction found in larger bots, also most the advanced techinues are right out. I think that the best result for a nano would be to use the <a href="robowiki?WaveSerpent" class=wikipagelink>WaveSerpent</a> bin system, another words recording either the gf (or in NS' case probably the angle offset, as wouldn't have the luxury of a nice gf to angle conversion). Also NS would most likely use a system that gustimates about where the the bot would get to in the time that the wave would hit, like timeToImpact<a href="robowiki?action=edit&id=ToImpact" class=wikipageedit>?</a>*8*direction-velocity, but probably a much better equivilent.
+<p>
+--<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Personally, I think the things that make a <a href="robowiki?WaveSurfer" class=wikipagelink>WaveSurfer</a> so powerful will probably be lost in a <a href="robowiki?NanoBot" class=wikipagelink>NanoBot</a> implementation, perhaps even in a <a href="robowiki?MicroBot" class=wikipagelink>MicroBot</a> implementation (eg, <a href="robowiki?Artist" class=wikipagelink>Artist</a>, and <a href="robowiki?Rozu" class=wikipagelink>rozu</a> is no slouch). I think a combination of <a href="robowiki?RandomMovement" class=wikipagelink>RandomMovement</a> and <a href="robowiki?StopAndGo" class=wikipagelink>StopAndGo</a> are better choices in these two weight classes. But I've never actually completed a <a href="robowiki?MicroBot" class=wikipagelink>MicroBot</a> or <a href="robowiki?NanoBot" class=wikipagelink>NanoBot</a>, so I'm no expert, and I will definitely be interested to see what you come up with. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I think task one is coming up with a decent Micro surfer. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Or maybe a Nano S&amp;G movement --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+I know a couple bots you could look at for that code ... -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+I mean me making a micro, I have plans for a Micro-surfer called Nightingale, and a Nano-surfer (maybe) called Hummingbird, and yes i'm on bird names now, Genesis' surfing is being problematic so i'm gonna drop its development for now and only use it as a test bed for awhile. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Just a heads up, <a href="robowiki?Dummy" class=wikipagelink>Dummy</a> already has a bot named HummingBird<a href="robowiki?action=edit&id=HummingBird" class=wikipageedit>?</a>, along with some other bird names. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Blast, oh well, I guess I have to name it Wren, also a small bird, one I happen to like. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+What is a wren? (Sorry, just some Baseball Stars humor. Anyone remember that game?) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+<img src="http://www.rivernen.ca/wren.jpg"> --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Hah, yep. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Here are my thoughts on making a nano surfer:
+<UL >
+<li> Keeping track of multiple waves probably takes up too much space. So instead the nano could stay at a distance of about 150 from the other bot so there is only one wave in the air at once.
+<li> I think bins are the way to go instead of a list of hits; its very easy to say if(hits[forward] &gt; hits[backward]), and I'm not sure how you'd do it the other way.
+<li> There is a really simple solution that gets rid of a need for keeping track of bearing offsets or and any sort of prediction. You could just keep track which average velocities you've been hit the least at, and then try to stay at those velocities.
+<li> Of course, this now is so unlike wave surfing it hardly deserves to be called such. It's more of a simple type of adaptive random movement that doesn't use Math.random().
+</UL>
+<p>
+I've written a "surfing" nano with a very simple random gun. It's fairly strong, but not near the level of top nanos like  <a href="robowiki?Splinter" class=wikipagelink>Splinter</a>. But if anyone is interested, the code is <a href="robowiki?WaveSnake" class=wikipagelink>here</a>. I also have a micro one (again quite a bit weaker than <a href="robowiki?Thorn" class=wikipagelink>Thorn</a>), that I might release into the rumble later. -- <a href="robowiki?Kev" class=wikipagelink>Kev</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=WaveSurfing/NanoSurfer" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=WaveSurfing/NanoSurfer">View other revisions</a><br>Last edited February 26, 2007 0:28 EST by <a href="robowiki?Kev" title="ID 8976 from c-67-168-171-184.hsd1.wa.comcast.net">Kev</a> <a href="robowiki?action=browse&diff=1&id=WaveSurfing/NanoSurfer">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

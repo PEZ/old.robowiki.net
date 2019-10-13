@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing Ant - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Ant'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing Ant</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="Ant"  />
+<input type="hidden" name="oldtime" value="1192717529"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="4"  />
+<input type="hidden" name="captchaArg2" value="8"  />
+<input type="hidden" name="captchaOp" value="*"  />
+<input type="hidden" name="captchaId" value="735048726273"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">==== Apache Ant ====
+Apache Ant is a Java-based build tool, similar to the DOS-based MAKE file.  It allows you to automate the procedure of compiling and packaging your Java code.  It is an open source tool and is available at [http://ant.apache.org Ant Home Page] and is produced by [http://www.apache.org Apache Software Foundation] who develop a whole collection of top-class open-source projects.
+
+&lt;p&gt;I use Ant for all of my commercial Java developments and have just started to use it within the development of by Bots.  (It may be a bit of an overkill as the Robocode projects don&#39;t tend to be that big but it is a useful skill/tool to have on your CV)
+
+I have an Ant &quot;Build&quot; file that performs the following tasks for me during the development of my Bots:
+&lt;ol&gt;
+   &lt;li&gt;Create the output directories (if they don&#39;t already exist)
+   &lt;li&gt;Compile my Bots
+   &lt;li&gt;Perform Unit Tests against the bots to ensure that everything still works as expected.
+   &lt;li&gt;Create the JAR file containing the Bot
+   &lt;li&gt;(TODO) Automatically deploy the new JAR file to the RobocodeRepository.
+&lt;/ol&gt;
+
+-- [[Hexkid]]
+
+/SampleBuildFile ([[Hexkid]])
+
+/SampleBuildFile2 ([[David Alves]])
+----
+
+&#39;&#39;&#39;Packing a minimal JAR&#39;&#39;&#39;
+
+/MinimalJarSample
+
+My codesize would be a lot smaller if I could figure out how to have Ant automatically include only required files, but right now it&#39;s just including *.class. Does anyone know how to tell Ant to only include files needed by YALT.class? --[[David Alves]]
+
+Not really, but maybe you can check how the Robocode packager does it? -- [[PEZ]]
+
+Built-in Robocode packager includes only needed classes. --[[Ph]]
+
+@Ph, I know, but is there a way I can get Ant to do it? I want to automate everything. :-) --[[David Alves]]
+
+
+I think there is no simple way to tell Ant compile only classes needed by some class. AFAIK in each .class file there are references to other classes needed by this class, so you can scan each .class file for these references. But it is complicated, because you have to know how a class file is built, and find some way to plug-in that into Ant. I am not an expert and do not use Ant very often, so maybe someone can find better solution. --[[Ph]]
+
+Maybe Ant has some way to reach the reflection API? -- [[PEZ]]
+
+Years later, I answered my own question: [http://sadun-util.sourceforge.net/pack.html these people] have made an Ant task that packages only the minimal set of files. --[[David Alves]]
+
+----
+
+&#39;&#39;&#39;Escape Characters in robot.description files&#39;&#39;&#39;
+
+I have been using Ant build-files for some time now, but still have one (simple?) problem. I want to enter a description for the robot-properties file like:
+&lt;pre&gt;&lt;entry key=&quot;robot.description&quot; value=&quot;text 1\n text 2\n text 3&quot;/&gt;&lt;/pre&gt;
+so i get three lines of text in my description. But when i select my bot in the &quot;new battle&quot;-popup, instead i get one line in the description field that is too long to show completely. Any ideas how to get multiple lines? Thanks --[[Loki]]
+
+Well i didnt try, but maybe using \\n instead of \n in your ant-file could help. --[[Mue]]
+
+If you do that, [[Mue]], you get \n instead of a line break. Looking at existent .properties files \n should work. -- [[Jonathan]]
+
+sorry folks, i should have described the results of the properties file as well; i get a \\n in the description field, like:
+&lt;pre&gt;robot.description=text 1\\n text 2\\n text 3&lt;/pre&gt;
+Every &quot;\&quot; in the description is escaped... --[[Loki]]
+
+Ant files are XML, so try &amp;amp;#72; That&#39;s the UTF-8 character code for a slash. --[[David Alves]]
+
+I have Googled a solution: include the following &lt;replaceregexp&gt; Ant-task after the definition of the properties-file, like:
+&lt;pre&gt;
+   &lt;propertyfile file=&quot;${ROBOTNAME}.properties&quot;&gt;
+      &lt;entry key=&quot;robot.description&quot; value=&quot;this line is to long to show in the description field,\n so i need a newline character.&quot;/&gt;
+      &lt;entry key=&quot;robot.java.source.included&quot; value=&quot;true&quot;/&gt;
+      &lt;entry key=&quot;robocode.version&quot; value=&quot;1.0.6&quot;/&gt;
+      &lt;entry key=&quot;robot.version&quot; value=&quot;0.1&quot;/&gt;
+      &lt;entry key=&quot;robot.author.name&quot; value=&quot;&quot;/&gt;
+      &lt;entry key=&quot;robot.classname&quot; value=&quot;${package}.${ROBOTNAME}&quot;/&gt;
+   &lt;/propertyfile&gt;
+
+   &lt;replaceregexp file=&quot;${ROBOTNAME}.properties&quot;
+                         match=&quot;\\n+&quot;
+                         replace=&quot;\n&quot;
+                         flags=&quot;g&quot;
+                         byline=&quot;false&quot;/&gt;
+&lt;/pre&gt;
+The &lt;replaceregexp&gt; task is a &quot;directory based task for replacing the occurrence of a given regular expression with a substitution pattern in a selected file or set of files.&quot;&lt;br&gt;
+Doesn&#39;t look like the simplest solution, but it does the trick.&lt;br&gt;
+B.t.w. David&#39;s suggestion results in an Ant build error &#39;&quot;;&quot; expected&#39;. Thanks all for your suggestions. --[[Loki]]
+
+Loki: Did you include the semicolon? It works for me. Entities in XML need to be terminated with a semicolon, like so: &lt;font size=+1&gt;&amp;amp;#72&lt;b&gt;;&lt;/b&gt;&lt;/font&gt; --[[David Alves]]
+
+sorry, i misunderstood the &quot;;&quot; as a &quot;.&quot; as your next sentence started with a capital letter. I added the semicolon. This results in a capital &quot;H&quot;... 
+--[[Loki]]
+
+You probably have some other encoding than David has? -- [[PEZ]]
+
+Loki, I think your solution is beautiful. It must obviously be a bug in Ant that it writes an escaped backslash for you without you asking for it. Then you go in and correct the effects of the bug. Clean and clear. Why David&#39;s solution works I don&#39;t know. The backslash character itself or it&#39;s entity reference should be equal in XML. But a bug is a bug I guess. =) -- [[PEZ]]
+
+thanks PEZ. Regular expressions are powerful, once you get to know he syntax. But i do prefer &#39;first time right&#39;. --[[Loki]]
+
+Reggexps are truly powerfil. Though in this case regular expressions aren&#39;t showing their power. The task could just as well had been solved with a simple, non-regexp, search-and-replace. Had there been such a task builtin of course. -- [[PEZ]]
+
+Ah oops, you&#39;re right, should be &amp;amp;#92&lt;b&gt;;&lt;/b&gt; not &amp;amp;#72&lt;b&gt;;&lt;/b&gt;. This is ISO 8859-1, not UTF-8. Although you could force it to be UTF-8 by using
+ &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+--[[David Alves]]
+
+Ok, checked both &amp;amp;#72; with UTF-8 encoding and &amp;amp;#92 without the encoding specification (which default to ISO 8859-1): on my (Windows) machine only the latter works. So the result of this session is that we have two working solutions. Thanks all! --[[Loki]]
+
+BTW. I think your regexp breaks if you have a string like &quot;dada, dada, dada\\nnana, nana&quot;. Remove that + in the match expression and it should be safer. -- [[PEZ]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 4 * 8 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that Ant has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=Ant">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

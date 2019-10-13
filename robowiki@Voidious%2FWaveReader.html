@@ -1,0 +1,1747 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Voidious/WaveReader - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Voidious, Wave, Reader'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/WaveReader">Voidious/WaveReader</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Voidious" class=wikipagelink>Voidious</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>The analysis portion of my recent <a href="robowiki?Voidious/SegmentationResearch" class=wikipagelink>Segmentation Research</a>. This program uses data recorded with <a href="robowiki?Voidious/WaveRecorder" class=wikipagelink>WaveRecorder</a> to try and find optimal <a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a> slices for a <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> bot. 
+<p>
+Much of the code is very stringy, but the core methods are pretty clean and efficient. A lot of it is just kind of a sandbox to try this stuff. I may get to cleaning it up later once I'm more familiar with what I want to be doing with it.
+<p>
+--
+<pre>
+package voidious.test;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+
+/** 
+ * WaveReader.java
+ * 
+ * Some GuessFactorTargeting analysis by Voidious.
+ *
+ * This code is open source, released under the RoboWiki Public Code License:
+ * http://robowiki.net/cgi-bin/robowiki?RWPCL
+ */
+
+public class WaveReader {
+//	public static double _ln2 = Math.log(2);
+	public HashMap&lt;String, ArrayList&gt; waveSets;
+	public static String baseDir = 
+		"/your/data/dir/";
+
+	public WaveReader() {
+		waveSets = new HashMap&lt;String, ArrayList&gt;();
+	}
+	
+	public static void main(String[] args) {
+		boolean useRatio = false;
+		if (args.length &gt; 0) {
+			useRatio = true;
+		}
+		
+		WaveReader wr = new WaveReader();
+		
+		String[] files = {"cig900.w2.txt", "dm900.w2.txt", "sparrow900.w2.txt",
+			"fm900.w2.txt", "rmb900.w2.txt", "aspid900.w2.txt",
+			"dt900.w2.txt", "fhqw900.w2.txt", "funky900.w2.txt", "taow900.w2.txt",
+			"tron900.w2.txt", "grb900.w2.txt"};
+
+		wr.clearData();
+		for (int x = 0; x &lt; files.length; x++) {
+			String thisFile = files[x];
+			System.out.print("Loading file: " + thisFile + "... ");
+			
+//			wr.loadData(thisFile);
+			wr.loadDataFiringOnly(thisFile);
+
+			System.out.println("Done!");
+		}
+
+/*
+		for (int y = 1; y &lt;= 4; y++) {
+			System.out.println("----\nLateralVelocity, " + y + " segments.");
+			ThresholdData td;
+			if (useRatio) {
+				td = wr.findBestLatVelSlicesTwoRatioAll(y, 0.2f, 37, 0, 8);
+			} else {
+				td = wr.findBestLatVelSlicesTwoAll(y, 0.2f, 37, 0, 8);					
+			}
+			
+			System.out.print("Slices: " + round(td.slices[0], 1));
+			for (int z = 1; z &lt; td.slices.length; z++) {
+				System.out.print(" / " + round(td.slices[z], 1));		
+			}
+			System.out.println();
+			System.out.println("Entropy: " + td.origEntropy + " / " + td.entropy);			
+			if (useRatio) {
+				System.out.println("Gain Ratio: " + td.gainRatio);			
+			}
+		}
+
+		for (int y = 1; y &lt;= 4; y++) {
+			System.out.println("----\nDistance, " + y + " segments.");
+			ThresholdData td;
+			if (useRatio) {
+				td = wr.findBestDistanceSlicesTwoRatioAll(y, 25, 37, 0, 1000);
+			} else {
+				td = wr.findBestDistanceSlicesTwoAll(y, 25, 37, 0, 1000);					
+			}
+			
+			System.out.print("Slices: " + round(td.slices[0], 0));
+			for (int z = 1; z &lt; td.slices.length; z++) {
+				System.out.print(" / " + round(td.slices[z], 0));		
+			}
+			System.out.println();
+			System.out.println("Entropy: " + td.origEntropy + " / " + td.entropy);			
+			if (useRatio) {
+				System.out.println("Gain Ratio: " + td.gainRatio);			
+			}
+		}
+
+		for (int y = 1; y &lt;= 4; y++) {
+			System.out.println("----\nWall Distance, " + y + " segments.");
+			ThresholdData td;
+			if (useRatio) {
+				td = wr.findBestWallDistanceSlicesTwoRatioAll(y, 0.025f, 37, 0, 1);
+			} else {
+				td = wr.findBestWallDistanceSlicesTwoAll(y, 0.025f, 37, 0, 1);
+			}
+			
+			System.out.print("Slices: " + round(td.slices[0], 3));
+			for (int z = 1; z &lt; td.slices.length; z++) {
+				System.out.print(" / " + round(td.slices[z], 3));		
+			}
+			System.out.println();
+			System.out.println("Entropy: " + td.origEntropy + " / " + td.entropy);			
+			if (useRatio) {
+				System.out.println("Gain Ratio: " + td.gainRatio);			
+			}
+		}
+
+		for (int y = 1; y &lt;= 4; y++) {
+			System.out.println("----\nVChangeTime, " + y + " segments.");
+			ThresholdData td;
+			if (useRatio) {
+				td = wr.findBestVChangeTimeSlicesTwoRatioAll(y, 0.025f, 37, 0, 1.2f);
+			} else {
+				td = wr.findBestVChangeTimeSlicesTwoAll(y, 0.025f, 37, 0, 1.2f);
+			}
+			
+			System.out.print("Slices: " + round(td.slices[0], 3));
+			for (int z = 1; z &lt; td.slices.length; z++) {
+				System.out.print(" / " + round(td.slices[z], 3));		
+			}
+			System.out.println();
+			System.out.println("Entropy: " + td.origEntropy + " / " + td.entropy);			
+			if (useRatio) {
+				System.out.println("Gain Ratio: " + td.gainRatio);			
+			}
+		}
+
+		System.out.println("----");
+*/
+	
+		System.out.println("Unsegmented entropy: " + 
+				wr.evaluateUnsegmentedSet(37));
+
+		wr.findBestLatVelDistanceWallDistanceReverseWallDistanceVChangeTimeSlicesTwoAll(
+				3, 3, 3, 1, 3, 37);
+	}
+	
+	public void clearData() {
+		waveSets = new HashMap&lt;String, ArrayList&gt;();
+	}
+	
+	public void loadData(String filename) {
+		ArrayList&lt;Wave&gt; waves = new ArrayList&lt;Wave&gt;();
+		File f = new File(baseDir + filename);
+
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(f));
+		
+			while (br.ready()) {
+				String nextLine = br.readLine();
+				if (nextLine != null) {
+					waves.add(parseRecord(nextLine));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error in loadData(" + f + ")");
+		}
+		
+		waveSets.put(filename, waves);
+	}
+
+	public void loadDataFiringOnly(String filename) {
+		ArrayList&lt;Wave&gt; waves = new ArrayList&lt;Wave&gt;();
+		File f = new File(baseDir + filename);
+
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(f));
+		
+			while (br.ready()) {
+				String nextLine = br.readLine();
+				if (nextLine != null) {
+					Wave w = parseRecord(nextLine);
+					if (w.firing) {
+						waves.add(w);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error in loadData(" + f + ")");
+		}
+		
+		waveSets.put(filename, waves);
+	}
+
+	public Wave parseRecord(String record) {
+		String[] fields = record.split(" : ");
+		
+		Wave w = new Wave();
+		
+		w.roundNum = (byte)Integer.parseInt(fields[0]);
+		w.firing = (Integer.parseInt(fields[1]) == 1);
+		w.orientation = (byte)Integer.parseInt(fields[2]);
+		w.guessFactor = (float)Double.parseDouble(fields[3]);
+		w.velocity = (float)Double.parseDouble(fields[4]);
+		w.latVel = (float)Double.parseDouble(fields[5]);
+		w.accel = (byte)Integer.parseInt(fields[6]);
+		w.timeSinceVChange = Integer.parseInt(fields[7]);
+		w.timeSinceZeroVelocity = Integer.parseInt(fields[8]);
+		w.timeSinceMaxVelocity = Integer.parseInt(fields[9]);
+		w.distance = (float)Double.parseDouble(fields[10]);
+		w.wallDistance = (float)Double.parseDouble(fields[11]);
+		w.reverseWallDistance = (float)Double.parseDouble(fields[12]);
+		w.relativeHeading = (float)Double.parseDouble(fields[13]);
+		w.distanceLastEightTicks = (float)Double.parseDouble(fields[14]);
+		w.distanceLastFifteenTicks = (float)Double.parseDouble(fields[15]);
+		w.distanceLastTwentyFiveTicks = (float)Double.parseDouble(fields[16]);
+		
+		return w;
+	}
+	
+ 	public void findBestLatVelDistanceWallDistanceVChangeTimeSlicesTwoAll(
+ 		int attrSlices, int gfSlices) {
+ 	 	 	 	 	 	 		
+ 	 	DataRecordTwoGroup[] drtg = new DataRecordTwoGroup[waveSets.size()];
+
+ 	 	Iterator iter = waveSets.keySet().iterator();
+ 	 	
+ 	 	int gIndex = 0;
+ 	 	while (iter.hasNext()) {
+ 	 	  	String filename = (String)iter.next();
+ 	 	  	drtg[gIndex++] = new DataRecordTwoGroup(gIndex, dataSetLatVel(filename, gfSlices));
+ 	 	}
+ 	 	 	 	 	 	 
+ 	 	int[] baseCounts = new int[drtg.length];
+ 	 	for (int x = 0; x &lt; drtg.length; x++) {
+ 	 		baseCounts[x] = drtg[x].dataSet.length;
+ 	 	}
+ 	 	 	 	 	 	 		 		
+ 	 	ThresholdData latVelData = findBestAttrSlices(drtg, attrSlices,
+ 	 	 	0.25f, gfSlices, 0, 8, baseCounts);
+
+ 	 	float[] latVelSlices = new float[attrSlices + 1];
+ 	 	for (int x = 0; x &lt; attrSlices; x++) {
+ 	 		latVelSlices[x] = latVelData.slices[x]; 	 		
+ 	 	}
+ 	 	latVelSlices[attrSlices] = Float.POSITIVE_INFINITY;
+ 	 	
+ 	 	float[] distSlices = new float[attrSlices + 1]; 	
+ 	 	drtg = new DataRecordTwoGroup[waveSets.size() * (attrSlices + 1)];
+ 	 	
+ 	 	for (int z = 0; z &lt; latVelSlices.length; z++) {
+ 	 	 	iter = waveSets.keySet().iterator();
+
+ 	 	 	gIndex = 0;
+ 	 	 	while (iter.hasNext()) {
+ 	 	 	  	String filename = (String)iter.next();
+
+ 	 	 	  	ArrayList waves = waveSets.get(filename);
+ 	 			DataRecordTwo[] drt = new DataRecordTwo[waves.size()];
+ 	 			
+ 	 			int tempIndex = 0;
+ 	 			
+ 	 			for (int x = 0; x &lt; waves.size(); x++) {
+ 	 				Wave w = (Wave)waves.get(x);
+ 	 				if (w.latVel &lt; latVelSlices[z] &amp;&amp; 
+ 	 					(z == 0 || w.latVel &gt;= latVelSlices[z-1])) {
+ 	 					drt[tempIndex++] = parseWaveDistance(w, gfSlices);
+ 	 				}
+ 	 			}
+ 	 			
+ 	 			drt = trimDataSet(drt, tempIndex);
+ 	 			
+ 	 			drtg[(z * waveSets.size()) + gIndex] = new DataRecordTwoGroup(gIndex, drt);
+ 	 			gIndex++;
+ 	 	 	}
+ 	 	}
+
+ 	 	baseCounts = new int[drtg.length];
+ 	 	for (int x = 0; x &lt; drtg.length; x++) {
+ 	 		baseCounts[x] = drtg[x].dataSet.length;
+ 	 	}
+ 	 	 	 	 	 	 	 		 		
+ 	 	ThresholdData distData = findBestAttrSlices(drtg, attrSlices,
+ 	 	 	25, gfSlices, 0, 1000, baseCounts);
+ 	 	 	
+ 	 	for (int x = 0; x &lt; attrSlices; x++) {
+ 	 		distSlices[x] = distData.slices[x]; 	 		
+ 	 	}
+ 	 	distSlices[attrSlices] = Float.POSITIVE_INFINITY;
+
+ 	 	
+ 	 	float[] walldistSlices = new float[attrSlices + 1]; 	
+ 	 	drtg = new DataRecordTwoGroup[waveSets.size() * (attrSlices + 1) * (attrSlices + 1)];
+ 	 	
+ 	 	for (int z = 0; z &lt; latVelSlices.length; z++) {
+ 	 	 	for (int a = 0; a &lt; distSlices.length; a++) {
+ 	 	 	 	iter = waveSets.keySet().iterator();
+
+ 	 	 	 	gIndex = 0;
+ 	 	 	 	while (iter.hasNext()) {
+ 	 	 	 	  	String filename = (String)iter.next();
+
+ 	 	 	 	  	ArrayList waves = waveSets.get(filename);
+ 	 	 			DataRecordTwo[] drt = new DataRecordTwo[waves.size()];
+ 	 	 			
+ 	 	 			int tempIndex = 0;
+ 	 	 			
+ 	 	 			for (int x = 0; x &lt; waves.size(); x++) {
+ 	 	 				Wave w = (Wave)waves.get(x);
+ 	 	 				if (w.latVel &lt; latVelSlices[z] &amp;&amp; 
+ 	 	 					(z == 0 || w.latVel &gt;= latVelSlices[z-1]) &amp;&amp;
+ 	 	 					w.distance &lt; distSlices[a] &amp;&amp;
+ 	 	 					(a == 0 || w.distance &gt;= distSlices[a-1])) {
+ 	 	 					drt[tempIndex++] = parseWaveWallDistance(w, gfSlices);
+ 	 	 				}
+ 	 	 			}
+ 	 	 			
+ 	 	 			drt = trimDataSet(drt, tempIndex);
+ 	 	 			
+ 	 	 			drtg[((a + z * distSlices.length) * waveSets.size()) + gIndex] = new DataRecordTwoGroup(gIndex, drt);
+ 	 	 			gIndex++;
+ 	 	 	 	}
+ 	 	 	}
+ 	 	}
+ 	 	
+ 	 	baseCounts = new int[drtg.length];
+ 	 	for (int x = 0; x &lt; drtg.length; x++) {
+ 	 		baseCounts[x] = drtg[x].dataSet.length;
+ 	 	}
+ 	 	 	 	 	 	 	 		 		
+ 	 	ThresholdData walldistData = findBestAttrSlices(drtg, attrSlices,
+ 	 	 	0.05f, gfSlices, 0, 1.2f, baseCounts);
+ 	 	 	
+ 	 	for (int x = 0; x &lt; attrSlices; x++) {
+ 	 		walldistSlices[x] = walldistData.slices[x]; 	 		
+ 	 	}
+ 	 	walldistSlices[attrSlices] = Float.POSITIVE_INFINITY;
+
+ 	 	
+ 	 	float[] vchangeSlices = new float[attrSlices + 1]; 	
+ 	 	drtg = new DataRecordTwoGroup[waveSets.size() * (attrSlices + 1) * 
+ 	 	    (attrSlices + 1) * (attrSlices + 1)];
+ 	 	
+ 	 	for (int z = 0; z &lt; latVelSlices.length; z++) {
+ 	 	 	for (int a = 0; a &lt; distSlices.length; a++) {
+ 	 	 	 	for (int b = 0; b &lt; walldistSlices.length; b++) {
+ 	 	 	 	 	iter = waveSets.keySet().iterator();
+
+ 	 	 	 	 	gIndex = 0;
+ 	 	 	 	 	while (iter.hasNext()) {
+ 	 	 	 	 	  	String filename = (String)iter.next();
+
+ 	 	 	 	 	  	ArrayList waves = waveSets.get(filename);
+ 	 	 	 			DataRecordTwo[] drt = new DataRecordTwo[waves.size()];
+ 	 	 	 			
+ 	 	 	 			int tempIndex = 0;
+ 	 	 	 			
+ 	 	 	 			for (int x = 0; x &lt; waves.size(); x++) {
+ 	 	 	 				Wave w = (Wave)waves.get(x);
+ 	 	 	 				if (w.latVel &lt; latVelSlices[z] &amp;&amp; 
+ 	 	 	 					(z == 0 || w.latVel &gt;= latVelSlices[z-1]) &amp;&amp;
+ 	 	 	 					w.distance &lt; distSlices[a] &amp;&amp;
+ 	 	 	 					(a == 0 || w.distance &gt;= distSlices[a-1]) &amp;&amp;
+ 	 	 	 					w.wallDistance &lt; walldistSlices[b] &amp;&amp;
+ 	 	 	 					(b == 0 || w.wallDistance &gt;= walldistSlices[b-1])) {
+ 	 	 	 					DataRecordTwo drtTemp = parseWaveVChangeTime(w, gfSlices);
+ 	 	 	 					if (drtTemp != null) {
+ 	 	 	 						drt[tempIndex++] = drtTemp;
+ 	 	 	 					}
+ 	 	 	 				}
+ 	 	 	 			}
+ 	 	 	 			
+ 	 	 	 			drt = trimDataSet(drt, tempIndex);
+ 	 	 	 			
+ 	 	 	 			drtg[((b + a * walldistSlices.length + z * distSlices.length * walldistSlices.length) * waveSets.size()) + gIndex] = new DataRecordTwoGroup(gIndex, drt);
+ 	 	 	 			gIndex++;
+ 	 	 	 	 	}
+ 	 	 	 	}
+ 	 	 	}
+ 	 	}
+ 	 	
+ 	 	baseCounts = new int[drtg.length];
+ 	 	for (int x = 0; x &lt; drtg.length; x++) {
+ 	 		baseCounts[x] = drtg[x].dataSet.length;
+ 	 	}
+ 	 	 	 	 	 	 	 		 		
+ 	 	ThresholdData vchangeData = findBestAttrSlices(drtg, attrSlices,
+ 	 	 	0.05f, gfSlices, 0, 1.2f, baseCounts);
+ 	 	 	
+ 	 	for (int x = 0; x &lt; attrSlices; x++) {
+ 	 		vchangeSlices[x] = vchangeData.slices[x]; 	 		
+ 	 	}
+ 	 	vchangeSlices[attrSlices] = Float.POSITIVE_INFINITY;
+ 	 	
+		System.out.print("LatVel Slices: " + round(latVelSlices[0], 2));
+		for (int z = 1; z &lt; latVelSlices.length - 1; z++) {
+			System.out.print(" / " + round(latVelSlices[z], 2));		
+		}
+		System.out.println();
+
+		System.out.print("Distance Slices: " + round(distSlices[0], 0));
+		for (int z = 1; z &lt; distSlices.length - 1; z++) {
+			System.out.print(" / " + round(distSlices[z], 0));		
+		}
+		System.out.println();
+
+		System.out.print("WallDistance Slices: " + round(walldistSlices[0], 2));
+		for (int z = 1; z &lt; walldistSlices.length - 1; z++) {
+			System.out.print(" / " + round(walldistSlices[z], 2));		
+		}
+		System.out.println();
+
+		System.out.print("VChangeTime Slices: " + round(vchangeSlices[0], 2));
+		for (int z = 1; z &lt; vchangeSlices.length - 1; z++) {
+			System.out.print(" / " + round(vchangeSlices[z], 2));		
+		}
+		System.out.println();
+
+		System.out.println("Final entropy: " + vchangeData.entropy);
+ 	}
+ 	
+ 	public void findBestLatVelDistanceWallDistanceReverseWallDistanceVChangeTimeSlicesTwoAll(
+ 	 	int numLatVelSlices, int numDistSlices, int numWallDistSlices, 
+ 	 	int numReverseWallDistSlices, int numVChangeTimeSlices, int gfSlices) {
+ 	 	 	 	 	 	 	 		
+ 	 	DataRecordTwoGroup[] drtg = new DataRecordTwoGroup[waveSets.size() * 3];
+
+ 	 	Iterator iter; 	 	
+ 	 	int gIndex = 0;
+
+ 	 	for (int y = 0; y &lt; 3; y++) {
+ 	 	 	iter = waveSets.keySet().iterator();
+
+ 	 	 	gIndex = 0;
+ 	 	 	while (iter.hasNext()) {
+ 	 	 	  	String filename = (String)iter.next();
+
+ 	 	 	  	ArrayList waves = waveSets.get(filename);
+ 	 			DataRecordTwo[] drt = new DataRecordTwo[waves.size()];
+ 	 			
+ 	 			int tempIndex = 0;
+ 	 			
+ 	 			for (int x = 0; x &lt; waves.size(); x++) {
+ 	 				Wave w = (Wave)waves.get(x);
+ 	 				if (w.accel == y) {
+ 	 					drt[tempIndex++] = parseWaveLatVel(w, gfSlices);
+ 	 				}
+ 	 			}
+ 	 			
+ 	 			drt = trimDataSet(drt, tempIndex);
+ 	 			
+ 	 			drtg[(y * waveSets.size()) + gIndex] = new DataRecordTwoGroup(gIndex, drt);
+ 	 			gIndex++;
+ 	 	 	}
+ 	 	}
+
+ 	 	int[] baseCounts = new int[drtg.length];
+ 	 	for (int x = 0; x &lt; drtg.length; x++) {
+ 	 		baseCounts[x] = drtg[x].dataSet.length;
+ 	 	}
+ 	 	 	 	 	 	 	 		 		
+ 	 	ThresholdData latVelData = findBestAttrSlices(drtg, numLatVelSlices,
+ 	 	 	0.25f, gfSlices, 0, 8, baseCounts);
+
+ 	 	float[] latVelSlices = new float[numLatVelSlices + 1];
+ 	 	for (int x = 0; x &lt; numLatVelSlices; x++) {
+	 		latVelSlices[x] = latVelData.slices[x]; 	 		
+ 	 	}
+ 	 	latVelSlices[numLatVelSlices] = Float.POSITIVE_INFINITY;
+ 	 	 	
+ 	 	
+ 	 	float[] distSlices = new float[numDistSlices + 1];
+ 	 	drtg = new DataRecordTwoGroup[waveSets.size() * 3 * (numLatVelSlices + 1)];
+ 	 	 	
+ 	 	for (int y = 0; y &lt; 3; y++) {
+ 	 	 	for (int z = 0; z &lt; latVelSlices.length; z++) {
+ 	 	 	 	iter = waveSets.keySet().iterator();
+
+ 	 	 	 	gIndex = 0;
+ 	 	 	 	while (iter.hasNext()) {
+ 	 	 	 	  	String filename = (String)iter.next();
+
+ 	 	 	 	  	ArrayList waves = waveSets.get(filename);
+ 	 	 			DataRecordTwo[] drt = new DataRecordTwo[waves.size()];
+ 	 	 			
+ 	 	 			int tempIndex = 0;
+ 	 	 			
+ 	 	 			for (int x = 0; x &lt; waves.size(); x++) {
+ 	 	 				Wave w = (Wave)waves.get(x);
+ 	 	 				if (w.accel == y &amp;&amp;
+ 	 	 					w.latVel &lt; latVelSlices[z] &amp;&amp; 
+ 	 	 					(z == 0 || w.latVel &gt;= latVelSlices[z-1])) {
+ 	 	 					drt[tempIndex++] = parseWaveDistance(w, gfSlices);
+ 	 	 				}
+ 	 	 			}
+ 	 	 			
+ 	 	 			drt = trimDataSet(drt, tempIndex);
+ 	 	 			
+ 	 	 			drtg[((y * latVelSlices.length + z) * waveSets.size()) + gIndex] = new DataRecordTwoGroup(gIndex, drt);
+ 	 	 			gIndex++;
+ 	 	 	 	}
+ 	 	 	}
+ 	 	}
+
+ 	 	baseCounts = new int[drtg.length];
+ 	 	for (int x = 0; x &lt; drtg.length; x++) {
+ 	 		baseCounts[x] = drtg[x].dataSet.length;
+ 	 	}
+ 	 	 	 	 	 	 	 		 		
+ 	 	ThresholdData distData = findBestAttrSlices(drtg, numDistSlices,
+ 	 	 	25, gfSlices, 0, 1000, baseCounts);
+ 	 	 	
+ 	 	for (int x = 0; x &lt; numDistSlices; x++) {
+ 	 		distSlices[x] = distData.slices[x]; 	 		
+ 	 	}
+ 	 	distSlices[numDistSlices] = Float.POSITIVE_INFINITY;
+
+ 	 	
+ 	 	float[] walldistSlices = new float[numWallDistSlices + 1]; 	
+ 	 	drtg = new DataRecordTwoGroup[waveSets.size() * 3 * (numLatVelSlices + 1) * (numDistSlices + 1)];
+ 	 	
+ 	 	for (int y = 0; y &lt; 3; y++) {
+ 	 	 	for (int z = 0; z &lt; latVelSlices.length; z++) {
+ 	 	 	 	for (int a = 0; a &lt; distSlices.length; a++) {
+ 	 	 	 	 	iter = waveSets.keySet().iterator();
+
+ 	 	 	 	 	gIndex = 0;
+ 	 	 	 	 	while (iter.hasNext()) {
+ 	 	 	 	 	  	String filename = (String)iter.next();
+
+ 	 	 	 	 	  	ArrayList waves = waveSets.get(filename);
+ 	 	 	 			DataRecordTwo[] drt = new DataRecordTwo[waves.size()];
+ 	 	 	 			
+ 	 	 	 			int tempIndex = 0;
+ 	 	 	 			
+ 	 	 	 			for (int x = 0; x &lt; waves.size(); x++) {
+ 	 	 	 				Wave w = (Wave)waves.get(x);
+ 	 	 	 				if (w.accel == y &amp;&amp;
+ 	 	 	 					w.latVel &lt; latVelSlices[z] &amp;&amp; 
+ 	 	 	 					(z == 0 || w.latVel &gt;= latVelSlices[z-1]) &amp;&amp;
+ 	 	 	 					w.distance &lt; distSlices[a] &amp;&amp;
+ 	 	 	 					(a == 0 || w.distance &gt;= distSlices[a-1])) {
+ 	 	 	 					drt[tempIndex++] = parseWaveWallDistance(w, gfSlices);
+ 	 	 	 				}
+ 	 	 	 			}
+ 	 	 	 			
+ 	 	 	 			drt = trimDataSet(drt, tempIndex);
+ 	 	 	 			
+ 	 	 	 			drtg[((a + z * distSlices.length + y * latVelSlices.length * distSlices.length) * waveSets.size()) + gIndex] = new DataRecordTwoGroup(gIndex, drt);
+ 	 	 	 			gIndex++;
+ 	 	 	 	 	}
+ 	 	 	 	}
+ 	 	 	}
+ 	 	} 	 	
+ 	 	baseCounts = new int[drtg.length];
+ 	 	for (int x = 0; x &lt; drtg.length; x++) {
+ 	 		baseCounts[x] = drtg[x].dataSet.length;
+ 	 	}
+ 	 	 	 	 	 	 	 		 		
+ 	 	ThresholdData walldistData = findBestAttrSlices(drtg, numWallDistSlices,
+ 	 	 	0.05f, gfSlices, 0, 1.2f, baseCounts);
+ 	 	 	
+ 	 	for (int x = 0; x &lt; numWallDistSlices; x++) {
+ 	 		walldistSlices[x] = walldistData.slices[x]; 	 		
+ 	 	}
+ 	 	walldistSlices[numWallDistSlices] = Float.POSITIVE_INFINITY;
+ 	 	
+
+ 	 	float[] reverseWallDistSlices = new float[numReverseWallDistSlices + 1]; 	
+ 	 	drtg = new DataRecordTwoGroup[waveSets.size() * 3 * (numLatVelSlices + 1) * 
+ 	 	    (numDistSlices + 1) * (numWallDistSlices + 1)];
+ 	 	
+ 	 	for (int y = 0; y &lt; 3; y++) {
+ 	 	 	for (int z = 0; z &lt; latVelSlices.length; z++) {
+ 	 	 	 	for (int a = 0; a &lt; distSlices.length; a++) {
+ 	 	 	 	 	for (int b = 0; b &lt; walldistSlices.length; b++) {
+ 	 	 	 	 	 	iter = waveSets.keySet().iterator();
+
+ 	 	 	 	 	 	gIndex = 0;
+ 	 	 	 	 	 	while (iter.hasNext()) {
+ 	 	 	 	 	 	  	String filename = (String)iter.next();
+
+ 	 	 	 	 	 	  	ArrayList waves = waveSets.get(filename);
+ 	 	 	 	 			DataRecordTwo[] drt = new DataRecordTwo[waves.size()];
+ 	 	 	 	 			
+ 	 	 	 	 			int tempIndex = 0;
+ 	 	 	 	 			
+ 	 	 	 	 			for (int x = 0; x &lt; waves.size(); x++) {
+ 	 	 	 	 				Wave w = (Wave)waves.get(x);
+ 	 	 	 	 				if (w.accel == y &amp;&amp;
+ 	 	 	 	 					w.latVel &lt; latVelSlices[z] &amp;&amp; 
+ 	 	 	 	 					(z == 0 || w.latVel &gt;= latVelSlices[z-1]) &amp;&amp;
+ 	 	 	 	 					w.distance &lt; distSlices[a] &amp;&amp;
+ 	 	 	 	 					(a == 0 || w.distance &gt;= distSlices[a-1]) &amp;&amp;
+ 	 	 	 	 					w.wallDistance &lt; walldistSlices[b] &amp;&amp;
+ 	 	 	 	 					(b == 0 || w.wallDistance &gt;= walldistSlices[b-1])) {
+ 	 	 	 	 					DataRecordTwo drtTemp = 
+ 	 	 	 	 						parseWaveReverseWallDistance(w, gfSlices);
+ 	 	 	 	 					if (drtTemp != null) {
+ 	 	 	 	 						drt[tempIndex++] = drtTemp;
+ 	 	 	 	 					}
+ 	 	 	 	 				}
+ 	 	 	 	 			}
+ 	 	 	 	 			
+ 	 	 	 	 			drt = trimDataSet(drt, tempIndex);
+ 	 	 	 	 			
+ 	 	 	 	 			drtg[((b + a * walldistSlices.length + z * distSlices.length * walldistSlices.length + y * latVelSlices.length * distSlices.length * walldistSlices.length) * waveSets.size()) + gIndex] = new DataRecordTwoGroup(gIndex, drt);
+ 	 	 	 	 			gIndex++;
+ 	 	 	 	 	 	}
+ 	 	 	 	 	}
+ 	 	 	 	}
+ 	 	 	}
+ 	 	} 	 	
+ 	 	baseCounts = new int[drtg.length];
+ 	 	for (int x = 0; x &lt; drtg.length; x++) {
+ 	 		baseCounts[x] = drtg[x].dataSet.length;
+ 	 	}
+ 	 	 	 	 	 	 	 		 		
+ 	 	ThresholdData reverseWallDistData = findBestAttrSlices(drtg, numReverseWallDistSlices,
+ 	 	 	0.05f, gfSlices, 0, 1.2f, baseCounts);
+ 	 	 	
+ 	 	for (int x = 0; x &lt; numReverseWallDistSlices; x++) {
+ 	 		reverseWallDistSlices[x] = reverseWallDistData.slices[x]; 	 		
+ 	 	}
+ 	 	reverseWallDistSlices[numReverseWallDistSlices] = Float.POSITIVE_INFINITY;
+
+ 	 	
+ 	 	float[] vchangeSlices = new float[numVChangeTimeSlices + 1]; 	
+ 	 	drtg = new DataRecordTwoGroup[waveSets.size() * 3 * (numLatVelSlices + 1) * 
+ 	 	    (numDistSlices + 1) * (numWallDistSlices + 1) * (numReverseWallDistSlices + 1)];
+ 	 	
+ 	 	for (int y = 0; y &lt; 3; y++) {
+ 	 	 	for (int z = 0; z &lt; latVelSlices.length; z++) {
+ 	 	 	 	for (int a = 0; a &lt; distSlices.length; a++) {
+ 	 	 	 	 	for (int b = 0; b &lt; walldistSlices.length; b++) {
+ 	 	 	 	 	 	for (int c = 0; c &lt; reverseWallDistSlices.length; c++) {
+ 	 	 	 	 	 	 	iter = waveSets.keySet().iterator();
+
+ 	 	 	 	 	 	 	gIndex = 0;
+ 	 	 	 	 	 	 	while (iter.hasNext()) {
+ 	 	 	 	 	 	 	  	String filename = (String)iter.next();
+
+ 	 	 	 	 	 	 	  	ArrayList waves = waveSets.get(filename);
+ 	 	 	 	 	 			DataRecordTwo[] drt = new DataRecordTwo[waves.size()];
+ 	 	 	 	 	 			
+ 	 	 	 	 	 			int tempIndex = 0;
+ 	 	 	 	 	 			
+ 	 	 	 	 	 			for (int x = 0; x &lt; waves.size(); x++) {
+ 	 	 	 	 	 				Wave w = (Wave)waves.get(x);
+ 	 	 	 	 	 				if (w.accel == y &amp;&amp;
+ 	 	 	 	 	 					w.latVel &lt; latVelSlices[z] &amp;&amp; 
+ 	 	 	 	 	 					(z == 0 || w.latVel &gt;= latVelSlices[z-1]) &amp;&amp;
+ 	 	 	 	 	 					w.distance &lt; distSlices[a] &amp;&amp;
+ 	 	 	 	 	 					(a == 0 || w.distance &gt;= distSlices[a-1]) &amp;&amp;
+ 	 	 	 	 	 					w.wallDistance &lt; walldistSlices[b] &amp;&amp;
+ 	 	 	 	 	 					(b == 0 || w.wallDistance &gt;= walldistSlices[b-1]) &amp;&amp;
+ 	 	 	 	 	 					w.reverseWallDistance &lt; reverseWallDistSlices[c] &amp;&amp;
+ 	 	 	 	 	 					(c == 0 || w.reverseWallDistance &gt;= reverseWallDistSlices[c-1])) {
+ 	 	 	 	 	 					DataRecordTwo drtTemp = parseWaveVChangeTime(w, gfSlices);
+ 	 	 	 	 	 					if (drtTemp != null) {
+ 	 	 	 	 	 						drt[tempIndex++] = drtTemp;
+ 	 	 	 	 	 					}
+ 	 	 	 	 	 				}
+ 	 	 	 	 	 			}
+ 	 	 	 	 	 			
+ 	 	 	 	 	 			drt = trimDataSet(drt, tempIndex);
+ 	 	 	 	 	 			
+ 	 	 	 	 	 			drtg[((c + b * reverseWallDistSlices.length + a * reverseWallDistSlices.length * walldistSlices.length + z * reverseWallDistSlices.length * distSlices.length * walldistSlices.length + y * latVelSlices.length * distSlices.length * walldistSlices.length * reverseWallDistSlices.length) * waveSets.size()) + gIndex] = new DataRecordTwoGroup(gIndex, drt);
+ 	 	 	 	 	 			gIndex++;
+ 	 	 	 	 	 	 	}
+ 	 	 	 	 	 	}
+ 	 	 	 	 	 }
+ 	 	 	 	}
+ 	 	 	}
+ 	 	} 	 	
+ 	 	baseCounts = new int[drtg.length];
+ 	 	for (int x = 0; x &lt; drtg.length; x++) {
+ 	 		baseCounts[x] = drtg[x].dataSet.length;
+ 	 	}
+ 	 	 	 	 	 	 	 		 		
+ 	 	ThresholdData vchangeData = findBestAttrSlices(drtg, numVChangeTimeSlices,
+ 	 	 	0.05f, gfSlices, 0, 1.2f, baseCounts);
+ 	 	 	
+ 	 	for (int x = 0; x &lt; numVChangeTimeSlices; x++) {
+ 	 		vchangeSlices[x] = vchangeData.slices[x]; 	 		
+ 	 	}
+ 	 	vchangeSlices[numVChangeTimeSlices] = Float.POSITIVE_INFINITY;
+ 	 	
+		System.out.print("LatVel Slices: " + round(latVelSlices[0], 2));
+		for (int z = 1; z &lt; latVelSlices.length - 1; z++) {
+			System.out.print(" / " + round(latVelSlices[z], 2));		
+		}
+		System.out.println();
+
+		System.out.print("Distance Slices: " + round(distSlices[0], 0));
+		for (int z = 1; z &lt; distSlices.length - 1; z++) {
+			System.out.print(" / " + round(distSlices[z], 0));		
+		}
+		System.out.println();
+
+		System.out.print("WallDistance Slices: " + round(walldistSlices[0], 2));
+		for (int z = 1; z &lt; walldistSlices.length - 1; z++) {
+			System.out.print(" / " + round(walldistSlices[z], 2));		
+		}
+		System.out.println();
+
+		System.out.print("ReverseWallDistance Slices: " + round(reverseWallDistSlices[0], 2));
+		for (int z = 1; z &lt; reverseWallDistSlices.length - 1; z++) {
+			System.out.print(" / " + round(reverseWallDistSlices[z], 2));		
+		}
+		System.out.println();
+
+		System.out.print("VChangeTime Slices: " + round(vchangeSlices[0], 2));
+		for (int z = 1; z &lt; vchangeSlices.length - 1; z++) {
+			System.out.print(" / " + round(vchangeSlices[z], 2));		
+		}
+		System.out.println();
+
+		System.out.println("Final entropy: " + vchangeData.entropy);
+ 	 }
+
+ 	public ThresholdData findBestLatVelSlicesTwo(String filename, int attrSlices, 
+ 		float attrIncrement, int gfSlices, float lowBound, float highBound) {
+		return findBestAttrSlices(dataSetLatVel(filename, gfSlices), attrSlices,
+			attrIncrement, gfSlices, lowBound, highBound);
+	}
+
+ 	public ThresholdData findBestLatVelSlicesTwoRatio(String filename, int attrSlices, 
+ 		float attrIncrement, int gfSlices, float lowBound, float highBound) {
+		return findBestAttrSlicesRatio(dataSetLatVel(filename, gfSlices), attrSlices,
+			attrIncrement, gfSlices, lowBound, highBound);
+	}
+
+ 	public ThresholdData findBestLatVelSlicesTwoAll(int attrSlices, 
+ 	 	float attrIncrement, int gfSlices, float lowBound, float highBound) {
+ 	 	 	 	 	 		
+ 	 	DataRecordTwoGroup[] drtg = new DataRecordTwoGroup[waveSets.size()];
+ 	 	 	 	 	 		
+ 	 	Iterator iter = waveSets.keySet().iterator();
+ 	 	 	 	 	 		
+ 	 	int gIndex = 0;
+ 	 	while (iter.hasNext()) {
+ 	 	  	String filename = (String)iter.next();
+ 	 	  	drtg[gIndex++] = new DataRecordTwoGroup(gIndex, dataSetLatVel(filename, gfSlices));
+ 	 	}
+ 	 	 	 	 	 
+ 	 	int[] baseCounts = new int[drtg.length];
+ 	 	for (int x = 0; x &lt; drtg.length; x++) {
+ 	 		baseCounts[x] = drtg[x].dataSet.length;
+ 	 	}
+ 	 	 	 	 	 		 		
+ 	 	return findBestAttrSlices(drtg, attrSlices,
+ 	  	 	attrIncrement, gfSlices, lowBound, highBound, baseCounts);
+ 	}
+ 	
+ 	public ThresholdData findBestLatVelSlicesTwoRatioAll(int attrSlices, 
+ 		float attrIncrement, int gfSlices, float lowBound, float highBound) {
+ 		
+ 		DataRecordTwoGroup[] drtg = new DataRecordTwoGroup[waveSets.size()];
+ 		
+ 		Iterator iter = waveSets.keySet().iterator();
+ 		
+ 		int gIndex = 0;
+ 		while (iter.hasNext()) {
+ 			String filename = (String)iter.next();
+ 			drtg[gIndex++] = new DataRecordTwoGroup(gIndex, dataSetLatVel(filename, gfSlices));
+ 		}
+ 		
+ 		int[] baseCounts = new int[drtg.length];
+ 		for (int x = 0; x &lt; drtg.length; x++) {
+ 			baseCounts[x] = drtg[x].dataSet.length;
+ 		}
+ 		 		
+		return findBestAttrSlicesRatio(drtg, attrSlices,
+			attrIncrement, gfSlices, lowBound, highBound, baseCounts);
+	}
+
+ 	public ThresholdData findBestDistanceSlicesTwo(String filename, int attrSlices, 
+ 	 	float attrIncrement, int gfSlices, float lowBound, float highBound) {
+ 		return findBestAttrSlices(dataSetDistance(filename, gfSlices), attrSlices,
+ 			attrIncrement, gfSlices, lowBound, highBound);
+	}
+
+ 	public ThresholdData findBestDistanceSlicesTwoRatio(String filename, int attrSlices, 
+ 	 	 	float attrIncrement, int gfSlices, float lowBound, float highBound) {
+ 	 		return findBestAttrSlicesRatio(dataSetDistance(filename, gfSlices), attrSlices,
+ 	 			attrIncrement, gfSlices, lowBound, highBound);
+	}
+ 	
+ 	public ThresholdData findBestDistanceSlicesTwoAll(int attrSlices, 
+ 	 	 float attrIncrement, int gfSlices, float lowBound, float highBound) {
+ 	 	 	 	 		
+ 	 	 DataRecordTwoGroup[] drtg = new DataRecordTwoGroup[waveSets.size()];
+ 	 	 	 	 		
+ 	 	 Iterator iter = waveSets.keySet().iterator();
+ 	 	 	 	 		
+ 	 	 int gIndex = 0;
+ 	 	 while (iter.hasNext()) {
+ 	 	 	 String filename = (String)iter.next();
+ 	 	  	 drtg[gIndex++] = new DataRecordTwoGroup(gIndex, dataSetDistance(filename, gfSlices));
+ 	 	 }
+ 	 	 	 	 
+ 	 	 int[] baseCounts = new int[drtg.length];
+ 	 	 for (int x = 0; x &lt; drtg.length; x++) {
+ 	 	 	baseCounts[x] = drtg[x].dataSet.length;
+ 	 	 }
+ 	 	 	 	 		 		
+ 	 	 return findBestAttrSlices(drtg, attrSlices,
+ 	 	 	attrIncrement, gfSlices, lowBound, highBound, baseCounts);
+ 	}
+ 	
+ 	public ThresholdData findBestDistanceSlicesTwoRatioAll(int attrSlices, 
+ 	 	float attrIncrement, int gfSlices, float lowBound, float highBound) {
+ 	 		
+ 	 	DataRecordTwoGroup[] drtg = new DataRecordTwoGroup[waveSets.size()];
+ 	 		
+ 	 	Iterator iter = waveSets.keySet().iterator();
+ 	 		
+ 	 	int gIndex = 0;
+ 	 	while (iter.hasNext()) {
+ 	 		String filename = (String)iter.next();
+ 	 		drtg[gIndex++] = new DataRecordTwoGroup(gIndex, dataSetDistance(filename, gfSlices));
+ 	 	}
+ 	 	
+ 		int[] baseCounts = new int[drtg.length];
+ 		for (int x = 0; x &lt; drtg.length; x++) {
+ 			baseCounts[x] = drtg[x].dataSet.length;
+ 		}
+ 	 		 		
+ 		return findBestAttrSlicesRatio(drtg, attrSlices,
+ 			attrIncrement, gfSlices, lowBound, highBound, baseCounts);
+ 	}
+
+ 	public ThresholdData findBestWallDistanceSlicesTwo(String filename, int attrSlices, 
+ 	 	float attrIncrement, int gfSlices, float lowBound, float highBound) {
+ 		return findBestAttrSlices(dataSetWallDistance(filename, gfSlices), attrSlices,
+ 			attrIncrement, gfSlices, lowBound, highBound);
+	}
+
+ 	public ThresholdData findBestWallDistanceSlicesTwoRatio(String filename, int attrSlices, 
+ 	 	float attrIncrement, int gfSlices, float lowBound, float highBound) {
+ 	 	return findBestAttrSlicesRatio(dataSetWallDistance(filename, gfSlices), attrSlices,
+ 	 		attrIncrement, gfSlices, lowBound, highBound);
+ 	}
+ 	
+ 	public ThresholdData findBestWallDistanceSlicesTwoAll(int attrSlices, 
+ 	  	 float attrIncrement, int gfSlices, float lowBound, float highBound) {
+ 	 	 	 		
+ 	 	 DataRecordTwoGroup[] drtg = new DataRecordTwoGroup[waveSets.size()];
+ 	 	 	 		
+ 	 	 Iterator iter = waveSets.keySet().iterator();
+ 	 	 	 		
+ 	 	 int gIndex = 0;
+ 	 	 while (iter.hasNext()) {
+ 	 		 String filename = (String)iter.next();
+ 	 	 	 drtg[gIndex++] = new DataRecordTwoGroup(gIndex, dataSetWallDistance(filename, gfSlices));
+ 	 	 }
+ 	 	 	 
+ 	  	int[] baseCounts = new int[drtg.length];
+ 	 	for (int x = 0; x &lt; drtg.length; x++) {
+ 	 		baseCounts[x] = drtg[x].dataSet.length;
+ 	 	}
+ 	 	 	 		 		
+ 	 	return findBestAttrSlices(drtg, attrSlices,
+ 	 		attrIncrement, gfSlices, lowBound, highBound, baseCounts);
+ 	}
+ 	
+ 	public ThresholdData findBestWallDistanceSlicesTwoRatioAll(int attrSlices, 
+ 	 	 float attrIncrement, int gfSlices, float lowBound, float highBound) {
+ 	 	 		
+ 	 	 DataRecordTwoGroup[] drtg = new DataRecordTwoGroup[waveSets.size()];
+ 	 	 		
+ 	 	 Iterator iter = waveSets.keySet().iterator();
+ 	 	 		
+ 	 	 int gIndex = 0;
+ 	 	 while (iter.hasNext()) {
+ 	 	 	String filename = (String)iter.next();
+ 	 	 	drtg[gIndex++] = new DataRecordTwoGroup(gIndex, dataSetWallDistance(filename, gfSlices));
+ 	 	 }
+ 	 	 
+  		int[] baseCounts = new int[drtg.length];
+ 		for (int x = 0; x &lt; drtg.length; x++) {
+ 			baseCounts[x] = drtg[x].dataSet.length;
+ 		}
+ 	 	 		 		
+ 	 	 return findBestAttrSlicesRatio(drtg, attrSlices,
+ 	 		attrIncrement, gfSlices, lowBound, highBound, baseCounts);
+ 	}
+ 	
+ 	public ThresholdData findBestVChangeTimeSlicesTwoAll(int attrSlices, 
+ 		float attrIncrement, int gfSlices, float lowBound, float highBound) {
+	 		
+ 		DataRecordTwoGroup[] drtg = new DataRecordTwoGroup[waveSets.size()];
+ 	 	 	 	 		
+ 	 	Iterator iter = waveSets.keySet().iterator();
+ 	 	 	 	 		
+ 	 	int gIndex = 0;
+ 	 	while (iter.hasNext()) {
+ 	 		String filename = (String)iter.next();
+ 	 	 	drtg[gIndex++] = new DataRecordTwoGroup(gIndex, dataSetVChangeTime(filename, gfSlices));
+ 	 	}
+ 	 	 	 	 
+ 	 	int[] baseCounts = new int[drtg.length];
+ 	 	for (int x = 0; x &lt; drtg.length; x++) {
+ 	 		baseCounts[x] = drtg[x].dataSet.length;
+ 	 	}
+ 	 	 	 	 		 		
+ 	 	return findBestAttrSlices(drtg, attrSlices,
+ 	 		attrIncrement, gfSlices, lowBound, highBound, baseCounts);
+ 	}
+
+	public ThresholdData findBestVChangeTimeSlicesTwoRatioAll(int attrSlices, 
+		float attrIncrement, int gfSlices, float lowBound, float highBound) {
+ 		 		
+ 	 	DataRecordTwoGroup[] drtg = new DataRecordTwoGroup[waveSets.size()];
+ 	 	 	 	 	 		
+ 	 	Iterator iter = waveSets.keySet().iterator();
+ 	 	 	 	 	 		
+ 	 	int gIndex = 0;
+ 	 	while (iter.hasNext()) {
+ 	 		String filename = (String)iter.next();
+ 	 	 	drtg[gIndex++] = new DataRecordTwoGroup(gIndex, dataSetVChangeTime(filename, gfSlices));
+ 	 	}
+ 	 	 	 	 	 
+ 	 	int[] baseCounts = new int[drtg.length];
+ 	 	for (int x = 0; x &lt; drtg.length; x++) {
+ 	 		baseCounts[x] = drtg[x].dataSet.length;
+ 	 	}
+ 	 	 	 	 	 		 		
+ 	 	return findBestAttrSlicesRatio(drtg, attrSlices,
+ 	 		attrIncrement, gfSlices, lowBound, highBound, baseCounts);
+ 	 }
+	
+	public float evaluateUnsegmentedSet(int gfSlices) {
+ 	 	DataRecordTwoGroup[] drtg = new DataRecordTwoGroup[waveSets.size()];
+	 		
+ 	 	Iterator iter = waveSets.keySet().iterator();
+ 	 		
+ 	 	int gIndex = 0;
+ 	 	while (iter.hasNext()) {
+ 	 		String filename = (String)iter.next();
+ 	 		drtg[gIndex++] = new DataRecordTwoGroup(gIndex, dataSetDistance(filename, gfSlices));
+ 	 	}
+ 	 	
+ 		int[] baseCounts = new int[drtg.length];
+ 		for (int x = 0; x &lt; drtg.length; x++) {
+ 			baseCounts[x] = drtg[x].dataSet.length;
+ 		}
+ 		
+ 		return calculateEntropy(drtg, baseCounts);		
+	}
+	
+ 	public float evaluateSegmentationSet(float[] LATVEL_SLICES,
+ 		float[] DISTANCE_SLICES, float[] WALLDISTANCE_SLICES,
+ 		float[] VCHANGETIME_SLICES, float[] ACCEL_SLICES, int gfSlices) {
+ 		
+ 		int numSegments = LATVEL_SLICES.length * DISTANCE_SLICES.length *
+ 			WALLDISTANCE_SLICES.length * VCHANGETIME_SLICES.length * 
+ 			ACCEL_SLICES.length;
+ 		
+ 		DataRecordTwoGroup[] dg = new DataRecordTwoGroup[numSegments * waveSets.size()];
+ 	 	int[] dataSetLengths = new int[numSegments * waveSets.size()];
+
+ 	 	Iterator iter = waveSets.keySet().iterator();
+ 	 	 	 	 	 	 		
+ 	 	int gIndex = 0;
+	 	while (iter.hasNext()) {
+	 		String filename = (String)iter.next();
+ 	 		ArrayList waves = waveSets.get(filename);
+ 	 		
+ 	 	 	for (int a = 0; a &lt; LATVEL_SLICES.length; a++) {
+ 	 			for (int b = 0; b &lt; DISTANCE_SLICES.length; b++) {
+ 	 				for (int c = 0; c &lt; WALLDISTANCE_SLICES.length; c++) {
+ 	 					for (int d = 0; d &lt; VCHANGETIME_SLICES.length; d++) {
+ 	 						for (int e = 0; e &lt; ACCEL_SLICES.length; e++, gIndex++) {
+ 	 							if (dg[gIndex] == null) {
+ 	 								dg[gIndex] = new DataRecordTwoGroup(gIndex,
+ 	 									new DataRecordTwo[200]);
+ 	 							} 
+ 	 							 	 							
+ 	 							for (int x = 0; x &lt; waves.size(); x++) {
+ 	 	 							if (dg[gIndex].dataSet.length &lt;= dataSetLengths[gIndex] + 1) {
+ 	 	 								DataRecordTwo[] newSet = new DataRecordTwo[dg[gIndex].dataSet.length * 2];
+ 	 	 								for (int z = 0; z &lt; dg[gIndex].dataSet.length; z++) {
+ 	 	 									newSet[z] = dg[gIndex].dataSet[z];
+ 	 	 								}
+ 	 	 								
+ 	 	 								dg[gIndex].dataSet = newSet;
+ 	 	 							}
+
+ 	 	 							Wave w = (Wave)waves.get(x);
+ 	 	 							double vChange = ((double)w.timeSinceVChange) / (w.distance / 11);
+ 	 								if (w.latVel &lt; LATVEL_SLICES[a] &amp;&amp; (a == 0 || w.latVel &gt; LATVEL_SLICES[a-1]) &amp;&amp;
+ 	 									w.distance &lt; DISTANCE_SLICES[b] &amp;&amp; (b == 0 || w.distance &gt; DISTANCE_SLICES[b-1]) &amp;&amp;
+ 	 									w.wallDistance &lt; WALLDISTANCE_SLICES[c] &amp;&amp; (c == 0 || w.wallDistance &gt; WALLDISTANCE_SLICES[c-1]) &amp;&amp;
+ 	 									vChange &lt; VCHANGETIME_SLICES[d] &amp;&amp; (d == 0 || vChange &gt; VCHANGETIME_SLICES[d-1]) &amp;&amp;
+ 	 									w.accel &lt;  ACCEL_SLICES[e] &amp;&amp; (e == 0 || w.accel &gt; ACCEL_SLICES[e-1])) {
+ 	 									dg[gIndex].dataSet[dataSetLengths[gIndex]++] =
+ 	 										new DataRecordTwo((float)gIndex, gfIndex(w.guessFactor, gfSlices));
+  	 								}
+ 	 							}
+ 	 						}
+ 	 					}
+ 	 				}
+ 	 			}
+ 	 		}
+ 	 	}
+	 	
+ 	 	return calculateEntropy(dg, dataSetLengths);
+ 	}
+ 	
+ 	public ThresholdData findBestAttrSlices(DataRecordTwo[] ds,
+ 		int attrSlices, float attrIncrement, int gfSlices, float lowBound, float highBound) {
+ 			
+		DataRecordTwo[] ds1 = new DataRecordTwo[ds.length];
+		DataRecordTwo[] ds2 = new DataRecordTwo[ds.length];
+			              
+		float origEntropy = calculateEntropy(ds);
+		float bestEntropy = Float.POSITIVE_INFINITY;
+		
+		float[] slices = new float[attrSlices];
+		
+		for (float t1 = lowBound + attrIncrement; t1 &lt; highBound; 
+			t1 += attrIncrement) {
+			int ds1Index = 0, ds2Index = 0;
+			
+			for (int x = 0; x &lt; ds.length; x++) {
+				DataRecordTwo dr = ds[x];
+				if (dr.attr1 &lt; t1) {
+					ds1[ds1Index++] = dr;
+				} else {
+					ds2[ds2Index++] = dr;
+				}
+			}
+					
+			float newEntropy = 
+					((((float)ds1Index) / ds.length) * 
+						calculateEntropy(trimDataSet(ds1, ds1Index)));
+			
+			if (attrSlices == 1) {
+				newEntropy += ((((float)ds2Index) / ds.length) *
+					calculateEntropy(trimDataSet(ds2, ds2Index)));
+
+				if (newEntropy &lt; bestEntropy) {
+					bestEntropy = newEntropy;
+					slices[0] = t1;
+				}
+			} else {
+				ThresholdData td = findBestAttrSlices(
+					trimDataSet(ds2, ds2Index), attrSlices - 1, attrIncrement,
+					gfSlices, t1, highBound);
+					
+				newEntropy += ((((float)ds2Index) / ds.length) *
+					td.entropy);
+
+				if (newEntropy &lt; bestEntropy) {
+					bestEntropy = newEntropy;
+					slices[0] = t1;
+					for (int i = 0; i &lt; td.slices.length; i++) {
+						slices[i+1] = td.slices[i];
+					}
+				}
+			}				
+		}
+		
+		return new ThresholdData(slices, bestEntropy, origEntropy);
+	}
+ 	
+ 	public ThresholdData findBestAttrSlicesRatio(DataRecordTwo[] ds,
+		int attrSlices, float attrIncrement, int gfSlices, float lowBound, float highBound) {
+ 	 			
+ 		DataRecordTwo[] ds1 = new DataRecordTwo[ds.length];
+ 		DataRecordTwo[] ds2 = new DataRecordTwo[ds.length];
+ 
+ 		float origEntropy = calculateEntropy(ds);
+ 				
+		float bestRatio = Float.NEGATIVE_INFINITY;
+		float bestEntropy = Float.POSITIVE_INFINITY;
+		
+		float[] slices = new float[attrSlices];
+		
+		for (float t1 = lowBound + attrIncrement; t1 &lt; highBound; 
+			t1 += attrIncrement) {
+			int ds1Index = 0, ds2Index = 0;
+			
+			for (int x = 0; x &lt; ds.length; x++) {
+				DataRecordTwo dr = ds[x];
+				if (dr.attr1 &lt; t1) {
+					ds1[ds1Index++] = dr;
+				} else {
+					ds2[ds2Index++] = dr;
+				}
+			}
+					
+			float newEntropy = 
+					((((float)ds1Index) / ds.length) * 
+						calculateEntropy(trimDataSet(ds1, ds1Index)));
+			
+			if (attrSlices == 1) {
+				newEntropy += ((((float)ds2Index) / ds.length) *
+					calculateEntropy(trimDataSet(ds2, ds2Index)));
+
+				float[] tempSlices = new float[1];
+				tempSlices[0] = t1;
+				
+				float gainRatio = (origEntropy - newEntropy)
+					/ calculateSplitInformation(ds, tempSlices);
+
+				if (gainRatio &gt; bestRatio) {
+					bestRatio = gainRatio;
+					slices[0] = t1;
+					bestEntropy = newEntropy;
+				}
+			} else {
+				ThresholdData td = findBestAttrSlicesRatio(
+					trimDataSet(ds2, ds2Index), attrSlices - 1, attrIncrement,
+					gfSlices, t1, highBound);
+					
+				newEntropy += ((((float)ds2Index) / ds.length) *
+					td.entropy);
+
+				float[] tempSlices = new float[attrSlices];
+				tempSlices[0] = t1;
+				for (int i = 0; i &lt; td.slices.length; i++) {
+					tempSlices[i+1] = td.slices[i];
+				}
+				
+				float gainRatio = (origEntropy - newEntropy)
+					/ calculateSplitInformation(ds, tempSlices);
+
+				if (gainRatio &gt; bestRatio) {
+					bestRatio = gainRatio;
+					slices = tempSlices;
+					bestEntropy = newEntropy;
+				}
+			}			
+		}
+	
+		return new ThresholdData(slices, bestEntropy, origEntropy, bestRatio);
+			
+	}
+
+ 	public ThresholdData findBestAttrSlices(DataRecordTwoGroup[] dg,
+ 	 	int attrSlices, float attrIncrement, int gfSlices, float lowBound, 
+ 	 	float highBound, int[] baseCounts) {
+ 	 	 	 			 	 	 		
+ 		float origEntropy = calculateEntropy(dg, baseCounts);
+ 		 				
+ 		float bestGain = Float.NEGATIVE_INFINITY;
+		float bestEntropy = Float.POSITIVE_INFINITY;
+
+	 	DataRecordTwoGroup[] dg1 = new DataRecordTwoGroup[dg.length];
+	 	DataRecordTwoGroup[] dg2 = new DataRecordTwoGroup[dg.length];
+		
+	 	for (int x = 0; x &lt; dg.length; x++) {
+	 		dg1[x] = new DataRecordTwoGroup(dg[x].group, 
+	 			new DataRecordTwo[dg[x].dataSet.length]);
+	 		dg2[x] = new DataRecordTwoGroup(dg[x].group, 
+	 	 		new DataRecordTwo[dg[x].dataSet.length]);
+	 	}
+
+		float[] slices = new float[attrSlices];
+
+		for (float t1 = lowBound + attrIncrement; t1 &lt; highBound; 
+			t1 += attrIncrement) {
+
+			int dg1Count = 0;
+			int dg2Count = 0;
+
+			int[] trimCounts1 = new int[dg.length];
+			int[] trimCounts2 = new int[dg.length];
+			
+			for (int z = 0; z &lt; dg.length; z++) {
+				int ds1Index = 0, ds2Index = 0;
+			
+				for (int x = 0; x &lt; baseCounts[z]; x++) {
+					DataRecordTwo dr = dg[z].dataSet[x];
+					if (dr.attr1 &lt; t1) {
+						dg1[z].dataSet[ds1Index++] = dr;
+						dg1Count++;
+					} else {
+						dg2[z].dataSet[ds2Index++] = dr;
+						dg2Count++;
+					}
+				}
+
+				trimCounts1[z] = ds1Index;
+				trimCounts2[z] = ds2Index;
+			}
+					
+			float newEntropy = 
+					((((float)dg1Count) / (dg1Count + dg2Count)) * 
+						calculateEntropy(dg1, trimCounts1));
+			
+			if (attrSlices == 1) {
+				newEntropy += ((((float)dg2Count) / (dg1Count + dg2Count)) * 
+						calculateEntropy(dg2, trimCounts2));
+
+				float[] tempSlices = new float[1];
+				tempSlices[0] = t1;
+				
+				float infoGain = (origEntropy - newEntropy);
+
+				if (infoGain &gt; bestGain) {
+					bestGain = infoGain;
+					slices[0] = t1;
+					bestEntropy = newEntropy;
+				}
+			} else {
+				ThresholdData td = findBestAttrSlices(
+					dg2, attrSlices - 1, attrIncrement,
+					gfSlices, t1, highBound, trimCounts2);
+					
+				newEntropy += ((((float)dg2Count) / (dg1Count + dg2Count)) *
+					td.entropy);
+
+				float[] tempSlices = new float[attrSlices];
+				tempSlices[0] = t1;
+				for (int i = 0; i &lt; td.slices.length; i++) {
+					tempSlices[i+1] = td.slices[i];
+				}
+				
+				float infoGain = (origEntropy - newEntropy);
+
+				if (infoGain &gt; bestGain) {
+					bestGain = infoGain;
+					slices = tempSlices;
+					bestEntropy = newEntropy;
+				}
+			}			
+		}
+	
+		return new ThresholdData(slices, bestEntropy, origEntropy, 0);
+	}
+
+ 	public ThresholdData findBestAttrSlicesRatio(DataRecordTwoGroup[] dg,
+ 		int attrSlices, float attrIncrement, int gfSlices, float lowBound, 
+ 		float highBound, int[] baseCounts) {
+ 	 	 			 	 	 		
+	 	float origEntropy = calculateEntropy(dg, baseCounts);
+	 				
+		float bestRatio = Float.NEGATIVE_INFINITY;
+		float bestEntropy = Float.POSITIVE_INFINITY;
+
+ 	 	DataRecordTwoGroup[] dg1 = new DataRecordTwoGroup[dg.length];
+ 	 	DataRecordTwoGroup[] dg2 = new DataRecordTwoGroup[dg.length];
+	
+ 	 	for (int x = 0; x &lt; dg.length; x++) {
+ 	 		dg1[x] = new DataRecordTwoGroup(dg[x].group, 
+ 	 			new DataRecordTwo[dg[x].dataSet.length]);
+ 	 		dg2[x] = new DataRecordTwoGroup(dg[x].group, 
+ 	 	 		new DataRecordTwo[dg[x].dataSet.length]);
+ 	 	}
+
+		float[] slices = new float[attrSlices];
+
+		for (float t1 = lowBound + attrIncrement; t1 &lt; highBound; 
+			t1 += attrIncrement) {
+
+			int dg1Count = 0;
+			int dg2Count = 0;
+
+			int[] trimCounts1 = new int[dg.length];
+			int[] trimCounts2 = new int[dg.length];
+			
+			for (int z = 0; z &lt; dg.length; z++) {
+				int ds1Index = 0, ds2Index = 0;
+			
+				for (int x = 0; x &lt; baseCounts[z]; x++) {
+					DataRecordTwo dr = dg[z].dataSet[x];
+					if (dr.attr1 &lt; t1) {
+						dg1[z].dataSet[ds1Index++] = dr;
+						dg1Count++;
+					} else {
+						dg2[z].dataSet[ds2Index++] = dr;
+						dg2Count++;
+					}
+				}
+
+				trimCounts1[z] = ds1Index;
+				trimCounts2[z] = ds2Index;
+			}
+					
+			float newEntropy = 
+					((((float)dg1Count) / (dg1Count + dg2Count)) * 
+						calculateEntropy(dg1, trimCounts1));
+			
+			if (attrSlices == 1) {
+				newEntropy += ((((float)dg2Count) / (dg1Count + dg2Count)) * 
+						calculateEntropy(dg2, trimCounts2));
+
+				float[] tempSlices = new float[1];
+				tempSlices[0] = t1;
+				
+				float gainRatio = (origEntropy - newEntropy)
+					/ calculateSplitInformation(dg, tempSlices, baseCounts);
+
+				if (gainRatio &gt; bestRatio) {
+					bestRatio = gainRatio;
+					slices[0] = t1;
+					bestEntropy = newEntropy;
+				}
+			} else {
+				ThresholdData td = findBestAttrSlicesRatio(
+					dg2, attrSlices - 1, attrIncrement,
+					gfSlices, t1, highBound, trimCounts2);
+					
+				newEntropy += ((((float)dg2Count) / (dg1Count + dg2Count)) *
+					td.entropy);
+
+				float[] tempSlices = new float[attrSlices];
+				tempSlices[0] = t1;
+				for (int i = 0; i &lt; td.slices.length; i++) {
+					tempSlices[i+1] = td.slices[i];
+				}
+				
+				float gainRatio = (origEntropy - newEntropy)
+					/ calculateSplitInformation(dg, tempSlices, baseCounts);
+
+				if (gainRatio &gt; bestRatio) {
+					bestRatio = gainRatio;
+					slices = tempSlices;
+					bestEntropy = newEntropy;
+				}
+			}			
+		}
+	
+		return new ThresholdData(slices, bestEntropy, origEntropy, bestRatio);
+	}
+ 	
+	public DataRecordTwo[] dataSetLatVel(String filename, int gfSlices) {
+		ArrayList waves = waveSets.get(filename);	
+		DataRecordTwo[] drt = new DataRecordTwo[waves.size()];
+		
+		for (int x = 0; x &lt; waves.size(); x++) {
+			drt[x] = parseWaveLatVel((Wave)waves.get(x), gfSlices);
+		}		
+		
+		return drt;
+	}
+
+	public DataRecordTwo[] dataSetDistance(String filename, int gfSlices) {
+		ArrayList waves = waveSets.get(filename);
+		DataRecordTwo[] drt = new DataRecordTwo[waves.size()];
+		
+		for (int x = 0; x &lt; waves.size(); x++) {
+			drt[x] = parseWaveDistance((Wave)waves.get(x), gfSlices);
+		}
+		
+		return drt;
+	}
+	
+	public DataRecordTwo[] dataSetWallDistance(String filename, int gfSlices) {
+		ArrayList waves = waveSets.get(filename);
+		DataRecordTwo[] drt = new DataRecordTwo[waves.size()];
+		
+		for (int x = 0; x &lt; waves.size(); x++) {
+			drt[x] = parseWaveWallDistance((Wave)waves.get(x), gfSlices);
+		}		
+		
+		return drt;
+	}
+	
+	public DataRecordTwo[] dataSetVChangeTime(String filename, int gfSlices) {
+		ArrayList waves = waveSets.get(filename);
+		DataRecordTwo[] drt = new DataRecordTwo[waves.size()];
+		
+		int skips = 0;
+		
+		for (int x = 0; x &lt; waves.size(); x++) {
+			Wave w = (Wave)waves.get(x);
+			
+			if (w.accel == 1) {
+				drt[x - skips] = parseWaveVChangeTime(w, gfSlices);
+			} else {
+				skips++;
+			}
+		}
+	
+		return trimDataSet(drt, drt.length - skips);
+	}
+	
+	public DataRecordTwo parseWaveLatVel(Wave w, int gfSlices) {
+		DataRecordTwo drt = new DataRecordTwo();
+			                                  
+		drt.attr1 = w.latVel;
+		drt.output = (int) limit(0, 
+			Math.round(w.guessFactor * ((gfSlices - 1) / 2) + (gfSlices - 1)),
+			gfSlices - 1);
+		
+		return drt;
+	}
+	
+	public DataRecordTwo parseWaveDistance(Wave w, int gfSlices) {
+		DataRecordTwo drt = new DataRecordTwo();
+			                                  
+		drt.attr1 = w.distance;
+		drt.output = (int) limit(0, 
+			Math.round(w.guessFactor * ((gfSlices - 1) / 2) + (gfSlices - 1)),
+			gfSlices - 1);
+		
+		return drt;
+	}
+	
+	public DataRecordTwo parseWaveWallDistance(Wave w, int gfSlices) {
+		DataRecordTwo drt = new DataRecordTwo();
+			                                  
+		drt.attr1 = w.wallDistance;
+		drt.output = (int) limit(0, 
+			Math.round(w.guessFactor * ((gfSlices - 1) / 2) + (gfSlices - 1)),
+			gfSlices - 1);
+		
+		return drt;
+	}
+
+	public DataRecordTwo parseWaveReverseWallDistance(Wave w, int gfSlices) {
+		DataRecordTwo drt = new DataRecordTwo();
+			                                  
+		drt.attr1 = w.reverseWallDistance;
+		drt.output = (int) limit(0, 
+			Math.round(w.guessFactor * ((gfSlices - 1) / 2) + (gfSlices - 1)),
+			gfSlices - 1);
+		
+		return drt;
+	}
+
+	public DataRecordTwo parseWaveVChangeTime(Wave w, int gfSlices) {
+		DataRecordTwo drt = new DataRecordTwo();
+		
+		if (w.accel != 1) {
+			return null;
+		}
+			                                  
+		drt.attr1 = ((float)w.timeSinceVChange) / (w.distance / 11);
+		drt.output = (int) limit(0, 
+			Math.round(w.guessFactor * ((gfSlices - 1) / 2) + (gfSlices - 1)),
+			gfSlices - 1);
+		
+		return drt;
+	}
+	
+	// CREDIT: Taken from PEZ's CassiusClay
+	// http://robowiki.net?CassiusClay
+    public static int index(float[] slices, float v) {
+    	for (int i = 0; i &lt; slices.length; i++) {
+    	    if (v &lt; slices[i]) {
+    	    	return i;
+    	    }
+    	}
+    	
+    	return slices.length;
+    }
+    
+    public static int gfIndex(float guessFactor, int gfSlices) {
+    	return (int) limit(0, 
+    			Math.round(guessFactor * ((gfSlices - 1) / 2) + (gfSlices - 1)),
+    			gfSlices - 1);
+    }
+    
+    private static float limit(float min, float value, float max) {
+        return Math.max(min, Math.min(value, max));
+    }
+
+    public float calculateEntropy(DataRecordTwo[] d) {   	
+    	return calculateEntropy(d, d.length);
+    }
+    
+    public float calculateEntropy(DataRecordTwo[] d, int dataSetLength) {   	
+    	int min = 0, max = 0;
+    	for (int x = 0; x &lt; dataSetLength; x++) {
+    		if (x == 0) {
+    			min = max = d[x].output;
+    		} else {
+    			if (d[x].output &gt; max) {
+    				max = d[x].output;
+    			}
+    			if (d[x].output &lt; min) {
+    				min = d[x].output;
+    			}
+    		}
+    	}
+    	
+    	float[] counts = new float[max - min + 1];
+    	
+    	for (int x = 0; x &lt; dataSetLength; x++) {
+    		counts[d[x].output - min]++;
+    	}
+    	
+    	float entropy = 0;
+    	for (int x = 0; x &lt; counts.length; x++) {
+    		if (counts[x] != 0) {
+    			entropy += (counts[x] / dataSetLength) * Math.log((1 / (counts[x] / dataSetLength)));
+    		}
+    	}
+
+    	return entropy;
+    }
+    
+    public float calculateEntropy(DataRecordTwoGroup[] dg, int[] dataSetLengths) {
+    	float totalEntropy = 0;
+    	long groupCount = 0;
+    	for (int x = 0; x &lt; dg.length; x++) {
+    		if (dg[x] != null) {
+    			totalEntropy += calculateEntropy(dg[x].dataSet, dataSetLengths[x]) 
+    				* dataSetLengths[x];
+    			groupCount += dataSetLengths[x];
+    		}
+    	}
+    	
+    	return totalEntropy / groupCount;
+    }
+
+    public float calculateSplitInformation(DataRecordTwo[] d, 
+        	float[] slices) {   	
+    	return calculateSplitInformation(d, slices, d.length);
+    }
+    
+    public float calculateSplitInformation(DataRecordTwo[] d, 
+    	float[] slices, int dataSetLength) {   	
+
+    	long[] sliceCounts = new long[slices.length+1];
+
+    	for (int x = 0; x &lt; dataSetLength; x++) {
+    		sliceCounts[index(slices, d[x].attr1)]++;
+    	}
+    	
+    	float splitInformation = 0;
+    	for (int x = 0; x &lt; sliceCounts.length; x++) {
+    		float ratio = ((float)sliceCounts[x]) / dataSetLength;
+    		if (sliceCounts[x] != 0) {
+    			splitInformation -= ratio * Math.log(ratio);
+    		}
+    	}
+    	
+    	return splitInformation;
+    }
+
+    public float calculateSplitInformation(DataRecordTwoGroup[] dg,
+    	float[] slices, int[] baseCounts) {
+    	float totalSplitInformation = 0;
+    	long groupCount = 0;
+    	
+    	for (int x = 0; x &lt; dg.length; x++) {
+    		if (dg[x] != null) {
+    			totalSplitInformation += calculateSplitInformation(dg[x].dataSet,
+    				slices, baseCounts[x]) * baseCounts[x];
+    			groupCount += baseCounts[x];
+    		}
+    	}
+    	
+    	return totalSplitInformation / groupCount;
+    }
+    
+    public DataRecordTwo[] trimDataSet(DataRecordTwo[] ds, int size) {
+    	DataRecordTwo[] newArray = new DataRecordTwo[size];
+    	
+    	for (int x = 0; x &lt; size; x++) {
+    		newArray[x] = ds[x]; 
+    	}
+    	
+    	return newArray;
+    }
+    
+    public DataRecordTwoGroup[] trimDataSets(DataRecordTwoGroup[] dg,
+    	int[] sizes) {
+    	
+    	DataRecordTwoGroup[] newDg = new DataRecordTwoGroup[dg.length];
+    	for (int x = 0; x &lt; dg.length; x++) {
+    		newDg[x] = new DataRecordTwoGroup(dg[x].group, 
+    			trimDataSet(dg[x].dataSet, sizes[x]));
+    	}
+    	
+    	return newDg;
+    }
+    
+    private static double round(double d, int i) {
+    	long powerTen = 1;
+    	
+    	for (int x = 0; x &lt; i; x++) {
+    		powerTen *= 10;
+    	}
+    	
+    	return ((double)Math.round(d * powerTen)) / powerTen;
+    }
+    
+    /*
+    public static float log2(float d) {
+    	return _ln2 * Math.log(d);
+    }
+    */
+}
+
+class Wave {
+    byte orientation, roundNum, accel;
+    int timeSinceVChange, timeSinceZeroVelocity, timeSinceMaxVelocity;
+    float velocity, distance, latVel, reverseWallDistance,
+    	wallDistance, relativeHeading;
+    float distanceLastEightTicks, distanceLastFifteenTicks,
+    	distanceLastTwentyFiveTicks;
+    boolean firing = false;
+    float guessFactor;
+}
+
+class DataRecordTwoGroup {
+	int group;
+	DataRecordTwo[] dataSet;
+
+	public DataRecordTwoGroup() { }
+
+	public DataRecordTwoGroup(int g, DataRecordTwo[] ds) {
+		group = g;
+		dataSet = ds;
+	}
+	
+	public Object clone() {
+		DataRecordTwo[] newDs = new DataRecordTwo[dataSet.length];
+		for (int x = 0; x &lt; dataSet.length; x++) {
+			newDs[x] = (DataRecordTwo)dataSet[x].clone();
+		}
+		
+		return new DataRecordTwoGroup(group, newDs);
+	}
+}
+
+class DataRecordTwo {
+	float attr1;
+	int output;
+
+	public DataRecordTwo() { }
+	
+	public DataRecordTwo(float a, int o) {
+		attr1 = a;
+		output = o;
+	}
+	
+	public Object clone() {
+		return new DataRecordTwo(attr1, output);
+	}
+	
+}
+
+class ThresholdData {
+	public ThresholdData(float[] sl, float en, float oe) {
+		slices = sl;
+		entropy = en;
+		origEntropy = oe;
+	}
+
+	public ThresholdData(float[] sl, float en, float oe, float gr) {
+		slices = sl;
+		entropy = en;
+		origEntropy = oe;
+		gainRatio = gr;
+	}
+
+	float[] slices;
+	float entropy;
+	float origEntropy;
+	float gainRatio;
+	
+	public float infoGain() {
+		return origEntropy - entropy;
+	}
+}
+
+/*	
+public float[] findBestLatVelSlices(int latSlices, int gfSlices) {
+	DataRecordTwo[] ds = dataSetLatVel(gfSlices);
+	
+	DataRecordTwo[] ds1 = new DataRecordTwo[ds.length];
+	DataRecordTwo[] ds2 = new DataRecordTwo[ds.length];
+	DataRecordTwo[] ds3 = new DataRecordTwo[ds.length];
+	DataRecordTwo[] ds4 = new DataRecordTwo[ds.length];
+	              
+	float origEntropy = calculateEntropy(ds);
+	
+	// hard code this for now
+	float latVelIncrement = 0.5;
+	
+	float bestEntropy = Double.POSITIVE_INFINITY;
+	
+	float[] slices = new float[3];
+	
+	for (float t1 = latVelIncrement; t1 &lt; 8; t1 += latVelIncrement) {
+	for (float t2 = t1 + latVelIncrement; t2 &lt; 8; t2 += latVelIncrement) {
+	for (float t3 = t2 + latVelIncrement; t3 &lt; 8; t3 += latVelIncrement) {
+
+		int ds1Index = 0, ds2Index = 0, ds3Index = 0, ds4Index = 0;
+		
+		for (int x = 0; x &lt; ds.length; x++) {
+			DataRecordTwo dr = ds[x];
+			if (dr.attr1 &lt; t1) {
+				ds1[ds1Index++] = dr;
+			} else if (dr.attr1 &lt; t2) {
+				ds2[ds2Index++] = dr;
+			} else if (dr.attr1 &lt; t3) {
+				ds3[ds3Index++] = dr;
+			} else {
+				ds4[ds4Index++] = dr;
+			}
+		}
+				
+		float newEntropy =
+			((((float)ds1Index) / ds.length) * 
+				calculateEntropy(trimDataSet(ds1, ds1Index))) +
+			((((float)ds2Index) / ds.length) *
+				calculateEntropy(trimDataSet(ds2, ds2Index))) +
+			((((float)ds3Index) / ds.length) *
+				calculateEntropy(trimDataSet(ds3, ds3Index))) +
+			((((float)ds4Index) / ds.length) *
+				calculateEntropy(trimDataSet(ds4, ds4Index)));
+		
+		if (newEntropy &lt; bestEntropy) {
+			bestEntropy = newEntropy;
+			slices[0] = t1;
+			slices[1] = t2;
+			slices[2] = t3;
+		}
+	}
+	}
+	}
+	
+	float infoGain = origEntropy - bestEntropy;
+	
+	System.out.println("Entropy 1: " + origEntropy);
+	System.out.println("Info gain: " + infoGain);
+	System.out.println("Entropy 2: " + bestEntropy);
+	System.out.println("Best Slices: " + slices[0] + " / " + slices[1] +
+			" / " + slices[2]);
+			
+	return slices;
+}
+*/
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Voidious" class=wikipagelink>Voidious</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Voidious/WaveReader" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Voidious/WaveReader">View other revisions</a><br>Last edited October 24, 2006 13:02 EST by <a href="robowiki?Voidious" title="ID 7423 from pool-71-126-8-207.bflony.east.verizon.net">Voidious</a> <a href="robowiki?action=browse&diff=1&id=Voidious/WaveReader">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

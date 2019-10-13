@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Garm/BotwidthCalculation - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Garm, Botwidth, Calculation'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/BotwidthCalculation">Garm/BotwidthCalculation</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Garm" class=wikipagelink>Garm</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>My precise botwidth implementation:
+<p>
+<pre>
+
+	//calculates bullet-botedge collision, writes max/min gf in "bearings" array
+	public static boolean setHitEdgeBearing(double wave_radius, Point2D.Double victim, Stats stats_source, double gf_null_angle, double bullet_velocity, double[] bearings, boolean hit)
+	{
+		double x_delta,y_delta,distance,bearing;
+		double[] ex=new double[4], ey=new double[4];
+		
+		//bottom left corner
+		ex[0]=victim.getX()-BOTWIDTH_HALF;
+		ey[0]=victim.getY()-BOTWIDTH_HALF;
+		
+		//top right corner
+		ex[1]=victim.getX()+BOTWIDTH_HALF;
+		ey[1]=victim.getY()+BOTWIDTH_HALF;
+		
+		//top left corner
+		ex[2]=victim.getX()-BOTWIDTH_HALF;
+		ey[2]=victim.getY()+BOTWIDTH_HALF;
+		
+		//bottom right corner
+		ex[3]=victim.getX()+BOTWIDTH_HALF;
+		ey[3]=victim.getY()-BOTWIDTH_HALF;
+		
+		//calculate collision for each edge
+		for(int edge=0; edge&lt;4; edge++)
+		{
+			x_delta = ex[edge]-stats_source.getX();
+			y_delta = ey[edge]-stats_source.getY();
+			distance=Math.sqrt(x_delta*x_delta+y_delta*y_delta);
+			
+			//check if the edge is between head and tail of the wave
+			if(distance&lt;wave_radius &amp;&amp; distance&gt;wave_radius-bullet_velocity)
+			{
+				bearing = Math.atan2(x_delta, y_delta);
+				updateMinMaxHitBearing(bearing, gf_null_angle, bearings, hit);
+				hit = true;
+			}
+		}
+		return hit;
+	}
+	
+	//calculates bullet-botborder collision, writes max/min gf in "bearings" array
+	public static boolean setHitCurveBearing(double wave_radius, Point2D.Double victim, Stats stats_source, double gf_null_angle, double[] bearings, boolean hit)
+	{
+		double ex, ey;
+		double x_delta, y_delta;
+		double x, y;
+		double bearing;
+		Rectangle2D bot_rect;
+		ex=victim.getX();
+		ey=victim.getY();
+		bot_rect= new Rectangle2D.Double(ex-BOTWIDTH_HALF-0.001,ey-BOTWIDTH_HALF-0.001,2*BOTWIDTH_HALF+0.002,2*BOTWIDTH_HALF+0.002);
+		
+		//x,y distance of bot and victim (left and bottom border)
+		x_delta = ex-stats_source.getX()-BOTWIDTH_HALF;
+		y_delta = ey-stats_source.getY()-BOTWIDTH_HALF;
+		
+		//calculate intersection with bottom border
+		x=Math.sqrt(wave_radius*wave_radius-y_delta*y_delta)*Math.signum(x_delta)+stats_source.getX();
+		y=ey-BOTWIDTH_HALF;
+		if(bot_rect.contains(x,y))  //collision with bot?
+		{
+			bearing = Math.atan2(x - stats_source.getX(), y - stats_source.getY());
+			updateMinMaxHitBearing(bearing, gf_null_angle, bearings, hit);
+			hit = true;
+		}
+		
+		//calculate intersection with left border
+		x=ex-BOTWIDTH_HALF;
+		y=Math.sqrt(wave_radius*wave_radius-x_delta*x_delta)*Math.signum(y_delta)+stats_source.getY();
+		if(bot_rect.contains(x,y))
+		{
+			bearing = Math.atan2(x - stats_source.getX(), y - stats_source.getY());
+			updateMinMaxHitBearing(bearing, gf_null_angle, bearings, hit);
+			hit = true;
+		}
+		
+		//x,y distance of bot and victim (top and right border)
+		x_delta = ex-stats_source.getX()+BOTWIDTH_HALF;
+		y_delta = ey-stats_source.getY()+BOTWIDTH_HALF;
+		
+		//calculate intersection with top border
+		x=Math.sqrt(wave_radius*wave_radius-y_delta*y_delta)*Math.signum(x_delta)+stats_source.getX();
+		y=ey+BOTWIDTH_HALF;
+		if(bot_rect.contains(x,y))
+		{
+			bearing = Math.atan2(x - stats_source.getX(), y - stats_source.getY());
+			updateMinMaxHitBearing(bearing, gf_null_angle, bearings, hit);
+			hit = true;
+		}
+
+		//calculate intersection with right border
+		x=ex+BOTWIDTH_HALF;
+		y=Math.sqrt(wave_radius*wave_radius-x_delta*x_delta)*Math.signum(y_delta)+stats_source.getY();
+		if(bot_rect.contains(x,y))
+		{
+			bearing = Math.atan2(x - stats_source.getX(), y - stats_source.getY());
+			updateMinMaxHitBearing(bearing, gf_null_angle, bearings, hit);
+			hit = true;
+		}
+		return hit;
+	}
+	
+	
+	//updates max/min gf in "bearings" array
+	private static void updateMinMaxHitBearing(double bearing_new, double gf_null_angle, double[] gf_hit_angles, boolean hit)
+	{
+		double bearing_new_delta = Utils.normalRelativeAngle(bearing_new-gf_null_angle);
+		if(hit) 	//Update angles
+		{
+			gf_hit_angles[0]=Math.min(0, bearing_new_delta);
+			gf_hit_angles[1]=Math.max(gf_hit_angles [1], bearing_new_delta);
+		}
+		else		//first hit
+		{
+			gf_hit_angles[0]=gf_hit_angles[1]=bearing_new_delta;
+		}
+	}
+
+</pre>
+<p>
+It must be called this way:
+<p>
+<pre>
+double wave_radius = velocity*time_delta;
+double[] gf_hit_angles_new = new double[2];
+
+boolean hit = setHitEdgeBearing(wave_radius, victim_location, source_stats, gf_null_angle, bullet_velocity, gf_hit_angles_new, false);
+hit = setHitCurveBearing(wave_radius, victim_location, source_stats, gf_null_angle, gf_hit_angles_new, hit);
+hit = setHitCurveBearing(wave_radius-bullet_velocity, victim_location, source_stats, gf_null_angle, gf_hit_angles_new, hit);
+</pre>
+<p>
+The resulting max/min hitangle (relative to gf0) is saved in the "gf_hit_angles_new" array (0:min 1:max). 
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Ahh yes, this does indeed appear to be the same as what I'm doing in <a href="robowiki?Rednaxela/SuperBotwidth" class=wikipagelink>Rednaxela/SuperBotwidth</a>. Some parts of the code confuse me a little, but indeed the base functionality seems to be the same there :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+It's not the clearest code... but it works fine :) --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Garm" class=wikipagelink>Garm</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Garm/BotwidthCalculation" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Garm/BotwidthCalculation">View other revisions</a><br>Last edited April 4, 2008 16:56 EST by <a href="robowiki?Krabb" title="ID 4412 from d235.stw.stud.uni-saarland.de">Krabb</a> <a href="robowiki?action=browse&diff=1&id=Garm/BotwidthCalculation">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

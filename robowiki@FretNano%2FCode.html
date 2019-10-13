@@ -1,0 +1,229 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>FretNano/Code - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Fret, Nano, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Code">FretNano/Code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?FretNano" class=wikipagelink>FretNano</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Version 1.0:
+<p>
+<pre>
+// (C) 2007 Stelokim
+// nanobot using wave for targeting
+package stelo;
+
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.*;
+
+import robocode.*;
+import robocode.util.Utils;
+
+public class FretNano extends AdvancedRobot {
+//	private double moveAmount = 100;
+	private static double enemyVelocity;
+//	private static double lastEnemyVelocity;
+//	private static double enemyDistance;
+//	private static int velocities_size;
+	
+	public void run() {
+		setAdjustGunForRobotTurn(true);
+		//setAdjustRadarForGunTurn(true);
+
+		//do {
+			turnRadarRightRadians(Double.POSITIVE_INFINITY);
+		//} while (true);
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e) {
+		double absbearing = e.getBearingRadians() + getHeadingRadians();
+		enemyVelocity = e.getVelocity();
+//		enemyDistance = e.getDistance();
+		setTurnRightRadians(Math.cos(e.getBearingRadians()));
+				
+		//setTurnRadarRightRadians(Utils.normalRelativeAngle(absbearing - getRadarHeadingRadians()) * 2); // 2 original
+//		out.println(e.getVelocity() + " " + getTime());
+		setTurnRadarLeftRadians(getRadarTurnRemainingRadians());
+				
+		VirtualBullet vb = new VirtualBullet(this, e.getDistance());
+		addCustomEvent(vb);																					
+//		setTurnGunRightRadians(Utils.normalRelativeAngle(absbearing - getGunHeadingRadians() + vb.mostVisitedVelocity() / 11.0 * Math.sin(e.getHeadingRadians() - absbearing)));
+		setTurnGunRightRadians(Utils.normalRelativeAngle(absbearing - getGunHeadingRadians() + VirtualBullet.guessedVelocity / 11.0 * Math.sin(e.getHeadingRadians() - absbearing)));
+//		setFire(3.0);
+		setFire(e.getEnergy() / 4.0);
+		
+		// move
+		setAhead(Math.tan(e.getEnergy()*5)*500); // Perceptual bullet-dodger
+
+//		setAhead(moveAmount);
+//		if (Math.random() &lt; 0.04)
+//			moveAmount = -moveAmount;
+//		if (!(new Rectangle2D.Double(18, 18, 800-36, 600-36)).contains(Math.sin(absbearing = getHeadingRadians())*moveAmount + getX(),Math.cos(absbearing)*moveAmount + getY()))
+//			moveAmount = -moveAmount;
+		
+//		if (enemyEnergy &gt; (enemyEnergy = e.getEnergy() ) ) {
+//			setMaxVelocity( Math.random() * 30.0 + 2.0);
+//			if (Math.random() &lt; 0.25)
+//				onHitWall(null);
+//		}
+		//lastEnemyAbsoluteBearing = absbearing;
+//		lastEnemyVelocity = enemyVelocity;				
+	}
+
+//	public static double limit(double min, double value, double max) {
+//		return Math.max(min, Math.min(value, max));
+//	}
+
+//	public void onHitWall(HitWallEvent e) {
+//		moveAmount = -moveAmount;
+//	}
+
+	private static class VirtualBullet extends Condition {
+//		private static int BINS = 8 * 2 + 1;
+//		private static double[][][] statBuffer = new double[VELOCITY_INDEXES][VELOCITY_INDEXES][BINS];
+//		static double[] statBuffer = new double[BINS];
+				
+		private long time = 0;
+		private double velocitySum = 0;
+		AdvancedRobot robot;
+//		private int velocityIndex;
+		static double guessedVelocity;
+		private double enemyDistance;
+		
+		VirtualBullet(AdvancedRobot _robot, double _enemyDistance) {
+			robot = _robot;
+			enemyDistance = _enemyDistance;
+//			buffer = statBuffer[(int) (velocity + 8)][(int) (velocity2 + 8)];
+//			velocityIndex = (int) (velocity + 8);
+//			buffer = statBuffer[(int) (velocity + 8)];
+		}
+//		public boolean test() {return false;}
+		public boolean test() {
+			time++;
+			velocitySum += enemyVelocity;
+			if (time * 11 &gt; enemyDistance) {
+//			if (time &gt; 32) {
+				guessedVelocity = velocitySum / time;
+//				statBuffer[velocityIndex] = enemyVelocity;
+				robot.removeCustomEvent(this);
+//				robot.out.println("arrived");
+			}
+			return false;
+		}
+
+	}
+}
+</pre>
+<hr>
+Version 1.1:
+<pre>
+// (C) 2007 Stelokim
+// nanobot using wave for targeting
+// codesize 245
+
+package stelo;
+
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.*;
+
+import robocode.*;
+import robocode.util.Utils;
+
+public class FretNano extends AdvancedRobot {
+//	private double moveAmount = 100;
+//	private static double enemyVelocity;
+//	private static double lastEnemyVelocity;
+//	private static double enemyDistance;
+//	private static int velocities_size;
+	private static double myX, myY, eX, eY;
+	private static AdvancedRobot robot;
+	
+	public void run() {
+		robot = this;
+//		setAdjustGunForRobotTurn(true);
+		//setAdjustRadarForGunTurn(true);
+
+		//do {
+			turnRadarRightRadians(Double.POSITIVE_INFINITY);
+		//} while (true);
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e) {
+		double absBearing = e.getBearingRadians() + getHeadingRadians();
+		double enemyDistance = e.getDistance();
+		eX = (myX = getX()) + enemyDistance * Math.sin(absBearing);
+		eY = (myY = getY()) + enemyDistance * Math.cos(absBearing);
+				
+		setTurnRightRadians(Math.cos(e.getBearingRadians()));
+				
+		setTurnRadarLeftRadians(getRadarTurnRemainingRadians());
+
+		addCustomEvent(new Wave(myX, myY, absBearing));
+		setTurnGunRightRadians(Utils.normalRelativeAngle(absBearing - getGunHeadingRadians() + Wave.guessAngle));
+				
+		setFire(2);
+//		setFire(e.getEnergy() / 4.0);
+		
+		// move
+		setAhead(Math.tan(e.getEnergy()*5)*500); // Perceptual bullet-dodger
+//		setAhead(e.getVelocity() * 10); // pseudo-MirrorMovement
+
+//		if (Math.random() &lt; 0.05 / 300.0 * enemyDistance)
+//			moveAmount = -moveAmount;
+//		if (!(new Rectangle2D.Double(18, 18, 800-36, 600-36)).contains(Math.sin(absBearing = getHeadingRadians())*moveAmount + getX(),Math.cos(absBearing)*moveAmount + getY()))
+//			moveAmount = -moveAmount;
+		
+//		if (enemyEnergy &gt; (enemyEnergy = e.getEnergy() ) ) {
+//			setMaxVelocity( Math.random() * 30.0 + 2.0);
+//			if (Math.random() &lt; 0.25)
+//				onHitWall(null);
+//		}
+		//lastEnemyAbsoluteBearing = absBearing;
+//		lastEnemyVelocity = enemyVelocity;				
+	}
+
+//	public static double limit(double min, double value, double max) {
+//		return Math.max(min, Math.min(value, max));
+//	}
+
+//	public void onHitWall(HitWallEvent e) {
+//		moveAmount = -moveAmount;
+//	}
+
+	static class Wave extends Condition {
+//		double bulletPower;
+		double gunX, gunY;
+		double bearing;
+
+		private double distanceTraveled;
+		static double guessAngle;
+		
+		public Wave(double _gunX, double _gunY, double _bearing) {
+			gunX = _gunX;
+			gunY = _gunY;
+			bearing = _bearing;
+		}
+	
+		public boolean test() {
+			// advance
+//			distanceTraveled += 20.0 - 3.0 * bulletPower;
+			double dx = eX - gunX, dy = eY - gunY;
+			
+			// has arrived?
+			if ((distanceTraveled += 14) &gt; Math.hypot(dx, dy)) {
+				guessAngle = Math.atan2(dx, dy) - bearing;
+								
+				robot.removeCustomEvent(this);
+			}
+			return false;
+		}
+	}
+}
+																																																									
+</pre>						
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?FretNano" class=wikipagelink>FretNano</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=FretNano/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=FretNano/Code">View other revisions</a><br>Last edited August 13, 2007 2:36 EST by <a href="robowiki?Stelokim" title="ID 9056 from 121.133.34.190">Stelokim</a> <a href="robowiki?action=browse&diff=1&id=FretNano/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

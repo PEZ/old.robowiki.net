@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Simonton/RoboleagueGroupingsSorting - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Simonton, Roboleague, Groupings, Sorting'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/RoboleagueGroupingsSorting">Simonton/RoboleagueGroupingsSorting</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Simonton" class=wikipagelink>Simonton</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I don't know the best place to do this, so here goes: I hacked together a mod for Roboleague to sort all the groupings in a season, so that when I compare between results files the bots are in the same place on the screen. It isn't pretty, but it works. I can't find licencing info on Roboleague, so I'm just going to paste my mods on here &amp; let you paste them into the soure &amp; compile. Please treat this code as "open source" &amp; share any improvements you make!
+<p>
+It seems like roboleague kinda already does this - but not always.  Maybe I broke it with some of my other mods ... I don't know.  Anyway, this will ALWAYS sort them right.
+<p>
+This is in <tt>roboleague.XmlIO</tt>.  Find the <tt>storeGroupings</tt> method and replace the first few lines with the following.  Notice that the last line here is the first surviving line in the original file.
+<p>
+<pre>
+	private static final Comparator GROUPING_COMPARATOR = new Comparator&lt;Grouping&gt;() {
+		public int compare(Grouping o1, Grouping o2) {
+			if (o1.competitors.length != o2.competitors.length) {
+				return o1.competitors.length - o2.competitors.length;
+			}
+			Arrays.sort(o1.competitors);
+			Arrays.sort(o2.competitors);
+			for (int i = 0; i &lt; o1.competitors.length; i++) {
+				int comp = o1.competitors[i].compareTo(o2.competitors[i]);
+				if (comp != 0) {
+					return comp;
+				}
+			}
+			return 0;
+		}
+	};
+
+	protected void storeGroupings(Element parent, Collection groupings) {
+		Grouping[] groups = new Grouping[groupings.size()];
+		groupings.toArray(groups);
+		Arrays.sort(groups, GROUPING_COMPARATOR);
+		for (Grouping grouping : groups) {
+			if (grouping.getTerminated()) {
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Simonton" class=wikipagelink>Simonton</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Simonton/RoboleagueGroupingsSorting" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Simonton/RoboleagueGroupingsSorting">View other revisions</a><br>Last edited September 30, 2006 2:22 EST by <a href="robowiki?Simonton" title="ID 7817 from adsl-70-227-96-101.dsl.applwi.ameritech.net">Simonton</a> <a href="robowiki?action=browse&diff=1&id=Simonton/RoboleagueGroupingsSorting">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

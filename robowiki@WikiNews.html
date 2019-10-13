@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>WikiNews - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Wiki, News'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=WikiNews">WikiNews</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H2><a href="robowiki?UseModWiki" class=wikipagelink>UseModWiki</a> 1.0.pez in use</H2>
+
+Hello folks. I've upgraded the wiki script to the latest <a href="robowiki?UseModWiki" class=wikipagelink>UseModWiki</a> release. Plus some of my own patches that so many of our pages rely on. I hope it works. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<H3>New stuff (feel free to edit this section as you find new behaviour)</H3>
+
+<UL >
+<li> RSS news feed of the Changes page - the URL to use is: <a rel="nofollow" href="http://robowiki.net/cgi-bin/robowiki?action=rss">http://robowiki.net/cgi-bin/robowiki?action=rss</a> -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<li> Table of contents with the <code>&lt;toc&gt;</code> tag. You must use numbered headings for this to work. (Syntax for numbered headings look like <code>=== # Heading ===</code>) Check my <a href="robowiki?Poets" class=wikipagelink>Poets</a> page to see how it works. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<li> Better support for CSS. Maybe some day the wiki can look pretty... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<li> The bug demanding some markup at the end of tables and list is history. Hurray! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<li> Clicking on the title link of a page no longer performs a free text search for that text. Now it performs a back-link search instead. Resulting in a list of pages that references the searched for page. Cool for ego-surfing the wiki. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</UL>
+<p>
+Here's a page mentioning a few RSS feed readers for some platforms - <a rel="nofollow" href="http://channels.lockergnome.com/rss/resources/articles/quickstart.phtml">http://channels.lockergnome.com/rss/resources/articles/quickstart.phtml</a> -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+For people using <a href="robowiki?FireFox" class=wikipagelink>FireFox</a>... I don't know why FF doesn't "see" this feed automatically. But you can add the wiki RSS feed as a Live Bookmark anyway. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Would it be possible to make a wiki rss feed that includes the diff of the edit, or would it typically be too huge?  I have the wiki's RSS feed open in Microsoft Outlook, by the way, I'll bet I'm the first one ;-) -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+That should be possible, though it would take a considerable amount of time to figure out how to do it. <a rel="nofollow" href="http://wikipedia.sourceforge.net/">[MediaWiki]</a> does what you ask for by default. Check <a rel="nofollow" href="http://h2wiki.halowiki.net/wiki/Special:Recentchanges">http://h2wiki.halowiki.net/wiki/Special:Recentchanges</a> for instance. I've just finished porting the halowiki to wikipedia from usemod. It was 250 pages and took some time =) If some of you guys are willing to help we could look into the possibilities of moving this wiki to the wikipedia engine. Think of mediawiki as a much better usemod. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+I patched the table syntax handling some more. Now tables like this are supported:
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'><strong>CSS-styled</strong></td><td colspan="0.5"><strong>Left</strong> </td><td colspan="0.5"> <strong>Center</strong> </td><td colspan="0.5"> <strong>Right</strong></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>foo </td><td align="left" colspan="0.5">bar            </td><td align="center" colspan="0.5">c         </td><td align="right" colspan="0.5"> 270</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> bar</td><td align="left" colspan="0.5">foo            </td><td align="center" colspan="0.5">center    </td><td align="right" colspan="0.5">1200</td></TR>
+</TABLE>
+<p>
+That is. To get left aligned cell contents, pad with at least two spaces at the end. Center - at least two spaces beofore and after the content, Right, pad with at least two spaces before. (Left and right of course requires that you don't pad with more than one space at "the other" end). To let CSS styles choose the alignement, don't double-space pad anywwhere in the cell.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+Why do the Preview suddenly show below the edit box? Because I have forgotten to fix it in the new script. Anyone feels it is necessary? I kinda like it the default way... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+<H3>Page embedded title searches</H3>
+
+I hacked the script again! Can't help it. =) This time I added a macro (or whatever it should be called) in the spirit of the <code>&lt;toc&gt;</code> tag. This one embeds title searches in the pages. The macro is activated with a tag - <code>&lt;title-search search_for_this_or_that_text&gt;</code>. Good for listing pages that are named around a particular subject like:
+<p>
+<a href="robowiki?WaveSurf" class=wikipagelink>WaveSurf</a><br>
+<a href="robowiki?WaveSurfer" class=wikipagelink>WaveSurfer</a><br>
+<a href="robowiki?WaveSurfers" class=wikipagelink>WaveSurfers</a><br>
+<a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a><br>
+.... <a href="robowiki?WaveSurfing/Archive20070511" class=wikipagelink>WaveSurfing/Archive20070511</a><br>
+.... <a href="robowiki?WaveSurfing/BarracudaChallenge" class=wikipagelink>WaveSurfing/BarracudaChallenge</a><br>
+.... <a href="robowiki?WaveSurfing/DevilFISHChallenge" class=wikipagelink>WaveSurfing/DevilFISHChallenge</a><br>
+.... <a href="robowiki?WaveSurfing/Experiments" class=wikipagelink>WaveSurfing/Experiments</a><br>
+.... <a href="robowiki?WaveSurfing/GoToStyle" class=wikipagelink>WaveSurfing/GoToStyle</a><br>
+.... <a href="robowiki?WaveSurfing/NanoSurfer" class=wikipagelink>WaveSurfing/NanoSurfer</a><br>
+.... <a href="robowiki?WaveSurfing/PathFinding" class=wikipagelink>WaveSurfing/PathFinding</a><br>
+.... <a href="robowiki?WaveSurfing/PatternSurfing" class=wikipagelink>WaveSurfing/PatternSurfing</a><br>
+.... <a href="robowiki?WaveSurfing/PrecisePrediction" class=wikipagelink>WaveSurfing/PrecisePrediction</a><br>
+.... <a href="robowiki?WaveSurfing/ReverseForwardSensors" class=wikipagelink>WaveSurfing/ReverseForwardSensors</a><br>
+.... <a href="robowiki?WaveSurfing/ShrapnelSurf" class=wikipagelink>WaveSurfing/ShrapnelSurf</a><br>
+.... <a href="robowiki?WaveSurfing/TrueSurf" class=wikipagelink>WaveSurfing/TrueSurf</a><br>
+.... <a href="robowiki?WaveSurfing/Tutorial" class=wikipagelink>WaveSurfing/Tutorial</a><br>
+<a href="robowiki?WaveSurfingChallenge" class=wikipagelink>WaveSurfingChallenge</a><br>
+.... <a href="robowiki?WaveSurfingChallenge/BotA" class=wikipagelink>WaveSurfingChallenge/BotA</a><br>
+.... <a href="robowiki?WaveSurfingChallenge/BotB" class=wikipagelink>WaveSurfingChallenge/BotB</a><br>
+.... <a href="robowiki?WaveSurfingChallenge/BotC" class=wikipagelink>WaveSurfingChallenge/BotC</a><br>
+.... <a href="robowiki?WaveSurfingChallenge/FastLearning" class=wikipagelink>WaveSurfingChallenge/FastLearning</a><br>
+<a href="robowiki?WaveSurfingChallenge2K6" class=wikipagelink>WaveSurfingChallenge2K6</a><br>
+<a href="robowiki?WaveSurfingChallengeBotA" class=wikipagelink>WaveSurfingChallengeBotA</a><br>
+<a href="robowiki?WaveSurfingChallengeBotB" class=wikipagelink>WaveSurfingChallengeBotB</a><br>
+<a href="robowiki?WaveSurfingChallengeBotC" class=wikipagelink>WaveSurfingChallengeBotC</a><br>
+<a href="robowiki?Wavesurfing" class=wikipagelink>Wavesurfing</a><br>
+
+<p>
+Neat huh? (Open the page for editing to see how the list was produced.) I hope it works. If the wiki scripts blows up I can just replace the old one while I try to fix it.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+<H3>Random page excludes archived rankings again</H3>
+
+Well, yes. I made the random page function skip pages mathcing "Rankings_". -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+<H4>Comments</H4>
+
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=WikiNews" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=WikiNews">View other revisions</a><br>Last edited May 23, 2005 23:55 EST by <a href="robowiki?PEZ" title="ID 3989 from 1-1-7-24a.dre.sth.bostream.se">PEZ</a> <a href="robowiki?action=browse&diff=1&id=WikiNews">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

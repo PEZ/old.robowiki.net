@@ -1,0 +1,358 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing ABCsLinkedListChallenge - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='ABCs, Linked, List, Challenge'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing ABCsLinkedListChallenge</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="ABCsLinkedListChallenge"  />
+<input type="hidden" name="oldtime" value="1115604750"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="2"  />
+<input type="hidden" name="captchaArg2" value="7"  />
+<input type="hidden" name="captchaOp" value="+"  />
+<input type="hidden" name="captchaId" value="991126620050"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">In my experience, all of java built in list classes are slow as hell because of the casting needed in every read. I used to have linked lists for my gun&#39;s scan log, when I replaced them with custom made linked lists my execution speed increased 10x. Bottom line is, class casting in (big) inner loops should be avoided at all costs. -- [[ABC]]
+
+ABC, is it possible you could package a focused example with your deep loop list problem? And also provide your custom list classes and we could make it a competition to try solve the speed problem with different approaches? Ideally a solution using the standard Collections classes will result with a speed penalty you could live with. -- [[PEZ]]
+
+By not using the standard Collections classes I&#39;m actually decreasing the probability of a future JVM surprise, imo. I just made a very simple linked list, here is an example: You need to save a history of every enemy scan:
+
+&lt;pre&gt;
+public class ScanInfo {
+	long time;
+	double x, y, vel, heading;
+	double distance;
+
+	public ScanInfo(AdvancedRobot bot, ScannedRobotEvent e) {
+	...
+	}
+}
+&lt;/pre&gt;
+
+Since you will always be traversing this list sequencially, I made a LinkedList of ScanInfos. The problem is that if you use the listIterator classes, your code inside the loop looks like this:
+&lt;pre&gt;info = (ScanInfo)it.previous();&lt;/pre&gt;That cast (ScanInfo) is the problem, especially when you are traversing a list with thousands of elements. My solution, add a pointer field (or two, if you want a double linked list) to that class: &lt;pre&gt;ScanInfo previous, next;&lt;/pre&gt;and you loop looks like this: &lt;pre&gt; info = info.previous;&lt;/pre&gt;This change made my gun 10x faster. If you want I&#39;ll make an example bot with working code and you can try making it run close to the speed of my solution with the standard Collection classes... 
+
+-- [[ABC]]
+
+
+Yes, ABC, please make that example bot.
+
+Here is my example: http://robocode.aclsi.pt/abc.ListTester_slow_1.0.jar, http://robocode.aclsi.pt/abc.ListTester_fast_1.0.jar. Run each one 10 rounds against SittingDuck. In my comp the fast version took 17 secs to run and the slow one 34. -- [[ABC]]
+
+I&#39;m not sure how your gun works and how much &quot;sequenciality&quot; you need in traversing that list. But somehow I don&#39;t think it&#39;s the cast that makes the Collections solution slow. It&#39;s the iterator. Using an ArrayList instead of a LinkedList and this idiom to traverse the list:
+&lt;pre&gt;
+	    for (int i = scanLog.size() - 1; i &gt;= 0; i--) {
+		ScanInfo sci = (ScanInfo)scanLog.get(i);
+	    }
+&lt;/pre&gt;
+your list tester reports it takes 11 secs on my machine. The custom linked list runs in 13 secs. I&#39;ve run the list testers 10 times each and it&#39;s pretty stable in these figures.
+
+-- [[PEZ]]
+
+You are right, ArrayList is faster. That is strange, I remember making an array version of my gun and it being slower than with the linked list. But even so, the way I use my scanLog collection makes much more sense with a linked list structure. From the scans resulting from that search I trace the future position by iterating forward (info.next) until the bullet meets the enemy, much more elegant than fiddling with array indexes. And I don&#39;t depend on Sun to make a better/worse linked list implementation (or even breaking it) in the future. -- [[ABC]]
+
+Yeah, but often one can abstract away the indexing and use the metaphore of choice. In this case though, instead of rolling your own list you migh roll your own iterator instead:
+&lt;pre&gt;
+class ScanIterator implements ListIterator {
+    List list;
+    int size;
+    int currentIndex;
+
+    public ScanIterator(List list, int startIndex) {
+	this.list = list;
+	if (list != null) {
+	    this.size = list.size();
+	}
+	currentIndex = Math.min(size - 1, startIndex);
+    }
+
+    public boolean hasNext() {
+	return currentIndex &lt; size - 1;
+    }
+
+    public boolean hasPrevious() {
+	return currentIndex &gt; 0;
+    }
+
+    public Object next() {
+	if (currentIndex &lt; size - 1) {
+	    return list.get(++currentIndex);
+	}
+	else {
+	    throw new NoSuchElementException();
+	}
+    }
+
+    public int nextIndex() {
+	return currentIndex + 1;
+    }
+
+    public Object previous(){
+	if (currentIndex &gt; 0) {
+	    return list.get(--currentIndex);
+	}
+	else {
+	    throw new NoSuchElementException();
+	}
+    }
+
+    public int previousIndex() {
+	return currentIndex - 1;
+    }
+
+    public void remove() {
+	throw new UnsupportedOperationException();
+    }
+
+    public void add(Object o) {
+	throw new UnsupportedOperationException();
+    }
+
+    public void set(Object o) {
+	throw new UnsupportedOperationException();
+    }
+}
+&lt;/pre&gt;
+Which you then traverse like so:
+&lt;pre&gt;
+	    if (scanLog.size() &gt; 0) {
+		ScanIterator it = new ScanIterator(scanLog, scanLog.size() - 1);
+		while (it.hasPrevious()) {
+		    ScanInfo sci = (ScanInfo)it.previous();
+		}
+	    }
+&lt;/pre&gt;
+Using an ArrayList for the list this takes 14 secs according to your list tester. 1 sec more than using your custom list and 3 secs more than just iterating the list using the pure &quot;for loop&quot; idiom. This approach retains some of the advantages of using a Collections list while still allowing you to walk the list backwards or forwards at will. With only a slight speed penalty. I assume their are purer ways of implementing your own iterators. I have never done this sort of thing before, but I imagine making your own Collections compatible List would come closer to the ideal. The above is just to show that working with the Collections library needn&#39;t be too much slower than rolling your own custom lists.
+
+-- [[PEZ]] 
+
+Duh! I just noticed that ArrayList already provides a listIterator() method!! I&#39;ll try that one and see what performance we get. -- [[PEZ]]
+
+Well, using the default listIterator(), like so:
+&lt;pre&gt;
+	    if (scanLog.size() &gt; 0) {
+		ListIterator it = scanLog.listIterator(scanLog.size() - 1);
+		while (it.hasPrevious()) {
+		    ScanInfo sci = (ScanInfo)it.previous();
+		}
+	    }
+&lt;/pre&gt;
+is a bit slower than my home brewed one. 16 secs. Using a for loop with the iterator, like you did in your example above results in 18 secs execution time. I don&#39;t understand why, but a while() is clearer anyway.
+
+-- [[PEZ]]
+
+Use Java 1.5 and then there is no need for those casts :) -- [[Pulsar]]
+
+Not that the casts are the problem though. =) And, if they were, wouldn&#39;t the casts happen implicitly even using Java 1.5? -- [[PEZ]]
+
+True and true, it was mostly a joke, hence the smiley ;-) -- [[Pulsar]]
+
+So, in conclusion, java&#39;s LinkedList is much slower than should be expected even if you use it like a simple linked list (never by index, always iterating). The best (fastest) solution is simply replacing it with an ArrayList and you can use the same List interface. But you have to keep in mind that Iterators are slow and the general execution speed depends on the java version used, so you better access it by index anyway. I still like the &quot;make it yourself, it&#39;s just a linked list!&quot; solution better, though. ;) -- [[ABC]]
+
+I&#39;m not sure LinkedList is slower than should be expected. The contract of AbstractSequentialList seems to demand that things are done in a special way that I think penalizes the kind of access you tried to use it for. And are Iterators really that slow? I still think rolling your own linked list still is a bit drastic. But if you know for sure you&#39;re not going to want to do anything else with the list so sure, &quot;it&#39;s just a linked list&quot; then. The Collections classes tend to be speedier with each Java version though, not the other way around. -- [[PEZ]]
+
+About Iterators, when you used the index access it took 11s, with the iterator it took 16s, 45% slower. That&#39;s a very big difference. I would expect the LinkedList solution to be (almost) as fast as my own linked list implementation, it is 100% slower. How hard can it be to extend Object with some .next and .previous pointers? -- [[ABC]]
+
+16 secs was with the built in iterator. It provides all sorts of protections and also allows you to delete elements as you traverse the list and such. I got 14 secs by using a less decorated iterator. Random access is faster yes, but that&#39;s to be expected I think. It&#39;s faster than your own linked list implementation too, remember? LinkedList is more than the name implies. -- [[PEZ]]
+
+But my implementation is a linked list! I want a linked list not an array! ;) How can you not be sure LinkedList is slower than expected? All your faster implementations are array based. What if I want to add/remove big blocks in the middle of my list? I&#39;m sure a (proper) linked list will always be faster in that case... -- [[ABC]]
+
+I think you want the interface of a linked list. =) I&#39;m not sure what I expect from LinkedList is what I&#39;m saying. Obviously it&#39;s not the tool for your task, that&#39;s agreed. -- [[PEZ]]
+
+Nope, I want the characteristics of a linked list, not the interface. If it is the tool for the task or not is debatable. For my simplified example it is not, but only in an execution speed perspective, and not by much. From the LinkedList description in the java API: &quot;All of the operations perform as could be expected for a doubly-linked list&quot;. Now, my implementation is a doubly-linked list, shouldn&#39;t I expect a performance close to mine if I replace it with a LinkedList? -- [[ABC]]
+
+They are most likely referring to the complexity ( O(n), O(1) etc ). -- [[Pulsar]]
+
+Good question. =) What characteristics of a linked list is it that you want? I thought the primary reason to using a linked list was to be able to insert and delete elements anywhere in the list at will without the speed penalty you get when doing this with array-type lists. So far I&#39;ve only seen you ask for a speedy and intuitive traversal. If you get that from an ArrayList, isn&#39;t that to your satisfaction? -- [[PEZ]]
+
+I think linked lists are cool :). I don&#39;t like indexes when all I want is to sequentially traverse my list. I like to get the next element of my list without knowing the indexOf(currentElement). I like speedy and &lt;b&gt;intuitive&lt;/b&gt; traversal. I think a linked list is the best representation for the abstract structure I see in my mind when I think of a scan log for PM targeting. Call me stubborn, but I want to use a linked list in my code. Elegant and slow solution: use LinkedList, elegant and fast solution: make your own linked list implementation, fastest (but not elegant, imo) solution: use an array based list and be prepared to pay the price if you reach the point where you realise a linked list was best afterall and an array solution gets slow as hell. -- [[ABC]]
+
+But that can happen whichever path you choose. As long as you don&#39;t expect to start inserting and deleting in the beginning or middle of the list chances are you&#39;ll never find an array-based solution getting slower than a linked list one. And of course I call you stubborn. =) And if you use the List and Iterator interfaces all the time you can plug in and out different List implementations. And even if you end up rolling your own tailored linked list the change in implementation shouldn&#39;t be too hard anyway. Here&#39;s a few more experiments. First:
+&lt;pre&gt;
+	    if (scanLog.size() &gt; 0) {
+		ListIterator it = scanLog.listIterator(scanLog.size() - 1);
+		//ScanIterator it = new ScanIterator(scanLog, scanLog.size() - 1);
+		for (int i = scanLog.size() - 1; i &gt; 0; i--) {
+		    ScanInfo sci = (ScanInfo)it.previous();
+		}
+	    }
+&lt;/pre&gt;
+This gives a performance of 15 secs for the standard iterator and 13 secs for my own one. But if you don&#39;t want to bother even that much with indexes:
+&lt;pre&gt;
+		try {
+		    while (true) {
+			ScanInfo sci = (ScanInfo)it.previous();
+		    }
+		}
+		catch (NoSuchElementException e) {};
+&lt;/pre&gt;
+gives 12 secs using the built-in listIterator() and 10 secs using my home cooked iterator. I would say this last one is both speedy and intuitive traversal.
+
+-- [[PEZ]]
+
+I now tried that last traversal with a LinkedList and it gives the same performance as with an ArrayList. In fact I know now what&#39;s so terribly wrong with your own first attempt using a LinkedList. It&#39;s that &#39;&#39;indexOf()&#39;&#39; in &lt;code&gt;ListIterator it = scanLog.listIterator(scanLog.indexOf(((LinkedList)scanLog).getLast()))&lt;/code&gt;. It forces a traversal of the entire list I think. Using &lt;code&gt;ListIterator it = scanLog.listIterator(scanLog.size() - 1)&lt;/code&gt; instead avoids this. -- [[PEZ]]
+
+That explains a lot! Thanks for restoring my faith in the List classes. But I still don&#39;t like the whole Iterator stuff, how do you store a reference to the current object without losing the Iterator context (next() and previous())? -- [[ABC]]
+
+Btw, it should be &lt;code&gt;ListIterator it = scanLog.listIterator(scanLog.size())&lt;/code&gt;, so that the next call to previous() returns the last element. It&#39;s just a bit too abstract for me, anything related to indexes (like listIterator(index)) makes no sense in a linked list context, imho. -- [[ABC]]
+
+I agree. But since the lists are implemented as containers and not as decorations on existing objects I think there&#39;s only indexes available to initialize the iterator. I don&#39;t understand what you&#39;re asking there about storing references. Can you develop it a bit? -- [[PEZ]]
+
+While I traversed the list I found 10 scans that match the criteria I was looking for, and I want to iterate the list forward from each of their positions. In my linked list I just store the scans in an array and use .next, how do you do the same with a LinkedList without storing the indexes? You .clone() the Iterator? -- [[ABC]]
+
+Cool question. The API docs doesn&#39;t give any details on the actual iterator implementations (only the interfaces) which means we can&#39;t know from that documentation if clone() would work. You&#39;ll have to test it I guess. And I&#39;m CuriousGeorge about if it works! -- [[PEZ]]
+
+Here&#39;s the actual implementation, CuriousGeorge:
+
+&lt;pre&gt;
+    private class ListItr implements ListIterator {
+	private Entry lastReturned = header;
+	private Entry next;
+	private int nextIndex;
+	private int expectedModCount = modCount;
+
+	ListItr(int index) {
+	    if (index &lt; 0 || index &gt; size)
+		throw new IndexOutOfBoundsException(&quot;Index: &quot;+index+
+						    &quot;, Size: &quot;+size);
+	    if (index &lt; (size &gt;&gt; 1)) {
+		next = header.next;
+		for (nextIndex=0; nextIndex&lt;index; nextIndex++)
+		    next = next.next;
+	    } else {
+		next = header;
+		for (nextIndex=size; nextIndex&gt;index; nextIndex--)
+		    next = next.previous;
+	    }
+	}
+
+	public boolean hasNext() {
+	    return nextIndex != size;
+	}
+
+	public Object next() {
+	    checkForComodification();
+	    if (nextIndex == size)
+		throw new NoSuchElementException();
+
+	    lastReturned = next;
+	    next = next.next;
+	    nextIndex++;
+	    return lastReturned.element;
+	}
+
+	public boolean hasPrevious() {
+	    return nextIndex != 0;
+	}
+
+	public Object previous() {
+	    if (nextIndex == 0)
+		throw new NoSuchElementException();
+
+	    lastReturned = next = next.previous;
+	    nextIndex--;
+	    checkForComodification();
+	    return lastReturned.element;
+	}
+
+	public int nextIndex() {
+	    return nextIndex;
+	}
+
+	public int previousIndex() {
+	    return nextIndex-1;
+	}
+
+	public void remove() {
+            checkForComodification();
+            try {
+                LinkedList.this.remove(lastReturned);
+            } catch (NoSuchElementException e) {
+                throw new IllegalStateException();
+            }
+	    if (next==lastReturned)
+                next = lastReturned.next;
+            else
+		nextIndex--;
+	    lastReturned = header;
+	    expectedModCount++;
+	}
+
+	public void set(Object o) {
+	    if (lastReturned == header)
+		throw new IllegalStateException();
+	    checkForComodification();
+	    lastReturned.element = o;
+	}
+
+	public void add(Object o) {
+	    checkForComodification();
+	    lastReturned = header;
+	    addBefore(o, next);
+	    nextIndex++;
+	    expectedModCount++;
+	}
+
+	final void checkForComodification() {
+	    if (modCount != expectedModCount)
+		throw new ConcurrentModificationException();
+	}
+    }
+&lt;/pre&gt;
+-- [[David Alves]]
+
+Thanks! I guess that means it is an inner class of LinkedList? And what that means for its clone()-ing capabilities I don&#39;t know. Inner classes always confuses me. =) [[ABC]]&#39;s problem seems to be hard to solve in any elegant way using LinkedList... Or maybe subList() can be used? You&#39;d had to worry about indexes again though. If you build a List of iterators created like &lt;code&gt;scanLog.subList(it.nextIndex() - 1, scanLog.size()).iterator()&lt;/code&gt; you can use these for the traversal. (Assuming it&#39;s forward-traversal only, otherwise ask for listIterator() instead.)  -- [[PEZ]]
+
+Somehow I doubt that &lt;code&gt;subList(int fromIndex, int toIndex)&lt;/code&gt; won&#39;t traverse the source list to find the first entry for that subList, making it slow again. If only they could have found a way to make that &quot;Entry next&quot; object accessable, then maybe you could use a LinkedList like a linked list... -- [[ABC]]
+
+You&#39;re right, I have the same doubts. -- [[PEZ]]
+
+On the other hand. If you use an ArrayList instead you can use it in exactly the same way but without the speed penalty. -- [[PEZ]]
+
+Not in the same way I use my linked list. I would have to save indexes instead of list entries. And do a lot of (scanInfo)list.get(i). And why mess with obscure Iterators when you can do for loops, or i++? One of the cool things linked lists is that every element is a list itself. -- [[ABC]]
+
+Yes, I didn&#39;t mean you can use it in the same way as with your linked list. I mean in the same way as the LinkedList iterator with subList() and such. -- [[PEZ]]
+
+----
+this topic describes why i both like and dislike the Java language :) .&lt;br&gt; 
+
+It&#39;s my experience that many programmers like to develop their own solutions instead of using default functionality and general patterns. And the language makes it possible. Sometimes it makes sense to use your own code, like in this case where the performance of the original functions is not acceptable. Sometimes &#39;homebrewn&#39; solutions are used, just because people are pigheaded and think their own ideas are much better. So these capabilities can both be powerful and destructive.&lt;br&gt;
+Yesterday we had a lot of discussion at work because of this. We started out with designing and building an application build on standards and ended up with unmaintanable code because of all the deviations from the standards that were implemented. Of course the decissions you make also depend on for whom you are developing your code; for work or private use. So maybe this &#39;rant&#39; is out of place on this wiki :)&lt;br&gt;
+It may be clear from my oppinion: in my professional life i am not a true Java adept. I mostly use a 4GL language with limited options but very high productivity. I use Java to fill the gaps in functionality. Sometimes we build &#39;all-Java&#39; applications and get discussions like described above.&lt;br&gt;
+I hope i didn&#39;t offended anyone with my oppinion. If i did, than it was not my intention. I am not intereseted in a discussion on what is the best programming language, i think they all have weak and strong points. I am interested in a discussion how to get the most out of a programming language, which includes productivity and maintainability.&lt;br&gt;
+
+Just out of curiosity: how many of you use Java in their professional lives? And how do you cope with these issues? --[[Loki]]
+
+This page makes me think of an episode in Winnie the Pooh where Pooh, Rabbit and Piglet are lost out in the woods. They try to find their way home, but keep going in circles always returning to the same spot in the forest. Pooh then suggests that, Since trying to find home finds them that spot, maybe trying to find that spot finds them home. Rabbit thinks the idea is ridiculus and offers to prove it by going away to find the spot they are on. He does this as a non-believer though and eventually finds himself even more lost than before.
+
+I think of myself as Pooh in this story. Since the forest obviously has its way, I better follow it. And, no offense ABC! =), I think of ABC as Rabbit. Trying to force his ways on the forest.
+
+In less methaphorical terms, to respond to Loki&#39;s reasoning. I think the way to get the most out of any programming language is to try follow it&#39;s way. Taoism, if you like. I think very highly of Joshua Bloch and the other designers of the Java Collections API. Whenever the API surprises me I start with questioning my own reasoning. Most often this leads me in a direction that is working and most often I can look at the code aftewards and feel i own it.
+
+The stream philosphy in Java is another matter though. I just can&#39;t for the life of me understand it! Where&#39;s printf()??? Luckily printf() is present in Java 1.5 so I was not alone missing it. =)
+
+-- [[PEZ]]
+
+I would re-design that forest, after following the rabbits way until I&#39;m 100% sure that the forest follows no logical rule. ;)
+
+I don&#39;t use java in my professional life, my main java experience is the 3 years of robocoding. I do mostly DB stuff and also prefer using a rapid development tool than going low-level. When I code for fun (Robocode) I&#39;m the opposite, I see coding as an art form, not a tool. I love the philosophy behind java, and also think ver highly of its designers. But there is a difference between the language and the API. Maybe I don&#39;t know the API enough to make judgements but, at least in this case, it looks to me like there is a logical flaw in the way they put arrays and lists together. I also question my own judgement first, I did try the LinkedList solution first, and only went the &quot;do it yourself&quot; way after I re-read the API specification to exaustion and found no way of using it like I wanted. PEZ findings in suposed &quot;java optimisation experts&quot; pages are a very good example of the dangers of never questionnig the API, though. LinkedList is just useless when you use it the same way as an ArrayList, and the API is to blame because it makes it look like they are two tools for the same job. And the fact that the List Interface is very much array-oriented just makes things worse.
+
+-- [[ABC]]
+
+I know you would re-design the forest. =) After all, you invented WaveSurfing and I didn&#39;t. About the API tricking you. The docs are quite clear about that the operations on a LinkList will be performed using LinkedList operations. I guess the API designer thought that would be enough of a warning not to use indexing on large lists. Clearly they were wrong about that. -- [[PEZ]]
+
+Like ABC, I too use RAD-tools in combination with a DB for data persistance, while using Java mostly for connectivity to &#39;legacy&#39; applications. I am eagerly awaiting a 4GL-like design/generation tool for Java that (iteratively) generates the whole application from its specifications. The current options (see eg. www.codegeneration.net) only solve part of the problem. So from a practical viewpoint, more productive languages/tools exist.&lt;br&gt;
+But i do like Java over most other languages i have learned and used because of it&#39;s structured approach, it&#39;s a very nice language from a theoretical viewpoint. --[[Loki]]
+
+Looks like I missed most of this conversation which ended half a year ago (the last change, coincidentially, was on my half-birthday...)...
+
+I don&#39;t use Java professionally (and the closest I&#39;ve come is teaching beginners to use Java, which doesn&#39;t count as anything relative to actually using Java in production).  Basically, my use of Java is completely for &quot;art&quot;.  I&#39;ve programmed in Java competitively (against mostly C/C++ programmers, which is quite unfair to them :-p) since 2002 in various college and open competitions.  Some of these required me to optimize my code for speed so it could match speed constraints set based on the C++ solutions.  Others allowed me to use the java libraries inasmuch as I&#39;m familiar with them (thanks to Robocode, a bunch of geometric problems go quicker now :-) ), and the emphasis was more on how fast I could code up a solution.  To be honest, I&#39;m not sure which I think is more fun (but the latter certainly takes less time).  I think the more I use object-oriented design as well as my available libraries, though, the more &quot;Java&quot; I feel like my solution is (whether anyone cares about that or wants to make their robots Java-esque or non-Java-esque).  So there&#39;s some programming philosophy for you. -- [[Kawigi]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 2 + 7 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that ABCsLinkedListChallenge has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=ABCsLinkedListChallenge">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

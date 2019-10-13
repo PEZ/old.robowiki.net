@@ -1,0 +1,436 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Raiko - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Raiko'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Raiko">Raiko</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><center>
+<H3>Raiko</H3>
+
+</center>
+<UL >
+<li> Alternatively it might be because the gun was completely broken. :-\ Never try to adapt a micro-gf gun, is my advice... 0.43 on the way.
+</UL>
+<p>
+<UL >
+<li> Down 4 points in the general rumble and up 10 in minibot. Could be that saved data is more important than I'd thought, or maybe I've finally found the segmentation limit for 35-round battles?  It does now have over 1k buckets.    I think I'll leave it for now, finally beating Lacrimas is quite nice.
+</UL>
+<p>
+<UL >
+<li>2004-02-20: Long time coming but 0.41 is finally out.  Unfortunately I changed virtually everything, only ran two test battles, and included hardly any data with it, so I'm not too sure where it's going to end up. :-)  The new head-on avoidance is inspired by Aristocles and sample.walls.
+<UL >
+<li> Ugly bug in the head-on avoidance sends it plumeting... at least I hope it's that. :-)
+</UL>
+</UL>
+<p>
+<UL >
+<li>2004-01-28: Raiko 0.3 released.  Back to a more theory-based movement.
+</UL>
+<p>
+<UL >
+<li>2004-01-09: Raiko 0.22 released.  
+<UL >
+<li> Realized that I was actually segmenting on time since last velocity change, not time since last stationay like I thought.  Well, it seems to work, so I left it. :-)  Changed the granularity again.
+<li> Squeezed 99 bytes from the codesize so as to be able to implement Axe's linear movement trick.  
+</UL>
+</UL>
+<p>
+<UL >
+<li> 2004-01-05: Raiko 0.2 released.
+<UL >
+<li> Features an ugly hack to cover my awful near-field movement.  Seems to work, though.
+<li> Refined the gun using a suggestion from Kawigi about granularity on the time-since-stationary segment.
+<li> Returns to segmenting on distance, not bullet velocity; this seems better against my problem bots.
+</UL>
+</UL>
+<p>
+<UL >
+<li> And down again.  Ah well. :-)
+<li> Ok, maybe I was wrong about the bug... Raiko re-enters at number 6 in overall 1v1.  I'm going to go watch it drop. :-)
+<li> 2004-01-01:  New year, new version.  Raiko 0.16.
+<UL >
+<li> Tweaked movement over many battles with DT.  Now does better vs it (~48% of score over 500 rounds with no data.) and seems improved against many others.
+<li> Reintroduced the time since last stationary segment.  5 segments in the gun may slow learning too much, but we'll have to see.
+<li> Data on more bots, but less of it (hundred round battles mostly)
+<li> Hmm, I think I might have introduced a bug while shrinking the code... :-/
+</UL>
+<li> Raiko 0.14 is out.  several changes;
+<UL >
+<li> Changed to segmenting on opponent's absolute velocity.  Works better against most bots.
+<li> Went back to an older movement which looks better near the walls.  The new flattening modifiers solve the problem I had with it before.
+<li> Changed it's preferred combat range to 550 in line with the change in the flattest part of it's movement.  Made it much more aggressive about maintaining it's distance from the opponent.
+<li> Multiplied everything by 1.2, just for the hell of it.
+</UL>
+</UL>
+<p>
+I've managed to loose whatever made it beat <a href="robowiki?Griffon" class=wikipagelink>Griffon</a>, unfortunately, but it looks better than 0.12 at least. ;-)
+<p>
+<UL >
+<li> Raiko 0.12 plummets to 12th in mini 1v1 and 25th overall.  My set of problem bots changed to being trashed by everything PEZ-like :\  I think I'll go back to 0.1 for now...
+</UL>
+<p>
+On the plus side, the new development version is the first I've tested to consistently beat <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> and Griffon without saved data.  It still looses to micro.Predator_1.5, though.  We'll work out something...
+<UL >
+<li> 2003-12-29 - Raiko 0.12 update released.
+<UL >
+<li>  Fixed movement bug - now stays at it's best range.  It also hits the panic button when finding itself too far from that range, and tacks towards it faster.
+<li>  Removed segmentation on the elapsed time since the opponent was stationary.  I'm not sure if this is good or not, it makes a big difference vs most of the problem bots but it now looses to Tityus 0.6.0.  I settled on segmenting on the elapsed time since the opponent changed velocity instead.
+</UL>
+</UL>
+<p>
+<UL >
+<li> 2003-12-28 - Raiko 0.1 released.
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<H4>What's special about it?</H4>
+
+It's my first public bot.
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=1922">http://www.robocoderepository.com/BotDetail.jsp?id=1922</a>
+<H4>How competitive is it?</H4>
+
+As of 2004-02-20:20:27 it's at #1 in mini 1v1, and #3 overall. 
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+It circles the other bot.  If Math.random() exceeds a certain number then it circles the other way.
+<H4>How does it fire?</H4>
+
+It uses <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> with segmentation on distance, lateral acceleration, elapsed time since the opponent last changed velocity, enemy absolute velocity and whether the opponent is heading for a wall.
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+0.3 now reacts to the opponent's firepower.
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+Don't know.  Never tried it in <a href="robowiki?Melee" class=wikipagelink>Melee</a>...
+<H4>What does it save between rounds and matches?</H4>
+
+The details of the guess factors are saved.
+<H4>Where did you get the name?</H4>
+
+Raiko is the name of an 11th century Japanese hero, famous for slaying giants.
+<H4>Can I use your code?</H4>
+
+It should be in the bot jar, help yourself.  Use is under the terms of the <a href="robowiki?RWPCL" class=wikipagelink>RWPCL</a>.
+<H4>What's next for your robot?</H4>
+
+Better movement, refined gun. 
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+We'll see. 
+<H4>What other robot(s) is it based on?</H4>
+
+The gun is a modified version of the one in <a href="robowiki?Tityus" class=wikipagelink>Tityus</a>, by <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>.  The movement looks a bit like <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a>'s, though that's just because it turned out to be the easiest way to dodge walls. :p
+<hr noshade class=wikiline size=1>
+<p>
+<H4>Comments?</H4>
+
+Cool. It seems strong. But it lacks a flag. Is it a secret where you are from? =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I'm from... several places.  But let it fight under the Irish flag.  It needs one defender in the Rumble!
+<p>
+Very impressive indeed! Congratulations and welcome. (or should i say "badcome" since my bot had been overcame? :^))) -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>  
+<p>
+A splash entry indeed. I'm not sure I have the flag of the Ireland around. It might take a while to find it. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+By the way, <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>'s movement seems to have the same problems that <a href="robowiki?Musashi" class=wikipagelink>Musashi</a> have against bots like <a href="robowiki?Barracuda" class=wikipagelink>Barracuda</a>. I (and other people too) think that is a weakness near GF 0.0 -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Thanks guys! :-)  It's performing even better than I'd hoped against the top ten (well saved data helps, but this is vale tudo, heh).  Now if I can just fix these problem bots.  And the indomnitable VertiLeech<a href="robowiki?action=edit&id=VertiLeech" class=wikipageedit>?</a>... ;-)
+<p>
+<a href="robowiki?Axe" class=wikipagelink>Axe</a>, yes, seems our movements are pretty similar in concept!  Damn, I thought I'd created something original. ;-)
+I suspect the problem is more subtle than a spike at GF 0; most of my spikes are around .7 or .8.  I think that this type of movement mostly produces a mountain-profile, i.e. a peak with the other visits evenly distributed to either side.  As a result averaging the offsets is just as good as full-blown guess factors, and learning is faster.
+<p>
+I also had some other interlocking problems with <a href="robowiki?Barracuda" class=wikipagelink>Barracuda</a> and others;
+<p>
+<UL >
+<li> <a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a> on the last time a bullet stopped doesn't work well on bots which don't move continuously, or which change velocity to flatten their profile.  In fact it just introduces junk noise.
+<li> <a href="robowiki?Barracuda" class=wikipagelink>Barracuda</a> segments based on distance from walls and corners, which is a big problem area still.
+<li> <a href="robowiki?Barracuda" class=wikipagelink>Barracuda</a> and <a href="robowiki?FloodMicro" class=wikipagelink>FloodMicro</a> use dynamic distancing.  My movement is only flat at a certain range, and they were slipping inside and taking advantage.  Melee bots were also a problem because they tend to run away and get outside my combat range.
+<li> I was maintaining the wrong distance, because I couldn't multiply 160 by three.  Duh... :p
+</UL>
+<p>
+My current development version is no longer vulnerable to these bots, but we'll see if I've introduced any other problems.  Teach me not to do all my testing vs the top ten. :\  0.12 coming soon...  - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+You are pretty observant for a newbie. =) I also think <a href="robowiki?Barracuda" class=wikipagelink>Barracuda</a> is able to expose more than vulnerability to head-on targeting. Maybe <a href="robowiki?Shadow" class=wikipagelink>Shadow</a> too has some particular distance where it is vulnerable to head-on and then Barracuda finds that distance and leads <a href="robowiki?ABC" class=wikipagelink>ABC</a> to think it's a more general problem? Testing against the top-10 isn't wrong. Only the very best (read <a href="robowiki?Paul" class=wikipagelink>Paul</a> and <a href="robowiki?Iiley" class=wikipagelink>iiley</a>) can afford thinking about performance against the weaker bots as well. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li> Or those who want to be among the very best. I say agian: Beat everyone else as well as they do, then beat them. <a href="robowiki?Lacrimas" class=wikipagelink>Lacrimas</a> is a case study of this. He can beat DT 1-v-1 but is still #2 overall because he can not beat everyone else. It may seem counter intuative, but I suspect that beating everyone else will be easier than beating <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> and <a href="robowiki?Lacrimas" class=wikipagelink>Lacrimas</a>. -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<li> It doesn't beat DT in short battles, does it? DT is undefeated in <a href="robowiki?PremierLeague" class=wikipagelink>PremierLeague</a>. I think you get forward a good bot faster by testing against top-10 than bottom-10 or a mixed-10. Besides, it's cool with a newbie who aims that high. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li>The approach I have always taken is to focus on the bots that I perform worse than expected against. One nice side affect of fighting these bots is that they sometimes seem to be geneticaly engineered to take advantage of some weakness that I did not know existed. The first one that I can clearly remember was Aroura<a href="robowiki?action=edit&id=Aroura" class=wikipageedit>?</a>. It had the nasty habit of cornering me. The next one was one of the early versions of one of the Flood* bots. Those could pin me to a wall. Next set were some of the tobe.* bots (particularly Gravitron<a href="robowiki?action=edit&id=Gravitron" class=wikipageedit>?</a>). But as <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> and <a href="robowiki?Jekyl" class=wikipagelink>Jekyl</a> clearly point out, there is more than one road to the top (and neither of ours has been completely successful so far) so feel free to chose your own path. -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<li> I count <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> as a complete success. It was made to be a competetive mini. Getting the #1 mini is way, way beyond my expectations. If Verti is not a complete success I don't know what is. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li> <a href="robowiki?SandboxDT" class=wikipagelink>This</a> is complete success. Everything else is only an immitation. -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+</UL>
+</UL>
+</UL>
+<p>
+My philosophy is, try to beat everyone... :-)  While it's great to optimize movement  against only the best, guns involve a lot of voodoo.  I've ended up with one gun which apparently hits DT more than it hits many bots around 30th in the rankings.  Fun, but not useful (in a mini...) -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Good philosphy. =) But still you'll have to decide what bots to test against. I think it's movement where you can make your bot extra strong against the weak while maintaing strength against the strong. And I also think movement holds more voodoo than targeting. =) Do you mean above that segmenting on time since enemy was stationary worked against <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> 0.6.0? I'm curious, because I would guess that T 0.6.0 changes velocity about as often as it is stationary. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+That segment appeared to make all the difference, yes, though my movement is also a small factor.  Unfortunately I only noticed the new release as I was about to make mine, and ended up staying up till dawn trying to fix it; no luck, though.  I either loose against you or about 5 bots way down the mini rankings.
+<p>
+And I've noticed that you're a movement queen. ;-)  <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> has always seemed unhittable, with an absolutely beautiful profile, but gets a consistently worse hit rate vs one of my movements than head-on targeting.  Bizzare...
+<p>
+- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+You are the second to tell me Marshmallow is a good movement bot. Yet, that movement was too complicated. I always fail to port it to other bots without it losing whatever it is that makes it good. I think it might be a bug actually. ... And it's guns are too complicated too. Good against some bots, but can be tricked badly by some movements... It's good at catching bad wall movement and if you don't have that the guns are more or less worthless. So, my new <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> movement is vulnerable to segmentation on time since stationary? That might explain why it's problem bot list looks like it does. I have no clue how to fix that weakness though so I'll have to live with it a while I guess. At the movement I find some comfort in that 0.6.1 manages to keep some points ahead of <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+One way to fix that is probably to have T stop dead every so often.  <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> finds this an bewildering habit. :-)  However since no-one uses that as a segment AFAIK I think you'll be pretty safe.  And 0.6.1's movement is too damn good anyway! - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a> 
+<p>
+The difficulty of that segmentation is granularity, but it helps against <a href="robowiki?Iiley" class=wikipagelink>Iiley</a>'s bots, and I can only assume it helps against the <a href="robowiki?FloodMovement" class=wikipagelink>FloodMovement</a>.  However, time since stationary might be too simplistic - I think time since a change in velocity at all might be more effective against <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>, and against a goto-style bot (like <a href="robowiki?Iiley" class=wikipagelink>Iiley</a>'s and <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>'s are), even time since a change in direction (or change in velocity).  Empirically, 3 or 4 segments where the highest one is the amount of time for a bullet to reach the enemy or more is about the right number.  I have yet to actually release a bot that uses that, though (but it fits in the dev <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>, if I choose to include it). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+<a href="robowiki?Swiffer" class=wikipagelink>Swiffer</a> uses a segment like that, though it uses change in lateral velocity and time, making it a combined acceleration and "time since velocity change" segment. It exploited a weakness in <a href="robowiki?DT" class=wikipagelink>DT</a> 2.31 movement and made Swiffer beat that DT. <a href="robowiki?Paul" class=wikipagelink>Paul</a> somehow knew how to fix that weakness though. I could only enjoy beating DT in battle for half a day ... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Hah, so I'm not alone on that seg.  Kawigi, unfortunately I haven't found that it helps against flood-style movement; in fact just the reverse, it actually decreases peformance.  Actually not much I do works well against Flood movement :\.  I'll try messing with the granularity, though, and see if things improve.  Mostly I've found it works best against bots which move at top speed all the time.
+<p>
+PEZ, coincidence, I started using it when I did all my testing vs DT 2.31 :-) works well vs the Duelist series, too. - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+I don't think you should revert back to 0.1. They seem about equal in strength and you probably need very little tweaking on 0.12 to get it to pass 0.1. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Not perchance because it got trashed by everything you ever wrote? ;-) 
+<p>
+Anyway, I posted 0.14 just before you wrote, so it's a bit late. :-)  0.12 was a dicey proposition in the first place.  By the time I'd seen it's position I was working on a more promising fork, so I decided I'd rather be back in the mini-top ten in the meantime.  Now it's fingers crossed for the new version... - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+I don't mind my bots trashing yours. =) However, I have great experience in revoking good bots too early. So take this advice of mine and wait for your bot to get some 500 battles under it's belt in the rumble before deciding what to do with it. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Fair enough; I admit I'm still blundering about like a bull in a china shop while trying to make improvements, so there may well be some good ideas in there.  I'll let 0.14 settle for a bit.  And who knows... there's just about enough space there to implement a virtual gun.  0.12 may yet see it's revenge. - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Hmmm... well I'm postponing my decision about 0,14's ranking, but this is nice while it lasts :-
+<p>
+<UL >
+<li>pe.[SandboxDT 2]<a href="robowiki?action=edit&id=SandboxDT_2" class=wikipageedit>?</a>.41 54.0 1 31-12-2003:1:12 37.2 16.7 
+<li>pe.[SandboxLump 1]<a href="robowiki?action=edit&id=SandboxLump_1" class=wikipageedit>?</a>.52 52.8 1 31-12-2003:0:39 47.5 5.2 
+<li>pe.mini.[SandboxMini 1]<a href="robowiki?action=edit&id=SandboxMini_1" class=wikipageedit>?</a>.2 64.2 1 31-12-2003:1:30 57.5 6.7 
+</UL>
+<p>
+- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Way cool. Way cool! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It seems <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> is strong against quite a few strong bots. A question; You have a static method looking like this:
+<pre>
+    private static double maxEscapeAngle(double bulletVelocity) {
+	return 1.2*Math.asin(MAX_VELOCITY / bulletVelocity);
+    }
+</pre>
+What's the 1.2 about?
+<p>
+Also I found I improved the <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> gun when I didn't do:
+<pre>
+	bearingDirection = deltaBearing &lt; 0 ? -1 : 1;
+</pre>
+but instead:
+<pre>
+	if (deltaBearing &lt; 0) {
+	    bearingDirection = -1;
+	}
+	else if (deltaBearing &gt; 0) {
+	    bearingDirection = 1;
+	}
+</pre>
+That is, if the enemy is stationary I keep the bearingDirection it previously had. On the other hand; I did this to be able to better hit stop-and-go bots like the <a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a>s and <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> 0.4 -&gt; 0.5. Yet you seem to hit this movement better than I so I might try it your way instead...
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Well again the saved data help, but it beats 3-4 of the top ten with clean files, given enough rounds.  Not sure why I introduced such a huge problem against some bots, though.
+<p>
+Didn't I say I multiplied everything by 1.2 for the hell of it?  ;-) OK, I'm not sure if that factor actually helps.  However when I hooked <a href="robowiki?RoboGrapher" class=wikipagelink>RoboGrapher</a> up to Raiko's gun I noticed that there seemed to be some overhang, with bots moving more than a 1.0 guess factor, so I put in 1.2* to be able to see the full graph.  Then I never got around to taking it out. :-\  I intended to go through the code and figure out if it was a bug or not, but haven't had time yet.
+<p>
+I'll definitely try your gun modification, it make a lot of sense.  I think the reason <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> hits <a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a> so much is the near-wall segment;  I had the same experience as Kawigi mentioned on Tityus' page. - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+A GF of more than 1 is certainly a bug.  I avoid that bug by simply checking the GF as soon as it is calculated and if it is more than 1 or less than -1 I make it exactly 1 or -1. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+That doesn't fix the bug though. It only makes your bot not crash (which is of course an improvement anyway). I had that overhang problem with <a href="robowiki?RoboGrapherBot" class=wikipagelink>RoboGrapherBot</a> a while, but I managed to fix it. Don't remember what it was though. I'll let you know if it comes back to me. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Indeed.  I "avoid" the bug, rather than fix it.  I don't know how often it happens, i should probably check, i have a feeling i fixed it, so i could remove the checks... -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Well, I don't think you should remove them. Even if you fix the bug, sometimes, I don't know why, you get indexes outside the range. Maybe it is because of lost scans or something. Here's a tiny function you can use to force a value inside a range:
+<pre>
+    private static double minMax(double v, double min, double max) {
+	return (Math.max(Math.min(v, max), min));
+    }
+</pre>
+It adds clarity I think. and it also saves codesize if you need to use it more than once. Use it like so to increment a visitcount:
+<pre>
+   visitCounts[minMax(index, 0, NUM_INDEXES - 1)]++;
+</pre>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I belive i only use it once, so i would stick with putting the code inline, i think.  The only reason i would remove it altogether was if i decided to make it a mini/micro/nanobot and needed the bytes. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+In my code I multiplied that asin by 1.2 as well, but eventually tweaked it down to 1.15.  I'm not sure what the actual value is, but I believe it has to do with poor research into the geometry of the "maximum escape angle".  The asin(MAX_VELOCITY / bulletVelocity) works only if the maximum escape angle is reached by perpendicular motion (to transcribe the base of an isoceles triangle).  I believe the problem has to do with bots moving toward you instead of perpendicular to you, and it might also (mayyyybe) have something to do with the discrete nature of Robocode physics.  If anyone wants to sit down and puzzle out the actual solution to this problem, I would definitely like to hear the answer.  -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<UL >
+<li>I did this some time ago but was promptly told that the problem didn't exist and I was an idiot. Your mileage may vary. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+</UL>
+<p>
+Look at iileys<a href="robowiki?action=edit&id=Iileys" class=wikipageedit>?</a> bots for code where someone has given the thing more thought. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+The culprit is always either the discrete tick-based movement or missed scans (I suppose it could also possibly be using invalid bullet velocities, but I assume you would have made checks to get that right).  The Math.asin(MAX_VELOCITY/bulletVelocity) is the max escape angle.  You won't get to as far of an angle if you don't move perpendicular to the direction to the enemy when he fired.  It is also possible to just be one tick off in tracing the wave.  The max escape angle with any direction of movement can be found using the law of sines, but the key variable is the sine of that angle (the one between the direction you move in and the one to the enemy).  The peak of the sine function is at 90 degrees, as does the function. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a> 
+<p>
+<hr noshade class=wikiline size=1>
+You have managed to make Raiko stronger again. Congrats! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Thanks! :-)  Now I have to go tweak it vs <a href="robowiki?Tityus" class=wikipagelink>Tityus</a>, <a href="robowiki?BlackDestroyer" class=wikipagelink>BlackDestroyer</a> and <a href="robowiki?Griffon" class=wikipagelink>Griffon</a>, lol. -<a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Hey what did you feed Raiko 0.2?  Impressive! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Very impressive indeed! -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+What did he feed? That's easy: our bots... :) Congrats, <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>!!! -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Woohoo, cheers! :-)  I don't think it will stabilize there, lol.  However the movement is completely untweaked since I changed it's strategy, so there's some room for improvement.  All I've done is make it more wall-fearing and given it a truly stupid movement at close range. - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+You mean "less" wall fearing, in'it? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I think that <a href="robowiki?Musashi" class=wikipagelink>Musashi</a> needs some stupid moving at close range too. I've been a total failure at close ranges, never getting it flat... Unbelievable. So, or the movement get stupid, or i get less stupid. (Stupid phrase, i know!) :) -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>      
+<p>
+Ah! The "No fear from the walls" thing! We were talking about this at <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>'s <a href="robowiki?RandomMovementBot" class=wikipagelink>RandomMovementBot</a>. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+<a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, nope, it should be more wall-fearing (unless it's just a bug :p) as it now changes direction when the approach angle is less than Math.PI/3 inside distance 400.  Stops me ramming the other bot.  
+<p>
+<a href="robowiki?Axe" class=wikipagelink>Axe</a>, yup, I think it's a problem with this type of movement generally - it's very hard to flatten it at all ranges.  
+<p>
+Oh, and cheers <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> for the flag! :-) - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+You are right that the movement still has to be tweaked. <a href="robowiki?RoboGrapher" class=wikipagelink>RoboGrapher</a> tells me it's rather weak against power 3 bullets at mid to long ranges. Seeing how well Raiko does, this tells me two things. 1) It might have been a mistake to focus on higher powered bullets. 2) Raiko's gun must be quite strong. Actually three things.3) Raiko can go very, very far if you tweak that movement. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Pre-learned data also helps... ;) -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Not that there is much pre-learnt data in the bot package, so I don't think it makes a very big difference. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Problem-bot data can make a big difference, like Musashi demonstrated. And how is data on 41 bots "not much"? Not that I'm complaining, it's stil a valid tactic... -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+It's not 41 rumble bots. And it's not much compared to <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> and <a href="robowiki?Griffon" class=wikipagelink>Griffon</a> and some others. We would need to see an empty Raiko to know how much difference it makes though. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yup, saved data helps a bunch. ;-)  It's not high quality, mostly 50 - 100 rounds a bot, but with a heavily segmented gun it's useful. I'm also curious about how it would do without it, but... not that curious. :-)
+Ah well, down to sixth.  The tweaked version will have to wait a few days. - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+You have got rid of the wall segmentation too, haven't you? And what about that granularity thing in time-since-stationary? Tell, tell. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+OK, ok. :-) The wall segmentation is still there, it's just more obfuscated.  (I was trying to reduce codesize so that I could fit DynamicSegmentation<a href="robowiki?action=edit&id=DynamicSegmentation" class=wikipageedit>?</a> in.)  The time-since-stationary segment is governed by the vSegment method.  It calculates timeSinceLastChange<a href="robowiki?action=edit&id=SinceLastChange" class=wikipageedit>?</a>/(enemyDistance/bulletVelocity) and segments at values of .2, .6, and 1, 4 segments in total.  Thanks again to Kawigi for the suggestion. :-) I also reverted to segmenting on distance, not bullet travel time.  Because of the way the bullet power is chosen everything was being squashed into two segments, and dissimilar cases were overlaping.  As a result the 250-300 values were badly contaminated, and I couldn't reliably hit bots which change ranges around this value.  I'm going to have to find a way to balance that out, though, because it causes problems against several strong bots.  You'll notice in now looses to Sedan, something which hasn't happened in my testing since 0.1.
+<p>
+Btw, I just graphed the profile and I was shocked.  If I'd seen it then I'd never have released this version!  I suspect the reason it works (sort of) is that only low-ranked bots spend any real time in the near-range segment... most of those use either head-on or average-offset-targeting, and the spike at 1.0 obviously works against head-on, while average-offset targeters are firing at the foot of the peak.  I guess it's not whether a profile is flat, it's whether the opponent can hit it or not. ;-)
+<p>
+I've also just realised that my grapher is segmenting every 140 clicks, and my movement modifiers are segmenting every 160.  Er, perhaps that explains why trying to improve near-range movement always messed up the wrong segment. :-\  Tweaking should be a bit easier from now on. - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+<a href="robowiki?Tityus" class=wikipagelink>Tityus</a> chooses a given bullet power for a given distance index so that it shouldn't need segment on bullet power. Segmenting on bullet travel time is a bit like doing bullet power segmentation. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+You're right, and it's an elegant solution.  The reason I switched to bullet travel time was to deal accurately with the cases where I'm firing based on the opponent's energy.  Those are often the most critical, and they can contaminate the other data if e.g. I fire lots of 1.1 value bullets at the 300-range in the third round. - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+I don't know if those shots are often most critical. If the enemy is low on energy you will eventually kill it even if you don't have data collected for those bullets. My bots usually don't collect data for bullets below a certain bullet power (or in some cases if the fired bullet has a lower power than the default power for a certain distance). That way you do not contaminate the data for start and mid game. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+BTW. It's scary to see <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>'s <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a> rating raise as it does right now... It will soon pass <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> I think. That's no fun! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+There you go, it's gone down again since you said that. ;-)  Your number one spot is safe, I think... maybe in the next release.  But Vertileach<a href="robowiki?action=edit&id=Vertileach" class=wikipageedit>?</a> is hard to unstick... &lt;groan&gt;
+<p>
+Raiko is currently ceasing data collection when it's firing low-power bullets, but with a 5-segment gun I'm keen enough to collect all the data I can.  I'll give the whole thing some more though when I have time; I'm a sucker for trying to create 'optimal' solutions. - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+I know that feeling. It's worth exploring all paths of course. Sometime I feel like I have. But I probably sometimes explore a strategy or technique and do it the wrong way and then draw the wrong conclusions. That's what cool with a new mind in the game. Anyway, you might try with a four way gun and see if the faster learning pays in the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> tournament format. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Man! 1894 after 380+ battles. I knew you would make the jump if you applied <a href="robowiki?Axe" class=wikipagelink>Axe</a>'s trick, but this high?? Now I am pretty sure I will lose my mini-crown too. I really needed some sleep tonight! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+iiley picked a nice time to release a broken Lacrimas, too. ;-)  I'll have to give you another few days before the next version, university is murderous at the moment.  - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Congrats man!! But if u have used my trick, u at least should had the decency of sending me a bottle of a fine irish wiskey!! What a shame... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+I surely deserve that bottle, look at you LRP graph (If u need i'll send my adress for the posting)!! -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Lol, thanks Axe, I definitely wouldn't be there without you.  Mail me the address and I'll send you a bottle next time I'm not broke. ;-)  -  <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+I don't know about the "I definitely wouldn't be there without you", i am anly interested in that irish wiskey. Consider it a deal, please send the bottle when u become not broken, ok? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+A discussion worthy of the <a href="robowiki?BeerPoet" class=wikipagelink>BeerPoet</a>. =) I sure wouldn't mind a dram or two of some 12 year Bushmill malt. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Bushmill's, huh?  Not a bad choice, even if I do say it is a Vodka drinker. ;-)  Go on then, send me an address and I'll get round to that too.  (Damn you've both caught me in a good mood! :p) - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Bushmill's is one of my very favourites among whiskeys. Very oily and with a lot of fruitiness to its after taste. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Hey, why don't you sign Raiko up in the <a href="robowiki?RobocodeLittleLeague" class=wikipagelink>RobocodeLittleLeague</a>? I bet it would rule the mini 1v1 division. For a while at least. Until I have gotten <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> where I want it. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Err, <a href="robowiki?LittleLeague" class=wikipagelink>LittleLeague</a>?  Ah, OK.. yes, I'll get around to that, thanks. :-)  But probably after I see what you have up your sleeve with 0.9.5.  That's a nice graph on the Shadow page... - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Relax. I have trashed that development track. I couldn't get the profile any flat when clear of the walls. Strange, very strange... I'm working with a new system now. It will take a little longer than usual for me to get next version out. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I say. Raiko 0.3. WOW! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Aaargh, this is torture... it keeps skipping above and below <a href="robowiki?Paul" class=wikipagelink>Paul</a>... make up your mind, silly bot... :-) we'll see where it settles. - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Still, this is a milestone in Robocode bot development. A <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a> fightingfor the #2 spot with <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a>!!!! I like to see things like this:<pre>
+Fighting battle 26 ... jam.mini.Raiko 0.3,pe.SandboxDT 2.41
+RESULT = jam.mini.Raiko 0.3 wins 2718 to 2487
+</pre>
+=) Sweeeet! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Hehe, cool :-) 1918 with 400+ battles, it just *might* stay at #2 until the next DT. :-)  And still with 50 bytes to play with... - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+<a rel="nofollow" href="http://rumble.robowiki.net/servlet/Rankings?version=1&amp;game=minirumble">[Mini Rankings]</a> &lt;--- is anyone else not seeing Raiko there? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+This usually happens - it takes a while longer for the mini rankings to update.  I just checked the codesize at 1453, so it should show up later. - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+The delay you're talking about is while it waits for it's first match against a mini. It's already run 600+ matches at the time of that writing and fought most of the minis in the minirumble. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+True - however I've often noticed bots fighting more than 400 battles without appearing in the minibot rankings, then showing up with only 30 battles fought.  Of course I have no idea how <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> works, so I've no idea why this should be so. - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+If someone is running RR set to "General" maybe it only uploads to Roborumble and not the mini leagues? No clue why else that might happen. Albert? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Congrats, the second to overcome <a href="robowiki?DT" class=wikipagelink>DT</a>! Things are getting tougher and tougher... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+I see nothing wrong with the mini ranking table. In fact it looks "cured" somehow. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+The premier leagues also seem to be slow to update. -- <a href="robowiki?Alcatraz" class=wikipagelink>Alcatraz</a>
+<p>
+Yes, they are. Only updated twice a day. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+There is a problem with Robocode security manager that prevents RR@H to check the robot codesize once the first iteration has runed. It can happen then that the battles used for the general ranking are not used with the mini ranking. The only work around is to stop the client and start it again. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Top result from a mini bot, congrats - looks like a rating of 2000 must be possible.  Good news, my contract has finished and I am unemployed, I can now spend some time on DT :) - perhaps I can reach the 2000 mark first.  --  <a href="robowiki?Paul" class=wikipagelink>Paul</a>
+<p>
+<strong>Good</strong> news? If I could I would employ you myself. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I have two suggestions for what you could do with those 509 bytes left.
+<OL >
+<li> Stop Raiko from embarassing itself on arenas != 800X600
+<li> Make Raiko hit disabled opponents
+</OL>
+The first change won't win you more points in RR@H, but the second change might. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Raiko 0.3 is my worst result: 37%. Sure that is a good bot, what a hell did u feed it with (excluding our bots, of course)? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+<a href="robowiki?Paul" class=wikipagelink>Paul</a>, thanks. :-)  There's still some optimization to be done on this movement, as 0.3 still doesn't react quite right to enemy bullet power.  The dev version has a much nicer profile against DT. :-)  
+<p>
+<a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, oops, I say I'll fix it against disabled opponents every version and never do it.  This time. :-)
+<p>
+<a href="robowiki?Axe" class=wikipagelink>Axe</a>, it's all it the movement. ;-)  -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+I imagine. The movement is allways my weak point, i'm a complete failure... :( Probably is that the reason of my cheap tricks, i have to fill the weakness with something... Btw: that Raiko is not AM? If it isn't, i think that it is probably the greatest "pure moving" ever! Imagine: beating <a href="robowiki?DT" class=wikipagelink>DT</a> without AM... And with a mini... Wow. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Nope, no AM - unless you count the <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a>, of course. ;-)
+<p>
+The movement of Raiko is simply great and so small. A nano with this movement is absolutely no problem. If you think of it perhaps you can do something with this: <a href="robowiki?RaikoNano" class=wikipagelink>RaikoNano</a>. -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+<hr noshade class=wikiline size=1>
+Would you care to share some of the theory behind Raiko's movement? Particularly why you settled on a 1 - x^x curve for probability of direction change and why you chose the x you did? I'm really curious as to why this works so well.. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Ah, OK... well, it's a simple statistical idea.  First assume that you can't get the negative guess factors flat. (After some e-mails with <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> and a bit of testing I think this is probably not true in general, but it probably is true for a constant-probability-of-turning movement)  This allows us to create a boundary condition on flatness, which is that the probability of getting to the edge of the escape area is roughly proportional to 1/n, where n is the number of ticks before a bullet arrives.  (That is, the probability of getting to the edge of the escape area should be the same as the probability of getting to any other positive guessfactor.)
+<p>
+If the probability of not turning on a given tick is p, then the probability of not turning in the next n ticks is p^n.  This is also the probability of reaching the edge of the escape area.
+<p>
+Equating these conditions :-
+<p>
+p^n = 1/n
+<p>
+=&gt; p = (1/n)^(1/n)
+<p>
+So I knew that for a movement with a constant probability of turning each tick to be truly flat, it had to follow something like that formula.  Some simulations indicated that it would flatten well enough, thanks to the fact that it takes time to turn, which smooths out the mid-range positive guessfactors.
+<p>
+Unfortunately I never tuned it properly when I first started, and got sidetracked for Raiko 0.1-&gt;0.22, but Tityus 0.9.1 gave me an incentive to get it to work right. :-) 
+<p>
+There are different ways to achieve the same result with other movement types, but I'll leave those as an exercise for the reader. ;-)  -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Raiko" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Raiko">View other revisions</a><br>Last edited May 18, 2006 20:15 EST by <a href="robowiki?GrubbmGait" title="ID 6861 from ip195-142-172-82.dyndsl.versatel.nl">GrubbmGait</a> <a href="robowiki?action=browse&diff=1&id=Raiko">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

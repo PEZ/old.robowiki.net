@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Lukious/VersionHistory - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Lukious, Version, History'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/VersionHistory">Lukious/VersionHistory</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Lukious" class=wikipagelink>Lukious</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><UL >
+<li> <strong>1.321</strong> - 11/20/2007
+<UL >
+<li> Much lower hit percentage thresholds for using the more complex / quickly decaying scan distance formula in <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>. (Still no <a href="robowiki?CurveFlattening" class=wikipagelink>CurveFlattening</a>.)
+</UL>
+<li> <strong>1.32</strong> - 11/19/2007
+<UL >
+<li> <strong>Rating: 2056 (13th), PL: 565-15 (13th)</strong>
+<li> Changes to scan distancing functions in movement.
+<li> Fixed a small issue in projected bot width in the surfing's kernel density calculations (using width at precisely predicted location instead of at the surf scan's original distance to enemy).
+</UL>
+<li> <strong>1.31</strong> - 11/19/2007
+<UL >
+<li> <strong>Rating: 2054 (13th), PL: 561-20 (17th)</strong>
+<li> Fixed a bug from 1.30: was using my location in bullet-hit-bullet events instead of the bullet's location.
+<li> Merged over changes from Dookious movement made since I originally started rederiving Lukious.
+<li> Added a second distancing formula to be more quick adapting against bots above a given hit percentage threshold. (Old Lukious movement had this type of setup.)
+</UL>
+<li> <strong>1.30</strong> - 11/19/2007
+<UL >
+<li> <strong>Pulled</strong>
+<li>  Movement rewritten / rederived from <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>.
+</UL>
+<li> <strong>1.21</strong> - 11/17/2007
+<UL >
+<li> <strong>Rating: 2047 (16th), PL: 565-14 (12th)</strong>
+<li> Using a <a href="robowiki?DisplacementTargeting" class=wikipagelink>DisplacementTargeting</a> style GuessVector<a href="robowiki?action=edit&id=GuessVector" class=wikipageedit>?</a> for firing angle projections in the gun.
+<li> Reverting to some tuned static attribute weights instead of using a dynamic weighting system in the gun.
+</UL>
+<li> <strong>1.20</strong> - 10/11/2007
+<UL >
+<li> <strong>Rating: 2042 (16th)</strong>
+<li> Gun rewritten / rederived from <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> 1.56.
+</UL>
+<li> <strong>1.10</strong> - 9/4/2006
+<UL >
+<li> Two changes stolen from <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>:
+<UL >
+<li> Updated bullet power management.
+<li> Precise GF=1/-1 calculation in gun.
+</UL>
+</UL>
+<li> <strong>1.06</strong> - 5/23/2006
+<UL >
+<li> <strong>Rating: 2039 (11th), PL: 427-9 (10th)</strong>
+<li> Lots of changes to gun distancing, band width factors.
+</UL>
+<li> <strong>1.05</strong> - 5/20/2006
+<UL >
+<li> <strong>Rating: 2038 (10th), PL: 410-9 (10th)</strong>
+<li> Restored 1.03 movement (logically, not full code reversion.)
+<li> Major reworking of gun distancing factors.
+<li> Significant change to how scan distances affect <a href="robowiki?KernelDensity" class=wikipagelink>KernelDensity</a> estimations. (Inspired by comment from <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>.)
+</UL>
+<li> <strong>1.04</strong> - 5/19/2006
+<UL >
+<li> <strong>Rating: 2034 (11th), PL: 412-6 (6th)</strong>
+<li> Added real <a href="robowiki?CurveFlattening" class=wikipagelink>CurveFlattening</a> to movement.
+<li> Misc changes to quick-adapting movement clustering.
+</UL>
+<li> <strong>1.03</strong> - 5/16/2006
+<UL >
+<li> <strong>Rating: 2040 (9th), PL: 407-11 (12th)</strong>
+<li> Movement changes:
+<UL >
+<li> Decision to use quick-adapting scan distance altered to be the same as <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>'s decision to enable CurveFlattener<a href="robowiki?action=edit&id=CurveFlattener" class=wikipageedit>?</a>. (Slightly higher hit-% threshold all around.)
+<li> Changes to "main" distancing calculations in movement: lateral and advancing velocities instead of velocity and heading; added turn rate factor; miscellaneous changes to weights, minimums, and maximums.
+<li> Slight changes to <a href="robowiki?KernelDensity" class=wikipagelink>KernelDensity</a> estimations.
+<li> Various changes to quick-adapting distance formula. (Largely intuitive, and based on successes in main distance formula.)
+</UL>
+<li> Wave system caches two sets of "closest scans", so movement does not slow down much over hundreds of rounds. (Also enables me to run <a href="robowiki?MovementChallenge" class=wikipagelink>MovementChallenge</a> benchmarks.)
+<li> <em>Note: <a href="robowiki?WaveSurfingChallenge" class=wikipagelink>WaveSurfingChallenge</a> scores now about on par with <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>. (I'll post MC results soon.)</em>
+</UL>
+<li> <strong>1.022</strong> - 5/15/2006
+<UL >
+<li> <strong>Rating: 2042 (7th), PL: 412-5 (5th)</strong>
+<li> Fixed some flaws arising from aiming 2 ticks beforehand, concerning the base angle and source location in creating waves and aiming.
+</UL>
+<li> <strong>1.02</strong> - 5/14/2006
+<UL >
+<li> <strong>Pulled</strong>
+<li> Bug fixed in decision to use quick-adapting scan distancing formula in movement.
+<li> Gun changes:
+<UL >
+<li> Off-by-two bug fixed in segmentation scan.
+<li> Reserve two ticks for aiming, instead of assuming 1 and taking 2 when needed.
+<li> Some changes to gun's distancing factors.
+</UL>
+</UL>
+<li> <strong>1.0</strong> - 5/12/2006
+<UL >
+<li> <strong>Rating: 2042 (7th), PL: 409-7 (6th)</strong>
+<li> Initial release. Everything but data storage and analysis is from <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>.
+</UL>
+</UL>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Lukious" class=wikipagelink>Lukious</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Lukious/VersionHistory" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Lukious/VersionHistory">View other revisions</a><br>Last edited November 21, 2007 0:34 EST by <a href="robowiki?Voidious" title="ID 12443 from pool-71-126-31-237.bflony.east.verizon.net">Voidious</a> <a href="robowiki?action=browse&diff=1&id=Lukious/VersionHistory">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

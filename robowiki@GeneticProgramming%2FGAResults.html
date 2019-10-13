@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>GeneticProgramming/GAResults - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Genetic, Programming, GAResults'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/GAResults">GeneticProgramming/GAResults</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?GeneticProgramming" class=wikipagelink>GeneticProgramming</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I explored four different conditions for training my robots.
+They are presented here in order of difficulty, beginning with the 
+easiest condition.
+<p>
+<h4>One Adversary, Fixed Starting Position</h4>
+The simplest possible experiment condition was training against a 
+single adversary where all battles begin from a fixed starting position.
+Under this condition, I was able to reliably evolve robots that could 
+beat each of the bots that ship with Robocode, as well as <a href="robowiki?SquigBot" class=wikipagelink>SquigBot</a>.  
+In some cases, only a few generations were required.  Using a population of 500 individuals, I evolved a robot that could beat Walls in only 
+13 generations.
+<p>
+There are at two reasons that this condition was so favorable for 
+my approach.  First, evaluation was very fast, since only one 
+battle was required to evaluate an individual.  
+In practical terms, that meant that even 
+with a population of 500 individuals, an entire run could be completed 
+in a few hours.  More importantly, however, this condition allowed 
+robots to develop very brittle strategies that only worked under
+the precise training conditions. In general, these robots were unable
+to beat adversaries other than one that they trained against.  The ability
+of these robots to generalize beyond their initial starting positions
+was mixed.  Some runs produced robots that could win fairly reliably 
+even at novel starting positions, but other runs produced extremely
+narrow solutions that only won at a single starting point.
+<p>
+<h4>One Adversary, Multiple Starting Positions</h4>
+Combat outcomes are very sensitive to the initial
+starting position.  Even an inferior robot can win easily if it starts
+the battle with its radar and gun fixed on the back of an opponent 
+who is trapped in a corner.  Thus, to produce a fair evaluation at multiple
+starting positions, a reasonable sample size is necessary.  
+My sample sizes ranged from 10 to 25 starting positions; this had the 
+obvious effect of increasing the training time by a large factor.
+To fairly evaluate all individuals in the same generation, I used the 
+same set of random starting position for each individual within a 
+generation.  The starting positions were updated every generation 
+to prevent overfitting.
+<p>
+I chose several adversaries from the ``starter'' set, and in all cases 
+I was able to evolve a robot that could win more than half the time. 
+For example, it took 60 generation to develop a robot capable
+of regularly beating <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> 80% of the time.
+Against <a href="robowiki?SquigBot" class=wikipagelink>SquigBot</a>, another 60 generation run produced
+a robot that could win 50% of the time, but it appeared to plateau 
+at this result.  In most cases, when the evolved robots won, the margin 
+was small, whereas when the hand-coded robots won, the margin was 
+very large.  In part this was due to the fact that most of these experiments
+were conducted when I was using a raw fitness function that actually 
+encouraged this outcome by offering a declining rate of return for
+high scores.
+Changing the fitness function to more greatly reward the margin of victory
+improved the situation somewhat. 
+However, to a large extent this problem was due to the fact most of my 
+robots never even attempted to shoot their
+adversary.  Instead, they won by dodging all fire until the opponent 
+ran out of energy.  
+<p>
+<h4>Multiple Adversaries, Single Starting Position</h4>
+The robots evolved in the previous condition typically learned 
+to move in a pattern that evaded their adversary's firing pattern.
+Predictably, these robots had no success against other adversaries.
+In this condition, I attempted to evolve robots that learned general
+programs that could defeat multiple adversaries.
+<p>
+After 80 generations, a robot evolved that could beat four out of five 
+of the initial bots that ship with Robocode.  The only bot that it couldn't 
+beat was Tracker.  My robot had evolved a complex movement pattern that 
+avoided the fire of the other four adversaries, who would shoot from 
+a distance.  But the tracker inevitably chased my robot down and 
+killed it.  In another run, I trained my robot against 10 adversaries, 
+including <a href="robowiki?SquigBot" class=wikipagelink>SquigBot</a>.  In 51 generations, a robot evolved that could beat 
+four of the ten adversaries, through a combination of dodging and ramming.
+<p>
+<h4>Multiple Adversaries, Multiple Starting Positions</h4>
+This condition was designed to produce the most general solutions:
+Robots that could beat multiple adversaries from a variety of different
+starting positions.  Unfortunately, this condition was extremely time-consuming.  
+I recently began an experiment with two adveraries, 
+twenty random starting positions, and a population of 200.  
+Under these conditions, each generation took roughly 130
+minutes.  After 14 generations, very little progress has been made.  
+In the previous two conditions, 60 to 80 generations were required to 
+produce winning robots.  Since this condition is more general
+than either of the previous two, it would seem that 60 generations --  
+130 hours -- would be soonest that any success could be expected.
+<hr noshade class=wikiline size=1>
+This is so fascinating! 130 hours. I think that's how long it took me to hand code a bot that could beat all <a href="robowiki?SampleBots" class=wikipagelink>SampleBots</a>. =) There's this thing with the <a href="robowiki?SampleBots" class=wikipagelink>SampleBots</a> that they all shoot with <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a>. Maybe that's why you reach good results in so few generations (at least few from what I would have guessed). Have you given any thought to using <a href="robowiki?GeneticProgramming" class=wikipagelink>GeneticProgramming</a> for very specific tasks? Like maybe for correcting <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a> or some such. Also I think you could have some success with using GA to create a good randomized flattening movement. Since I'm not a schoolar I think it might be a too daunting task for me to try this out, but I'm tempted to check what I could do with that TABLEREX language... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Any chance of you publishing the code for the winning bot?  I would be interested to see what kind of code can come out of a system like this. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I would assume the code looks pretty similar for all these bots, whether evolved or not. It's just the genome string fed to the TABLEREX interpreter that changes. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+That's right -- the java is identical, only the TABLEREX differs.  I looked closely at some of the TABLREX and it was a little disappointing.  A lot of lines that never connected to 
+the "actuators", and then stuff like "turn left (my energy)"...  -- <a href="robowiki?Jacob" class=wikipagelink>Jacob</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?GeneticProgramming" class=wikipagelink>GeneticProgramming</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=GeneticProgramming/GAResults" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=GeneticProgramming/GAResults">View other revisions</a><br>Last edited June 11, 2003 19:37 EST by <a href="robowiki?Paul_Evans" title="ID 111 from dsl092-068-011.bos1.dsl.speakeasy.net">Paul Evans</a> <a href="robowiki?action=browse&diff=1&id=GeneticProgramming/GAResults">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

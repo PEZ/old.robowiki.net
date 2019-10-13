@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>MeleePatternMatching - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Melee, Pattern, Matching'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h3>(redirected from <a href="robowiki?action=edit&id=MeleePatternMatcher" class=wikipageedit>MeleePatternMatcher</a>)</h3><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=MeleePatternMatching">MeleePatternMatching</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Haha, my isp went nuts yesterday so here is a belated plee: 
+<p>
+<a href="robowiki?MeleePatternMatching" class=wikipagelink>MeleePatternMatching</a> would seem to me to be the best kind of melee gun, as loads of melee bots move in regular patterns or have repeating corner movement. Having realised that, it is clear that you only need look at the change in actual position, rather than the change in heading/velocity when trying to match and project the pattern. 
+I came up with the following code. The way its built up, and the way it searches the string was cribbed straight from <a href="robowiki?FunkyChicken" class=wikipagelink>FunkyChicken</a>, also i have some functions taken from one of <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>'s bots (i cant remember which):
+<p>
+<pre>
+public class MeleePatternMatcher
+{
+    final int HISTORY_LENGTH = 10000;
+    final int MAX_SEARCH_LENGTH = 128;
+    
+    ArrayList history;
+    StringBuffer historyString;
+    
+    public MeleePatternMatcher()
+    {
+        history = new ArrayList();
+        historyString = new StringBuffer();
+    }
+    
+    public void add(Enemy target)
+    {
+        double bearing = absoluteBearing(target.lastPosition, target.position);
+        double distancePerTick = target.lastPosition.distance(target.position)/target.timeSinceLastScan;
+
+        for(int i=0; i&lt;target.timeSinceLastScan; i++)
+        {
+            PMData temp = new PMData(bearing, distancePerTick);
+
+            if(history.size() &gt; HISTORY_LENGTH)
+            {
+                historyString.deleteCharAt(HISTORY_LENGTH);
+                history.remove(HISTORY_LENGTH);  
+            }
+
+            history.add(0, temp);
+            historyString.insert(0, temp.toChar());
+        }
+    }
+    
+    public Point2D predict(Point2D here, double bulletPower, Enemy target)
+    {
+        double bulletTime=0;
+        double bulletSpeed = 20 - (3*bulletPower);
+        int startIndex;
+        Point2D position = target.position;
+
+        if ((startIndex=findStartIndex()) == -1) return position;
+            
+        while((bulletTime+=bulletSpeed)&lt;here.distance(position) &amp;&amp; startIndex&gt;=0)
+        {
+            PMData current = (PMData)history.get(startIndex);
+            position = vectorToLocation(current.bearing, current.distance, position);
+            startIndex--;
+        }
+        
+        return position;
+    }
+    
+    public int findStartIndex()
+    {
+        int startIndex = -1;
+        int searchlength = MAX_SEARCH_LENGTH;
+        
+        if(historyString.length()&lt;searchlength) return startIndex;
+        while ((startIndex = historyString.toString().indexOf(historyString.substring(0, searchlength-=8), 1)) &lt; 0);
+        
+        return startIndex;
+    }
+    
+    public double absoluteBearing(Point2D source, Point2D target) 
+    {
+        return Math.atan2(target.getX() - source.getX(), target.getY() - source.getY());
+    }
+    
+    public Point2D vectorToLocation(double angle, double length, Point2D sourceLocation) 
+    {
+        return new Point2D.Double(sourceLocation.getX() + Math.sin(angle) * length,
+            sourceLocation.getY() + Math.cos(angle) * length);
+    }
+    
+    public class PMData
+    {
+        double bearing;
+        double distance;       
+
+        public PMData(double bearing, double distance)
+        {
+            this.bearing = bearing;
+            this.distance = distance;
+        }
+
+        public char toChar()
+        {
+            int val = 1;
+            val *= Math.pow(2, Math.round(distance/5));
+            val *= Math.pow(3, Math.round(Math.toDegrees(bearing)/2));
+            
+            return (char)(val);
+        }
+    }
+}
+</pre>
+With a system looking at the change in the actual position of the enemy, it should do great against bots that move disregarding the opponents, and so should do well in the Pattern Matcher challenge, but it only gets around 50%, and i really dont know whats wrong with it. anyone any ideas?? --<a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+It looks like you are storing the data in terms relative to your current position, so unless you are remaining absolutely still it will be inacurate, surely? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Nope, don't think i am. The only data stored is movement between 2 scans  -- <a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+PMData holds a bearing and a distance.  Those values have to be relative to something, and I can't see where you convert them to something absolute. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Sorry, thats my fault i should really have commented or explained my code. I have an Enemy object that stores all possible relevant information on an opponent including the current and previous position. i create a PMData instance for every tick, interpolating between the 2 recording positions, to record the absolute bearing of the move made and the distance moved in the last tick. I use this data in a symbolic pattern matcher. Once found, the vectors stored in the PMData instance for that tick are projected onto the current position until the enemy distance would be the same as the bullet travel distance. I then shoot at that point. To add a scan to teh pattern matcher you call the add() method with an Enemy object, and to project where the enemy will be before firing you call predict(). Maybe one day i'll actually listen to what i'm always being told and comment my code... --<a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+OK, so to summerise, the bearing and distance are relative to the last enemy position.  That makes sense. :-) -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Can you explain what happens in the while() loops in the predict() and findStartIndex<a href="robowiki?action=edit&id=StartIndex" class=wikipageedit>?</a>() methods? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+When you insert something at position 0 (in the Arraylist and StringBuffer<a href="robowiki?action=edit&id=StringBuffer" class=wikipageedit>?</a>), it doesn't overwrite it, right? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Nope, thats the whole point of inserting it, <a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a>.add(int Index, Object &lt;E&gt;) will insert the object at position Index. To overwrite you would ahve to use the Set(int index, Object &lt;E&gt;), which will overwrite the Object at index with the new Object. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+What does findStartIndex<a href="robowiki?action=edit&id=StartIndex" class=wikipageedit>?</a>() do?
+Btw, does this work yet? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+It seems to work, kind of. Btw, should I do the PM for every bot or just the target?
+Also, if it doesn't seem to work, make sure you have an instance of the class for each robot. Otherwise, you're patternmatching all the robots at once for just one target! --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Nvm about the "it seems to work", it can't hit Crazy on 1v1. Maybe you should start tweaking with 1v1 first --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+It always fire with HOT, even against Crazy. This is because findStartIndex<a href="robowiki?action=edit&id=StartIndex" class=wikipageedit>?</a>() always returns -1 for some reason--<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Aha! findStartIndex<a href="robowiki?action=edit&id=StartIndex" class=wikipageedit>?</a>() always returns -1 because historyString.length() is always less than searchlength! --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+If timeSinceLastScan<a href="robowiki?action=edit&id=SinceLastScan" class=wikipageedit>?</a> is 0 (which it probably will be in 1v1) it won't add anything. --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Hello. I am just curious if anyone could actually teach me how to code some fast melee pattern matching code. I have been trying to figure out this for very long but have no solutions to it. And mind telling me what you think is the best radar to use for melee? thanks. -- <a href="robowiki?Aryary" class=wikipagelink>Aryary</a>
+<p>
+Take a look at Simonton's melee microbot, <a href="robowiki?Sprout" class=wikipagelink>Sprout</a>. IIRC it uses melee pattern matching, although I've never looked at it very closely. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Hmm ok. Thanks. Will see what I can do. -- <a href="robowiki?Aryary" class=wikipagelink>Aryary</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=MeleePatternMatching" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=MeleePatternMatching">View other revisions</a><br>Last edited December 12, 2008 15:05 EST by 220.255.7.184 <a href="robowiki?action=browse&diff=1&id=MeleePatternMatching">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

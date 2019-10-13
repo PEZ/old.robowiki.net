@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>ReducedDimensionalSegmentation - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Reduced, Dimensional, Segmentation'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=ReducedDimensionalSegmentation">ReducedDimensionalSegmentation</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><hr noshade class=wikiline size=1>
+<H4>What is it?</H4>
+
+A <a href="robowiki?Targeting" class=wikipagelink>Targeting</a> strategy. (Surprise!) Probably only useful in <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> battle. Here's the rationale behind:
+<p>
+Suppose you are using a <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> approach. Suppose also that you keep the distance to your enemy fixed and also fixate one, relative, movement axis towards your enemy. Then, by segmenting your enemy's movement only along the right angle of the fixated movement axis, you can catch many birds with this stone. The battlefield suddenly gets only one dimensonal when it comes to targeting segmentation. Let's say you slice the one and only dimension up in 7 pieces and then also segment on the movement along this dimenson (upwards, stationary or downwards). This makes only 21 stat buffers right? Yet with these buffers you now can keep track of things like enemy is in sector 2, moving towards sector 3. This is extra powerful in sectors 0 and 6 of course since that's the near wall sectors. Almost all bots show a special movement profile in those sectors. Especially against a movement like we are talking about here.
+<p>
+This strategy is also applicable to <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> though someone has yet to implement it. ... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li> The nano-patternmatchers (and perhaps some other types PatternMatchers<a href="robowiki?action=edit&id=PatternMatchers" class=wikipageedit>?</a> as well) only consider <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a>.. that's one-dimensional... --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<li> Indeed it is, but without a movement that fixates one relative dimension you can't draw the same conclusions from the one dimension. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<li> You cannot draw the conclusion, but because quite a lot of bots already try to do stay at a constant distance, you can often make the assumption that the distance remains constant. This doesn't make the nano patternmatchers any less one-dimensional :-p --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<UL >
+<li> Keeping the distance constant is not enough. With one-dimensional targeting I mean that you utilize the benefits from keeping your enemy moving in just one dimension (relative to yourself). Nano pattern matchers are not less one-dimensional maybe, but not in order to utilize it, rather because it keeps them small. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</UL>
+<li> Nano pattern matchers are two dimensional, because they use time as analysis dimension. Of course, if you apply one-dimensional targeting to <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a>, they it will not be one dimensional either. Thus, it won't be one-dimensional but something like <a href="robowiki?ReducedDimensionalSegmentation" class=wikipagelink>ReducedDimensionalSegmentation</a>. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<UL >
+<li> I think that the time dimension is stored inside the guess factors of <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> as well, so either way it might be thought of as <a href="robowiki?ReducedDimensionalSegmentation" class=wikipagelink>ReducedDimensionalSegmentation</a>. ... Maybe I should rename it... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</UL>
+</UL>
+<p>
+<H4>What are the benefits and drawbacks?</H4>
+
+The benefits is a very accurate gun, fast learning with a truly simple design. You also get tiny stat files if you are into saving enemy data between battles. This gains competetiveness in leagues like <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>@Home since you meet all enemies there.
+<p>
+The drawback is that it limits your movement. You need to really trust your gun if you are going to mimic the movement profile of some of the simpler enemies. It's hard to really trash those like a more general movement and gun could do.
+<p>
+<H4>Who uses it?</H4>
+
+This is the gist of <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a>'s design. Watch it fight a while and you'll understand how it can get away simplyfying targeting to just one dimension. Read the <a href="robowiki?VertiLeach/Code" class=wikipagelink>VertiLeach/Code</a> to see the implementation.
+<p>
+<H4>Comments and questions are welcome</H4>
+
+I moved the discussion that used to be here to a page of its own: <a href="robowiki?ReducedDimensionalSegmentation/OldConfusingDiscussion" class=wikipagelink>/OldConfusingDiscussion</a> since I didn't really see how it had any connection to the technique this page tries to communicate. I'll see if I can rewrite the description above to avoid the confusion. But I won't rename this page again. I'm pretty sure it is about segmentation and that it is about a dimensionally reduced view of your enemy's whereabouts. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<hr>
+<p>
+I noticed at times that I'd get relatively good scores against <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a>.  Is this bot vulnerable to anti-mitrror targeting?  Have you used the same premise in any other bots since then? -- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin Alan Pedersen</a> / <a href="robowiki?Ugluk" class=wikipagelink>Ugluk</a>
+<p>
+I suppose it could be vulnerable to anti-mirror guns. In a sense it is mirroring its opponent. But like a real world mirror, not like usual mirror movement. I can't recall what my latest version of VL did. If I remember correcttly I tried implement <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>, but I think I got it quite wrong. Since it was <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a>'s surfing I started it from and that surfing is broken it is broken in VL too, but then I probably broke it even more. No, since that attempt I haven't really been experimenting very wildly with anything. It has more been about perfecting/expanding known techniques. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=ReducedDimensionalSegmentation" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=ReducedDimensionalSegmentation">View other revisions</a><br>Last edited May 4, 2006 21:57 EST by <a href="robowiki?GrubbmGait" title="ID 6861 from ip219-32-173-82.dyndsl.versatel.nl">GrubbmGait</a> <a href="robowiki?action=browse&diff=1&id=ReducedDimensionalSegmentation">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

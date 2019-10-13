@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>HatTourney/wiki.team.communication - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Hat, Tourney/wiki.team.communication'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/wiki.team.communication">HatTourney/wiki.team.communication</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?HatTourney" class=wikipagelink>HatTourney</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>One option available to participants of the Hat League is to use a standard set of classes to ease the task of transmitting and receiving messages.  While it is not a requirement to use them, I have written and provide a suite to achieve this end.  The files are extractable from the JAR below.  Due to Robocode's disallowing linking to external JAR files, in order to use this library you will need to extract the files and compile them along with your bot.
+<p>
+<a rel="nofollow" href="http://home.comcast.net/~kokyunage/robocode/communication.jar">http://home.comcast.net/~kokyunage/robocode/communication.jar</a>
+<p>
+The files belong in a package named wiki.team.communication.  The version can be obtained by calling String getVersion() on an instance of a Communique implementation.  At this point, the version is "Beta 1.0", and there is no JavaDoc<a href="robowiki?action=edit&id=JavaDoc" class=wikipageedit>?</a> available, but the code examples below should illustrate their usage.
+<p>
+<hr>
+<p>
+Usage examples:
+<p>
+Sending and Receiving: (these methods exist in my event handling layer)
+<p>
+<pre>
+	protected void processAllEvents()
+	{
+		Iterator&lt;? extends Event&gt; iterator;
+
+		// ...
+
+		// I was going by an old API in which TeamRobot does not have a getMessageEvents()
+
+		iterator = this.getAllEvents().iterator();
+		while( iterator.hasNext() )
+		{
+			Event e = iterator.next();
+			if( e instanceof MessageEvent )
+			{
+				this.process( (MessageEvent)e );
+			}
+		}
+
+		this.processTeamMessage( this.communiques );
+
+		// ...
+
+	}
+
+	protected abstract void processTeamMessage( List&lt;Communique&gt; communiques );
+
+	public void prepareCommunique( Communique communique )
+	{
+		this.communiques.add( communique );
+	}
+	
+	public void transmitCommuniques()
+	{
+		try
+		{
+			this.broadcastMessage( CommuniqueFactory.packageCommuniques( this.communiques ) );
+		}
+		catch( IOException ex )
+		{
+			ExceptionHandler.handleException( ex );
+		}
+		this.communiques.clear();
+	}
+
+	private List&lt;Communique&gt; communiques = new ArrayList&lt;Communique&gt;();
+
+</pre>
+<p>
+Using Communique data : (these methods exist in my 'foundation' layer, between the event handling and my specific bot (Ugluk, Banzai, etc) ).<br>
+In the examples below, I haven't really done much to illustrate the larger formats (yet).
+<p>
+<pre>
+	protected void processTeamMessage( List&lt;Communique&gt; communiques )
+	{
+		Iterator&lt;Communique&gt; iterator = communiques.iterator();
+		while( iterator.hasNext() )
+		{
+			Communique c = iterator.next();
+			
+			if( c instanceof CommuniquePersonalData ) consoleTick( c.toString() );
+			else if( c instanceof CommuniqueMyBullet ) consoleTick( c.toString() );
+			else if( c instanceof CommuniqueEnemyScan ) consoleTick( c.toString() );
+			else if( c instanceof CommuniqueEnemyWave ) consoleTick( c.toString() );
+			else if( c instanceof CommuniqueMyRadarTarget )
+			{
+				CommuniqueMyRadarTarget mr = ( CommuniqueMyRadarTarget ) c;
+				System.out.println( c.getSender() + " is scanning " + mr.name );
+			}
+			else if( c instanceof CommuniqueMyBulletTarget )
+			{
+				CommuniqueMyBulletTarget mb = ( CommuniqueMyBulletTarget ) c;
+				System.out.println( c.getSender() + " is aiming for " + mb.name );
+			}
+			else if( c instanceof CommuniqueSuggestedRadarTarget )
+			{
+				CommuniqueSuggestedRadarTarget tr = ( CommuniqueSuggestedRadarTarget ) c;
+				System.out.println( c.getSender() + " suggests scanning " + tr.name );
+			}
+			else if( c instanceof CommuniqueSuggestedBulletTarget )
+			{
+				CommuniqueSuggestedBulletTarget tb = ( CommuniqueSuggestedBulletTarget ) c;
+				System.out.println( c.getSender() + " suggests aiming for " + tb.name );
+			}
+			else if( c instanceof CommuniqueOther )
+			{
+				CommuniqueOther na = ( CommuniqueOther ) c;
+				System.out.println( c.getSender() + " says " + na.message );
+			}
+			else if( c instanceof CommuniqueNotAvailable )
+			{
+				CommuniqueNotAvailable na = ( CommuniqueNotAvailable ) c;
+				System.out.println( c.getSender() + " tries to communicate " + na.message );
+			}
+			else
+			{
+				System.out.println( c.getSender() + " fails to communicate." );
+			}
+				
+			iterator.remove();
+		}
+	}
+</pre>
+<p>
+Constructors for the Communique implementations take all values in the message format, in the order shown, with the exception of the two character message type code (which is implicit).
+<p>
+-- Martin Pedersen
+<p>
+<hr>
+<p>
+Here is a link to the source in a zip file. <a rel="nofollow" href="http://home.comcast.net/~kokyunage/robocode/wiki.team.communication.zip">http://home.comcast.net/~kokyunage/robocode/wiki.team.communication.zip</a>
+Please see the new wiki for comments on usage. -- Martin
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?HatTourney" class=wikipagelink>HatTourney</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=HatTourney/wiki.team.communication" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=HatTourney/wiki.team.communication">View other revisions</a><br>Last edited February 13, 2008 18:11 EST by <a href="robowiki?Martin_Alan_Pedersen" title="ID 13117 from 208.147.70.132">Martin Alan Pedersen</a> <a href="robowiki?action=browse&diff=1&id=HatTourney/wiki.team.communication">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

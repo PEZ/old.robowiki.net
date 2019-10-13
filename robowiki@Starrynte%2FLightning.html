@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Starrynte/Lightning - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Starrynte, Lightning'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Lightning">Starrynte/Lightning</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+import robocode.*;
+import robocode.util.Utils;
+import java.awt.geom.*;
+import java.util.*;
+
+/**
+ * Lightning - a robot by Starrynte
+ * Changes
+ * ------------------------------------------------------------------
+ * Version 0.1
+ *     Created!
+ *     
+ * 
+ */
+public class Lightning extends AdvancedRobot
+{
+	static Hashtable enemies=new Hashtable();
+	static Point2D.Double nextDestination,lastPosition,myPos,center;
+	static Rectangle2D.Double field;
+	static Enemy target;
+	static double myEnergy,myGunHeat,myGunHeading,myHeading;
+	static int timeSinceLastScan;
+	
+	public void run() {
+		initBattle();
+		while(true){
+			doMovement();
+			doGun();
+			execute();
+		}
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e) {
+		myPos=new Point2D.Double(getX(),getY());
+		myEnergy=getEnergy();
+		myGunHeat=getGunHeat();	
+		myGunHeading=getGunHeadingRadians();
+		myHeading=getHeadingRadians();
+		Enemy en=(Enemy)enemies.get(e.getName());
+		if(en==null){
+			en=new Enemy();
+			enemies.put(e.getName(),en);
+		}
+		en.name=e.getName();
+		en.energy=e.getEnergy();
+		en.location=projectPoint(myPos,e.getBearingRadians()+getHeadingRadians(),e.getDistance());
+		en.distance=e.getDistance();
+		en.heading=e.getHeadingRadians();
+		en.velocity=e.getVelocity();
+		en.ctime=e.getTime();
+		en.live=true;
+		if((!target.live) || getTime()-target.ctime&gt;20 || (en.distance&lt;target.distance*0.9 &amp;&amp; myGunHeat/getGunCoolingRate()&gt;5)){
+			if(!target.name.equals(en.name)){
+				target=en;
+			}
+		}
+	}
+
+	public void onHitByBullet(HitByBulletEvent e) {
+	}
+	
+	public boolean initBattle(){
+		enemies=new Hashtable();
+		nextDestination=lastPosition=myPos=new Point2D.Double(getX(),getY());
+		field=new Rectangle2D.Double(36,getBattleFieldHeight()-36,getBattleFieldWidth()-72,getBattleFieldHeight()-72);
+		target=new Enemy();
+		center=new Point2D.Double(getBattleFieldWidth()/2,getBattleFieldHeight()/2);
+		timeSinceLastScan=0;
+		
+		setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
+		
+		setAdjustGunForRobotTurn(true);
+		setAdjustRadarForRobotTurn(true);
+		return true;
+	}
+
+	public boolean doMovement(){
+		if(nextDestination.distanceSq(myPos)&lt;1000 || target.extrapolate(getTime()).location.distance(myPos)&lt;90){
+			boolean changed=false;
+			for(int i=0;i&lt;100;i++){
+				double ang=(2*Math.PI)*Math.random();
+				double dist=Math.min(target.extrapolate(getTime()).location.distance(myPos)*0.8,100+200*Math.random());
+				Point2D.Double testPoint=projectPoint(myPos,ang,dist);
+				if(field.contains(testPoint) &amp;&amp; evaluate(testPoint)&lt;evaluate(nextDestination)){
+					nextDestination=testPoint;
+					changed=true;
+				}
+				if(timeSinceLastScan&gt;20 &amp;&amp; field.contains(testPoint)){
+					nextDestination=testPoint;
+					break;
+				}				
+			}			
+			if(changed){
+				lastPosition=myPos;
+			}
+		}else{
+			double dir=1;
+			double ang=calcAngle(myPos,nextDestination)-getHeadingRadians();
+			double dist=nextDestination.distance(myPos);
+			if(Math.cos(ang)&lt;0){
+				dir=-1;
+				ang+=Math.PI;
+			}
+			ang=Utils.normalRelativeAngle(ang);
+			setTurnRightRadians(ang);
+			setAhead(dist*dir);		
+			setMaxVelocity((Math.abs(ang)&gt;1) ? 0.1 : 8);			
+		}
+		return true;
+	}
+
+	public boolean doGun(){
+		if(target.location!=null){
+			double absBearing=calcAngle(myPos,target.location);
+			double bulletPower=Math.min(Math.min(target.energy/4,1200/target.distance),myEnergy/10)/Math.max(getTime()-target.ctime,0);
+			if(Math.abs(getGunTurnRemainingRadians())&lt;0.01){
+				setTurnGunRightRadians(Utils.normalRelativeAngle(absBearing-myGunHeading));
+			}
+			if(myGunHeat==0){
+				setFire(bulletPower);
+			}
+		}
+		return true;
+	}
+
+	public double evaluate(Point2D.Double point){
+		long time=getTime();
+		double risk=0;
+		Enumeration e=enemies.elements();
+		while(e.hasMoreElements()){
+			Enemy en=(Enemy)e.nextElement();
+			double eval=(en.energy+25)/en.extrapolate(time).location.distanceSq(myPos);
+			
+			int enTargets=0;
+			Enumeration enEn=enemies.elements();
+			while(enEn.hasMoreElements()){
+				Enemy enE=(Enemy)enEn.nextElement();
+				if((!enE.name.equals(en.name)) &amp;&amp; enE.live &amp;&amp; enE.extrapolate(time).location.distanceSq(en.extrapolate(time).location)*0.9&lt;point.distanceSq(en.extrapolate(time).location)){
+					enTargets++;
+				}
+			}
+			if(enTargets&lt;=1){
+				eval*=2;
+				eval*=1+Math.abs(Math.cos(calcAngle(point,myPos)-calcAngle(point,en.extrapolate(time).location)));
+			}
+			if(new Line2D.Double(myPos,point).intersects(new Rectangle2D.Double(en.extrapolate(time).location.getX()-18,en.extrapolate(time).location.getY()-18,36,36))){
+				eval*=2;
+			}
+			risk+=eval;
+		}
+		risk+=1/lastPosition.distanceSq(point) + 0.8/myPos.distanceSq(point) + 0.5/center.distanceSq(point);
+		return risk;
+	}					
+
+	public double calcAngle(Point2D.Double source,Point2D.Double target){
+		return Math.atan2(target.getX()-source.getX(),target.getY()-source.getY());
+	}
+
+	public Point2D.Double projectPoint(Point2D.Double sourceLocation, double angle, double length) {
+        return new Point2D.Double(sourceLocation.getX() + Math.sin(angle) * length,
+            sourceLocation.getY() + Math.cos(angle) * length);
+    }
+}	
+</pre>
+I need help on this as well! --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+The problem I see is that Lightning sometimes divides by zero when computing bullet power, giving an unreal answer. When it shoots the same tick as it scanned its target, getTime() - target.ctime is 0. -- <a href="robowiki?Kev" class=wikipagelink>Kev</a>
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Starrynte/Lightning" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Starrynte/Lightning">View other revisions</a><br>Last edited January 14, 2007 0:12 EST by <a href="robowiki?Starrynte" title="ID 8009 from cpe-75-84-67-39.socal.res.rr.com">Starrynte</a> <a href="robowiki?action=browse&diff=1&id=Starrynte/Lightning">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

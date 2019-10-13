@@ -1,0 +1,172 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>SegmentedData/Segments - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Segmented, Data, Segments'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Segments">SegmentedData/Segments</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?SegmentedData" class=wikipagelink>SegmentedData</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I would like to use this page to discuss potential segments for use in targeting. If you have the time and inclination to share how about letting us know what types of segmentation you use. I have started the list below. I am sure there are others and I am sure that some of my explanations below are sketchy or flat out wrong but it's a start =^&gt; Also the formatting on this page is horrible. Could a WikiMaster<a href="robowiki?action=edit&id=WikiMaster" class=wikipageedit>?</a> fix this? -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+<hr noshade class=wikiline size=1>
+<UL >
+<li> <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a>: Guess factor is a form of <a href="robowiki?KentuckyWindage" class=wikipagelink>KentuckyWindage</a> used to tune your gun. In it's crudest sense, it is a measure of the difference from where you aimed to where you should have aimed to actually hit. This is accomplised in many different ways, the most common of which are <a href="robowiki?Wave" class=wikipagelink>Wave</a>s and <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>.  There are other methods for doing this.
+</UL>
+<p>
+<UL >
+<li> Distance: Simple range to the target at shot time. Almost always divided by some constant to limit the ammount of segments used. For instance:
+</UL>
+<pre> Math.min(10, (int)(e.getDistance() / 100))</pre>
+That would results in segments from 0 - 10, with all data above 1000 pixels agregating into the 10 bin.
+<p>
+<UL >
+<li> Bullet Flight Time: Sort of a variation on distance segments. The idea here is to divide the distance by the bullet velocity to get a number of ticks until impact. As this is usually a large number, the tick count is often divided by 5 or 10 to get a reasonable number of segments. For instance:
+</UL>
+<pre> Math.min(10, (int)((e.getDistance() / (20 - 3 * shotPower)) / 10)</pre>
+This would result in 11 bins of 10 ticks each. Each bin would cover from 80 to 197 pixels depending on shot power.
+<p>
+<UL >
+<li> Target Velocity: Simply segmenting on a targets velocity. If used in a raw form, it results in 9 segments. Some folks chose to aggregate some of the possible velocities to reduce the numer of segments. For instance:
+</UL>
+<pre>velIndex=(int)e.getVelocity();</pre>
+<p>
+<UL >
+<li> Target Lateral Velocity: A variation of segmenting on straight velovity. This method accounts for a target not moving truly perpindicular to your position. See the <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a> page for a method to calculate a targets lateral velocity. For Instance:
+</UL>
+<pre>latVelIndex=(int)(lateralVelocity / 3);</pre>
+This results in 3 latVelIndicies<a href="robowiki?action=edit&id=VelIndicies" class=wikipageedit>?</a>. This is also an example of aggregation. Here the lateral velocities 0 - 2 are placed in the first (zero) index, 3 - 5 are placed in the second (one) index, and 6 - 8 are stored in the third (two) index.
+<p>
+<UL >
+<li> Change in Target Heading: According to Andrew's posting in the <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a>, this is a segment that he added to <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>'s gun in the creation of Neo. This is often used in <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> as well.
+</UL>
+<p>
+<UL >
+<li> Bullet Power: <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> once mentioned that he did this with a gun he used in the <a href="robowiki?TargetingChallenge" class=wikipagelink>TargetingChallenge</a> (stupid rules =^&gt;).
+</UL>
+<p>
+<UL >
+<li> Move Times: <a href="robowiki?Iiley" class=wikipagelink>iiley</a> use it in <a href="robowiki?BlestPain" class=wikipagelink>BlestPain</a> and <a href="robowiki?CigaretST" class=wikipagelink>CigaretST</a>,Times is counted from last stop time to current time.
+</UL>
+<pre>
+if(enemyVelocity==0) moveTimes=0;  else  moveTimes++;
+moveTimesIndex=moveTimes/5;
+</pre>
+<UL >
+<UL >
+<li> Ok, so this segment slightly puzzles me. The code snippet above given a theoretically infinite index. I tried segmenting by movetime divided by the projected bullet travel time, but that sucks so i'm looking for further inspiration... --<a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<UL >
+<UL >
+<li> The idea here is to try and determine the number of ticks since your enemies velocity last equalled zero. In theory this might help you determine stop and go bots (Cigaret style movement) or see if there is some periodicity to an enemies reverse time. The snippet that I provided above can give an infinitely large result, in the case of a bot that never reverses. You could use <pre>moveTimesIndex = Math.min(9, moveTimes/5)</pre> to get a range from 0 - 9 inclusive to limit that. You could also use a larger divisor to potentially reduce possible answers. You will have to play with a bit as I have found in practice that this does not seem to help any of my efforts. I have heard that others are having some success using this as a segment. -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+</UL>
+</UL>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<UL >
+<UL >
+<UL >
+<li> Isn't this one of <a href="robowiki?AdNeo" class=wikipagelink>AdNeo</a>'s segments?
+<UL >
+<li> I don't believe so, most of his segments come from <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> conceptually, except for <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a>, which he changed to something else. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+</UL>
+</UL>
+</UL>
+</UL>
+</UL>
+</UL>
+<hr noshade class=wikiline size=1>
+<a href="robowiki?PEZ" class=wikipagelink>PEZ</a> sometimes uses one or more of these (along with several of the ones mentioned above).
+<UL >
+<li> Lateral acceleration: This is one of the most discriminating segmentations I've tested and is used by all my bots except <a href="robowiki?VertiLeach" class=wikipagelink>Verti</a> and <a href="robowiki?HypoLeach" class=wikipagelink>Hypo</a>.
+<UL >
+<li> Care to expand on this one <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>? 
+<li> Lateral Velocity is described further up, Lateral acceleration will just be change in lateral velocity, won't it? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<UL >
+<li> Indeed, that's by definition. Though lateral acceleration is more discriminating in my experience. Since the enemy is always either accelerating, deccelerating or constant in the lateral dimension it only multiplies your segmentation by 3 and yet tells you a lot. Here's a function that works pretty well:<pre>    int accelSegment(double deltaBearing, double oldDeltaBearing) {
+        int delta = (int)(Math.round(5 * enemyDistance * (Math.abs(deltaBearing) - Math.abs(oldDeltaBearing))));
+        if (delta &lt; 0) {
+            return 0;
+        }
+        else if (delta &gt; 0) {
+            return 2;
+        }
+        return 1;
+    }</pre> Keep in mind that "lateralVelocity == deltaBearing". <a href="robowiki?RoboGrapher" class=wikipagelink>RoboGrapher</a> can show you just how discrimination this segmentation is against particular bots. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>.
+</UL>
+<li> Actual absolute acceleration is also good, although I haven't done any real testing to decide which is better.  I could see how lateral acceleration could tell a little more about some bots (like, say, <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a>), but not a lot of them that I'm worried about. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<UL >
+<li> I think it might be pretty equivalent. Though I seldom care about the veocity of the enemy so I don't have that data around to calculate the acceleration. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</UL>
+</UL>
+<li> Distance from center: Can capture near wall and in-corner behaviour, especially in combination with other segmentations.
+<li> <a href="robowiki?AdvancingVelocity" class=wikipagelink>AdvancingVelocity</a>: Well, <a href="robowiki?Mako" class=wikipagelink>Mako</a> uses it but I don't think it really works very well against most enemies.
+<li> Wave Type: Is this a Wave following a real bullet or not? Some bots show _very_ different profiles here. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<a href="robowiki?JohnDoe" class=wikipagelink>JohnDoe</a> added:
+<UL >
+<li> The number of enemies on the battlefield
+<li> The distance the enemy is from the center, or how far they would have to move in a straight line to hit the wall
+<UL >
+<li> I think this might be the same as "Distance from center" =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</UL>
+</UL>
+<hr noshade class=wikiline size=1>
+Here's a couple of segments I have on the drawing board for <a href="robowiki?Fractal" class=wikipagelink>Fractal</a>:
+<p>
+<UL >
+<li> The enemy's distance until offscreen
+<UL >
+<li> In other words, the length of the line segment extended from the enemy's current heading (normalized by the enemy's velocity) through the bounds of the battlefield
+<li> It seems we have some sort of consensus that this measure might be a good segmentation dimension. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</UL>
+</UL>
+<p>
+<UL >
+<li> The enemy's <a href="robowiki?AdvancingVelocity" class=wikipagelink>AdvancingVelocity</a>
+<UL >
+<li> I think this was mentioned above, but it could be used by movement against bots that do <a href="robowiki?DynamicDistancing" class=wikipagelink>DynamicDistancing</a>; if one type of bin provides more of a spike, your bot could move more aggressively/passively to get a reaction out of the enemy and force the enemy's <a href="robowiki?AdvancingVelocity" class=wikipagelink>AdvancingVelocity</a> into the bin you want (possibly powerful against bots such as <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> who are strongly <a href="robowiki?DynamicDistancing" class=wikipagelink>DynamicDistancing</a>)
+<li> This could certainly be strong against <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a>. Though it is not using <a href="robowiki?DynamicDistancing" class=wikipagelink>DynamicDistancing</a>. Quite the opposite actually. But if you mean it is trying to control its distance, that entirely the case. But that's not what <a href="robowiki?DynamicDistancing" class=wikipagelink>DynamicDistancing</a> is about. (DD is about figuring out at what distances your bot might be stronger than the enemy bot.) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<li> Right. So um... 'bots that control their distance' then. :) Is there a wiki page about this? -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+</UL>
+</UL>
+<p>
+<UL >
+<li> The magnitude of the antigravity vector acting on an enemy (in <a href="robowiki?Melee" class=wikipagelink>Melee</a>)
+<UL >
+<li> This means calculating the antigravity for the enemy rather than for self, and segmenting on this; I had been planning something similar in another of my bots a while back, but never got around to it
+</UL>
+</UL>
+<p>
+<UL >
+<li> The number of teammates an enemy has remaining (in <a href="robowiki?Teams" class=wikipagelink>Teams</a>)
+<UL >
+<li> Could be very useful; droids can die when there are no radars left, and certain teams may modify their movement strategies based on this (DrunkenTeam<a href="robowiki?action=edit&id=DrunkenTeam" class=wikipageedit>?</a> comes to mind)
+</UL>
+</UL>
+<p>
+-- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<hr noshade class=wikiline size=1>
+Starrynte sometimes segments on:
+<UL >
+<li> 1v1
+<UL >
+<li> Lateral Velocity - kind of combining segmentation of heading and enemy velocity
+<li> Distance - probably (haven't tested) good against rambots, antigravity
+<li> Abs(abs(&lt;where pm gun tells you to shoot, slight modification of <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a>'s in this case&gt;) - abs(absbearing)) - somehow bringing PM into consideration - don't know if this one works that well yet
+</UL>
+<li> No melee gun needing segmentation *yet*...
+</UL>
+<hr noshade class=wikiline size=1>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?SegmentedData" class=wikipagelink>SegmentedData</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=SegmentedData/Segments" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=SegmentedData/Segments">View other revisions</a><br>Last edited August 21, 2007 18:47 EST by <a href="robowiki?Starrynte" title="ID 10964 from cpe-75-84-83-181.socal.res.rr.com">Starrynte</a> <a href="robowiki?action=browse&diff=1&id=SegmentedData/Segments">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

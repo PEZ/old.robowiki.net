@@ -1,0 +1,379 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>GFTargetingBot - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='GFTargeting, Bot'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=GFTargetingBot">GFTargetingBot</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><center>
+<H3><a href="robowiki?GFTargetingBot" class=wikipagelink>GFTargetingBot</a>, by <a href="robowiki?PEZ" class=wikipagelink>PEZ</a></H3>
+
+</center>
+<p>
+<H4>What's special about it?</H4>
+
+It's a simple <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> bot using <a href="robowiki?GuessFactors" class=wikipagelink>GuessFactors</a>, if not literal so the general idea. My goal is that people who want to start out with <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> can do so with this bot without having to figure it all out first. This bot is quite competetive out-of-the-box, but with just some little work it can be made to kick ass.
+<p>
+It features:
+<UL >
+<li> <a href="robowiki?Wave" class=wikipagelink>Wave</a>s, to collect the data
+<li> <a href="robowiki?VisitCountStats" class=wikipagelink>VisitCountStats</a>, accumulating data into simple int arrays
+<li> <a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a> (really simple, just to show how it can be done)
+</UL>
+It lacks:
+<UL >
+<li> <a href="robowiki?EnergyManagement" class=wikipagelink>EnergyManagement</a>
+<li> Advanced <a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a>
+<li> Gun alignment nitty-gritty.
+<li> <a href="robowiki?RollingAverage" class=wikipagelink>RollingAverage</a>s
+<li> DataSaving<a href="robowiki?action=edit&id=DataSaving" class=wikipageedit>?</a>
+<li> Anything advanced really.
+</UL>
+<p>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=2913">http://www.robocoderepository.com/BotDetail.jsp?id=2913</a>
+<UL >
+<li> Note: It would be good to update this bot on the repository with MAX_DISTANCE = 1000 or calculated based on battle field width and height. I've updated it in the code on this page. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+<H4>How competitive is it?</H4>
+
+Quite so for something this simple
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+Random, fluid, orbit movement. Almost verbatim <a href="robowiki?Aristocles" class=wikipagelink>Aristocles</a> movement. (Minus <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a>)
+<p>
+<H4>How does it fire?</H4>
+
+A <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> gun segmented on distance, velocity, last-scan-velocity. 
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+It tries to create a flat <a href="robowiki?MovementProfile" class=wikipagelink>MovementProfile</a>.
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+This bot doesn't know about <a href="robowiki?Melee" class=wikipagelink>Melee</a> battles.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+The visit counts are saved between rounds. Nothing is saved between matches.
+<p>
+<H4>Where did you get the name?</H4>
+
+Duh... It's a <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> tutorial bot.
+<p>
+<H4>Can I use your code?</H4>
+
+Sure. That's the whole idea. It's included in the jar. Use it as you see fit. Of course if I do not mind credits. And here's the code for version 1.0 (meaning it might not always be up to date.):
+<pre>
+package wiki.tutorial;
+import robocode.*;
+import robocode.util.Utils;
+import java.awt.Color;
+import java.awt.geom.*;
+
+// GFTargetingBot, by PEZ. A simple GuessFactorTargeting bot for tutorial purposes.
+// Use the code as you see fit. Of course if I do not mind credits.
+
+public class GFTargetingBot extends AdvancedRobot {
+	private static final double BULLET_POWER = 1.9;
+	
+	private static double lateralDirection;
+	private static double lastEnemyVelocity;
+	private static GFTMovement movement;
+	
+	public GFTargetingBot() {
+		movement = new GFTMovement(this);	
+	}
+	
+	public void run() {
+		setColors(Color.BLUE, Color.BLACK, Color.YELLOW);
+		lateralDirection = 1;
+		lastEnemyVelocity = 0;
+		setAdjustRadarForGunTurn(true);
+		setAdjustGunForRobotTurn(true);
+		do {
+			turnRadarRightRadians(Double.POSITIVE_INFINITY); 
+		} while (true);
+	}
+	
+	public void onScannedRobot(ScannedRobotEvent e) {
+		double enemyAbsoluteBearing = getHeadingRadians() + e.getBearingRadians();
+		double enemyDistance = e.getDistance();
+		double enemyVelocity = e.getVelocity();
+		if (enemyVelocity != 0) {
+			lateralDirection = GFTUtils.sign(enemyVelocity * Math.sin(e.getHeadingRadians() - enemyAbsoluteBearing));
+		}
+		GFTWave wave = new GFTWave(this);
+		wave.gunLocation = new Point2D.Double(getX(), getY());
+		GFTWave.targetLocation = GFTUtils.project(wave.gunLocation, enemyAbsoluteBearing, enemyDistance);
+		wave.lateralDirection = lateralDirection;
+		wave.bulletPower = BULLET_POWER;
+		wave.setSegmentations(enemyDistance, enemyVelocity, lastEnemyVelocity);
+		lastEnemyVelocity = enemyVelocity;
+		wave.bearing = enemyAbsoluteBearing;
+		setTurnGunRightRadians(Utils.normalRelativeAngle(enemyAbsoluteBearing - getGunHeadingRadians() + wave.mostVisitedBearingOffset()));
+		setFire(wave.bulletPower);
+		if (getEnergy() &gt;= BULLET_POWER) {
+			addCustomEvent(wave);
+		}
+		movement.onScannedRobot(e);
+		setTurnRadarRightRadians(Utils.normalRelativeAngle(enemyAbsoluteBearing - getRadarHeadingRadians()) * 2);
+	}
+}
+
+class GFTWave extends Condition {
+	static Point2D targetLocation;
+
+	double bulletPower;
+	Point2D gunLocation;
+	double bearing;
+	double lateralDirection;
+
+	private static final double MAX_DISTANCE = 1000;
+	private static final int DISTANCE_INDEXES = 5;
+	private static final int VELOCITY_INDEXES = 5;
+	private static final int BINS = 25;
+	private static final int MIDDLE_BIN = (BINS - 1) / 2;
+	private static final double MAX_ESCAPE_ANGLE = 0.7;
+	private static final double BIN_WIDTH = MAX_ESCAPE_ANGLE / (double)MIDDLE_BIN;
+	
+	private static int[][][][] statBuffers = new int[DISTANCE_INDEXES][VELOCITY_INDEXES][VELOCITY_INDEXES][BINS];
+
+	private int[] buffer;
+	private AdvancedRobot robot;
+	private double distanceTraveled;
+	
+	GFTWave(AdvancedRobot _robot) {
+		this.robot = _robot;
+	}
+	
+	public boolean test() {
+		advance();
+		if (hasArrived()) {
+			buffer[currentBin()]++;
+			robot.removeCustomEvent(this);
+		}
+		return false;
+	}
+
+	double mostVisitedBearingOffset() {
+		return (lateralDirection * BIN_WIDTH) * (mostVisitedBin() - MIDDLE_BIN);
+	}
+	
+	void setSegmentations(double distance, double velocity, double lastVelocity) {
+		int distanceIndex = (int)(distance / (MAX_DISTANCE / DISTANCE_INDEXES));
+		int velocityIndex = (int)Math.abs(velocity / 2);
+		int lastVelocityIndex = (int)Math.abs(lastVelocity / 2);
+		buffer = statBuffers[distanceIndex][velocityIndex][lastVelocityIndex];
+	}
+
+	private void advance() {
+		distanceTraveled += GFTUtils.bulletVelocity(bulletPower);
+	}
+
+	private boolean hasArrived() {
+		return distanceTraveled &gt; gunLocation.distance(targetLocation) - 18;
+	}
+	
+	private int currentBin() {
+		int bin = (int)Math.round(((Utils.normalRelativeAngle(GFTUtils.absoluteBearing(gunLocation, targetLocation) - bearing)) /
+				(lateralDirection * BIN_WIDTH)) + MIDDLE_BIN);
+		return GFTUtils.minMax(bin, 0, BINS - 1);
+	}
+	
+	private int mostVisitedBin() {
+		int mostVisited = MIDDLE_BIN;
+		for (int i = 0; i &lt; BINS; i++) {
+			if (buffer[i] &gt; buffer[mostVisited]) {
+				mostVisited = i;
+			}
+		}
+		return mostVisited;
+	}	
+}
+
+class GFTUtils {
+	static double bulletVelocity(double power) {
+		return 20 - 3 * power;
+	}
+	
+	static Point2D project(Point2D sourceLocation, double angle, double length) {
+		return new Point2D.Double(sourceLocation.getX() + Math.sin(angle) * length,
+				sourceLocation.getY() + Math.cos(angle) * length);
+	}
+	
+	static double absoluteBearing(Point2D source, Point2D target) {
+		return Math.atan2(target.getX() - source.getX(), target.getY() - source.getY());
+	}
+
+	static int sign(double v) {
+		return v &lt; 0 ? -1 : 1;
+	}
+	
+	static int minMax(int v, int min, int max) {
+		return Math.max(min, Math.min(max, v));
+	}
+}
+
+class GFTMovement {
+	private static final double BATTLE_FIELD_WIDTH = 800;
+	private static final double BATTLE_FIELD_HEIGHT = 600;
+	private static final double WALL_MARGIN = 18;
+	private static final double MAX_TRIES = 125;
+	private static final double REVERSE_TUNER = 0.421075;
+	private static final double DEFAULT_EVASION = 1.2;
+	private static final double WALL_BOUNCE_TUNER = 0.699484;
+
+	private AdvancedRobot robot;
+	private Rectangle2D fieldRectangle = new Rectangle2D.Double(WALL_MARGIN, WALL_MARGIN,
+		BATTLE_FIELD_WIDTH - WALL_MARGIN * 2, BATTLE_FIELD_HEIGHT - WALL_MARGIN * 2);
+	private double enemyFirePower = 3;
+	private double direction = 0.4;
+
+	GFTMovement(AdvancedRobot _robot) {
+		this.robot = _robot;
+	}
+	
+	public void onScannedRobot(ScannedRobotEvent e) {
+		double enemyAbsoluteBearing = robot.getHeadingRadians() + e.getBearingRadians();
+		double enemyDistance = e.getDistance();
+		Point2D robotLocation = new Point2D.Double(robot.getX(), robot.getY());
+		Point2D enemyLocation = GFTUtils.project(robotLocation, enemyAbsoluteBearing, enemyDistance);
+		Point2D robotDestination;
+		double tries = 0;
+		while (!fieldRectangle.contains(robotDestination = GFTUtils.project(enemyLocation, enemyAbsoluteBearing + Math.PI + direction,
+				enemyDistance * (DEFAULT_EVASION - tries / 100.0))) &amp;&amp; tries &lt; MAX_TRIES) {
+			tries++;
+		}
+		if ((Math.random() &lt; (GFTUtils.bulletVelocity(enemyFirePower) / REVERSE_TUNER) / enemyDistance ||
+				tries &gt; (enemyDistance / GFTUtils.bulletVelocity(enemyFirePower) / WALL_BOUNCE_TUNER))) {
+			direction = -direction;
+		}
+		// Jamougha's cool way
+		double angle = GFTUtils.absoluteBearing(robotLocation, robotDestination) - robot.getHeadingRadians();
+		robot.setAhead(Math.cos(angle) * 100);
+		robot.setTurnRightRadians(Math.tan(angle));
+	}
+}
+</pre>
+<p>
+<H4>What's next for your robot?</H4>
+
+<UL >
+<li> I must document the code to make this tutorial thing to really work. You're more than welcome to help in this.
+</UL>
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+<a href="robowiki?Aristocles" class=wikipagelink>Aristocles</a> - both gun and movement
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+<p>
+Way cool, <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>! It might be cool to pair this with the <a href="robowiki?BasicSurfer" class=wikipagelink>BasicSurfer</a> movement and post it to the rumble, just to get a sense of a "base line" for a functioning <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> gun and <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> movement. (This seems a little more polished for what it is than <a href="robowiki?BasicSurfer" class=wikipagelink>BasicSurfer</a>, though...) I'm curious to hear from some other people how clear this code seems to them, as I'm already very familiar with both <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>, and the <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> style of the GF code that is found here. This should certainly be linked from a few places, including the <a href="robowiki?GuessFactorTargeting/Tutorial" class=wikipagelink>GuessFactorTargeting/Tutorial</a>. (I'll do some of that myself sometime soon if nobody else does.) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Really nice! Just a quick question what is BIN_WIDTH? It seems to be <pre>maxEscapeAngle/MIDDLE_BIN</pre>, because the 0.7 is not really self explanatory (to me at least). Other than that it seems fine to me. -- <a href="robowiki?Florent" class=wikipagelink>Florent</a>
+<p>
+I think using .7 instead of a true calculation is a "<a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a>-ism", as Math.asin(8/bulletvelocity(1.9)) is about .6 in radians. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+No, it's not really minibot-ism. It's more of an approximation of the max escape angle that works for most bullet powers. But yeah, in a micro it saves spaces. I've changed the code above to include a MAX_ESCAPE_ANGLE constant. I hope that makes the code clearer. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Hi. I see, that you don't store your Waves in an <a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a> or Vector. Instead your GFTWave class exdends Condition. Could someone explain this point to me in more detail?
+By the way; I'm an absolute Greenhorn (Robocode and Java) but for some days i like to read the conversation of the godnesses from Robocode-Olymp. [Sir Drake]<a href="robowiki?action=edit&id=Sir_Drake" class=wikipageedit>?</a>
+<p>
+An <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> lets you add <a href="robowiki?CustomEvents" class=wikipagelink>CustomEvents</a> like that - it probably uses an <a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a> or Vector internally. Every tick, Robocode automatically runs the test() method of each <a href="robowiki?CustomEvent" class=wikipagelink>CustomEvent</a>, so this setup is just making use of that capability of the <a href="robowiki?RobocodeAPI" class=wikipagelink>RobocodeAPI</a> to take care of the waves stuff. This setup is particularly useful in <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a>-restricted bots, as well, as it saves you a little bit of code. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Hmm, it's late here, and re-reading my post, that might not have completely cleared things up for you =) It does give some links that might help clear things up, but certainly feel free to ask if it's still unclear. (This is a <a href="robowiki?Tutorial" class=wikipagelink>Tutorial</a> type bot, after all!) Don't worry about being a Greenhorn, this site is the perfect place to be for a beginner to Robocode ;) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+In this bot I do it for clarity. Instead of adding structural code to handle the waves I just use a built-in Robocode mechanism. As long as your somewhat familiar with Robocode and its custom events then it's less blur. Note however, that if you want complete control over the execution order you might want to manage the waves list yourself. That or figure out exactly when custom events are executed in respect to the rest of your code. In this bot though I opted for as little extra code as possible. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I have run a <a href="robowiki?TargetingChallenge2K6" class=wikipagelink>TargetingChallenge2K6</a> with <a href="robowiki?GFTargetingBot" class=wikipagelink>GFTargetingBot</a> 1.02, mainly to have a reflection of <a href="robowiki?GresSuffurd" class=wikipagelink>GresSuffurd</a> against another simple GF-gun. The results are a bit less than I expected, although it is clearly stated that this bot is just a basic implementation without any advanced stuff. One thing is quite obvious, to hit a <a href="robowiki?WaveSurfer" class=wikipagelink>WaveSurfer</a> you do need more than this.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <strong>Name</strong> </td><td colspan="0.5"> <strong>Author</strong> </td><td colspan="0.5"> <strong>Gun</strong> </td><td colspan="0.5"> <strong>BFly</strong> </td><td colspan="0.5"> <strong>CC</strong> </td><td colspan="0.5"> <strong>Chk</strong> </td><td colspan="0.5"> <strong>Cig</strong> </td><td colspan="0.5"> <strong>Cya</strong> </td><td colspan="0.5"> <strong>DM</strong> </td><td colspan="0.5"> <strong>FM</strong> </td><td colspan="0.5"> <strong>Grb</strong> </td><td colspan="0.5"> <strong>RMB</strong> </td><td colspan="0.5"> <strong>Tig</strong> </td><td colspan="0.5"> <strong>Total</strong> </td><td colspan="0.5"> <strong>Comment</strong> </td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <a href="robowiki?GFTargetingBot" class=wikipagelink>GFTargetingBot</a> 1.02 </td><td colspan="0.5"> <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> </td><td colspan="0.5"> GF </td><td colspan="0.5"> 88.57 </td><td colspan="0.5"> 31.62 </td><td colspan="0.5"> 41.16 </td><td colspan="0.5"> 72.73 </td><td colspan="0.5"> 28.45 </td><td colspan="0.5"> 92.84 </td><td colspan="0.5"> 77.53 </td><td colspan="0.5"> 85.38 </td><td colspan="0.5"> 84.18 </td><td colspan="0.5"> 51.91 </td><td colspan="0.5"> <strong>65.44</strong> </td><td colspan="0.5"> </td></TR>
+</TABLE>
+<p>
+Indeed. In fact this bot is almost designed to <strong>miss</strong> a wavesurfer. Or, rather, any non-trivial <a href="robowiki?WaveSurfer" class=wikipagelink>WaveSurfer</a> is designed to avoid it. Run a regular <a href="robowiki?TargetingChallenge" class=wikipagelink>TargetingChallenge</a> and you might see better performance from this bot. Is that a full TC2K6 run? If so, please pubish it on the appropriate results page. Good to have references like that. Especially if people base their bots on this code. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Results are published. I started an old <a href="robowiki?TargetingChallenge" class=wikipagelink>TargetingChallenge</a>, the results will be present in an hour or three.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a><br>
+It has already finished, this gun is very comparable with Tityus's gun.
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'> Name </td><td colspan="0.5"> Author </td><td colspan="0.5"> Type </td><td colspan="0.5"> DT </td><td colspan="0.5"> Asp </td><td colspan="0.5"> TAOW </td><td colspan="0.5"> Spar </td><td colspan="0.5"> Cig </td><td colspan="0.5"> Tron </td><td colspan="0.5"> Fhqw </td><td colspan="0.5"> HTTC </td><td colspan="0.5"> Yng </td><td colspan="0.5"> Funk </td><td colspan="0.5"> Score </td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <a href="robowiki?GFTargetingBot" class=wikipagelink>GFTargetingBot</a> 1.02* </td><td colspan="0.5"> <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> </td><td colspan="0.5"> GF </td><td colspan="0.5"> 77.58 </td><td colspan="0.5"> 89.67 </td><td colspan="0.5"> 99.55 </td><td colspan="0.5"> 96.57 </td><td colspan="0.5"> 70.94 </td><td colspan="0.5"> 86.40 </td><td colspan="0.5"> 91.03 </td><td colspan="0.5"> 88.77 </td><td colspan="0.5"> 95.09 </td><td colspan="0.5"> 85.15 </td><td colspan="0.5"> <strong>88.07</strong> </td><td colspan="0.5"> </td></TR>
+</TABLE>
+<p>
+Just for grins, I DID pair this with <a href="robowiki?BasicSurfer" class=wikipagelink>BasicSurfer</a> and the results were surprisingly good.  It is <a href="robowiki?BasicGFSurfer" class=wikipagelink>BasicGFSurfer</a> and ranks 47th in the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> as of 10-25-06. --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+Yah, I did a merger too, and i'm trying to get mine to beat it. -- Chase-san
+<p>
+Okay, I'm trying to understand this code and have a couple of questions.  In the GFTWave, when does the information from <code>buffer</code> get returned to <code>statBuffers</code>?  It seems to me like it only takes data from <code>statBuffers</code> and never puts data back in. --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+The magic is in this line from setSegmentation:
+<pre>
+buffer = statBuffers[distanceIndex][velocityIndex][lastVelocityIndex];
+</pre>
+After this, they 1D array "buffer" is set to point to one of the final dimensions of "statBuffers", so their cells point to the exact same data. This will save you from typing "statBuffers[index1][index2][index3]" every time you are accessing that data in that tick.
+<p>
+-- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+<p>
+Yah I had the same question, if Voidious' excellent explination wasn't enough you get my extremely confusing one, but one that comes with a visual represnetation...
+<p>
+<h4>Pointers 101: with visual aids</h4>
+<pre>
+Here we have two different statBuffers, each with what
+data they contain displayed respecibly below them.
+
+  Main Class                  GFTWave
++-------------+           +-------------+
+| statBuffers |           | statBuffers |
++-------------+           +-------------+
+| 0           |           |             |
++-------------+           +-------------+
+
+Notice how the statBuffers in GFTWave contain nothing, thats
+considered a null state, or just null for short.
+
+Now when you assign the statBuffers from the main class to
+the statBuffers of the GFTWave your not actually copying the
+data, no for that you would need to clone() it.
+
+Now you have made a pointer! Congradulations.
+
+  Main Class                  GFTWave
++-------------+           +-------------+
+| statBuffers |           | statBuffers |
++-------------+  same as  +-------------+
+| 0           | &lt;-------- | 0           |
++-------------+    this   +-------------+
+
+Now any modification you make to the data in the GTFWave
+class will also take place in the main class aswell.
+
+So when you assign or add or multiply or do whatever else to
+the data in the GTFWave it also takes place in the Main class.
+
+GFTWave:statBuffers = 1;
+
+  Main Class                   GFTWave
++-------------+            +-------------+
+| statBuffers |  actually  | statBuffers |
++-------------+ happens to +-------------+
+| 1           | &lt;--------- | 1           |
++-------------+    this    +-------------+
+
+It also works in reverse. So anything you assign to the main class
+will also happen to the data in the other class.
+</pre>
+<p>
+I explained all that just so I could make the ascii graphics. -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=GFTargetingBot" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=GFTargetingBot">View other revisions</a><br>Last edited September 26, 2007 2:50 EST by <a href="robowiki?Voidious" title="ID 8561 from cpe-204-210-154-119.hvc.res.rr.com">Voidious</a> <a href="robowiki?action=browse&diff=1&id=GFTargetingBot">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

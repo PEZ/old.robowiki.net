@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>SavingDataHowto - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Saving, Data, Howto'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=SavingDataHowto">SavingDataHowto</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I am struggling with adding persistence to my robot. Now I don't know a good way to see when the <a href="robowiki?MatchIsOver" class=wikipagelink>MatchIsOver</a>. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+<em><strong>static variables</strong></em>
+<p>
+The easiest way to save data between rounds is to make your variables static. There is no need to save data to a file and retrieve it. You usually store the enemy information you collected in previous rounds (if you need it later) or information stored in files that you need to read only once. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+As far as I know static variables in a Java class is shared among all instances of that class. Robocode creates a new instance of your bot for each round (and then calls the run() method), but since static variables are shared among all instances, your bot still has access to the data that was saved in the static variables last round. I'm not sure what this means if you have multiple instances of the same bot on the field though? --<a href="robowiki?Zeb" class=wikipagelink>Zeb</a>
+<p>
+In principle, multiple instances of the bot work OK. I'm not sure why (because they are the same class, they should share the data). My guess is that it is OK because they execute in different threads. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+I've found the answer in an old posting by <a href="robowiki?MathewNelson" class=wikipagelink>Mat</a>: <a rel="nofollow" href="http://www.alphaworks.ibm.com/forum/robocode.nsf/archived/5F86B09EE7DCA3E682798BC09C4B0950?OpenDocument">http://www.alphaworks.ibm.com/forum/robocode.nsf/archived/5F86B09EE7DCA3E682798BC09C4B0950?OpenDocument</a> It says that each robot is created by separate ClassLoaders<a href="robowiki?action=edit&id=ClassLoaders" class=wikipageedit>?</a>, with the purpose being that they should not share static variables. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+I'm still a bit confused about what Robocode does between rounds. I have a static collection of enemies, each which get an instance of my robot when they are created. How come this robot reference is still valid between rounds? Isn't it a new instance of the Robot then? Or why would you need static variables for this otherwise? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Pondering and discussing with my colleagues I now think I know the the answer to this question: Calls like getHeading() are accessing static variables in the robot. My static collection holds a reference to an old and dead robot, but it shares those static variables with each new and fresh instance, which make it work. It's when you try calls like ahead() that things stop to work. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+<em><strong>Serialization</strong></em>
+<p>
+Serializable means that a class can be converted into an array of bytes which can then be written to disk, sent over a network, etc. For a class to be Serializable it must (a) have no member variables which hold non-serializable classes and (b) implement the Serializable interface. The only real problem you can run into is if you have an object with a lot of references to other objects: when you serialize it, you''ll also be serializing and all of those objects, any objects that they have references to, etc. In an early version of Duelist I couldn't understand why my datafiles were about 40k per bot - turned out that one of the things I was serializing had a reference to my bot in it, so I was serializing EVERY object my bot used! :-P
+--<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+You use the <em>transient</em> keyword to indicate that a member variables aren't part of the persistant object. As long as you know how to reconstruct an "incomplete" deserialized object you just put <em>transient</em> in front of the variable declaration and it won't get serialized along with the rest of the object. Beware though that if you initialize a transient variable upon declaration you won't have the initialized value on that variable after deserialization. Like:
+<pre>
+transient double largestX = getBattleFieldHeight() - getWidth() / 2;
+</pre>
+The variable 'largestX' will have the value of 0 (zero) after deserialization. Now this particular variable you might want to serialize anyway. =) But you get the drift I hope. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+You can also compress the serialized files. <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a> shows how in <a href="robowiki?CompressedSerialization" class=wikipagelink>CompressedSerialization</a>.
+<hr noshade class=wikiline size=1>
+<strong>Other</strong>
+<p>
+If you have your data in simple, primitive type, arrays you can store and retrieve that data compressed by using a variant of the serialization thingy above: <a href="robowiki?WritingArraysToFile" class=wikipagelink>WritingArraysToFile</a>. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<p>
+<em><strong>TIP:</strong></em>
+<p>
+if you want to increase your file quata in your local machine, add the robocode.robot.filesystem.quota=2000000 in your robocode.propoerties file. It will set the file quata to 2MB.
+--SSO<a href="robowiki?action=edit&id=SSO" class=wikipageedit>?</a>
+<hr noshade class=wikiline size=1>
+If you are having problems saving data under 1.4.2, look here: <a href="robowiki?JRE_1.4.2_SecurityException_Bug" class=wikipagelink>JRE 1.4.2 SecurityException Bug</a>
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=SavingDataHowto" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=SavingDataHowto">View other revisions</a><br>Last edited January 17, 2004 9:08 EST by <a href="robowiki?Albert" title="ID 2199 from 80.58.32.174.proxycache.rima-tde.net">Albert</a> <a href="robowiki?action=browse&diff=1&id=SavingDataHowto">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

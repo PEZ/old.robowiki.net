@@ -1,0 +1,220 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>GrubbmGrb - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Grubbm, Grb'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=GrubbmGrb">GrubbmGrb</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><center><font size=+2><b> <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> </b></font><br>
+<font size = -1>by <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a></font></center><br>
+<p>
+<a href="robowiki?GrubbmGrb/History" class=wikipagelink>/History</a> - <a href="robowiki?GrubbmGrb/RRGC" class=wikipagelink>/RRGC</a>
+<p>
+<H4>Description</H4>
+
+<p>
+<a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> is my only competitive Mega <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> bot.<br>
+It has combined the best things of my testbots <a href="robowiki?GrubbmOne" class=wikipagelink>GrubbmOne</a>, <a href="robowiki?GrubbmTwo" class=wikipagelink>GrubbmTwo</a> etc.<br>
+Basically it is just a collection of tweaked old-fashioned and simple targetting and movement, but for some reason they complement and strenghten eachother. Alas no real progress is expected anymore as no 'modern' techniques (<a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>, <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>, <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a>) will be used.
+<p>
+<H4>What's special about it?</H4>
+
+<p>
+It does not guess factors and does not surf waves, yet it is ranked just in the top-50 of the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>.
+<p>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<p>
+<a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a>: <a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=2380">http://www.robocoderepository.com/BotDetail.jsp?id=2380</a> <br>
+or at      <a rel="nofollow" href="http://home.versatel.nl/gheijenk/robocode/jarfiles/gh.GrubbmGrb_1.2.4.jar">http://home.versatel.nl/gheijenk/robocode/jarfiles/gh.GrubbmGrb_1.2.4.jar</a>
+<p>
+<H4>How competitive is it?</H4>
+
+<p>
+It is in the subtop with a rating around 1830.
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+<p>
+Movement array with <a href="robowiki?StopAndGo" class=wikipagelink>StopAndGo</a> and <a href="robowiki?Oscillators" class=wikipagelink>Oscillator</a> movement, depending on targeting skill of opponent. The original spinning movement has been abandoned from v1.0.7.<br>
+The <a href="robowiki?StopAndGo" class=wikipagelink>StopAndGo</a> movement starts as a fullspeed orbital movement until hit by one non-HOT bullet (checked by virtual enemybullet). After that it reacts on enemyfire by alternately going fullspeed and fullstop. The oscillator movement uses a double oscillator (sin(x)*cos(y)) as described on <a href="robowiki?Oscillators/Period" class=wikipagelink>Oscillators/Period</a>. Both (actually three) movements use a distance dependent dive-in protection with different maximum angles for each movement.
+The movements are rated as (bulletpower hit) / (bulletpower fired and reached distance).
+<p>
+<H4>How does it fire?</H4>
+
+<p>
+Using 5 <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a>: <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a>, <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a>, OrbitalTargeting<a href="robowiki?action=edit&id=OrbitalTargeting" class=wikipageedit>?</a>, averaged velocity <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> and <a href="robowiki?RandomTargeting" class=wikipagelink>RandomTargeting</a>.
+<p>
+As both CT-guns adapt the bulletpower if a bullet would end up in the wall, the VG-array uses <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> and not <a href="robowiki?Waves" class=wikipagelink>Waves</a>. The vgun statistics (not the guns) are segmented on distance(4) and nearwall(2), but I don't think that gets me more than one full point.
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+<p>
+The <a href="robowiki?StopAndGo" class=wikipagelink>StopAndGo</a> movement successfully dodges HOT bullets and linear/circular targeting bullets (see <a href="robowiki?WaveSurfingChallenge2K6" class=wikipagelink>WSC2K6</a>). The oscillator unsuccessfully tries to dodge the rest.
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+<p>
+This is a <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> bot.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+<p>
+Between rounds vgun-statistics (hitrate), and movement-performance (hitrate of enemy).<br>
+Between matches nothing will ever be saved.
+<p>
+<H4>Where did you get the name?</H4>
+
+<p>
+Taken from my nickname, it means something like 'dry ditch near a farm'.
+<p>
+<H4>Can I use your code?</H4>
+
+<p>
+It's included in the jar, under the <a href="robowiki?RWPCL" class=wikipagelink>RWPCL</a>.
+<p>
+<H4>What's next for your robot?</H4>
+
+<p>
+<UL >
+<li> Secondary movement from <a href="robowiki?GrubbmTwo" class=wikipagelink>GrubbmTwo</a>     DONE 20041123: ratingboost of 120 points
+<li> Ramming mode (<a href="robowiki?GrubbmThree" class=wikipagelink>GrubbmThree</a>)            CANCELLED:     it would only affect top-20
+<li> Movement to lure HOT and LT/CT guns   DONE 20050602: ratingboost of 100 points
+<li> Musashi-trick                         DONE 20050602: part of <a href="robowiki?StopAndGo" class=wikipagelink>StopAndGo</a> movement
+<li> More simple guns                      DONE 20050705: +30 points, I can not think of more effective simple guns
+<li> adding anti-oscillator gun
+<li> Tweaking until I pass <a href="robowiki?Locke" class=wikipagelink>Locke</a>
+</UL>
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+<p>
+On the testbots <a href="robowiki?GrubbmOne" class=wikipagelink>GrubbmOne</a>, <a href="robowiki?GrubbmTwo" class=wikipagelink>GrubbmTwo</a> etc and all kinds of info from this wiki<br>
+The <a href="robowiki?Wave" class=wikipagelink>Wave</a>s are inspired by <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, although I use it as <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>.<br>
+Inspiration for statistics came from <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>'s <a href="robowiki?CalculatingScore" class=wikipagelink>CalculatingScore</a>.<br>
+The Orbital gun is based upon 2 lines of code from <a href="robowiki?Iiley" class=wikipagelink>Iiley</a>'s <a href="robowiki?Smog" class=wikipagelink>Smog</a> 2.5<br>
+The ini-file handling is copied from <a href="robowiki?Loki" class=wikipagelink>Loki</a>'s <a href="robowiki?Freya" class=wikipagelink>Freya</a>
+<p>
+I must thank <a href="robowiki?Krabb" class=wikipagelink>Krabb</a> for providing the drive to change instead of tweak, by racing for the top-100.
+<p>
+<H4>Goal</H4>
+
+<p>
+Pass <a href="robowiki?Locke" class=wikipagelink>Locke</a> (and maybe <a href="robowiki?RaikoMicro" class=wikipagelink>RaikoMicro</a>) on the rankinglist.<br>
+Accomplished to pass <a href="robowiki?Locke" class=wikipagelink>Locke</a>, due to quite a lot of <strike>fresh meat</strike> new bots with relative simple targeting, the kind I like to dodge ;-)<br>
+Alas, this accomplishment was due to some weird battleresults of a pulled robocode version. I still need a fistfull of points . . .  
+<p>
+<H4>History</H4>
+
+Look <a href="robowiki?GrubbmGrb/History" class=wikipagelink>here</a>
+<p>
+<H4>Comments, questions, feedback:</H4>
+
+<p>
+Surprisingly nice.  With just circular/linear/head on targeting this beats my both <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> and <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> targeting bots. If only I had a little time... --<a href="robowiki?LRem" class=wikipagelink>lRem</a>
+<p>
+Thanks. Considering the time I've spent on my bot(s) and you on yours, there is plenty room for improvements on your side. For <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> I am busy with the Musashi-trick and an equivalent trick for linear/circular targetters and then I <strong>REALLY</strong> need a PM-gun or GF-gun.  --<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+I disagree, they're on a dead end. They both have flawed design. A nice bot with nice gun and sound movement is bound to come, but even the start of the work is being endlessly delayed. I just hope to do something this summer... --<a href="robowiki?LRem" class=wikipagelink>lRem</a>
+<hr noshade class=wikiline size=1>
+This morning i was shocked about your ranking :) But i am impressed about your score vs Krabby :D I have to hurry to be the first of us, who is in the top 100!! --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+I had good hopes too after 100 battles, but alas the rankings are not stable yet before approx 1000 battles. My Specialization Index shoots from 70 to 160, I think that says it all. Crush the weak, get crushed by anything else, victory or death, no truce anymore. My movementselection is almost perfect :-p  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+<p>
+@Krabb: You don't have to hurry any more, as I won :D
+<img src="http://asterix.maxnet.org.pl/~lrem/result.jpeg">
+--<a href="robowiki?LRem" class=wikipagelink>lRem</a> 
+<p>
+Can we agree that 1000 battles have to be fought? Then the ranking should be stable enough. Both of you are really really near to victory as I am dangling just around 102 place :-(  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+OK, 1000 battles are OK! Is ther a possibility to setup the roborumble client to fight only Krabby큦 Battles? :D --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+Alas not, but I have set mine up to give priority to every bot with less than 999 battles. How to do that is to put the lines below at the end of roborumble.txt.
+<pre>#Number of battles a bot has to fight when it is uploaded. It has priority againts others until it reaches such number
+BATTLESPERBOT = 999
+</pre>  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+I'm nowhere near victory. Today I'll release the last hack, and I'm off for a week. And after return I'll move to melee, which I always prefered. --<a href="robowiki?LRem" class=wikipagelink>lRem</a>
+<p>
+Thanks for the info <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>! When Krabby is in the top 100 i큞l move to team Battles :) --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+Both of you won't get rid of me, because I participate in every rumble present here ;-) As for melee, I prefer that too, but I want at least have one bot in the top-100 one-on-one. As for teams, there is really need for some more competition as long as I can stay in the top-10 :-p -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Although the ranking is not stable yet, there is no change falling out of the top-100 anymore !
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'>74</td><td colspan="0.5">gh.<a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> 1.0.5</td><td colspan="0.5">1740.97</td><td colspan="0.5">details</td><td colspan="0.5">graph</td><td colspan="0.5">397</td><td colspan="0.5">2-6-2005:9:13</td><td colspan="0.5"> </td></TR>
+</TABLE>
+-- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Yes, you have won the race :) congratulation!! And it큦 a good rank. --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+Arg, I have no chance beating you without the spinning movement ;( But i have a new movent too!
+Up to now it큦 bad, but it looks good! And i have holidays...
+<p>
+EDIT: You wrote, that <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> has no <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>, but i bet you have some kind of waves?!--<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+I do have two kinds of waves, one for my <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> (although it is handled more like <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>) and also an '<a href="robowiki?EnemyWave" class=wikipagelink>EnemyWave</a>', which only purpose (yet) is to check if I am hit with not-HOT. If so, I switch from full-speed orbital to Stop'nGo orbital. The <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a> could do the same in a much simpler way (and maybe even better), but I though I would need those <a href="robowiki?EnemyWaves" class=wikipagelink>EnemyWaves</a> in the future anyway.
+<p>
+Thanks by the way for chasing me to rating 1700. I needed that to stop fiddling with details and do some serious changes. --<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Intresting, so you have no direct reaction on <a href="robowiki?EnemyWaves" class=wikipagelink>EnemyWaves</a>! By the way I큞l chase you to Place 1 :D --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+The Stop'nGo movement only reacts on enemyfire without any further intelligence, except what I explained above. A previous version of <a href="robowiki?Krabby" class=wikipagelink>Krabby</a> also did that if I remember correctly. I still have some movement-tweaks and a <a href="robowiki?FastTargeting" class=wikipagelink>FastTargeting</a> trick in my sleeve, so I am ready for you ;-)  --<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+I have some Ideas too... I think Krabby has enemy waves since V. 1.1, but realy buggy ones :) --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+Stupid me, ofcourse I am using the <a href="robowiki?EnemyWaves" class=wikipagelink>EnemyWaves</a> also for the rating of my movement. Counting the bulletpower that passed me (the ones that hit me I get from onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a>), so I can calculate a bulletpower-hitpercentage. See the debug-window for all sorts of (un)interesting statistics. --<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+You <a rel="nofollow"  href="robowiki?Dookious#crush">commented</a> to Voidious about your ranking and the importance of beating weaker opponents soundly, and I observe that while Ugluk only loses to <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> by a small margin, Grubbm has a ranking 100 points higher (1807 vs. 1707).  It testifies to the saying that you have to do well against the great bots and even better against the not so great.  I've been focusing on Ugluk's problem bots (at least the really nasty ones) without worrying about really pummeling the easier prey.  If I need an ego boost I'll have to pick on some little guys. -- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin</a>
+<p>
+Since a few weeks, when the <a href="robowiki?TargetingChallenge2K6" class=wikipagelink>TargetingChallenge2K6</a> and <a href="robowiki?MovementChallenge2K6" class=wikipagelink>MovementChallenge2K6</a> came up, I realize I do not have <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a> in my <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> array. <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> does hit Walls as good, so I think there is no need for it anyway.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+<pre>gh.GrubbmGrb 1.1.3: Exception: java.lang.NullPointerException
+java.lang.NullPointerException
+    at gh.GrubbmGrb.onScannedRobot(GrubbmGrb.java:873)</pre>
+Noticed the above while bug hunting for <a href="robowiki?Ugluk" class=wikipagelink>Ugluk</a> with <a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a> at 1 tick per second.  Normally <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> likes to avoid being shot. -- Martin
+<p>
+I am not sure it is a bug in <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a>, I am suspecting Robocode. I have seen before (especially in melee) that at extreme slow speeds a sort of 'restart' of Robocode happened. All bots then got back their initial energy, but most of them were disabled by an Exception. It seems to get triggered if the battle takes very long (in seconds, not in ticks). Maybe someone with more indepth knowledge of the Robocode-code (<a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>, <a href="robowiki?Fnl" class=wikipagelink>Fnl</a>) knows this symptom.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Nice update, i have to tweak Krabby2 so that he beats <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> again :D And thx for your debugging grafics, i noticed a bug in my Wave System :) But it would be nice if they are disabled next time... my own grafics are enought to hide every thing. --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+Sorry, had not thought of those graphics. Next release I will make a flag for it. Just look at it as a small gift from me to help you line-up your waves ;-)  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+I'm curious if your 'orbital targeting' requires you to predict your own future position several ticks out so that you can anticipate your opponent's relative position.  In watching (very closely) battles in <a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a>, it is clear that your successful firing mechanism has to be one of the latter three, since I am not anticipating them.  I have a targeting technique that uses average velocity for circular prediction, but it also averages rate of heading change.  It is also probably broken (and was kind of abstract to begin with, though my most effective against some).  I am also wondering what 'modern' guns you are interested in exploring, and if it will be a new bot. - Martin <font size="-1">edit: my debug graphics are tied to my 'production killswitch' and are disabled (along with console / file debug) automatically when I release (assuming I remember the switch).</font>
+<UL >
+<li> The orbital gun is just three lines of code base upon a nanogun from <a href="robowiki?Iiley" class=wikipagelink>Iiley</a>. I do predict my and the opponents next position (T+1) but no further. The same gun is used in <a href="robowiki?GrubbmTwo" class=wikipagelink>GrubbmTwo</a>, so I think this gun indeed is your main problem. A <a href="robowiki?PatternMatcher" class=wikipagelink>PatternMatcher</a> is under development (<a href="robowiki?GrypRepetyf" class=wikipagelink>GrypRepetyf</a>) and I will start with a GF-gun near the summer. Neither of them will be included in <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> though. I do want to extend the vgun array with a gun that can hit an oscillator, but I have no clear idea yet in my head.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</UL>
+<p>
+Congratulations on 1.2.0! You've passed some real heavy-hitters in <a href="robowiki?Musashi" class=wikipagelink>Musashi</a> and <a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a>. I look forward to <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> breaking the 1900 barrier without <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> or <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a>. Keep up the good work!  --<a href="robowiki?Corbos" class=wikipagelink>Corbos</a> <font size="-1">Edit: I realize there are very statistical elements in <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a>'s movement and guns. Still, there's a purity in its implementation I love.</font>
+<UL >
+<li> Thanks, I am afraid that 1900 is out of reach for such a 'simple' bot, so I am aiming for <a href="robowiki?Locke" class=wikipagelink>Locke</a> and the last micro in front of me: <a href="robowiki?RaikoMicro" class=wikipagelink>RaikoMicro</a>. I use statistics to choose the gun and movement, not to determine <em>where</em> to shoot or to move, so I see it more like administration.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</UL>
+<p>
+It's a bit late to observe it, but you mentioned above that you weren't feeling the lack of linear targeting.  I've noticed that linear targeting can outperform circular against many bots, notably a few of <a href="robowiki?Loki" class=wikipagelink>Loki</a>'s.  Then again it may come down to implementation, since I do stuff like check if the anticipated intercept point is even inside the arena, so my circular may not hit as well but will fire more often. (Wether or not that's an advantage I'll leave to you.)  It becomes evident when testing my new random-plus-dodging movement and I'm not dodging shots I would not have taken, but the wave surfing challenge bot fired anyway.  It's as though I need to create a simpler targeting to aim at myself, though it's unlikely I'd use it on an enemy. -- Martin
+<p>
+My (averaged) circular targeting puts the intercept point back into the field, and adapts the bulletpower to intercept at the time of the supposed wallhit, so even wallsmoothers are likely to be hit with a lower power bullet. It is worth a test if linear targeting can help me a bit, but I am afraid it's eventual positive effects will be negated because there is more chance of selecting the wrong gun.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Great work with <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a>. You are almost at the level of Locke (which uses Raiko's movement, if i remember correctly). Do you think you can squeeze 20 more points in the ranking out of <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a>? Anyway, it shows that i must turn my attention again at 1-vs-1 as you now are really way ahead of any of my bots in this type of battle... --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<p>
+I have the feeling it is possible to outrank Locke with some more movementtweaks, but that would also be the End of Development for <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a>. To get it any higher than this it needs <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> and/or a GF/ST gun, but I rather leave it as it is: a well-working collection of simple things. And ofcourse I have to tweak Griezel, as you pushed it out of the top-10.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<UL >
+<li> well, you can focus on <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> again as Griezel is back in the top-10 :O --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<li> Griezel is out again, but I will focus on <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> first.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</UL>
+<p>
+Only 8 points difference with <a href="robowiki?Locke" class=wikipagelink>Locke</a>, but now I have to find something to improve. I hope you don't mind, but I copied the ini-file handling of <a href="robowiki?Freya" class=wikipagelink>Freya</a>, so I do not have to change the source when I want to test my movement or gunnery anymore.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<UL >
+<li> no problem. It certainly makes testing and running the different challenges simpler. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+</UL>
+<p>
+Version 1.2.3 has its secondary (oscillator) movement replaced by Raiko's (RRGC) movement, while the <a href="robowiki?StopAndGo" class=wikipagelink>StopAndGo</a> is still active. This is just a test to see if some simple movement changes could get me where I want.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+The repository is up, but it doesn't look like the file for 1.2.3 can be found via the link there. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I have also put it on my own webspace now, and changed the participants-link. The repository seems down again. -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=GrubbmGrb" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=GrubbmGrb">View other revisions</a><br>Last edited December 9, 2006 9:22 EST by <a href="robowiki?GrubbmGait" title="ID 6861 from ip44-76-208-87.adsl2.versatel.nl">GrubbmGait</a> <a href="robowiki?action=browse&diff=1&id=GrubbmGrb">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

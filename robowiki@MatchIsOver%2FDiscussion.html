@@ -1,0 +1,23 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>MatchIsOver/Discussion - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Match, Is, Over, Discussion'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Discussion">MatchIsOver/Discussion</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?MatchIsOver" class=wikipagelink>MatchIsOver</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>This is mainly a problem when I want to save state in a perstent file. But I have the same problem when my robot prints statistics at the end of each round. There I've put calls to my printStatistics function inside onWin<a href="robowiki?action=edit&id=OnWin" class=wikipageedit>?</a> and <a href="robowiki?OnDeath" class=wikipagelink>onDeath</a> event handlers. But they sometimes occur both and then I get two prints of statistics. It hasn't been important enough for me to deal with, but this persistence issue is different. So now, can someone tell me how to figure out that the round is over? And the match? Or maybe if I know when a round is over I can just check if it's the final round using <a href="robowiki?GetRoundNum" class=wikipagelink>getRoundNum</a>()? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+You could call a clearAllEvents<a href="robowiki?action=edit&id=ClearAllEvents" class=wikipageedit>?</a>() at the end of onWin<a href="robowiki?action=edit&id=OnWin" class=wikipageedit>?</a>() and <a href="robowiki?OnDeath" class=wikipagelink>onDeath</a>() to avoid the second printout. --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<p>
+Thanks, I'll do that. So this means that these two events are the only clues to that the game is over? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+What about using <a href="robowiki?GetRoundNum" class=wikipagelink>getRoundNum</a>() and getNumRounds<a href="robowiki?action=edit&id=GetNumRounds" class=wikipageedit>?</a>()? When the first is 1 less than the second then you are in the final round of the battle. --<a href="robowiki?Tad" class=wikipagelink>Tad</a>
+<p>
+Perhaps using getOthers<a href="robowiki?action=edit&id=GetOthers" class=wikipageedit>?</a>() and checking when it reaches 0 (or 1 if it includes your robot which I don't think it does.)  That should do the trick. --<a href="robowiki?Miked0801" class=wikipagelink>Miked0801</a>
+<p>
+It doesn't include the own robot. But if I get killed, then that call will never return 0, will it? Anyhow, I have decided to use the onWin<a href="robowiki?action=edit&id=OnWin" class=wikipageedit>?</a>() and <a href="robowiki?OnDeath" class=wikipagelink>onDeath</a>() calls and not bother if I write the statistics file twice. <a href="robowiki?Tad" class=wikipagelink>Tad</a>'s suggestion works fine for knowing I'm reaching the end of the match. But I'm not sure I will keep it that way, since then if I stop the game prematurely I wont save the statistics. I still think there is an onGameOver<a href="robowiki?action=edit&id=OnGameOver" class=wikipageedit>?</a>() event missing. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?MatchIsOver" class=wikipagelink>MatchIsOver</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=MatchIsOver/Discussion" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=MatchIsOver/Discussion">View other revisions</a><br>Last edited March 3, 2003 23:11 EST by <a href="robowiki?PEZ" title="ID 1052 from 192.168.0.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=MatchIsOver/Discussion">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

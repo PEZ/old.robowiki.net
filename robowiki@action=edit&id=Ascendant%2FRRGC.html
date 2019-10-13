@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing Ascendant/RRGC - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Ascendant, RRGC'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing Ascendant/RRGC</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="Ascendant/RRGC"  />
+<input type="hidden" name="oldtime" value="1146977551"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="1"  />
+<input type="hidden" name="captchaArg2" value="1"  />
+<input type="hidden" name="captchaOp" value="+"  />
+<input type="hidden" name="captchaId" value="148283957111"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">[[Ascendant|Ascendants]] entry in the RRGunChallenge. So its basically Raikos movement without the MusashiTrick (see [[RRGunChallenge/RaikoNMT|RaikoNMT]]) plugged into [[Ascendant]]. This is also a test platform for experiments with targeting that are not yet available in a public release of [[Ascendant]].
+
+----
+&#39;&#39;&#39;version history&#39;&#39;&#39; (newest entry on top)
+
+&lt;font size = -1&gt;
+* &#39;&#39;&#39;version 1.2.6&#39;&#39;&#39; (April 13 2006) - rating: 1882
+** uses the targeting of Ascendant 1.2.6
+
+* &#39;&#39;&#39;version 1.0.6&#39;&#39;&#39; (December 06 2004) - rating: 1892
+** hopefully fixed the problem the 1.0.5 bugfix caused
+* &#39;&#39;&#39;version 1.0.5&#39;&#39;&#39; (December 04 2004) - rating: 1891
+** fixed a bug in fire power selection
+* &#39;&#39;&#39;version 1.0.4&#39;&#39;&#39; (November 29 2004) - rating: 1904 (dropped to 1894 now)
+** tampered again with reverse wall proximity segmentation
+* &#39;&#39;&#39;version 1.0.3&#39;&#39;&#39; (November 28 2004) - rating: 1893
+** some fine tuning for the reverse distance to wall segments
+* &#39;&#39;&#39;version 1.0.2&#39;&#39;&#39; (November 26 2004) - rating: 1900
+** tweaked wall segmentation
+** segments on distance to wall in direction of GF -1 too
+* &#39;&#39;&#39;version 1.0.1&#39;&#39;&#39; (November 21 2004) - rating: 1893
+** using higher bullet power
+* &#39;&#39;&#39;version 1.0b2&#39;&#39;&#39; (November 18 2004) - rating: 1897
+** added a fast learning buffer (inspired by [[PEZ]]s Bee)
+* &#39;&#39;&#39;version 1.0b1&#39;&#39;&#39; (November 15 2004) - rating: 1888
+** first test for a new array based guess factor gun that will become part of Ascendant 1.0 if things go well
+
+* &#39;&#39;&#39;version 0.9.7&#39;&#39;&#39; (October 29 2004) - rating: 1870 
+* &#39;&#39;&#39;version 0.7.7c&#39;&#39;&#39; (August 18 2004) - rating: 1869
+&lt;/font&gt;
+&lt;p&gt;
+----
+
+==== Where can I get it? ====
+
+http://www.robocoderepository.com/BotDetail.jsp?id=2418
+
+--[[Mue]]
+
+----
+1889 points! This must be the strongest gun ever. -- [[PEZ]]
+
+Yeah. I already feared that there is something wrong with my gun testbed, since the new gun performed even better than Bee there. Now i&#39;m tempted to plug this gun into [[Ascendant]] as it is. 
+
+BTW: I tested alot with Bee to see why it performed better than my earlier test versions. It turned out to be your wall segmentation which is much better than to simply segment on distance to wall by using the targets current heading. So i&#39;m now using your type of wall segmentation (with different granularity), so thanks&amp;credits to you [[PEZ]]. --[[Mue]]
+
+But it performs much better than Bee in the RRGC too, so what&#39;s wrong with your test bed? Cool that you found my wall segmentation being useful! I&#39;ve said it a few times on this wiki that I think it&#39;s a very good segmentation. What granularity are you using then? Did you lower it slightly? Mine is tweaked using the TargetingChallenge, which I think is a bad testbed for this. I&#39;ll try using a lower granularity now I think. -- [[PEZ]]
+
+No, there is nothing wrong with my testbed apparently. I just did not trust it that much, since i did not really expect the new gun to do better than Bee (which has been tuned in a lot of releases in the rumble). To granularity of wall segments: I use 47 guess factors and 5 wall segments with wall segment width being 7 guess factor bins. --[[Mue]]
+
+You&#39;ve got 10 points up to Shadow. Your new gun performs some 17 points better than your old. You just might make it to the throne again with this gun. You splice the wall segmentation up in GF bins? That&#39;s pretty clever. -- [[PEZ]]
+
+* That was the way i read your code in Bee, so its not my cleverness this time :-) --[[Mue]]
+
+BTW, blessing your gun with my wall segmentation boosts it&#39;s performance well past my gun. What do you think I am lacking in my gun now? -- [[PEZ]]
+
+Hm, i dont really know. My first guess would be that rolling stats work better. Apart from that maybe your bullet power segmentation costs you some points. --[[Mue]]
+
+Rolling stats. I&#39;ll try that. Hopefully you&#39;re right about the bullet power segmentation slowing things down. I&#39;ve removed it in the latest release. -- [[PEZ]]
+
+Which bots do you have in your gun testbed? I&#39;ve experimented some with rolling the stats, but it doesn&#39;t seem to improve my gun. Removing bullet power segmentation lost me RR@H points. Any other ideas? -- [[PEZ]]
+
+My testbed for targeting experiments consists of:
+* [[CassiusClay]] (one of the recent versions that got the same rating as [[Ascendant]])
+* [[Lacrimas]]
+* [[Tityus]]
+* [[RaikoMicro]]
+* [[Quest]]
+* [[FloodMini]]
+* emp.Yngwie
+* [[TheArtOfWar]]
+* [[NekoNinja]]
+* [[Booring]]
+* tobe.Fusion
+Dont know what else it could be that is holding Bee back. I use acceleration segments instead of last velocity segments (need less segments this way), but i dont think that this has an impact on performance. --[[Mue]]
+
+But it just might have an impact on performance. At least it might mean that I do not benefit much from using two velocity segments. Which I thought I did. Time to experiment and question everything in my gun I guess. -- [[PEZ]]
+
+I&#39;m impressed! You managed to press another 10 points out of your already excellent gun. Now, please release an Ascendant using this gun. I think your movement already is almost on par with Shadow&#39;s. Now with a gun that is clearly betterm who&#39;s going to be King? =) -- [[PEZ]]
+
+Yep, I can&#39;t wait to see Ascendant equipped with this gun, why the wait? And what about some TC scores? -- [[ABC]]
+
+I just didnt want to put an unfinished gun into version 1.0 :-). Last on my todo list is some bullet power tweaking. But since i dont really expect this to bring me any points, i&#39;ll take the gun as it is now and put it in a release of Ascendant tomorrow - i&#39;m curious too :-). I&#39;ll also take a look at the TC then, though i consider the [[RRGunChallenge|RRGC]] score to be a better measure for targeting performance (at least with respect to the rumble). --[[Mue]]
+
+Yes, the RRGC is a far better measure. But even so, I&#39;m curious what this beast does in the TC. -- [[PEZ]]
+
+I like the TC because it measures long term performance. -- [[ABC]]
+
+I like gut instinct because I have no patience. :-) --[[David Alves]]
+
+
+
+
+Yay, gut instinct! My favorite way of testing, too. Maybe that&#39;s the problem with us Americans... -- [[Alcatraz]]
+
+Tis&#39; nothing wrong with gut feeling other than that it&#39;s almost always wrong. =) How about some TC500 results Mue? I think that&#39;s what ABC means with &quot;long term performance&quot;. -- [[PEZ]]
+
+Check the TC500 again, Ascendant is in 1st place. :) -- [[ABC]]
+
+Yes, I missed it on the Changes listing. Only the slightest margin to CC though. The margin of error is larger than that. From my biased position it&#39;s a draw. =) -- [[PEZ]]
+
+It&#39;s a draw from my (unbiased) position too, but the TCFast and RRGC tell a different story... -- [[ABC]]
+
+I&#39;m working on that. I&#39;m working on that. -- [[PEZ]]
+
+
+
+Yeah, you are right, its a draw. I suspect that the fast learning buffer somehow lowers performance in the long run. I&#39;ll experiment with that a bit. --[[Mue]]
+
+I&#39;d be happy to settle the draw by running 10 seasons of TC500 for each of them if you send me non-moving versions of your the bots. --[[David Alves]]
+
+I&#39;m not sure I have the exact version of Bee left around... But maybe the new one can compete. I&#39;ll run one TC500 and check. -- [[PEZ]]
+
+I think I have CC 1.9.9.87 already... Mue, if you send me a TC version of Ascendant I&#39;ll run each of them through 10 rounds of TC500 and settle this once and for all. :-) --[[David Alves]]
+
+Edit conflict... OK. It seems the new Bee can perform like that old one. 94.00 in my TC500 test. And during that test SandboxDT was too slow to start 8 time and TheArtOfWar one time which made me lose some in score I guess. Still the margin to Ascendant could well be within the margin of error so I&#39;d welcome your test, David. Download the TC-version of CC here: http://pezius.com/robocode/robots/pez.rumble.CassiusClay_1.9.9.87TC.jar -- [[PEZ]]
+
+10 rounds of TC500? That would take like 8 hours on my machine and another 8h for CC i think. Thats a lot of computation time ... Anyway, i uploaded a TC version of Ascendant to: http://informatik.hu-berlin.de/~ueckerdt/mue.Ascendant_1.0TC.jar. Please tell if you cant reach this domain (i know [[PEZ]] couldnt, but i have no other web space at hand). --[[Mue]]
+
+They&#39;re running now. I&#39;ll upload the results when I wake up tomorrow. May the best bot win! --[[David Alves]]
+
+Results posted. --[[David Alves]]
+
+Way cool! I was pretty confident I would win when I saw my solid #1 score in [[TargetingChallenge/FastLearning|TC35]]. So now I have my TC crowns back. Why is my gun not competing with [[Mue]]&#39;s at all in the RR@H? A Riddle with capital R... -- [[PEZ]]
+
+Ding dong! 1.0.2 is out. What&#39;s up for test now? -- [[PEZ]]
+
+Ah someone is watching :-). I just had no time to add a description, but added one now. --[[Mue]]
+
+I&#39;m totally tuned in on the Ascendant Gun development channel! My tests with segmenting on reverse wall proximity hasn&#39;t hinted at a success. But you seem to at least retain your excellent score... Maybe I should try a release using that segmentation. What&#39;s your wall segmentaion tweak about? -- [[PEZ]]
+
+My tests didnt really show an improvement either, i just released it anyway :-). The other &#39;wall segmentation tweak&#39; was a small code change that allows me to use wall segments of different size. So the length of the gf intervals covered by the different wall segments may vary from segment to segment. I thought up some numbers there, lost patience while testing and released it... :-) --[[Mue]]
+
+Yes, maybe a non-linear distribution of wall-segment indexes would work. Worth a try! -- [[PEZ]]
+
+It looks like 1.0.4 is very strong against surfers. 45+% against Shadow... FYI I refactored my wall segmentation so that I now can choose the segment index widths at will. I think I&#39;ll make the same refactoring for all my segmentations. (Even if for the wall segmentatuion I haven&#39;t found a setup that works better than the linear distribution I already had.) -- [[PEZ]]
+
+Maybe its something special with [[Shadow]], since i dont have an idea why the current wall segmentation should be better against surfers (i only changed segment widths). And i&#39;ve also come to the conclusion that different segment widths dont really help with wall segmentation. There was just no reason to assume this when i started experimenting.
+
+To this refactoring: I use array constants that contain the segment borders (probably the same way you do it). This makes it very easy to experiment with segmentation since i only need to modify the array in order to add, remove or resize the segments. In addition to that its very easy to see what segmenation is currently used (i still remember the time-since-velocity-changed segmenation in Bee where i gave up to figure out what segmentation borders you actually use :-). --[[Mue]]
+
+Yes, I use literal array constants too and benefit from the same effects of it as you do. =) That timer segmentation formula in Bee was developed using Excel b t w. But I&#39;ll change to use array constants instead since it&#39;ll allow hand tweaking with much greater ease. -- [[PEZ]]
+
+Man, you&#39;re an even tougher game than [[Jamougha]] ever was! 1904. Care to toss me a hint on what your latest segmentation tweak was about? -- [[PEZ]]
+
+Thanks :-), looks like the first place of [[RRGunChallenge|RRGC]] has come in reach. The tweak was still about reverse wall proximity. I&#39;m now using 3 segments, each covering 0.4*escapeAngle. --[[Mue]]
+
+I&#39;ll change my wall segmentation semantics to use fractions of the escapeAngle too. That&#39;s so much better and how I should have done it to begin with. Thanks! -- [[PEZ]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 1 + 1 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that Ascendant/RRGC has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=Ascendant/RRGC">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Ascendant" class=wikipagelink>Ascendant</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

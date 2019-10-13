@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Robocode2/Additions - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Robocode2/Additions'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Additions">Robocode2/Additions</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Robocode2" class=wikipagelink>Robocode2</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>What should <a href="robowiki?Robocode2" class=wikipagelink>Robocode2</a> add that isnt in RC1?
+<p>
+<UL >
+<li> The ability for bots to draw to the screen for debugging. When a battle is started there should be an option to select a bot to debug; that bot would then be allowed to draw to the screen. This would prevent total chaos if all bots are drawing to the screen at once. 
+<li> Bots should have a customizable set of parameters. Off the top of my head, speed/energy/armor seems like a good combination. Bots would default to 5/5/5, which would correspond to the max speed, initial energy, and damage formulae from R1. You could then set your bot to have 8/5/2, for example, for a faster bot with the same initial energy, but which takes more damage when hit. Each point could correspond to 1 unit of speed, 20 energy, and 8% damage. A 3/4/8 bot would have a max speed of 6 and initial energy of 90 in this system, but would take 24% less damage than the standard amount. I think this would especially make for interesting team battles where you could have a mix of different parameters on your team. 
+<li> More accurate physics. In particular, elastic collisions would be fun to watch. Bots should also be treated as rotating rectangles, so that a collision might send you spinning. A bot's top speed (see above) could be used to determine its mass in collisions: slow, heavily armored bots should send light fast bots flying when they hit. Collisions should be damped fairly quickly so that R1 bots don't go crazy, since R1 bots aren't designed to deal with collisions. 
+<li> Scores should be displayed on-the-fly. 
+<li> setColors() should be changed to accept any object of class Paint. This would be backwards compatible (since the Color class implements Paint) AND would allow cool custom paint jobs. Imagine a robot with racing stripes! Woohoo! The only caveat here is that bots whose Paint implementation changes over time wouldn't actually be color changing bots unless you called setColors() again, since the bot image would get buffered. In other words, pulsating colors and flashing lights on your bot is just not going to work, for performance reasons. 
+<li> Would be nice if teams were placed in an ordered way into the battle field (ie. one team on the left, one on the right). --<a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<li> Additionally I would like to have different kinds of obstacles on the field. Both those that only block movement, but also those that block line of sight and bullets. --<a href="robowiki?Sikjo" class=wikipagelink>sikjo</a>
+<li> Support for running it in an IDE, eg, as an <a rel="nofollow" href="http://www-106.ibm.com/developerworks/opensource/library/os-ecplug/">[Eclipse plug-in]</a> --<a href="robowiki?Rod_Hyde" class=wikipagelink>Rod Hyde</a>
+<li> It would be nice to be able to turn off the victory dance, as it wastes time, and my bot has two left feet anyway. --<a href="robowiki?Tad" class=wikipagelink>Tad</a>
+<li> <a rel="nofollow"  href="http://www.alphaworks.ibm.com/forum/robocode.nsf/current/C8E0009AA76B6D987CF098A3ED0F0C03?OpenDocument">A Radar Warning Receiver (RWR)</a>
+<li> I would like to add multiple programmation language support throught a simple communication protocol (maybe something like Corba or defined protocol) that can be implemented in any language. I can add the security issue for the linux platform (and maybe <a href="robowiki?MacOSX" class=wikipagelink>MacOSX</a>, I think on *nix systems) but I don't know about Window$. This protocol can also provide playing over a network. --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<li> DEBUG state : You should have the possibility to declare a bot in DEBUG MOD. It'll be able to draw special thing in this state as said before. Another thing is the ability to send information to your Bot in DEBUG MOD like if you type F1 or Fx the bot receive a message by implementing void onModChange<a href="robowiki?action=edit&id=ModChange" class=wikipageedit>?</a>(int Fx) or something similar. This can help a lot to see difference between movement or other things during testing phase. --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<li> I made a separate page for <a href="robowiki?Robocode2/DebuggingBots" class=wikipagelink>/DebuggingBots</a>.
+<li> 'Main' robot color, see below (for graphical debug in one color). Drawback: useless if the author of a bot doesn't use it right.
+<li> getColors() (returns an array), getMainColor<a href="robowiki?action=edit&id=MainColor" class=wikipageedit>?</a>(), getRobotColor<a href="robowiki?action=edit&id=RobotColor" class=wikipageedit>?</a>(), getGunColor<a href="robowiki?action=edit&id=GunColor" class=wikipageedit>?</a>() and getRadarColor<a href="robowiki?action=edit&id=RadarColor" class=wikipageedit>?</a>(), both for the bot itself and other bots (e.g. in <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>). Could be useful for drawing graphical debug info, especially in <a href="robowiki?Melee" class=wikipagelink>Melee</a> or <a href="robowiki?Teams" class=wikipagelink>Teams</a>, or of course for fun.
+<UL >
+<li> What would getMainColor<a href="robowiki?action=edit&id=MainColor" class=wikipageedit>?</a>() return? --<a href="robowiki?Ph" class=wikipagelink>Ph</a>
+<UL >
+<li> A fourth color the author sets in setColors(). Melee example: you draw graphical stuff for every bot you scanned, in their colors. But many bots use three different colors, so what color do you use? Maybe the main color is completely unnecessary because the robot color is a big area (at least in RC 1), but it's still an idea. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+</UL>
+</UL>
+<li> getTeam(), both for the bot itself and other bots (e.g. in <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>). To target a specific team. :) No, actually it can be used for stats and a couple of things. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a> (also did the three points above)
+<li> Just one onHitRobot<a href="robowiki?action=edit&id=HitRobot" class=wikipageedit>?</a>() event when both bots are moving towards each other, of course with getOthersFault<a href="robowiki?action=edit&id=OthersFault" class=wikipageedit>?</a>() added to HitRobotEvent<a href="robowiki?action=edit&id=HitRobotEvent" class=wikipageedit>?</a>. That should ease some calculations. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<UL >
+<li> getOthersFault<a href="robowiki?action=edit&id=OthersFault" class=wikipageedit>?</a>() is not needed. If it is not your fault it is your enemy's fault. --<a href="robowiki?Ph" class=wikipagelink>Ph</a>
+</UL>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<b>Some comments on accurate physics</b>
+<p>
+I was scratching my head thinking about how to simulate elastic collisions, when I realised that there are a lot of resources out there that deal with this sort of thing. For example, if you like a bit of bedtime reading then there's a book called Physics for Game Developers. Also, searching on Google for phrases such as "collision detection physics" turns up all sorts of things.
+<p>
+Here's a link to a site which has <a rel="nofollow" href="http://www.d6.com/users/checker/dynamics.htm">[4 physics articles]</a> and some sample applications. The articles were originally published as articles in Game Developer magazine a few years ago. It's definitely worth reading the first three of them.
+<p>
+I've already started porting his C++ physics code to Java... :-) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+That's good. I look forward to seeing it. --<a href="robowiki?Rod_Hyde" class=wikipagelink>Rod Hyde</a>
+<p>
+<p>
+After some more exploring, I found the <a rel="nofollow" href="http://www.oxforddynamics.co.uk/">[Fast Car]</a> page.  This is a commercial C++ library (2.5D not 2D - also free for evaluation) but it also contains freeware in the form of full source code for rigid body dynamics. I think it is worth taking a look at the code and the documentation as it is more complete than Chris Hecker's code. There are a few downloadable demos (Windows/OpenGL<a href="robowiki?action=edit&id=Robocode2/OpenGL" class=wikipageedit>?</a>): watching the collisions in the one with the cars and the blocks is very interesting as it gives a flavour of what RC2 could look like if extended to 2.5D. However, I am inclined to suggest that we should keep the physics in 2D as I'm not sure if I'm prepared to write code to handle the case of my robot being toppled over completely :-) --<a href="robowiki?Rod_Hyde" class=wikipagelink>Rod Hyde</a>
+<p>
+What exactly does "Each point could correspond to ....8% damage" mean, anyways? --<a href="robowiki?Insectoid" class=wikipagelink>Insectoid</a>
+<p>
+I created a page at which eneryone can spread their toughts, knowledge and URL's about more accurate physics: <a href="robowiki?Robocode2/Accurate_Physics" class=wikipagelink>/Accurate Physics</a>. --<a href="robowiki?Daniël_Pelsmaeker" class=wikipagelink>Daniël Pelsmaeker</a>
+<p>
+I think <a href="robowiki?RoboCode2" class=wikipagelink>RoboCode2</a> robots should be able to be controlled through socket communication, that way, you could code the robots in virtually ANY other programming language besides Java. --<a href="robowiki?Acid06" class=wikipagelink>Acid06</a>
+<p>
+I belive you can do that with RoboCode1<a href="robowiki?action=edit&id=RoboCode1" class=wikipageedit>?</a>, there a bot, HCBot i think, that has a separate program that takes human input and uses that the control the robot.  I see no reason why that program couldn't be written in any language you like, and control the bot automatically. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I think that bot depended on File I/O, so it would be a challenge to make a bot that measures up to normal performance in another language. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+It was files, rather than sockets, was it?  OK.  How about <a href="robowiki?DeathMatch" class=wikipagelink>DeathMatch</a>?  That uses sockets to communicate with the server, is it possible for the server to control the robot? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Could be done by adding a new robot class into the robocode package. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+<b>Comment about Oriented bounding box</b>
+<p>
+I wrote a class for oriented bounding box in another project, it make collision and all calculation quite hard and so I don't thing it's a good thing (like you can hit something by rotating). I mean Robocode is cool because of it's simplicity. --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<p>
+A circle might be a good substitute. Checking for collisions would be pretty straightforward too:
+<PRE >
+ if(xDistance * xDistance + yDistance * yDistance) &lt; 4 * robotRadius * robotRadius){ ...
+</PRE>
+Using a circle would guarantee that <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a> is equally easy to hit from every angle, which is not the case right now. It would also be simple to program and run almost as fast as the current system. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Would it still be worthwhile to check a line's intersection with a circle rather than a point's lying within the circle?  (especially for fast-moving bullets?) -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Robocode2" class=wikipagelink>Robocode2</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Robocode2/Additions" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Robocode2/Additions">View other revisions</a><br>Last edited May 7, 2006 4:53 EST by <a href="robowiki?Voidious" title="ID 6144 from pool-71-126-25-138.bflony.east.verizon.net">Voidious</a> <a href="robowiki?action=browse&diff=1&id=Robocode2/Additions">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

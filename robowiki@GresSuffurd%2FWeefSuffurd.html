@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>GresSuffurd/WeefSuffurd - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Gres, Suffurd, Weef, Suffurd'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/WeefSuffurd">GresSuffurd/WeefSuffurd</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?GresSuffurd" class=wikipagelink>GresSuffurd</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?GresSuffurd" class=wikipagelink>GresSuffurd</a> uses a movement that from a (very very large) distance looks like <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>. The first version (0.0.3) is largely based upon the <a href="robowiki?WaveSurfing/Tutorial" class=wikipagelink>WaveSurfingTutorial</a> written by <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>. It will gradually improve until it is good enough for <a href="robowiki?The2000Club" class=wikipagelink>The2000Club</a>.
+<p>
+<p>
+<hr noshade class=wikiline size=1>
+<strong>version history</strong> (newest entry on top)
+<p>
+<font size = -1>
+<UL >
+<li> <strong>0.2.2</strong> (20070612)
+<UL >
+<li> remove wall-segmentation, current absolute velocity is the only segmentation left
+</UL>
+<li> <strong>0.2.1</strong> (20070607)
+<UL >
+<li> remove segmentation on distance
+<li> re-introduce wall-segmentation (5 segments), take preferred heading (without wallsmoothing) iso actual heading to calculate
+</UL>
+<li> <strong>0.2.0</strong> (20070523)
+<UL >
+<li> segment also on distance
+<li> small preference current direction
+<li> small enhancements virtual waves
+</UL>
+<li> <strong>0.1.9</strong> (20070317)
+<UL >
+<li> rollback rolling surfingstats
+<li> get rid of that multiply-factor for GF1 protection
+</UL>
+<li> <strong>0.1.8</strong> (20070311)
+<UL >
+<li> rolling surfingstats: 0.7*old + 0.3*new
+</UL>
+<li> <strong>0.1.7</strong> (20070207)
+<UL >
+<li> also use information from onBulletHitBullet<a href="robowiki?action=edit&id=BulletHitBullet" class=wikipageedit>?</a>
+</UL>
+<li> <strong>0.1.6</strong> (20070125)
+<UL >
+<li> always have a surfable wave (real or simulated)
+</UL>
+<li> <strong>0.1.5</strong> (20070117)
+<UL >
+<li> bugfix weighting of waves (sometimes second &gt; first = wrong)
+</UL>
+<li> <strong>0.1.4</strong> (20070114)
+<UL >
+<li> remove nearwall segmentation
+<li> also evaluate second wave
+</UL>
+<li> <strong>0.1.3</strong> (20070102)
+<UL >
+<li> segment also on nearwall  no - far - near
+</UL>
+<li> <strong>0.1.2</strong> (20061212) 
+<UL >
+<li> segment on absolute currentvelocity(T-2) 0 - 2 - 6 - 8
+</UL>
+<li> <strong>0.1.1</strong> (20061127) 
+<UL >
+<li> do not evaluate stop-position when enemy is close (anti-ram)
+</UL>
+<li> <strong>0.1.0</strong> (20061028) 
+<UL >
+<li> slowing down when wallhit is eminent (but getting more predictable)
+<li> using proper <a href="robowiki?OnDeath" class=wikipagelink>OnDeath</a> (by <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>) and similar behaviour at onWin, meaning keep surfing until the air is safe
+</UL>
+<li> <strong>0.0.8</strong> (20061024) 
+<UL >
+<li> bugfixing stop position evaluation (much more fixing than I thought)
+</UL>
+<li> <strong>0.0.7</strong> (20061023) 
+<UL >
+<li> add stop-evaluation (Bug: but never actually stop)
+</UL>
+<li> <strong>0.0.6</strong> (20061019) 
+<UL >
+<li> update 5 bins instead of 3 when hit (still no 'classic' binsmoothing)
+<li> if direction does not matter, continue same direction (solved strange behaviour near wall)
+</UL>
+<li> <strong>0.0.5</strong> (20061013) 
+<UL >
+<li> Keep preferred distance, includes very simple dive-in protection
+<li> Circle around enemy when there is no wave to surf
+</UL>
+<li> <strong>0.0.4</strong> (20060925) 
+<UL >
+<li> Surf wave until wavefront hits me, then start surfing next wave
+<li> Use whole battlefield, no more buffer between the wall and my bot.
+</UL>
+<li> <strong>0.0.3</strong> (20060919) 
+<UL >
+<li> Initial version, largely based on the <a href="robowiki?WaveSurfing/Tutorial" class=wikipagelink>WaveSurfingTutorial</a>
+</UL>
+</UL>
+<p>
+</font>
+<p>
+<strong><a href="robowiki?MovementChallenge2K6" class=wikipagelink>MC2K6 500 rounds</a></strong>
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> Version   </td><td align="left" colspan="0.5"> <font size="-1"><a href="robowiki?WaveSurfingChallenge2K6" class=wikipagelink>WSCBotA</a></font></td><td align="left" colspan="0.5"> <font size="-1"><a href="robowiki?WaveSurfingChallenge2K6" class=wikipagelink>WSCBotB</a></font></td><td align="left" colspan="0.5"> <font size="-1"><a href="robowiki?WaveSurfingChallenge2K6" class=wikipagelink>WSCBotC</a></font></td><td colspan="0.5"> <strong><a href="robowiki?WaveSurfingChallenge2K6" class=wikipagelink>WSC</a></strong> </td><td colspan="0.5"> <strong><a href="robowiki?AntiPatternMatcherChallenge2K6" class=wikipagelink>APMC</a></strong> </td><td align="left" colspan="0.5"> <font size="-1"><a href="robowiki?CurveFlatteningChallenge2K6" class=wikipagelink>CassiusClay</a></font></td><td align="left" colspan="0.5"> <font size="-1"><a href="robowiki?CurveFlatteningChallenge2K6" class=wikipagelink>FloodHT</a></font></td><td colspan="0.5"> <font size="-1"><a href="robowiki?CurveFlatteningChallenge2K6" class=wikipagelink>Shadow</a></font> </td><td colspan="0.5"> <strong><a href="robowiki?CurveFlatteningChallenge2K6" class=wikipagelink>CFC</a></strong> </td><td colspan="0.5"> <font size="-1"><strong>Overall Score</strong></font></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>0.1.8</em> </td><td colspan="0.5"> 99.22 </td><td colspan="0.5"> 92.72 </td><td colspan="0.5"> 91.52 </td><td colspan="0.5"> <strong>94.49</strong> </td><td colspan="0.5"> <strong>24.21</strong> </td><td colspan="0.5"> 16.48 </td><td colspan="0.5"> 48.11 </td><td colspan="0.5"> 20.64 </td><td colspan="0.5"> <strong>28.41</strong> </td><td align="center" colspan="0.5"><strong>49.04</strong></td><td colspan="0.5"> 2 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>0.2.1</em> </td><td colspan="0.5"> 99.46 </td><td colspan="0.5"> 96.65 </td><td colspan="0.5"> 95.79 </td><td colspan="0.5"> <strong>97.30</strong> </td><td colspan="0.5"> <strong>22.86</strong> </td><td colspan="0.5"> 15.33 </td><td colspan="0.5"> 46.23 </td><td colspan="0.5"> 17.86 </td><td colspan="0.5"> <strong>26.47</strong> </td><td align="center" colspan="0.5"><strong>48.88</strong></td><td colspan="0.5"> 2 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>0.2.0</em> </td><td colspan="0.5"> 99.56 </td><td colspan="0.5"> 96.19 </td><td colspan="0.5"> 96.09 </td><td colspan="0.5"> <strong>97.28</strong> </td><td colspan="0.5"> <strong>18.53</strong> </td><td colspan="0.5"> 13.40 </td><td colspan="0.5"> 49.68 </td><td colspan="0.5"> 18.00 </td><td colspan="0.5"> <strong>27.03</strong> </td><td align="center" colspan="0.5"><strong>47.61</strong></td><td colspan="0.5"> 2 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>0.1.9</em> </td><td colspan="0.5"> 99.32 </td><td colspan="0.5"> 94.23 </td><td colspan="0.5"> 92.92 </td><td colspan="0.5"> <strong>95.49</strong> </td><td colspan="0.5"> <strong>19.84</strong> </td><td colspan="0.5"> 8.41 </td><td colspan="0.5"> 53.20 </td><td colspan="0.5"> 14.83 </td><td colspan="0.5"> <strong>25.48</strong> </td><td align="center" colspan="0.5"><strong>46.94</strong></td><td colspan="0.5"> 2 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>0.1.5</em> </td><td colspan="0.5"> 99.60 </td><td colspan="0.5"> 92.90 </td><td colspan="0.5"> 92.63 </td><td colspan="0.5"> <strong>95.04</strong> </td><td colspan="0.5"> <strong>17.85</strong> </td><td colspan="0.5"> 7.04 </td><td colspan="0.5"> 51.47 </td><td colspan="0.5"> 15.26 </td><td colspan="0.5"> <strong>24.59</strong> </td><td align="center" colspan="0.5"><strong>45.83</strong></td><td colspan="0.5"> 2 seasons</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> <em>Grb</em> </td><td colspan="0.5"> 89.69 </td><td colspan="0.5"> 95.88 </td><td colspan="0.5"> 93.77 </td><td colspan="0.5"> <strong>93.11</strong> </td><td colspan="0.5"> <strong>27.77</strong> </td><td colspan="0.5"> 9.83 </td><td colspan="0.5"> 16.19 </td><td colspan="0.5"> 15.11 </td><td colspan="0.5"> <strong>13.71</strong> </td><td align="center" colspan="0.5"><strong>44.86</strong></td><td colspan="0.5"> 5 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>0.1.4</em> </td><td colspan="0.5"> 98.16 </td><td colspan="0.5"> 93.71 </td><td colspan="0.5"> 91.17 </td><td colspan="0.5"> <strong>94.35</strong> </td><td colspan="0.5"> <strong>16.43</strong> </td><td colspan="0.5"> 8.07 </td><td colspan="0.5"> 48.54 </td><td colspan="0.5"> 14.19 </td><td colspan="0.5"> <strong>23.60</strong> </td><td align="center" colspan="0.5"><strong>44.79</strong></td><td colspan="0.5"> 2 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>0.2.2</em> </td><td colspan="0.5"> 99.50 </td><td colspan="0.5"> 96.50 </td><td colspan="0.5"> 96.68 </td><td colspan="0.5"> <strong>97.56</strong> </td><td colspan="0.5"> <strong>13.92</strong> </td><td colspan="0.5"> 8.68 </td><td colspan="0.5"> 40.83 </td><td colspan="0.5"> 14.43 </td><td colspan="0.5"> <strong>21.31</strong> </td><td align="center" colspan="0.5"><strong>44.26</strong></td><td colspan="0.5"> 2 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>0.1.3</em> </td><td colspan="0.5"> 99.45 </td><td colspan="0.5"> 77.99 </td><td colspan="0.5"> 86.99 </td><td colspan="0.5"> <strong>88.14</strong> </td><td colspan="0.5"> <strong>17.19</strong> </td><td colspan="0.5"> 12.98 </td><td colspan="0.5"> 46.51 </td><td colspan="0.5"> 11.37 </td><td colspan="0.5"> <strong>23.62</strong> </td><td align="center" colspan="0.5"><strong>42.98</strong></td><td colspan="0.5"> 2 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>0.1.2</em> </td><td colspan="0.5"> 99.18 </td><td colspan="0.5"> 70.54 </td><td colspan="0.5"> 89.42 </td><td colspan="0.5"> <strong>86.38</strong> </td><td colspan="0.5"> <strong>12.98</strong> </td><td colspan="0.5"> 12.56 </td><td colspan="0.5"> 47.92 </td><td colspan="0.5"> 10.23 </td><td colspan="0.5"> <strong>23.57</strong> </td><td align="center" colspan="0.5"><strong>40.97</strong></td><td colspan="0.5"> 2 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>0.0.6</em> </td><td colspan="0.5"> 98.85 </td><td colspan="0.5"> 50.41 </td><td colspan="0.5"> 59.65 </td><td colspan="0.5"> <strong>69.63</strong> </td><td colspan="0.5"> <strong>12.90</strong> </td><td colspan="0.5"> 8.46 </td><td colspan="0.5"> 40.55 </td><td colspan="0.5"> 8.59 </td><td colspan="0.5"> <strong>19.2</strong> </td><td align="center" colspan="0.5"><strong>33.91</strong></td><td colspan="0.5"> 2 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>0.0.7</em> </td><td colspan="0.5"> 99.15 </td><td colspan="0.5"> 48.70 </td><td colspan="0.5"> 50.94 </td><td colspan="0.5"> <strong>66.26</strong> </td><td colspan="0.5"> <strong>17.80</strong> </td><td colspan="0.5"> 10.96 </td><td colspan="0.5"> 30.81 </td><td colspan="0.5"> 10.94 </td><td colspan="0.5"> <strong>17.57</strong> </td><td align="center" colspan="0.5"><strong>33.87</strong></td><td colspan="0.5"> 2 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>0.0.5</em> </td><td colspan="0.5"> 96.95 </td><td colspan="0.5"> 59.21 </td><td colspan="0.5"> 48.30 </td><td colspan="0.5"> <strong>68.15</strong> </td><td colspan="0.5"> <strong>12.22</strong> </td><td colspan="0.5"> 9.32 </td><td colspan="0.5"> 32.61 </td><td colspan="0.5"> 6.41 </td><td colspan="0.5"> <strong>16.11</strong> </td><td align="center" colspan="0.5"><strong>32.16</strong></td><td colspan="0.5"> 2 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>0.1.0</em> </td><td colspan="0.5"> 99.23 </td><td colspan="0.5"> 63.16 </td><td colspan="0.5"> 63.69 </td><td colspan="0.5"> <strong>75.36</strong> </td><td colspan="0.5"> <strong>4.05</strong> </td><td colspan="0.5"> 7.94 </td><td colspan="0.5"> 33.80 </td><td colspan="0.5"> 4.19 </td><td colspan="0.5"> <strong>15.31</strong> </td><td align="center" colspan="0.5"><strong>31.57</strong></td><td colspan="0.5"> 2 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>0.0.8</em> </td><td colspan="0.5"> 99.41 </td><td colspan="0.5"> 61.33 </td><td colspan="0.5"> 60.53 </td><td colspan="0.5"> <strong>73.75</strong> </td><td colspan="0.5"> <strong>5.99</strong> </td><td colspan="0.5"> 8.01 </td><td colspan="0.5"> 31.61 </td><td colspan="0.5"> 4.37 </td><td colspan="0.5"> <strong>14.66</strong> </td><td align="center" colspan="0.5"><strong>31.46</strong></td><td colspan="0.5"> 2 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>0.0.4</em> </td><td colspan="0.5"> 93.70 </td><td colspan="0.5"> 69.01 </td><td colspan="0.5"> 64.63 </td><td colspan="0.5"> <strong>75.78</strong> </td><td colspan="0.5"> <strong>4.37</strong> </td><td colspan="0.5"> 4.60 </td><td colspan="0.5"> 17.20 </td><td colspan="0.5"> 2.20 </td><td colspan="0.5"> <strong>8</strong> </td><td align="center" colspan="0.5"><strong>29.38</strong></td><td colspan="0.5"> 2 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em><a href="robowiki?BasicSurfer" class=wikipagelink>BasicSurfer</a></em> </td><td colspan="0.5"> 91.59 </td><td colspan="0.5"> 58.87 </td><td colspan="0.5"> 61.09 </td><td colspan="0.5"> <strong>70.51</strong> </td><td colspan="0.5"> <strong>6.22</strong> </td><td colspan="0.5"> 5.46 </td><td colspan="0.5"> 12.41 </td><td colspan="0.5"> 3.45 </td><td colspan="0.5"> <strong>7.10</strong> </td><td align="center" colspan="0.5"><strong>27.94</strong></td><td colspan="0.5"> 2 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>0.0.3</em> </td><td colspan="0.5"> 74.05 </td><td colspan="0.5"> 12.98 </td><td colspan="0.5"> 3.93 </td><td colspan="0.5"> <strong>30.32</strong> </td><td colspan="0.5"> <strong> 1.85</strong> </td><td colspan="0.5"> 1.68 </td><td colspan="0.5"> 4.90 </td><td colspan="0.5"> 1.57 </td><td colspan="0.5"> <strong> 2.71</strong> </td><td align="center" colspan="0.5"><strong>11.62</strong></td><td colspan="0.5"> 2 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>     </em> </td><td align="right" colspan="0.5"></td><td align="right" colspan="0.5"></td><td align="right" colspan="0.5"></td><td colspan="0.5"> <strong> </strong> </td><td colspan="0.5"> <strong> </strong> </td><td align="right" colspan="0.5"></td><td align="right" colspan="0.5"></td><td align="right" colspan="0.5"></td><td colspan="0.5"> <strong> </strong> </td><td align="center" colspan="0.5"><strong> </strong></td><td colspan="0.5"></td></TR>
+</TABLE>
+<p>
+<p>
+<strong><a href="robowiki?MovementChallenge2K6/ResultsFastLearning" class=wikipagelink>MC2K6 FastLearning</a></strong>
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> Version   </td><td align="left" colspan="0.5"> <font size="-1"><a href="robowiki?WaveSurfingChallenge2K6" class=wikipagelink>WSCBotA</a></font></td><td align="left" colspan="0.5"> <font size="-1"><a href="robowiki?WaveSurfingChallenge2K6" class=wikipagelink>WSCBotB</a></font></td><td align="left" colspan="0.5"> <font size="-1"><a href="robowiki?WaveSurfingChallenge2K6" class=wikipagelink>WSCBotC</a></font></td><td colspan="0.5"> <strong><a href="robowiki?WaveSurfingChallenge2K6" class=wikipagelink>WSC</a></strong> </td><td colspan="0.5"> <strong><a href="robowiki?AntiPatternMatcherChallenge2K6" class=wikipagelink>APMC</a></strong> </td><td align="left" colspan="0.5"> <font size="-1"><a href="robowiki?CurveFlatteningChallenge2K6" class=wikipagelink>CassiusClay</a></font></td><td align="left" colspan="0.5"> <font size="-1"><a href="robowiki?CurveFlatteningChallenge2K6" class=wikipagelink>FloodHT</a></font></td><td colspan="0.5"> <font size="-1"><a href="robowiki?CurveFlatteningChallenge2K6" class=wikipagelink>Shadow</a></font> </td><td colspan="0.5"> <strong><a href="robowiki?CurveFlatteningChallenge2K6" class=wikipagelink>CFC</a></strong> </td><td colspan="0.5"> <font size="-1"><strong>Overall Score</strong></font></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>0.2.2</em> </td><td colspan="0.5"> 98.30 </td><td colspan="0.5"> 92.96 </td><td colspan="0.5"> 91.09 </td><td colspan="0.5"> <strong>94.11</strong> </td><td colspan="0.5"> <strong>24.28</strong> </td><td colspan="0.5"> 15.56 </td><td colspan="0.5"> 46.47 </td><td colspan="0.5"> 21.68 </td><td colspan="0.5"> <strong>27.90</strong> </td><td colspan="0.5"> <strong>48.76</strong> </td><td colspan="0.5"> 30 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>0.1.5</em> </td><td colspan="0.5"> 98.83 </td><td colspan="0.5"> 89.11 </td><td colspan="0.5"> 87.43 </td><td colspan="0.5"> <strong>91.79</strong> </td><td colspan="0.5"> <strong>20.74</strong> </td><td colspan="0.5"> 12.37 </td><td colspan="0.5"> 44.85 </td><td colspan="0.5"> 20.49 </td><td colspan="0.5"> <strong>25.90</strong> </td><td colspan="0.5"> <strong>46.14</strong> </td><td colspan="0.5"> 30 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>0.1.2</em> </td><td colspan="0.5"> 98.82 </td><td colspan="0.5"> 70.43 </td><td colspan="0.5"> 82.71 </td><td colspan="0.5"> <strong>83.98</strong> </td><td colspan="0.5"> <strong>16.32</strong> </td><td colspan="0.5"> 13.26 </td><td colspan="0.5"> 44.01 </td><td colspan="0.5"> 13.56 </td><td colspan="0.5"> <strong>23.61</strong> </td><td colspan="0.5"> <strong>41.30</strong> </td><td colspan="0.5"> 30 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>0.1.0</em> </td><td colspan="0.5"> 98.92 </td><td colspan="0.5"> 62.29 </td><td colspan="0.5"> 59.17 </td><td colspan="0.5"> <strong>73.46</strong> </td><td colspan="0.5"> <strong>10.13</strong> </td><td colspan="0.5"> 8.34 </td><td colspan="0.5"> 36.05 </td><td colspan="0.5"> 7.69 </td><td colspan="0.5"> <strong>17.36</strong> </td><td colspan="0.5"> <strong>33.65</strong> </td><td colspan="0.5"> 30 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <em>     </em> </td><td align="right" colspan="0.5"></td><td align="right" colspan="0.5"></td><td align="right" colspan="0.5"></td><td colspan="0.5"> <strong> </strong> </td><td colspan="0.5"> <strong> </strong> </td><td align="right" colspan="0.5"></td><td align="right" colspan="0.5"></td><td align="right" colspan="0.5"></td><td colspan="0.5"> <strong> </strong> </td><td align="center" colspan="0.5"><strong> </strong></td><td colspan="0.5"></td></TR>
+</TABLE>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Ouch, I think I still have some work to do . . .   -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+v0.0.4 seems good enough to release in the wild.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+The score against <a href="robowiki?WSCBotA" class=wikipagelink>WSCBotA</a> is on level, seems like segmentation is the next thing to explore.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+It hits the wall a lot, thats something to look into first, together with the right implementation of onDeath.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Still getting the HOT-avoidance optimal and the details right before tuning, read segmenting, to avoid non-HOT.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+First time above <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a>! Against botA, botB and botC the results are acceptable, but I seem very vulnerable for a <a href="robowiki?Bee" class=wikipagelink>Bee</a>-like GF-gun.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Checking the details I saw a relatively low score (93%) against bbo.<a href="robowiki?RamboT" class=wikipagelink>RamboT</a> where I expected a 99%. It turned out that for 3-4 ticks there was no surfable wave, the time it takes a wave to pass my bot. No surfable wave means no movement, which is not good against rambots/close fighters. In movement 0.1.6 (<a href="robowiki?GresSuffurd" class=wikipagelink>GresSuffurd</a> 0.2.2) this is solved by creating a simulated wave when no surfable wave is available (instead of no wave available).  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+It turns out that, against the better bots, onBulletHitBullet<a href="robowiki?action=edit&id=BulletHitBullet" class=wikipageedit>?</a> happens approx 100-110 times per battle (is 3 times per round), so that information is really welcome.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Wow, that often? Thanks for posting that. =) Now I *really* want to fit that into <a href="robowiki?Komarious" class=wikipagelink>Komarious</a>... -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Some nuancing: the above was with robocode 1.2.5_Alpha. With 1.1.2 it happens 'only' ~70 times (2 per round). Don't know why, have to ask <a href="robowiki?Fnl" class=wikipagelink>Fnl</a>.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Well, a 3:2 ratio doesn't seem like that big a deal to me... But in 1.2, I seem to be getting zero BulletHitBullets<a href="robowiki?action=edit&id=BulletHitBullets" class=wikipageedit>?</a> ever. A sample match of Dookious vs <a href="robowiki?Roland" class=wikipagelink>Roland</a> gave 67 in Robocode 1.07 and 0 in 1.2. :-\ -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Yeah, I know that the implementation in 1.06/1.07 was not really well (using a line with fixed 8 length I think). In version 1.2.1 (according the version.txt) this has been replaced by a new algorithm. I think that in v1.2 it just was really buggy. I don't have a problem with a better solution, although it might have a minor influence on the performance, as long as it is logical and bugfree. I tested against <a href="robowiki?WaveSerpent" class=wikipagelink>WaveSerpent</a> with 1.0.6 (59 bullethitbullet), 1.1.2 (63) and 1.2.5_Alpha (106). It seems that currently the most stable/bugfree version is still 1.1.2/1.1.3, but this may change with 1.2.5 (memory issue!)  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+I like it when things turn out the way they should be: rolling the surfingstats does perform much better against PM and GF-guns, but looses points in the rumble, see 0.1.8.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+All my tryouts to improve seem to help nothing in the rumble. Now I set 0.2.2 as base for future development and only do FastLearning<a href="robowiki?action=edit&id=FastLearning" class=wikipageedit>?</a> MC2K6 for testing.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+As base for further development 0.2.2 is significally worse with long battles, but better in FastLearning<a href="robowiki?action=edit&id=FastLearning" class=wikipageedit>?</a>, and that is what matters.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?GresSuffurd" class=wikipagelink>GresSuffurd</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=GresSuffurd/WeefSuffurd" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=GresSuffurd/WeefSuffurd">View other revisions</a><br>Last edited June 12, 2007 11:17 EST by <a href="robowiki?GrubbmGait" title="ID 9333 from styx18.ict.nl">GrubbmGait</a> <a href="robowiki?action=browse&diff=1&id=GresSuffurd/WeefSuffurd">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing Ant/SampleBuildFile - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Ant, Sample, Build, File'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing Ant/SampleBuildFile</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="Ant/SampleBuildFile"  />
+<input type="hidden" name="oldtime" value="1047768143"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="6"  />
+<input type="hidden" name="captchaArg2" value="5"  />
+<input type="hidden" name="captchaOp" value="-"  />
+<input type="hidden" name="captchaId" value="639432565614"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">[[Hexkid]]s sample Ant build.xml:
+&lt;pre&gt;
+&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;project name=&quot;Robocode&quot; default=&quot;deployjar&quot; basedir=&quot;.&quot;&gt;
+	&lt;!-- INIT: Set constants for project --&gt;
+	&lt;target name=&quot;init&quot;&gt;
+        &lt;property name=&quot;ROBOTNAME&quot; value=&quot;MyRobot&quot;/&gt;
+        &lt;property name=&quot;package&quot; value=&quot;MyPackage&quot;/&gt;
+
+        &lt;!-- Create the property file that describes this robot --&gt;
+        &lt;propertyfile file=&quot;${ROBOTNAME}.properties&quot;&gt;
+            &lt;entry key=&quot;robot.description&quot; value=&quot;&quot;/&gt;
+            &lt;entry key=&quot;robot.java.source.included&quot; value=&quot;true&quot;/&gt;
+            &lt;entry key=&quot;robocode.version&quot; value=&quot;1.0.6&quot;/&gt;
+            &lt;entry key=&quot;robot.version&quot; value=&quot;0.1&quot;/&gt;
+            &lt;entry key=&quot;robot.author.name&quot; value=&quot;&quot;/&gt;
+            &lt;entry key=&quot;robot.classname&quot; value=&quot;${package}.${ROBOTNAME}&quot;/&gt;
+        &lt;/propertyfile&gt;
+
+
+        &lt;property file=&quot;${ROBOTNAME}.properties&quot; description=&quot;Use the entries from the properties file within this script.&quot;/&gt;
+		&lt;property name=&quot;ROBOCODE_HOME&quot; value=&quot;c:\robocode&quot;/&gt;
+        &lt;property name=&quot;JAR_NAME&quot; value=&quot;${robot.classname}_${robot.version}.jar&quot;/&gt;
+		&lt;property name=&quot;COMPILE_WITH_DEBUG&quot; value=&quot;off&quot;/&gt;
+		&lt;property name=&quot;VERBOSE_LEVEL&quot; value=&quot;1&quot;/&gt;
+		&lt;property name=&quot;CLASSPATH&quot; value=&quot;./classes;${ROBOCODE_HOME}/robocode.jar&quot;/&gt;
+		&lt;property name=&quot;COMPILECLASSNAME&quot; value=&quot;&quot;/&gt;
+
+	&lt;/target&gt;
+
+	&lt;!-- CLEANLOCAL: Delete the local filesystem directories which contain generated files --&gt;
+	&lt;target name=&quot;cleanlocal&quot; depends=&quot;init&quot; description=&quot;Remove the directories containing the classes and the jar file&quot;&gt;
+		&lt;delete dir=&quot;jars&quot;/&gt;
+		&lt;delete dir=&quot;classes&quot;/&gt;
+	&lt;/target&gt;
+	&lt;!-- PREPARE: Create directories for generated files --&gt;
+	&lt;target name=&quot;prepare&quot; depends=&quot;init&quot; description=&quot;Create the generated directories&quot;&gt;
+		&lt;mkdir dir=&quot;jars&quot;/&gt;
+		&lt;mkdir dir=&quot;classes&quot;/&gt;
+	&lt;/target&gt;
+	&lt;!-- COMPILE: Compile all java files in the project
+         This task will compile all classes that have been modified since the previous compilation.
+           --&gt;
+	&lt;target name=&quot;compile&quot; depends=&quot;prepare&quot; description=&quot;Compile the Java classes&quot;&gt;
+		&lt;javac srcdir=&quot;src&quot; destdir=&quot;classes&quot; classpath=&quot;${CLASSPATH}&quot; debug=&quot;${COMPILE_WITH_DEBUG}&quot; includes=&quot;**/*.java&quot;/&gt;
+	&lt;/target&gt;
+	&lt;!-- BUILDCOMPONENTJAR: Build the war jar file containing classes, jars, jsps, images, html files, and deployment descriptor --&gt;
+	&lt;target name=&quot;buildjar&quot; depends=&quot;compile&quot; description=&quot;Construct the Jar file containing the robot&quot;&gt;
+		&lt;!-- Build the JAR containing all of the classes --&gt;
+		&lt;jar jarfile=&quot;jars/${JAR_NAME}&quot; filesonly=&quot;true&quot;&gt;
+		   	&lt;fileset dir=&quot;classes&quot; includes=&quot;**\*.class&quot;/&gt;
+            &lt;fileset dir=&quot;src&quot; includes=&quot;**\*.java&quot;/&gt;
+            &lt;fileset dir=&quot;.&quot; includes=&quot;${ROBOTNAME}.properties&quot;/&gt;
+		&lt;/jar&gt;
+	&lt;/target&gt;
+	&lt;!-- DEPLOYJAR: Deploy the jar to the robocode/robots directory --&gt;
+	&lt;target name=&quot;deployjar&quot; depends=&quot;buildjar&quot; description=&quot;Copy the Robot Jar file to Robocode/robots directory&quot;&gt;
+        &lt;copy file=&quot;jars/${JAR_NAME}&quot; overwrite=&quot;true&quot; todir=&quot;${ROBOCODE_HOME}/robots&quot;/&gt;
+	&lt;/target&gt;
+    &lt;target name=&quot;javadoc&quot; depends=&quot;compile&quot; description=&quot;Generate the JavaDoc Documentation&quot;&gt;
+        &lt;delete dir=&quot;javadoc&quot;/&gt;
+        &lt;mkdir dir=&quot;javadoc&quot;/&gt;
+        &lt;javadoc sourcepath=&quot;src&quot; destdir=&quot;javadoc&quot; packagenames=&quot;*&quot; classpath=&quot;{CLASSPATH}&quot;/&gt;
+    &lt;/target&gt;
+	&lt;!-- FULL: Default target which rebuilds and redeploys the whole application &amp; generates the JavaDoc--&gt;
+	&lt;target name=&quot;full&quot; depends=&quot;cleanlocal,deployjar,javadoc&quot;/&gt;
+&lt;/project&gt;
+&lt;/pre&gt;
+
+==== How I Use Ant ====
+First of all make sure that you have Apache Ant installed.  It can be downloaded from [http://ant.apache.org Ant Home Page].  Probably easiest to add the Ant/bin directory to your PATH environment variable.
+
+I tend to create a new directory for each Robot that I work on &amp; treat each Robot as a separate project.
+
+This directory has the following format:
+
+RobotNameDir 
+  src     - The source code for the Robot.  This is the parent directory of my Java package structure.
+  classes - Where the Java classes are created by the compiler.  This directory will be automatically created by the Ant script.
+  javadoc - The automatically generated documentation for my Robot&#39;s classes.  
+  jars    - The directory that holds the JAR file for the robot after it has been packaged.
+
+* Copy the XML from above and create a file called build.xml (this is the default name used by Ant) in the Robot&#39;s root directory.
+* Edit the build.xml file and set the properties at the top of the file to match the details of your robot and your installation of Robocode.
+* Create your Java source code
+* Run Ant from the command line to perform the task that you want to carry out. This should be executed from the Robot&#39;s root directory.  This is done by selecting the name of the target in the build file that you want to execute.&lt;br&gt;For example: to compile the Bot without creating the JAR file you will need to enter &quot;ant compile&quot; at the command prompt.
+
+The Sample Ant Build file contains the following targets:
+&lt;table bgcolor=&quot;black&quot; cellpadding=1 cellspacing=1&gt;
+  &lt;tr bgcolor=&quot;white&quot;&gt;&lt;td&gt;Target Name&lt;/td&gt;&lt;td&gt;Description&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr bgcolor=&quot;white&quot;&gt;&lt;td&gt;cleanlocal&lt;/td&gt;&lt;td&gt;Delete the automatically generated directories i.e. classes &amp; jar.&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr bgcolor=&quot;white&quot;&gt;&lt;td&gt;prepare&lt;/td&gt;&lt;td&gt;Create the classes &amp; jar directories.&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr bgcolor=&quot;white&quot;&gt;&lt;td&gt;compile&lt;/td&gt;&lt;td&gt;Compile all of the Java classes in the project that need compilation.&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr bgcolor=&quot;white&quot;&gt;&lt;td&gt;buildjar&lt;/td&gt;&lt;td&gt;Create the JAR file that contains the classes &amp; the properties of the Robot&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr bgcolor=&quot;white&quot;&gt;&lt;td&gt;deployjar&lt;/td&gt;&lt;td&gt;Copy the JAR file to the robocode/robots directory&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr bgcolor=&quot;white&quot;&gt;&lt;td&gt;javadoc&lt;/td&gt;&lt;td&gt;Generate documentation on my robot.  This documentation is the standard JavaDoc for the all of the classes defined in my Robot&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr bgcolor=&quot;white&quot;&gt;&lt;td&gt;full&lt;/td&gt;&lt;td&gt;Do everything&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+The build file also includes the inter-dependancies between the tasks.  For example, if you specify the &#39;deployjar&#39; target Ant will compile any classes that need compiling &amp; then build the jar before it is deployed.
+
+==== To Do ====
+Trying to create the following Ant tasks:
+* one that automatically sends updated Bots to the RobocodeRepository 
+* One that executes test battles against selected Bots.  A sort of modified version of RoboLeague so that I can test whether the modifications that I have made to the code actually improve the performance.
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 6 - 5 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that Ant/SampleBuildFile has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=Ant/SampleBuildFile">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Ant" class=wikipagelink>Ant</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

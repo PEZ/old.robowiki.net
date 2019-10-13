@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RoboRumble/ClientDevelopment - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Robo, Rumble, Client, Development'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/ClientDevelopment">RoboRumble/ClientDevelopment</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I have started a total rewrite of the RR@H client.
+<p>
+Here is a list of improvements I want to include:
+<UL >
+<li> Cleaner design/code for easy maintanance.
+<li> No hardcoded strings, everything in config-file.
+<li> Better error handling. Better error messages.
+<li> Easy addition of GUI in the future (I'm not writing a GUI, but the API will be there).
+<li> Override option on command line (<a href="robowiki?PEZ" class=wikipagelink>PEZ</a> idea)
+<li> A way to shut down the client cleanly.
+<li> A lot of other stuff.
+<li> Maybe a new server protocol? (see <a href="robowiki?RoboRumble/ProtocolDevelopment" class=wikipagelink>/ProtocolDevelopment</a>)
+<li> Offline rumbling
+</UL>
+<p>
+Progress:
+<UL >
+<li> Participant list download - DONE!
+<li> Rating file download - DONE!
+<li> Bot-jar download - DONE!
+<li> Battle runner - Next thing to look at.
+<li> Waiting for more discussion of protocols
+</UL>
+<p>
+If anybody has some suggestion please put them on this page.
+You are very welcome to help me with the code, if someone could set up a cvs server it would be easy to cooperate.
+<p>
+-- <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+<p>
+I would like to see the config be downloaded from the server. That way any changes required (like the -D option for file reading) could be easily propogated. You might still need a local config file for the user name and those sort of vanity things but the heart of correct operation should be maintaned centrally. Error messages that mean somthing is a must. Adding the GUI option might be nice but it not neseccary. Just my .02. -- <a href="robowiki?Jim" class=wikipagelink>jim</a> 
+<p>
+Adding the ability to download the config file on the fly would allow for clean way to re-direct clients. Maybe the best way to do it would be to check a timestamp and only download newer config files. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+Good initative! Though I always get worried when I hear talks about GUIs =). A real think about the UI should be good though. I would like if all options in the config files were overrideable from the command prompt. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Don't worry, I'm not going to write a GUI but I will design the code so it will be easy to make a GUI later. Good suggestion on the command line options. -- <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+<p>
+Also given the StrongBotsRumble<a href="robowiki?action=edit&id=StrongBotsRumble" class=wikipageedit>?</a> problem. How could we make this client allow such a tournament setup? I guess it would have to agree to some interface towards the server. The client shouldn't have to worry about what kind of tournament it is running battles for I think. What if it would just listen to commands like:
+<pre>
+run botA vs botB for 35 rounds
+run botC, botD, botE and botF against echother for 100 rounds
+run botP vs BotQ for 1000 rounds
+...
+</pre>
+? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I have though about the need for a new client/server protocol. The current one is not so good IMHO.
+I would have it something like this:
+<OL >
+<li> C: Hi, I'm X and I want to run N battles
+<li> S: Here's N battles for you: 'bot1,bot2,800x600,35 rounds,1 match,nanorumble,microrumble', 'bot3,bot4,...', ...
+<li> Client runs all battles
+<li> C: Here is result for 'bot1,bot2,800x600,35,1,nanorumble,microrumble, result', 'bot3,bot4...', ...
+<li> S: Thanks!
+<li> Back to 1. (or maybe the next battle list request can be sent together with the results to minimize traffic).
+</OL>
+<p>
+The server should also be responsible for keeping the participants list (i.e. reading it from the wiki). The client would then not need to download it nor the ratings.
+-- <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+<p>
+As <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> pointed out, what if I am on dial up and simply want to run battles and reported the results when I dialed back in. This would not be an option as you outline the new protocol above. Also, keeping the state of who has what battles, timing out the lack of results, etc would add a layer of complexity that might not be easy to get right. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+A loopback server proxy would solve that. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+@<a href="robowiki?Jim" class=wikipagelink>jim</a> I'll answer the second question first: I added the name if the client so that the server has the option to keep track of who got which battles, it's not required to implement it though.
+<p>
+About dialup: With the current client you must first be online to download the participant list and the ratings. Then you can be offline until you decide to upload the results. With my proposed protocol you must be online to download a list of battles (the client can request say 1000) then go offline do the battles and go online to upload results. If you run out of assigned battles before you go online just run the same battles again or do random parings.
+-- <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+<p>
+Running random pairings is hard without a participants list. But running the latest asked for pairings again is a great idea! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+If the client request's 1000 pairings how long do you wait before timing that those results out? What if the pairings contain the last pairing in a special competition? Are different pairings assigned to different machines? Do you assign the same pairings to different machines in some way? How do you choose the pairings? Do you compare the pairings that were assigned to the ones being reported before you ingest the results? These and other issues are things that I think need to be thought through if you are going to assign pairings. I think the time out issue the biggest one. I think the idea of assigning pairings and match length is quite possibly the best way to go but I am clouded on how *I* would implement it so I am full of questions (among other things). I am sorry if I come off as a naysayer. I am really not. I am just foggy on the details =^&gt; -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+I think that all these questions are server/servlet issues. If i understood <a href="robowiki?Strider" class=wikipagelink>Strider</a> correctly, the new client/server protocol allows the server to use some sophisticated methods for assigning battles to clients, but it does not force the server to do so. A simple server could just assign pairings, forget about them and store the results once they are reported (of course running special competitions would require a more complex server behaviour). --<a href="robowiki?Mue" class=wikipagelink>Mue</a>
+<p>
+Yup. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yes, you are right <a href="robowiki?Mue" class=wikipagelink>Mue</a>. I though out that protocol to be simple but still enable the server to do clever things in the future without the need to alter the client. What those clever things are I don't know, I'm concentrating on the client right now. -- <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+<p>
+If the client keeps some rude track on how many bot-rounds it can run per time unit it could hand this estimate to the server. Then the server can hand the client enough battles to keep it busy for, say, half an hour. Any tournament scheme needing to know the outcome of some particular battles can then hand those battles to some other client if it hasn't received them back within an hour or whatever margin would be cool. With bot-rounds I am assuming it is running a bot that takes most time for the RC environment. Maybe it's not fully linear, but what if we assume it takes about 5 times as long running a  melee battle with 10 bots involved as it does running a 1-v-1 battle? A slightly more advanced client could even keep track of its capacity with individual bots involved. Then it could hand the server back an estimate on when it thinks it might be ready with the particular tasks it has been handed. Getting the  results from the same pairings from different clients isn't a problem if you just average the results. It probably just became more accurate. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+While you are at it, could the output of the client battle have a column added for percent of score, winner : loser or some such. I am tired of doing it in my head as the matches prgress. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+As it currently stands, "smart battles" are not so smart...  CC is fighting CC about 1/4 of the time, so I'm about to upload 25 battles of CC vs. CC... 
+<p>
+<pre>
+Fighting battle 44 ... pez.rumble.CassiusClay 1.9.9.11,pez.rumble.CassiusClay 1.
+9.9.12
+RESULT = pez.rumble.CassiusClay 1.9.9.12 wins 2617 to 2541
+Fighting battle 45 ... sgp.ShiningBeetle 1.1,pez.rumble.CassiusClay 1.9.9.12
+RESULT = pez.rumble.CassiusClay 1.9.9.12 wins 4140 to 525
+Fighting battle 46 ... sgp.ShiningBeetle 1.1,trab.Crusader 0.0.4
+RESULT = trab.Crusader 0.0.4 wins 4664 to 1112
+Fighting battle 47 ... pez.rumble.CassiusClay 1.9.9.11,pez.rumble.CassiusClay 1.
+9.9.12
+RESULT = pez.rumble.CassiusClay 1.9.9.11 wins 2725 to 2291
+Fighting battle 48 ... hamilton.Hamilton 1.0,pez.rumble.CassiusClay 1.9.9.12
+RESULT = pez.rumble.CassiusClay 1.9.9.12 wins 4754 to 704
+Fighting battle 49 ... hamilton.Hamilton 1.0,trab.Crusader 0.0.4
+RESULT = trab.Crusader 0.0.4 wins 3625 to 3501
+Fighting battle 50 ... pez.rumble.CassiusClay 1.9.9.11,pez.rumble.CassiusClay 1.
+9.9.12
+RESULT = pez.rumble.CassiusClay 1.9.9.12 wins 2650 to 2386
+Fighting battle 51 ... mdouet.BotKicker 2.0,pez.rumble.CassiusClay 1.9.9.12
+RESULT = pez.rumble.CassiusClay 1.9.9.12 wins 4529 to 469
+Fighting battle 52 ... mdouet.BotKicker 2.0,trab.Crusader 0.0.4
+RESULT = trab.Crusader 0.0.4 wins 4529 to 1167
+Fighting battle 53 ... pez.rumble.CassiusClay 1.9.9.11,pez.rumble.CassiusClay 1.
+9.9.12
+RESULT = pez.rumble.CassiusClay 1.9.9.11 wins 2535 to 2408
+Fighting battle 54 ... adt.Ar1 2.1,pez.rumble.CassiusClay 1.9.9.12
+RESULT = pez.rumble.CassiusClay 1.9.9.12 wins 4795 to 18
+Fighting battle 55 ... pez.rumble.CassiusClay 1.9.9.11,pez.rumble.CassiusClay 1.
+9.9.12
+RESULT = pez.rumble.CassiusClay 1.9.9.11 wins 2365 to 2310
+Fighting battle 56 ... rz.GlowBlowAPM 1.0,pez.rumble.CassiusClay 1.9.9.12
+RESULT = pez.rumble.CassiusClay 1.9.9.12 wins 3666 to 1475
+Fighting battle 57 ... pez.rumble.CassiusClay 1.9.9.11,pez.rumble.CassiusClay 1.
+9.9.12
+RESULT = pez.rumble.CassiusClay 1.9.9.12 wins 2507 to 2408
+Fighting battle 58 ... fm.mammillarias 1.3,pez.rumble.CassiusClay 1.9.9.12
+RESULT = pez.rumble.CassiusClay 1.9.9.12 wins 4752 to 16
+Fighting battle 59 ... axeBots.HataMoto 3.09,jekl.DarkHallow 0.83.1
+RESULT = jekl.DarkHallow 0.83.1 wins 3903 to 1602
+Fighting battle 60 ... pez.rumble.CassiusClay 1.9.9.11,pez.rumble.CassiusClay 1.
+9.9.12
+
+RESULT = pez.rumble.CassiusClay 1.9.9.11 wins 2504 to 2446
+Fighting battle 61 ... axeBots.HataMoto 3.09,pez.rumble.CassiusClay 1.9.9.12
+RESULT = pez.rumble.CassiusClay 1.9.9.12 wins 3992 to 1190
+Fighting battle 62 ... axeBots.HataMoto 3.09,trab.Crusader 0.0.4
+RESULT = trab.Crusader 0.0.4 wins 2916 to 2506
+Fighting battle 63 ... pez.nano.Icarus 0.3,jekl.DarkHallow 0.83.1
+RESULT = jekl.DarkHallow 0.83.1 wins 4258 to 281
+Fighting battle 64 ... pez.rumble.CassiusClay 1.9.9.11,pez.rumble.CassiusClay 1.
+9.9.12
+RESULT = pez.rumble.CassiusClay 1.9.9.11 wins 2596 to 2418
+Fighting battle 65 ... pez.nano.Icarus 0.3,pez.rumble.CassiusClay 1.9.9.12
+RESULT = pez.rumble.CassiusClay 1.9.9.12 wins 4059 to 282
+Fighting battle 66 ... pez.nano.Icarus 0.3,trab.Crusader 0.0.4
+RESULT = trab.Crusader 0.0.4 wins 3335 to 2783
+Fighting battle 67 ... pez.rumble.CassiusClay 1.9.9.11,pez.rumble.CassiusClay 1.
+9.9.12
+</pre>
+--<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+That happened to me some time ago with <a href="robowiki?SilverSurfer" class=wikipagelink>SilverSurfer</a> 2.42 vs. 2.46, after 2.42 has been removed. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+The CC vs. CC battles are a server issue it's not the clients smart battle code. See also the first bullet on <a href="robowiki?RoboRumble/ProtocolDevelopment" class=wikipagelink>/ProtocolDevelopment</a>.
+<p>
+The protocol discussion on this page should maybe be moved to that page. But I'm too tired now. Good night! -- <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+<p>
+My laptop is mostly idle and fast, but cannot be connected to the internet during working hours. I would be happy to contribute to the rankings, if only i could run the RR@H client offline and only occasionally (in the evening) upload results. 
+<p>
+I can imagine some problems as some people upload multiple versions of their robots during a day. But may be these situations can be handled by ignoring the results for older versions. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<p>
+That shouldn't be a problem. The results on inactive particpants are just added like any other results. They just don't display in the Ranking table. I think we should support offline clients in the way that we make local server that the client can interact with while it is offline. That way the logics in the client and server can be kept clean and the offline complexity can live mostly in this "proxy" server. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RoboRumble/ClientDevelopment" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RoboRumble/ClientDevelopment">View other revisions</a><br>Last edited October 14, 2004 13:10 EST by <a href="robowiki?PEZ" title="ID 3537 from ua-213-115-147-228.cust.bredbandsbolaget.se">PEZ</a> <a href="robowiki?action=browse&diff=1&id=RoboRumble/ClientDevelopment">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

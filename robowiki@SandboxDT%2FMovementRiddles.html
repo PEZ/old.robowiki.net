@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>SandboxDT/MovementRiddles - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Sandbox, DT/Movement, Riddles'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/MovementRiddles">SandboxDT/MovementRiddles</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>On the repository you mention that you found your curve (duringd development) being flat against one bot but not against another. Even without the assumption that this bot is either <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> or <a href="robowiki?Fhqwhgads" class=wikipagelink>Fhqwhgads</a> this sounds very much like my problem with the <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> movement. I get a flat curve from both <a href="robowiki?FloodGrapher" class=wikipagelink>FloodGrapher</a> and StatistPainter<a href="robowiki?action=edit&id=StatistPainter" class=wikipageedit>?</a>. But my <a href="robowiki?CurveFlatteningChallenge" class=wikipagelink>CurveFlatteningChallenge</a> index is just 10%! <a href="robowiki?StatistRobot" class=wikipagelink>StatistRobot</a>'s hit rate on me is much lower than what's reported on the DT 2.01 graphs above. (About 2-3% lower in each distance segment). Could you elaborate a little on the subject of creating a flat profile <em>regardless of the enemy's targeting method</em> please? I'm close to going really nuts here. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Let me try and give you some clues - <a href="robowiki?StatistRobot" class=wikipagelink>StatistRobot</a> has only distance segmentation - a flat profile here may not be flat if other segmentations are used - in fact going for a flat profile against <a href="robowiki?StatistRobot" class=wikipagelink>StatistRobot</a> may generate larger peaks with segmented statistitions (it is real difficult to get flat without doing some predictable things - especially with multiple bullets in the air).  Of course It is difficult to know what segmentation I use (cus I won't say), and to a large extent the same is true for other opponents and future opponents.  My movement adaption is pretty simple - but rather than just giving you the answer I'll make you work for it with a question and answer session.
+<p>
+Question 1: If you had perfectly flat movement (as measured by your guns), what guess factor would an opponent choose to fire you at (if he had your guns)?
+<p>
+I'd spontanpously say factor 1.0, but I have no consious clue as to why. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a> would fire right in the middle if everything were <em>perfectly</em> flat.  That's also what it does in the beginning.  Of course, the next time in that segment, it wouldn't be flat, because the last shot would give a new (small) peak. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+My answer would be 'All over the place' A flat profile can not possibly be flat all of the time, there will be small tempory peaks in different places each turn - so the gun should pick guess factors almost at random - across the whole range from -1.0 to 1.0.  -- <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<p>
+Question 2:  Lets assume you have done a little tunning of your movement over the past few months - one of your tunning parameters will probably be 'frequency of direction change' - it may be random, but you will be able to change its average frequency.  What happens to your movement profile if the frequency of change direction is too low (i.e. you are moving in one direction for long periods of time)?
+<p>
+If it's too low, you end up at +1 alot, but it may be a quite broad profile.  If you change directions too much, you get a hill with its peak somewhere near the middle, with about as much on the left as on the right. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+On question 1; I fail to see why firing all over the place would be better than firing head-on or fully linear. How would that exploit the temporary peaks? On question 2, I know from my tests that when this frequencey is too low I end up with a spike at +1. Though I suspect this answer must be too simple.
+<p>
+He's not saying it's an <em>advantage</em> to fire all over the place arbitrarily.  Firing at temporary peaks is a product of past movement, not a projection of future movement, firing arbitrarily is a product of not knowing where to fire, but having slightly different numbers around. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Now you have lost me completely. Can you develop this a bit further. Pretend I'm stupid or something. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+OK - suppose your opponent has 5 stat bins at -1.0, -0.5, 0.0, 0.5 and 1.0 and some time in the battle you have stats in those bins of 12.3%, 12.4%, 12.1%, 12.2%, 12.3%.  Your gun should pick the guess factor with the highest value - 12.4% which corresponds to a guess  factor of -0.5.  This is a profile I would be proud of - flatter than a flat thing with flat juice poured over it, however a few moments the stats may read 12.4, 12.3, 12.2, 12.4. 12.5 - in this case the gun should fire with a guess factor of 1.0 - not much has changed.  It does not matter where the gun fires (it will hit around 12.3% of the time) but the stat gun will always fire at the present best direction (for the purposes of this discussion think only of guess factor guns).  --  <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<p>
+<a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a> has the correct answer to the second question (and what was going to be my next question)... -- <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<p>
+Is it assumed you are using rolling averages here or could this be total figures? If it's the latter, that's how all my stat guns work. Marshmallow uses both rolling and total, but anyway it's the same. If it's perfectly flat the guns would vary their guesses. Where does this bring me when it comes to my own movement? CurveFlatteningChallengeDT<a href="robowiki?action=edit&id=CurveFlatteningChallengeDT" class=wikipageedit>?</a> hits me like I have a huge, huge spike somewhere, eventhough I can't see it myself. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Question 3:  Can you detect when and where your opponent fired from each time you were hit and the direction the opponent fired in? -- <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<p>
+Yes I could. I don't do it yet, but I could. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Of course.  I've actually seriously considered doing it before, in conjunction with actually aiming at myself from my opponent's location, just to get an idea what he knows about me. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+That is not too useful though - looking at your own profile doesn't help much because you are using your own gun logic not the opponents (you should at least have good movement against your own guns). -- <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<p>
+Alright <a href="robowiki?Paul_Evans" class=wikipagelink>Paul</a>, I am ready for Question #4 already. -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+Question 4:  You know where you were and what you were doing when the opponet fired at you so you can work out the guess factor of the bullet(s) that actually hit you.  If most of the bullets that hit you are at guess factor 1.0 what should you do?
+<p>
+The way you're going, I assume you'd up your change-in-direction-frequency.  But based on knowing what you were doing at the theoretical fire-time, you may do something different from that even.  Or if you are simulating your own gun against yourself, you might just raise the guess-factor in that segment until it's the highest. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I'd try Kawigi's first suggestion. And if most of the bullets hit me at factor 0.0 I'd do the reverse. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yep - if you think you're being hit at guess factor 1.0 (or near to guess factor 1.0) most of the time reduce the frequency of direction change.  However I think it is not safe to assume the opposite is being hit at guess factor 0.0 - I think it is better to say if your never/rearly hit at guess factor 1.0 reduce your change direction frequency.  (somewhere between the two extreems is the ideal movement where the opponent feels it is as successful at firing 1.0's as some other guess factor.  --  <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<p>
+So is that all there is to it?  It seems like this is trying to improve itself against *most* segments (or at least against the segments you're spending the most time in).  Oh, by the way, "CigarQwhgads<a href="robowiki?action=edit&id=CigarQwhgads" class=wikipageedit>?</a>" seems to do better against this version (beat it twice in 1000 round battles, about 80k-75k). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Thats all that that in it - my movement has two peaks - a potentially sharp one at 1.0 and a softer one at just below 0.0 - the adaptive movement tries to get the peaks about level - I may be able to find other parameters to raise/lower the profile at other guess factors.  I don't like the news about DT 2.01 performing worse than 1.91 - would you care to send me a copy of CigarQwhads<a href="robowiki?action=edit&id=CigarQwhads" class=wikipageedit>?</a> please.  --  <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<p>
+I think it sounds just brilliant. I don't think I would have started to think this way in a very long time without this help. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=SandboxDT/MovementRiddles" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=SandboxDT/MovementRiddles">View other revisions</a><br>Last edited May 18, 2006 13:09 EST by <a href="robowiki?Danb00" title="ID 7047 from bmly-cache-4.server.ntli.net">Danb00</a> <a href="robowiki?action=browse&diff=1&id=SandboxDT/MovementRiddles">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

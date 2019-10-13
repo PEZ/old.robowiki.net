@@ -1,0 +1,236 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Synnalagma/Utils - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Synnalagma, Utils'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Utils">Synnalagma/Utils</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I hope this can help some people to avoid some headeaque as I had --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<pre>
+public class Utils {
+    /**
+     *  Constant for circle / 360 degree
+     */
+    public final static double CIRCLE = 2 * Math.PI;
+    /**
+     *  Constant for half circle 180 degree
+     */
+    public final static double HALF_CIRCLE = Math.PI;
+
+
+    /**
+     *  Classify the angle : angle in one of the nbPas classes determined using maxB, the maximum angle and minB the minimum angle
+     *
+     * You should prefer using getOutput array
+     *
+     *@param  angle  angle to classify
+     *@param  minB   minimum angle
+     *@param  maxB   maximimum angle
+     *@param  nbPas  number of different classes
+     *@return        the class of angle
+     */
+    public static int getOutput(double angle, double minB, double maxB, int nbPas) {
+        double diffAngle = getMinDiff(minB, maxB);
+        double diffB = getMinDiff(minB, angle);
+        double re = diffB / diffAngle * (double) nbPas;
+        if (Math.abs(re - nbPas) &lt; 0.03) {
+            return nbPas - 1;
+        }
+        if (re &lt; 0 || re &gt;= nbPas) {
+            return -1;
+        }
+        return (int) re;
+    }
+
+
+    /**
+     *  Classify angle in the nbPas classes determined using maxB, the maximum angle and minB the minimum angle
+     *
+     * return an array that can holds 0 or 1. 1 mean that the angle is contained in this class
+     *
+     *@param  angle  angle to classify
+     *@param  error  Acceptable error to classify the angle that can be Math.atan(ROBOT_RADIUS/robot_distance)
+     *@param  minB   minimum angle
+     *@param  maxB   maximimum angle
+     *@param  nbPas  number of different classes
+     *@return        an array containing 0 and 1
+     */
+    public static double[] getArrayOutput(double angle, double error, double minB, double maxB, int nbPas) {
+        double[] out = new double[nbPas];
+        double diffTotal = getMinDiff(minB, maxB);
+        int minIndex = (int) (getMinDiff(minB, angle - error) / diffTotal * (double) nbPas);
+        int maxIndex = (int) (getMinDiff(minB, angle + error) / diffTotal * (double) nbPas);
+        if ((minIndex &lt; 0 || minIndex &gt;= nbPas) &amp;&amp; (maxIndex &lt; 0 || maxIndex &gt;= nbPas)) {
+            return out;
+        }
+        minIndex = Math.max(0, Math.min(nbPas - 1, minIndex));
+        maxIndex = Math.max(0, Math.min(nbPas - 1, maxIndex));
+        int limit = Math.max(minIndex, maxIndex) + 1;
+        for (int i = Math.min(maxIndex, minIndex); i &lt; limit; i++) {
+            out[i] = 1;
+
+        }
+        return out;
+    }
+
+
+    /**
+     *  Return the minimum angular difference between min and max
+     *
+     *@param  min  first angle
+     *@param  max  the other one
+     *@return      minimum angular difference, can be negative
+     */
+    public static double getMinDiff(double min, double max) {
+        double diffAngle = max - min;
+        if (Math.abs(diffAngle) &gt; HALF_CIRCLE) {
+            if (max &gt; min) {
+                return -(CIRCLE - max + min);
+            } else {
+                return (CIRCLE - min + max);
+            }
+        }
+        return diffAngle;
+    }
+
+
+    /**
+     *  Exaclty inverse of getOuput
+     *
+     *@param  minB   minimum angle
+     *@param  maxB   maximimum angle
+     *@param  index  class of the angle we want to find
+     *@param  nbPas  number of different classes
+     *@return        angle found
+     */
+    public static double getAngleFromIndex(double min, double max, int index, int nbPas) {
+        double diff = getMinDiff(min, max) / (double) nbPas;
+        return absoluteAngle(((double) index * diff + (double) (index + 1) * diff) / 2 + min);
+    }
+
+
+    /**
+     *  return an angle between 0 and Math.PI*2
+     *
+     *@param  angle  angle
+     *@return
+     */
+    public static double absoluteAngle(double angle) {
+        while (angle &lt; 0) {
+            angle += CIRCLE;
+        }
+        return angle % CIRCLE;
+    }
+
+
+    /**
+     *  return an angle between -Math.PI and Math.PI
+     *
+     *@param  angle  Description of the Parameter
+     *@return        Description of the Return Value
+     */
+    public static double relativeAngle(double angle) {
+        while (angle &gt; HALF_CIRCLE) {
+            angle -= CIRCLE;
+        }
+        while (angle &lt; -HALF_CIRCLE) {
+            angle += CIRCLE;
+        }
+        return angle;
+    }
+
+
+    /**
+     *  return the max distance that a bot can do in a certain time
+     *
+     *@param  velocity  velocity of the bot
+     *@param  time      time that the bot is going
+     *@param  sign      1 for going forward, -1 for backward
+     *@return           distance max
+     */
+    public static double getMaxDist(double velocity, double time, int sign) {
+        double dist = 0;
+        while (time &gt; 0) {
+            dist += Math.max(-8, Math.min(8, ((sign * velocity) &gt; 0 ? (velocity += sign) : (velocity += sign * 2))));
+            time--;
+        }
+        return dist;
+    }
+
+
+    /**
+     *  get the maximum angle that a bot can go assuming is going always at the same distance (on a circle of radius robot_distance)
+     *
+     *@param  heading   heading of the bot should be absolute
+     *@param  bearing   bearing of the bot
+     *@param  velocity  velocity of the bot
+     *@param  distance  distance of the bot
+     *@param  time      the time for the bullet to reach the bot
+     *@param  sign      1 for forward, -1 for backward
+     *@return           The maxAngle value
+     */
+    public static double getMaxAngle(double heading, double bearing, double velocity, double distance, double time, int sign) {
+        bearing = absoluteAngle(bearing);
+        return absoluteAngle(bearing+(heading&gt;Math.PI?-sign:sign)* ((bearing&gt;Math.PI/2&amp;&amp;bearing&lt;1.5*Math.PI)?-1:1)* Math.abs(Utils.getMaxDist(velocity,time, sign))/distance);
+    }
+
+}
+
+
+</pre>
+<p>
+====Comment suggestions welcome====
+<p>
+This code is a bit risky:
+<pre>public static double absoluteAngle(double angle) {
+        while (angle &lt; 0) {
+            angle += CIRCLE;
+        }
+        return angle % CIRCLE;
+    }</pre>
+<p>
+I once used something similar and got caught more than once in infinite loops, when angle == Double.NEGATIVE_INFINITY. I sugest something like this:
+<p>
+<pre>public static double absoluteAngle(double angle) {
+        angle %= CIRCLE;
+        if (angle &lt; 0) angle += CIRCLE;
+        return angle;
+    }</pre>
+<p>
+-- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Shouldn't the Math.IEEERemainder() (I think that's where it is) function normalize the absolute angle to positive for you? -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+<p>
+I don't get it exactly but as I understand IEEERemainder it keep the sign of the dividend. but it could be used as a first step. I never had problem with infinite loop with this. --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<p>
+Maybe if you try fighting <a href="robowiki?WhatTheHeck" class=wikipagelink>WhatTheHeck</a>? :-p -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Math.IEEERemainder is in fact normalizeAngle just do Math.IEEERemainder(angle,2*Math.PI). --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<p>
+Solving the problem in a direct way. 
+<p>
+<PRE >
+ /** Note: you need an appropriate implementation of the functions mentioned here. Also
+  * note that zero heading vector and its normal could be hardcoded if needed. For the sake of
+  * example, let's not do that here.
+  * @param angle The angle to be normalized
+  * @return Normalized angle value, in the range (-PI, PI]
+  */
+ public double absoluteAngle(double angle) {
+   Vector unit = Math.unitvec(angle); // get the unit vector with angle as bearing
+   Vector zero = Math.unitvec(0);     // get the vector with angle 0
+   Vector norm = Math.getNormal(zero);// get the normal to unit, rotated in positive direction
+   double cosangle = Math.cosangle(unit,zero); // get the cosine of the angle, using dot product
+   int sign = Math.sign( Math.dot(unit, norm) );
+   double absangle = sign * java.lang.Math.acos(cosangle);
+   return absangle;
+ }
+</PRE>
+<p>
+Using dot product etc is quite a good way to do away with awkward angle normalization. I have not seen that using classes such as Vector and more operations slow things down. -- <a href="robowiki?Filmil" class=wikipagelink>filmil</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Synnalagma/Utils" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Synnalagma/Utils">View other revisions</a><br>Last edited May 6, 2004 0:18 EST by <a href="robowiki?Filmil" title="ID 2747 from dslam223-182-166-62.adsl.zonnet.nl">Filmil</a> <a href="robowiki?action=browse&diff=1&id=Synnalagma/Utils">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>GuessFactor2D - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Guess, Factor2D'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=GuessFactor2D">GuessFactor2D</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>A variation of <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> which uses elements DynamicSegmentation<a href="robowiki?action=edit&id=DynamicSegmentation" class=wikipageedit>?</a> and <a href="robowiki?EscapeEnvelope" class=wikipagelink>EscapeEnvelope</a> targeting to both enhance exactness of <a href="robowiki?EscapeRadius" class=wikipagelink>EscapeRadius</a> based <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> and to give <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> like results against bots not using <a href="robowiki?PerpendicularMovement" class=wikipagelink>PerpendicularMovement</a>.
+<p>
+The system works by taking into account maximum distances achievable in all directions in a certain amount of time given its current velocity (<a href="robowiki?EscapeEnvelope" class=wikipagelink>EscapeEnvelope</a> / <a href="robowiki?EscapeArea" class=wikipagelink>EscapeArea</a>) and rotates that in accordance to the targets current heading.  The field is then segmented two dimensionally, which starts at a very low level of segmentation and which proceeds to become finer as more data is collected (DynamicSegmentation<a href="robowiki?action=edit&id=DynamicSegmentation" class=wikipageedit>?</a>).  By segmenting this data by velocity and heading if the target appears to be not traveling perpendicularly, a result quite similar to <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> is then achieved.
+<p>
+Firing takes place by selecting the angle which will pass through the highest probablility areas.
+<p>
+While this proves to be just as effective as regular <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> against <a href="robowiki?RandomMovement" class=wikipagelink>RandomMovement</a>, has a much better hit rate against basic patterns, and is easy to modify to attack high or low guess factors.
+<p>
+This is a combination of me being tired of getting only average hitrates against most patterned bots, and the conclusion that the wave surfer vs guess factor challenge is just going to end up in a method of constant second guessing of yourself (he will think I will use guess factoring, so he will move to the low factors, but then he will think im thinking that, and so he will move to the high factors, but he will think im thinking hes thinking that so he will move to low, etc...).
+-- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+Have you tried running a TargettingChallenge<a href="robowiki?action=edit&id=TargettingChallenge" class=wikipageedit>?</a> with this type of targetting? I am very curious to see the results. -- <a href="robowiki?Alcatraz" class=wikipagelink>Alcatraz</a>
+<p>
+Ah, you just reminded me what my hangup was on this before - if I don't calculate things based on the current heading of the enemy rather than on the angle to me, I didn't see a consistent way to project it back for targeting if the enemy was facing a different direction relative to me.
+<p>
+However, if that proves to not really matter, or there is a good way to map back to the differently proportioned escape envelope, then I think the whole algorithm is <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a>-able by using AffineTransform<a href="robowiki?action=edit&id=AffineTransform" class=wikipageedit>?</a> cleverly (maybe, unless that way to map it back makes it unhelpful). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Well I really need to try using this AffineTransform<a href="robowiki?action=edit&id=AffineTransform" class=wikipageedit>?</a> class.  I am currently mapping the escape area as a rectangle (it works fairly well because the unreachable areas just never get incremented) and then basically rotating the entire battlefield so that the enemy has a heading of 0, only changing my relative point.  I then calculate the best angle based on that, and reverse the process to get the exact angle I need to fire at.  If I can change this around and be able to rotate a polygon around a position I will be able to drastically reduce code size and use my algorithms for the definitive shape. -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+Ok, so I basically have GF split into 3 sections:
+<OL >
+<li> Getting information
+<li> Segmenting information
+<li> Selecting angle
+</OL>
+<p>
+In my opinion, 2 is the heart and soul of a good GF gun, and so that is what I am working on.  At the moment, I have a Factor class which is basically my wave, but which contains all information I might want to segment on.  A major plus of my 2D system is that it removes the need to segment on heading, velocity, etc, since that is directly applied on my information (although I am still keeping track of them in my Factor class just in case).  I am incredibly fond of the <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a> idea, and am currently trying to implement it, but I need to come up with a good way to decide which segment is best.  The three ideas that I have been working with are the most even split (closest to 50/50), the best entropy split, or there is the obscure point split that is mentioned on the <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a> page (choosing the one with the highest sum peaks??? 865 vs 687?). my current segmentations are:
+<UL >
+<li> Bullet Power
+<UL >
+<li> Probably unnessecary
+</UL>
+<li> Distance
+<UL >
+<li> Probably unnessecary
+</UL>
+<li> Target Velocity
+<UL >
+<li> Probably unnessecary
+</UL>
+<li> Target Heading
+<UL >
+<li> Probably unnessecary
+</UL>
+<li> Target Acceleration State
+<li> Time since last reverse
+<li> Time since last bullet
+<UL >
+<li> Used for my every tick factors
+</UL>
+<li> Near center/wall/corner
+</UL>
+If you can think of any other good ones that would be great.  Then all I do is select the best suited factor and fire on it.
+<p>
+All this work with segmentation has made me think about an exploitation of highly segmented guns.  To try to flatten your profile not just by GF but by segmentation, so the main aim is that they dont have enough data in their segments.  It will probably turn out to be wildly inefficient and not give much return (mostly because to have best effect you need to know the segmentation of the opponent), but it could be interesting to watch the bot go around through all possible velocities, acceleration states, headings, etc.
+-- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+This (segmented flattening) is actually what most <a href="robowiki?WaveSurfer" class=wikipagelink>WaveSurfer</a>'s do. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It would be *very* interesting if you were able to find a practical implementation of <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a>. I'm following this with great interest. Keep us posted! --<a href="robowiki?Vic" class=wikipagelink>Vic</a> 
+<p>
+Well I am still toying with the efficiency problem, but I have a few ideas.  The processor power required is exponentially related to the number of segments there are to deal with, and the way you decide which implementation to use.  I am currently working on two versions together, an ideal version of <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a> if it had all the processing in the world, and a very basic version which splits data as equally as possible and doesnt go back to check the accuracy of early segments.  One thing that I will need to test is how nessecary segmentation is in the face of <a href="robowiki?GuessFactor2D" class=wikipagelink>GuessFactor2D</a>, because it is mapping guess factors based on all of those variables.  Ive currently been splitting my time between about 12 different projects, so over the next week or so I am going to spend my robocoding time just on this targeting to try to get it finalized. --<a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+Looking back at my own <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a> ramblings, the 'ideal world' version (as you call it) *is* available if you are willing to use prepopulation. You can write an offline program that converts raw data into a bunch of dynamically segmented <a href="robowiki?SuperNodes" class=wikipagelink>SuperNodes</a>. This is in fact the initial <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a> way. The existence of <a href="robowiki?SuperNodes" class=wikipagelink>SuperNodes</a> has allready been proven, so this should work. Although there are those in this community that do not approve of prepopulated guns.
+<p>
+I think your second version may not work so good, unless you have come up with an ingenious solution. I have thought about such an implementation too and using that scheme you will either segment too slowly, or you do not have enough waves per node. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=GuessFactor2D" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=GuessFactor2D">View other revisions</a><br>Last edited May 4, 2006 22:26 EST by <a href="robowiki?GrubbmGait" title="ID 6861 from ip219-32-173-82.dyndsl.versatel.nl">GrubbmGait</a> <a href="robowiki?action=browse&diff=1&id=GuessFactor2D">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

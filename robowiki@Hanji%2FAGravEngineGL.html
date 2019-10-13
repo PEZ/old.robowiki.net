@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Hanji/AGravEngineGL - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Hanji, AGrav, Engine, GL'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/AGravEngineGL">Hanji/AGravEngineGL</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Hanji" class=wikipagelink>Hanji</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>This subclass of my <a href="robowiki?Hanji/AGravEngine" class=wikipagelink>/AGravEngine</a> draws points to the screen using <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a>. The comments should say all.
+<hr noshade class=wikiline size=1>
+<pre>
+ package neh;
+
+ import java.util.*;
+ import java.awt.Color;
+ import robocode.robocodeGL.*;
+ import robocode.robocodeGL.system.GLRenderer;
+
+ /**
+ * @author NEH (aka Hanji)
+ *
+ * This class subclasses AGravEngine, and provides identical functionality,
+ * but it also draws gravity points to the screen using RobocodeGL. It also
+ * provides a simple interface for customizing the points drawn.
+ */
+ public class AGravEngineGL extends AGravEngine {
+	
+	/**The system GLRenderer*/
+	protected GLRenderer render;
+	/**This hashtable maps GravPoints to PointGLs*/
+	protected Hashtable renderElements = new Hashtable();
+	
+	/**Points are drawn as PointGLs with this color*/
+	protected int ptSize = 6;
+	/**Attractive points (strength &gt;= 0) are drawn with this color*/
+	protected Color attractingColor = new Color(0,0,255);
+	/**Repelling point (strength &lt; 0) are draw with this color*/
+	protected Color repellingColor = new Color(255,255,0);
+
+	public AGravEngineGL() {
+		super();
+		render = GLRenderer.getInstance();
+	}
+
+	public AGravEngineGL(double width, double height) {
+		super(width, height);
+		render = GLRenderer.getInstance();
+	}
+	
+	public void addPoint(GravPoint p) {
+		PointGL pt = new PointGL();
+		pt.setSize(ptSize);
+		if(p.strength &lt; 0 )pt.setColor(repellingColor);
+		else pt.setColor(attractingColor);
+		pt.setPosition(p.x,p.y);
+		renderElements.put(p,pt);
+		render.addRenderElement(pt);
+		super.addPoint(p);
+	}
+	
+	public void update(double curX, double curY, long time) {
+		xForce = 0.0;
+		yForce = 0.0;
+		Vector deadPoints = new Vector();
+		GravPoint g;
+		double force;
+		double angle;
+		for(int i=0;i&lt;gravPoints.size();i++) {
+			g = (GravPoint) gravPoints.elementAt(i);
+			if(g.update(time)) {
+				deadPoints.add(g);
+				continue;
+			}else{
+				((PointGL)renderElements.get(g)).setPosition(g.x,g.y);
+			}
+			force = g.strength/Math.pow(
+								RobocodeUtils.dist(curX, curY, g.x, g.y),
+								pointDropoff);		
+			angle = RobocodeUtils.getBearing(curX, curY, g.x, g.y);
+			xForce += force * Math.sin(angle);
+			yForce += force * Math.cos(angle);
+		}
+		xForce += wallForce/Math.pow(curX, wallDropoff);
+		xForce -= wallForce/Math.pow(width-curX, wallDropoff);
+		yForce -= wallForce/Math.pow(height-curY, wallDropoff);
+		yForce += wallForce/Math.pow(curY, wallDropoff);
+
+		Object o;
+		for(int i=0;i&lt;deadPoints.size();i++) {
+			o = deadPoints.elementAt(i);
+			gravPoints.remove(o);
+			((PointGL)renderElements.get(o)).remove();
+			renderElements.remove(o);
+		}
+	}
+
+	/**
+	 * @return The color with which attracting points are drawn.
+	 */
+	public Color getAttractingColor() {
+		return attractingColor;
+	}
+
+	/**
+	 * @return The size of the PointGLs we draw with.
+	 */
+	public int getPointSize() {
+		return ptSize;
+	}
+
+	/**
+	 * @return The color with which repelling points are drawn.
+	 */
+	public Color getRepellingColor() {
+		return repellingColor;
+	}
+
+	/**
+	 * Set the color with which to draw attracting points (strength &gt;= 0).
+	 * This will only take effect for points created after the call.
+	 * @param color The new color for attracting points.
+	 */
+	public void setAttractingColor(Color color) {
+		attractingColor = color;
+	}
+
+	/**
+	 * Change the size points are drawn with. This will only take 
+	 * effect for points created after this is called.
+	 * @param i The new size for points.
+	 */
+	public void setPointSize(int i) {
+		ptSize = i;
+	}
+
+	/**
+	 * Set the color with which to draw repelling points (strength &lt; 0).
+	 * This will only take effect for points created after the call.
+	 * @param color The new color for repelling points.
+	 */
+	public void setRepellingColor(Color color) {
+		repellingColor = color;
+	}
+
+ }
+</pre>
+<hr noshade class=wikiline size=1>
+<strong>Questions or comments:</strong>
+<p>
+Could we perhaps get a screenshot of what this looks like in-game? -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Hanji" class=wikipagelink>Hanji</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Hanji/AGravEngineGL" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Hanji/AGravEngineGL">View other revisions</a><br>Last edited June 15, 2003 7:48 EST by <a href="robowiki?Vuen" title="ID 1421 from pm2-u36.thot.net">Vuen</a> <a href="robowiki?action=browse&diff=1&id=Hanji/AGravEngineGL">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

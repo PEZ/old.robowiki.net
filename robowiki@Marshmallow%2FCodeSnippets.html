@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Marshmallow/CodeSnippets - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Marshmallow, Code, Snippets'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/CodeSnippets">Marshmallow/CodeSnippets</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><UL >
+<li> <a href="robowiki?Marshmallow/RobotUtilsCode" class=wikipagelink>/RobotUtilsCode</a>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<em>How <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> checks if its <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> has hit or missed</em>
+<p>
+Marshmallow has a very close (to the decimal percentage) relation between virtual bullet hit ratio and real bullet hit ratio. This might or might not be common. Here's the relevant code anyway:
+<p>
+<pre>
+private Point2D enemyLocation;
+private Point2D bulletLocation;
+private Point2D oldRobotLocation;
+private double radius = 20.0;
+...
+        boolean hasHit() {
+            // calculate bulletLocation here
+            if (bulletLocation.distance(enemy.location) &lt; radius) {
+                active = false;
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        boolean hasMissed() {
+            // calculate bulletLocation here
+            if (oldRobotLocation.distance(bulletLocation) &gt; oldRobotLocation.distance(enemy.location)) {
+                active = false;
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+</pre>
+I used to calculate a circle (Ellipse2D) around the enemyLocation and check to see if the bulletLocation was contained in that circle, but suddenly realised this way is simpler and achives the exact same results. To calculate the bulletLocation we need:
+<UL >
+<li> bulletBearing
+<li> bulletVelocity
+<li> firedTime
+<li> nowTime
+<li> oldRobotLocation
+</UL>
+With these we can:
+<pre>
+bulletDistance = bulletVelocity * (nowTime - firedTime);
+X = oldRobotLocation.getX() + sin(Math.toDegrees(bulletBearing)) * bulletDistance;
+Y = oldRobotLocation.getY() + cos(Math.toDegrees(bulletBearing)) * bulletDistance;
+bulletLocation.setLocation(X, Y);
+</pre>
+Of course some of this should be encapsulated into a generic function. Marshmallow has a robot utilities class with a function like this:
+<pre>
+    static void setLocationFromVector(double angle, double length, Point2D sourceLocation, Point2D targetLocation) {
+        double X = sourceLocation.getX() + sin(angle) * length;
+        double Y = sourceLocation.getY() + cos(angle) * length;
+        targetLocation.setLocation(X, Y);
+    }
+</pre>
+And sin/cos functions like these:
+<pre>
+    static double cos(double a) {
+        return Math.cos(Math.toRadians(a));
+    }
+
+    static double sin(double a) {
+        return Math.sin(Math.toRadians(a));
+    }
+</pre>
+Feel free to use this code. Give me credit if you think I deserve it. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Marshmallow/CodeSnippets" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Marshmallow/CodeSnippets">View other revisions</a><br>Last edited May 16, 2003 23:28 EST by <a href="robowiki?PEZ" title="ID 1052 from 192.168.0.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=Marshmallow/CodeSnippets">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

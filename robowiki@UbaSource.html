@@ -1,0 +1,514 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>UbaSource - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Uba, Source'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=UbaSource">UbaSource</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>// Copy the Code from <a rel="nofollow" href="http://robowiki.net/cgi-bin/robowiki?action=edit&amp;id=UbaSource">[here]</a> --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+// Put comments at <a href="robowiki?Uba" class=wikipagelink>Uba</a><pre>
+
+
+package bayen.uba;
+import robocode.*;
+import robocode.util.Utils;
+import java.awt.Color;
+import java.awt.geom.*;
+import java.util.*;
+
+
+
+
+
+/**
+ * ___   ___ ____  
+ * | |   | | |   \     /  * | |   | | |   /    |  |
+ * | |   | | |   \   /      * \ \___/ / |    \  |    |
+ *  \_____/  |____/ /__/\__  *     A Robot by Bayen
+ */
+public class Uba extends AdvancedRobot
+{
+	
+
+
+
+        /**
+         * Declare Variables
+         */
+        Enemy t;                //A place to store info on my target
+	double dir = 1;         //My direction, forward or backward
+	int corner = 1;         //which corner to go to?
+	double missCount = 0;      //how many shots we missed
+	double hitCount = 0;       //how many shots hit!
+	static final double BULLET_POWER = 3.0;
+	static final double BULLET_VELOCITY = 20 - 3 * BULLET_POWER;
+	
+	static final int AIM_FACTORS = 25;
+	static final int MIDDLE_FACTOR = (AIM_FACTORS - 1) / 2;
+	
+	static double enemyX;
+	static double enemyY;
+	static int[] aimFactors = new int[AIM_FACTORS];
+	private int timeSinceLastScan = 10;
+    Point2D robotLocation = new Point2D.Double();
+    Point2D enemyLocation = new Point2D.Double();
+    static double enemyAbsoluteBearing;
+
+
+
+
+
+	/**
+	 * run: -Set my colors
+	 *      -uncouple my radar, gun, and bot,
+	 *      -begin my radarlock mechanism
+	 */
+	public void run() {
+
+
+
+
+                /**
+                 * Set Colors
+                 */
+		setColors(Color.blue,Color.blue,Color.yellow);
+
+
+
+
+               /**
+                 * Uncouple components
+                 */
+		setAdjustGunForRobotTurn(true);
+		setAdjustRadarForGunTurn(true);
+
+
+
+
+               /**
+                 * begin the radar lock
+                 */
+                while(true)
+		turnRadarRight(Double.POSITIVE_INFINITY);
+	}
+
+
+
+
+
+	/**
+	 * onScannedRobot: -record enemy info
+	 *                 -lock onto them with my radar
+	 *                 -other misc operations
+	 */
+	public void onScannedRobot(ScannedRobotEvent e) {
+
+
+
+
+               /**
+                 * calculate enemy x and y
+                 */
+		double enemyBearing = this.getHeading() + e.getBearing();
+		double enemyX = getX() + e.getDistance() *
+		Math.sin(Math.toRadians(enemyBearing));
+		double enemyY = getY() + e.getDistance() *
+		Math.cos(Math.toRadians(enemyBearing));
+
+
+
+
+               /**
+                 * save enemy info into an accessable class
+                 */
+		t = new Enemy(e.getName(), e.getBearing(), e.getHeading(),
+		              getTime(),
+		              e.getVelocity(), enemyX, enemyY, e.getDistance(),
+		              e.getEnergy());
+
+
+               /**
+                 * call my gun
+                 */
+		doGun();
+
+
+
+               /**
+                 * call my movement
+                 */
+		doMovement();
+
+
+
+               /**
+                 * do my firing checker
+                 */
+		if(getGunHeat() == 0){
+			if(getOthers() == 1){
+		if(hitCount/(missCount + hitCount) &gt; .50)
+		setFire(3);
+		else{
+			hitCount=hitCount + .5;
+		}
+		}
+		else{
+			setFire(3);
+		}
+	    }
+
+
+
+
+               /**
+                 * complete the radar lock
+                 */
+		setTurnRadarRightRadians
+(Utils.normalRelativeAngle((getHeadingRadians() + e.getBearingRadians()) 
+- getRadarHeadingRadians()));
+	}
+	
+
+
+
+
+	/**
+	 * onBulletHit: Update our bullet hit count!
+	 */
+	public void onBulletHit(BulletHitEvent e) {
+		if(getOthers() == 1)
+		hitCount++;
+	}
+
+
+
+	
+	/**
+	 * onBulletMissed: Update our bullet hit count!
+	 */
+	public void onBulletMissed(BulletMissedEvent e) {
+		if(getOthers() == 1)
+		missCount++;
+	}
+
+
+
+	
+	/**
+	 * doGun: Do my Gun!
+	 * based off PEZ's Tiny Faclon's Gun
+	 * and the Wiki's Targeting Challenge bot B
+	 */
+	public void doGun() {
+		Wave wave;
+		addCustomEvent(wave = new Wave());
+		double enemyAbsoluteBearing = getHeadingRadians()
+		+ Math.toRadians(t.getBearing());
+		enemyX = (wave.wGunX = getX()) +
+		Math.sin(enemyAbsoluteBearing) * t.getDistance();
+		enemyY = (wave.wGunY = getY()) +
+		Math.cos(enemyAbsoluteBearing) * t.getDistance();
+		
+		wave.wBearingDirection = (t.getVelocity()
+		* Math.sin(Math.toRadians(t.getHeading())
+		- enemyAbsoluteBearing) &lt; 0 ? -1.0/MIDDLE_FACTOR
+		: 1.0/MIDDLE_FACTOR) ;
+		wave.wBearing = enemyAbsoluteBearing;
+		int mostVisited = 0;
+		int i = 0;
+		do
+		{
+			if (aimFactors[i] &gt; aimFactors[mostVisited])
+				mostVisited = i;	
+			i++;
+		}
+		while (i &lt; AIM_FACTORS);
+		double bulletPower = Math.min(3.0,getEnergy());
+		double myX = getX();
+		double myY = getY();
+		double absoluteBearing = getHeadingRadians() +
+		Math.toRadians(t.getBearing());
+		double enemyX = t.getX();
+		double enemyY = t.getY();
+		double enemyHeading = Math.toRadians(t.getHeading());
+		double enemyVelocity = t.getVelocity();
+		
+		
+		double deltaTime = 0;
+		double battleFieldHeight = getBattleFieldHeight(),
+		battleFieldWidth = getBattleFieldWidth();
+		double predictedX = enemyX, predictedY = enemyY;
+		while((++deltaTime) * (20.0 - 3.0 * bulletPower)
+			&lt; Point2D.Double.distance(myX, myY, predictedX, predictedY)){
+			predictedX += Math.sin(enemyHeading) * enemyVelocity;	
+			predictedY += Math.cos(enemyHeading) * enemyVelocity;
+			if(	predictedX &lt; 18.0 
+				|| predictedY &lt; 18.0
+				|| predictedX &gt; battleFieldWidth - 18.0
+				|| predictedY &gt; battleFieldHeight - 18.0){
+				
+				predictedX = Math.min(Math.max(18.0, predictedX),
+				battleFieldWidth - 18.0);	
+				predictedY = Math.min(Math.max(18.0, predictedY),
+				battleFieldHeight - 18.0);
+				break;
+			}
+		}
+		double theta = Utils.normalAbsoluteAngle(Math.atan2
+		            (predictedX - getX(), predictedY - getY()));
+		
+		setTurnGunRightRadians(Utils.normalRelativeAngle(theta
+		                        - getGunHeadingRadians()));
+	if(getOthers() == 1 &amp;&amp; t.gfhit &gt;= t.lthit){
+	setTurnGunRightRadians(Utils.normalRelativeAngle(
+		enemyAbsoluteBearing - getGunHeadingRadians()
+		+ wave.wBearingDirection * (mostVisited - MIDDLE_FACTOR)));		
+		out.println("GF");
+	}
+	if(getOthers() &gt; 1 || t.gfhit &lt; t.lthit){
+	setTurnGunRightRadians(Utils.normalRelativeAngle(theta
+		                        - getGunHeadingRadians()));
+		out.println("GF");
+	}
+robotLocation.setLocation(getX(), getY());
+        toLocation((Utils.normalRelativeAngle(
+		enemyAbsoluteBearing - getGunHeadingRadians()
+		+ wave.wBearingDirection * (mostVisited - MIDDLE_FACTOR))), t.getDistance(), robotLocation, enemyLocation);
+            addCustomEvent(new VirtualBulletsTrigger(11, "gf"));		
+
+robotLocation.setLocation(getX(), getY());
+        toLocation((Utils.normalRelativeAngle(theta
+		                        - getGunHeadingRadians())), t.getDistance(), robotLocation, enemyLocation);
+            addCustomEvent(new VirtualBulletsTrigger(11, "lt"));		
+
+	}
+
+
+
+	
+	/**
+	 * doMove: Do my movement!
+	 */
+	public void doMovement() {
+		if(getOthers() == 1){
+			double amt = 300;
+			double random = Math.random();
+		    if(getDistanceRemaining() == 0){
+			    dir=-dir;
+			    setAhead(amt*random*dir);
+		    }
+		    setTurnRight(t.getBearing() + 90 - 90*dir*Math.random()*
+		    (t.getDistance()&gt;200?1:-1));
+	    }
+		if(getOthers() &gt; 1){
+			if(getDistanceRemaining() == 0){
+				corner++;
+				if(corner==5)
+				corner = 1;
+				if(corner == 1)
+			    goTo(new Point2D.Double(100,100));
+			    if(corner == 2)
+			    goTo(new Point2D.Double(100,getBattleFieldHeight() -100));
+			    if(corner == 3)
+			    goTo(new Point2D.Double(getBattleFieldWidth() - 100,
+			              getBattleFieldHeight() -100));
+		    	if(corner == 4)
+			    goTo(new Point2D.Double(getBattleFieldWidth() - 100,100));
+		    }
+		}
+	}
+
+
+
+	
+	/**
+	 * goTo: Go to a point
+	 *       from the Wiki's GoToBot
+	 */
+	private void goTo(Point2D destination) {
+        Point2D location = new Point2D.Double(getX(), getY());
+        double distance = location.distance(destination);
+        double angle = normalRelativeAngle(absoluteBearing(
+                       location, destination) - getHeading());
+        if (Math.abs(angle) &gt; 90) {
+            distance *= -1;
+            if (angle &gt; 0) {
+                angle -= 180;
+            }
+            else {
+                angle += 180;
+            }
+        }
+        setTurnRight(angle);
+        setAhead(distance);
+    }
+    
+
+
+
+        /**
+	 * absoluteBearing: find the Absolute Bearing
+	 *                  from the Wiki's GoToBot
+	 */
+    private double absoluteBearing(Point2D source, Point2D target) {
+        return Math.toDegrees(Math.atan2(target.getX()
+               - source.getX(), target.getY() - source.getY()));
+    }
+
+
+
+
+        /**
+	 * normalRelativeAngle: prevent unneccesary spinning
+	 *                      from the Wiki's GoToBot
+	 */
+    private double normalRelativeAngle(double angle) {
+        angle = Math.toRadians(angle);
+        return Math.toDegrees(Math.atan2(
+               Math.sin(angle), Math.cos(angle))); 
+    }
+    
+void toLocation(double angle, double length, Point2D sourceLocation, Point2D targetLocation) {
+        targetLocation.setLocation(sourceLocation.getX() + Math.sin(angle) * length, sourceLocation.getY() + Math.cos(angle) * length);
+    }
+
+    int sign(double v) {
+        return v &gt; 0 ? 1 : -1;
+    }
+
+
+
+    public void onWin(WinEvent e) {
+	    while(true){
+		    setTurnGunRight(360);
+		    if(getEnergy() &gt; .1)
+		    setFire(.1);
+	        turnRight(30);
+	        setTurnGunRight(360);
+	        if(getEnergy() &gt; .1)
+		    setFire(.1);
+	        turnLeft(30);
+	    }
+    }
+
+
+class VirtualBulletsTrigger extends Condition {
+        private long time;
+        private double bulletVelocity;
+        private Point2D oldRobotLocation = new Point2D.Double();
+        private String type;
+
+        public VirtualBulletsTrigger(double bulletVelocity, String type) {
+            this.time = getTime();
+            this.bulletVelocity = bulletVelocity;
+            this.oldRobotLocation.setLocation(robotLocation);
+            this.type = type;
+        }
+
+        public boolean test() {
+            if (bulletVelocity * (getTime() - time) &gt; oldRobotLocation.distance(enemyLocation)) {
+
+                //update your stats here
+                //(you probably need some more instance variables in this class for this.)
+                if(type.equals("gf") &amp;&amp; getOthers() == 1)
+                t.gfhit++;
+                if(type.equals("lt") &amp;&amp; getOthers() == 1)
+                t.lthit++;
+
+                removeCustomEvent(this);
+            }
+            return false;
+        }
+    }	
+
+
+class Wave extends Condition {
+	double wGunX;
+	double wGunY;
+	double wBearing;
+	double wBearingDirection;
+	double wDistance;
+
+	public boolean test() {
+	    if ((wDistance += BULLET_VELOCITY) &gt; Point2D.distance(
+		wGunX, wGunY, enemyX, enemyY)) {
+		try {
+		    aimFactors[(int)((Utils.normalRelativeAngle(
+		Math.atan2(enemyX - wGunX, enemyY - wGunY) - wBearing)) /
+				wBearingDirection) + MIDDLE_FACTOR]++;
+		}
+		catch (Exception e) {
+		}
+		removeCustomEvent(this);
+	    }
+	    return false;
+	}
+    }
+}
+
+
+/**
+ * Enemy: A class to store enemy info
+ */
+class Enemy
+{
+	String name;
+	private double bearing;
+	private double heading;
+	private long ctime;
+	private double speed;
+	private double x,y;
+	private double distance;
+	private double energy;
+	double gfhit = 0;
+	double lthit = 0;
+	
+	Enemy (String name, double bearing, double heading, long ctime,
+	       double speed, double x, double y, double distance,
+		   double energy) {
+		this.name = name;
+		this.bearing = bearing;
+		this.heading = heading;
+		this.ctime = ctime;
+		this.speed = speed;
+		this.x = x;
+		this.y = y;
+		this.distance = distance;
+		this.energy = energy;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	public double getBearing() {
+		return bearing;
+	}
+	public double getHeading() {
+		return heading;
+	}
+	public long getTime() {
+		return ctime;
+	}
+	public double getVelocity() {
+		return speed;
+	}
+	public double getX() {
+		return x;
+	}
+	public double getY() {
+		return y;
+	}
+	public double getDistance() {
+		return distance;
+	}
+	public double getEnergy() {
+		return energy;
+	}
+}
+//</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=UbaSource" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=UbaSource">View other revisions</a><br>Last edited February 17, 2006 20:27 EST by <a href="robowiki?Bayen" title="ID 5955 from pool-68-238-252-117.phlapa.fios.verizon.net">Bayen</a> <a href="robowiki?action=browse&diff=1&id=UbaSource">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Opposite - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Opposite'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Opposite">Opposite</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H3>Bot Name</H3>
+
+Opposite
+<H4>Author</H4>
+
+<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<H4>Extends</H4>
+
+What do you think?
+<H4>What's special about it?</H4>
+
+<a href="robowiki?FluidMovement" class=wikipagelink>FluidMovement</a>, a nano (246)
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=3570">http://www.robocoderepository.com/BotDetail.jsp?id=3570</a>
+<H4>How competitive is it?</H4>
+
+We'll see once there's stable rankings
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+See above
+<H4>How does it fire?</H4>
+
+Infinity-like gun
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+Well, by moving back and forth somewhat randomly while staying perpendicular, I hope it dodges bullets semi-decently.
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+It's melee. Don't use it in 1v1.
+<H4>How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a>?</H4>
+
+If enemyscanneddistance &lt; targetdistance + 150
+<H4>What does it save between rounds and matches?</H4>
+
+Nothing.
+<H4>Where did you get the name?</H4>
+
+The movement...
+<H4>Can I use your code?</H4>
+
+No, but I am willing to release code snippets from it
+<H4>What's next for your robot?</H4>
+
+<UL >
+<li> 1) Adding some wall avoidance. At the moment all it does is bounce off them, which occasionally traps it in corners
+<li> 2) Better radar than set<a href="robowiki?TurnRadarRight" class=wikipagelink>TurnRadarRight</a>(Double.POSITIVE_INFINITY);
+</UL>
+And always, always shrinking the code!
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+Not yet
+<H4>What other robot(s) is it based on?</H4>
+
+tobe's idea of <a href="robowiki?FluidMovement" class=wikipagelink>FluidMovement</a>, which is used in <a href="robowiki?Neptune" class=wikipagelink>Neptune</a>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+You may want to make that "how does it choose a target" <code>if (enemyscanned &lt; targetdistance * 1.2)</code>. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> Oops typo, i meant if(enemyscanneddistance*0.8&lt;targetdistance). Thnx for pointing that out. --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<UL >
+<li> If enemyscanneddistance is the distance to the bot you just scanned and targetdistance is the distance to current target, I think your original code was right. But maybe your variable naming conventions are different than mine would be... I'd generally want something like, "only switch targets if the new target is 20% closer", not "switch as long as new target is no more than 20% further away." -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<UL >
+<li> In my code i have enemyscanneddistance*0.8&lt;targetdistance. Simonton's post just alerted me to the typo. --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+</UL>
+<li> You are not a nano writer, my friend.  It costs a lot to know whether the current scan is the same bot you targeted before OR 20% closer.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> Ah right, you silly <a href="robowiki?NanoBot" class=wikipagelink>NanoBot</a> guys! So the idea here is just to avoid targeting bots that are super far away, more than trying to actually pick the single best target? -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> You got it.  This will degrade your performance when the 2 (or 3 or 4) closest bots are all within 20% of the same distance from you, but that may well be a price worth paying. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> So you mean I don't have to check whether the enemybot is the current target if i use your code...? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<li> As far as I'm concerned you never have to, as long as you're competing against my bots :P.  --<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+</UL>
+</UL>
+</UL>
+<p>
+I'm looking for a way to code in some <a href="robowiki?WallAvoidance" class=wikipagelink>WallAvoidance</a> with 40 bytes...I'm using the 'bounce off' way right now but it seems to trap itself in corners...Oh, btw, the current <a href="robowiki?WallAvoidance" class=wikipagelink>WallAvoidance</a> / RobotAvoidance simply checks if getDistanceRemaining<a href="robowiki?action=edit&id=DistanceRemaining" class=wikipageedit>?</a>()==0 and if it does reverse direction...which is why it traps itself in corners... --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<UL >
+<li> Hmm ... that's a little tough.  One thing is to put in some distancing code that prefers a semi-close range, therefore drawing you out of the corners.  But then, you have to want to fight close for that to work ... --<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Opposite" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Opposite">View other revisions</a><br>Last edited April 2, 2009 3:42 EST by cpe-75-84-83-181.socal.res.rr.com <a href="robowiki?action=browse&diff=1&id=Opposite">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

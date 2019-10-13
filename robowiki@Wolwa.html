@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Wolwa - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Wolwa'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Wolwa">Wolwa</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><center>
+<i><h2>Wolwa</h2>
+<img src="http://www.uffes-smedja.nu/sejdstav.gif">
+<p>a female shaman or seeress in Norse mythology. Expecteed to foresee and evade enemy waves before they hit her.</p></i></center>
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+A first attempt at <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>.
+<p>
+<H4>How does it fire?</H4>
+
+For now i focus on movement only, so it uses HOT.
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+It doesn't yet, but in time it will try to do so by using <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>.
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+The architecture is such that it is capable of storing data on multiple enemies. Not yet tested though.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+Nothing. It depends on fast learning.
+<p>
+<H4>Where did you get the name?</H4>
+
+The role of the wolwa's or wickes was to predict the future. So it seemed an apt name for a robot that tries to predict the position of enemy bullets by using reverse GF-statistics.
+<p>
+<H4>Where can i get it?</H4>
+
+Not yet uploaded
+<p>
+<H4>Can I use your code?</H4>
+
+See previous remark...
+<p>
+<H4>What's next for your robot?</H4>
+
+A lot.
+<p>
+<H4>What is it based on?</H4>
+
+The movement code is mostly new, based on the WS-tutorial. The gun-code is from Freya.
+<p>
+<hr noshade class=wikiline size=1>
+Question on accuracy of WS-accuracy: This is some output from the onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a>()-event. 
+<p>
+<pre>
+=========================
+Round 99 of 100
+=========================
+onHitByBullet(): at position Point2D.Double[270.5344953717234, 428.4523540588868]
+             bullet position Point2D.Double[269.8556767624386, 438.42928772087373]
+           expected position Point2D.Double[235.75884195360467, 434.3490426809509]
+=========================
+Round 100 of 100
+=========================
+onHitByBullet(): op positie Point2D.Double[662.0265755670273, 163.20113872648136]
+              kogel positie Point2D.Double[652.3499262267184, 160.67874749102663]
+          verwachte positie Point2D.Double[652.641451401879, 102.27711258519803]
+</pre>
+<p>
+The "expected position" is where i expected the bullet to be when it hit me. It looks like it is considerably off (a bot width in x in the first case, 2 times the bot width in y in the other case). Or is this the best you can get with a certain number of GF-bins?
+<p>
+On the other hand, the exact location should not be that important when it's only used to decide wether to go in clock- or anti clock wise direction.
+<p>
+And another question: do you use the bot position (center) or the bullet position (when the bot is hit) for updating the WS-statistics? --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<p>
+What kind of data is behind this "expectation"? For instance, is it hard coded to expect <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a> and you're testing against a HOT gun? Or is it more like: I know what wave I got hit by, and I thought that wave would have been at these coordinates? It would also be helpful to know what direction the bullet came from in both cases; then you'd know if it was off by left/right aim, or if it's a matter of bullet distance. (The latter might mean you are off by a tick in the bullet's start time, for instance.)
+<UL >
+<li> the expected position is based on wave radius and the predicted angle based on the <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> statistics. So, it's not based on HOT, although this data is from a battle against WaveSurfingBotA<a href="robowiki?action=edit&id=WaveSurfingBotA" class=wikipageedit>?</a>. The bullet start time is ok as the bullet position is aligned with the wave radius. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+</UL>
+<p>
+As for which position to use, I would say the bullet position, but I doubt it will make any noticeable difference. If you use the bullet position, you can use the same code from onBulletHitBullet<a href="robowiki?action=edit&id=BulletHitBullet" class=wikipageedit>?</a> and onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a>, though. Hope some of this helps.
+-- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<UL >
+<li> I will use the buller position. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<li> If you are just asking about how accurate <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> gets with predicting bullet locations against any old gun, I wouldn't concern yourself over that level of inaccuracy. If it's against HOT, though, you have something wrong somewhere. For anything else, that is quite accurate enough to dodge a lot of bullets. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<UL >
+<li> it's agains HOT (WaveSurfingBotA<a href="robowiki?action=edit&id=WaveSurfingBotA" class=wikipageedit>?</a>)... --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+</UL>
+</UL>
+<p>
+Personally I use the bullet position for updating the wave surfing stats. Comment this bot in English! ;-)
+<UL >
+<li> i will (and hopefully improve my English doing so) --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+</UL>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Wolwa" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Wolwa">View other revisions</a><br>Last edited August 9, 2006 13:24 EST by nlvdhy01-pub.asml.nl <a href="robowiki?action=browse&diff=1&id=Wolwa">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Rednaxela/SingularityGun - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Rednaxela, Singularity, Gun'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/SingularityGun">Rednaxela/SingularityGun</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Well, I was thinking about targeting some and I had some thoughts that led me to start working on a new gun. Firstly, most log-based guns like <a href="robowiki?DynamicClustering" class=wikipagelink>'traditional'-DC</a>, <a href="robowiki?TronsGun" class=wikipagelink>TronsGun</a>, and <a href="robowiki?PatternMatching" class=wikipagelink>traditional-PM</a> have different ways of finding/rating similar situations in a log. The two main styles are:
+<UL >
+<li> DC-style (including <a href="robowiki?TronsGun" class=wikipagelink>TronsGun</a>)
+<li> PM-style
+</UL>
+And each style tends to excel in different areas, but really, why not combine them? In my new gun, I attempt to make a hybrid using the following method:
+<DL >
+<dt><dd> <strong>1.</strong> Use a normal KDTree to find candidates for similar situations, like a normal DC gun.
+<dt><dd> <strong>2.</strong> For each situation, step back through the logs to see the closeness of the match over a number of ticks
+<dt><dd> <strong>3.</strong> Use the following weighting algorithm:
+<DL >
+<dt><dd> w = 1/(1+a) + 1/((1+a)*(1+b)) + 1/((1+a)*(1+b)*(1+c)) + ...
+</DL>
+<dt><dd> Where "a" is the distance between the current situation, "b" is the distance between situations in the tick prior, and so forth.
+</DL>
+This means that it will look for strong matches to the situation this tick like a DC-style gun does, but is also aware of temporal patterns like a PM-style gun. In order to adjust it's sensitivity temporal matches, you can use a multiplier on the  distance values (a higher multiplier will mean it will care about old situation matches less).
+<p>
+So this looks sounds like a pretty nice hybrid situation matching to me, so what is needed next? Some kind of prediction based on the situations of course. So what styles are normally in use? Well, I'd say:
+<UL >
+<li> "Play-it-forward" (traditional-PM and <a href="robowiki?TronsGun" class=wikipagelink>TronsGun</a>)
+<li> <a href="robowiki?GuessFactors" class=wikipagelink>GuessFactors</a> ('traditional'-DC)
+</UL>
+Each of which excels against different movement classes. So why not have both? So I'm combining the following prediction methods using <a href="robowiki?CrowdTargeting" class=wikipagelink>CrowdTargeting</a>:
+<UL >
+<li> Absolute "Play-it-forward" (The most common kind)
+<li> Wave-Relative "Play-it-forward" (A special type, that's relative to the wave origins you'd expect a typical surfer to move relative to)
+<li> <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> prediction
+</UL>
+A combination that I think would quite effectively deal with most things out there really. So far I have the data-logging/storage code done, and am working on the code to find the DC/PM hybrid matches, and then predict based on them.
+<p>
+As for the name... Well... I think this gun kind of is a 'singularity' of DC, PM, "Play-it-forward", and <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> techniques. =)
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Any comments/questions? =) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+I like it, I have some similar ideas of extending/modifying my DC gun. And it's something I could try without much coding. Most of my latest attempts at improving my gun have been in the "multiple choice" part, your "PM on the DC log" sounds like a good thing to try next. :) -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+A while ago I thought of something along similar lines, but never got around to implementing it. It was a pattern matcher that matched the last x velocitys using DC instead of absolute matches. Just like regular DC, except the attributes are velocity, velocity 1 tick ago, velocity 2 ticks ago, velocity 3 ticks ago etc, maybe coupled with delta-heading or lateral velocity coupled with advancing/retreating velocity instead. The attributes would be weighted so the most recent data counted the most. I asked Simonton to do a test of the KDTree using 30 attributes, and it turned out to be really slow (slower than without a tree). But this might be a cool way to get around that problem =) I could mod my gun for this in next to no time, but I think I'll give it a day to stew first. And I want to get my "Play-it-forward" gun working up to the standards of the GF gun, now that I got the biggest bug out. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Interesting thoughts there. Indeed, many normal DC guns could be modded fairly easily to hybridize the situation matching so long as their logs are in a format that works for it (my old DC gun wasn't suitable because it stored things purely in the KDTree as opposed to a log that could be iterated). Right now I manged to get the situation searching code and the GF-prediction working and am testing a first revision of this gun, with the hybrid DC/PM situation matching but no "Play-it-forward" yet. I'm running TCRM on it and what seems particularly interesting is so far it's <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> score is unusually strong despite using pure tickwaves and no gunheat segment, which may indicate that <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> has some kind of particular weakness that isn't visible until you take the "time" dimension into account. When I have enough seasons I'll run a version of the exact same gun but with the 'pattern-depth' turned down to 0 in order to see how useful the hybridization of situation matching actually is. So far it's scoring higher than anything in <a href="robowiki?RougeDC/TargetingLab" class=wikipagelink>RougeDC/TargetingLab</a> that doesn't use "wait-until-aimed" (and SingularityGun doesn't either right now and would likely improve scores a fair bit to use) so things are looking promising. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+I think I've given up on the Play-It-Forward. There are absolutely no bugs as far as I can tell. After seeing any situation it can hit Spinbot/Walls<a href="robowiki?action=edit&id=Rednaxela/Walls" class=wikipageedit>?</a> pretty much 100%. But it still loses a LOT of performance against the real random movers, like Raiko. So I tested it vs. my GF gun against Spinbot over 100 rounds, and the difference was about 50 bullet damage. Almost nothing. So I think I'm staying with GF for now =). I've hacked in some of these 'singularity' ideas, and I'd be interested on how it does with the 'time weighting', seeing it already has 4 time-dependant attributes that it is clustering on (distance last 10, time since decel, time since dir change, current GF). It already has a 'high' <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> score, as you noted for your gun, which I put down to all these time-based attributes. I think it helps pick up what is otherwise picked up with a gunheat dimension, because the gun is fired at regular intervals. I'm starting a TCRM now, update tomorrow morning. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+First attempt results aren't that good - in fact it only helped against <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>, Fortune and <a href="robowiki?RaikoMicro" class=wikipagelink>RaikoMicro</a>. It brought the overall score down to 90.08. I'm now trying some other tweaks, including a 'multiplicative' DC distancer. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+I've tried hacking this method into my gun. I used it only to choose the angle to shoot at from a cluster (N=100) instead of my current method(s). Tested a few times against some TC2K7 random movers, the results were always worse than without it. Maybe I'll try it in the clustering code, but that'll take a bit more time. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Rednaxela/SingularityGun" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Rednaxela/SingularityGun">View other revisions</a><br>Last edited July 16, 2008 20:10 EST by <a href="robowiki?ABC" title="ID 8723 from 89-180-156-149.net.novis.pt">ABC</a> <a href="robowiki?action=browse&diff=1&id=Rednaxela/SingularityGun">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

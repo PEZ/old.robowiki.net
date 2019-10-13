@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>AutomatedSegmentation - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Automated, Segmentation'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=AutomatedSegmentation">AutomatedSegmentation</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><b>Difference (from prior major revision)</b>
+(no other diffs)<br> <br><strong>Changed: 86c86,88</strong><br><table width="95%" bgcolor=#ffffaf class=wikidiffold><tr><td>
+ It could also be that the surfer learns to dodge one segment, so the other segment becomes stronger, then the surfer learns to dodge the next, and so on. How are you deciding which segment to use? Kernel density calculations? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a><br></td></tr></table><table width="95%" bgcolor=#cfffcf class=wikidiffnew><tr><td>
+ It could also be that the surfer learns to dodge one segment, so the other segment becomes stronger, then the surfer learns to dodge the next, and so on. How are you deciding which segment to use? Kernel density calculations? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a><br> <br> I'm sure there are smarter ways, but currently I'm just storing the guessfactors for every segmentation-combination in my bullet waves, and when the waves hit associate "error" values with various combinations of segments. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a><br></td></tr></table>
+<hr class=wikilinediff>
+<div class=wikitext>Okay. <a href="robowiki?AutomatedSegmentation" class=wikipagelink>AutomatedSegmentation</a> is a gun concept I came up with for Fractal's new <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> gun.
+<p>
+The concept is that, given a set of axis, the gun segments data across all the axis, and across every possible combination of every possible amount of these axis.
+<p>
+For example, say you segment data across 4 axis, say Distance (bullet travel time), Time (travelled without stopping), Lateral (velocity), and Acceleration. The gun automatically builds a dataset to hold the graphs on all of the following segmentations:
+<p>
+<UL >
+<li> none
+<li> [distance]
+<li> [time]
+<li> [latvel]
+<li> [accel]
+<li> [distance][time]
+<li> [distance][latvel]
+<li> [distance][accel]
+<li> [time][latvel]
+<li> [time][accel]
+<li> [latvel][accel]
+<li> [distance][time][latvel]
+<li> [distance][time][accel]
+<li> [distance][latvel][accel]
+<li> [time][latvel][accel]
+<li> [distance][time][latvel][accel]
+</UL>
+<p>
+Thus for example, the [none] graph is simply an array of the guessfactor bins. The [time] graph is a 2D array of time segmentation and guessfactor bins. The [latvel][accel] graph is a 3D array of lateral velocity vs acceleration across the guess factor bins. The first and last graphs are those people are obviously most farmiliar with; no segmentation, and segmentation across all available axis.
+<p>
+When Fractal records a wave hit, it puts the hit at the right place into every single one of these graphs. So it parses each one and checks where the data goes. Say the wave hit is being added to the [accel] graph; it finds the right acceleration index, then in it looks for the right angle bin and adds the hit. Say the wave hit is being added to the [distance][time][latvel] graph; it finds the right distance index, then in it the right time index, then in it the right latvel index, then in there looks for the righht angle bin and adds the hit.
+<p>
+This may seem somewhat complicated, and it's probably because I didn't explain it well, because it's actually quite simple. This is one way of aggregating a <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> array of <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> guns into one gun. Many bots use such an array (<a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> for example). In this, you would have a select few of these combinations; for example, you would have a fully segmented gun ([distance][time][latvel][accel]), then say a partially segmented gun ([distance][time][latvel]), and an only slightly segmented gun ([distance]). If you are attempting to use the fully segmented gun and it doesn't have enough data, you step down to the partially segmented gun; if it still doesn't have enough data, you step down to the slightly segmented gun. Now, this makes things simple, but has some obvious disadvantages. What if the enemy shows a large spike on the [accel] axis? You don't get to exploit this vulnerability until you reach the fully segmented gun.
+<p>
+With <a href="robowiki?AutomatedSegmentation" class=wikipagelink>AutomatedSegmentation</a>, the gun automatically uses all possible combinations. When finding where to shoot, it first looks at the most segmented gun. If it has enough data, great! It uses it and fires as would an ordinary fully segmented gun. If however it decides that it doesn't have enough data or that it's not reliable enough, it steps down one dimension and takes all possible combinations of graphs, those being:
+<p>
+<UL >
+<li> [distance][time][latvel]
+<li> [distance][time][accel]
+<li> [distance][latvel][accel]
+<li> [time][latvel][accel]
+</UL>
+<p>
+It then uses a <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a> on the four of these graphs to decide where to shoot. So if the enemy has a vulnerability spike on [accel], it will show up in 3 of the 4 graphs here, while it doesn't show up at all on the <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> example above. If it decides that none of these graphs are reliable enough, it again steps down, and takes every possible combination of 2 axis:
+<p>
+<UL >
+<li> [distance][time]
+<li> [distance][latvel]
+<li> [time][latvel]
+<li> [distance][accel]
+<li> [time][accel]
+<li> [latvel][accel]
+</UL>
+<p>
+Thus the acceleration spike will be picked up by 3 out of the 6 graphs here, against the other 3 forms of segmentation. You can see how these six graphs will take much, much less time to fill up with data than would the fully segmented graph; these can fill up across 3 or 4 rounds while the full segmentation axis can take up to 40 rounds to get a reliable source of data. If it again doesn't have enough data, it keeps stepping down until it does; eventually it reaches the fully unsegmented graph, and uses it to shoot if all else fails. Since some of the conditions remain the same across the course of the first round, such as Distance for example, the unsegmented axis is a reliable data source until the higher segmentations get filled with data.
+<p>
+With this gun, you can see how it can reach an incredibly fast learning time; over the course of a few rounds it can pick up spikes across any of the four axis and know very reliably where to shoot.
+<p>
+Now, the best part is, the concept of <a href="robowiki?AutomatedSegmentation" class=wikipagelink>AutomatedSegmentation</a> is that this is handled automatically by the gun for an arbitrary number of axis. Fractal's gun code is designed entirely for an arbitrary number of segmentation axis, rather than a fixed number. It has an abstract Axis class which the axis extend, and within the gun it has an array of Axis called axis. The axis are plugged directly into this array, and the gun automatically conforms to how many axis are it in; thus you can have as many segmentation axis as you want! Fractal currently has 9 axis written; right know I'm debating which to plug in for a release version (I'll probably end up using the best 5 or 6 that I find useful), but if I want I can simply plug in all 9, and it automatically builds the dataset for every possible combination of every possible number of these axis. Thus it totals (9 choose 0) + (9 choose 1) + (9 choose 2) + ... + (9 choose 9) graphs, which reduces to 2^9 = 512 graphs. These graphs are all arbitrarily dimensional; some segment across two, or three, or no axis, while some segment across 8 or all 9. Whenever a wave hit is recorded, it adds it to all 512 of these graphs (with the gaussian smoothing algorithm Fractal uses, this totals about 15360 gaussian smoothings per wave hit!) Whereas an ordinary GF gun suffers from many dimensions, it has little effect on <a href="robowiki?AutomatedSegmentation" class=wikipagelink>AutomatedSegmentation</a>, because say I add a [heading] axis, the [distance][time][accel][latvel] axis still exists and is still used as before while there isn't enough data. In theory the gun can only get better by adding dimensions.
+<p>
+There are many ways in which to store this data; after debating a few ways ways, Fractal now uses one very simple way: it uses a single array of objects, in which it puts arrays of arrays of arrays, and it uses heavy typecasting and a handful of recursive functions to add and retrieve the possible combinations. I can call a getBins function specifying the amount of free axis I want (say 2), and it recursively steps through the dimensions and pulls out all possible graphs (6 in the example above) into an <a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a>. If it were segmenting on 9 axis, getBins(3) for example would yield all (9 choose 6) = 84 graphs. The data retrieval is surprisingly fast, and it even performs much faster than Fractal 0.32, which used static segmentation only on Distance.
+<p>
+For deciding which level of segmentation to use, Fractal currently has a reliability algorithm; it computes the reliability of each dimension (the reliability of the data obtained from all possible graphs of the given number of dimensions), and uses the one with the highest reliability. Reliability is based on the product of the reliabilites of the used dimensions in each graph, and graph reliabilities are currently static (so, say distance is worth 3 and accel is worth two, the reliability of [distance][accel] is 6), times a function of the amount of data in the graph (fractal currently uses a logarithm for this). Thus as the data increases, it uses the more and more segmented axis.
+<p>
+The end result of all of this is extremely fast learning time; it has the effect of a <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> array of partially segmented guns, but with an analytic solution to segmentation selection, and using all possible axis rather than a hardcoded subset for each gun. Here are some screenshots illustrating its fast learning time; the depth indication shows how much segmentation it's currently using (for example, depth 2 means it's using a <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a> on the subset of all graphs segmenting data on only 2 dimensions.)
+<p>
+<img src="http:/robocode/uploads/vuen/automatedsegmentationgltron.jpg">
+<img src="http:/robocode/uploads/vuen/automatedsegmentationglvertileach2.jpg">
+<p>
+Anyway, that's my blurb on Fractal's gun. Lemme know what you think!
+<p>
+-- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+It is one lovely idea, Vuen.
+One question is: what/how do you save between rounds? -- <a href="robowiki?Frakir" class=wikipagelink>Frakir</a>
+<p>
+I think Frakir means, what/how do you save between battles? I am too very interested in the answer. And thanks for sharing this design idea. I am hacking away on a new gun for <a href="robowiki?GloomyDark" class=wikipagelink>GloomyDark</a> which shares a lot of this concept. And this page serves to answer the most important question I have had so far; "Is it worth te effort?" I think the way you describe the benefits here answers that question with a solid "Yes". I'll post my design as soon as I have a prototype running. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+All versions of Fractal past 0.32 have been using this to its full extent. Unfortunately, I have yet to find the real learning speed bonuses I've been looking for; I can't seem to get it to perform well against everyone at once. It's either good against some bots and loses against others, or the other way around, depending on how I tweak it. I'm getting annoyed by some bots though because I keep forgetting that some save data, and when I think I've made a change that degrades its performance it's just because the bots I test it against have learned more and so they get a higher score against it. This is why I'm more drawn toward the targeting challenge, but it doesn't really work for some of Fractal's axis because they involve having Fractal moving as well. On the issue of saving data, none of my bots save anything between battles, but if they did, saving this would be very similar to saving only the full segmented graph; that said I don't want to explain more because I don't want to give away too much about Fractal's format for storing the data : ). The screenshots I added were taken with slightly different tweaks of its gun, so I have yet to get the bot to yield both these extremes at once, but they still make for some nice-looking shots :D -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+<a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a> 0.7 did this (but with a static number of segmentations and it attempted to use VG's to resolve which cross-section to use).  The code was actually somewhat clean, even, and the original bot I made to do this was close to still being a minibot (extended off of <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>'s code).  The dev version of Fhqwhgads does a much more dynamic job of this as well, and seems to be at the same level in the TC as the mini Fhqwhgads.  The problem I have is that I'm still saving too much to effectively use that saved data, but it's still built to keep expanding it's knowledge well into the 1000-rounds space (while making intelligent decisions on the data it has in the short term). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Just two brief questions: how much memory does this consume and how slow the bot becomes? I'm also going to implement an arbitrary_number_of_axis gun concept, but I believe that one will be at least a fast gun. --<a href="robowiki?LRem" class=wikipagelink>lRem</a>
+<p>
+I should publish something like this, actually - in order to have stats quickly available in any combination of segmentations, your space only increases marginally - the additional guns take up less room than the fully segmented one - you just need to add one to the size of each segment.  You also need n<sup>2</sup> time to insert stats, there are n<sup>2</sup> guns that you can potentially use.  In other words, when you add a segmentation, you have twice as many guns, since you have all your previous guns and all your previous guns plus this new segmentation.  This time isn't too bad if you're not segmented too deeply.  You could also easily make a segmentation not optional (just don't add the extra space for it and don't index for it?)  I'll put some old code here for how I did it in <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a> (from a test bot that idea came from) at <a href="robowiki?Flood16CodeSnippets" class=wikipagelink>Flood16CodeSnippets</a>. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I personally dont see too great of an advantage here.  It would be much more effective to increase the number of divisions in each array rather than adding segmentations.  That way having a segment with only 1 division would be the same as not having the array at all, and size increase can be much more measured.  Rather than having to deal with the introduction of n times the number of current sections, you can be using say 2 or 3 times with each increase, being able to monitor divisions much quicker. This will give a much faster and more accurate learning. -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+In my current development bot <a href="robowiki?Gwynfor" class=wikipagelink>Gwynfor</a>, I'm using one targeting method very similar to this. So far, my tests show it working better than either fully segmented or not segmented at all. Interesting thing I've noticed though, is that against strong dodgers, the dominant segmentation-combination keeps flickering between different segment combinations. I'm guessing that's largely due to wavesurfers that are managing to fool the targeting effectively, making it very indecisive due to none of the combinations of segmentation work well. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+It could also be that the surfer learns to dodge one segment, so the other segment becomes stronger, then the surfer learns to dodge the next, and so on. How are you deciding which segment to use? Kernel density calculations? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+I'm sure there are smarter ways, but currently I'm just storing the guessfactors for every segmentation-combination in my bullet waves, and when the waves hit associate "error" values with various combinations of segments. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=AutomatedSegmentation" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=AutomatedSegmentation">View other revisions</a><br>Last edited January 28, 2008 21:56 EST by <a href="robowiki?Rednaxela" title="ID 13292 from h134-135.reznet.ucalgary.ca">Rednaxela</a> <a href="robowiki?action=browse&diff=1&id=AutomatedSegmentation">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

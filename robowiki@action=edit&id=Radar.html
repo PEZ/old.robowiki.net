@@ -1,0 +1,734 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing Radar - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Radar'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing Radar</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="Radar"  />
+<input type="hidden" name="oldtime" value="1232933087"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="2"  />
+<input type="hidden" name="captchaArg2" value="3"  />
+<input type="hidden" name="captchaOp" value="+"  />
+<input type="hidden" name="captchaId" value="151588353169"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">&lt;h2&gt;OneOnOne&lt;/h2&gt;
+
+
+The simplest situation for radar. Typically accomplished with the use of a radar lock.
+
+&lt;h3&gt;Infinity Lock&lt;/h3&gt;
+
+ run()
+ {
+     setTurnRadarRight(Double.POSITIVE_INFINITY);
+ }
+ 
+ onScannedRobot(ScannedRobotEvent e)
+ {
+     setTurnRadarLeft(getRadarTurnRemaining());
+ }
+ 
+
+
+Advantages:
+* Very small code size
+Disadvantages:
+* High slip rate (between 2 to 5 times a round)
+
+&lt;h3&gt;Lazy Lock&lt;/h3&gt;
+Points radar at enemy&#39;s last seen position. This is &quot;lazy&quot; because this is the minimum turn necessary (within 2px) to stay locked on.
+ boolean needManualScan = false;
+ run() {
+     do {
+         //... other code...
+         if (getRadarTurnRemaining() == 0 &amp;&amp; !needManualScan)
+             // We haven&#39;t told our radar to spin
+             setTurnRadarRightRadians(Double.PositiveInfinity);
+         // This can replace execute() because it is a blocking call.
+         scan();
+     } while (true);
+ }
+ 
+ onScannedRobot(ScannedRobotEvent e) {
+     double radarTurn = robocode.util.Utils.normalRelativeAngle(
+         e.getBearingRadians() + getHeadingRadians() - getRadarHeadingRadians() );
+     setTurnRadarRightRadians(radarTurn);
+     // If we want to keep receiving &lt;code&gt;ScannedRobotEvent&lt;/code&gt;s after
+     // telling our radar to spin by 0, we will need to call scan() manually
+     needManualScan = radarTurn == 0;
+ }
+
+If you can stand losing your lock whenever you stop moving, you can save some code size by removing the code referring to &lt;code&gt;needManualScan&lt;/code&gt; and &lt;code&gt;scan()&lt;/code&gt;. Otherwise, it&#39;s necessary to make sure your robot continues detecting enemies when you and your gun stop moving. The &lt;code&gt;if(...)&lt;/code&gt; is necessary because calling &lt;code&gt;scan()&lt;/code&gt; too often will lead to your radar fixating on the enemy&#39;s old position and losing your lock.
+
+While it looks like a precarious lock, it can never be lost. Robots can only move a max of 8px/turn. Even if you both move at full speed in opposite directions, your enemy can only move 16px relative to you each turn. Robots are 18px from centre to edge, so the rear few pixels of the enemy will always be visible where its old centre used to be.
+
+--[[duyn]]
+
+&lt;h3&gt;[[Radar/RadarBot|RadarBot]] Lock&lt;/h3&gt;
+By [[PEZ]]
+
+
+ private int timeSinceLastScan = 10;
+ static double enemyAbsoluteBearing;
+ run()
+ {
+     do {
+         doScanner();
+         execute();
+     } while true;
+ }
+ 
+ onScannedRobot(ScannedRobotEvent e) {
+     enemyAbsoluteBearing = getHeadingRadians() + e.getBearingRadians();
+     timeSinceLastScan = 0;
+ }
+ 
+ doScanner() {
+     timeSinceLastScan++;
+     double radarOffset = Double.POSITIVE_INFINITY;
+     if(timeSinceLastScan &lt; 3) {
+         radarOffset = robocode.util.Utils.normalRelativeAngle(getRadarHeadingRadians() - enemyAbsoluteBearing);
+         radarOffset += sign(radarOffset) * 0.02;
+     }
+     setTurnRadarLeftRadians(radarOffset);
+ }
+ 
+ int sign(double v) {
+     return v &gt; 0 ? 1 : -1;
+ }
+ 
+Advantages
+* Next to no slippage
+Disadvantages
+* Large code size
+
+There is no need for the sign(double) function. The Math.signum() already exists and works better. It will return 0 if v = 0, which is probably desirable (if radarOffset is 0 then it will move +0.02 degrees. Not much, but could throw off further calculations). -- [[Aziz]]
+* &lt;code&gt;Math.signum&lt;/code&gt; doesn&#39;t do what we want here. If radarOffset is 0, &lt;code&gt;Math.signum(radarOffset) * 0.02 == 0&lt;/code&gt; so it will move the radar by 0. This can cause you to lose your lock if you don&#39;t have a well-placed call to scan() in your run(). See the API docs on scan() if you want to know why.--[[duyn]]
+
+
+&lt;h3&gt;Factor Lock&lt;/h3&gt;
+
+ run() {
+     do {
+         // ...other actions go here...
+         
+         if (getRadarTurnRemaining() == 0)
+             setTurnRadarRight(Double.POSITIVE_INFINITY);
+         execute();
+     } while (true);
+ }
+
+ static final double FACTOR = 2.1;
+ onScannedRobot(ScannedRobotEvent e) {
+     double absBearing = e.getBearingRadians() + getHeadingRadians();
+     setTurnRadarRightRadians( FACTOR*
+         robocode.util.Utils.normalRelativeAngle(absBearing - getRadarHeadingRadians()) );
+ }
+
+Advantages
+* No slippage
+* Multiple behaviours packed into the same code
+
+FACTOR determines behaviour:
+* 1.0 gives the same behaviour as Lazy Lock (above). It will sometimes slip unless you add the manual scanning code as used in Lazy Lock.
+* 1.0 &lt; FACTOR &lt; 2.0 will narrow down to the minimal lock necessary without slipping. &lt;p&gt;1.99 gives a nice fluid narrowing-down motion at the start of the round.&lt;/p&gt;
+* 2.0 will keep a constant size lock on enemy. The size of the lock is determined largely by how close you start off to your enemy.
+* &gt; 2.0 will expand the lock area until the widest lock is achieved. The larger FACTOR, the closer the behaviour approaches Infinity Lock. A FACTOR of 3 or greater will expand the lock so quickly it reaches the widest lock almost right away. This works the same way Infinity Lock does, but avoids slippage by keeping the enemy in the centre of the lock. &lt;p&gt;2.1 gives a cool-looking expanding lock at the start of the round.&lt;/p&gt;
+
+A FACTOR &lt; 1.0 is just silly as you&#39;re barely spinning your radar enough to see your target again.
+
+--[[duyn]]
+&lt;h4&gt;HELP!&lt;/h4&gt;
+&lt;p&gt;Hi,&lt;/p&gt;
+I&#39;m using the factor lock for my bot, but every time I try and compile it, it says:
+Compiling...
+/home/vincent/.robocode/robots/vvk/MyOneonOne.java:33: &#39;;&#39; expected
+        run(){
+If you could help me, that would be great, thanks.
+Vvkuyck
+
+You are probably missing an opening or closing bracket ( or ). -- [[Skilgannon]]
+
+&lt;h3&gt;Spotlight Lock&lt;/h3&gt;
+
+Keeps a lock just wide enough to keep the enemy bathed in your radar.
+
+ run() {
+     setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
+ }
+ 
+ onScannedRobot(ScannedRobotEvent e) {
+     double radarTurn = robocode.util.Utils.normalRelativeAngle(
+         e.getBearingRadians() + getHeadingRadians() - getRadarHeadingRadians() );
+     radarTurn += Math.signum(radarTurn)*Math.atan(getWidth()/e.getDistance());
+     setTurnRadarRightRadians(radarTurn);
+ }
+
+Makes your robot look smarter by only scanning as much as necessary. Otherwise, no real advantage over Factor Lock (above).
+
+--[[duyn]]
+
+&lt;h2&gt;Melee&lt;/h2&gt;
+
+
+More complicated. The basic method (although not nessecarily most effective) is a simple spinning.
+
+&lt;h3&gt;Spin&lt;/h3&gt;
+
+
+ run()
+ {
+     setTurnRadarRight(Double.POSITIVE_INFINITY);
+ }
+ 
+
+
+Yet if your bot is near a corner then the other bots will only take up 90 degrees of your scan, meaning you waste 6 ticks unnessecarily. To remedy this, there are a variety of &quot;efficient&quot; radars.
+
+&#39;&#39;
+
+The radar I use in melee performs a &#39;sweep&#39; after every bullet I fire and then locks again at the most appealing target. No further &quot;efficient&quot; stuff is used. A bit simplified it shows like this:
+
+
+ public void onScannedRobot(ScannedRobotEvent e) {
+ 
+     if (this is not most appealing target) return; // do your own target selection here
+ 
+     double radaroffset = Utils.normalRelativeAngle( getHeadingRadians() + e.getBearingRadians() - getRadarHeadingRadians());
+     setTurnRadarRightRadians( Double.NEGATIVE_INFINITY * radaroffset);  // continue in the same direction
+ 
+     if (getGunHeat() == 0.0) {
+         setFire( bulletpower);
+     }
+     else {
+         // when not firing, overrule spinning radar with radarlock mechanism
+         // 2.2 means a slowly widening arc, 2.0 constant arc, 1.8 slowly narrowing arc, 1.0 is needle arc (but can miss non-moving targets)
+         setTurnRadarRightRadians( 2.2 * radaroffset);
+     }
+ }
+ 
+ public void onRobotDeath(RobotDeathEvent e) {
+     // If current target dies, force to find another, so spin radar
+     if (target.name.equals( e.getName())) {  // Change this to your own target-administration
+         // implement your own &quot;remove current target from your administration&quot;
+ 	setTurnRadarRight( Double.POSITIVE_INFINITY);
+     }
+ }
+ 
+
+
+There are more meleebots using this type of radar, although the implementation may vary. Ofcourse you need to implement your own startup-behaviour and targetselection. Note that this snippet is written without the sourcecode at hand. The intention of this radar should be clear though. --GrubbmGait
+
+I tried making a bot which used what I guess is called an &#39;Efficient&#39;(just kidding) radar...and failed miserably.
+If anybody actually cares and would like to look at my atrocious code, I&#39;ll make it a little more...errr....readable.
+No wonder nobody has put in any good melee radar snippets.... --Jray
+
+
+Logic&#39;s radar spins in one direction until it has scanned all enemy bots and then reverses direction. Not exactly &quot;efficient,&quot; but better than just spinning.
+-- Kev
+
+My question is, what&#39;s wrong this?
+
+
+ run()
+ {
+ while(true){    
+ setTurnRadarRight(360);
+ **execute();**
+ }
+ }
+ 
+
+
+
+The execute() was missing so it should have turned one time each round. --gez
+
+It works well on CrazyTracker (I think) and I haven&#39;t detected any slippage (although it could be there, hiding...). --Bayen
+
+If that&#39;s all you do with the radar, it will continually move around in a circle. Many tanks, especially in 1v1, focus the radar on a single target so that they scan it every frame, instead of just every time the radar passes by. -- Voidious
+
+Yes, with a constant spinning you will only see your enemy 1 out of every 8 ticks, like a flickering light. Most duelists scan back and forth 22.5 degrees to either side of the line between them and their opponent, once it is aquired. Others get real fancy and draw a really narrow beam. It looks risky but with the right math your opponent isn&#39;t going to escape (unless they hit a wall and stop abruptly and the radar doesn&#39;t account for it / have a backup plan). Cheaper radar models will keep scanning an old enemy location not realizing the opponent has left the area. Den me cruches dem. Har! -- Ugluk
+
+Can you miss robots with your radar because I find that my robot will not notice another robot that is behind something else. -- Kinsen
+* Perhaps you could do something like [[Radar/getAllEvents|this]] --[[Starrynte]]
+You should get an onScannedRobot? event for every bot that is present in your radar-arc, there is no &#39;radar-shadow&#39; generated by another bot. However, if you do a call to clearAllEvents?(), all pending events are removed. Just print out the time and the name of the scanned bot in the onScannedRobot? event to check whether you miss some. Also, the radar has a reach of 1200, so in melee it is possible that a bot is out of range. -- GrubbmGait
+
+ScannedRobotEvents are sorted by distance. The first events you get are the ones closest to you. So if you call execute() or fire() or whatever in your onScannedRobot handler, you will always be acting on the ScannedRobotEvent for the robot closest to you, and ones behind it will effectively be &quot;shadowed&quot;. --[[David Alves]]
+
+I know some people do the majority of their logic off of the onScannedRobot method, and this seems like a good argument against that approach.  However, it&#39;s not an issue until you want to take on more than one opponent at a time and / or have allies.  When I started designing Ugluk I favored melee battles (since they are fun to watch) so I have always accomodated multiple opponents.  The scanned robot events update the internal target data, and the targeting and movement are based on the entire enemy picture. -- Martin
+
+I use something like this, its a tight and almost non-slipping radar lock (the almost is just for safety, as I personally haven&#39;t seen it slip ever). The radar sags a bit at times (only catching the backend of a fast moving opponent) but its better then the infinity lock without taking up alot of room.
+&lt;pre&gt;
+	public void onScannedRobot(ScannedRobotEvent e)
+	{
+		adjustRadar(e.getBearingRadians());
+	}
+	public void adjustRadar(double angle)
+	{
+		double xAngle = getRadarHeadingRadians() - (getHeadingRadians() + angle);
+		double radarOffset = Math.atan2(Math.sin(xAngle), Math.cos(xAngle));
+		radarOffset += (radarOffset &gt; 0 ? 1 : -1) / 100;
+		setTurnRadarLeftRadians(radarOffset);
+	}
+&lt;/pre&gt;
+-- [[Chase-san]]
+
+It seems like a good radar but it dosen&#39;t spin when you&#39;re not locked, so you can&#39;t actually lock unless you have some extra code.  What do I do to fix this?
+
+In your main loop just add before the execute():
+&lt;pre&gt;
+
+if(getRadarTurnRemaining() == 0.0)
+    setTurnRadarRight(Double.POSITIVE_INFINITY);
+&lt;/pre&gt;
+
+And welcome to robowiki! Make a page for yourself, tell us about your bots =) -- [[Skilgannon]]
+
+
+-- [[Skilgannon]]
+
+----
+
+
+With Perpy, I just do circular targeting with my radar, basically. On the timescales that we&#39;re talking about, you won&#39;t miss. If I don&#39;t have an enemy, I just spin the radar until I find one. Every time I lose track of the enemy (Which doesn&#39;t happen all that often), I reverse the direction that I&#39;m spinning the radar in - that seems to help find bots once I&#39;ve lost them. --[[Jp]].
+
+
+I always see these very smooth wide radars that keep the enemy in the center of its beam without being very very thin. Bots such as DT 1.91, Tron 2.01, Yngwie 1.0, TheArtOfWar 1.2, and several others. I consider this smooth lock, the &quot;perfect&quot; radar lock. I have managed this, and it seems ratehr effective but I would like to know how effective this type of lock is. -- [[Chase-san]]
+
+Yeah, that should be the best, assuming you&#39;re just talking 1v1. -- [[Voidious]]
+
+Having a really tight radar arc is more of a coolness thing.  All the big boys are doing it (at least the ones who still play). -- Martin
+
+I just thought of an idea for a fairly simple radar lock.  I haven&#39;t coded it yet, but what you would do was to turn the radar at the enemy who you haven&#39;t seen for the longest amount of time.  If you keep track of where everyone is, this should be pretty efficent (not too much extra spinning) and give you equal data on every enemy.  I will use this once I get around to making a melee bot.  --[[Bayen]]
+
+That would require you to keep track of all the enemies, and how would you know where the enemy is to be able to scan it? -- [[Chase-san]]
+
+If this was based on the last position that you saw each enemy at, the result would be spinning your radar in the same direction at all times - unless you&#39;re in a corner, where you might have optimal scanning by going back and forth... It&#39;s a lot easier in 2v2, but LuminariousDuo does optimal scanning like this. -- [[Voidious]]
+
+It depends on what you are trying to accomplish.  If you want to avoid being near opponents, you are probably best off just spinning the radar in one direction for the entire round (or until your goals change).  If you are trying to kill one person at a time, you should just sweep over the single opponent every turn until he&#39;s dead.  If you are trying to avoid bad situations while attacking favorable targets, you need to delve into what you need your radar for.  Unless you are doing pattern matching, you really only need to sweep your opponent for two turns prior to the turn you fire.  If you are using waves, you will also want to sweep over your target while the wave is crashing over them.  If they dive into the wave, you may miss it if your radar is focused elsewhere.  My melee radar just does a full circle sweep immediately upon firing a wave, during which I evaluate my present target choice against all of the opportunities presented.  At the end of the full circle sweep my radar swing back to my (possible new) target until I fire again.  -- Martin
+
+If it&#39;s only a couple of ticks, I could use a simple linear prediction on all of the bots that I am keeping track of.  It shouldn&#39;t be too far off in the small amounts of time. --[[Bayen]]
+
+In the beginning of the round, I spin the radar toward where I cover the most battlefield. I also use a melee radar lock in [[Smash]]. Here is the radar part of the code:&lt;br&gt;
+&lt;pre&gt;
+run(){
+        int direction=sign(Utils.normalRelativeAngle(calcAngle(new Point2D.Double(getX(),getY()),new Point2D.Double(getBattleFieldWidth()/2,getBattleFieldHeight()/2))-getRadarHeadingRadians()));
+
+        setTurnRadarRightRadians(direction * Double.POSITIVE_INFINITY);
+        setTurnRightRadians(0.5*direction);
+        setTurnGunRightRadians(Math.PI/2*direction);
+        waitFor(new GunTurnCompleteCondition(this));
+
+        setAdjustGunForRobotTurn(true);
+        setAdjustRadarForGunTurn(true);
+        while(true){
+                .
+                .
+                .
+        }
+}
+
+public void onScannedRobot(ScannedRobotEvent e){
+        //do your own target selection here
+        if(getOthers()==1 || (getGunHeat()/getGunCoolingRate()&lt;10 &amp;&amp; target.name.equals(e.getName()))){
+	        setTurnRadarLeftRadians(getRadarTurnRemainingRadians());
+        }
+        //other onScannedRobot code
+}
+&lt;/pre&gt;
+--[[Starrynte]]
+
+What does scan() do? --[[Starrynte]]
+
+See Help -&gt; Robocode API -&gt; Robot -&gt; scan(). I don&#39;t use it, so I don&#39;t have more info than that.  -- [[GrubbmGait]]
+
+scan()&lt;br&gt;
+public void scan()&lt;br&gt;
+Look for other robots. This method is called automatically by the game, as long as you are moving, turning, turning your gun, or turning your radar. There are 2 reasons to call scan() manually: 1 - You want to scan after you stop moving 2 - You want to interrupt the onScannedRobot event. This is more likely. If you are in onScannedRobot, and call scan(), and you still see a robot, then the system will interrupt your onScannedRobot event immediately and start it from the top. This call executes immediately. Scan will cause onScannedRobot(robocode.ScannedRobotEvent) to be called if you see a robot. 
+
+I still don&#39;t really get what scan() does. Does it turn the radar 360? Or does it somehow instantly look for robot without turning radar?
+--[[Starrynte]]
+
+Nvm, scan() just looks for any robots that are within the radar arc. scan() is called every tick for each robot, i guess. In other words, the radar by itself wouldn&#39;t see anything. scan() &quot;opens the eyes&quot; of the robots. The description is above. So, if you are not moving, turning, turning your gun, or turning your radar, you can&#39;t see anything, unless you call it manually.
+--[[Starrynte]]
+
+I developed this for my new bot Genesis. Its probably been done before, but its not listed here. This radar fixes onto the arc width of the enemy robot, and also compensates for lateral movement of the enemy so that it doesn&#39;t slip off. Meaning the edges of the radar arc when it reachs the enemy will directly light up with its edges, no matter its speed. (its fancy)
+
+&#39;&#39;&#39;Fancy Radar - Expanded Explination Version&#39;&#39;&#39;
+&lt;pre&gt;
+//assuming you have the run method taken care of
+int scanDir = 1;
+public void onScannedRobot(ScannedRobotEvent e){
+	//This is just the absoluteBearing
+	double angle = e.getBearingRadians()+getHeadingRadians();
+	double lateralVelocity = e.getVelocity()*Math.sin(-angle+e.getHeadingRadians());
+
+	//20 is half the width of a robot, but since it has to oscillate back and forth, it covers the full span
+	//We divide by the distance to get the radians to turn
+	double scanArc = (20-scanDir*lateralVelocity)/e.getDistance();
+
+	setTurnRadarRightRadians(Utils.normalRelativeAngle(angle-getRadarHeadingRadians()+scanArc*(scanDir=-scanDir)));
+}
+&lt;/pre&gt;
+
+--[[Chase-san]]
+
+I think GrubbmGrb uses something similar to this --[[Starrynte]]
+
+According to [http://www-128.ibm.com/developerworks/library/j-robowrap.html this], [[Yngwie]] &quot;determines which robots are close or dangerous and tries to effectively scan these as often as possible&quot;. When i ran it in a battle (slowly) and turned on visible scanned arcs, it did exactly that: When some bots are close to it, it scans those only (ignores the other bots). Does anyone else think this is a good radar to use? --[[Starrynte]]
+
+
+This can&#39;t be answered in general. As an example for [[Aleph]] it is crucial that it has a continuous scanhistory for the gun to work nicely. So I tried to make the radar scan all bots as effectively as possible until shortly before a shot is fired, then only the target is scanned. I did it something like this: For any bot on the field the clockwise angle to the next bot is determined (next in the sense of smallest clockwise angle difference). If bot A has the biggest of these angles and the angle is larger then x=180 degrees (to bot B) it is better not to make a full radar turn but to just scan from bot A to B (anticlockwise) then reverse the radar direction... (even a smaller angle then 180 for x could be reasonable because the scan angle is somewhere around 40 degrees itself (not sure about the 40 degrees though;))) -- [[rozu]]
+
+
+Here is a easier but still fancy radar setup for one on one. This version can do the same as above, if you want, but doesn&#39;t ahve to and it doesn&#39;t require a global vairable to work correctly. Again this was not depicted here, this can be the starting bed for more complex melee radars, which would require a +/- spin however much to a certain enemies last angle, etc.
+
+&#39;&#39;&#39;Fancy Radar 2&#39;&#39;&#39;
+&lt;pre&gt;
+public void onScannedRobot(ScannedRobotEvent e) {
+	//standard absolute bearing
+	double angle = e.getBearingRadians()+getHeadingRadians();
+
+	//normalize the radar angle, this itself is a radar lock
+	double rAngle = Utils.normalRelativeAngle(angle-getRadarHeadingRadians());
+
+	//Now this may seem backwards, but it works, as we want a wider arc
+	//as not to slip, so we move it even further in that direction
+	//we could use a variable equal to 20d/e.getDistance()
+	rAngle = (rAngle &gt; 0) ? .17 : -.17;
+
+	//now spin the radar ;)
+	setTurnRadarRightRadians(rAngle);
+}
+&lt;/pre&gt;
+
+--[[Chase-san]]
+
+Is there any such thing as a 100% radar lock (was looking at the [[Radar/Old]] page)? --[[Starrynte]]
+
+Edit: is there any such thing as a 100% radar lock for 1v1, with melee just use the 1v1 lock right before firing --[[Starrynte]]
+
+I guess there is a 100% radar lock as long as you&#39;re at least 20 away, since the most a bot could move in one tick if it&#39;s at distance 18 is &lt;code&gt;atan(8/18)&lt;/code&gt; which equals about 23.9 (degrees). With &lt;code&gt;atan(8/20)&lt;/code&gt; the angle is about 21.8 (degrees) which a radar could handle (feel free to tell me if there&#39;s a problem with the trig) 
+
+I am now thinking of making a radar similar to what Jokester mentioned (see [[Radar/Old]] page), so far my ideas are to consider the benifit of spinning the radar to the left 45 (e.g. the number of bots between radarheading and radarheading-pi/4 and take into account their energy, distance, etc.) and in the other way --[[Starrynte]]
+
+I haven&#39;t seen this in the wiki but my question is where should i use the execute() command, as i find that using it in different places can have a big effect on how my robot works. I noticed this by Watching my Radar arc if execute was called twice the radar would not function properly but if i use it only one my fire rate drops drammatically, i am using a simple oscillating radar and i just don&#39;t understand why there is such a difference --[[Irish Sean]] 
+
+In Robocode, there are both blocking and non-blocking calls. Blocking calls (like ahead, back) end your turn, while non-blocking calls (setAhead, setTurnRadarRight) just set things to happen when you finish your turn. The call to execute() finishes your turn and executes all the commands you had queued with the setXXX commands. Some bots never call execute, particularly CodeSize-restricted bots that call a blocking call like &lt;nowiki&gt;turnRadarRight&lt;/nowiki&gt; as part of their radar lock (it&#39;s like setTurnRadarRight + execute in one). So, the short answer is, I&#39;d put execute() in a do-while loop in my run() method and use only setXXX commands, but it&#39;s not the only way to do things. 
+
+In your case, I bet you&#39;re using a blocking call and execute, so you are skipping every other turn. Hope that helps. And hey, welcome, make yourself a wiki page! =)  We love &lt;strike&gt;fresh blood&lt;/strike&gt; to see new faces around here!
+
+-- [[Voidious]]
+
+Ok, to me this seems a good concept &#39;in my head&#39; but when I put it into practise I get slippage at the boundaries of the segments 45deg apart.
+
+basically, spin the radar 45. If you get an onScannedRobot, then spin 45 the other way.  So, if you see a robot, you should see it again next time as you scan right back over it. If you dont, you keep going in your current direction untill you do.
+
+But, as I say, as the enemy bot approaches the 45deg boundaries, sometimes it will slip out of the radar, sometimes the radar keeps it.
+
+Is there a way to avoid my boundary issues?
+
+..I&#39;d like to get this to work or understand why it wont rather than stealing any ready-mix radars out there :)
+
+-- [[YellowAlienBaby]]
+
+Mr. Yellow Baby: the concept you are speaking of is exactly that of the &quot;infinity lock&quot; at the top of this page.  The slippage comes when your opponent has a small fraction of his bot inside your boundary, then moves completely out of the boundary on the next tick, just as you try to scan that same area again.    The trick is to keep him in the center of your scan arc, meaning that you should never try to scan more than 45/2 degrees past him in any direction, because once you scan more than 45 degrees past where he will be next tick, you&#39;ve lost him.  Hope this helps.  -- [[Simonton]]
+
+Ahh. Simple, but thanks for explaining. I had realised the conditions it happened in, I was just jumping through hoops to try and figure out how to compensate for it - (was he going clockwise or anticlockwise around me and should I switch direction etc..) - but I was convinced a full 45deg scan should work..
+
+-- [[YellowAlienBaby]] 
+
+My &#39;fancy&#39; radar snippets above do exactly this, keeping the robot in the center of the field, and with enough work it can be balanced in such a way escape is impossible. On my newer bots I just cheat by still determining it by distance but dumping a 8 into it to make up for maximum robot velocity, instead of trying to guess the lateral movement (however much cooler it looks when it works). --[[Chase-san]]
+
+----
+I would have a MeleeBot by now but my advanced radar system sometimes just plain fails. It will be going just fine the it just dies, not even falling back to a simple spin (as it should), it doesn&#39;t throw any errors or anything, so i&#39;m a tad confused. However when it does work, it works very well! It uses the method to scan for the bot it hasn&#39;t seen the longest, which I would think is a rather common style of melee radar. Soon as this progresses farther I will continue working on my pathfinding system. --[[Chase-san]]
+
+
+I don&#39;t know how often this happens, but I accidently coded something that works better than intended. I wanted to make a radar which focuses on one enemy keeping him in the middle of a 45 degree arc. I tried different ways wich didn&#39;t work too good or at all and I tried this which as I thought shouldn&#39;t work:
+
+private byte radarDir=1;
+..
+
+public void onScannedRobot(ScannedRobotEvent e) {
+                ..
+		focusRadar(e);
+                ..
+	}
+
+public void focusRadar(ScannedRobotEvent e){
+		double enemyDir=normalRad(getHeadingRadians() - getRadarHeadingRadians()) + e.getBearingRadians();
+		setTurnRadarRightRadians(normalRad(enemyDir-(radarDir*PI/8)));
+		radarDir*=-1;
+	}
+
+It works perfect! (ok, it loses the enemy in very few occasions)
+If I look at the code, I would say that it would keep the enemy on the edge of a PI/8 arc.
+A stupid question to ask about my own code: Why does this work?
+
+PS. I have an execute(); method at the end of run() and thats it.
+
+-- Infestor
+
+Seems to me like this should keep the enemy in the middle of a PI/4 arc (which you&#39;re saying it does, right?).  Your variable &lt;code&gt;enemyDir&lt;/code&gt; is the amount to turn the radar to focus directly on the enemy.  Then you alternately add or subtract PI/8 from that each time he&#39;s scanned.  Make sense?  A couple notes: that first &quot;normalRad&quot; call is unneccesary, since the total result will be normalized inside the setTurn method, enemyDir is a bit of a misleading name (which I&#39;m sure you figured out), and making radarDir a byte is really unnecessary (it&#39;s just going to be converted to a double every time you use it in the setTurn argument list).  -- [[Simonton]]
+* Ah, so the place where your staying has internet! (assuming you&#39;re still on that vacation :) --[[Starrynte]]
+* Yes, yes it does.  And yes, yes I am :).  -- [[Simonton]]
+----
+Not sure how to ask this but is there any actual way to detect that you have not scanned any bot? I mean this as in they moved out of you radar&#39;s reach.I ask as i want to make a simple method to reset the radar to sweep when no target it scanned as my (quick) firing method current locks the radar in the last bots place. -- gEE7
+
+* Sure. In your run method, you normally have an infinite loop, like &lt;code&gt;while (true) { /* do whatever */ execute(); }&lt;/code&gt; - the &quot;do whatever&quot; will happen each tick, then &lt;nowiki&gt;execute()&lt;/nowiki&gt; advances to the next tick. Well, you can have a boolean (e.g., &lt;nowiki&gt;&quot;scannedThisTick&quot;&lt;/nowiki&gt;) and set it to false in the run method, then set it to true in &lt;nowiki&gt;onScannedRobot&lt;/nowiki&gt;. I hope that helps. Also, welcome to the wiki! Feel free to make a page for yourself and your bots. -- [[Voidious]]
+* Yes this method works fine. Just to point out anyone else wanting to do this you need to do the if false test on &lt;nowiki&gt;&quot;scannedThisTick&quot;&lt;/nowiki&gt; at the begining of the while(true) and set it to false at the end due to robocode&#39;s processing loop... and its only useful if your using really big battlefields. Thanks a lot for that Voidious it helped alot. I guess i&#39;ll finish my bot before making a page. -- gEE7
+
+----
+
+Over at [[NightAndDay]], [[Voidious]] and [[Skilgannon]] were discussing melee radars, so I just thought I should throw this out here... this is the radar I&#39;m using in my upcoming minibot. In addition to scanning for the oldest enemy in melee, it also seems to be a perfect radar in 1v1. I haven&#39;t really tried to compact its codesize yet.
+
+&lt;pre&gt;
+private Map&lt;String, RobotRecording&gt; enemies = new HashMap&lt;String, RobotRecording&gt;();
+private static String scanTarget;
+private static double scanDirection = 1.0;
+
+public void run() {
+    // ...
+
+    do {
+        // ...
+
+        setTurnRadarRightRadians(scanDirection * Double.POSITIVE_INFINITY);
+        execute();
+    } while (true);
+}
+
+public void onScannedRobot(ScannedRobotEvent e) {
+    // ...
+
+    // Spin the radar if we haven&#39;t seen all the enemies. Once we have a
+    // target, keep spinning the radar in the same direction.
+    if (enemies.size() == getOthers()
+        &amp;&amp; (scanTarget == null || enemyName.equals(scanTarget))) {
+        // Scan for the enemy we haven&#39;t seen in the longest amount of time.
+        long oldestTime = Long.MAX_VALUE;
+        for (Map.Entry&lt;String, RobotRecording&gt; enemy : enemies.entrySet()) {
+            RobotRecording enemyRecording = enemy.getValue();
+            if (enemyRecording.time &lt; oldestTime) {
+                oldestTime = enemyRecording.time;
+                scanTarget = enemy.getKey();
+                scanDirection = normalRelativeAngle(absoluteBearing(
+                    myRecording.location, enemyRecording.location)
+                    - getRadarHeadingRadians());
+            }
+        }
+    }
+}
+
+public void onRobotDeath(RobotDeathEvent e) {
+    enemies.remove(e.getName());
+    scanTarget = null;
+}
+&lt;/pre&gt;
+
+-- [[AaronR]]
+
+I wanna play!!  Codesize = 176 (w/ jikes).
+&lt;pre&gt;&lt;nowiki&gt;
+package simonton.tutorial;
+
+import java.util.*;
+
+import robocode.*;
+import robocode.util.*;
+
+/**
+ * @author Eric Simonton
+ */
+public class MeleeRadar extends AdvancedRobot {
+
+	private static HashMap scanInfo;
+
+	public void run() {
+
+		scanInfo = new HashMap();
+
+		double scanDir = 1;
+		do {
+			if (scanInfo.size() == getOthers()) {
+				scanDir =
+					Utils.normalRelativeAngle(((EnemyInfo) Collections
+						.min(scanInfo.values())).absDir
+						- getRadarHeadingRadians());
+			}
+
+			setTurnRadarRight(scanDir * Double.POSITIVE_INFINITY);
+			scan();
+		} while (true);
+	}
+
+	public void onScannedRobot(ScannedRobotEvent event) {
+
+		String name = event.getName();
+		EnemyInfo enemy = (EnemyInfo) scanInfo.get(name);
+		if (enemy == null) {
+			scanInfo.put(name, enemy = new EnemyInfo());
+		}
+		enemy.scanTime = getTime();
+		enemy.absDir = getHeadingRadians() + event.getBearingRadians();
+	}
+
+	public void onRobotDeath(RobotDeathEvent event) {
+
+		scanInfo.remove(event.getName());
+	}
+
+	private static class EnemyInfo implements Comparable {
+
+		public long scanTime;
+		public double absDir;
+
+		public int compareTo(Object o) {
+
+			return (int) (scanTime - ((EnemyInfo) o).scanTime);
+		}
+	}
+}
+&lt;/nowiki&gt;&lt;/pre&gt;
+Hmm - except now that I think about it I this will throw an exception when it wins and scanInfo has zero elements.  Better put that in a try-catch, I guess.  It looks like that makes codesize 180.  -- [[Simonton]]
+
+* Using Collections.min()... that&#39;s clever. I wouldn&#39;t have thought of that. But, is it really smaller than just using a loop? -- [[AaronR]]
+
+* Also, it doesn&#39;t seem to work very well; it sometimes tries to scan for a robot, but scans in one place forever whenever that bot happens to be farther away laterally than it was previously. To see the problem, put it in a 1000x1000 battlefield with three copies of [[Walls]]. Why do you think I needed the scanTarget and scanDirection variables? -- [[AaronR]]
+
+
+* Hmm, I see your point.  Everyone was making cool melee radar, I just wanted to join the fun.  Looks like I loose :(.  But anyway, if I remember right, using Collections.min() is slightly smaller than using a loop.  Unless, of course, you have to make the loop anyway for some other purpose, like minimum risk movement ... -- [[Simonton]]
+
+* It seems my trick for only adjusting your radar turn in the &lt;code&gt;onScannedRobot&lt;/code&gt; is what makes me not susceptible to something similar to this. Also, my radar adjusts to a perfect 1v1 radar when there is only 1 enemy, because I&#39;m using the magical &#39;2&#39; multiplier on the difference of the angle. That Collections.min() looks neat, if I need extra codesize I&#39;ll give it a try =). -- [[Skilgannon]]
+
+* As I said, my radar is perfect in 1v1, though for a different reason (it always adjusts to find the one out of eight possible sweeps that contains the center of the enemy). I&#39;ve tried different combinations of placing the radar code in the run() method, &lt;nowiki&gt;onScannedRobot()&lt;/nowiki&gt;, and a custom event that executes before &lt;nowiki&gt;onScannedRobot()&lt;/nowiki&gt;; for full melee performance, and not just TwinDuel, you need at least one global variable - scanTarget, which solves the problem you mentioned about robots being out of range in melee. Introducing scanDirection and placing the radar movement in run() saves having to invoke a &lt;nowiki&gt;setRadarTurnRight(Double.POSITIVE_INFINITY)&lt;/nowiki&gt; at the beginning of the round. I&#39;m not sure if it is really any smaller to do it that way, though. -- [[AaronR]]
+
+I wanna play too. Codesize 173, and it works. ;-) Can anyone beat that? 
+&lt;pre&gt;
+package davidalves.test;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import robocode.RobotDeathEvent;
+import robocode.ScannedRobotEvent;
+import robocode.TeamRobot;
+
+import robocode.util.Utils;
+
+
+public class DavesTinyOptimalMeleeScan extends TeamRobot{
+	class EnemyHashMap&lt;K,V&gt; extends LinkedHashMap&lt;K,V&gt;{
+		protected boolean removeEldestEntry(Map.Entry&lt;K,V&gt; eldest){
+			if(ehm.size() == getOthers() &amp;&amp; sought == null){
+				sought = eldest.getKey();
+				scanDir = Utils.normalRelativeAngle(((Double)eldest.getValue()).doubleValue() - getRadarHeadingRadians());
+			}
+			return false;
+		}
+	}
+	
+	static EnemyHashMap&lt;String,Double&gt; ehm;
+	static double scanDir = 1;
+	static Object sought = null;
+	
+	public void run(){
+		ehm = new EnemyHashMap&lt;String,Double&gt;();
+		do{
+			setTurnRadarRightRadians(scanDir * Double.POSITIVE_INFINITY);
+			execute();
+		}while(true);
+	}
+	
+	public void onRobotDeath(RobotDeathEvent e) {
+
+	    ehm.remove(e.getName());
+	    sought = null;
+	}
+	
+	public void onScannedRobot(ScannedRobotEvent e){
+		String name;
+		ehm.remove(name = e.getName());
+
+		if(sought == name) sought = null;
+		ehm.put(name, getHeadingRadians() + e.getBearingRadians());
+	}
+}
+&lt;/pre&gt;
+
+Note: Voidious asked about licensing. Feel free to use it and change it, with or without credit. Credit would be appreciated though. =)
+--[[David Alves]]
+
+Nice concept!  I ought to be able to shrink that a bit.  Let&#39;s see here ... *hack, hack, tinker*.  Ah - here&#39;s a version at 156. --[[Simonton]]
+&lt;pre&gt;
+package simonton.tutorial;
+
+import java.util.*;
+
+import robocode.*;
+import robocode.util.*;
+
+public class DavesTinyOptimalMeleeScan extends TeamRobot {
+
+	static LinkedHashMap&lt;String, Double&gt; enemyHashMap;
+	static double scanDir;
+	static Object sought;
+
+	@Override
+	public void run() {
+
+		scanDir = 1;
+		enemyHashMap = new LinkedHashMap&lt;String, Double&gt;(5, 2, true);
+		do {
+			setTurnRadarRightRadians(scanDir * Double.POSITIVE_INFINITY);
+			scan();
+		} while (true);
+	}
+
+	@Override
+	public void onRobotDeath(RobotDeathEvent e) {
+
+		enemyHashMap.remove(e.getName());
+		sought = null;
+	}
+
+	@Override
+	public void onScannedRobot(ScannedRobotEvent e) {
+
+		String name = e.getName();
+		LinkedHashMap&lt;String, Double&gt; ehm = enemyHashMap;
+		ehm.put(name, getHeadingRadians() + e.getBearingRadians());
+		if ((name == sought || sought == null) &amp;&amp; ehm.size() == getOthers()) {
+			scanDir =
+				Utils.normalRelativeAngle(ehm.values().iterator().next()
+					- getRadarHeadingRadians());
+			sought = ehm.keySet().iterator().next();
+		}
+	}
+}
+&lt;/pre&gt;
+
+Very nicely done. I missed the fact that access-ordered LinkedHashMaps are ordered with the least recently used first and the most recently used last. I thought it was most recently used at the head of the list, which would make it hard to get the oldest. =) --[[David Alves]]
+
+Using a linked list.....why didn&#39;t I think of that? Very smart! The one thing that I think we (all) haven&#39;t managed to figure out is how to decide to skip bots that are further than 1200 away, and thus &#39;out of range&#39;. I was considering ignoring bots that I haven&#39;t scanned in the last x ticks, unless Math.random() &lt; k, but I&#39;m not sure how well that would work, and its 2 more variables that need to be tuned. Any ideas? Another point: once you start storing things like movement patterns in the HashMap, it means that you can&#39;t remove the objects in the onRobotDeath, but instead have to mark the object as &#39;dead&#39;. This means that at the beginning of every round you have to mark every single one as &#39;alive&#39;. It also means that you can&#39;t just use the last entry in the LinkedList, because that entry will be dead most of the time, so you &#39;&#39;have&#39;&#39; to use a loop. I can&#39;t remember where I read this, but: In theory, practice and theory are the same. In practice, they&#39;re not. =) -- [[Skilgannon]]
+
+
+Well my version (and Simonton&#39;s) will just spin in complete circles if they can&#39;t find a bot. I think that&#39;s probably a good enough solution. Anything else would be complicated, and might not work in some obscure corner case. Incidentally, it&#39;s not exactly a linked list, it&#39;s a LinkedHashMap. It&#39;s still a Map, so you can still do get() and remove() by providing the bot name (key), but it keeps a sorted list of keys internally so that iteration is fast and ordered. My initial thought was to use a linked list, removing a bot and then re-adding it at the top whenever it was found to make sure the list was in order of most-recently-used to least-recently-used. But LinkedHashMap gives you the best of both worlds, you can get() and remove() things by key, but you don&#39;t have the unpredictable iteration order of a regular hash map. As for needing to mark things as dead, well yeah... If you were really going to use this in a bot you&#39;d also store the coordinates of the enemy instead of the angle to them, to account for your own movement... But this was just an exercise in CodeSize reduction. =) --[[David Alves]]
+
+* Yeah, but the problem with using a LinkedHashMap and only looking at the &#39;&#39;last&#39;&#39; entry (or first) is that, if you can&#39;t remove dead bots because you need to keep the objects for other reasons (eg. targeting data), then this method will have to use a loop to sort through each bot, which takes more CodeSize. But as an exercise in CodeSize reduction, with Radar being the only requirement, this is definately the best option. =) -- [[Skilgannon]]
+
+(edit conflict) Wait a minute, let me see if I understand this... creating a seemingly redundant local variable is &#39;&#39;smaller&#39;&#39; than accessing a global variable directly? Man, I&#39;m never going to learn to be a codesize writer... -- [[AaronR]]
+
+* Yeah, I think if you use the global variable more than about 3 times it becomes cheaper to assign it to a local variable first. Ugly as hell, but all is fair in love and Robocode =) -- [[Skilgannon]]
+
+You want to really blow your mind, how about this: The first few local variables you make inside a method are cheaper to access than the subsequent ones...  --[[David Alves]]
+* A fact well documented (and even explained) at CodeSize/WritingSmallCode. -- [[Simonton]]
+* Ok, maybe *well* documented is a stretch.  Let&#39;s just say it&#39;s mentioned and a semi-understandable explanation is there :). -- [[Simonton]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 2 + 3 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that Radar has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=Radar">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Suvorov - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Suvorov'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Suvorov">Suvorov</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I've been trying to implement <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> on this bot Suvorov. I used the code from the article on IBM's site and fixed it a bit so that it would compile. Now Suvorov will shoot very nicely and accurately and directly at the lower left-hand corner. Here's the full code of the bot (you can also see my preliminary <a href="robowiki?Oscillators" class=wikipagelink>Oscillators</a> engine which I will tune up when I have the gun working). If you can see what the problem is, let me know. Thanks. --<a href="robowiki?Pfvicm" class=wikipagelink>Pfvicm</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<pre>
+package pfvicm;
+import robocode.*;
+import java.awt.Color;
+import java.awt.geom.*;
+import robocode.util.Utils;
+
+/**
+ * Suvorov - PFVICM 8.0.2
+ */
+public class Suvorov extends AdvancedRobot
+{
+	static final double PI = Math.PI;
+	public double absbearing;
+	static int FORWARD = 1;
+	public double firePower;
+	public double changehead, y, time, heading, speed, x, starthead, nexthead;
+	public double tx, ty;
+	public void run() {
+		setColors(Color.cyan,Color.green,Color.red);
+		setAdjustGunForRobotTurn(true);
+		setAdjustRadarForGunTurn(true);
+		do {
+			turnRadarLeft(Double.POSITIVE_INFINITY);
+		}
+		while(true);
+}
+	public void onScannedRobot(ScannedRobotEvent e) {
+		double distance = Math.random()*(Math.max(Math.max((getBattleFieldHeight()-getY()-20),(getBattleFieldWidth()-getX()-20)),(Math.max(getX(),getY()))));
+		if (getDistanceRemaining() == 0) { FORWARD = -FORWARD; setAhead(distance * FORWARD); }
+		setTurnRightRadians(e.getBearingRadians() + PI/2 - 0.5236 * FORWARD * (e.getDistance() &gt; 200 ? 1 : -1));
+		tx = getX()+Math.sin(absbearing)*e.getDistance();
+     	ty = getY()+Math.cos(absbearing)*e.getDistance();
+		speed = Math.abs(getVelocity());
+		starthead = getHeading();
+		nexthead = getHeading();
+		firePower = Math.min(3.0,getEnergy()/2);
+		doGun();
+		fire(firePower);
+	}	
+	public Point2D.Double guessPosition(double when) {
+    double diff = when - time;
+    double newX, newY;
+	double changehead = Math.abs(starthead - nexthead);
+    if (Math.abs(changehead) &gt; 0.00001) {
+        double radius = speed/changehead;
+        double tothead = diff * changehead;
+        newY = ty + (Math.sin(heading + tothead) * radius) - 
+                      (Math.sin(heading) * radius);
+        newX = tx + (Math.cos(heading) * radius) - 
+                      (Math.cos(heading + tothead) * radius);
+    }
+    else {
+        newY = ty + Math.cos(heading) * speed * diff;
+        newX = tx + Math.sin(heading) * speed * diff;
+    }
+    return new Point2D.Double(newX, newY);
+}
+	void doGun() {
+    	double time;
+    	double nextTime;
+    	Point2D.Double p;
+    	p = new Point2D.Double(tx, ty);
+    	for (int i = 0; i &lt; 10; i++){
+     	   nextTime = 
+    	Math.round((getRange(getX(),getY(),p.x,p.y)/(20-(3*firePower))));
+        	time = getTime() + nextTime;
+       		p = guessPosition(time);
+    	}
+    double gunOffset = getGunHeadingRadians() - 
+            (PI/2 - Math.atan2(p.y - getY(), p.x - getX()));
+   		 setTurnGunLeftRadians(normaliseBearing(gunOffset));
+	}
+
+	double normaliseBearing(double ang) {
+    	if (ang &gt; PI)
+        	ang -= 2*PI;
+    	if (ang &lt; -PI)
+    	    ang += 2*PI;
+    	return ang;
+	}
+
+	public double getRange(double x1,double y1, double x2,double y2) {
+    	double x = x2-x1;
+    	double y = y2-y1;
+    	double h = Math.sqrt( x*x + y*y );
+    	return h;	
+	}
+	public double absbearing(Point2D source, Point2D target) {
+		return Math.toDegrees(Math.atan2(target.getX() - source.getX(), target.getY() - source.getY()));
+	}
+}
+</pre>
+<hr noshade class=wikiline size=1>
+<p>
+Questions/Comments<a href="robowiki?action=edit&id=Suvorov/Comments" class=wikipageedit>?</a>:
+<p>
+<p>
+Well, you must have got rid of to much stuff to get it to compile. None of x, y, speed, heading, absbearing, changehead is given any value. Also you might want change in guessPosition x and y to tx and ty. -- <a href="robowiki?Florent" class=wikipagelink>Florent</a>
+<p>
+I think the problem is that you never set tx and ty properly in the scannedRobot method. In your scannedRobot method you have:
+<PRE >
+ <pre>double tx = getX()+Math.sin(absbearing)*e.getDistance();
+      double ty = getY()+Math.cos(absbearing)*e.getDistance();</pre>
+</PRE>
+<p>
+those values are only used within the scope of that method. I think you want to set the global variables tx, ty (which are later used in doGun()).
+<p>
+just replace the above lines with:
+<pre>tx = getX()+Math.sin(absbearing)*e.getDistance();
+     ty = getY()+Math.cos(absbearing)*e.getDistance();</pre>
+<p>
+There may be more problems, but that jumps out at me.
+<p>
+EDIT: I just looked through that code more carefully and there are definitely more problems. <a href="robowiki?Florent" class=wikipagelink>Florent</a> is right, all of those values need to be set in order for this to work.
+<p>
+--<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a>
+<p>
+Code above updated to current. Still doesn't work, fires due north. --<a href="robowiki?Pfvicm" class=wikipagelink>Pfvicm</a>
+<p>
+One quick remark: You never give <strong>absbearing</strong> a value, so it is always 0. In your scannedrobotevent it should be assigned the value <strong>get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>() + e.getBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a>()</strong> . If you just need a circular targeting routine, take a look at <a href="robowiki?WaveSurfingChallengeBotC" class=wikipagelink>WaveSurfingChallengeBotC</a>.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Thanks to all. Problem is not yet solved - he fires at angles between 0 and 90 - but I will inspect Bot C and and see what's missing from my routine. -- <a href="robowiki?Pfvicm" class=wikipagelink>Pfvicm</a>
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Suvorov" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Suvorov">View other revisions</a><br>Last edited May 10, 2006 23:51 EST by <a href="robowiki?PFVICM" title="ID 6941 from pool-141-157-101-11.balt.east.verizon.net">PFVICM</a> <a href="robowiki?action=browse&diff=1&id=Suvorov">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

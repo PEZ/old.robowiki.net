@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing AxialXForm - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Axial, XForm'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing AxialXForm</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="AxialXForm"  />
+<input type="hidden" name="oldtime" value="1147988804"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="1"  />
+<input type="hidden" name="captchaArg2" value="5"  />
+<input type="hidden" name="captchaOp" value="*"  />
+<input type="hidden" name="captchaId" value="225703881195"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">=== &lt;center&gt;&lt;font color=red&gt;Axial Transform&lt;/font&gt;&lt;/center&gt; ===
+
+----
+
+&#39;&#39;15th May 2004&#39;&#39;
+&lt;blockquote&gt;
+Hi,all! I am a noob around here and not that good at bots yet. So much for my introduction :p. Anyways i wanted to register at Robocode repository, but the controller.jsp page seems to have some problems. How can i contact the guys at robocode repository to convey this error? Unfortunately this was supposed to be the day i upload my first bot, well its not very great but still its my first and very own :). It uses a slightly different version of antigravity movement and i feel its more easier to implement than antigravity movement. It uses Standard Linear and Circular Targetting. I want to seriously improve the firing algorithm and i am seriously looking at the tips you guys have provided. I will be making it open source but i dunno an alternative place to upload the bot. Any pointers? -- [[AxialXForm]]
+&lt;/blockQuote&gt;
+
+
+&lt;i&gt;9th May 2004&lt;/i&gt;
+&lt;blockquote&gt;
+I have just Ventured into Robocodes and i have successfully created a small time and simple working bot which is working fine against the sample bots. I would venture into better bots in the future as i get time. I am just glad to see so many robocoders around. :) - [[AxialXForm]]
+
+&lt;u&gt;Added :Movement strategy (I am not sure if this is already used since it more or less resembles AntiGravity Movement)&lt;/u&gt;
+
+The idea is to assign each enemy with some energy values and think of them as some field emitting points. We have to determine the radius of this field using the relation that Radius is directly proportional to Field Strength. If our Bot is within this radius then we simply move back so as to get out of the radius.
+
+Advantage of this code :
+* Very simple to implement
+* Works well in a melee (but at robot battles with less than 3 robots might require some modifications)
+
+Disadvantage of this code :
+
+* Not that good with less than 3 robots
+* For some configurations the bot might just come in the firing range
+* One may have to add center and corner avoidance mechanism(which is simple if we consider the center and corners as enemies as well)
+&lt;/blockquote&gt;
+
+&#39;&#39;3rd May 2005&#39;&#39;
+&lt;blockquote&gt;
+Finally got some time, so i uploaded my two bots. Well its a noob&#39;s attempt at something different. As soon as i get more time, i am thinking of improving their firing strategies (currently they are just using linear and circular system taken directly from antigrav bot). Would like to have comments on my bots .. thank you :)
+
+[http://www.robocoderepository.com/BotDetail.jsp?id=2531 Bot1]
+[http://www.robocoderepository.com/BotDetail.jsp?id=2532 Bot2]
+- [[AxialXForm]]
+&lt;/blockquote&gt;
+----
+Welcome back (since this is your first update in almost a year ;-))
+
+By the way, Robocode Repository doesn&#39;t like you linking to their download pages, so you should link to the bot detail page (did it for you, and otherwise wiki-ised some of your html). -- [[Kawigi]]
+
+Welcome! I have taken a quick glance at the performance of your DefensiveBot, without looking at the code. First of all, I could not use your .jar file, maybe you use Java 1.5? After recompiling it (Java 1.4.2, jikes) I have the following remarks about your bot.
+* Sometimes it is turning left/right without actually moving. It gets hit a few times before it starts moving again.
+* A couple of times I saw it moving away from one bot right into a cluster of other bots. It seems that your &#39;awareness-radius&#39; is a bit too small.
+
+I just have some common tips for you at the moment:
+* make a testbed. Download some bots from the lower half of the meleeranking and test your changes against them. You can find their ID on the RoboRumble/MeleeParticipants page.
+* watch your bot. Does it behave as expected? If not, use some debugging (out.println) to find the cause.
+* read this wiki, don&#39;t hesitate to follow links that seem offtopic. There is a lot of information here, but sometimes it is hard to find. (tip: MeleeStrategy)
+* enter the competition. If you feel confident enough, just enter the competition by signing up on the RoboRumble/MeleeParticipants (and/or RoboRumble/Participants) page. It is preferred that your bot will run on 1.4.2 though.
+
+If you have any more specific questions, don&#39;t hesitate to ask them. And don&#39;t let a seemingly lack of progress discourage you, a breakthrough is always hidden behind the next corner.  -- [[GrubbmGait]]
+
+&lt;hr&gt;
+&#39;&#39;4th May 2005&#39;&#39;
+&lt;blockquote&gt;
+[[Kawigi]],&lt;br&gt;
+Thanks!! &lt;br&gt;
+I will remember that in future.Please dont mind if i dont update my wikiPage frequently, for u can be sure, i am smitten by the robocode bug but i just lack time in my hands now and then. :)&lt;br&gt;
+
+[[GrubbmGait]],&lt;br&gt;
+Thanks for trying out my bot.&lt;br&gt;&lt;br&gt;
+Quote : 
+&#39;&#39;Sometimes it is turning left/right without actually moving. It gets hit a few times before it starts moving again.&#39;&#39;&lt;br&gt;
+Thats expected because in my onHitByBulletEvent, i only ask the robot to turnLeft(abs_bearing)&lt;br&gt;&lt;br&gt;
+Quote : 
+&#39;&#39;A couple of times I saw it moving away from one bot right into a cluster of other bots. It seems that your &#39;awareness-radius&#39; is a bit too small.&#39;&#39;&lt;br&gt;
+That could happen if the cluster had a weak bot (i.e a bot with low totalEnergy). Note that the awareness radius is not associated with the bot but it is associated with the enemies , with each enemy having different awareness radius depending upon his energy. In DefensiveBot, radius is directly proportional to energy and in OffensiveBot, radius is inversely proportional to energy. (Thats the only difference between the two :) ). &lt;br&gt;
+&lt;br&gt;
+Thanks for the tips. I surely have downloaded bots off repository but could not find any ranking page(Thanks for that!). I will keep these things in mind when i work on the bot. Thanks again for everything.&lt;br&gt;
+&lt;br&gt;
+-- [[AxialXForm]]
+&lt;/blockquote&gt;
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 1 * 5 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that AxialXForm has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=AxialXForm">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

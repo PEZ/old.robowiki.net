@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>WeightClass - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Weight, Class'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=WeightClass">WeightClass</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Some hints about what to pay attention to when making small robots would be appreciated. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li> <a href="robowiki?MiniBots" class=wikipagelink>MiniBots</a> (codesize: &lt; 1500)
+<li> <a href="robowiki?MicroBots" class=wikipagelink>MicroBots</a> (codesize: &lt; 750)
+<li> <a href="robowiki?NanoBots" class=wikipagelink>NanoBots</a> (codesize: &lt; 250)
+<li> <a href="robowiki?MegaBots" class=wikipagelink>MegaBots</a> (codesize: sizes &gt;= 1500)
+<li> <a href="robowiki?PerceptualBots" class=wikipagelink>PerceptualBots</a> : Bots that do not store any information in-between turns.
+<li> <a href="robowiki?HaikuBots" class=wikipagelink>HaikuBots</a> (4 lines of code)
+<li> <a href="robowiki?SonnetBots" class=wikipagelink>SonnetBots</a> (14 lines of code)
+</UL>
+<p>
+Measure your bot's <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> with Christian Schnell's codesize tool <a rel="nofollow" href="http://user.cs.tu-berlin.de/~lulli/codesize/">http://user.cs.tu-berlin.de/~lulli/codesize/</a>
+<p>
+<hr noshade class=wikiline size=1>
+<u><b>Some general hints for making Micro and Mini bots.</b></u>
+<p>
+<UL >
+<li> Keep it simple. You can design a big bot with multiple firing strategies and movements, but you can't with that small bots. Just pick a good movement and a good gun and stick to it.
+</UL>
+<p>
+<UL >
+<li> Consider always the cost/benefit of adding aditional code. Avoid low value checks or precise calculations that will consume lots of code (you can live with a 5% failures). Some examples for this are variables initialization, some walls checks, some angle calculations, etc. 
+</UL>
+<p>
+<UL >
+<li> Don't get obsessed by size. First implement your bot, then reduce its code size. I easily reduce code size 40% to 50% after finishing the first implementation (altough it probably depends on how you code).
+</UL>
+<p>
+<UL >
+<li> Take advantage of the forums (specially <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a>). There are lots of posts about reducing codesize. Ask in the forums if you don't find the answer.
+</UL>
+<p>
+<u><b>Some tricks to make your bot smaller.</b></u>
+<p>
+<UL >
+<li> Avoid using "else" if possible.
+</UL><PRE>
+ if (condition) a = b; else a = c; &lt;- Is bigger
+ a = c; if (condition) a = b; &lt;- Is smaller
+</PRE>
+<p>
+<UL >
+<li> Make variables static when possible. They take less space.
+</UL>
+<p>
+<UL >
+<li> Assign the variables inside the formula if possible.
+</UL><PRE>
+ a = b; c = 2 * a; &lt;- Is bigger
+ c = 2 * (a=b); &lt;- Is smaller
+</PRE>
+<p>
+<UL >
+<li> Clean your code when you finish your bot (make sure there are not unused variables, etc.)
+</UL>
+<p>
+<UL >
+<li> Calling a method uses more space than using a variable. If you are going to use it many times, assign the result to a variable and use it instead of the method. Also, parameters consume lots of space. Try to reduce them (a good trick is to use global variables instead).
+</UL>
+<p>
+<p>
+--<a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+<p>
+<a rel="nofollow" href="http://developers.sun.com/techtopics/mobility/midp/ttips/jax/">[Jax]</a> might be able to reduce your size even more. I'm not into mini/micro/nano bots myself and didn't test it, but maybe some of you guys want to try it ... -- <a href="robowiki?FnH" class=wikipagelink>FnH</a>
+<p>
+If you're coding i <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a> then I think your best bet is to keep your code clear and understandable. It doesn't really cost that many bytes, but it can gain you bytes because you see better ways to do things. The same things might not be true for micros and certainly not nanos. But in a mini you can afford some overhead and you might have good use for it. It's not true that you can't fit multiple guns and/or movements in a mini. Look at <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> which has two movements and a killer gun to go with them. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Not just minis, nanos have been made with multiple movements and micros with multiple guns. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+<p>
+With the size that bots are getting (I mean thier getting HUGE), perhaps we should have a even bigger category for them, such that place a upper limit (myself I think about 4500 to 6000 codesize(but i'm not sure of the size of the largest bots)) on what a Megabot is and make a new category (gigabot, superbot, terabot, exabot). But then again these just might be the categories for historical reasons, i'm not sure (but its not like i'm proposing to change the existing ones). -- Chase-san
+<p>
+I agree with Kuuran.  The nano version of <a href="robowiki?Squirrel" class=wikipagelink>Squirrel</a> has 2 movements (one anti-HOT and one anti-LT/CT) and 2 guns (LT and Random). --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=WeightClass" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=WeightClass">View other revisions</a><br>Last edited January 20, 2007 20:15 EST by bas2-toronto47-1242398994.dsl.bell.ca <a href="robowiki?action=browse&diff=1&id=WeightClass">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

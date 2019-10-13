@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Uba - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Uba'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Uba">Uba</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H3>Bot Name</H3>
+
+Uba
+<p>
+<H4>Author</H4>
+
+<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+<H4>Extends</H4>
+
+<a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>
+<p>
+<H4>What's special about it?</H4>
+
+I'll get back to you on this once there's something special about it.
+<p>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+Uba Micro - <a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=2824">http://www.robocoderepository.com/BotDetail.jsp?id=2824</a>
+<p>
+Uba - <a href="robowiki?UbaSource" class=wikipagelink>UbaSource</a>
+<p>
+<H4>How competitive is it?</H4>
+
+Not very -- yet!
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+It sidles closer to the enemy, but switches direction completely randomly.  This means that <a href="robowiki?GuessFactors" class=wikipagelink>GuessFactors</a> guns don't have any basis to use against it!  BWAHAHA!  It isn't as good as wavesurfing, but it is this simple:
+<pre>
+if (getDistanceRemaining() == 0) {FORWARD =-FORWARD;
+setAhead(185 * Math.random() * FORWARD);}
+setTurnRightRadians(e.getBearingRadians()
++Math.PI/2-0.5236*FORWARD
+*(e.getDistance()&gt;200?1:-1));
+</pre>
+It is almost the same as <a href="robowiki?MicroAspid" class=wikipagelink>MicroAspid</a>'s, except I put in the randominizing.
+<p>
+<H4>How does it fire?</H4>
+
+GF and linear
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+Well, it moves.  And it moves randomly to throw off really complicated guns.  Ha ha.
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+The movement is different
+<p>
+<H4>How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a>?</H4>
+
+The enemy with lower energy
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+GF stuff.
+<p>
+<H4>Where did you get the name?</H4>
+
+It is a name I came up with in 4th or 5th grade and I still like it.
+<p>
+<H4>Can I use your code?</H4>
+
+Yes!  I encourage it!  But please give credit to me if you copy &amp; paste.
+<p>
+<H4>What's next for your robot?</H4>
+
+fixing melee movement!  It is REALLY BAD!  The samples even kill it!
+<p>
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+not yet
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+<a href="robowiki?CrazyTracker" class=wikipagelink>CrazyTracker</a>
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+Is there a wiki page that has a tutorial on how to use JAVA to save information between matches?  --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+Martin posted some code for this purpose under <a href="robowiki?Ugluk/Persistence" class=wikipagelink>Ugluk/Persistence</a>. --<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a>
+<p>
+I get an error every melee battle I do with Uba.  Could someone find out what is wrong?  My source code is at <a href="robowiki?UbaSource" class=wikipagelink>UbaSource</a>. --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+Could you copy/paste the error message from the console? That would make it a lot easier to diagnose. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+It's okay, I fixed the error.  It was from not deleting the custom event! --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+20060217: This will be a quite irritating mini in <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a>, because it fights close. In melee it has no chance, because it will lock the radar and forget all other enemies. You are using both radians and degrees, better is to use one of them and stick to it. -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+The bot really isn't for melee, I just threw in the melee options in case my little brother throws my bot into a melee battle on his computer ;)   However, I am having problems with my VG array!  It always shoots with the <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> gun and never with the Linear gun, even when the LT gun is better.  For example, I know that the LT gun hits Walls more often than the GF gun, but Uba continues to use the GF.  WHY!?!?!?!
+<p>
+This looks like a problem:
+<pre>
+                if(type == "gf" &amp;&amp; getOthers() == 1)
+                t.gfhit++;
+                if(type == "lt" &amp;&amp; getOthers() == 1)
+                t.lthit++;
+</pre>
+You should use type.equals("gf") instead, because what you have there doesn't work the way you want it to. (The "==" operator in Java actually tests that two object references are pointing to the exact same object; only numbers (and maybe characters?) work with "==" for the actual equality of values.) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Small remark: when you fire with LT, you printout GF  ;-)    -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<pre>
+	if(getOthers() == 1 &amp;&amp; t.gfhit &gt;= t.lthit){
+	setTurnGunRightRadians(Utils.normalRelativeAngle(
+		enemyAbsoluteBearing - getGunHeadingRadians()
+		+ wave.wBearingDirection * (mostVisited - MIDDLE_FACTOR)));		
+===&gt; fire GF    out.println("GF");
+	}
+	if(getOthers() &gt; 1 || t.gfhit &lt; t.lthit){
+	setTurnGunRightRadians(Utils.normalRelativeAngle(theta
+		                        - getGunHeadingRadians()));
+===&gt; fire LT	out.println("GF");
+	}
+</pre>
+<p>
+I know, I just can't figure out why!!  Also: I tried your idea, <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>, but it didn't help. --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+Well, no matter what else you did, your hit counts would never increment if you didn't make the change I mentioned =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Uba" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Uba">View other revisions</a><br>Last edited May 4, 2006 22:15 EST by <a href="robowiki?GrubbmGait" title="ID 6861 from ip219-32-173-82.dyndsl.versatel.nl">GrubbmGait</a> <a href="robowiki?action=browse&diff=1&id=Uba">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

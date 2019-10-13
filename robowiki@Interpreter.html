@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Interpreter - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Interpreter'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Interpreter">Interpreter</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H4>The Crazy Idea</H4>
+
+I (<a href="robowiki?Strider" class=wikipagelink>Strider</a>) had a crazy idea I just had to try to implement. I got it when working on my nanobots. It's a way to cheat codesize.jar and fit more advanced code into the bot than would otherwise be possible.
+Because only bytecode counts and strings in the class file are free I though that it must be possible to put the actual code into strings and then execute them using an interpreter.
+<p>
+I have implemented an interpreter for a custom "bytecode". The interpreter is just over 700 bytes of bytecode so it fits in a microbot. I think java put a limit of 64Kb on strings so thats the limit of how advanced the bot can be. Well, the interpreted language puts a lot of constraints on what can be done. 
+<p>
+<H4>Features</H4>
+
+<p>
+<UL >
+<li> Fixed size stack of doubles
+<li> Fixed size static heap of doubles
+<li> Basic stack operations: push, dup, drop, swap, pick, etc.
+<li> Arithmetic operations: subtraction, multiplication and less-than-zero
+<li> Heap operations: load and store.
+<li> Branching: conditional and unconditional jump, subroutine call and return.
+<li> Java interface: Ability to call getters and setters on the robot and on the event.
+</UL>
+<p>
+The custom bytecode looks a bit like <a rel="nofollow" href="http://quadium.net/funge/spec98.html">[funge]</a>. It is hard to write, harder to read and probably impossible to debug, so don't expect any killer bot comming out of this. =)
+<p>
+<H4>The Code</H4>
+
+You can get the code here: <a href="robowiki?Interpreter/Code" class=wikipagelink>/Code</a>
+<p>
+Size optimizations for the interpreter are very welcome.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<H4>Comments</H4>
+
+<p>
+Have anybody tried something like this before? -- <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+<p>
+<hr noshade class=wikiline size=1>
+Way cool that interpreter of yours. When will you release it? I'd like to try build a bot using it. Since I used to code in PostScript<a href="robowiki?action=edit&id=PostScript" class=wikipageedit>?</a> some years ago I might have a head start with it. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+The code is here now! -- <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Actually, I'm looking at a similar, smaller system for my next bot.  What I was making, though, was a command queue, which would include commands like ahead(x), fire(y), turnRight(z).  The idea was to set up an exact future for my bot.  --<a href="robowiki?Goofy" class=wikipagelink>Goofy</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+I just had the same idea and implemented an interpreter robot which fits into a <a href="robowiki?MicroBot" class=wikipagelink>MicroBot</a> and can do theoretical everything a <a href="robowiki?MegaBot" class=wikipagelink>MegaBot</a> can. I saw how you access the setters and getters - very flexible and small. We should take a look at the java API, perhaps java byte code can be executed from an byte array ( converted from String at runtime ) without SecurityException? If not, perhaps classes can be instantiated from a string ( especially Math and Streams ) --<a href="robowiki?Sin_Varg" class=wikipagelink>Sin Varg</a>
+<p>
+My first thought would be the reflection API... --<a href="robowiki?Alphax" class=wikipagelink>Alphax</a>
+<p>
+You need a class loader to load from a byte array, and the security manager won't let you make your own class loader. So you have to interpret your byte or string manually. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+I have implemented a nano interpreter which runs a bit slowly and "requires" a compiler. The source is available here: <a href="robowiki?Interpreter/NanoInterpreter" class=wikipagelink>Interpreter/NanoInterpreter</a>. Comments? -- <a href="robowiki?Kinsen" class=wikipagelink>Kinsen</a>
+<p>
+Uh oh.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+You should get rid of the quotation marks. -- <a href="robowiki?Zian" class=wikipagelink>Zian</a>
+<p>
+Has anyone tried writing a compiler to generate the shrunken bytecode String (besides <a href="robowiki?Kinsen" class=wikipagelink>Kinsen</a> and I)? -- <a href="robowiki?Zian" class=wikipagelink>Zian</a>
+<p>
+Not in my time here.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Interpreter" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Interpreter">View other revisions</a><br>Last edited November 12, 2007 3:37 EST by 24-247-120-95.dhcp.klmz.mi.charter.com <a href="robowiki?action=browse&diff=1&id=Interpreter">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

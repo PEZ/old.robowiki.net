@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Mer - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Mer'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Mer">Mer</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H4>Author</H4>
+
+<a href="robowiki?Strider" class=wikipagelink>Strider</a>
+<p>
+<H4>What's special about it?</H4>
+
+It's a <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> <a href="robowiki?NanoBot" class=wikipagelink>NanoBot</a> with a hybrid of random and statistical targeting.
+<p>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=2360">http://www.robocoderepository.com/BotDetail.jsp?id=2360</a>
+<p>
+<H4>How competitive is it?</H4>
+
+I don't know yet. Probably not so good.
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+It orbits the enemy with periodical direction changes.
+<p>
+<H4>How does it fire?</H4>
+
+It fires at a random guessfactor between -1 and 1, but the distribution is adjusted by the success of the fired bullets.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+It saves the statistics between rounds.
+<p>
+<H4>Where did you get the name?</H4>
+
+Since my first public bot was named <a href="robowiki?Festis" class=wikipagelink>Festis</a> after a beverage, I though I'd stick to the theme.
+Mer (swedish for 'more') is a Swedish beverage "too good to be carbonated".
+<p>
+<H4>Can I use your code?</H4>
+
+Sure! <a href="robowiki?Mer/Code" class=wikipagelink>/Code</a>
+<p>
+<H4>What's next for your robot?</H4>
+
+Tweeking mostly.
+<p>
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+None yet!
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+<a href="robowiki?Festis" class=wikipagelink>Festis</a>, I started with the same codebase but allmost everything has been rewritten.
+<p>
+<H4>History</H4>
+
+<p>
+<strong>V 1.1.0</strong> - Sep 16 2004 - <strong>?</strong> (General) <strong>?</strong> (Nano) - 246 bytes
+<DL >
+<dt><dd>New smaller movement code to make room for future gun tweeks.
+</DL>
+<p>
+<strong>V 1.0.3</strong> - Sep 2 2004 - <strong>1540</strong> (General) <strong>1633</strong> (Nano) - 249 bytes
+<DL >
+<dt><dd>Testing the oposite of 1.0.2. Now adding 5 to the stats for each hit and initializing the bins to 1.
+<dt><dd>Never expected it to make such a difference. I must experiment more with the stat weighting.
+</DL>
+<p>
+<strong>V 1.0.2</strong> - Sep 2 2004 - <strong>1447</strong> (General) <strong>1536</strong> (Nano) - 249 bytes
+<DL >
+<dt><dd>A small test after the discussion with <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> below. Initializes the bins with 5 instead of 1 to shoot more random and less statistical.
+<dt><dd>A little bit better against a few bots (surfers), a lot worse against most bots. Pretty much expected drop in the ranking.
+</DL>
+<p>
+<strong>V 1.0.1</strong> - Aug 29 2004 - <strong>1504</strong> (General) <strong>1587</strong> (Nano) - 249 bytes
+<DL >
+<dt><dd>Fire power 2.0.
+</DL>
+<p>
+<strong>V 1.0.0</strong> - Aug 29 2004 - <strong>1487</strong> (General) <strong>1566</strong> (Nano) - 249 bytes
+<DL >
+<dt><dd>First release.
+</DL>
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+<p>
+Are you sure you ever change guess factors you shoot at? It seems that <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a>'s surfing works a bit too well against <a href="robowiki?Mer" class=wikipagelink>Mer</a>... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yes, Mer does changes guess factors. Actually it chooses a new one at random for each bullet. But the probabilities for different factors are not the same, they are propotional to the number if successful shots there. It only collects stats on real bullets using onBulletHit<a href="robowiki?action=edit&id=BulletHit" class=wikipageedit>?</a> (I could not fit waves into a nano) so as soon as it gets a spike it probably have a hard time to learn that CC is now avoiding that GF. I hope that explanation made some sense. -- <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+<p>
+Indeed. But if it continues to fire wherever its first hit was, which it seems to be doing. Then I would say the mechanism doesn't really work for its purpose (which I assume is to hit your opponent better). Like if you would happen to hit <a href="robowiki?Walls" class=wikipagelink>Walls</a> when it is in the corner, you would maybe never see that most of the time it travels near GF1. Maybe your weighting for probabilities is a bit too strong? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I initialize all bins to 1 hit so even agains <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a> it would fire at the other bins with the probability 1/(BINS+hits) which will always be nonzero. My argument was that most of its opponents will not be using adaptive movement so if it finds a spike in the graph that spike will continue to be valid, but it still has the chanse of finding another spike if the first was just luck. Obviously this fails misserably against surfers that adapts too quickly.
+<p>
+I uncommented the debugging code in Mer and watched a 35 round match against CC. Mer lost 804 to 3958, but it won two rounds (#30 &amp; #32). This is what CC had to say about the match:
+<PRE >
+ range hits taken: 62 (average / round: 1,824)
+ range hits given: 195 (average / round: 5,735)
+</PRE>
+And this is Mer's view of CC (from GF -1 to 1):
+<PRE >
+ ##
+ ##
+ #
+ ####
+ ###
+ ####
+ ##
+ #
+ #####
+ #
+ ###
+ ##
+ #########
+ ####
+ ####
+ ###
+ ##########
+ ########
+ ##
+ #################
+ ####
+</PRE>
+It was not so fun to see CC hit Mer constantly while dodging Mer's bullets with ease. Luckily they are not competing in the same weight class and I don't think there are any nano wave surfers.
+-- <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+<p>
+Hmmm. That's better results for Mer than what I got in my tests. But I used CC 1.9.8.01, using .02 seems to degrade CC in this measure. Interesting. In any case, hitting CC with 1.8 hits / round isn't bad for a nano stat gun. I seriously doubt we will ever see a nano <a href="robowiki?WaveSurfer" class=wikipagelink>WaveSurfer</a>. It was extremely hard work fitting it in a mini and going micro might be possible even though I will not try it until I feel really strong. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Isn't rz.<a href="robowiki?Artist" class=wikipagelink>Artist</a> a micro-wave-surfer?  -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Indeed! I had no idea. Not a bad micro rating using a random gun! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Mer" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Mer">View other revisions</a><br>Last edited September 15, 2004 22:27 EST by <a href="robowiki?Strider" title="ID 3440 from strider.campus.luth.se">Strider</a> <a href="robowiki?action=browse&diff=1&id=Mer">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>FunkyLeech - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Funky, Leech'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=FunkyLeech">FunkyLeech</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>A <a href="robowiki?NanoBot" class=wikipagelink>NanoBot</a> by <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>.  It's what you would get if you combined <a href="robowiki?FurryLeech" class=wikipagelink>FurryLeech</a> and <a href="robowiki?FunkyChicken" class=wikipagelink>FunkyChicken</a> into one bot.  From my experience, a nano needs superb movement to get past the likes of <a href="robowiki?FunkyChicken" class=wikipagelink>FunkyChicken</a> and <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a>, and such a superb nano mover will likely be meat to Evil Simon's <a href="robowiki?FurryLeech" class=wikipagelink>FurryLeech</a>.  Of course, on the negative side, <a href="robowiki?FunkyLeech" class=wikipagelink>FunkyLeech</a>'s movement will be terrible against robots with inferior movement.
+<p>
+<H4>What's special about it?</H4>
+
+It has possibly the most accurate pattern-matcher (except maybe Kakuru's) ever crammed into a nano, AND it mirrors its opponent's movement (pretty impressively, actually).  And it's still just 247 bytes.
+<p>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<p>
+<a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=1617">http://www.robocoderepository.com/BotDetail.jsp?id=1617</a>
+<p>
+<H4>How competitive is it?</H4>
+
+<p>
+Well, that's a good question.  If your movement is better than your gun, you have a good shot against this robot.  It does about as well against bad nanos as against good nanos, in general it seems to do even better against nanos that <a href="robowiki?FunkyChicken" class=wikipagelink>FunkyChicken</a> has problems with (the dev version, anyways).  And it's one of the best nanos there are against <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a>.
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+<p>
+It attempts to mirror it's opponent's movement relative to itself.  This can actually be very entertaining to watch, especially against robots with very distinct movements.  It doesn't, however reflect it's opponent's movement across an axis or a point - it merely goes toward or away from the enemy at the same angle as the enemy is doing to it.  This makes it more likely to hit walls, but it shows a more true imitation than <a href="robowiki?FurryLeech" class=wikipagelink>FurryLeech</a> does by going to a reflection point.  Try it against any of the sample bots (particularly <a href="robowiki?Walls" class=wikipagelink>Walls</a>, <a href="robowiki?Fire" class=wikipagelink>Fire</a>, or <a href="robowiki?MyFirstRobot" class=wikipagelink>MyFirstRobot</a>), or against <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> or <a href="robowiki?Tron" class=wikipagelink>Tron</a> for a real show.  You'll be able to see it moving like any of these robots, it really works!  And it's like two lines of code!
+<p>
+<H4>How does it fire?</H4>
+
+<p>
+A symbolic pattern-matcher.  I've messed around with <a href="robowiki?FunkyChicken" class=wikipagelink>FunkyChicken</a>'s gun a little more.  It still inserts new stuff onto the front of the pattern, but now it uses a StringBuffer<a href="robowiki?action=edit&id=StringBuffer" class=wikipageedit>?</a>.  And, yes, <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, I convert the StringBuffer<a href="robowiki?action=edit&id=StringBuffer" class=wikipageedit>?</a> into a String before calling indexOf, just for you.
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+<p>
+Relies on its opponent to dodge for it.  If I didn't run into walls, I suspect this robot would rock against <a href="robowiki?GlowBlowAPM" class=wikipagelink>GlowBlowAPM</a>...
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+<p>
+Not sure what it will do in Melee.  I suspect that due to its radar system's tendency to usually lock on somewhere, it is not likely to be the worst melee robot of all time, like <a href="robowiki?FurryLeech" class=wikipagelink>FurryLeech</a>.
+<p>
+<H4>How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a>?</H4>
+
+<p>
+No such code in this nano...
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+<p>
+Saves its pattern buffer between rounds.
+<p>
+<H4>Where did you get the name?</H4>
+
+<p>
+Leechy movement in <a href="robowiki?FunkyChicken" class=wikipagelink>FunkyChicken</a>.  In reality, I was playing with the idea of mirroring lateral movement in <a href="robowiki?FunkyChicken" class=wikipagelink>FunkyChicken</a>, and then I decided to see what it looked like against <a href="robowiki?Tron" class=wikipagelink>Tron</a> (suspecting correctly that it would go slower when <a href="robowiki?Tron" class=wikipagelink>Tron</a> was going at a sharper angle).  So I decided to figure out a way to make it actually look like <a href="robowiki?Tron" class=wikipagelink>Tron</a> when it was fighting it.  And, amazingly, it works, and it's pretty true to it.
+<p>
+<H4>Can I use your code?</H4>
+
+<p>
+lol, go for it if you want.  But open source your bot if you use the Pattern-matcher, or at least send me a copy of the code, so I can see how you used it.  The mirroring code isn't quite as dear to me.
+<p>
+<H4>What's next for your robot?</H4>
+
+<p>
+Eh, don't know.  While this may be competitive on the nano-scale, it's more of a novelty bot than anything.
+<p>
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+<p>
+<a href="robowiki?Tron" class=wikipagelink>Tron</a>!!! It will beat <a href="robowiki?Tron" class=wikipagelink>Tron</a>!!!  (j/k, it will never be able to beat Tron)
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+<p>
+<a href="robowiki?FunkyChicken" class=wikipagelink>FunkyChicken</a>'s aiming code (the dev version's), and the movement is conceptually the same idea as <a href="robowiki?FurryLeech" class=wikipagelink>FurryLeech</a> and <a href="robowiki?Parakeet" class=wikipagelink>Parakeet</a>.
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=FunkyLeech" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=FunkyLeech">View other revisions</a><br>Last edited August 5, 2003 6:50 EST by <a href="robowiki?Kawigi" title="ID 1125 from evrtwa1-ar18-4-41-095-057.evrtwa1.dsl-verizon.net">Kawigi</a> <a href="robowiki?action=browse&diff=1&id=FunkyLeech">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>FoldedPatternMatcher - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Folded, Pattern, Matcher'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=FoldedPatternMatcher">FoldedPatternMatcher</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I like the idea of <a href="robowiki?PatternMatching" class=wikipagelink>pattern matching</a> but was afraid of performance issues. <a href="robowiki?SymbolicPatternMatching" class=wikipagelink>Symbolic pattern matchers</a> get
+around some of these issues by using optimized Java string libraries. Still, there's only so much a 
+<a rel="nofollow" href="http://www-igm.univ-mlv.fr/~lecroq/string/node14.html">[Boyers-Moore algorithm]</a> or regular expression parser can do. If you're interested in checking patterns of
+many sizes, Robocode <b>will</b> slow down. Even if it works, the resulting pattern matcher might not work in a <a href="robowiki?VirtualGuns" class=wikipagelink>Virtual Gun</a> array.
+<p>
+An optimized algorithm came to me while I was showering before work:
+<p>
+Imagine a symbolic pattern matcher with a six character alphabet. A typical implementation might store its history in a string like so:
+<p>
+<pre>
+Character
+Index-&gt;0000000000111111111122222222223333
+       0123456789012345678901234567890123
+       ||||||||||||||||||||||||||||||||||
+       BFFADEDCEFBEDADCFCCFEEADDEBFACCEEA &lt;-New characters appended here.
+</pre>
+<p>
+These strings are best searched using Java string libraries.
+<p>
+Now imagine a "folded" string that is folded at each changed symbol. Besides characters linked in a string, identical symbols could be linked one to the next using a linked list or similar data structure like so:
+<p>
+<pre>
+Character
+Index-&gt;0000000000111111111122222222223333
+       0123456789012345678901234567890123
+       ||||||||||||||||||||||||||||||||||
+          A&lt;--------A&lt;-------A&lt;----A&lt;---A&lt;-A index
+       B&lt;--------B&lt;--------------B&lt;--------B index
+              C&lt;------C&lt;CC&lt;---------CC&lt;----C index
+           D&lt;D&lt;----D&lt;D&lt;-------DD&lt;----------D index
+            E&lt;-E&lt;-E&lt;-------EE&lt;--E&lt;----EE&lt;--E index
+        FF&lt;-----F&lt;-----F&lt;-F&lt;------F&lt;-------F index
+                                         ^
+                                         |
+                                         New characters appended here.
+</pre>
+<p>
+To append the next character (I'll say 'A'):
+<p>
+<UL >
+<li>Add it to the string (or other data structure) just like you would in flat pattern matching.
+<li>Create a reference from your new 'A' to the latest 'A' in the A index list.
+<li>Point the A index list reference at your new 'A'.
+</UL>
+<p>
+Now you're ready to match a pattern:
+<p>
+<UL >
+<li>Take the first character in your recent pattern. In this case, the 'A' at index 33.
+<li>Follow its index reference directly to the next 'A' in your string. In this case, the 'A' at index 28. (Interesting note: If there were no matches, you'd know immediately because the A index reference would be null.)
+<li>Make sure you have a reference to A33 and A28
+<li>Use these references to look one character deeper in the pattern and history. The character before A33 is E32 and the character before A28 is F27 so there's no match. Our first attempt yields a match only one character deep.
+<li>Now repeat the process.
+<li>Your pattern starts at A33.
+<li>Follow your 'A' index reference to the 'A' at 22.
+<li>Look a character deeper in pattern and history. The character before A33 is E32 and the character before A22 is E21 so we have a two-character match.
+<li>Look a character deeper. E31 precedes E32 and E20 precedes E21 so we have a three-character match.
+<li>One deeper. C30 precedes E31 and F19 precedes E20 for no match.
+<li>Repeat with the next 'A' index ...
+</UL>
+<p>
+There are two nice outcomes from this approach. First, it's fast. Most pattern matching algorithms aren't aware of their inputs before they receive them so they can't take advantage of indexing until they've already passed through the pattern and history at least once. We get around this by indexing as the string is built. Second, you don't have to guess at the length of your maximum match. The algorithm explores the absolute depth of every existing one-character match.
+<p>
+I've included a prototype implementation below. It comes with no guarantees. There are more than a few things to iron out. Namely:
+<p>
+<OL >
+<li>It currently uses my own strongly-typed collections. Java linked lists, array lists, etc, might work just as well and be easier to manage.
+<li>It doesn't sense when a projected destination is outside the battlefield.
+<li>It contains round breaks but doesn't do anything with them. A pattern match might project into the next round.
+<li>There's no memory management. The longer it runs, the more it steals.
+<li>Since its fast, it makes sense to crunch some stats like <a href="robowiki?TronsGun" class=wikipagelink>TronsGun</a> when a deep match isn't found. (Which happens a lot.)
+</OL>
+<p>
+Feel free to use and improve the code but please return the results to the wiki. Cheers. --<a href="robowiki?Corbos" class=wikipagelink>Corbos</a>
+<p>
+<pre>
+import java.awt.geom.Point2D;
+
+public class FoldedPatternMatcher {
+	
+	private PatternNode[] _nodeIndexes;
+	private PatternNode _head;
+	private int _scanCount = 0;
+	final double TEN_DEGREES = 10 * Math.PI / 180;
+	final double TWENTY_DEGREES = TEN_DEGREES * 2;
+	final char BREAK_SCAN = '\uffff';
+	
+	public FoldedPatternMatcher(){
+		_nodeIndexes = new PatternNode[512];
+	}
+	
+	public void record(double velocity, double headingDelta){
+		int index = (((int)((velocity + 8) * 15 / 16) &lt;&lt; 5) | ((int)((headingDelta + TEN_DEGREES) * 31 / TWENTY_DEGREES)));
+		PatternNode node = new PatternNode((char)index, _scanCount++);
+		insert(node);
+		node.IndexRef = _nodeIndexes[index];
+		_nodeIndexes[index] = node;
+	}
+	
+	public void insertBreak(){
+		insert(new PatternNode(BREAK_SCAN, _scanCount++));
+	}
+	
+	private void insert(PatternNode node){
+		node.SequenceRef = _head;
+		_head = node;
+		if(node.SequenceRef != null){
+			node.SequenceRef.ReverseSequenceRef = node;
+		}
+	}
+	
+	public Point2D.Double project(Point2D.Double enemyLocation, double currentHeading, double bulletVelocity, Point2D.Double robotLocation){
+		
+		Point2D.Double nextPosition = null;
+		PatternNode indexSymbol, cursor;
+		PatternNode lastSymbol = _head;
+		PatternNode bestSymbol = null;
+		indexSymbol = _head.IndexRef;
+		int depth;
+		int bestDepth = 0;
+		
+		while(indexSymbol != null &amp;&amp; lastSymbol.Index - indexSymbol.Index &lt; 55000){
+			
+			if(lastSymbol.Index - indexSymbol.Index &gt; 20){
+				
+				cursor = indexSymbol;
+				depth = 0;
+				
+				while(lastSymbol != null &amp;&amp; cursor != null &amp;&amp; lastSymbol.Symbol == cursor.Symbol &amp;&amp; depth &lt; 125){
+					lastSymbol = lastSymbol.SequenceRef;
+					cursor = cursor.SequenceRef;
+					depth++;
+				}
+				
+				if(depth &gt;= bestDepth){
+					bestSymbol = indexSymbol;
+					bestDepth = depth;
+				}
+			}
+			
+			lastSymbol = _head;
+			indexSymbol = indexSymbol.IndexRef;
+		}
+		
+		if(bestSymbol != null){
+			double projectedTime = 0;
+			double enemyX = enemyLocation.x;
+			double enemyY = enemyLocation.y;
+			bestSymbol = bestSymbol.ReverseSequenceRef;
+			while(Point2D.distance(robotLocation.x, robotLocation.y, enemyX, enemyY) &gt; projectedTime * bulletVelocity &amp;&amp; bestSymbol != null){
+				currentHeading += bestSymbol.getHeading();
+				enemyX += Math.sin(currentHeading) * bestSymbol.getVelocity();
+				enemyY += Math.cos(currentHeading) * bestSymbol.getVelocity();
+				bestSymbol = bestSymbol.ReverseSequenceRef;
+				projectedTime++;
+			}
+			nextPosition = new Point2D.Double(enemyX, enemyY);
+		}
+		return nextPosition;
+	}
+	
+	class PatternNode{
+		
+		public PatternNode IndexRef;
+		public PatternNode SequenceRef;
+		public PatternNode ReverseSequenceRef;
+		public char Symbol;
+		public int Index;
+		
+		public PatternNode(char s, int index){
+			Symbol = s;
+			Index = index;
+		}
+		
+		public double getVelocity(){
+			int i = (int)Symbol;
+			i = i &gt;&gt; 5;
+			return (((double)i) * 16 / 15) - 8;
+		}
+		
+		public double getHeading(){
+			int i = (int)Symbol;
+			i = i &amp; 31;
+			return (((double)i) * TWENTY_DEGREES / 31) - TEN_DEGREES;
+		}
+	}
+
+}
+</pre>
+<p>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Cool idea! I like it when people publish their brainstorms like you just did. -- <a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+I've read the text a few times now. This seems very interesting, but it's somehow elusive for me yet. Can you provide some more wordings on how you do the match? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Sorry about my clarity. I was in a hurry to get the idea down and realized my explanation was lacking. I rewrote a chunk of the text above. Take a look and see if it makes more sense.  --<a href="robowiki?Corbos" class=wikipagelink>Corbos</a>
+<p>
+Thanks! It now makes sense to me. It even itches some in my coding fingers. =) Seriously, I might try do something with this. Some of my PM experiments have been put to a halt because of performance issues. This might be just what the doctor ordered! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Hmm, your explination doesn't really make sense to me, but then again I had trouble wrapping my head around the workings of dynamic clustering there for awhile. I think I should look at more normal pattern matching. -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+My explanation might be a bit unintuitive (given that a smarty like <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> asked for clarification). I'm not the best at explaining but it helps if you're comfortable with some of the <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> metaphors/ideas:
+<p>
+Frame == a snapshot of your opponent's state(velocity, heading, deltas, etc...) at a specific point in time.<br>
+Movie == a collection of Frames stored in sequence.
+<p>
+Standard pattern matching takes the last few real-world frames and matches them against the closest set of historical frames and then "plays the movie forward" from the match (since you've gathered everything you need to reconstruct movement) until the estimated bullet impact. From that it determines a bearing and aims.
+<p>
+Symbolic pattern matching (<a href="robowiki?SymbolicPatternMatcher" class=wikipagelink>SymbolicPatternMatcher</a>) translates one or more continuous values from each frame, like doubles or floats, to discrete values. Usually the values are part of some symbol alphabet so each frame is simply a symbol (character). It's kind of like segmentation: 0-2 == 'A', 2-4 == 'B', 4-6 == 'C', or whatever. Then, during the matching phase, you don't have to use an error threshold to decide if you have a match or not. You simply check if symbols match. A nice side-effect is there's been a lot written about pattern matching in strings, which your movie is now, effectively: <a rel="nofollow" href="http://www-igm.univ-mlv.fr/~lecroq/string/">http://www-igm.univ-mlv.fr/~lecroq/string/</a>.
+<p>
+Folded pattern matching is simply folding your movie so every 'A' lines up with or points to the last 'A' witnessed, every 'B' points to the last 'B' witnessed, etc. They're indexed. If you see a new 'A', you don't have to search your string for it. Instead, you just follow the 'A' index and see if any exist. Saves lots of time.  --<a href="robowiki?Corbos" class=wikipagelink>Corbos</a>
+<p>
+I think I got it, each A has a index to the last A before it, and such that you can just suffle backward through the list? -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+AH HA, I understand this perfectly now, I can't believe I was so dense. By having references to the last of the letter you can more easily compare forward and backward from those positions to get a quicker match, instead of having to scan through the entire list looking for the positions then scanning. This gives me an idea to make a Folded Dynamic Clustering gun, which would be complex (as there is so much viaration, but you could "cluster" simular entries =) ). In fact if I have the time, I just go ahead and make this (as soon as I can figure out a good way to cluster simular entries without diffusing to much and just having one big cluster). --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+You might simply run out of memory if you tried to apply this concept to a <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> gun. Also, you might want to look into <a rel="nofollow" href="http://en.wikipedia.org/wiki/K-means_clustering">[K-means clustering]</a>, the idea that <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> is based off of, to get some ideas. Frankly, I'm not really sure how you could "fold" a DC system in the same way - the DC system is already kind of a simpler version of K-means. But good luck =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Yah, I thought it over for awhile, I figured you would require static cluster reference points to allow a folded DC system, which is nothing more then a gf based index pattern matcher (which itself is nothing more then a complex gf gun), but 10 times more complex. So I decided to test a few shortening tricks to current DC systems in an attempt to speed them up. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+<hr noshade class=wikiline size=1>
+Hmm, okay maybe i'm dumb. But why do you call bestSymbol = bestSymbol.ReverseSequenceRef<a href="robowiki?action=edit&id=ReverseSequenceRef" class=wikipageedit>?</a> when trying to find the angle to fire at. In fact I can't visualize how your loop is suppose to work. As I under stand PM, shouldn't you find the bestNode and then play it forward from there, the time it would take your bullet to reach the enemy (distance / bulletSpeed). Add up the heading difference between those two positions, apply the enemies velocity, and then fire at that angle.
+<p>
+Also, being new to <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> in general. Do you think a indexed folded pattern matcher would be possible. I don't know if this would even count as a "folded" pattern matcher.
+<p>
+You use the index to store the locations of each index (e.g. distance, velocity, etc). Store the heading and (velocity or distance) changes in a symbol within the node itself. Then when you get a new node to repalce the last within that index you just place it as the lastSequenceNode<a href="robowiki?action=edit&id=SequenceNode" class=wikipageedit>?</a>, so that you reference not to the last Symbol of the same kind but the same index. Then you use the symbols to compare.
+<p>
+--<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+You've probably fallen victim to my bad naming conventions. In the example above, SequenceRef<a href="robowiki?action=edit&id=SequenceRef" class=wikipageedit>?</a> points backward in time. That is, tick 4 points at tick 3, tick 3 at tick 2, 2 at 1. Following ReverseSequenceRef<a href="robowiki?action=edit&id=ReverseSequenceRef" class=wikipageedit>?</a> actually "plays the movie forward" like you describe: 1 -&gt; 2 -&gt; 3 ...
+<p>
+As for an indexed folded PM, that's really what this is all about. The symbols are indexed by "folding" the movie. If I had any sense, I would have called it an IndexedPatternMatcher<a href="robowiki?action=edit&id=IndexedPatternMatcher" class=wikipageedit>?</a>. However, as evidenced by the SequenceRef/ReverseSequenceRef<a href="robowiki?action=edit&id=SequenceRef/ReverseSequenceRef" class=wikipageedit>?</a> debacle, I'm often without sense - especially when it comes to naming. I pictured a folded string of characters and the name stuck in my head. Cheers.  --<a href="robowiki?Corbos" class=wikipagelink>Corbos</a>
+<p>
+Then that means that within PatternNode<a href="robowiki?action=edit&id=PatternNode" class=wikipageedit>?</a>, SequenceRef<a href="robowiki?action=edit&id=SequenceRef" class=wikipageedit>?</a> points backwards along the movie, and ReverseSequenceRef<a href="robowiki?action=edit&id=ReverseSequenceRef" class=wikipageedit>?</a> points forward(that seems backwards to me, but meh), and IndexRef<a href="robowiki?action=edit&id=IndexRef" class=wikipageedit>?</a> points to the last of the Symbol? If thats so your code makes alot more sense to me now. Also may I ask, why do you bothered convering the symbol to a char, an int and a char are almost synchronis in java, and the way you compare them wouldn't make much difference (in fact Elipse lets me compare them without a cast).
+<p>
+On mine, by a index I mean Node[] index = new Node[DISTANCE_INDEXES]; and I wouldn't keep a symbol index at all (Since its not used in the comparing system at all I don't need it). I wouldn't even need to keep distance index data within the node as thats built into the index.
+<p>
+--<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+You're right that you can just use numbers... I'm guessing symbols are used here for the sake of comparing it to a vanilla <a href="robowiki?SymbolicPatternMatcher" class=wikipagelink>SymbolicPatternMatcher</a> (near the top of the page), in which using characters allows you to make use of Java's string matching methods. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=FoldedPatternMatcher" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=FoldedPatternMatcher">View other revisions</a><br>Last edited January 9, 2007 21:48 EST by <a href="robowiki?Voidious" title="ID 8561 from pool-71-126-23-175.bflony.east.verizon.net">Voidious</a> <a href="robowiki?action=browse&diff=1&id=FoldedPatternMatcher">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

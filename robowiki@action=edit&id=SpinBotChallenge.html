@@ -1,0 +1,193 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing SpinBotChallenge - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Spin, Bot, Challenge'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing SpinBotChallenge</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="SpinBotChallenge"  />
+<input type="hidden" name="oldtime" value="1203274298"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="2"  />
+<input type="hidden" name="captchaArg2" value="3"  />
+<input type="hidden" name="captchaOp" value="*"  />
+<input type="hidden" name="captchaId" value="402044361996"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">The SpinBot Challenge
+
+
+Beat SpinBot better than anyone else. Setup:
+# The results must come from 1000 round OneOnOne battles - Challenger vs SpinBot
+# Battlefield size is 800x600
+# Best score share (percent of total score) wins.
+## If two bots get the same score share - the Challenger with the highest score wins
+# Your bot must extend Robot
+
+Results
+
+
+|Challenger |Author |Score share (%)|Total score
+|AntiSpinBot with firing |[[David Alves]] |99.539 |162997
+|AntiSpinBot without firing |[[David Alves]] |97.560 |60025
+|SpinBotHunter |Goofy |95.737 |166077
+|sample.Walls |Mat Nelson |94.492 |124737
+|St00pid |Dummy |93.777 |163352
+|Krazy |Alcatraz |86.358 |153699
+|WallsPoetAS |PEZ |73.631 |158761
+
+Chat
+
+
+
+And if you write a bot to extend Robot, consider entering it in the ExtendsRobotCompetition! -- Alcatraz
+
+Does anyone know why SpinBot sometimes stops spinning and drives straight until it hits a wall? I&#39;ve looked at the code and I can&#39;t figure out why it does that... --[[David Alves]]
+
+No, but it can help me beat it, as it loses energy when it does so :) So far my main effort is beating SpinBot, but the best % I&#39;ve got is 63.46, total of 126500. Actually I think Walls extends AdvancedRobot, making it invalid -- Alphax
+
+Good point on walls, I removed it and posted my score so far. AntiSpinBot? only gets hit in the beginning of rounds where it starts next to SpinBot and occaisionally when the &quot;go straight bug&quot; kicks in. Maybe I&#39;ll try again later, I&#39;m going over to my girlfriend&#39;s house to watch the presidential debates.
+&lt;pre&gt;
+1st: davidalves.robot.AntiSpinBot 59973 49900 9980 0 0 93 0 998 2 0
+2nd: sample.SpinBot 6757 100 20 6479 33 124 0 2 998 0
+&lt;/pre&gt;
+AntiSpinBot does not fire. :-)
+
+--[[David Alves]]
+
+My entry: dummy.St00pid. I bet I can get a better score if I implement some wallsmoothing and a better prediction of incoming enemyfire. But I&#39;ll do that some other time; it&#39;s 3am here right now, so I&#39;m off to bed :-)
+&lt;pre&gt;
+1st: dummy.St00pid 165318 49100 9820 88676 17380 340 0 982 18 0
+2nd: sample.SpinBot 13585 900 180 11921 426 157 0 19 982 0
+&lt;/pre&gt;
+St00pid does fire. :-p
+
+--Dummy
+
+Only difference between Krazy 1.45 and the version I used for this is that this version doesn&#39;t change directions. With some tweaking it can be better. -- Alcatraz
+
+
+ 73.631%
+&lt;pre&gt;
+1st: pez.femto.WallsPoetAS      158761	47800	9560	84425	16209	723	41	957	 43
+2nd: sample.SpinBot	         30007	 2150	 430	26369	  746	310	 0	 46	956
+&lt;/pre&gt;
+
+
+-- PEZ
+
+SpinBot goes straight when its turning (setTurnRight(10000)) is complete. At that moment its moving (ahead(10000) is not yet complete. Therefor it goes in a straight line until its movement is complete. To correct this, just increase the number of turns to take. However, tampering with the samples is not allowed I think. ;-) -- GrubbmGait
+
+The solution is of course to not get hit by SpinBot. Or hit it with bullets. That way it will die before it runs out of turns. -- PEZ
+
+Actually, sample.Walls extends Robot, so it&#39;s results are valid... --Dummy
+
+The reason sample.SpinBot sometimes just drives straight is when his &quot;setTurnRight(10000)&quot; runs out and his &quot;Ahead(10000)&quot; still has some distance remaining. --Goofy
+
+&lt;pre&gt;
+1st: dummy.St00pid 163352 49700 9940 86437 17261 13 0 997 6 0
+2nd: sample.SpinBot 10840 300 60 10356 37 86 0 6 994 0
+&lt;/pre&gt;
+
+Nice scores everyone. By the way Dummy, this is PEZ&#39;s challenge not mine. --[[David Alves]]
+
+My challenge? Hardly. This is the RoboWiki. So it&#39;s everyones challenge. But, yes, I founded it. I didn&#39;t find a reasonable way to sign the foundation though. =) -- PEZ
+
+I mean you proposed the challenge. He credits me in his bot&#39;s source. :-P --[[David Alves]]
+
+*Ah, I&#39;m sorry. So many challenges going on around here got me confused, I guess :-p. --Dummy
+&lt;pre&gt;
+With firing:
+1st: davidalves.robot.AntiSpinBot 156666 49950 9990 80642 16083 0 0 999 0 0
+2nd: sample.SpinBot 3061 50 10 2984 6 10 0 1 999 0
+&lt;/pre&gt;
+score = 98.083%
+
+Without firing:
+&lt;pre&gt;
+1st: davidalves.robot.AntiSpinBot 59872 49800 9960 0 0 112 0 996 4 0
+2nd: sample.SpinBot 5760 200 40 5304 69 146 0 4 996 0
+&lt;/pre&gt;
+score = 91.224%
+
+--[[David Alves]]
+
+David, grab my SpinBotHunter from the RobocodeRepository and stick my gun on your movement. --Goofy
+
+Thanks for the offer, but you&#39;re a bit too late, I just fixed the bug in the gun. I forgot to convert from radians to degrees. Also added more intelligent dodging at the beginning and end of the round.
+&lt;pre&gt;
+1st: davidalves.robot.AntiSpinBot 164500 50000 10000 87097 17403 0 0 1000 0 0
+2nd: sample.SpinBot 1273 0 0 1264 0 9 0 0 1000 0
+&lt;/pre&gt;
+score: 99.232%
+
+--[[David Alves]]
+
+Wow Dave! Can&#39;t you publish the code now? -- PEZ
+
+There&#39;s still a bug in movement. I&#39;m still around 91% if I don&#39;t fire. I&#39;ll publish soon though. :-) --David Alves
+
+Heh, well, since you seem to have gotten to the end of this challenge, I guess I can cease developing my SpinBotHunter. I was going to model what happens when he starts walking, so that I just have to scan him once, then I just have to fire exactly the right number of bullets and it&#39;s all over. But that seems useless. --Goofy
+
+The end of the challenge is 100%. I may be ahead but I haven&#39;t won by any means. ;-) --David Alves
+
+Is 100% the end? When writing &quot;If two bots get the same score share - the Challenger with the highest score wins&quot; I had 100% in mind. It&#39;s rather unlikeley any two bots would get the same score share otherwise. Anyway, I know I wouldn&#39;t be able to reach 100% with an extends Robot if I tried forever. When calls block, so do my brain. =) -- PEZ
+
+What I meant was that this is a trivial question, now. Since Dave has some minor tweaks to prevent him from ever getting hit, and with some relatively minor tweaks, I could get a gun that not only never misses, but only needs to scan the enemy once, I don&#39;t think there&#39;s much more to look for. I very much believe that a Robot can get 100% against SpinBot, and I see that as the end. --Goofy
+
+It has to be proven first I&#39;d say. In 1000 rounds lots of start positions get tried. -- PEZ
+
+I think the limit is roughly 99.7%. In other words about half of the damage I&#39;m taking right now is preventable, the other half is just due to bad luck in start positions. --[[David Alves]]
+
+with firing:
+&lt;pre&gt;
+1st: davidalves.robot.AntiSpinBot 164143 50000 10000 86785 17357 1 0 1000 0 0
+2nd: sample.SpinBot 890 0 0 880 0 10 0 0 1000 0
+&lt;/pre&gt;
+score: 99.461%
+
+without firing:
+&lt;pre&gt;
+1st: davidalves.robot.AntiSpinBot 60025 50000 10000 0 0 25 0 1000 0 0
+2nd: sample.SpinBot 1501 0 0 1440 0 61 0 0 1000 0
+&lt;/pre&gt;
+score: 97.560%
+--[[David Alves]]
+
+AntiSpinBot 1.0 released. I don&#39;t think I&#39;m going to work on this any more unless someone beats me. :-)
+&lt;pre&gt;
+1st: davidalves.robot.AntiSpinBot 1.0 162997 50000 10000 85834 17157 6 0 1000 0 0
+2nd: sample.SpinBot 755 0 0 727 0 28 0 0 1000 0
+&lt;/pre&gt;
+Code is here: [[David Alves/AntiSpinBot]]
+
+Jar is here: http://davidalves.net/robocode/robots/davidalves.robot.AntiSpinBot_1.0.jar
+
+--[[David Alves]]
+
+Do I get any credit for inspiring the SpinBotChallenge :P ? --Alphax
+
+I think you just claimed it. =) -- PEZ
+
+While we&#39;re making extends-Robot challenges, how about samplebot melee? Your bot vs. all the sample.* bots that fire (everyone except Target and SittingDuck) on a 1000x1000 field. Melee seems like it would be very hard to do well if you can only use blocking calls, harder than 1-v-1 --[[David Alves]]
+
+I&#39;d like such a challenge if it&#39;s not constrained to extending Robot. But don&#39;t let me discourage such a challenge anyway. I am lousy at doing anything non-femto with Robot and I have never given Melee stuff attention either. Thus, my vote shouldn&#39;t count much. -- PEZ
+
+If it&#39;s not restricted to non-advanced Robots then just stick Shadow or Aleph in there and it&#39;s all over. --[[David Alves]]
+
+I wonder if you can sneak inside Spinbot&#39;s turn radius, in which case he&#39;d never see you to target you.  This is just idle speculation, but I think if I were to take up this challenge I&#39;d sneak inside Spinbot&#39;s turn radius if I spawned close to him (and could make it before he started firing), or if I started far away I&#39;d just snipe his predictable bullets out of the air.  Meh.. I already spent too much time writing Ugluk.. -- Martin
+
+I don&#39;t think it would be worth doing from a scoring standpoint. But personally, I think it would be a great trick to pull off. Clever! --[[David Alves]]
+
+Walls could, at least most of the time, defeat all other sample bots. Walls extends robot...
+The robot should have something like this:
+All bots fire with HOT, so any movement should be fine
+[[MeleePatternMatching]], when it is fixed, should do the trick for the targeting
+Target the closest bot!
+--[[Starrynte]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 2 * 3 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that SpinBotChallenge has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=SpinBotChallenge">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

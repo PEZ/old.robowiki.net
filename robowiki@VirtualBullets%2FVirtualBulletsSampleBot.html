@@ -1,0 +1,280 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>VirtualBullets/VirtualBulletsSampleBot - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Virtual, Bullets, Virtual, Bullets, Sample, Bot'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/VirtualBulletsSampleBot">VirtualBullets/VirtualBulletsSampleBot</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>In addition to illustrating virtual bullets, this sample bot showcases some good techniques for writing a robot.
+<UL >
+<li> Uses abstract classes for guns, so that they can be swapped easily.
+<li> Uses the same RobotState<a href="robowiki?action=edit&id=RobotState" class=wikipageedit>?</a> class to represent both itself and the enemy, so that it can easily simulate the enemy shooting at it by switching the shooter and target parameters when calling the gun method.
+<li> Uses a good hierarchy of classes for representing points on the field, moving things (e.g. virtual bullets and robots), and robots.
+</UL>
+<p>
+Note that the robot defaults to "Really Bad Gun", which fires away from the enemy, but will soon learn to use a better one. =)
+<p>
+--<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+<p>
+<pre>
+package davidalves.sample;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.Iterator;
+import java.util.Vector;
+
+import robocode.AdvancedRobot;
+import robocode.Bullet;
+import robocode.DeathEvent;
+import robocode.ScannedRobotEvent;
+import robocode.WinEvent;
+
+public class VirtualGunsSampleBot extends AdvancedRobot {
+	static final double BULLET_POWER = 3.0;
+	
+	RobotState me, target; // these aren't static, so they will be reset every round
+	
+	static Vector guns; // this Vector (and all its contents) will persist from round to round
+	
+	static Vector virtualBullets = new Vector();
+	
+	Rectangle2D.Double battlefield;
+	
+	public void run(){
+		setAdjustGunForRobotTurn(true);
+		setAdjustRadarForGunTurn(true);
+		setAdjustRadarForRobotTurn(true);
+		
+		battlefield = new Rectangle2D.Double(0,0,getBattleFieldWidth(), getBattleFieldHeight());
+		
+		if(guns == null){
+			guns = new Vector();
+			
+			Gun defaultGun = new ReallyBadGun();
+			defaultGun.hits = 1;
+			guns.add(defaultGun);
+			guns.add(new HeadOnGun());
+			guns.add(new RandomGun());
+		}
+		
+		virtualBullets.clear();
+		
+		while(true){			
+			//Update our position, heading, and velocity
+			me = new RobotState();
+			me.name = getName();
+			me.velocity = getVelocity();
+			me.heading = getHeadingRadians();
+			me.x = getX();
+			me.y = getY();
+			
+			//Turn our radar
+			if(target == null)
+				setTurnRadarRightRadians(Math.toRadians(45));
+			else {
+				double radarTurnAngle = normalizeRelativeAngle(me.absoluteAngleTo(target) - getRadarHeadingRadians());
+				if(radarTurnAngle &gt; 0)
+					radarTurnAngle += .4;
+				else
+					radarTurnAngle -= .4;
+				setTurnRadarRightRadians(radarTurnAngle);
+			}
+			
+			//Move each virtual bullet forward one tick. After moving, check if they are off the field or near the target.
+			Iterator i = virtualBullets.iterator();
+			while(i.hasNext()){
+				VirtualBullet virtualBullet = (VirtualBullet) i.next();
+				virtualBullet.setLocation(virtualBullet.project(virtualBullet.heading, virtualBullet.velocity));
+				
+				if(virtualBullet.distance(target) &lt; 25){ //check if the virtual bullet "hit" the enemy
+					
+					virtualBullet.gunUsed.hits += 1;
+					i.remove();
+				} else if(!battlefield.contains(virtualBullet)){ //check if the virtual bullet is off the field
+					i.remove();
+				}
+			}
+			
+			if(target != null) gun();
+			
+			execute();
+		}
+	}
+	
+	public void gun(){
+		
+		//Select the best gun
+		long bestScore = -1;
+		Gun bestGun = null;
+		Iterator i = guns.iterator();
+		while(i.hasNext()){
+			Gun gun = (Gun) i.next();
+			if(gun.hits &gt; bestScore){
+				bestScore = gun.hits;
+				bestGun = gun;
+			}
+		}
+		
+		
+		//Aim with the best gun
+		setTurnGunRightRadians(normalizeRelativeAngle(bestGun.getFiringAngle(me, target, BULLET_POWER) - getGunHeadingRadians()));
+		
+		
+		// create new virtual bullets only if we actually fired this turn
+		Bullet b = setFireBullet(BULLET_POWER);
+		if(b != null){
+			i = guns.iterator();
+			while(i.hasNext()){
+				Gun gun = (Gun) i.next();
+				VirtualBullet newVirtualBullet = new VirtualBullet();
+				newVirtualBullet.setLocation(me);
+				newVirtualBullet.heading = gun.getFiringAngle(me, target, BULLET_POWER);
+				newVirtualBullet.velocity = 20.0 - 3.0 * BULLET_POWER;
+				newVirtualBullet.gunUsed = gun;
+				virtualBullets.add(newVirtualBullet);
+			}
+		}
+	}
+	
+	public void onScannedRobot(ScannedRobotEvent e){
+		// Create a new RobotState object to represent the enemy's current state
+		target = new RobotState();
+		target.setLocation(me.project(e.getBearingRadians() + getHeadingRadians(), e.getDistance()));
+		target.heading = e.getHeadingRadians();
+		target.velocity = e.getVelocity();
+		target.name = e.getName();
+	}
+	
+	public void onDeath(DeathEvent e){
+		endRound();
+	}
+	
+	public void onWin(WinEvent e){
+		endRound();
+	}
+	
+	public void endRound(){
+		Iterator i = guns.iterator();
+		out.println();
+		out.println("Virtual bullet hit table");
+		out.println("------------------------");
+		while(i.hasNext()){
+			Gun gun = (Gun) i.next();
+			out.println(gun.getName() + ": " + gun.hits);
+		}
+		out.println();
+		
+		//So we don't keep firing
+		target = null;
+	}
+	
+	//Draw the virtual bullets on screen - this will only work with a recent version of robocode and "Paint" turned on in the robot's console
+	public void onPaint(Graphics2D g){
+		
+		Iterator i = virtualBullets.iterator();
+		while(i.hasNext()){
+			VirtualBullet virtualBullet = (VirtualBullet) i.next();
+			g.setColor(virtualBullet.gunUsed.getColor());
+			g.fillOval((int)virtualBullet.x - 3, (int)virtualBullet.y -3, 6, 6);
+		}
+		
+		int numberOfGuns = guns.size();
+		for(int j = 0; j &lt; numberOfGuns; j++){
+			Gun gun = (Gun) guns.elementAt(j);
+			g.setColor(Color.WHITE);
+			g.drawString(gun.getName() + ": " + gun.hits, 20, 5 + j*15);
+			g.setColor(gun.getColor());
+			g.fillOval(5, 5 + j * 15, 10, 10);
+		}
+	}
+	
+	//This method ensures that angles are between -180 and 180 degrees, for turning radar / gun 
+	public static double normalizeRelativeAngle(double angle){
+		while(angle &lt;= -Math.PI){
+			angle += 2.0 * Math.PI;
+		}
+		while(angle &gt; Math.PI){
+			angle -= 2.0 * Math.PI;
+		}
+		return angle;
+	}
+}
+
+class ReallyBadGun extends Gun{
+	public String getName(){return "Really bad gun - fires away from the enemy";}
+	public Color getColor(){return Color.RED;}
+	
+	public double getFiringAngle(RobotState shooter, RobotState target, double bulletPower) {
+		return target.absoluteAngleTo(shooter);
+	}
+}
+class RandomGun extends Gun {
+	public String getName(){return "Simple linear gun";}
+	public Color getColor(){return Color.BLUE;}
+	
+	public double getFiringAngle(RobotState shooter, RobotState target, double bulletPower) {
+		//double maxAngle = Math.asin(8.0 / (20.0 - 3.0 * bulletPower));
+		double directAngle = shooter.absoluteAngleTo(target);
+		return directAngle - target.velocity * Math.sin(directAngle - target.heading) / (20.0 - 3.0 * bulletPower);
+	}
+}
+
+class HeadOnGun extends Gun {
+	public String getName(){return "Head on";}
+	public Color getColor(){return Color.GREEN;}
+	
+	public double getFiringAngle(RobotState shooter, RobotState target, double bulletPower) {
+		return shooter.absoluteAngleTo(target);
+	}
+}
+
+abstract class Gun {
+	public long hits;
+	public abstract Color getColor();
+	public abstract String getName();
+	public abstract double getFiringAngle(RobotState shooter, RobotState target, double bulletPower);
+}
+
+class FieldPoint extends Point2D.Double{
+	public FieldPoint(){}
+	public FieldPoint(double x, double y){
+		super(x,y);
+	}
+	
+	public double absoluteAngleTo(FieldPoint p){
+		double angle = Math.atan2(p.x - x, p.y - y);
+		while(angle &lt; 0.0){
+		 	angle += 2.0 * Math.PI;
+		}
+		while(angle &gt;= 2.0 * Math.PI){
+		 	angle -= 2.0 * Math.PI;
+		}
+		return angle;
+	}
+	
+	public FieldPoint project(double angle, double distance) {
+		return new FieldPoint(x + Math.sin(angle) * distance, y + Math.cos(angle) * distance);
+	}
+} 
+
+class MotionState extends FieldPoint{
+	public double velocity, heading;
+}
+
+class VirtualBullet extends MotionState{
+	public Gun gunUsed;
+}
+
+class RobotState extends MotionState{
+	public String name;
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=VirtualBullets/VirtualBulletsSampleBot" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=VirtualBullets/VirtualBulletsSampleBot">View other revisions</a><br>Last edited September 20, 2006 17:37 EST by <a href="robowiki?David_Alves" title="ID 7143 from adsl-71-146-0-118.dsl.pltn13.sbcglobal.net">David Alves</a> <a href="robowiki?action=browse&diff=1&id=VirtualBullets/VirtualBulletsSampleBot">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>WritingArraysToFile - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Writing, Arrays, To, File'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=WritingArraysToFile">WritingArraysToFile</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>The simple type of <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> in my <a href="robowiki?TityusMega" class=wikipagelink>TityusMega</a> bot uses a multidimensional integer array to store the "most visited" count of each factor. Much like <a href="robowiki?Fhqwhgads" class=wikipagelink>Fhqwhgads</a>, but unlike Fhqwhgads I save the data using a variant of <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>'s <a href="robowiki?CompressedSerialization" class=wikipagelink>CompressedSerialization</a>. Like so:
+<pre>
+    private static int[][][][] aimFactors;
+.
+.
+.
+    void restoreFactors() {
+        try {
+            ZipInputStream zipin = new ZipInputStream(new
+                FileInputStream(getDataFile(enemyName + ".zip")));
+            zipin.getNextEntry();
+            ObjectInputStream in = new ObjectInputStream(zipin);
+            aimFactors = (int[][][][])in.readObject();
+            in.close();
+        }
+        catch (IOException e) {
+            System.out.println("Ah! A new aquaintance. I'll be watching you " + enemyName + ".");
+            aimFactors = new int[ACCEL_SEGMENTS][DISTANCE_SEGMENTS][POWER_SEGMENTS][AIM_FACTORS];
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    void saveFactors() {
+        try {
+            ZipOutputStream zipout = new ZipOutputStream(new RobocodeFileOutputStream(getDataFile(enemyName + ".zip")));
+            zipout.putNextEntry(new ZipEntry(enemyName));
+            ObjectOutputStream out = new ObjectOutputStream(zipout);
+            out.writeObject(aimFactors);
+            out.flush();
+            zipout.closeEntry();
+            out.close();
+        }
+        catch (IOException e) {
+            System.out.println("Error saving factors:" + e);
+        }
+    }
+</pre>
+As i understand very little of Java's I/O model I just hacked on the serialization code until it compiled. It works. But if someone with more understanding sees a danger here, please feel free to improve the code. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Looks to me like it should work.  This is similar to what <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> does, actually (except I use the GZIP streams instead of the Zip streams).  <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a> does it a little more efficiently by making a series of nested loops and using out.writeInt() and out.readInt(). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I considered this too, but firstly I don't need it yet (my files are 1.7k per opponent at the moment, after 10k rounds) and secondly I would have to rewrite the save/restore functions each time I changed my mind about the segmentation. And I change my mind often. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I am wondering how about the compressibility between GZIP and ZIP,are those same?or one is better?  -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+<p>
+I will try this, but my bet is that if there is a difference it will be small. To solve your storage size problems you probably need to look elsewhere. Maybe you can e-mail me details on how you store things internally and externally today and I can help you ponder on a solution? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+My guess is that Zip compression does better if you set it to.  With the zip libraries, you can specify compression methods to be optimized for speed or smallest compression as well. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Add <a href="robowiki?VisitCountStats/LimitFileSize" class=wikipagelink>VisitCountStats/LimitFileSize</a> to this and you have really small files on disk. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+What do I have to import to get this to work?  It seems java.io isn't enough, and I can't see anything else in the API... -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Scratch that - found it! -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Also consider looking at <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> save/restore functions. They are more straightforward and <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> friendly. Using gzip files like <a href="robowiki?SandboxMini" class=wikipagelink>SandboxMini</a>. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I guess you could save even more space if you don't create a file per opponent but a file that contains a hashtable with the data of all opponents. --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+That's what DT does, I think (at least, it only has one file in it's data directory).  I expect it is smaller, but also much slower, as you have to load the whole file each time. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+It's incredibly slow actually. In fact if you run a DT with a full data quota file in <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a> you'll see that RL writes out a warning message in the beginning of each battle. Something like "<a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> hasn't started after 600ms. Giving up."
+<p>
+Anyway, no need to write a hash table if you use regular zip files at least. They can contain several file entries. Probably quite easily glued on the above code. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+But you don't have to read our hash table each round. Reading it the first round and saving every single round works good and is not too slow.Using regular zip files my stats get sometimes crashed. --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a> 
+<DL >
+<DL >
+<dt><dd> I was assuming you were only loading in the first round.  If you load all the data you have on every bot every round, you are going to have an extremely <a href="robowiki?SlowBot" class=wikipagelink>SlowBot</a>. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+</DL>
+</DL>
+<p>
+I think DT is slow on startup because it is creating new statistics structures on all the opponents in is file.  I can probably restrict most of this, save time and reduce the memory hit.  --  <a href="robowiki?Paul" class=wikipagelink>Paul</a>
+<p>
+Why, it could be good to have if an enemy should just spontanously appear on the battle field in mid battle. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Now *there's* an idea for a mod.  Quite easy to do, too.  Just put the enemy outside the field until a random time, when it appears.  You have 1 challenger, and a team of magically appearing bots. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Hmmm... there seems to be no getDataFile<a href="robowiki?action=edit&id=DataFile" class=wikipageedit>?</a>() so it won't compile.  Do I need to import it?  Or do I need to write it? --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+It's defined in the <a href="robowiki?RobocodeAPI" class=wikipagelink>RobocodeAPI</a> for <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>, so you need a reference to your main tank class, and call MyTank<a href="robowiki?action=edit&id=MyTank" class=wikipageedit>?</a>.getDataFile<a href="robowiki?action=edit&id=DataFile" class=wikipageedit>?</a>(). -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Hmm,in the guessfactors, if you keep saving/restoring the factors without 'lowering' them, won't the counts eventually get like so high...is there a range for integers? And if you were to proportionally 'lower' them, how would you do it with so many segments? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Theoretically, yes. But if I remember right, the maximum an integer can hold is in the range of 2000000000, so I don't think we'll reach it very quickly. =) If it did, that bin would shift to the minimum possible number, screwing up your results BIGTIME. So a very valid worry. Good thing we aren't using arrays of shorts to store our data. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+If you use <a href="robowiki?RollingAverage" class=wikipagelink>RollingAverage</a> for your stats, as many of us do, you always have a value between 0 and 1. As for having lots of segments, it doesn't really matter if each segment is in the same scale, just that all <a href="robowiki?GuessFactors" class=wikipagelink>GuessFactors</a> in a given segment are in the same scale, so you could surely just divide all the GFs in a segment when they got too big, if you needed to. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<UL >
+<li> Ok, using <a href="robowiki?RollingAverage" class=wikipagelink>RollingAverage</a> now...*discovers that there's a limit to amount of data in data file* --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<li> =) ... I'd also look at <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a> / <a href="robowiki?SuperNodes" class=wikipagelink>SuperNodes</a> if you're going to be saving gun data. The basic idea is to just save the <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> data for the most visited nodes. For instance, you might have 20,000 segments in your gun, but find that 95% of the time the enemy spends in just 300 of those segments. So saving the best GF for those 300 segments gives you a LOT of info about the enemy in very little space. <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> and <a href="robowiki?Phoenix" class=wikipagelink>Phoenix</a> use data saving in their guns based on this idea. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+Quick question, does the code above delete the old saved data before saving the new data? And if it doesn't, how? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+I am <em>pretty</em> sure the above code would create a new file, overwriting any previous file for that bot (with the same name). But I'm not entirely sure on that. There is a <code>delete()</code> method in the File class, though, so you could do this to be sure: <code>getDataFile(enemyName + ".zip").delete()</code>. Note that this method will use a LOT of data for each bot, so you will not be able to save nearly as many opponents as with <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a> -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Actually I have been giving the save problem some thought for such things, and if you make an thread to do the work (like pear I think does), you could save it in something like a peak (save the peaks in the data) file. Then rebuild that data into the buffers as a type of lossy saving, but also ahve a degradation clause, giving the average amount of drop between peeks. Otherwise just save the peeks and valleys and just do a straight degredation between them. I know Dookious saves the most visited bins, but i'm not sure how. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+<UL >
+<li> Dooki just saves which GF bin was the most visited for each <a href="robowiki?SuperNode" class=wikipagelink>SuperNode</a>. This means (I just checked) I can save a segment in 3 bytes for very small data files. When it restores, it uses a <a href="robowiki?BinSmoothing" class=wikipagelink>BinSmoothing</a>  across the other bins and gives all this data a weight of 5 (as if it saw this GF for 5 firing waves). I like your idea, but I think just saving most visited is the best use of your space. In movement, saving multiple peaks seems much more worth it, though. Just my opinion, of course - I think <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> is also more keen on saving all the segment's data instead of just the top visited GF. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=WritingArraysToFile" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=WritingArraysToFile">View other revisions</a><br>Last edited August 23, 2007 2:38 EST by <a href="robowiki?Voidious" title="ID 8561 from cpe-204-210-154-119.hvc.res.rr.com">Voidious</a> <a href="robowiki?action=browse&diff=1&id=WritingArraysToFile">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

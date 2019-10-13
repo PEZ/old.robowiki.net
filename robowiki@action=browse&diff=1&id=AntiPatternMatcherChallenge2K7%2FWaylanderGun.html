@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>AntiPatternMatcherChallenge2K7/WaylanderGun - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Anti, Pattern, Matcher, Challenge2K7/Waylander, Gun'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/WaylanderGun">AntiPatternMatcherChallenge2K7/WaylanderGun</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?AntiPatternMatcherChallenge2K7" class=wikipagelink>AntiPatternMatcherChallenge2K7</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><b>Difference (from prior major revision)</b>
+(no other diffs)<br> <br><strong>Changed: 1c1,3</strong><br><table width="95%" bgcolor=#ffffaf class=wikidiffold><tr><td>
+    import robocode.*;<br></td></tr></table><table width="95%" bgcolor=#cfffcf class=wikidiffnew><tr><td>
+ &lt;pre&gt; <br> <br>   import robocode.*;<br></td></tr></table>
+ <br><strong>Changed: 109c111,112</strong><br><table width="95%" bgcolor=#ffffaf class=wikidiffold><tr><td>
+    }<br></td></tr></table><table width="95%" bgcolor=#cfffcf class=wikidiffnew><tr><td>
+    }<br> &lt;/pre&gt;<br></td></tr></table>
+<hr class=wikilinediff>
+<div class=wikitext><pre> 
+
+  import robocode.*;
+   import robocode.util.*;
+   import java.awt.geom.*;
+ 
+    public class ChallengerBot extends AdvancedRobot{
+   
+      WaylanderGun waylanderGun;
+   
+       public void run(){
+         waylanderGun = new WaylanderGun(this);
+      
+      //your code here
+      
+      
+      }
+   
+       public void onScannedRobot(ScannedRobotEvent e){
+      
+      //your code here
+      
+         waylanderGun.onScannedRobot(e);
+      }
+   
+   
+   }
+
+    class WaylanderGun
+   {
+   
+      final static double angleScale = 24;
+      final static double velocityScale = 1;
+      static double lastEnemyHeading;
+     
+      static boolean firstScan;
+      static StringBuilder data = new StringBuilder();
+      AdvancedRobot bot;
+     
+       public WaylanderGun(AdvancedRobot bot){
+         this.bot = bot;
+         firstScan = true;
+         try{
+            data.delete(60000, 80000);
+         }
+             catch(StringIndexOutOfBoundsException e){}
+      }
+   	
+   
+       public void onScannedRobot(ScannedRobotEvent e) {
+      
+         double headingRadians;
+         double eDistance ;
+         double eHeadingRadians = e.getHeadingRadians();
+         double absbearing=e.getBearingRadians()+ (headingRadians = bot.getHeadingRadians());
+         
+         boolean rammer = (eDistance = e.getDistance()) &lt; 100 
+            || bot.getTime() &lt; 20;
+        
+         Rectangle2D.Double field = new Rectangle2D.Double(17,17,766,566);
+            
+      		
+         if(!firstScan)
+            data.insert(0,(char)((eHeadingRadians - lastEnemyHeading )*angleScale))
+               .insert(0,(char)(e.getVelocity()*velocityScale));
+         
+        
+         int keyLength  = Math.min(data.length(), Math.min(Math.max(2,(int)bot.getTime()*2 - 8), 256));
+         
+         int index = -1;
+         do{
+         
+            index = data.indexOf(data.substring(0, keyLength),(int)eDistance/11)/2;
+            
+         }while(index &lt;= 0 &amp;&amp; (keyLength/=2) &gt; 1);
+         
+         
+         double bulletPower = rammer?3:Math.min(2,Math.min(bot.getEnergy()/16, e.getEnergy()/2));
+         
+           
+         double eX=eDistance*Math.sin(absbearing);
+         double eY=eDistance*Math.cos(absbearing);
+         
+         double db=0;
+         double ww=eHeadingRadians; 
+         double speed = e.getVelocity();
+         double w = eHeadingRadians - lastEnemyHeading;
+         do
+         {
+            if( index &gt; 1 ){
+               speed = (short)data.charAt(index*2 );
+               w = ((short)data.charAt(index--*2 - 1))/angleScale;    
+            }
+         
+         }while ((db+=(20-3*bulletPower))&lt; Point2D.distance(0,0,eX+= (speed*Math.sin(ww+=w)),eY+= (speed*Math.cos(ww))) 
+         &amp;&amp; field.contains(eX + bot.getX() , eY + bot.getY()));         
+         
+         
+         bot.setTurnGunRightRadians(Utils.normalRelativeAngle(Math.atan2(eX,eY) - bot.getGunHeadingRadians()));
+         bot.setFire(bulletPower);
+         
+         bot.setTurnRadarRightRadians(Math.sin(absbearing - bot.getRadarHeadingRadians())*2);
+               
+         lastEnemyHeading=eHeadingRadians;
+         firstScan = false;
+      
+      }
+           
+   
+   
+   }
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?AntiPatternMatcherChallenge2K7" class=wikipagelink>AntiPatternMatcherChallenge2K7</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=AntiPatternMatcherChallenge2K7/WaylanderGun" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=AntiPatternMatcherChallenge2K7/WaylanderGun">View other revisions</a><br>Last edited October 14, 2007 17:05 EST by <a href="robowiki?Skilgannon" title="ID 11213 from ctb-cache4-vif0.saix.net">Skilgannon</a> <a href="robowiki?action=browse&diff=1&id=AntiPatternMatcherChallenge2K7/WaylanderGun">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

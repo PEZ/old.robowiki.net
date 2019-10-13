@@ -1,0 +1,335 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RoboResearch/Archive - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Robo, Research, Archive'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Archive">RoboResearch/Archive</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H3>Calling All Developers</H3>
+
+<p>
+Ok, I think it's time to take <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> to the next level.  <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> 2.0.  I want to network it.  We'll have a roboresearch server that will keep track of all the challenges people are wanting to run.  Then clients will poll the servers for battles to run, downloading bot jars from the requester as necessary.  The results will be sent back to the requester, as well, to be stored on their local database.  When there are no battles to run, the clients will fire up a copy of the rumble instead.  People's clients will prefer their own bots' battles.  Who's willing to help? -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+I'm not sure a communal <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> server is a good idea. It seems like you'd end up in one of two situations. 1) Some people request way more battles than they contribute, so the people running more than their fair share get annoyed,  or 2) Everyone requests about the same number of battles as they contribute, in which case what's the point of having it be networked? --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+<UL >
+<li> You're right on one point - we should make sure people would actually be interested in running the client.  But I can definitely see benefits.  Some people may certainly run way more battles than anyone else (someone named "Simonton" comes to mind), but just like in the rumble, you can always turn off your client if you don't feel like assisting that person anymore (and, in this case, turn on the rumble client by itself ;) ).  But as for people requesting the same number of battles - the point is that people can do their research at different <em>times</em>.  Skilgannon doing research in the evening in South Africa can see results quickly, then you doing research in the evening in California can see them quickly, too, since you're both helping each other out in your times of "need".  The users should be instructed briefly in <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> etiquette, so that for example they only run as many battles as they need to get stable ratings (e.g. 50 seasons instead of 500, or whatever).  So, I guess the question is: Who out there would actually run a client like this?  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> I would use it. As long as I always have the option of giving my own tests highest priority, I don't see how it could do anything but help everyone. As for switching to the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> when there are no more tests to run - I think it would be equally useful to be able to reverse that: run the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> until everyone has their required battles, then return to contributing cycles towards anybody who wants to run some tests. (In other words: if there are unstable bots in the rumble, I'd give that higher priority than somebody else's gun tests.) As for the timezones thing - I do run stuff 24/7 sometimes, both while I'm at work and while I'm sleeping, but I usually try to do something that will finish before I'm back at the computer, in which case there would be some idle time at the end to contribute back. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<UL >
+<li> Great idea!  That will require a little more logic, but I'm sure we're up to the task! -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+</UL>
+<p>
+<H3>The Idea</H3>
+
+<p>
+I've started on a new utility something like <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a>.  The biggest difference is that it stores battle results in a database, not an XML file.  This leaves LOTS of flexibility to analyze data any way you can dream up.  The other big reason I decided to start on it was to be able to run battles remotely on separate machines (which I plan to accomplish through SSH).  I know <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a> can do this with leagues (but not divisions?), but I need it in a different format to accomplish the type of remote operation I have in mind.  Would there be anyone interested in making this a community project?  Here are the other differences from <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a> I can think of right now:
+<p>
+<UL >
+<li> It runs <a href="robowiki?RoboCode" class=wikipagelink>RoboCode</a> in a separate process, interacting only with .battle files and .results files (it does not utilize any of <a href="robowiki?RoboCode" class=wikipagelink>RoboCode</a>'s APIs).  This has benefits and drawbacks, but I did it so that 1) I could get a fresh JVM with each battle (to avoid memory issues as encountered with my Obsession series of bots) and 2) it's a little easier to code up the remote operation.
+<li> It is "tweak-centric" as opposed to "bot-centric".  The idea is to allow the modification of a bot's properties file, where each permutation of variable assignments defines a "tweak" of that bot.  So, there may be many tweaks to each version.  If I/we ever get around to it, <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> will be able to automatically create tweaks of a bot and run them against a set of competitors, so you can see what combination of tuner variables brings the best payoff.  Maybe it could even search for a maximum benefit &amp; drill down to optimal values?  But that's just a dream down the road.
+<li> It should have starters you can create &amp; save for, e.g. MC2K7, where you click on "MC2K7", then on the bot/tweak-set you wish to run, then on "go".
+<li> There will not a be a "league" style, and there will always be a "focused competitor".  The intent of this utility is to test your bot, not rank a group of bots.
+<li> So far I plan to wipe out the robots/ and .robotcache/ directories often.  It would use a directory of bot jars elsewhere, then copy them into the robots/ directory when it's time to fight.  This eliminates the benefit of file saving in bots, but I'm sick of waiting for <a href="robowiki?RoboCode" class=wikipagelink>RoboCode</a> to rebuild the robot database and robot cache so often.  This should eliminate a lot of the overhead that would otherwise come from spawning a new instance of <a href="robowiki?RoboCode" class=wikipagelink>RoboCode</a> for every battle.
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<H3>Capabilites So Far</H3>
+
+<UL >
+<li> Run a battle.
+<li> Run any number of battles at once, each on a remote host (requires password-free SSH between the machines and that <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> is installed in a common NSF directory).
+<li> Store the results in a database.
+<li> Read in a set of reference bots from a "<a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> Challenge File" and run a challenge bot against them for any number of rounds.
+<li> Query the database and give results in wiki format! =D
+<li> Run multiple battles at once on your local machine (for multicore/multiprocessor machines).
+</UL>
+<p>
+Next might be figuring out if it would be capable of running battles for the rumble. Also adding a GUI.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<H3>Getting Started</H3>
+
+<p>
+<OL >
+<li> Get a copy of roboresearch from its <a rel="nofollow" href="http://sourceforge.net/projects/roboresearch">[sourceforge home]</a> by pointing an SVN client at <a rel="nofollow" href="https://roboresearch.svn.sourceforge.net/svnroot/roboresearch">https://roboresearch.svn.sourceforge.net/svnroot/roboresearch</a>.  You're after the "trunk" folder.
+<li> Continue with the (hopefully) helpful instructions found in docs/getting_started_running.txt.
+</OL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Cool. Let me know if you need a hand or have trouble making it work with Robocode. Then I'll support you as much as possible! --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+I need something like this for running lots of seasons of 35-round matches. If it gets integrated into the main Robocode release, that would be even better. Would you mind sharing the code? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Do you not use <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a>? I can't live without it in development. Actually, I remember it didn't work right with some newer versions of Robocode, but I use it with 1.07. If it still doesn't work with Robocode, that should really be something <a href="robowiki?Fnl" class=wikipagelink>Fnl</a> or one of us take care of. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+<UL >
+<li> Oh, and there is an example of some Robocode automation in my <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> util (on the <a href="robowiki?Voidious" class=wikipagelink>Voidious</a> page) or in the open source <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> code. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+<UL >
+<li> Yeah, <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a> does everything most people are after.  I have a few special needs, like restarting the JVM between battles.  Other than that, I thought saving all results to a database would be handy.  Also, if I can get it to work, the distributed environment should be very powerful to anyone with access to a computer lab :).  But yeah, I can shoot you the code I have so far.  If you're interested in helping we should set up some kind of collaboration environment.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+I've never tried <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a>. Besides not being compatible with the latest version it looked like a mission to set up as well. I'll grab a copy of 1.07 and give it a try....is the source code for it available?
+<p>
+<UL >
+<li> I think the source is packaged with it, but I'm not sure on the licensing if it is. And hey, it's Robocode that grew incompatible, not <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a>. =) It's painless to setup and I bet 95% of Robocoders use it regularly. Not to say you two can't do better (you surely can), but it's still a super useful tool available right now. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> Hmm, all clients that uses/runs Robocode should use the robocode.control package and access the RobocodeEngine<a href="robowiki?action=edit&id=RobocodeEngine" class=wikipageedit>?</a> class. Clients that does not do this will not be able to keep up with newer versions of Robocode. It would be quite hard to make changes to Robocode. The robocode.control package is meant for Robocode clients and is always backwards compatible. If something is missing in the robocode.control package, I will be happy to extend it. ;-) --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+</UL>
+<p>
+@Simonton, how about merging it with the SourceForge<a href="robowiki?action=edit&id=SourceForge" class=wikipageedit>?</a> Robocode project? Things like restarting robocode each season could be set as an option, I'm assuming? What are you using for database access? SQL/ODBC? Also, is it written in Java as well? I'd like to try a bit of Python, and this sounds like something fun, but even if it's in Java I'm willing to lend a bit of my time. I just have to remember that I'm also meant to be studying =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<UL >
+<li> I'm not sure about merging with the Robocode project.  I don't plan to integrate with Robocode's source at any point in the future - only through the command line, .battle files, and .results files.  So I don't know if that means it should be some separate project? But anyway, for a database I'm using <a rel="nofollow" href="http://hsqldb.org/">[HSQLDB]</a>. I don't know anything about sourceforge ... could we open a separate project for it pretty easily? -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+We could make some options in Robocode to support this project. I will support you with whatever you need. --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<UL >
+<li> It relies on command line arguments, .battle files and .results files, so as long as they stay the same / backward compatible I'll be in business.  Do you think any of these will ever change? -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+I am wondering. How far is this project? Is there any progress? (I am just curious ;-) --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+<UL >
+<li> I <em>just</em> finished getting it to run distributed-style.  My test run is pitting the latest pattern matching against all 5 random movers as I type.  It's highly un-portable, though, I'm sorry to say.<br><br>It is not currently saving to a database, though I think that functionality is in place, I'm just not activating it (if I remember correctly).  That's it so far, and none of it's pretty to work with.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+Ok - why does robocode run WAY slow when I use a copy of the jar in a directory other than the one in which I installed it?  It takes a very long time for it to do <strong>something</strong> between battles.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+<UL >
+<li> Could it be building .robotcache? --<a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> Oh, sorry, I meant between <em>rounds</em>.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> I've got no idea, but you could try a process of elimination. Do a fresh robocode install, test. Delete seemingly unnecessary files one at a time, test again. If you find it before <a href="robowiki?Fnl" class=wikipagelink>Fnl</a> (if he knows the reason) replies, it is time well spent =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> I did that for a while with no fruit, so I just adapted <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> to use a full install :) --<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Ok, now my normal install is doing the same thing. I upgraded to 1.4beta2. At first I just grabbed the jar out if it &amp; put it over my current install, but then I started getting this "it takes a very long time for robots to die" problem. It's not slamming the hard drive, and it's not slamming the processor. So I ran the whole installer over top of my old install, and that didn't help.  I installed in a fresh directory, and it works fine.  Is anybody else experiencing anything like this?  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Ah <strong>HA</strong>!  It has to do with the CPU constant.  When I set the CPU constant really high, it sometimes waits for that long when a robot dies. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+Alrighty, I just submitted an application to open a sourceforge project for <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a>.  I hope you were serious about helping, <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>! --<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> I'll try and dig up my old SF ID, and yes I am. It might take me a few days to get the layout of the code and find time, but I'll definately help with it. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<UL >
+<li> Are you sure... --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<UL >
+<li> I'm kinda busy with Waylander at the moment (and exams...haha), but I've messaged Simonton to add me as a developer. I'm just reading through the code now. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+</UL>
+</UL>
+<p>
+Oh, <a href="robowiki?Fnl" class=wikipagelink>Fnl</a>, I just found one more request this project could ask of <a href="robowiki?RoboCode" class=wikipagelink>RoboCode</a>: make sure that when "-nodisplay" is used, it never tries to open *any* kind of user interface (except the console).  I can't run the newest version distributed over the network; it's giving me the "can't connect to your computer" message again (since I'm behind a firewall, if it tries to open a connection back to my computer to display a window or anything like that it fails).  I thought maybe it was because of the new human-interaction capabilities, so I installed version 1.3.3, and that one works great.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Well - sourceforge apparently ignored my request to open a project.  I never heard back from them.  On another note, can someone tell me whether it would work to copy robot jars and their cache directories in &amp; out of the robots folder?  I would like to get <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> set up to handle data-saving bots without having to leave those bots in the robots directory (because it takes a long time for robocode to go through them all every time it starts).  Would robocode re-unzip the jars &amp; overwrite things in the data saving directory, or leave it the way it was?  I suppose it wouldn't be too hard to test, I was just wondering if anyone knew.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> [edit] - or, then again, maybe the project is already <a rel="nofollow" href="http://sourceforge.net/projects/roboresearch">[there]</a> but nobody bothered to tell me! -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+Ok, it was a very long time coming - BUT THE SOURCE IS NOW ON SOURCEFORGE!!  YAY!  So, anyone who wishes to help out, tell me how to let you!  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> School's almost coming, but there's still a week...so...I've never programmed anything like Robocode, so something (relatively) simple(ish) for me... --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<li> Great!  Um - you'll need eclipse with SVN support (I recommend using <a rel="nofollow" href="http://yoxosondemand.com">[Yoxos]</a> and grabbing a distribution with Subclipse), and I'll have to figure out how to add you as a developer on sourceforge.  Send me an email so we can communicate.  My address is on the <a href="robowiki?ContactInfo" class=wikipagelink>ContactInfo</a> page.  Oh ... of course if you already know how to use SVN, feel free to use any client you like instead of downloading a new eclipse! -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> :3 I only use CVS cause its built into eclipse, SVN is alot better though. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<li> That sounds familiar ... -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> I can't help you, i have already more than enough programming projects running :/ But i would like to try this nice tool. Is it my fault that i can't get the code from the cvs server (I'm not that familiar with cvs) or do i need a name/pw? --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<UL >
+<li> They use a svn, probably why you can't get the cvs for it. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<li> Ahh thanks! I thought CVS would work as well, because there is a "CVS" label below "Code". --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<li> Oh, look, there's an option to make that go away.  Done!  Sorry for the confusion. Enjoy! If you do something cool with it, let us know. If you have trouble getting it to run (after looking at the half-completed stuff in the docs folder), let me know that, too, so I can update the docs. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> It runs fine, but you need a differend score type for the tc challenge (Or may be its just a typo). The AVERAGE_BULLET_DAMAGE always returns 1.0. It should be <pre>results.getResult(bot).bulletDmg/results.getNumRounds()</pre> instead of <pre>results.getResult(bot).bulletDmg/ results.getTotalBulletDamage()</pre> :) --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<li> Excellent, thanks for the fix!  I actually knew that scoring scheme was broken, but in my haste to get this thing running for the MC2K7 I never checked out why.  Thanks, for saving me the trouble!  (Sorry for causing you the trouble ...)  This patch has been added &amp; committed. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+</UL>
+<p>
+<i>""If I/we ever get around to it, <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> will be able to automatically create tweaks of a bot and run them against a set of competitors,"" </i> This is probably most easily accomplished with a <a href="robowiki?GeneticAlgorithm" class=wikipagelink>GeneticAlgorithm</a> which are in fact what my project is using, the robot is <a href="robowiki?NeBot" class=wikipagelink>NeBot</a>, (the one that found the bugs in <a href="robowiki?RoboCode" class=wikipagelink>RoboCode</a>). So its not really that difficult of a concept to implement. It would be some work, having to deal with different parameters that would have different discretizations and the effects of the delta's used for those discretizations would have on the robots. But doable. -- <a href="robowiki?Ntroutman" class=wikipagelink>Ntroutman</a> 2007-08-30
+<UL >
+<li> I agree.  What I had in mind (and have done before) was a brute force approach.  Using a <a href="robowiki?GeneticAlgorithm" class=wikipagelink>GeneticAlgorithm</a> is much more elegant, and would save a lot of computation time if you set it up well.  (I have to remember that I won't always have 100+ machines to use in parallel.)  Perhaps our projects could merge at some point?  Or are you using <a rel="nofollow" href="http://jgap.sourceforge.net/doc/robocode/robocode.html">[RobocodeJGAP]</a>?  Either way, if you're not currently using a database to save your results, I think it could be helpful for all of us to team up. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> No, I'm not using JGAP, I'm using my own Genetic Algorithm library that I've been using for a couple years now for my research at work. JGAP is genetic <i>programming</i>, not genetic <i>algorithm</i>. They do share some concepts as they are both in the evolutionary computation field but they aren't the same thing. I'm not using a database to save results, as I'm not using Robocode's scoring scheme I need my own scoring system that I can easily tweak. My only concern with <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> is, are all the robots compatible with standard Robocode? -- <a href="robowiki?Ntroutman" class=wikipagelink>Ntroutman</a> 2007-09-03
+<li> Another question, why are you starting a new JVM all the time and why aren't you using the Robocode API? It would keep you from having to parse through all the text being spewed to the console as you would have direct access to the RobotResults<a href="robowiki?action=edit&id=RobotResults" class=wikipageedit>?</a> objects. If its a memory issue, those have been (will be as soon as my patches hit CVS) fixed. I saw the two reasons you listed in the beginning and I disagree with them. The memory thing was an issue, but its being fixed. As for coding the remote stuff, running external programs form Java isn't exactly a pretty process. There is very little control you have over the spawned processes. I've worked with it a long time ending up having to write JNI code to get the control over a process I needed from Java. In my opinion you'd be better off keeping everything in Java, even if it takes some extra work because you'll more likely stay cross-platform compatible. If you have any question feel free to email me (an address is in my profile). I've worked a lot with java and doing research with java. -- <a href="robowiki?Ntroutman" class=wikipagelink>Ntroutman</a> 2007-09-03
+<UL >
+<li> I think that the only way to do remote stuff (over SSH) is using native/scripting tools. Java isn't that friendly with native programs, but it's all a tradeoff. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> Then why use SSH? Java is very networking friendly. Just write a quick protocol over TCP/IP and that makes it even more cross-platform friendly as it means people don't need SSHD setup and configured, having SSH and SSH is not a likely story for most Windows people. -- <a href="robowiki?Ntroutman" class=wikipagelink>Ntroutman</a> 2007-09-03
+<li> I'm a Linux junkie, so I breath SSH. =). And with SSH you don't need to set up a client, and leave it running, listening for connections. It all gets done for you. You only need to call "ssh user@host 'cd /mnt/nsf1/; java roboResearch.BattleRunner<a href="robowiki?action=edit&id=BattleRunner" class=wikipageedit>?</a> distrib.cfg' ", and it returns all the stdout right back to you, which then gets parsed by the same mechanism, voila! -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<li> (edit conflict) Hmm, I thought I responded to that first one about 20 minutes ago.  Guess I must have failed the consciousness check or something.  Anyway, as I tried to say before, yes, any robot should work with standard Robocode unless it tries to write to a directory other than the one it's supposed to (and perhaps there are a couple other restrictions?).  And why use another JVM?  Well, it really is just the two reasons you already responded to.  As for parsing the text, that part is already done.  The memory was an issue whether or not it will be in the future, so it was still a valid reason to build <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> that way.  But you're absolutely right about cross-platform ability-ness.  Once the memory issues are fixed, it would make the program more efficient to use the API instead of re-starting the JVM (in non-distributed mode).  Thanks for your offer to answer questions!  As for a quick protocol, feel free to contribute one ;) -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> By the way, it now uses .results files, not the results printed to the console.  I'll fix that in the description above. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+</UL>
+<p>
+I'm sad.  2 hours to run the <a href="robowiki?TargetingChallenge" class=wikipagelink>TargetingChallenge</a> for <a href="robowiki?GFMicro/DCResearch" class=wikipagelink>DCResearch</a> is a lot slower than the 2 minutes it took when I had access to the computer lab at the school ... :*(  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+I have actually optimised it to use the duo's (faster dual cores :) and it has dropped down to about 1 and a half. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<UL >
+<li> Sweet, you should sign up for a sorceforge account &amp; I'll add you as a developer. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+I'm getting this when I try to run:
+<p>
+<PRE >
+ C:\robocode\<a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a>&gt;java -cp bin;hsqldb.jar roboResearch.BattleRunner<a href="robowiki?action=edit&id=BattleRunner" class=wikipageedit>?</a> 
+ -s 5
+ -C c:\robocode\<a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a>\challenges\mc2k7.rrc
+ -c "davidalves.Phoenix 0.9"
+</PRE>
+<p>
+<PRE >
+ Running vs. wiki.mc2k7.HawkOnFireOS<a href="robowiki?action=edit&id=HawkOnFireOS" class=wikipageedit>?</a> MC2K7 ... java.io.FileNotFoundException<a href="robowiki?action=edit&id=FileNotFoundException" class=wikipageedit>?</a>: 
+ robocode_install\battles\tmp.battle.results 
+ (The system cannot find the file specified)
+        at java.io.FileInputStream<a href="robowiki?action=edit&id=FileInputStream" class=wikipageedit>?</a>.open(Native Method)
+        at java.io.FileInputStream<a href="robowiki?action=edit&id=FileInputStream" class=wikipageedit>?</a>.&lt;init&gt;(FileInputStream<a href="robowiki?action=edit&id=FileInputStream" class=wikipageedit>?</a>.java:106)
+        at java.io.FileInputStream<a href="robowiki?action=edit&id=FileInputStream" class=wikipageedit>?</a>.&lt;init&gt;(FileInputStream<a href="robowiki?action=edit&id=FileInputStream" class=wikipageedit>?</a>.java:66)
+        at java.io.FileReader<a href="robowiki?action=edit&id=FileReader" class=wikipageedit>?</a>.&lt;init&gt;(FileReader<a href="robowiki?action=edit&id=FileReader" class=wikipageedit>?</a>.java:41)
+        at roboResearch.BattleResults<a href="robowiki?action=edit&id=BattleResults" class=wikipageedit>?</a>.load(BattleResults<a href="robowiki?action=edit&id=BattleResults" class=wikipageedit>?</a>.java:22)
+        at roboResearch.BattleRunner<a href="robowiki?action=edit&id=BattleRunner" class=wikipageedit>?</a>.runBattle(BattleRunner<a href="robowiki?action=edit&id=BattleRunner" class=wikipageedit>?</a>.java:106)
+        at roboResearch.BattleRunner<a href="robowiki?action=edit&id=BattleRunner" class=wikipageedit>?</a>.runBattle(BattleRunner<a href="robowiki?action=edit&id=BattleRunner" class=wikipageedit>?</a>.java:76)
+        at roboResearch.BattleRunner<a href="robowiki?action=edit&id=BattleRunner" class=wikipageedit>?</a>.runChallenge(BattleRunner<a href="robowiki?action=edit&id=BattleRunner" class=wikipageedit>?</a>.java:143)
+        at roboResearch.BattleRunner<a href="robowiki?action=edit&id=BattleRunner" class=wikipageedit>?</a>.main(BattleRunner<a href="robowiki?action=edit&id=BattleRunner" class=wikipageedit>?</a>.java:34)
+ There appears to have been an error in Robocode itself.
+</PRE>
+<p>
+I put a copy of Robocode 1.4.5 in the robocode_install directory and put all the MC2K7 bots in it. If run robocode manually and select the tmp.battle file, it properly loads up the two bots. Any ideas? --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Nevermind, figured it out. I had edited the batch file used to run robocode and had it pointing to a different directory. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<UL >
+<li> :) Glad you got it figured out.  I hope you like the tool!  I have worked on the source a little at home to make it safe to run multiple copies of roborumble at once (in the non-distributed version), I'll commit those as soon as I get internet ... -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+Ah cool, I was going to add that when I got home tonight. 4x speed improvement would be nice, but I had to go to bed before I could add it last night. =) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<UL >
+<li> Warning: "as soon as I get internet" means "as soon as I subscribe to an internet service at home" - so it may not be immediate.  But, if you would like to make the same changes yourself, all I did was change BattleRunner<a href="robowiki?action=edit&id=BattleRunner" class=wikipageedit>?</a>.java to use something like File.createTempFile<a href="robowiki?action=edit&id=TempFile" class=wikipageedit>?</a>("tmp", ".battle", "same directory as before") instead of having every copy work off of the same "tmp.battle" file.  And then make sure it and its .battle.results friend get deleted after I read in the results.  Umm ... this would be somewhere in the string of runBattle(...) methods.  (I'm not entirely confident of the names, but those should all be close).  If you'd like to help with the tool a little, you could do something similar to the DistributedBattleRunner<a href="robowiki?action=edit&id=DistributedBattleRunner" class=wikipageedit>?</a>.java, except just for the local host (no ssh connections), so that fast learning challenges could be kicked off in one place and run X copies in parallel :).  That's on my to-do list at some point now that I have a dual core machine.  (No need to announce to me that you now have a quad core just to make me feel inferior) -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> OH WAIT!!  No, that was not the only change.  Oh.  It requires running an HSQLDB server process that all the roboresearch processes can connect to.  Hmm ... let's see.  You should replace the IN_MEMORY_CONNECTION in BattleRunner<a href="robowiki?action=edit&id=BattleRunner" class=wikipageedit>?</a>.main with SERVER_CONNECTION, and from the database directory run the following command.  Ok - I think <em>that</em> is all you have to do.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL><PRE>
+       java -cp ../hsqldb.jar org.hsqldb.Server -database.0 file:roboresearch -dbname.0 roboresearch
+</PRE>
+<p>
+There's no harm in running multiple copies of robocode from the same install directory as long as they are just using .battle files, right? I know from experience that it can cause bad interactions if you run multiple RRAH clients from the same directory, but multiple .battle ones seems safe. I'll make the change after I get home tonight. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<UL >
+<li> Right.  As long as you don't run 2 copies of a data-saving bot at once.  The trouble with RR@H is that it stores the results of its battles in a file, then reads them back in to upload.  On the (distant future, maybe never implemented) to-do list of <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> is to make it into a rumble client that can parallelize safely (including data saving bots).  Wanna be a developper?  ;) -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+<p>
+<a href="robowiki?RoboResearch/MultiThreaded" class=wikipagelink>It's working with multiple threads now</a>. Do you need to add me to the project on sourceforge to allow me to commit my changes? --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+It's been committed now. Enjoy! --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Very nice work!  I'm just about to commit a change to print out # of seasons, if you'd like update. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Updated to delete .results files (they stayed forever before). Also if a thread encountered an exception when running a battle it would previously stop running. Now the thread will skip that battle and move on to the next one.  
+Incidentally, the battles are run in the season order, so the # of seasons complete should be 
+<PRE >
+ battles completed so far / # of battles per season
+</PRE>
+<p>
+This doesn't account for any exceptions encountered while running battles though, if you want your season-printing thing to account for those then it gets a bit more complicated. 
+<p>
+If you're updating to this version you might want to clear out *.results from your robocode_install/battles folder, there might be a lot of 'em. =)
+--<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Oops ... ok, NOW I committed the printing of the # of seasons in wiki output.  Along with a few other, un-notable tweaks. Thanks again for your work, David - I'm running in two threads as we speak! -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Just made a nice change in the way challenge battles are chosen.  The number of seasons now represents the number of *completed* season you wish to have in the database altogether.  The bot(s) with the least number of battles fought will be run until every pairing in the challenge has at least that many battles.  It has been committed.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> And now I just committed a fix for a bug in that.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+I have a bug, and I'm wondering if it's a bug in robocode.  Maybe you guys can help me answer this.  <a href="robowiki?Simonton/DCResearch" class=wikipagelink>DCResearch</a> keeps getting "forcing a stop, no score will be generated" error, but only for the first battle run in the JVM.  After one battle is over, it runs smoothly.  The trouble is, <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> only runs one battle per JVM.  I hacked in a change to <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> to print out the message when this error happens.  Could those of you using <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> please update from SVN and see if your bots do the same thing?  You'll see the message print to the console if it does.  This will be especially interesting to David, I think, since this possible bug causes targeting challenge scores to be lower than they should. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> I'm definitely getting more forced stops than I ought to, including some from the reference bots. I've noticed those when running Robocode the regular way also, even though my bots rarely ever skip turns. (Edit: I also just noticed I'm getting a ton of <code>FAIL 2.0</code> messages. That can't be good, can it?) -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+</UL>
+<p>
+Hey Simonton, I had an idea that might make the results from <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> a little more reliable. You already have code to basically capture stderr from robocode and print it to the console, so that we can see if something goes wrong. How about checking whether a given process printed anything to stderr before adding its results to the database. If something went wrong, don't add it! --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<UL >
+<li> That is certainly doable.  I should be able to do that tonight after I get home. I'll un-hack-ify that print-to-stderr, too, &amp; make a regular part of <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a>.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Alrighty, I committed what I think should do it.  That is, assuming all "abnormal" messages will come out of Robocode's standard error (rather than standard out).  You can give it a shot.  If you have a bot that you know will cause errors, that will be the ideal test. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Thanks, works perfectly! --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+A thread following the call for <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> 2.0:
+<UL >
+<li> I'd like to, but I'm kind of strapped for time at the moment. Sounds like good stuff though, esp. the 'rumble when inactive' part =). -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> I have a bit of free time over the next couple of days, but I don't know if there is anything I could do to help. I'm not exactly an expert when it comes to networking in Java. By the way, who would be hosting the <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> server? -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<UL >
+<li> There are things that need to be done besides the actual networking.  Like getting it to fire up the rumble when there's nothing else to do, or getting it to swap robot jars in &amp; out of the live robots directory, so that only the ones that need to be running are running.  Would you like to do something like that?  You can contact me via one of the methods on <a href="robowiki?ContactInfo" class=wikipagelink>ContactInfo</a>.  The server, though, may be able to find a home on the same account to which we move this wiki, when that happens. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> Whoops, sorry for the slow reply. I'll see what I can do about swapping JARs into the robots directory; I'll contact you if I can get it working. On the other hand, that's assuming I can get <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> itself running - I keep getting <code>java.sql.SQLException: socket creation error</code>. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li> Sweet, thanks.  You need to use the "Database.IN_MEMORY_CONNECTION" in your BattleRunner<a href="robowiki?action=edit&id=BattleRunner" class=wikipageedit>?</a>.main() method.  That, or fire up the database.sh script.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Thanks! -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li> Alright, I have <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> rigged up so that it copies the necessary JARs from an auxiliary directory into <code>robocode_install/robots</code>, runs the battles, and then deletes the copies and clears out the robot cache. My sourceforge username is "arotenbe", by the way. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li> Awesome.  I'll add you as a developer tonight when I get home. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Can you not do the cache clearing if you're going to make <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> run RRAH battles? Maybe have a robocode_test and a robocode_rrah installation as subdirectories instead of just robocode_install? Those of us who gain points from saved data would appreciate it. =) Since Dookious and Phoenix are within 10 points, and saved data is probably worth about 10 points... --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<li> Hmm, I didn't really think about data saving. I think we should leave it as it is, and have RRAH run from the directory "roborumble_install" or "rrah_install". That way, nothing major has to be changed in the code or the existing installs. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li> My plan was to keep <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> and RRAH as totally separate entities, then just have <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> fire up that totally separate program when desired for one iteration.  At the end of each iteration (when the RRAH process exits) it would poll the server again to see if it should run some research battles instead. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> So basically, the question is: should <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> be kept in a completely separate location, or should it be placed in a subdirectory of the <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> folder? Now that I think about it, it may make more sense to keep <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> separate; people may want to run RRAH without <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a>, and having a subfolder would make it harder to start the rumble client by itself (albeit only by one or two mouse clicks =). -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li> I agree, let's do it that way.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a> <em>(who is off to add you as a developer right now)</em>
+<li> Thanks, I've committed the changes. Could someone update their copy of <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> and make sure that it actually works? I've been fiddling with my copy of the code so much that I'm not sure whether a fresh installation will even run with the new updates. Also, there is a bug that I can't seem to track down: it appears that the last bot in any challenge doesn't have its results saved to the database. So if you run a challenge, and then run it again, only the last battle will get run. For example, I just ran a MovementChallenge2K7/FastLearning<a href="robowiki?action=edit&id=MovementChallenge2K7/FastLearning" class=wikipageedit>?</a> and it works perfectly, except that if I run it again, the only battle executed is Chalk (<a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> thinks that it has run no battles for that bot). -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li> Do you have an IM client?  Please contact me via email or IM.  (<a href="robowiki?ContactInfo" class=wikipagelink>ContactInfo</a>) -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+</UL>
+</UL>
+<p>
+<a href="robowiki?AaronR" class=wikipagelink>AaronR</a> - I've been using <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> with your jar swapping for a little while now, and it seems to be working great!  I refactored it a bit, I hope you don't mind.  Also made one change: I let robocode deal with the .robocache stuff, since it delete directories automatically.  It's nice to be able to just throw my dev bots into the robocode_bots directory without worrying about slowing down the battles!  Nothing else has happened so far with <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> 2.0; I guess I've been too interested in getting this WS-GF-GF/DC surfing going :).  I hope that doesn't make you feel like your effort was a waste.  I still want to do 2.0, and like I said, your mods are useful already!  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> Great, thanks! Feel free to refactor and change it all you want, it was more of a quick hack than anything. Some of the code was copy-pasted from my equally messy cache cleaner utility I sent in as a feature request. ;) I might be able to do some more work on <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> over the weekend. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+</UL>
+<p>
+Why does <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> print "FAIL 2.0" to the console over and over when I run a <a href="robowiki?MovementChallenge2K7" class=wikipagelink>MovementChallenge2K7</a>? Looking at the code, it looks like this happens whenever it calculates the score... not sure why that's in there... --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<UL >
+<li> That should be removed from the latest version if you update.  The lastest version also does the bot jar swapping (which is so far undocumented in the getting started guide).  But, you're the one who added that "FAIL 2.0" - I assumed it was for testing ... -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+Oh hah, whoops! =) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+I've just committed a fairly signifigant modification: you now no longer have to modifiy the <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> source code if you are running Windows or if you want to run a local challenge (that is, not over a network). <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> will auto-detect the operating system; you need to pass a new command line flag to run battles over a network. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<UL >
+<li> Very nice!  I just committed a quick fix: the runOverSever<a href="robowiki?action=edit&id=OverSever" class=wikipageedit>?</a> flag was not getting set when a .cfg file was specified.  Thanks!  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> Thanks! Actually, from the SVN history, it looks like you just committed quite a few quick fixes... what are all of those other changes? -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+</UL>
+</UL>
+<p>
+And here I still ahve a rather ancient (in development terms) version of this for doing networked battles. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<UL >
+<li> Actually, <a href="robowiki?AaronR" class=wikipagelink>AaronR</a> meant to connect to a database server in a different process (or machine), not running distributed battles.  I don't know as I'd recommend updating, I have no idea whether distributed battle running still works.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Hmm, I'm trying to use RoboResarch<a href="robowiki?action=edit&id=RoboResarch" class=wikipageedit>?</a> here but I'm getting the following error:
+<pre>Exception in thread "Thread-1" java.lang.IllegalArgumentException: It's not worth storing a battle with less than 2 participants
+	at roboResearch.Database.makeTweakIdArray(Database.java:256)
+	at roboResearch.Database.store(Database.java:87)
+	at roboResearch.BattleRunner$BattleRunnerThread.run(BattleRunner.java:336)
+</pre> Anyone have any ideas what could be going on?
+<br>-- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Hmm, nevermind, it started working when I used a clean robocode_bots directory with the necessary bots instead of symlinking to the main robots directory. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Hmm, for some reason, I get problems like "pez.rumble.<a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> 2pi.08TC still has not started after 100000 ms... giving up." even though <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> 2pi.08TC seems to work fine outside of <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a>. Anyone have any suggestions? -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Gah, nevermind. I misspelled my own bot's version and that caused the problem... -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Hmm, well I don't have anything near the nice computer labs of <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>, but I am trying to run this in a distributed way but I can't seem to work out how. I've successfully set up a shared install of <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> within reach of both computers, but I can't seem to figure out how to get the instances running on each computer to cooperate. Anyone know how to get <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> to work in a distributed mode? -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+I know the earlier version worked for distributed, but the later versions haven't been tested yet, now that multi-threading and such have been added. But take a look at <a rel="nofollow" href="http://roboresearch.svn.sourceforge.net/viewvc/roboresearch/trunk/src/roboResearch/DistributedBattleRunner.java?revision=49&amp;view=markup">[the code]</a>, you can probably figure it out. At first glance it seems it is specifically designed for the computer lab at Simonton and Chase-san's university, but with a bit of tweaking of hostnames I'm sure you could get it to work. From all appearances you have to edit the actual code to get it to load the distributed battle code, which is how all the stuff in <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> was originally. If you want to add a hosts configuration file and some code to load it, email Simonton and he'll add you as a developer. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Hmm, the code there looks like a bit of a bother. Actually, I think I'm more interested in trying to get started some time on the "communal <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> server" idea that Simonton brought up above, than trying to fix that old distributed code :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<UL >
+<li> Still interested in that, Red?  If so, drop me an email (<a href="robowiki?ContactInfo" class=wikipagelink>ContactInfo</a>).  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Mail sent. :-) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+If anyone updates from SVN, be warned that the main class is now roboResearch.TUI, instead of roboResearch.BattleRunner<a href="robowiki?action=edit&id=BattleRunner" class=wikipageedit>?</a>, so your scripts will need to be updated.  Also, run roboResearch.GUI and let me know what you think of the design so far!  Making the GUI is just preparation for running against a communal server.  <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a> and I had a long discussion a while back about how the server should be designed; I still need to post a summary of our thoughts here to solicit feedback.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RoboResearch/Archive" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RoboResearch/Archive">View other revisions</a><br>Last edited September 13, 2008 21:55 EST by <a href="robowiki?Simonton" title="ID 15092 from 24-247-241-157.dhcp.klmz.mi.charter.com">Simonton</a> <a href="robowiki?action=browse&diff=1&id=RoboResearch/Archive">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

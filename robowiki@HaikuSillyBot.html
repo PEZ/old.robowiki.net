@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>HaikuSillyBot - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Haiku, Silly, Bot'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=HaikuSillyBot">HaikuSillyBot</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>The original <a href="robowiki?SillyBot" class=wikipagelink>SillyBot</a> was designed to beat <a href="robowiki?MogBot" class=wikipagelink>MogBot</a>.  This version still can beat <a href="robowiki?MogBot" class=wikipagelink>MogBot</a> sometimes in shorter battles ( &lt; 50 rounds).  I lost the wall avoidance here, and I don't have the old <a href="robowiki?SillyBot" class=wikipagelink>SillyBot</a> squiggly movement.  I tried to put it in, but I'd need to spin the radar instead of the gun to get that back, unfortunately, or else I turn back and forth too much.  It only happened before because of a bug anyways, but it probably made it appear to be better movement.
+<pre>
+package kawigi.haiku;
+import robocode.*;
+
+/**
+ * HaikuSillyBot - a haiku complex oscillator by Kawigi based on SillyBot.  Still occasionally beats MogBot.
+ */
+public class HaikuSillyBot extends AdvancedRobot
+{
+	public void run()
+	{
+		turnGunRight(Double.POSITIVE_INFINITY);
+	}
+	
+	public void onScannedRobot(ScannedRobotEvent e)
+	{
+		setTurnRightRadians(robocode.util.Utils.normalRelativeAngle(Math.PI/2+e.getBearingRadians()));
+		setAhead((Math.sin(getTime()/13.0)-Math.cos(getTime()/17.0))*400);
+		setFire(e.getEnergy()/4);
+	}
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=HaikuSillyBot" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=HaikuSillyBot">View other revisions</a><br>Last edited August 6, 2003 23:15 EST by <a href="robowiki?Kawigi" title="ID 1391 from tide78.microsoft.com">Kawigi</a> <a href="robowiki?action=browse&diff=1&id=HaikuSillyBot">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>WSGunChallenge/KomariMover - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='WSGun, Challenge, Komari, Mover'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/KomariMover">WSGunChallenge/KomariMover</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?WSGunChallenge" class=wikipagelink>WSGunChallenge</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package wiki.kmove;
+
+import robocode.*;
+import robocode.util.Utils;
+import java.awt.geom.*;
+import java.util.LinkedList;
+import java.awt.Color;
+
+/**
+ * KomariMover
+ *
+ * Movement of Komarious 1.37, by Voidious, 
+ * for use in WaveSurferGunChallenge,
+ *   http://robowiki.net?WSGunChallenge
+ *
+ * CREDITS:
+ *   rozu - mini-sized PrecisePrediction from Apollon
+ *   Iiley - small codesize BackAsFront method
+ *   PEZ - iterative WallSmoothing algorithm
+ *
+ * Code is open source, released under the RoboWiki Public Code License:
+ * http://robowiki.net/cgi-bin/robowiki?RWPCL
+ */
+
+public class KomariMover {
+    private AdvancedRobot _robot;
+    
+    private static double _surfStats[][][][] = new double[2][3][5][47];
+    private static Point2D.Double _myLocation;
+    private static Point2D.Double _enemyLocation;
+    private static LinkedList _enemyWaves;
+    private static double _oppEnergy;
+
+    private static EnemyWave _surfWave;
+    private static double _lastDistance;
+    private static double _surfDistance;
+
+    private static int _lastLastOrientation;
+    private static double _lastLatVel;
+    private static double _lastLastAbsBearingRadians;
+    private static double _lastAbsBearingRadians;
+    private static double _lastPredictedDistance;
+
+    private static double _goAngle;
+
+    private static java.awt.geom.Rectangle2D.Double _fieldRect
+        = new java.awt.geom.Rectangle2D.Double(18, 18, 764, 564);
+
+    // Math.PI/2 would be perpendicular movement, less will keep moving
+    // further away
+    static final double A_LITTLE_LESS_THAN_HALF_PI = 1.35;
+    static final double WALL_STICK = 140;
+    static final int SURF_MIDDLE_BIN = 23;
+
+	public KomariMover(AdvancedRobot robot) {
+		_robot = robot;
+		_enemyWaves = new LinkedList();
+	}
+
+    public void onScannedRobot(ScannedRobotEvent e) {
+        double enemyAbsoluteBearing = _robot.getHeadingRadians() + e.getBearingRadians();
+
+        double bulletPower;
+        if ((bulletPower = _oppEnergy - e.getEnergy()) &lt;= 3
+            &amp;&amp; bulletPower &gt; 0) {
+            EnemyWave ew;
+            _robot.addCustomEvent(ew = new EnemyWave());
+            ew.bulletVelocity = bulletVelocity(bulletPower);
+            ew.directAngle = _lastLastAbsBearingRadians;
+            ew.sourceLocation = _enemyLocation;
+            ew.orientation = _lastLastOrientation;
+            ew.waveGuessFactors = _surfStats[_fieldRect.contains(project(_enemyLocation, _lastLastAbsBearingRadians + (_lastLastOrientation*maxEscapeAngle(ew.bulletVelocity)/2), _lastDistance))?0:1][(int)(Math.min(_lastDistance/250, 2))][(int)((Math.abs(_lastLatVel))/2)];
+            _enemyWaves.add(ew);
+        }
+
+        _oppEnergy = e.getEnergy();
+
+        _enemyLocation =
+            project((_myLocation = new Point2D.Double(_robot.getX(), _robot.getY())),
+            enemyAbsoluteBearing, _lastDistance = e.getDistance());
+
+        // WaveSurfing /////////////////////////////////////////////////////////
+        int direction = (_lastLastOrientation = sign(_lastLatVel));
+        if (!_enemyWaves.isEmpty()) {
+            double angleFromWaveSource = absoluteBearing(
+                (_surfWave = (EnemyWave)(_enemyWaves.getFirst())).sourceLocation,
+                _myLocation);
+
+            _goAngle = angleFromWaveSource +
+                directedGoAngle(direction = (sign(checkDanger(-1) - checkDanger(1))));
+        }
+
+        moveWithBackAsFront(wallSmoothing(_myLocation, _goAngle, direction));
+
+        _lastLatVel = _robot.getVelocity()*Math.sin(e.getBearingRadians());
+        _lastLastAbsBearingRadians = _lastAbsBearingRadians;
+        _goAngle = _lastAbsBearingRadians = enemyAbsoluteBearing + Math.PI;
+    }
+
+    public void onHitByBullet(HitByBulletEvent e) {
+        if (!_enemyWaves.isEmpty() &amp;&amp; (_surfDistance &lt; 100)) {
+
+            // The waves are removed quickly enough that it's possible
+            // I could be hit by a bullet on a wave that's been removed...
+            // logging that could really screw up the stats.
+            logHit(_surfWave, _myLocation, 2);
+        }
+    }
+
+    public void logHit(Wave w, Point2D.Double targetLocation, int rollingDepth) {
+        for (int x = 46; x &gt;= 0; x--) {
+            w.waveGuessFactors[x] = ((w.waveGuessFactors[x] * rollingDepth)
+                + ((1 + w.weight) / (Math.pow(x - getFactorIndex(w, targetLocation), 2) + 1)))
+                / (rollingDepth + 1 + w.weight);
+        }
+    }
+
+    private static int getFactorIndex(Wave w, Point2D.Double botLocation) {
+        return (int)limit(0,
+            ((((Utils.normalRelativeAngle(
+            absoluteBearing(w.sourceLocation, botLocation)
+            - w.directAngle) * w.orientation)
+            / maxEscapeAngle(w.bulletVelocity))
+            * (SURF_MIDDLE_BIN)) + (SURF_MIDDLE_BIN)), 46);
+    }
+
+    private double checkDanger(int direction) {
+        int index = getFactorIndex(_surfWave, predictPosition(direction));
+
+        return (_surfWave.waveGuessFactors[index]
+            + .01 / (Math.abs(index - SURF_MIDDLE_BIN) + 1))
+            * Math.pow(_lastDistance/_lastPredictedDistance, 4);
+    }
+
+    private double directedGoAngle(int direction) {
+        return (direction * A_LITTLE_LESS_THAN_HALF_PI);
+    }
+
+    // CREDIT: mini sized predictor from Apollon, by rozu
+    // http://robowiki.net?Apollon
+    private Point2D.Double predictPosition(int direction) {
+        Point2D.Double predictedPosition = (Point2D.Double)_myLocation.clone();
+        double predictedVelocity = _robot.getVelocity();
+        double predictedHeading = _robot.getHeadingRadians();
+        double maxTurning, moveAngle, moveDir;
+
+        // - actual distance traveled so far needs +bullet_velocity,
+        //    because it's detected one after being fired
+        // - another +bullet_velocity b/c bullet advances before collisions
+        // ...So start the counter at 2.
+        int counter = 2;
+
+        do {
+            moveAngle =
+                wallSmoothing(predictedPosition, absoluteBearing(_surfWave.sourceLocation,
+                predictedPosition) + (direction * (A_LITTLE_LESS_THAN_HALF_PI)), direction)
+                - predictedHeading;
+            moveDir = 1;
+
+            if (Math.cos(moveAngle) &lt; 0) {
+                moveAngle += Math.PI;
+                moveDir = -1;
+            }
+
+            moveAngle = Utils.normalRelativeAngle(moveAngle);
+
+            // maxTurning is built in like this, you can't turn more then this in one tick
+            maxTurning = Math.PI/720d*(40d - 3d*Math.abs(predictedVelocity));
+            predictedHeading = Utils.normalRelativeAngle(predictedHeading + limit(-maxTurning, moveAngle, maxTurning));
+
+            // this one is nice ;). if predictedVelocity and moveDir have different signs you want to breack down
+            // otherwise you want to accelerate (look at the factor "2")
+//            predictedVelocity += (predictedVelocity * moveDir &lt; 0 ? 2*moveDir : moveDir);
+//            predictedVelocity = limit(-8,
+//                predictedVelocity + (predictedVelocity * moveDir &lt; 0 ? 2*moveDir : moveDir),
+//                8);
+
+            // calculate the new predicted position
+            predictedPosition = project(predictedPosition, predictedHeading,
+                (predictedVelocity = limit(-8,
+                predictedVelocity + (predictedVelocity * moveDir &lt; 0 ? 2*moveDir : moveDir),
+                8)));
+
+            if ((_lastPredictedDistance =
+                predictedPosition.distance(_surfWave.sourceLocation)) - 15 &lt;
+                _surfWave.distance + ((++counter) * _surfWave.bulletVelocity)) {
+                break;
+            }
+    	} while(true);
+
+        return predictedPosition;
+    }
+
+    private static double limit(double min, double value, double max) {
+        return Math.max(min, Math.min(value, max));
+    }
+
+    private static double bulletVelocity(double power) {
+        return (20.0 - (3.0*power));
+    }
+
+    private static double maxEscapeAngle(double velocity) {
+        return Math.asin(8.0/velocity);
+    }
+
+    // CREDIT: ganked from CassiusClay, by PEZ
+    // http://robowiki.net?CassiusClay
+    private static Point2D.Double project(Point2D.Double sourceLocation, double angle, double length) {
+        return new Point2D.Double(sourceLocation.x + Math.sin(angle) * length,
+            sourceLocation.y + Math.cos(angle) * length);
+    }
+
+    private static double absoluteBearing(Point2D.Double source, Point2D.Double target) {
+        return Math.atan2(target.x - source.x, target.y - source.y);
+    }
+
+    static int sign(double d) {
+        return (d &gt;= 0) ? 1 : -1;
+    }
+
+    // CREDIT: code by Iiley,
+    // http://robowiki.net?BackAsFront
+    void moveWithBackAsFront(double bearing) {
+        double angle = Utils.normalRelativeAngle(bearing - _robot.getHeadingRadians());
+        double turnAngle;
+        _robot.setTurnRightRadians(turnAngle = Math.atan(Math.tan(angle)));
+        _robot.setAhead((angle == turnAngle) ? 100 : -100);
+    }
+
+    // CREDIT: Iterative WallSmoothing by PEZ
+    // http://robowiki.net?WallSmoothing
+    public double wallSmoothing(Point2D.Double botLocation, double angle, int orientation) {
+        while (!_fieldRect.contains(project(botLocation, angle, WALL_STICK))) {
+            angle += orientation*0.05;
+        }
+        return angle;
+    }
+
+    abstract class Wave extends Condition {
+        Point2D.Double sourceLocation;
+        double[] waveGuessFactors;
+        double bulletVelocity, directAngle, distance;
+        int orientation, weight;
+    }
+    
+    class EnemyWave extends Wave {
+        public boolean test(){
+            if ((KomariMover._myLocation).distance(sourceLocation)
+                &lt;= (distance+=bulletVelocity) + (2*bulletVelocity)) {
+                _enemyWaves.removeFirst();
+                _robot.removeCustomEvent(this);
+            }
+            return false;
+        }
+    }
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?WSGunChallenge" class=wikipagelink>WSGunChallenge</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=WSGunChallenge/KomariMover" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=WSGunChallenge/KomariMover">View other revisions</a><br>Last edited July 21, 2006 22:06 EST by <a href="robowiki?Voidious" title="ID 7423 from ool-4357f2bb.dyn.optonline.net">Voidious</a> <a href="robowiki?action=browse&diff=1&id=WSGunChallenge/KomariMover">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

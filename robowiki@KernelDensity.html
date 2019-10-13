@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>KernelDensity - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Kernel, Density'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=KernelDensity">KernelDensity</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I just created this class to calculate kernel density estimates some time ago, but I didn't get much time now for robocoding, so may be it will be useful for someone.
+<p>
+Given an array of points (pe. a list of bearings) it gives you a good estimation of the probability for a given value (pe. bearing). Probably useful for <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> or <a href="robowiki?Targeting" class=wikipagelink>Targeting</a> algorithms.
+<p>
+It has several kernel functions. Just uncomment the one you want to use.
+<p>
+-- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<pre>
+ package apv;
+
+ /**
+  * KernelDensity - a class by Albert Perez
+  * Based on the following explanation: http://www.xplore-stat.de/tutorials/smoothernode2.html
+  * If you are using this code for Robocode, it i released under RWPCL
+  * Check http://robowiki.net/cgi-bin/robowiki?RWPCL for the terms.
+  */
+ public class KernelDensity {
+ 	
+ 	public static double densityAtPoint(double[] x, int n, double h, double p, double d) {
+ 		return densityAtPoint(x, n, h, p, d, n);
+ 	}
+ 	
+ 	public static double densityAtPoint(double[] x, int n, double h, double p, double d, int s) {
+ 		// x is the array of sample data points (ordered by t, 0 is prev. n-1 is actual
+ 		// n is the number of existing points in the array	
+ 		// h is the bandwidth
+ 		// p is the point at which to calculate the estimate
+ 		// d is the decay (assumes point at n-1 is the most recent one, then it weights the points as d^t)
+ 		// decay is just an addition to allow weighting the most recent points 
+ 		// s is the window (number of points to use for the calculation)
+ 		if (n==0) return 0;
+ 		if (s&gt;n) s =n;
+ 	
+ 		double d2 = d;
+ 		double w = 0;
+ 		double k = 0;
+ 		for (int i=n-1; i&gt;=n-s; i--) {
+ 			double u = (x[i]-p) / h;
+ 			w += d2;
+ 			
+ 			//Epanechnikov
+ 			//k += d2 * (3.0/4.0) * (1 - u*u) * (Math.abs(u)&lt;=1 ? 1 : 0);
+ 			//Uniform
+ 			// k += d2 * (1.0/2.0) * (Math.abs(u)&lt;=1 ? 1 : 0);
+ 			//Triangle
+ 			// k += d2 * (1- Math.abs(u)) * (Math.abs(u)&lt;=1 ? 1 : 0);
+ 			//Quartic
+ 			//k += d2 * (15.0/16.0) * (1 - u*u) * (1 - u*u) * (Math.abs(u)&lt;=1 ? 1 : 0);
+ 			//Gaussian
+ 			k += d2 * (1/Math.sqrt(2*Math.PI)) * Math.exp(-0.5 * u * u);
+ 			//Cosinus
+ 			//k += d2 * (Math.PI/4.0) * Math.cos(Math.PI/2 * u) * (Math.abs(u)&lt;=1 ? 1 : 0);	
+ 			
+			d2 = d2 * d;
+ 		}
+ 		k = k /(w*h);
+ 		return k;
+ 	}
+	
+ 	public static double densityAtPoint2D(double[] x, double[] y, int n, double h1, double h2, double px, double py, double d, int s) {
+ 		// x,y are the arrays of sample data points (ordered by t, 0 is prev. n-1 is actual
+ 		// n is the number of existing points in the array	
+ 		// h is the bandwidth
+ 		// p is the point at which to calculate the estimate
+ 		// d is the decay (assumes point at n-1 is the most recent one, then it weights the points as d^t)
+ 		// decay is just an addition to allow weighting the most recent points 
+ 		// s is the window (number of points to use for the calculation)
+ 		if (n==0) return 0;
+ 		if (s&gt;n) s =n;
+ 	
+ 		double d2 = d;
+ 		double w = 0;
+ 		double k = 0;
+ 		for (int i=n-1; i&gt;=n-s; i--) {
+ 			double ux = (x[i]-px) / h1; 
+ 			double uy = (y[i]-py) / h2;
+ 			w += d2;
+ 			
+ 			//Epanechnikov
+ 			//k += d2 * (3.0/4.0) * (1 - ux*ux) * (Math.abs(ux)&lt;=1 ? 1 : 0) * (3.0/4.0) * (1 - uy*uy) * (Math.abs(uy)&lt;=1 ? 1 : 0);
+ 			//Gaussian
+ 			k += d2 * (1/Math.sqrt(2*Math.PI)) * Math.exp(-0.5 * ux * ux) * (1/Math.sqrt(2*Math.PI)) * Math.exp(-0.5 * uy * uy);
+ 			
+ 			d2 = d2 * d;
+ 		}
+ 		k = k /(w*h1*h2);
+ 		return k;
+ 	}
+ 	
+ public static double derivativeAtPoint(double[] x, int n, double h, double p, double d, int s) {
+ 		// x is the array of sample data points (ordered by t, 0 is prev. n-1 is actual
+ 		// n is the number of existing points in the array	
+ 		// h is the bandwidth
+ 		// p is the point at which to calculate the estimate
+ 		// d is the decay (assumes point at n-1 is the most recent one, then it weights the points as d^t)
+ 		// decay is just an addition to allow weighting the most recent points 
+ 		// s is the window (number of points to use for the calculation)
+ 		if (n==0) return 0;
+ 		if (s&gt;n) s =n;
+ 	
+ 		double d2 = d;
+ 		double w = 0;
+ 		double k = 0;
+ 		for (int i=n-1; i&gt;=n-s; i--) {
+ 			double u = (x[i]-p) / h;
+ 			w += d2;
+ 			
+ 			//Gaussian
+ 			k += d2 * (1/Math.sqrt(2*Math.PI)) * Math.exp(-0.5 * u * u) * (1/h) * u;
+ 		
+ 			d2 = d2 * d;
+ 		}
+ 		k = k /(w*h);
+ 		return k;
+ 	}
+ 	
+ }
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=KernelDensity" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=KernelDensity">View other revisions</a><br>Last edited July 5, 2005 21:50 EST by <a href="robowiki?Albert" title="ID 4573 from 80-58-32-172.proxycache.rima-tde.net">Albert</a> <a href="robowiki?action=browse&diff=1&id=KernelDensity">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

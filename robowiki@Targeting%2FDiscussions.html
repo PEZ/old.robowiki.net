@@ -1,0 +1,206 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Targeting/Discussions - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Targeting, Discussions'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Discussions">Targeting/Discussions</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Targeting" class=wikipagelink>Targeting</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Not method specific questions:
+<p>
+I need a targeting method to pick off an oscillator without pattern matching. I've never even considered how to do this, and really don't want to "invent" such a primitive gun for this one little thing if it's already been invented, so, has it already been done? I'm guessing there's some kind of circular targeting with a way to account for periodic direction changes, or just something based on sin/cos waves. Has anyone done this? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Well, I have tried, but always end up going nuts when my brain waves collide and entangle. =) It just so happens that <a href="robowiki?AngularTargeting/Factored" class=wikipagelink>AngularTargeting/Factored</a> combined with <a href="robowiki?AveragedBearingOffsetTargeting" class=wikipagelink>AveragedBearingOffsetTargeting</a> and some segmentation of the factors work quite well against oscillators. Try using a gun like in <a href="robowiki?Gouldingi/Code" class=wikipagelink>Gouldingi/Code</a> and see if it is what you need. Of course, if it's for a <a href="robowiki?NanoBots" class=wikipagelink>nano</a> you can't use it until <a href="robowiki?Albert" class=wikipagelink>Albert</a> or some other brainiac manages to shrink that kind of gun considerably. Of course a brainiac like that probably can think out an anti-oscillator gun instead. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Hehehe :) Thanks, but thankfully it's not for a nano, I'm totally stuck on finding more space in <a href="robowiki?NanoSatan" class=wikipagelink>NanoSatan</a> at the moment. Instead I'm working on finishing up this proof of concept (which, with just it's supplementary classes, already crosses into mega :p). I need a targetting that can hit a regular oscillator, but does almost no learning (ideally the only learning is figuring out the period of the oscillator). I'll take a look at the <a href="robowiki?AngularTargeting/Factored" class=wikipagelink>AngularTargeting/Factored</a> and <a href="robowiki?AveragedBearingOffsetTargeting" class=wikipagelink>AveragedBearingOffsetTargeting</a> solutions, though :) If I can't make them work I'll just try extrapolating along a sin function stretched to a guess and check period. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I've always thought of looking for 'periods' of movement as a form of pattern-matching, too.  You could potentially try and match it to an approximate sine wave (of course, only nanos REALLY use a sine wave for oscillating motion) based on the times it turns around, and the distance it moves since the last peak.  Once you have a period, an amplitude, an orientation (? unless you assume it's oscillating perpendicular to you, which may be reasonable), and an offset (implicit with the period sort of), you can make a mathematical function to estimate it.  Hard to say if this is truly useful, though, but with simple oscillators and the occasional true sine oscillator, maybe it would work.  -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+That's about where I've ended up too, yeah, thanks Kawigi :) I guess you've confirmed what I feared, no easy way to do this. I'm instead going to avoid this part of the code for now and see if it'll simply work without, it quite possibly can. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Fourier transformation of x(t) and y(t) will give you both: answer if opponents movement is based on oscillations and base for good anti-oscillator gun (if amplitude of fourier series is falling to zero fast: oscillator!) It is a drag to program it though. -- <a href="robowiki?Frakir" class=wikipagelink>Frakir</a>
+<p>
+Actually, the old averaged-velocity linear targeting may work well for your problem, Kuuran. -- <a href="robowiki?Dil" class=wikipagelink>Dil</a>
+<p>
+You mean in the neighborhood of NanoDuelist<a href="robowiki?action=edit&id=NanoDuelist" class=wikipageedit>?</a>?  Or was it <a href="robowiki?DuelistNano" class=wikipagelink>DuelistNano</a>.  Is there a difference between those, David? -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+<p>
+<hr noshade class=wikiline size=2>
+<p>
+Q: What is the best way to find the right enemy direction? What alternatives are there? I want to use it for the right gun turn.    --SSO
+<p>
+I'm not sure I understand the question. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+By enemy direction, do you mean the enemy's heading? That's given in a <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> by e.getHeading(). If you mean the enemy's bearing, that's e.getBearing(), and it's offset by your current heading. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+I mean the clockwise (+) or counterclockwise (-). For instance in Tityus -Pez uses the abslute bearing diffrence. The flood mini uses lataral velosity sign. My problem is what others are there and under which conditions they are valid? My problem is I want to combine the direction with the stat gun. But my ranges are between -18 and 18. So if the direction is - and the best index is -10, than I got a diffrent result that index 10 . How to combine the direction and best index. --SSO
+<p>
+A rating of +18 would mean it's continuing in the same direction, -18 means turning around and going in the other direction. I think the easiest way to tell the direction is to have a global variable which stores the last known bearing to the enemy, and before you fire you compare the current bearing to the last known one, and then you know the direction it's going. (current&gt;last then clockwise, else anticlockwise) -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Whether you use bearing difference or lateral velocity (if you use bearing difference, be sure to measure, like <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> does, the bearing from your last position to the enemy's last position compared to the bearing from your last position to their current position), all you need to do is figure out the angle offset that the best index corresponds to, and multiply it by the direction.  Then turn your gun right that much from head-on. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+<hr noshade class=wikiline size=2>
+<p>
+What is a way to accurately find the time the bullet takes to travel to the enemy's predicted position, which requires the time the bullet will take?  An obvious way is to continuously update the time in a loop until you have it close enough (add the change components to the vector representing the path the bullet will travel, then get the hypotenuse again).  I know that the time the bullet takes to travel to predicted position and the predicted position after a certain time are dependent on EACH OTHER, but is there some kind of "magic formula" to do this? -Scoob
+<p>
+The most accurate way in general is to do what you described, in a loop calculate the next position and the distance to that position, and when the distance the bullet has travelled exceeds the distance to that position, that's the intersection. For different kinds of targeting there may be simplifications, though. For example: a linear gun can be simplified to a triangle between you, your opponent and the point of intersection, so a simple trig solution is possible. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+<hr noshade class=wikiline size=1>
+Hi, I'm new to this thing. I'm currently trying to implement something onto my corrupted version of Walls. I have <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a>. What I'm trying to do is, if the other robot is disabled, my robot (Ziska) will stop, turn the gun to the enemy, and fire. What I currently have is
+<p>
+<PRE >
+	public void on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {
+		if (e.getEnergy()&lt;0.1) {
+			stop();
+			set<a href="robowiki?TurnRadarRight" class=wikipagelink>TurnRadarRight</a>(getRadarTurnRemaining<a href="robowiki?action=edit&id=RadarTurnRemaining" class=wikipageedit>?</a>());
+			set<a href="robowiki?TurnGunRight" class=wikipagelink>TurnGunRight</a>(720);
+			fire(0.1);
+			resume();
+		}
+		else {  double absoluteBearing = get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>() + e.getBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a>();
+			setTurnGunRightRadians<a href="robowiki?action=edit&id=TurnGunRightRadians" class=wikipageedit>?</a>(robocode.util.Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(absoluteBearing - getGunHeadingRadians<a href="robowiki?action=edit&id=GunHeadingRadians" class=wikipageedit>?</a>()));
+			fire(3);
+	}
+</PRE>
+}
+<p>
+What will happen is, my robot will move in little jolts, moving its gun around, and firing sporadically. Eventually it will hit the thing but it doesn't work too well in melee, and wastes time and energy. I have experimented with various e.getBearings and e.getHeadings but nothing really works. What would be the best way to finish off a disabled robot in a single shot?
+<p>
+Thanks, PFVHanse
+/*/*/*/*/*/*/*/*/
+<p>
+I don't have much experience with ending turns in event handlers, but I think this is what you're trying to do (untested):
+<pre>public void onScannedRobot(ScannedRobotEvent event) {
+    double delta = robocode.util.Utils.normalRelativeAngle(getHeadingRadians() + event.getBearingRadians() - getGunHeadingRadians());
+    if(event.getEnergy() &lt; 0.1) {
+        stop();
+        turnGunRightRadians(delta);
+        fire(0.1);
+        resume();
+    } else {
+        setTurnGunRightRadians(delta);
+        fire(3); // note that this bullet doesn't even get close if the gun is turned in the other direction
+    }
+}</pre>
+-- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+Or probably, the gun turn in the first if statement should be turnGunRightRadians<a href="robowiki?action=edit&id=GunRightRadians" class=wikipageedit>?</a>(delta + Math.PI*4);.  The big distinction here is that you want the bot to finish turning the gun before firing, so you don't use a set call. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<hr noshade class=wikiline size=1>
+I lifted some code from MyFirstTeam<a href="robowiki?action=edit&id=MyFirstTeam" class=wikipageedit>?</a>. It seems to work pretty well now. Thanks.
+<p>
+<hr noshade class=wikiline size=1>
+Couldn't you combine certain different ways of targeting, such as Neural Networks and say a <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> Targeting, and use the ANN (artifical neural networks) to come up with the correct guessfactor for the gun to use based on ANN detection.. or is that how they do it already? -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Without a doubt, many of these concepts can be combined in interesting ways. For instance, the original <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> guns were almost synonymous with being <a href="robowiki?VisitCountStats" class=wikipagelink>VisitCountStats</a> systems; but both <a href="robowiki?Lukious" class=wikipagelink>Lukious</a> and <a href="robowiki?Ali" class=wikipagelink>Ali</a> use log-based targeting methods that make use of <a href="robowiki?GuessFactors" class=wikipagelink>GuessFactors</a>, and the Lukious page even has a terminology discussion about it =). Many of us use <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> with 2 different high-powered guns, because targeting a <a href="robowiki?WaveSurfer" class=wikipagelink>WaveSurfer</a> well can be so different than a non-<a href="robowiki?AdaptiveMovement" class=wikipagelink>AdaptiveMovement</a>. I would bet <a href="robowiki?Engineer" class=wikipagelink>Engineer</a> does some combining of Neural Networks with other advanced Robocode concepts, though I have no proof other than it being such a powerful tank. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+(edit conflict with voidious) I believe that is similar to how some systems work, such as <a href="robowiki?DynamicClustering" class=wikipagelink>Dynamic Clustering</a>. I'm only lightly familiar with the subject, but I am guessing that gun segmentation can be considered to be a simple neural network. One "down the road" thing I've planned to do is to poll the opinions of more than one targeting methodology for set of multiple recommended firing angles each, and go with the most often recommended angle. That's probably similar in concept to dynamic clustering. -- Martin
+<p>
+Thanks Voidious. Engineer does indeed combine other Robocode topics with NNs. In fact, the network's output vectors are nothing more than arrays of bins, just as in a classical GF gun. The purpose of a Kohonen network is to classify input vectors and associate each general classification with an output vector (e.g. a set of hit stats); As opposed to other types of networks that try to reproduce exact patterns. --<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a> 
+<p>
+(edit conflict with wcsv) Well I started thinking of Neural Networks once I saw it on wikipedia<a rel="nofollow" href="http://en.wikipedia.org/wiki/Neural_network">[1]</a>, and thought that the Reinforcement Learning<a rel="nofollow" href="http://en.wikipedia.org/wiki/Neural_network#Reinforcement_learning">[2]</a> would be perfect for robot, but I thought about the complications of that and so I decided the easiest way would be for the networks to calculate the guessfactor which would make the entire wave system unneeded for the gun. (nods to wcsv) thats about what I was thinking -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+<p>
+I am trying to think of a way to remove the need for the wave class, though while the total removal of something like the wave class is something nearly impossible to accomplish, so i'm trying to come up with a "new" way to target which has the accurracy of segmented gf gun with all the do-dad's, but at the same time not have it degenerate into something like a pattern matcher. If I come up with anything that can do it I will be sure to put the idea to paper. However my chances are slim as almost everything has been done so far. -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Well, the wave idea seems like a really great tool for any 1v1 targeting method; you are the only real variable for the enemy, so aiming based on the current bearing between you and him is just very logical, and waves are great at collecting data for that. <a href="robowiki?DisplacementTargeting" class=wikipagelink>DisplacementTargeting</a> comes to mind as a unique idea that you might be able to implement without waves. There's also the <a href="robowiki?TronsGun" class=wikipagelink>TronsGun</a> / <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> family of guns, although some of those still make use of waves, too. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+(edit conflict w/ Voidious) In order to gather any sort of useful info for targeting, you need to know something about the change in the target from the time that you fire (whether it's a real bullet or not) to the time that the "bullet" would pass the target. GF guns only care about the state of the target at the beginning and end of that period (the change in bearing) and PM guns keep track of the change over each tick in that period (generally the change in heading and velocity). A wave (as I see it) is basically just a convienient way to keep track of info about the beginning and end of that period. Your network still needs that info to be able to determine the GFs. --<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a> 
+<p>
+Is there any way to hit sample.Crazy besides PM? (and lucky headon shots) --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<UL >
+<li>Circular targeting does fairly well if not to far away.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<li>Besides a <a href="robowiki?PatternMatcher" class=wikipagelink>PatternMatcher</a> there are a few ways, you could make a gf gun(kinda advanced tho), or just make your bot stay close or even ram him. I find the best way to beat an enemy is to join them. So if you can't hit him, make sure he can't hit you either. (on a more general note, you could attempt a AverageBearingOffset<a href="robowiki?action=edit&id=AverageBearingOffset" class=wikipageedit>?</a> gun, there are examples on the <a href="robowiki?RaikoMicro" class=wikipagelink>RaikoMicro</a> page) -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</UL>
+<p>
+Will random targeting hit Crazy? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+The only time random targeting is as effective as another targeting method is when you're targeting a bot with perfect movement. Then, random targeting is as effective/ineffective as any other targeting. However, the rumble contains no bots with perfect movement; so you're better off trying something else. Crazy's movement is certainly not perfect. Try anything that uses probability - AverageBearingOffset<a href="robowiki?action=edit&id=AverageBearingOffset" class=wikipageedit>?</a>, <a href="robowiki?GuessFactors" class=wikipagelink>GuessFactors</a>, <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a>, <a href="robowiki?NeuralTargeting" class=wikipagelink>NeuralTargeting</a> or best yet - <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> pulls it off by deciding which simple targeting method (headon, linear, circular..) is best.  --<a href="robowiki?Corbos" class=wikipagelink>Corbos</a> 
+<p>
+I dont think so. Random targeting is better than HOT or LT vs good bots (they dont have to be perfect). You can easily dodge them, but you can't dodge random shots. --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<UL >
+<li>I am of the opinion that firing at random guess factors (i.e. the target could conceivably get where you are firing) is a good choice for the first shot, possibly a few of them.  If you fire directly at a bot that hasn't moved they are likely just messing with you, so it is a wasted bullet.  Ugluk doesn't fire randomly, but his first 6 shots in a battle are 0.1 power just to get the opponent moving around. -- Martin
+<li>To me its seems best to use CT for the first few shots or, even better, fire at GF1. There are a lot of bots using sortof a <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a> and you would nail them fast, forcing them to use their 'native' movement, before polluting the statistics too much. <a href="robowiki?Krabb" class=wikipagelink>Krabb</a> has a good point, firing random should hit equal against <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> and <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a>. For firing peas (0.1) at the start of a battle (only first round I assume) is an interesting idea, I have to think about it if the advantages outscore the disadvantages. -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</UL>
+<p>
+<p>
+I had a rather inspired idea, well two in fact. The first isn't quiet to inspirious as it is manatorial. That is moving a good aprt of this to a /OldDiscussion<a href="robowiki?action=edit&id=Targeting/OldDiscussion" class=wikipageedit>?</a> page. Now for the real one, it was to make a sorts of a 'Dynamic' segmented gun. It would work like this.
+<p>
+First we would have a arraylist of arrays(the reason for an arraylist is because not all segmentation ahve the same range of data), each one containing a different segmentation, such as distance, acceleration, lateralVelocity, wall and reverse wall, and so on. Each of those arrays would count each time thier visited for targeting. Each time thier visited they would adjust a different set of arrays to be more accurate by adjusting the segmentation of a segment closest to it or by adding or removing a segment (thus would also require an arraylist or something simular).
+<p>
+I don't know if there is a type of gun that already does this, but if there is, could you enlighten be before I embark on attepting to make one. I'm sure someone at some time thought of something like this. -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+I made a dynamically resegmenting gun.  Grishnakh uses it.  In addition to the regular segmentation, it would hold a variation that had one more division (data sliced more finely), one variation for each type of segmentation.  When one of those finally had enough data so that each bin had at least one hit, it would recreate itself using the new segmentation, and a new variant with one higher in that bin.  I had to set limits on each bin size, and it reached them fairly quickly.  There are some lessons to be learned from such a gun.  You are welcome to design one of your own and learn them. -- Martin (I certainly wasn't the first to do it either.  I know Florent has.)
+<p>
+Can anyone tell me a targeting method that:<br>
+<UL >
+<li>Can hit all sample bots (well enough to win 90% of the rounds)<br>
+<li>Will work in melee<br>
+</UL>
+The only one i can think of is Melee PM. Can anyone think of more? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+A 90-95% hit rate at what distance? And in a melee or 1 at a time? PM is probably the best against all sample bots, except maybe <a href="robowiki?Crazy" class=wikipagelink>Crazy</a>. But I don't think you need 90% hit rate against anyone in most situations. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I may be wrong on this, but I don't think there is a gun that can get 90-95% hitrates against all the sample bots, at least not in any realistic battle situation. ( My guns certainly can't hit Crazy 90% of the time :) ) --<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a>
+<p>
+How about a gun to hit well enough to win 90% of the rounds? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Well I assume that a patternMatcher would do the job, as long as you make it well. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Hey! You changed your post from before! Anyway, just about any of the more 'advanced' targeting methods (VG, GF, PM) should be able to win 90% of the rounds vs the sample bots as long as you've got a semi-decent movement, and all of them can be adapted to melee in one way or another. --<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a>
+<p>
+I had quite an amazing idea while building the raw buffer class for my new bot! What if in a GF gun (and maybe surfing too) you not only used different segments to aim, but different bin sizes aswell. Thus you could have 21 bins and 61 bins, and then compare the outputs by a compairison of guessfactors to find the best factor to shoot at, so that your aim is both general and specific. In fact I am implimenting this functionality in my bot as soon as I figure out how to correctly compare the guessfactors as they wouldn't be equal, and such even if they were close aiming at the average could be tricky. Only thing I can think of is a zoom like trick starting at the lowest sized bin (e.g. say 21), and slowly getting more specific for a better aim.
+<p>
+What does everyone else think of this idea? --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+As around 60 bins is all you need, most bots use between 31 and 55 bins, lowering the granularity would affect your precision. If there is not enough data yet in 60 bins to make a reliable prediction, groupings of f.e. 5 resulting in 12 'bigbins' could give satisfying results. On the other hand, temporarily dropping a less important segmentation gives the same and maybe even a better result. Your idea seems to have some similarities with <a href="robowiki?ZoomTargeting" class=wikipagelink>ZoomTargeting</a>. Only one way to tell if it works: trying it!  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+I ran a TC 2k6, without any kind of anti-surfer aimer and achieved a amazing ~85.5% (not sure of the exact percent as I left it at home). In the original TC it got about a 92.2%, right below Raiko. I might use a version of nekoangels gun for the anti-surfer gun (which by itself got a 83 or there abouts on 2k6). But that would be a royal waste of my flexable buffer system. I'll compare anti-surf stats later.  -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+The idea itself seems sound, but I agree with Grubbm that dropping one segment might be preferable to decreasing the number of bins. For a really scientific comparison, I'd try a version of the gun with a fixed number of segments and a low segmented / fast learning buffer added into the mix. In any case, nice work on that gun, 85 is darn a good score in TC2K6. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+VG worked well, except that it was painfully slow and sometimes i get stopped. (I am only doing it for the target). Unless, someone can think of a way to do VG and make it be quick. --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+What kind of guns did you have in your <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> system? A <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> system doesn't have to be slow to execute, but if you have multiple, completely separate slow guns in the VG, it is bound to be very slow. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Oh, if you want to look at a <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> implementation that is pretty quick to execute, check out <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a>. It's a VG of simple aimers that is quite effective. (I confess I haven't looked at the code myself, but Grubb knows his stuff and that bot rocks.) The latest versions of <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> also have a good <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> system that is pretty quick, but it's wave based and might not be quite as straightforward as the one in <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a>. You can find the source code in the .jar files for both bots. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Those scores are without the zoom trick, which proved problematic when I used them with segments, instead I just use 5 buffers of different segmentations and combine the results dynamically based on a weighted system. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+I had HOT,CT, and RT for the VGuns. --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Btw, it seems like that <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> uses waves also. Is 1.2.3 the latest version?
+<p>
+The latest version of <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> is 1.2.4, it can be found at the <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a> and at my own webspace. Most of my versions are present there. Although it uses waves by name and even implementation, the result is much more related to <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> as only the specific angles of the virtual guns are compared. Each virtualgun has its own 'wave' with one angle to check. A real wave-based implementation would fire one wave and record all angles that would hit (like <a href="robowiki?GresSuffurd" class=wikipagelink>GresSuffurd</a>). And <a href="robowiki?Voidious" class=wikipagelink>Voidious</a> is right, <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> is a relatively fast bot as it only uses <a href="robowiki?FastTargeting" class=wikipagelink>FastTargeting</a> and simple movement.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+The VGuns are "fast" now, but it throws a concurrent exception. Let me check the exact details. --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+ntc.Smash: Exception: java.util.ConcurrentModificationException<a href="robowiki?action=edit&id=ConcurrentModificationException" class=wikipageedit>?</a>
+java.util.ConcurrentModificationException<a href="robowiki?action=edit&id=ConcurrentModificationException" class=wikipageedit>?</a>
+<PRE >
+    at java.util.AbstractList<a href="robowiki?action=edit&id=AbstractList" class=wikipageedit>?</a>$Itr.checkForComodification<a href="robowiki?action=edit&id=ForComodification" class=wikipageedit>?</a>(AbstractList<a href="robowiki?action=edit&id=AbstractList" class=wikipageedit>?</a>.java:449)
+    at java.util.AbstractList<a href="robowiki?action=edit&id=AbstractList" class=wikipageedit>?</a>$Itr.next(AbstractList<a href="robowiki?action=edit&id=AbstractList" class=wikipageedit>?</a>.java:420)
+    at ntc.Gun.checkHits(Gun.java:68)
+    at ntc.Smash.doVirtBullets<a href="robowiki?action=edit&id=VirtBullets" class=wikipageedit>?</a>(Smash.java:330)
+    at ntc.Smash.run(Smash.java:32)
+    at robocode.peer.RobotPeer<a href="robowiki?action=edit&id=RobotPeer" class=wikipageedit>?</a>.run(Unknown Source)
+    at java.lang.Thread.run(Thread.java:595)
+</PRE>
+<p>
+<p>
+From <a rel="nofollow" href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/ConcurrentModificationException.html">http://java.sun.com/j2se/1.4.2/docs/api/java/util/ConcurrentModificationException.html</a>:
+<p>
+public class ConcurrentModificationException<a href="robowiki?action=edit&id=ConcurrentModificationException" class=wikipageedit>?</a>
+extends RuntimeException<a href="robowiki?action=edit&id=RuntimeException" class=wikipageedit>?</a>
+This exception may be thrown by methods that have detected concurrent modification of an object when such modification is not permissible.
+<p>
+--<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+No more ConcurrentModificationException<a href="robowiki?action=edit&id=ConcurrentModificationException" class=wikipageedit>?</a>, but now it's too slow again. I'll take a look at the <a href="robowiki?MeleePatternMatching" class=wikipagelink>MeleePatternMatcher</a> and see if it's fixed yet--<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Help with <a href="robowiki?MeleePatternMatching" class=wikipagelink>MeleePatternMatcher</a> plz! --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Is there any open-source bot that uses a <a href="robowiki?MeleePatternMatcher" class=wikipagelink>MeleePatternMatcher</a> that worx? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Targeting" class=wikipagelink>Targeting</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Targeting/Discussions" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Targeting/Discussions">View other revisions</a><br>Last edited December 25, 2006 5:27 EST by <a href="robowiki?Starrynte" title="ID 8009 from cpe-75-84-95-139.socal.res.rr.com">Starrynte</a> <a href="robowiki?action=browse&diff=1&id=Targeting/Discussions">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

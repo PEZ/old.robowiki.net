@@ -1,0 +1,481 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>ModdedBot/Code - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Modded, Bot, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Code">ModdedBot/Code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?ModdedBot" class=wikipagelink>ModdedBot</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>This is the source code to version 1.1 of <a href="robowiki?ModdedBot" class=wikipagelink>ModdedBot</a>. It is included within the .jar, which you can obtain here: <a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=1831">http://www.robocoderepository.com/BotDetail.jsp?id=1831</a>
+<p>
+<pre>
+/*
+ * ModdedBot.java
+ * by: Vuen
+ *
+ * version 1.1
+ * Last edited on December 5, 2003
+ */
+
+package mod;
+import robocode.*;
+import java.util.*;
+import robocode.exception.EventInterruptedException;
+
+
+
+/* This is the robot template for creating a Robocode mod. Robots playing your
+ * mod should extend this rather than AdvancedRobot; you can then add any
+ * functionality you like.
+ */
+
+
+
+public class ModdedBot extends AdvancedRobot {
+    
+    
+    
+    //These are pr ivate variables that hold needed info
+    private boolean isInit;
+    private Vector events;     //Holds all robot events
+    private Vector eventsfake; //Holds fake events before they are added to events vector
+    
+    
+    
+    
+    /* This is the initialization method of your robot. It gets called at the
+     * start of every round. The robot usually can perform a few calculations
+     * before this is called, but you should not have to worry; if you would
+     * like this to be guaranteed to be called before the robot does something,
+     * an example of this is below.
+     */
+    private void init() {
+        if (isInit) return;
+        isInit = true;
+        super.addCustomEvent(new Condition("ModdedBot", 99) {public boolean test() {events(); return false;}});
+        eventsfake = new Vector();
+        
+        
+        
+        //Add any code you would like that initializes your mod in here.
+        
+        
+        
+    }
+    
+    
+    
+    /* Suppose we would like to guarantee that the robot be initialized before
+     * the robot uses getHeading():
+     */
+    public double getHeading() {
+        init();
+        return super.getHeading();
+    }
+    /* You can delete this example method if you like. */
+    
+    
+    
+    
+    
+    /* This method handles the events in the robot. Whatever you would like the
+     * mod to do upon receiving an event, do it here. Do NOT override the
+     * onXXX(XXXEvent) methods.
+     */
+    private void events() {
+        if (events != null) events.clear();
+        events = super.getAllEvents();
+        eventsfake.clear();
+        super.clearAllEvents();
+        
+        Iterator i = events.iterator();
+        while (i.hasNext()) {
+            Event event = (Event)i.next();
+            
+            
+            
+            //This is where we handle the events we want to handle.
+            //This contains sample code to remove certain scans, and
+            // to catch robot deaths. Remove the below sample code when
+            // you create your mod.
+
+            if (event instanceof ScannedRobotEvent) {
+
+
+
+                //Suppose we would like to disallow a robot from scanning a ScoreBot:
+
+                ScannedRobotEvent scan = (ScannedRobotEvent)event;
+                if (scan.getName().indexOf("ScoreBot") &gt; -1)
+                    i.remove(); //remove the event from the events vector
+
+                //it is now impossible for the robot to receive ScoreBot scans.
+
+
+
+            } else if (event instanceof BulletMissedEvent) {
+
+
+
+                //Suppose we want to do something when a bullet goes offscreen:
+
+                BulletMissedEvent miss = (BulletMissedEvent)event;
+                //do stuff using this event
+
+                //Note that the robot will still receive this event even if we used it.
+
+
+
+            } else if (event instanceof BulletHitEvent) {
+
+
+
+                //Suppose we want to generate a RobotDeathEvent instead of a
+                // BulletHitEvent when the enemy's bullet hits another robot
+
+
+                BulletHitEvent hit = (BulletHitEvent)event;
+
+                //create new RobotDeathEvent
+                Event newevent = new RobotDeathEvent(hit.getName());
+                //DON'T FORGET to set the priority and time of the event!
+                newevent.setPriority(getEventPriority("RobotDeathEvent"));
+                newevent.setTime(getTime());
+                
+                //add RobotDeathEvent to eventsfake (NOT events)
+                eventsfake.add(newevent);
+                
+                //remove the BulletHitEvent
+                i.remove();
+                
+
+                //The robot will now receive a RobotDeathEvemt instead of a
+                // BulletHitEvent; the robot will not be able to tell the
+                // difference between the real RobotDeathEvents and the ones
+                // created by the mod.
+
+
+            }
+            
+        }
+        
+        
+        
+        /**Here you can create any fake events you would like. You can also
+         * make your own event classes, or make event classes that extend
+         * some of the events that already exist. I suggest you package custom
+         * event classes in the same package as your ModdedBot. Whatever events
+         * you create, add them to the eventsfake Vector when you want them to
+         * be sent to the robot.
+         */
+        
+        
+        
+        events.addAll(eventsfake);
+        eventsfake.clear();
+        Collections.sort(events);
+    }
+    
+    
+    
+    
+    
+    /* These variables handle prioritization. */
+    private boolean isHandlingEvents = false;
+    private int currentEventPriority = Integer.MIN_VALUE;
+    private boolean[] interruptible = new boolean[101];
+    /* This method handles setting interruptibility. Since we hold all blocking
+     * calls from the robot, we have to handle interruptibility manually.
+     */
+    public void setInterruptible(boolean interruptible) {
+        init();
+        if (!isHandlingEvents) return;
+        this.interruptible[currentEventPriority] = interruptible;
+    }
+    
+    
+    
+    
+    /* This event parses the events and calls the proper event handlers.
+     *
+     * This method is configured to automatically handle interruptibility the
+     * same way Robocode does. An error is thrown through the robot's event
+     * handler and caught by ModdedBot to interrupt an event.
+     */
+    private void dump() {
+        //set this to true. we shouldn't have to worry about setting it false
+        // again because from then on we always handle events.
+        isHandlingEvents = true;
+        
+        if (events == null) return;
+        
+        while (events.size() &gt; 0) {
+            
+            Event event = (Event)events.firstElement();
+            
+            //since the list is sorted, all events remaining are lower priority
+            // than the current one, so we cannot interrupt it and so we can
+            // stop dumping events.
+            if (event.getPriority() &lt; currentEventPriority)
+                break;
+                
+            //we need to interrupt the current event
+            if (event.getPriority() == currentEventPriority &amp;&amp; interruptible[currentEventPriority]) {
+                interruptible[currentEventPriority] = false;
+                throw new EventInterruptedException(event.getPriority());
+            }
+
+            //we haven't interrupted the current event; since the list is
+            // sorted, all events after this one will have the same or lower
+            // priority, so we can stop dumping events.
+            if (event.getPriority() == currentEventPriority)
+                break;
+            
+            //we can now remove the event from the vector. we remove it after
+            // interrupting so that we don't remove the event that we
+            // want to interrupt with!
+            events.remove(0);
+            
+            
+            int oldEventPriority = currentEventPriority;
+            currentEventPriority = event.getPriority();
+
+
+            try {
+
+                //If you have created any of your own custom event classes, add them
+                // here BEFORE the rest of the events get parsed, and change the
+                // next line to else if so that any events you have extended won't
+                // fire twice.
+
+                //If you haven't created any custom event classes, you don't need
+                // to modify this method.
+
+                if (event instanceof ScannedRobotEvent)
+                    onScannedRobot((ScannedRobotEvent)event);
+                else if (event instanceof RobotDeathEvent)
+                    onRobotDeath((RobotDeathEvent)event);
+
+                else if (event instanceof HitRobotEvent)
+                    onHitRobot((HitRobotEvent)event);
+                else if (event instanceof HitWallEvent)
+                    onHitWall((HitWallEvent)event);
+                else if (event instanceof HitByBulletEvent)
+                    onHitByBullet((HitByBulletEvent)event);
+
+                else if (event instanceof BulletHitEvent)
+                    onBulletHit((BulletHitEvent)event);
+                else if (event instanceof BulletMissedEvent)
+                    onBulletMissed((BulletMissedEvent)event);
+                else if (event instanceof BulletHitBulletEvent)
+                    onBulletHitBullet((BulletHitBulletEvent)event);
+
+                else if (event instanceof CustomEvent)
+                    onCustomEvent((CustomEvent)event);
+                else if (event instanceof SkippedTurnEvent)
+                    onSkippedTurn((SkippedTurnEvent)event);
+                else if (event instanceof WinEvent)
+                    onWin((WinEvent)event);
+                else if (event instanceof DeathEvent)
+                    onDeath((DeathEvent)event);
+                else
+                    printError("Unknown Event!! This event is unhandled: "  + event.getClass().getName());
+
+
+            } catch (EventInterruptedException e) {
+                //we dropped down the stack, and we resume event dumping with
+                // the new events vector using the old dump method.
+            }
+            
+            currentEventPriority = oldEventPriority;
+            
+            
+        }
+        
+        events.clear();
+        events = null;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    /* This is your go method. This is always called at the end of every tick, 
+     * after the robot has performed its actions.
+     */
+    private void go() {
+        init();
+        
+        
+        
+        //Put anything you would like your mod to do each tick in here.
+        
+        
+        
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /* The following chunk of methods provides the functionality of all the
+     * getXXXEvents methods in the robot. Since we parse the events manually,
+     * we have to rebuild these methods to allow the extending robot to use
+     * them. If you have any custom event classes, you should add a
+     * getXXXEvents for your class to provide the robot with this function.
+     * Note that if you extend any of the existing events, they will NOT be
+     * returned by the getXXXEvents method of the class they extend; you can
+     * modify the parseEvents method to provide this functionality if you want.
+     *
+     * If you have not created any custom event classes, you do not need to
+     * modify this code.
+     */
+    
+    
+    public Vector getAllEvents() {return events;}
+    public void clearAllEvents() {events.clear(); events = null;}
+    
+    public Vector getScannedRobotEvents() {return parseEvents("robocode.ScannedRobotEvent");}
+    public Vector getRobotDeathEvents() {return parseEvents("robocode.RobotDeathEvent");}
+    
+    public Vector getHitRobotEvents() {return parseEvents("robocode.HitRobotEvent");}
+    public Vector getHitWallEvents() {return parseEvents("robocode.HitWallEvent");}
+    public Vector getHitByBulletEvents() {return parseEvents("robocode.HitByBulletEvent");}
+    
+    public Vector getBulletHitEvents() {return parseEvents("robocode.BulletHitEvent");}
+    public Vector getBulletMissedEvents() {return parseEvents("robocode.BulletMissedEvent");}
+    public Vector getBulletHitBulletEvents() {return parseEvents("robocode.BulletHitBulletEvent");}
+    
+    private Vector parseEvents(String type) {
+        Vector newevents = new Vector();
+        for (int i = 0; i &lt; events.size(); i++) {if (events.get(i).getClass().getName().equals(type)) newevents.add(events.get(i));}
+        return newevents;
+    }
+    
+    public void addCustomEvent(Condition condition) {
+        init(); //make sure our condition is first
+        super.addCustomEvent(condition);
+    }
+    
+    
+    
+    
+    
+    
+    /* Here's the fun part: you can now add any mod methods to the robot you
+     * want! Suppose the robot has a powerup, and we want it to return the time
+     * remaining on the powerup:
+     */
+    private long powerUpTime;
+    public long getPowerUpTime() {
+        return powerUpTime;
+    }
+    /* You can see here that you can add to your mod any method you could
+     * possibly want the extending robot to call. Note that for methods like
+     * this, you would put in the go() method the code to handle the amount
+     * of time remaining on the powerup.
+     */
+    
+    
+    
+    
+    
+    
+    /* This is just a debugger method; it will call whenever an error occurs
+     * within the mod. You can call this or remove this or do whatever you want
+     * with it; debug your mod however you like.
+     */
+    private void printError(String text) {
+        System.out.println("[" + getTime() + "] Mod Error! " + text);
+    }
+    
+    
+    
+    /* The following block of code is what allows the extending robot to use
+     * any blocking calls they wish, and still allow the mod to get a go()
+     * every tick. You should not need to modify any of the below code, unless
+     * you want to prevent the robot from performing any of these actions.
+     */
+    
+    public void execute() {
+        go();
+        super.execute();
+        dump();
+    }
+    public void doNothing() {execute();}
+    
+    public void scan() {
+        go();
+        super.scan();
+        dump();
+    }
+    
+    public void fire(double power) {
+        go();
+        super.fire(power);
+        dump();
+    }
+    
+    public Bullet fireBullet(double power) {
+        go();
+        Bullet bullet = super.fireBullet(power);
+        dump();
+        return bullet;
+    }
+    
+    public void ahead(double distance) {
+        setAhead(distance);
+        while (getDistanceRemaining() &gt; 0) {
+            scan();
+        }
+    }
+    public void back(double distance) {ahead(-distance);}
+    
+    public void turnRightRadians(double angle) {
+        setTurnLeftRadians(angle);
+        while (getTurnRemaining() != 0) {
+            scan();
+        }
+    }
+    public void turnLeftRadians(double angle) {turnRightRadians(-angle);}
+    public void turnRight(double angle) {turnRightRadians(Math.toRadians(angle));}
+    public void turnLeft(double angle) {turnRight(-angle);}
+    
+    public void turnGunRightRadians(double angle) {
+        setTurnGunRightRadians(angle);
+        while (getGunTurnRemaining() != 0) {
+            scan();
+        }
+    }
+    public void turnGunLeftRadians(double angle) {turnGunRightRadians(-angle);}
+    public void turnGunRight(double angle) {turnGunRightRadians(Math.toRadians(angle));}
+    public void turnGunLeft(double angle) {turnGunRight(-angle);}
+    
+    public void turnRadarRightRadians(double angle) {
+        setTurnRadarRightRadians(angle);
+        while (getRadarTurnRemaining() != 0) {
+            scan();
+        }
+    }
+    public void turnRadarLeftRadians(double angle) {turnRadarRightRadians(-angle);}
+    public void turnRadarRight(double angle) {turnRadarRightRadians(Math.toRadians(angle));}
+    public void turnRadarLeft(double angle) {turnRadarRight(-angle);}
+    
+    
+    
+    
+    
+    
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?ModdedBot" class=wikipagelink>ModdedBot</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=ModdedBot/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=ModdedBot/Code">View other revisions</a><br>Last edited December 6, 2003 2:09 EST by <a href="robowiki?Vuen" title="ID 1948 from 134.117.157.xxx">Vuen</a> <a href="robowiki?action=browse&diff=1&id=ModdedBot/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

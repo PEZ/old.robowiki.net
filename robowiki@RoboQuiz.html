@@ -1,0 +1,206 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RoboQuiz - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Robo, Quiz'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=RoboQuiz">RoboQuiz</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Here are a few basic questions a newbie like me has when he comes to robocode world.... . Took me a while to figure them out (or find the answers hidden in some remote places). Feel free to add yours. 
+<p>
+<p>
+<p>
+<p>
+<p>
+1) what is the size of bullet?
+<p>
+2) Your bot has 0.5 energy when it hits the wall. Enemy is at distance of 50. What bonus (if any) he gets?
+<p>
+3) Enemy bot has energy of 0.1 and has stopped shooting. Should you try to ram him? 
+<p>
+4) Consider 2 situations: 
+<p>
+<UL >
+<li> a) bullet you are about to shoot has heading of 0 degrees, enemy is at distance of 300.
+<li> b) bullet has heading of 45 degrees, enemy is at distance of 400.
+</UL>
+<p>
+Which bullet has better chance of hitting enemy?
+<p>
+<p>
+<p>
+5) Your getDistanceRemaining<a href="robowiki?action=edit&id=DistanceRemaining" class=wikipageedit>?</a>() is 0. What is your speed?
+<p>
+[Scroll down to read the answers....]
+<p></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p></p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+<hr noshade class=wikiline size=2>
+<p>
+Answers:
+<p>
+<hr noshade class=wikiline size=2>
+<p>
+1) Size of bullet is 3
+<p>
+2) He gets ramming bonus. Same when you commit null-pointer suicide and he is too close. I am not sure what is distance limit of that...
+<p>
+3) NO! You will lose points for that. When your bot gets too close, enemy will shoot with 0.1 bullet (and hit getting 0.4 damage points). Now you (have to) shoot at (momentarily) disabled bot and get 0.3 damage points (that is what his energy will be when your bullet hits him) Note: you might shoot too late (or be too far) and he may get a chance to shoot second bullet....
+<UL >
+<li> Depends on the enemy. Some enemies don't start shooting just because you get close. And you could also ram smarter than just head on making it harder for your opponent to hit with its last bullet. My answer would be that if you have the energy for it you should ram because it's fun. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</UL>
+<p>
+4) b) At bullet heading of 0 degrees target is 36 pixels wide; at heading of 45 degrees target is ~51 pixels wide (sqrt(2)*36). 300*sqrt(2)&gt;400... 
+<p>
+5) likely 0, but in general can be anywhere between -2 to 2.
+<p>
+<p>
+<hr noshade class=wikiline size=1>
+<a href="robowiki?Tango" class=wikipagelink>Tango</a>'s answers:
+<p>
+1) Bullets don't have size, they are lines the length of the bullet velocity (20-3*power).
+<p>
+2) I'll take your word for it.
+<p>
+3) That depends very much on the bot you are ramming.  I would say most bots that stop firing when they get low energy don't start again if you get too close, so you would be best to ram.
+<p>
+4) Very true.
+<p>
+5) If it isn't 0 it will be 0 by the next tick.
+<p>
+<a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>'s 2 cents:
+<OL >
+<li> <a href="robowiki?Tango" class=wikipagelink>Tango</a> is right
+<li> Never observed that.
+<li> Don't try ramming on <a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a> or <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a>, but you'd probably be ok against a lot of them.  At that point I'd say get closer but keep shooting.  For an example of why not to ram, watch a close battle between <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a> and <a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a> and observe the 'games' <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a> will play on <a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a>.
+<li> An oddity that is.  It would be interesting to make a targeting algorithm that would actually slightly favor shooting diagonally.
+<li> You're both sort of wrong.  It is 0 if you haven't manually set it to a low number recently, but if you were moving at speed 8 and then called setAhead(0), you would have a velocity of 6 the next turn (or 8 currently) with a distance remaining of 0.
+</OL>
+<hr noshade class=wikiline size=1>
+<p>
+Crap, edit conflict!
+<p>
+<a href="robowiki?Vuen" class=wikipagelink>Vuen</a>'s answers:
+<p>
+1) Tango is correct. Bullets collide when their last displacements intersect with whatever they are colliding with; for a bullet it's simply the intersection of the lines, and for a robot it's a 36x36 unrotated square.
+<p>
+2) He doesn't get any bonus because you don't die. You can't die from crashing into a wall; the only ways you can die are from a bullet or from inactivity time. There's no such thing as nullpointer suicide; as for 'wallicide', it's a term given to when your bot jams or gets caught up on a wall, not when he disables himself from it (although this can result). -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+3) You could program your bot to try this once on each enemy; if the enemy does fire back, it can save in memory/file that the enemy fires when almost disabled, so not attempt this on that bot anymore. If it works, keep doing it. It's a matter of strategy, and ramming is not always a bad thing.
+<p>
+4) *My bad, I read the question wrong. It's imporant to note though that the enemy's heading is irrelevant. Anyway, the distance of the enemy is not a direct reciprocal factor in the equation; to find the odds, you have to consider the arc length in the equation rather than the distance, but they do cancel when you compare them. Anyway to find the odds, given a random position of the enemy from say -45 to 45 degrees and ignoring the enemy's approach velocity, the line on which the bot can lie is an arc length of distance * pi / 2. The odds of the bot being on this line are its width relative to the line; the odds are given by the equation botwidth / arclength. In the a) case, the odds are 36 / (300 * pi / 2) = 7.64%. In the b) case, the odds are rt(2) * 36 / (400 * pi / 2) = 8.10%. Thus the b) case has more chance to hit.
+<p>
+<UL >
+<li> for some funny reason I feel particularly nitpicky today, so here goes: Since the side of a bot is 18 pixels closer to you 36 / (300-18) * pi / 2) is more precise for situation a). ;-p -- <a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+</UL>
+<p>
+5) This is not necessarily true. If the robot is moving with velocity 8, then calls setAhead(0), it will no longer have a getDistanceRemaining<a href="robowiki?action=edit&id=DistanceRemaining" class=wikipageedit>?</a>() but will continue to move forward for the next 4 ticks until it has deccelerated to 0 even if it has no queued distance remaining.
+<DL >
+<DL >
+<dt><dd> I stand corrected. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+</DL>
+</DL>
+-- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+So this raises a question in my mind that i never considered before, although maybe it has been answered elsewhere. if i call setAhead(100) does robocode actually account for decelleration time with respect to the distance moved. ie does the robot start decellerating before it has travelled 100, so by the time it reaches a halt it has moved 100. or does it start to decellerate after it has moved 100, so in a  worst case scenario you could actually move 120 (100 + 8 + 6 + 4 + 2)?? -- <a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+Ok, so having read through the page again, it implies that robocode doesn't account for decelleration time in it's distance calculation, is there any way to get round this, or do you have to be content with only being accurate to 20 units?? -- <a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+If you getDistanceRemaining<a href="robowiki?action=edit&id=DistanceRemaining" class=wikipageedit>?</a>() returns something less than 20, Robocode adjusts your speed so you'll come to a stop when it's zero (if you don't setAhead anything else) -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+According to the FAQ it starts slowing down before you the move is finished. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+(why was the following discussion removed...? Though it is perhaps off-topic, I do want to continue this discussion... --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>)
+<p>
+4) Depends on Battlefield dimensions. If it's a 100 x 1000 Battlefield, distance 400 with a heading of 45 degrees will be always outside the Battlefield, so shooting there will always result in hitting the wall. --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<DL >
+<DL >
+<dt><dd>-If it's outside the wall, the bot can't be there, so that's not really a relevent point. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<dt><dd>-... making the chance of both situations a) and b) on hitting dependent on the battlefield dimensions. So I'm nitpicking... sue me. ;-p --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<DL >
+<dt><dd>-The chances of hitting don't change, just the chances of the situations occuring. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<dt><dd>-I think it does. <a href="robowiki?Vuen" class=wikipagelink>Vuen</a> just calculated a probability of 8.10% for situation b), but in a 100x1000 field, that probability is zero. --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<DL >
+<dt><dd> Yes, but the probability of the situation ever occuring is 0, so it isn't relevant. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<dt><dd> Read situations a) and b) again... it only says that enemydistance = 300 for situation a) and 400 for b). The Bullet heading is 0 or 45 degrees, but the position of the enemy bot can be anywhere, as long as enemydistance is 300/400. Both situations a) and b) are very possible in a 100x1000 battlefield. Shooting at an angle of 45 degrees will always miss, while if you shoot at an angle of 0 degrees, there is a chance that the enemy is at that spot. You do not have this problem in a 2000x2000 battle, that's why I said that the answer to question 4 depends on battlefield dimensions. --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<DL >
+<dt><dd> I was assuming the predicted position of the enemy to include wall checking, as most do. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<DL >
+<dt><dd> Do they? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<dt><dd> Most good ones, anyway. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<dt><dd> I doubt it. It doesn't pay very much. In fact, against good wallers, like <a href="robowiki?DT" class=wikipagelink>DT</a>, it can make your gun less accurate. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</DL>
+</DL>
+</DL>
+</DL>
+<dt><dd>Firing a bullet with heading 0 (relative to the enemy) has more chances of hitting a bot that firing with heading 45. It is true because usually bots oscillate (even if oscillation will usually not be periodic) and it means that for every ocasion the bot reaches the +45 position, it will be 2 times in the +0 position (this is, the time it goes to +45 and the time it moves to -45) -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<DL >
+<dt><dd>That's assuming it's ossilating between +45 and -45, what if it's going between 0 and +90? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<dt><dd>Then it's a sucker bot. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<dt><dd>How come?  The direction of up is completely arbitary, apart from what this discussion is about, it shouldn't make any difference. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<dt><dd>I thought Albert was talking about firing head-on (guess factor 0) at the enemt versus firing at guess factor 1.0. A bot that moves 90 degrees in a bullet flight time is very fast. But if it tries to move above 45 degrees half of the time it will be vulnerable at guess factor 1.0 like few bots are. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<dt><dd>I think the idea is completely random targetting.  Completely ignoring where the enemy is, you just fire at either 0deg or 45deg. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<dt><dd>I would propose that the question has merit in the case of a pattern-matcher with two matches - which project in different places.  You're more likely to be able to hit him if he moves similarly to how he did when he ended up 400 away at an absolute bearing of 45 degrees from you than if he moves similarly to how he would to end up at a distance of 500 and an absolute bearing of 0 to you. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<dt><dd>The point of the question is that robocode treats robots as 36x36 squares that do <u>not</u> rotate regardless of what you see on the screen. This means that if a bot's absolute bearing to you is 0, 90, 180, or 270 degrees, the target bot will be 36 pixels wide. At 45, 135, 225, and 315 degrees, the target bot will be sqrt(2)*36 pixels wide. --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<dt><dd><img src="http://elektron.its.tudelft.nl/~klli87/images/botwidth.gif">
+<dt><dd>Nice graphs! <a href="robowiki?HypoLeach" class=wikipagelink>HypoLeach</a> should be able to take advantage of this... Probably already is taking advantage of it, though it doesn't help much because of some major bug somewhere. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<dt><dd>Of course, from the enemy bot's point of view, your bot will be just as wide. --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<dt><dd>That's a fair point I guess. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</DL>
+</DL>
+</DL>
+<p>
+<DL >
+<dt><dd> I can't say I was really following everyone's responses, but here are my own given the original distance vs. aspect angle question...
+<dt><dd>a) If the targets are not moving, or moving directly away from / toward you, you have the same chance of hitting them with dead-on targeting (100%).
+<dt><dd>b) If the targets are moving, you are more likely to miss the more distant target.  The north target will not stay there, so his profile will be approaching that of the northeast target, who is also moving and will me making his profile diminish toward the north target's.  The profile advantage is made smaller and the more distant target has 5-9 ticks more wiggle room (1-2 bot widths). -- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin Alan Pedersen</a>
+</DL>
+<p>
+Does this question mean 45 degrees offset? 45 degrees offset is GF 0.96 with a power 3 bullet. This almost never occurs in a battle, even with a robot that never reverses. Generally, a robot orbiting the shooter gets hit around GF 0.85. --<a href="robowiki?Kev" class=wikipagelink>Kev</a>
+<p>
+The original question (based on his own answer) meant the target had a bearing of 45 degrees .. it is northeast of you. -- Martin
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RoboQuiz" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RoboQuiz">View other revisions</a><br>Last edited February 10, 2006 1:52 EST by <a href="robowiki?Martin_Alan_Pedersen" title="ID 5871 from c-24-7-149-71.hsd1.ca.comcast.net">Martin Alan Pedersen</a> <a href="robowiki?action=browse&diff=1&id=RoboQuiz">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

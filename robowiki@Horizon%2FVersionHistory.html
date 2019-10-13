@@ -1,0 +1,246 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Horizon/VersionHistory - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Horizon, Version, History'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/VersionHistory">Horizon/VersionHistory</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Horizon" class=wikipagelink>Horizon</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Nice.  I was planning to add these things to my surfing as soon as I get the current bugs out.  Is this open source?  Is the "wave detection" in one nice clean place I could rip out &amp; steal ... er ... I mean ... model my own code after?  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> Absolutely, my code is completely free to use. Look at the event handlers in the movement component, that is where all the code for the enemy bullet-fire detection is. The only thing is that the wall hit detection/damage calculation I took from <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>, so give some credit to <a href="robowiki?Voidious" class=wikipagelink>Voidious</a> too. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li> You may want to add one more feature, and that is to only accept <a href="robowiki?EnemyWaves" class=wikipagelink>EnemyWaves</a> being fired when their <a href="robowiki?GunHeat" class=wikipagelink>GunHeat</a> is 0. It eliminates 95% of wallhit waves. Of course, I also have the accurate tracking of enemy energy, using bullet bonus and bullet damage. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<UL >
+<li> <strong>1.0beta11</strong> <em>The "Accurate wave detection" release.</em>
+<UL >
+<li> <strong>Release: 2007-10-24</strong>
+<li> <strong>Rating: 1974.39 (30th)</strong>
+<li> Now accounts for wall hits, bullet hits, and bullet energy bonuses when determining whether the enemy fired.
+</UL>
+</UL>
+<p>
+<UL >
+<li> <strong>1.0beta10a</strong> <em>The "Bugfixes for bugfixes" release.</em>
+<UL >
+<li> <strong>Release: 2007-10-18</strong>
+<li> <strong>Rating: 1971.63 (34th)</strong>
+<li> Bugfix: Lateral velocity wasn't being initialized at the start of each round.
+<li> <em>Above <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a>!</em>
+</UL>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Umm... for the 400th time in a row, <em>that was dumb</em>. I just noticed a bug that explains why the scores didn't go up as much as they should have when I released 1.0beta10. I made the bot treat "stop" as moving in the previous direction, but I forgot to initialize the direction variable at the start of each round. By Java convention, a variable is automatically initialized to 0 if it is not set by the user code; unfortunately, my code can't handle a lateral direction of 0 in some spots (it is always supposed to be 1 or -1, that was the point of the change in the first place). A result of having the direction variable set to 0 is that my bot doesn't move some of the time. In other words, under certain conditions, Horizon is a sitting duck for two or three enemy shots at the beginning of every round!
+<p>
+Stupid! Stupid! Stupid!
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<UL >
+<li> <strong>1.0beta10</strong> <em>The "Bugfixes, bugfixes, and more bugfixes" release.</em>
+<UL >
+<li> <strong>Release: 2007-10-13</strong>
+<li> <strong>Rating: 1962.98 (37th)</strong>
+<li> MAJOR bugfix: believe it or not, lateral velocity was being calculated incorrectly in the gun.
+<li> And another significant bug: int-to-double-and-back-again conversions were messing with the "time since acceleration" attribute, in the movement and gun.
+<li> "Stop" is now interpreted as moving in the previous direction, something I've meant to change for a long time.
+<li> Firepower is more aggressive.
+</UL>
+</UL>
+<p>
+<UL >
+<li> <strong>1.0beta9a</strong> <em>The "That was the dumbest thing I've ever done" release.</em>
+<UL >
+<li> <strong>Release: 2007-10-12</strong>
+<li> <strong>Rating: 1916.15 (44th)</strong>
+<li> This time released with the correct gun...
+</UL>
+</UL>
+<p>
+<UL >
+<li> <strong>1.0beta9</strong> <em>The "Refactoring is the lesser of two evils" release.</em>
+<UL >
+<li> <strong>Release: 2007-10-12</strong>
+<li> <strong>Rating: 2030.11 (20th)</strong>
+<li> A major refactoring: the clustering code is now in its own class instead of integrated into the movement and gun code, and should be somewhat faster.
+<li> Reverted to surfing only two waves, and ranking later waves much lower as before. However, the danger calculation now uses the minimum of the next wave dangers instead of the average.
+<li> The gun's log now goes ten times deeper; hopefully this will do a better job at hitting the 90%-plus of rumble bots without adaptive movements.
+<li> The attribute weights have been changed significantly in both the movement and the gun.
+<li> <em>Oops! This version was released with Raiko's gun!</em>
+</UL>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Ouch, that hurts. That <em>really, really</em> hurts.
+<p>
+Compare 1.0beta8GF to 1.0beta8: <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison?game=roborumble&amp;name1=ar.horizon.Horizon%201.0beta8GF&amp;name2=ar.horizon.Horizon%201.0beta8">[1]</a>
+<p>
+So, "yes"? =) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+I'd be glad that it isn't your movement, after all the work you've put into it =). -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<UL >
+<li> Yeah, that's the good news... =) It does tell me why I couldn't seem to get above 50th place, though. And I now know that <a href="robowiki?The2000Club" class=wikipagelink>The2000Club</a> is a lot closer than I originally thought. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+</UL>
+<hr noshade class=wikiline size=1>
+<p>
+<UL >
+<li> <strong>1.0beta8GF</strong> <em>The "Do I need a new gun?" release.</em>
+<UL >
+<li> <strong>Release: 2007-10-05</strong>
+<li> <strong>Rating: 1942.47 (40th)</strong>
+<li> Same movement as 1.0beta8, but with the gun from <a href="robowiki?GFTargetingBot" class=wikipagelink>GFTargetingBot</a>/<a href="robowiki?BasicGFSurfer" class=wikipagelink>BasicGFSurfer</a>. I am trying to see how my movement compares to that of <a href="robowiki?BasicSurfer" class=wikipagelink>BasicSurfer</a>. If this release performs better than 1.0beta8, I will know that my gun needs a lot of work.
+</UL>
+</UL>
+<p>
+<UL >
+<li> <strong>1.0beta8</strong> <em>The "Yet Another Tweak Release" release.</em>
+<UL >
+<li> <strong>Release: 2007-10-03</strong>
+<li> <strong>Rating: 1889.59 (54th)</strong>
+<li> Reintroduced a graphical debugging system...
+<li> ... and removed a mildly <a href="robowiki?PerformanceEnhancingBug" class=wikipagelink>PerformanceEnhancing</a> bug caused by the old one. (Back before 0.9.5.1, waves were lined up correctly, but it didn't look like it because of the bug in Robocode's drawing, which made me change my wave handling code to make it *look* like they were lining up...)
+<li> Surfs three waves instead of two, and ranks later waves higher than before.
+<li> Several other minor tweaks to the surfing.
+</UL>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Well, that just goes to show that tweaking really does make a difference. Remember, the only change between 1.0beta6 and 1.0beta7 was to modify a few constants.
+<p>
+Compare 1.0beta7 to 1.0beta6: <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison?game=roborumble&amp;name1=ar.horizon.Horizon%201.0beta7&amp;name2=ar.horizon.Horizon%201.0beta6">[2]</a>
+<p>
+Compare 1.0beta7 to 1.0beta5: <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison?game=roborumble&amp;name1=ar.horizon.Horizon%201.0beta7&amp;name2=ar.horizon.Horizon%201.0beta5">[3]</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<UL >
+<li> <strong>1.0beta7</strong> <em>The "More tweaks" release.</em>
+<UL >
+<li> <strong>Release: 2007-09-27</strong>
+<li> <strong>Rating: 1883.98 (56th)</strong>
+<li> 1.0beta6 reduced my rating somewhat, but not as much as I thought it might. For this release, I replaced my pulled-out-of-the-air constants with empirically determined ones. If this doesn't bring the rating back up enough, I'll revert to 1.0beta5.
+</UL>
+</UL>
+<p>
+<UL >
+<li> <strong>1.0beta6</strong> <em>The "Tick waves" release.</em>
+<UL >
+<li> <strong>Release: 2007-09-23</strong>
+<li> <strong>Rating: 1840.24 (69th)</strong>
+<li> A highly experimental release, I just wanted to see what making the gun fire a wave every tick does to the rankings, other than lower my score against surfers.
+<li> Features a whole bunch of new constants with values I determined via the process of "pulling IEEE 754 64-bit floating point doubles out of the air".
+</UL>
+</UL>
+<p>
+<UL >
+<li> <strong>1.0beta5</strong> <em>The "Tweak" release.</em>
+<UL >
+<li> <strong>Release: 2007-09-23</strong>
+<li> <strong>Rating: 1868.85 (59th)</strong>
+<li> Major bugfixes in the danger and precise prediction functions of the surfing.
+<li> A couple of small tweaks chosen using empirical data.
+<li> <em>Above <a href="robowiki?BasicGFSurfer" class=wikipagelink>BasicGFSurfer</a>!</em>
+</UL>
+</UL>
+<p>
+<UL >
+<li> <strong>1.0beta4</strong> <em>The "New distance function" release.</em>
+<UL >
+<li> <strong>Release: 2007-09-22</strong>
+<li> <strong>Rating: 1835.51 (69th)</strong>
+<li> Rewrote the distance functions for the movement and the gun, to make tweaks easier.
+<li> Fixed bug in 1.0beta3 anti-rammer code that made the bot fire at close range even when its health is very low.
+<li> Now larger than 6000 bytes!
+</UL>
+</UL>
+<p>
+<UL >
+<li> <strong>1.0beta3</strong> <em>The "Anti-rammer" release.</em>
+<UL >
+<li> <strong>Internal release: 2007-09-22</strong>
+<li> <strong>Rating: ??? (Not released)</strong>
+<li> Fires with HOT at close range.
+<li> Now runs instead of sidestepping when faced with a linear or circular rammer.
+</UL>
+</UL>
+<p>
+<UL >
+<li> <strong>1.0beta2</strong> <em>The "Anti-pattern-matcher" release.</em>
+<UL >
+<li> <strong>Release: 2007-09-22</strong>
+<li> <strong>Rating: ??? (Not in rumble long enough to get a stable rating)</strong>
+<li> Added time-since-acceleration factor to surfing.
+<li> Firepower in 1.0beta was too aggressive, energy management is now more like the pre-1.0 releases.
+</UL>
+</UL>
+<p>
+<UL >
+<li> <strong>1.0beta</strong> <em>The "This is why it is still a beta" release.</em>
+<UL >
+<li> <strong>Rating: 1802.48 (85th)</strong>
+<li> Surfs multiple waves.
+<li> Surfing now has a stop position, in addition to left and right.
+<li> Completely reworked clustering factors, with <a href="robowiki?Horizon/Questions" class=wikipagelink>advice</a> from <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>.
+<li> Many, many more refactoring changes...
+</UL>
+</UL>
+<p>
+<UL >
+<li> <strong>0.9.8.2a</strong>
+<UL >
+<li> <strong>Rating: 1857.25 (60th)</strong>
+<li> Fixed a bug related to data tracking in the movement code.
+<li> Added a new clustering factor, "time since direction change", to the gun only.
+<li> Surfs perpendicular to the firing location of the current wave rather than the enemy's current location. 
+</UL>
+</UL>
+<p>
+<UL >
+<li> <strong>0.9.6</strong>
+<UL >
+<li> <strong>Rating: 1852.62 (60th)</strong>
+<li> Chooses clusters at fire time instead of current time, in both movement and gun.
+<li> Preloads one hit at guess factor 0 to improve score against HOT.
+<li> More refactoring. 
+</UL>
+</UL>
+<p>
+<UL >
+<li> <strong>0.9.5.1</strong>
+<UL >
+<li> <strong>Rating: ??? (70th)</strong>
+<li> Replaced segmentation with <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> or something like it.
+<li> Wavesurfing uses same clustering as gun.
+<li> Lots of refactoring 
+</UL>
+</UL>
+<p>
+<UL >
+<li> <strong>0.9.2.1</strong> <em>Yes, there is a big gap between those versions, there were a lot of things that I added and then took out.</em>
+<UL >
+<li> <strong>Rating: ??? (101st)</strong>
+<li> Removed most melee code.
+<li> Now has a single low-rolling-depth gun without the virtual bullets array.
+<li> Better segmentation of the gun. 
+</UL>
+</UL>
+<p>
+<UL >
+<li> <strong>0.8.6</strong>
+<UL >
+<li> <strong>Rating: ??? (96th)</strong>
+<li> Public release
+</UL>
+</UL>
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Horizon" class=wikipagelink>Horizon</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Horizon/VersionHistory" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Horizon/VersionHistory">View other revisions</a><br>Last edited October 26, 2007 5:05 EST by <a href="robowiki?Skilgannon" title="ID 12382 from ctb-cache4-vif1.saix.net">Skilgannon</a> <a href="robowiki?action=browse&diff=1&id=Horizon/VersionHistory">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

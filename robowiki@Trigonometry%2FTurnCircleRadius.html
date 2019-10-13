@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Trigonometry/TurnCircleRadius - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Trigonometry, Turn, Circle, Radius'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/TurnCircleRadius">Trigonometry/TurnCircleRadius</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Trigonometry" class=wikipagelink>Trigonometry</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+
+
+/**
+ * See &lt;a href="http://www.robowiki.net/cgi-bin/robowiki?Trigonometry/TurnCircleRadius"&gt;
+ * http://www.robowiki.net/cgi-bin/robowiki?Trigonometry/TurnCircleRadius
+ * &lt;/a&gt; for a description of this method.
+ * 
+ * @author David Alves
+ * @param velocity - velocity that the robot is traveling at
+ * @return the radius of the turning circle if the robot is traveling in a circle, turning at max velocity 
+ */
+public double turnCircleRadius(double velocity){
+   return (Math.abs(v) * 360.0 / (10.0 - .75 * Math.abs(v))) / (2.0 * Math.PI);
+}
+
+
+</pre>
+<p>
+<p>
+Here's the math behind this shortcut:
+<p>
+A robot at velocity v has a max turn rate of (10 - .75 * Math.abs(v)) degrees / tick. Therefore it takes 360 / (10 - .75 * Math.abs(v)) ticks to drive in a complete circle. After this time it will have traveled a distance of Math.abs(v) * 360 / (10 - .75 * Math.abs(v)). This is the circumference of the circle the bot is driving in, so dividing by 2 * pi gives the radius: Math.abs(v) * 360 / (10 - .75 * Math.abs(v)) / (2 * Math.PI). Note that this is not an exact answer (bots don't drive in continuous curves), but it should be within a pixel or two.
+<p>
+<p>
+Radius at velocity 8: 114.6<br>
+Radius at velocity 7: 84.4<br>
+Radius at velocity 6: 62.5<br>
+Radius at velocity 5: 45.8 (<a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a>)<br>
+Radius at velocity 4: 32.7<br>
+Radius at velocity 3: 22.2<br>
+Radius at velocity 2: 13.5<br>
+Radius at velocity 1: 6.2<br>
+<p>
+<PRE >
+ --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+</PRE>
+<p>
+<hr noshade class=wikiline size=1>
+<strong>Questions / Comments</strong>
+<p>
+I was using radius = velocity / ( 2 * sin ( turn rate / 2 ) ) after painstakingly doing the trig.  But using the small angle approximation (as you have) cuts out a sine calculation.   The inaccuracy is not more than 0.02 pixels by the way.  *Does global delete of Math.sin in robocode project directory*
+<p>
+<PRE >
+ --[Russ Graham]<a href="robowiki?action=edit&id=Russ_Graham" class=wikipageedit>?</a> 
+</PRE>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Trigonometry" class=wikipagelink>Trigonometry</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Trigonometry/TurnCircleRadius" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Trigonometry/TurnCircleRadius">View other revisions</a><br>Last edited December 7, 2004 12:29 EST by sdn-ap-015txhousP0505.dialsprint.net <a href="robowiki?action=browse&diff=1&id=Trigonometry/TurnCircleRadius">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

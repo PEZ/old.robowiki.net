@@ -1,0 +1,210 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RoboRumble/ProtocolDevelopment - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Robo, Rumble, Protocol, Development'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/ProtocolDevelopment">RoboRumble/ProtocolDevelopment</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H2>Server API</H2>
+
+<p>
+I think the first thing to do in developing a new <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> protocol is deciding on the API. If we will use SOAP/XML, a HTTP servlet or our own TCP protocol will not affect the functions the server makes available to the clients. Therefor this part of the specification is only about what to send and not how. Feel free to edit the proposal if have some good ideas.
+<p>
+<H3>Structures</H3>
+
+<p>
+<H4>Battle</H4>
+
+<UL >
+<li> id : int
+<li> width : int
+<li> height : int
+<li> rounds : int
+<li> robots : String[]
+</UL>
+<p>
+<H4>Result</H4>
+
+<UL >
+<li> scores : int[][]
+</UL>
+<p>
+<H3>Methods</H3>
+
+<p>
+<H4>Parameters common to all methods</H4>
+
+<UL >
+<li> username : String
+<li> password : String
+</UL>
+<p>
+<H4>requestBattles</H4>
+
+<UL >
+<li> Parameters
+<UL >
+<li> count : int
+<li> timeout : int
+</UL>
+<li> Returns
+<UL >
+<li> timeout : int
+<li> battles : Battle[]
+</UL>
+</UL>
+<p>
+<H4>returnBattles</H4>
+
+<UL >
+<li> Parameters
+<UL >
+<li> battles : Battle[]
+<li> results : Result[]
+</UL>
+<li> Returns
+<UL >
+<li> accepted : boolean[]
+</UL>
+</UL>
+<p>
+<H4>releaseBattles</H4>
+
+<UL >
+<li> Parameters
+<UL >
+<li> battles : Battle[]
+</UL>
+<li> Returns
+</UL>
+<p>
+<H4>renewBattles</H4>
+
+<UL >
+<li> Parameters
+<UL >
+<li> timeout : int
+<li> battles : Battle[]
+</UL>
+<li> Returns
+<UL >
+<li> timeout : int
+<li> battles : Battle[]
+</UL>
+</UL>
+<p>
+<p>
+<H2>Unresolved Issues</H2>
+
+<p>
+The above proposal is not complete. There are probably many things that were missed. Please add any issues you see to this list and discuss them.
+<UL >
+<li> <strong>How should clients know where to download robots?</strong>
+<li> <strong>Should the server maintain the participant list?</strong>
+<UL >
+<li> IMHO deciding who's in the rumble is not the client's task. And a nice JSP or Servlet for managing the list would be a nice feature. <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+</UL>
+<li> <strong>How should the server know which competition a bot is in?</strong>
+<UL >
+<li> One option I see is having the server download and check the jar when it is added to the rumble. <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+</UL>
+<li> <strong>Should the server return a status code from each method?</strong>
+<li> <strong>The Result structure need refining</strong>
+<UL >
+<li> I didn't even look at what <a href="robowiki?Robocode" class=wikipagelink>Robocode</a> returns after a battle when I wrote the proposal. <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+</UL>
+</UL>
+<p>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<H2>Transport</H2>
+
+<p>
+Here we can discuss how the client should communicade with the server.
+Feel free to add comments and other types of transport.
+<p>
+<H3><a rel="nofollow" href="http://www.w3.org/2002/ws/">[Web Services]</a></H3>
+
+That is <a rel="nofollow" href="http://www.w3.org/TR/soap/">[SOAP]</a> over HTTP POST.
+The server must have an application server with an SOAP implementation. A free solution is <a rel="nofollow" href="http://jakarta.apache.org/tomcat/">[Tomcat]</a> and <a rel="nofollow" href="http://ws.apache.org/axis/">[Axis]</a> but there are certainly other.
+<p>
+<H4>Pros</H4>
+
+<UL >
+<li> It's a standard protocol specially designed for things like this.
+<li> Almost no network code has to be written.
+<li> It uses HTTP so it should work through proxies.
+</UL>
+<p>
+<H4>Cons</H4>
+
+<UL >
+<li> The client will depend on some third party library.
+<li> XML is quite verbose and generates a bit more network traffic.
+</UL>
+<p>
+You can download an implementation of the proposed API as a web service here: <a rel="nofollow" href="http://www.daniel-nilsson.com/stuff/rr2-proposal_1.zip">http://www.daniel-nilsson.com/stuff/rr2-proposal_1.zip</a> -- <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+<p>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<H2>Discussion / Comments</H2>
+
+<p>
+Great to see there is people interested to enhance RR@home. The current version of RR@home is a little bit messy, but there are some design decisions I'd like everybody to be concious so we don't have to think it twice.
+<p>
+<UL >
+<li> RR@home uses only HTTP for 3 reasons: It is easier to deal with security (no problems with firewalls nor hackers trying to reach client computers), it makes people more confident to use the client (personally, I don't like untested software using strange ports and protocols installed on my computer), and it is easier to develop and maintain.
+</UL>
+<p>
+<UL >
+<li> When we set it up, it was not clear were it would be installed nor which would be the definitive setings. It is the reason RR@home reads the participants from one page, and posts the results into another one. Also the Wiki was an easy place to maintaint the participants list. If you change it, you will need to set up an interfase to maintain the participants file. In the current design the server was just a silly data receiver (all logic was on the client). Of course, now that thinks are more stable, It would be a good idea to take advantage of a good server (ie. the server is the one that removes old participants).
+</UL>
+<p>
+<UL >
+<li> All the design is oriented to allow the clients to work without need to connect to the server (and to minimize traffic). I think it is important because it is not clear everybody has a connection 24h open. So the clients run battles the best they can, and then the server eliminates the ones that are not useful. Also, if the server is down, the clients can work and then upload the battles when it gets up again. Aso, it avoids unnecesary work in the server (it was a concern when we set up RR@home, because we didn't know how much work would it represent for the server). The initial idea (no direction from the server) changed a little bit (now there are some priority battles and so on, but the aim for simplicity, decentralization and self-coordination is good I think.
+</UL>
+<p>
+<UL >
+<li> With the current design, you can have as many competitions as you want. To set up the <a href="robowiki?StrongestBotsRumble" class=wikipagelink>StrongestBotsRumble</a> you just need the server to generate periodically (ie. every week) a Web page with the list of participants and let the clients to download it and run the competition.
+</UL>
+<p>
+<UL >
+<li> Be careful with databases, XML, and all this stuff. It makes difficult to find and setup a server to run the RR@home (how long would have taken to create a backup server for RR@home if it had used MySQL<a href="robowiki?action=edit&id=MySQL" class=wikipageedit>?</a>, XML, direct connections and some other funny things?). Also I think one of the great things of the current design is that (even with a messy code) everybody can understand it and collaborate (ie. developing new servlets to analyze data) just because it uses plain text files and everybody understands them (will it be true with XLM or SQL?). Of course, performance is the price you pay for it :-)
+</UL>
+<p>
+Summaryzing: All RR@home was made keeping simplicity in mind (just make it complex when the experience has demonstrated it is necessary) and to minimize effort and knowledge needed to create/maintain it. I think this principles should stay in any new release of RR@home.
+<p>
+Again, it's good to see people dedicating time and efforts to improve it. My best wishes for the project.
+<p>
+-- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Cool! I think the simplicity of the current client / server has proven very useful. And though we have had some problems with data file corruption the system has proven very robust and able to heal even hard blows. The use of files instead of a database makes it simple to setup and maintain to a degree. I can't say that I see it impact performance in any degree really. Even when there were 10 or more clients competing on delivering battles as fast as they could the server wasn't even using fractions of the available capacity. In fact the server was itself busy running the RR@H client, testing new versions of <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a>, browsing the net and  my daughter was playing her games on it (Barbie Horse Show Adventure being the favourite). On the other hand I can't see that using SQL and / or XML would make it any harder to set up. There are free and easy to use tools for it. And both SQL and XML can help us build solutions that would be hard to do with stuff burried in a sea of files. A dynamically updated PremiereLeague<a href="robowiki?action=edit&id=PremiereLeague" class=wikipageedit>?</a> comes to mind. I also don't see why we should let one or two machines on the net lacking a constant connection stear the design descisions. Let's assume the server is always up and that the clients always are connected to the net. It will make things more fun and easier too. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+And, as I said somewhere else. We can make a local server to proxy when the client machine is offline. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+What do you think about a completly new client/server using Axis?
+<p>
+Ofcourse that means a rewrite of both the client and the server to fit the new protocol. I volunteer to write a new client (I'we started but is currently wating to see what protocol I should use). Someone must adept the server too.
+<p>
+-- <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+<p>
+I'm rewriting the server *anyway*. Please see <a href="robowiki?RoboRumble/Development" class=wikipagelink>/Development</a> for more info. I would be happy to write the server side of version 2 of the RR@H protocol. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Yeah, and Strider is rewriting the client *anyway*. I think it sounds excellent to use a web service framework for the task. I'm in love with http too as transport. The overhead in traffic is neglectable I think. Though I don't know nothing about Axis. I guess I'll have to read up on that one to know if I think it's a good choice. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Strider is rewriting the client *because* he wants to change the protocol. I am rewriting it for a different reason, hence "anyway". :-P  --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Well, at first I wanted to rewrite the client just to clean it up. Then I found out the the protocol also needed a cleanup and now I want to rewrite the client for both reasons :) -- <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+I updated this page with a new proposal and removed a lot of comments that I felt was no longer relevant. -- <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RoboRumble/ProtocolDevelopment" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RoboRumble/ProtocolDevelopment">View other revisions</a><br>Last edited May 18, 2006 21:33 EST by <a href="robowiki?Florent" title="ID 6624 from 148.187.103-84.rev.gaoland.net">Florent</a> <a href="robowiki?action=browse&diff=1&id=RoboRumble/ProtocolDevelopment">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

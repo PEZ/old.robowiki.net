@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Skilgannon/PreciseIntersect - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Skilgannon, Precise, Intersect'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/PreciseIntersect">Skilgannon/PreciseIntersect</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Like all my code, this is designed to run as fast as possible. At first I was working on a distance-based method (similar to the check at the beginning), but I realized there would be a bucketload of special cases, so I ditched that and went with standard square/circle intersection. All my own work, although after writing I did go over <a href="robowiki?Garm/BotwidthCalculation" class=wikipagelink>Krabb's</a> and <a href="robowiki?Rednaxela/SuperBotwidth" class=wikipagelink>Rednaxela's</a> implementations to check for bugs. It seems great minds think alike =) although I have a strange love of arrays ;-)
+<p>
+<pre>
+
+       import java.awt.geom.*;
+   import java.util.*;
+    public class PreciseUtils{
+   
+   //high speed test to determine if the full method should be run this tick
+       public static boolean intersects(Point2D.Double botLocation, Wave wave){
+         double[] distSq = new double[]{
+               wave.fireLocation.distanceSq(botLocation.x - 18, botLocation.y + 18),
+               wave.fireLocation.distanceSq(botLocation.x + 18, botLocation.y + 18),
+               wave.fireLocation.distanceSq(botLocation.x + 18, botLocation.y - 18),
+               wave.fireLocation.distanceSq(botLocation.x - 18, botLocation.y - 18)};
+         
+         //faster? I'm not sure
+      	// Arrays.sort(distSq);
+         // return (sqr(wave.distanceTraveled + bulletVelocity) &gt; distSq[0]
+            // &amp;&amp; sqr(wave.distanceTraveled) &lt; distSq[3]);
+            
+         return (sqr(wave.distanceTraveled) &gt;
+            Math.min(Math.min(distSq[0], distSq[1]), Math.min(distSq[2],distSq[3]))
+            &amp;&amp; sqr(wave.distanceTraveled - wave.bulletVelocity) &lt; Math.max(Math.max(distSq[0], distSq[1]), Math.max(distSq[2],distSq[3])));
+      
+      }
+       public static double[] getIntersectionRange(Point2D.Double botLocation, Wave wave){
+         double[] yBounds = new double[]{botLocation.y - 18, botLocation.y + 18};
+         double[] xBounds = new double[]{botLocation.x - 18, botLocation.x + 18};
+         
+         double[] radii = new double[]{wave.distanceTraveled, wave.distanceTraveled - wave.bulletVelocity};
+      	
+         ArrayList&lt;Point2D.Double&gt; intersects = new ArrayList&lt;Point2D.Double&gt;();
+         for(int i = 0; i &lt; 2; i++)
+            for(int j = 0; j &lt; 2; j++){
+               Point2D.Double[] testPoints = vertIntersect(wave.fireLocation.x, wave.fireLocation.y, radii[i], xBounds[j]);
+               for(int k = 0; k &lt; testPoints.length; k++)
+                  if(inBounds(testPoints[k].y, yBounds))
+                     intersects.add(testPoints[k]);
+            }
+            
+         for(int i = 0; i &lt; 2; i++)
+            for(int j = 0; j &lt; 2; j++){
+               Point2D.Double[] testPoints = horizIntersect(wave.fireLocation.x, wave.fireLocation.y, radii[i], yBounds[j]);
+               for(int k = 0; k &lt; testPoints.length; k++)
+                  if(inBounds(testPoints[k].x, xBounds))
+                     intersects.add(testPoints[k]);
+            }
+         for(int i = 0; i &lt; 2; i++)
+            for(int j = 0; j &lt; 2; j++){
+               Point2D.Double testCorner = new Point2D.Double(xBounds[i], yBounds[j]);
+               double distSq = testCorner.distanceSq(wave.fireLocation);
+               if(distSq &lt; sqr(radii[0]) &amp;&amp; distSq &gt; sqr(radii[1]))
+                  intersects.add(testCorner);
+            }
+         double antiClockAngle = Double.POSITIVE_INFINITY;
+         double clockAngle = Double.NEGATIVE_INFINITY;
+         double absBearing = angle(wave.fireLocation, botLocation);
+         for(Point2D.Double p: intersects){
+            double angDiff = fastRelativeAngle(angle(wave.fireLocation,p) - absBearing);
+            if(angDiff &gt; clockAngle)
+               clockAngle = angDiff;
+            if(angDiff &lt; antiClockAngle)
+               antiClockAngle = angDiff;
+         }
+         return new double[]{fastAbsoluteAngle(antiClockAngle + absBearing), fastAbsoluteAngle(clockAngle + absBearing)};
+      }
+       static boolean inBounds(double q,double[] xBounds){
+         return q &gt;= bounds[0] &amp;&amp; q &lt;= bounds[1] ;
+      }
+
+      
+   	//assumes between -PI*2 and PI*2
+       public static double fastRelativeAngle(double angle) {
+         return angle&lt;-Math.PI?angle+Math.PI*2:angle&gt;Math.PI?angle-Math.PI*2:angle;
+      }
+      
+   	//assumes between -PI*2 and PI*4
+       public static double fastAbsoluteAngle(double angle){
+         return angle &gt; Math.PI*2 ? angle - Math.PI*2 : angle &lt; 0? angle + Math.PI*2 : angle;
+      }
+   
+       static Point2D.Double[] vertIntersect(double centerX, double centerY, double r, double intersectX){
+         double deltaX = centerX - intersectX;
+         double sqrtVal = r*r - deltaX*deltaX;
+         if(sqrtVal &lt; 0)
+            return new Point2D.Double[]{};
+            
+
+// commented out because having this decision would 
+// take more execution time than the rare occurence 
+// that a perfect 0 discriminant would save, and
+// the code downstream can deal with it anyways 
+        // if(sqrtVal == 0)
+          //  return new Point2D.Double[]{
+            //      new Point2D.Double(intersectX, centerY)};
+      		
+         sqrtVal = Math.sqrt(sqrtVal);
+         return new Point2D.Double[]{
+               new Point2D.Double(intersectX, centerY + sqrtVal),
+               new Point2D.Double(intersectX, centerY - sqrtVal)};
+      } 
+       static Point2D.Double[] horizIntersect(double centerX, double centerY, double r, double intersectY){
+         double deltaY = centerY - intersectY;
+         double sqrtVal = r*r - deltaY*deltaY;
+         if(sqrtVal &lt; 0)
+            return new Point2D.Double[]{};
+            
+         if(sqrtVal == 0)
+            return new Point2D.Double[]{
+                  new Point2D.Double(centerX, intersectY)};
+      		
+         sqrtVal = Math.sqrt(sqrtVal);
+         return new Point2D.Double[]{
+               new Point2D.Double(centerX + sqrtVal, intersectY),
+               new Point2D.Double(centerX - sqrtVal, intersectY),};
+      } 
+   
+       public static double sqr(double d){
+         return d*d;}
+         
+       public static double angle(Point2D.Double source, Point2D.Double target) {
+         return Math.atan2(target.x - source.x, target.y - source.y);
+      }
+      
+       public class Wave{
+         double distanceTraveled;
+         double bulletVelocity;
+         Point2D.Double fireLocation;
+      }
+   }
+</pre>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Hmm, nice. This looks like a pretty solid implementation to me, and at a glance looks like it would probably notably quicker than mine. I'm quiet curious to see what affect this will have on Druss's targeting ability :-) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+I've actually made a couple small changes, which would mostly affect the execution speed. I'm curious how you layered all the ranges on top of each other to find a firing angle. Is the methodology anything similar to this? 
+<pre>
+            GFRange[] ranges = new GFRange[cluster.size()];
+            double[] indices = new double[ranges.length*2];
+            for(int i = 0; i &lt; ranges.length; i++){
+               ranges[i] = iterator.next();
+               indices[i*2] = ranges[i].min;
+               indices[i*2 + 1] = ranges[i].max;
+            }
+
+            Arrays.sort(indices);
+            int[] indicesScores = new int[indices.length - 1];
+            for(int i = 0; i &lt; ranges.length; i++){
+               int minIndex = Arrays.binarySearch(indices,ranges[i].min);
+               int maxIndex = Arrays.binarySearch(indices,ranges[i].max);
+               while(minIndex&lt;maxIndex)
+                  indicesScores[minIndex++]++;
+            }
+            int maxIndex = indicesScores.length/2;
+            for(int i = 0; i &lt; indicesScores.length; i++){
+               if(indicesScores[i] &gt; indicesScores[maxIndex])
+                  maxIndex = i;
+            }
+            double fireGF = (indices[maxIndex] + indices[maxIndex + 1])/2;
+
+            return fireGF*MEA*lateralDirection;
+</pre>
+<p>
+-- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Well, the way I did it should be in effect similar to that. I use a class I call "<a href="robowiki?MovementProfile" class=wikipagelink>MovementProfile</a>" that stores overlayed ranges and has a variety of functions for adding/retrieving data from it. See the <a href="robowiki?MovementProfile" class=wikipagelink>MovementProfile</a> file in <a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a>'s code or <a rel="nofollow" href="http://homepages.ucalgary.ca/~agschult/MovementProfile.java">[here]</a>. It's a bit messy and not all of the utility functions are actually used currently/anymore but I have them around in case I still need them. The utility functions besides getting the best GF that I am using are mostly there for the purpose of getting data about the profile for my <a href="robowiki?CrowdTargeting" class=wikipagelink>CrowdTargeting</a> weighting system to use (because I don't like <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>). Basically, it stores a sorted array where each element contains 1) an amount of increase/decrease and 2) The precise GF that increase/decrease occurs at. The reason I store amounts of increases/decreases instead of storing the overall value of an index, is that it makes incrementally adding to the profile far simpler and it's not as if searching for the highest point is much slower.  -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Skilgannon/PreciseIntersect" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Skilgannon/PreciseIntersect">View other revisions</a><br>Last edited July 2, 2008 16:46 EST by <a href="robowiki?Rednaxela" title="ID 14786 from d198-53-128-24.abhsia.telus.net">Rednaxela</a> <a href="robowiki?action=browse&diff=1&id=Skilgannon/PreciseIntersect">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

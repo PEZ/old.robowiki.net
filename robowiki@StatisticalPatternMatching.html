@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>StatisticalPatternMatching - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Statistical, Pattern, Matching'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=StatisticalPatternMatching">StatisticalPatternMatching</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><s>Take some pattern-matched angles, then select the most visited angle (like <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>).</s><br>
+In a word, <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> + <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a>
+<p>
+(Feel free to edit the definition.)
+<p>
+Bots using this <a href="robowiki?Targeting" class=wikipagelink>Targeting</a>:
+<UL >
+<li> <s><a href="robowiki?Tron" class=wikipagelink>Tron</a></s>
+<li> <a href="robowiki?Matchup" class=wikipagelink>Matchup</a>
+</UL>
+<p>
+I'm curious why you say <a href="robowiki?Tron" class=wikipagelink>Tron</a> uses this. It really doesn't use patterns to match old situations in its log, it uses <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> (aka <a href="robowiki?TronsGun" class=wikipagelink>TronsGun</a>), which is more of a log-based system to replace <a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a> / <a href="robowiki?VisitCountStats" class=wikipagelink>VisitCountStats</a>. <a href="robowiki?ABC" class=wikipagelink>ABC</a> has described it as a pattern recognition gun that can work in melee, but it's not a true <a href="robowiki?PatternMatcher" class=wikipagelink>PatternMatcher</a> any more than <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> is. Different versions choose firing angles in different ways, but I think most have a form of <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a> for selecting the angle once its found the N closest matches. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+<UL >
+<li> On second thought, perhaps you know all that and the definition at the top just needs to be refined. =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+<UL >
+<li>What I understood of <a href="robowiki?TronsGun" class=wikipagelink>TronsGun</a> was that it used <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> to find a 'similar' scan, and then 'played it forward' using normal pattern matching. This simplifies on 'normal' GF-DC guns because it doesn't have to use waves, and adds an element of <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> into it. It is a stat gun because it doesn't match on exact past movement, and is a <a href="robowiki?PatternMatcher" class=wikipagelink>PatternMatcher</a> because it 'plays it forward'. Thus <a href="robowiki?StatisticalPatternMatching" class=wikipagelink>StatisticalPatternMatching</a> seems right to me. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+<UL >
+<li> Ugh - I <em>really</em> disagree with this notion that playing a movie forward to project a firing angle is what <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> is. :-\ (Sorry to be so blunt.) <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> is, to me, when you take the most recent enemy movements (the "pattern") and you match it against a log of previous movements (the "matching"), then find the appropriate firing angle from that point in the movement log (traditionally, the "playing a movie forward" part). A couple other points of note: the current <a href="robowiki?Shadow" class=wikipagelink>Shadow</a> uses <a href="robowiki?GuessFactors" class=wikipagelink>GuessFactors</a> instead of path retrace (says on <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> page), and neither <a href="robowiki?Chalk" class=wikipagelink>Chalk</a> nor <a href="robowiki?Lukious" class=wikipagelink>Lukious</a> (both DC guns) use path retracing either. I don't think that's the defining aspect of a gun. On some level, you could argue that all targeting is looking for predictability (i.e., patterns) in enemy movements, but as a term, <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> has already been coined as a specific implementation that's a bit more literal, IMO. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<UL >
+<li> I'm convinced! -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> I wasn't aware that Shadow no longer plays forward. Thanks for the info =). For me, pure <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> means that the data is stored in order of the time recorded, with only enough data to reconstruct their (future) movement. <a href="robowiki?StatisticalPatternMatching" class=wikipagelink>StatisticalPatternMatching</a> keeps more info than is required to rebuild the enemy movement, and tries to find the best match on more data than is required to rebuild the enemy movement. There may also be several angles to shoot at, and these may be filtered using <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a>. Pure statistical targeting does not take the time the scan was made into account, or what scans were made after it. The data is not sorted by time, as is the <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> varieties, although  the data may be decayed over time in order to make the fresh scans more heavily weighted. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<UL >
+<li> Actually Shadow 'does' play it forward, but its not a pattern matcher by my definition (alot of confusion about this), read below. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<UL >
+<li> Well, <a href="robowiki?Shadow" class=wikipagelink>Shadow</a>'s not <a href="robowiki?OpenSource" class=wikipagelink>OpenSource</a>, so we only have what <a href="robowiki?ABC" class=wikipagelink>ABC</a> says - and he says on the <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> page that Shadow currently uses <a href="robowiki?GuessFactors" class=wikipagelink>GuessFactors</a>. But it's kinda moot anyway, I think it's clear you can have a <a href="robowiki?TronsGun" class=wikipagelink>TronsGun</a> with or without path retracing. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<UL >
+<li> Closed-source, right.. hem, forgot. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</UL>
+</UL>
+</UL>
+<li> Well, let's not bring another term ("statistical targeting") into the mix =) ... I think all learning guns are statistical in some way. I like this: "<a href="robowiki?StatisticalPatternMatching" class=wikipagelink>StatisticalPatternMatching</a> keeps more info than is required to rebuild the enemy movement." (In fact, my <a href="robowiki?Shaakious" class=wikipagelink>Shaakious</a> was like that.) As long as you're still matching a pattern in the first place, that is, which I still say <a href="robowiki?TronsGun" class=wikipagelink>TronsGun</a> doesn't - at least no more than any form of learning gun does. The main difference between <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> and <a href="robowiki?VisitCountStats" class=wikipagelink>VisitCountStats</a> (traditionally <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>) is that the former keeps raw attribute data and analyzes that before firing, while the latter processes that data on the fly into a data structure (multi-dimensional arrays); both ways will see patterns to some degree with attributes like "time since velocity change" and "distance last eight ticks", but I don't personally think it makes them <a href="robowiki?PatternMatcher" class=wikipagelink>PatternMatcher</a>s. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> But, the current version of Matchup keeps <strong>no</strong> more info than is required to rebuild the enemy movement. -- <a href="robowiki?Stelokim" class=wikipagelink>Stelokim</a>
+</UL>
+</UL>
+While we're arguing, I think "<a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> + <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a>" is AT LEAST 2 words ... really more like 5. --<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=StatisticalPatternMatching" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=StatisticalPatternMatching">View other revisions</a><br>Last edited August 3, 2007 23:18 EST by <a href="robowiki?Simonton" title="ID 7817 from technisource-router.mtec.mtu.edu">Simonton</a> <a href="robowiki?action=browse&diff=1&id=StatisticalPatternMatching">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

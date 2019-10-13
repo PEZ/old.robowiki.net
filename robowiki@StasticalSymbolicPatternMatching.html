@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>StasticalSymbolicPatternMatching - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Stastical, Symbolic, Pattern, Matching'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=StasticalSymbolicPatternMatching">StasticalSymbolicPatternMatching</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>This is <a href="robowiki?Ne" class=wikipagelink>Ne</a>'s big nasty <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> gun. It is not the best in the world but it was the best I could come up with considering my relative inexperience with all of this.
+<p>
+<H2>Bots it's used in:</H2>
+
+<UL >
+<li><a href="robowiki?Chimera" class=wikipagelink>Chimera</a>
+</UL>
+<p>
+<H2>How does it work?</H2>
+
+Firstly there is a massive symbolic pattern buffer. It is broken down into scan-blocks that are haphazardly arranged in a hashtable. Each block represents a string of uninterrupted scans over a certain bot. This solves any problems that pattern matchers tend to have with interrupted scans. Because the number of scan blocks is limited, it replaces the smallest scan block whenever choosing a new block to edit.
+<p>
+When attempting to determine the future location of a target, it will search for the previous n states in all of the scan blocks. It tries to find a balance between a long search pattern and several returns. If the pattern is not found, it reduces the search length. If the search length is still relatively long but returns very few instances in the buffer, it will again reduce the search length until it finds a happy equilibrium.
+<p>
+From there it simply finds all instances of the search pattern and then finds up to 5 possible future ticks in each scan block. Then it simply finds the one tick that is occurred the most times, advances the virtual target one tick, then repeats the process until it registers a bullet hit. If it runs out of data to process, it will revert to circular targeting. It is also capable of predicting and accounting for WallCollision<a href="robowiki?action=edit&id=WallCollision" class=wikipageedit>?</a>.
+<p>
+In effect this is somewhat like <a href="robowiki?SingleTick" class=wikipagelink>SingleTick</a> targeting.
+<p>
+<H2>Comments / Suggestions:</H2>
+
+<p>
+Nice!  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Thanks Dude. Not just for the compliment, but for the inspiration. This happens to be the one piece of my bot that I'm most proud of and it's largely inspired by your SD/<a href="robowiki?SingleTick" class=wikipagelink>SingleTick</a> PM gun. Now you've got me thinking about recording a change in velocity and heading instead of the literal velocity and heading change. I'm also thinking about folding the buffer and possibly combining the two characters used to encode them into one to increase efficiency. The more effecient I can make this thing, the more possible future ticks I can sample from in order to make more accurate statistics. As soon as I can tune <a href="robowiki?Chimera" class=wikipagelink>Chimera</a>'s movement, I'll definitely revisit this. -- <a href="robowiki?Ne" class=wikipagelink>Ne</a>
+<p>
+If you'd like, feel free to grab <a href="robowiki?LifelongObsession" class=wikipagelink>LifelongObsession</a>'s jar from the repository.  It's open-source, so you can see how I *seriously* optimized the computation time of this sort of pattern matching (compared to what you see in <a href="robowiki?SingleTick" class=wikipagelink>SingleTick</a>).  It also has a pretty sweet anti-xxx movement system, where you basically just paste in the source of your white-whale, modify here and there, and voila, you kick the crap out it ... but that's off topic ... -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+<i>Got off topic from here, moved to <a href="robowiki?Chimera" class=wikipagelink>Chimera</a> for the sake of keeping me sane.</i> -- <a href="robowiki?Ne" class=wikipagelink>Ne</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=StasticalSymbolicPatternMatching" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=StasticalSymbolicPatternMatching">View other revisions</a><br>Last edited May 3, 2007 5:29 EST by <a href="robowiki?Ne" title="ID 10690 from pool-71-123-195-130.dllstx.fios.verizon.net">Ne</a> <a href="robowiki?action=browse&diff=1&id=StasticalSymbolicPatternMatching">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

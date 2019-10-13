@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>SuperMyFirstRobot - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Super, My, First, Robot'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=SuperMyFirstRobot">SuperMyFirstRobot</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Look at the <a href="robowiki?WhiteWhales" class=wikipagelink>WhiteWhales</a> page. Several people say that they can't hit <a href="robowiki?MyFirstRobot" class=wikipagelink>MyFirstRobot</a> from
+long range with any gun simpler than a pattern matcher. It follows that an upgrade of
+<a href="robowiki?MyFirstRobot" class=wikipagelink>MyFirstRobot</a> might perform very well. So I created <a href="robowiki?SuperMyFirstRobot" class=wikipagelink>SuperMyFirstRobot</a>.
+<p>
+<H3>Bot Name</H3>
+
+<a href="robowiki?SuperMyFirstRobot" class=wikipagelink>SuperMyFirstRobot</a>
+<p>
+<H4>Author</H4>
+
+<a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<p>
+<H4>Extends</H4>
+
+<a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>
+<p>
+<H4>What's special about it?</H4>
+
+It is <a href="robowiki?MyFirstRobot" class=wikipagelink>MyFirstRobot</a>, except that it has things like <a href="robowiki?PerpendicularMovement" class=wikipagelink>PerpendicularMovement</a>, <a href="robowiki?Radar" class=wikipagelink>Radar</a> locks,
+<a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>...
+<p>
+<H4>How competitive is it?</H4>
+
+It is very effective at dodging simpler targeting methods. It also is fairly good in melee.
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+It oscillates back and forth, using <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> to avoid hitting the walls. Sometimes it
+takes off on a mad dash to the opposite side of the battlefield.
+<p>
+<H4>How does it fire?</H4>
+
+It uses <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a>.
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a> strategy?</H4>
+
+No difference, except it uses a radar lock in 1v1.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+Nothing.
+<p>
+<H4>Where did you get the name?</H4>
+
+Well, it was originally based on <a href="robowiki?MyFirstRobot" class=wikipagelink>MyFirstRobot</a>, and I think it is a pun on Super Mario.
+On the <a href="robowiki?OceansOfSpareTime" class=wikipagelink>OceansOfSpareTime</a> page, I put a comment about how if you attached a
+<a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> gun to <a href="robowiki?MyFirstRobot" class=wikipagelink>MyFirstRobot</a>, it could probably beat <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>...
+<p>
+<H4>Can I use your code?</H4>
+
+Sure, here it is:
+<p>
+<pre>
+package ar.tests;
+
+import static java.lang.Math.*;
+import static ar.tests.Util.*;
+
+import java.awt.Color;
+import java.awt.geom.*;
+
+import robocode.*;
+
+public class SuperMyFirstRobot extends AdvancedRobot {
+	private static final double WALL_STICK = 250.0;
+
+	private Rectangle2D.Double fieldRectangle;
+	private double angle;
+	private int direction = 1;
+	private double lastEnemyHeading;
+
+	public void run() {
+		setColors(null, null, Color.RED, Color.YELLOW, Color.RED);
+
+		setAdjustGunForRobotTurn(true);
+		setAdjustRadarForRobotTurn(true);
+		setAdjustRadarForGunTurn(true);
+		setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
+		
+		fieldRectangle = new Rectangle2D.Double(ROBOT_CENTER, ROBOT_CENTER / 2,
+				getBattleFieldWidth() - ROBOT_CENTER, getBattleFieldHeight()
+						- ROBOT_CENTER);
+
+		do {
+			direction = 1;
+			scan();
+			setBackAsFront(angle);
+			for (int i = 0; i &lt; 18; i++) {
+				doNothing();
+			}
+
+			direction = -1;
+			scan();
+			setBackAsFront(angle);
+			for (int i = 0; i &lt; 18; i++) {
+				doNothing();
+			}
+		} while (true);
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e) {
+		double absoluteBearing = getHeadingRadians() + e.getBearingRadians();
+
+		// Radar lock.
+		if (getOthers() == 1) {
+			setTurnRadarLeftRadians(getRadarTurnRemainingRadians());
+		}
+
+		// Perpendicular movement.
+		angle = normalRelativeAngle(wallSmoothing(new Point2D.Double(getX(), getY()),
+				absoluteBearing + PI / 2, direction));
+
+		// Circular targeting.
+		double relativeX = e.getDistance() * Math.sin(absoluteBearing);
+		double relativeY = e.getDistance() * Math.cos(absoluteBearing);
+		double db = 0;
+		double ww = lastEnemyHeading; // enemy's starting heading
+
+		do {
+			db += getBulletSpeed(3);
+			double dx = e.getVelocity() * Math.sin(ww);
+			double dy = e.getVelocity() * Math.cos(ww);
+			ww += e.getHeadingRadians() - lastEnemyHeading;
+			relativeX += dx;
+			relativeY += dy;
+		} while (db &lt; Util.distance(0, 0, relativeX, relativeY));
+		lastEnemyHeading = e.getHeadingRadians();
+
+		setTurnGunRightRadians(Math.asin(Math.sin(Math.atan2(relativeX,
+				relativeY)
+				- getGunHeadingRadians())));
+		setFire(3);
+	}
+
+	private double wallSmoothing(Point2D.Double botLocation, double angle,
+			int orientation) {
+		while (!fieldRectangle.contains(project(botLocation, angle, WALL_STICK))) {
+			angle += orientation * 0.1;
+		}
+		return angle;
+	}
+
+	private void setBackAsFront(double goAngle) {
+		double angle = normalRelativeAngle(goAngle - getHeadingRadians());
+		if (abs(angle) &gt; (PI / 2)) {
+			if (angle &lt; 0) {
+				setTurnRightRadians(PI + angle);
+			} else {
+				setTurnLeftRadians(PI - angle);
+			}
+			setBack(100);
+		} else {
+			if (angle &lt; 0) {
+				setTurnLeftRadians(-angle);
+			} else {
+				setTurnRightRadians(angle);
+			}
+			setAhead(100);
+		}
+	}
+}
+</pre>
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=SuperMyFirstRobot" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=SuperMyFirstRobot">View other revisions</a><br>Last edited May 7, 2007 19:23 EST by <a href="robowiki?AaronR" title="ID 9168 from 218.162.202.68.cfl.res.rr.com">AaronR</a> <a href="robowiki?action=browse&diff=1&id=SuperMyFirstRobot">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

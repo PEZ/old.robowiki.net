@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Smash - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Smash'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Smash">Smash</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H3>Bot Name</H3>
+
+Smash
+<H4>Author</H4>
+
+<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<H4>Extends</H4>
+
+<a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>. (duh)
+<H4>What's special about it?</H4>
+
+Nothing really...My first MR Movement bot
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=3104">http://www.robocoderepository.com/BotDetail.jsp?id=3104</a>
+<H4>How competitive is it?</H4>
+
+Can defeat all sample bots
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+MR Movement in melee, simple dodging movement in 1v1
+<H4>How does it fire?</H4>
+
+Linear or HeadOn<a href="robowiki?action=edit&id=HeadOn" class=wikipageedit>?</a> Targeting
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+Only in 1v1
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+It uses a radar lock in 1v1, or if it will fire soon. Also, see above (Movement)
+<H4>How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a>?</H4>
+
+Usually it attacks the closest. Or sometimes the "queerest" (see <a href="robowiki?SpareParts" class=wikipagelink>SpareParts</a>).
+<H4>What does it save between rounds and matches?</H4>
+
+It saves the enemy info between rounds.
+<H4>Can I use your code?</H4>
+
+I guess...it's kind of messy, but it's at <a href="robowiki?Starrynte/Smash" class=wikipagelink>Starrynte/Smash</a>
+<H4>What's next for your robot?</H4>
+
+Smash's days are coming to an end. I'm planning on just ... fixing alot of tiny bugs, e.g. not moving because it keeps selecting a point instead of actually going there (fixed)
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+Probably a lot!
+<H4>What other robot(s) is it based on?</H4>
+
+<a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a>, <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a>, and alot of ideas from <a href="robowiki?SpareParts" class=wikipagelink>SpareParts</a>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+Any idea of what's wrong if it prints out stuff like <tt>TARGET:sample.Corners at Point2D.Double[297.6702047421246, <b>52050.50756068383</b>]</tt>? Code is posted at <a href="robowiki?Starrynte/Smash" class=wikipagelink>Starrynte/Smash</a> (note: it is in debug mode, so itll print out alot of stuff). --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+What version of robocode? Older versions had funky teleport bugs. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Wow, your code is like, is in a older style (enumeration, vectors, hashtables). In your evaluate near the bottom, you have while(i.hasNext()){ just after you define a new Iterator, did you mean to use that iterator for that while loop? (you could just reuse the iterator by reassigning it btw, just remove "Iterator d" friom the first part of that). As for your little bug I can't be sure without doing a full trace, but I think it might be a problem in your extrapolate method. If can run a simple check (if(location.getX() &lt; 0 || location.getX() &gt; 800 || location.getY() &lt; 0 || location.getY() &gt; 600) out.println("ERROR! at line &lt;line num&gt;"); --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Hmm, did a little test, and these were the results (cropped to a few lines of the output, although most of it is similar to this):
+<pre>
+X WRONG: timeDelta=1.0 velocity=6.0 heading=2.9309882324026777 orig x=999.2743866043156
+Y WRONG: timeDelta=1.0 velocity=6.0 heading=2.9309882324026777 orig y=-737.2268427985015
+X WRONG: timeDelta=1.0 velocity=6.0 heading=2.9309882324026777 orig x=1000.5286926303485
+Y WRONG: timeDelta=1.0 velocity=6.0 heading=2.9309882324026777 orig y=-743.0942712295143
+X WRONG: timeDelta=1.0 velocity=6.0 heading=2.9309882324026777 orig x=1001.7829986563813
+Y WRONG: timeDelta=1.0 velocity=6.0 heading=2.9309882324026777 orig y=-748.9616996605272
+X WRONG: timeDelta=1.0 velocity=6.0 heading=2.9309882324026777 orig x=1003.0373046824142
+Y WRONG: timeDelta=1.0 velocity=6.0 heading=2.9309882324026777 orig y=-754.82912809154
+</pre>
+meaning it must be in on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>...it began to say that around the 11th tick. Did another test, and it began at the 5th tick. The 'on<a href="robowiki?CustomEvent" class=wikipagelink>CustomEvent</a>' for the tick works fine, so it's not a 'myPosition' update problem --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Wrong test earlier, forgot to take into account abs value and was accidentally comparing x instead of y...but still similar results
+Another test shows that the on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> is assigning the enemy position corretly...im wondering if I modified the enemy position in any way besides in on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>...a quick search shows im not. And i have robocode 1.3.4
+Perhaps i should tweak with 1v1 first...--<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+1v1 no problem. Added nano's code for <a href="robowiki?Trigonometry/Intersection" class=wikipagelink>finding the intersection of a line with a shape</a>. melee, still problems with the 'original position'. --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Your 'tick' condition looks suspicious to me...for example if you stop moving, and haven't fired, but you've turned, the e.getBearing() in on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> will be of a heading other than the recorded heading.  I would use <pre>return getTime() != time;</pre> as a condition. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Why is it that I always miss the obvious?! Thnx for the suggestion, still doesn't really work, thnx still. Oh and btw, the problem occurs more often the more the bots there are. It usually occurs with the bots it hasn't scanned for awhile.--<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a> (post edited)
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Smash" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Smash">View other revisions</a><br>Last edited July 28, 2007 16:33 EST by <a href="robowiki?Starrynte" title="ID 10964 from cpe-75-84-83-181.socal.res.rr.com">Starrynte</a> <a href="robowiki?action=browse&diff=1&id=Smash">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

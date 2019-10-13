@@ -1,0 +1,799 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RoboRumble/ReportedProblems - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Robo, Rumble, Reported, Problems'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/ReportedProblems">RoboRumble/ReportedProblems</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><em>Archive for March 4th, 2007: <a href="robowiki?RoboRumble/ReportedProblems03042007" class=wikipagelink>RoboRumble/ReportedProblems03042007</a></em>
+<p>
+<p>
+I should like you to try out Robocode 1.2.6 Beta, where one of the main goals is to replace the 1.1.3 version for RR@Home. The 1.2.6 has solved the issues listed here. If you find more issue when trying to run 1.2.6 Beta with RR@Home, then please notify me. --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+t i
+Darn <a href="robowiki?FireFox" class=wikipagelink>FireFox</a>, even with its improved crash recovery, I just lost my whole post about this... Anyway...
+<p>
+I copied robocode.jar and robocode.properties from a 1.2.6 Beta install into a working RR@home install, deleted and rebuilt the robot.database and .robotcache, and launched Robocode once from that directory to make sure it was working OK. Then I tried running <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> and got this error:
+<pre>
+Executing battles ...
+Fighting battle 0 ... repositorio.NanoStep 1.0,simonton.nano.WeekendObsession_S 1.6.2
+Exception in thread "Application Thread" java.lang.NoSuchMethodError: robocode.util.Utils.setLogListener(Lrobocode/control/RobocodeListener;)V
+        at roborumble.battlesengine.RobocodeEngineAtHome.runBattle(RobocodeEngineAtHome.java:94)
+        at roborumble.battlesengine.BattlesRunner.runBattles(BattlesRunner.java:86)
+        at roborumble.RoboRumbleAtHome.main(RoboRumbleAtHome.java:94)
+</pre>
+Here are lines 92 - 95 of RoboRumbleAtHome<a href="robowiki?action=edit&id=RoboRumbleAtHome" class=wikipageedit>?</a>.java:
+<pre>
+System.out.println("Executing battles ...");
+BattlesRunner engine = new BattlesRunner(parameters);
+engine.runBattles();
+engine = null;
+</pre>
+I think those steps are all I should need to do to upgrade a <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> client, and it's all that I've done previously, but maybe there's some other steps I should need to do that I'm unaware of.
+<p>
+-- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+By the way, my first thought is to try deleting the .class files for <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> and recompiling them. If I try that, I get these errors:
+<pre>
+% javac -cp ".:../robocode.jar:../codesize.jar" roborumble/RoboRumbleAtHome.java
+
+./roborumble/battlesengine/AtHomeListener.java:7: package apv does not exist
+import apv.TeamCompetition;
+           ^
+./roborumble/battlesengine/RobocodeEngineAtHome.java:9: cannot find symbol
+symbol  : class FileSpecificationVector
+location: package robocode.repository
+import robocode.repository.FileSpecificationVector;
+                           ^
+./roborumble/battlesengine/RobocodeEngineAtHome.java:85: cannot find symbol
+symbol  : class FileSpecificationVector
+location: class roborumble.battlesengine.RobocodeEngineAtHome
+                FileSpecificationVector v = robotRepository.getRobotSpecificationsVector(false, false, false, false, true, false);
+                ^
+./roborumble/battlesengine/RobocodeEngineAtHome.java:85: cannot find symbol
+symbol  : method getRobotSpecificationsVector(boolean,boolean,boolean,boolean,boolean,boolean)
+location: class robocode.repository.Repository
+                FileSpecificationVector v = robotRepository.getRobotSpecificationsVector(false, false, false, false, true, false);
+                                                           ^
+./roborumble/battlesengine/RobocodeEngineAtHome.java:94: cannot find symbol
+symbol  : method setLogListener(robocode.control.RobocodeListener)
+location: class robocode.util.Utils
+                Utils.setLogListener(listener);
+                     ^
+./roborumble/battlesengine/RobocodeEngineAtHome.java:97: cannot find symbol
+symbol  : method startNewBattle(robocode.battle.BattleProperties,boolean)
+location: class robocode.manager.BattleManager
+                manager.getBattleManager().startNewBattle(battleProperties, false); 
+                                        ^
+Note: ./roborumble/battlesengine/RobocodeEngineAtHome.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+6 errors
+</pre>
+That first one is an unused import that can just be commented out, but I think the rest are real things that have changed inside Robocode.
+<p>
+-- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Some additional info: robots are downloaded and put into the 'roborumble\temp' and 'robots' directory. Although the bot-entry is made in de .robotcache directory, the bot itself is not extracted there. For the rest the same remarks as <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>. -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+And some more info: <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a> does not work either with 1.2.6beta. It does run the first battle successfully but when collecting the results the error below is shown.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a><br>
+Next grouping: Yngwie 1.0 vs. <a href="robowiki?GresSuffurd" class=wikipagelink>GresSuffurd</a> 0.2.4 (9 remaining).
+<PRE >
+ Exception in thread "Thread-5" java.lang.NoSuchMethodError<a href="robowiki?action=edit&id=NoSuchMethodError" class=wikipageedit>?</a>: robocode.control.RobotResults<a href="robowiki?action=edit&id=RobotResults" class=wikipageedit>?</a>.getRamDamageBonus<a href="robowiki?action=edit&id=RamDamageBonus" class=wikipageedit>?</a>()I
+	at roboleague.GroupingEngine<a href="robowiki?action=edit&id=GroupingEngine" class=wikipageedit>?</a>.run(GroupingEngine<a href="robowiki?action=edit&id=GroupingEngine" class=wikipageedit>?</a>.java:161)
+	at roboleague.DivisionEngine<a href="robowiki?action=edit&id=DivisionEngine" class=wikipageedit>?</a>.run(DivisionEngine<a href="robowiki?action=edit&id=DivisionEngine" class=wikipageedit>?</a>.java:53)
+	at roboleague.gui.RoboLeagueGui<a href="robowiki?action=edit&id=RoboLeagueGui" class=wikipageedit>?</a>.bg_runSeasons(RoboLeagueGui<a href="robowiki?action=edit&id=RoboLeagueGui" class=wikipageedit>?</a>.java:675)
+	at roboleague.gui.RoboLeagueGui<a href="robowiki?action=edit&id=RoboLeagueGui" class=wikipageedit>?</a>.access$700(RoboLeagueGui<a href="robowiki?action=edit&id=RoboLeagueGui" class=wikipageedit>?</a>.java:21)
+	at roboleague.gui.RoboLeagueGui<a href="robowiki?action=edit&id=RoboLeagueGui" class=wikipageedit>?</a>$5.run(RoboLeagueGui<a href="robowiki?action=edit&id=RoboLeagueGui" class=wikipageedit>?</a>.java:807)
+</PRE>
+<p>
+Hmm.. the big issue for <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>@Home is that is accesses internal Robocode classes, instead of accessing the public control API only, i.e. the robocode.control classes (where the RobocodeEngine<a href="robowiki?action=edit&id=RobocodeEngine" class=wikipageedit>?</a> is the main entry). I also believe it is OK to access robocode.util.Utils methods, although this have never been the intension. Infact, the security manager of the current Robocode versions disallow robot to access internal Robocode classes except for robocode.util.Utils (as many robots uses e.g. normalAbsoluteAngle<a href="robowiki?action=edit&id=AbsoluteAngle" class=wikipageedit>?</a>). It will not be possible to continuesly evolving Robocode if the internal classes cannot change because other programs assumes that it is OK to access Robocode internals. The internals of Robocode will always change in order to enhance it, but also to gain better performance etc. That's the reason for having a API for controlling Robocode, that stays the same. If the robocode.control classes for controlling Robocode are not rich enough when it comes to controlling Robocode, then these should come as feature requests, and I will add it as fast as I can, if they make sense. The API for the control classes will not change, meaning that public classes, methods signatures, etc. will stay the same, except that additional classes and methods of course be added in the future! Existing classes, methods etc. will never be removed or changed. This way program like <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>@Home can count on using the control classes without worrying about which version of Robocode it controls. --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+The big question is how to proceed from here, so that RR@Home will be able to run the current but also comming versions of Robocode. One suggestion from my side is that I try to update RR@Home where the issues arise, and add missing functionality to the control classes of Robocode. --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+That makes perfect sense. <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>@Home is in bad need of refactoring anyway. It's more like a prototype to prove a concept. Now that the concept has been proven beyond any doubts anyone could have had, it is time we take it from the prototype phase. We... of course I seriously doubt I will have much time with it. But maybe Voidious and I can have a look at it together and try assess how much work it is. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Sure, I'm certainly willing to contribute some time and effort to the cause. I know <a href="robowiki?David_Alves" class=wikipagelink>David</a> has also expressed some interest to me in doing a rewrite of RR@Home, but I don't know what kind of time he has for it right now. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Please notice that I intend to remove the robocode.util.Constants class (again) and that robocode.util.Utils should not use copy() and similar stuff. It should "only" be the robocode.control classes that RR@Home make use of. If some additional functionality is really needed for robocode.control.RobocodeEngine<a href="robowiki?action=edit&id=RobocodeEngine" class=wikipageedit>?</a>, then send me a mail and I will add it the control API. --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+If you have any problems with RR@Home regarding Robocode, I will of course also do everything that I can to help you out. It has my top priority that Robocode and RR@Home works together soon and in future versions (of both applications). --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+I am trying to build a new version of <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>@Home based on the available 'roborumbleathome_beta9_server_b12.ZIP'. I will fix all the places where there are issues with the Robocode client. My question is: Is anyone else doing updates on <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>@Home, and if so, who? If it has already been updated, I suggest that the sources are merged and to make a new release of <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>@Home. --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+I know I mentioned updating the RR@Home code as part of this conversation, but I don't have anything done that would warrant merging it. I don't think anybody has updated the RR@Home code since <a href="robowiki?Albert" class=wikipagelink>Albert</a>. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I have some code that lets you run divisions from the command line.  It can also set variables in System.properties - I've used it to try different combinations of tuner variables &amp; view results.  I don't know if it's something anyone else would use, or if it should be a part of an actual release.  I think links of from my wiki page.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+All I have are quick and dirty hacks, through and through. Best you do it. Once you fimish i'll run it indefinitely given my new dsl and the aility to idle programs. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+I know some people (Martin f.e.) have solved an issue concerning uploading results of meleebattles. In the current version of RR@Home the results are uploaded twice (nr1 against all, nr2 against all (including nr1), nr3 against all (including nr1 and nr2) etc. etc.), while every result should be uploaded only once. It is only a minor issue, but since you will change the source, it is easy to take along. Please let me know when you need some testing of intermediate versions, time permitted I am happy to try them out.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+<UL >
+<li> Hmm... When did that fix come about? I don't remember ever patching my client for this, but it seems mine clearly doesn't upload them twice. I see 9 results uploading for bot 1, 8 for bot 2, 7 for bot 3, etc; after 3 battles run in my client, my bot correctly has 27 "battles" on the details page. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> I know for sure I haven't touched the code, so I am still uploading them twice. It is probably more than a year ago that this issue was mentioned, but I can only find it on the <a href="robowiki?Ugluk/Chat_Log_1" class=wikipagelink>Ugluk/Chat Log 1</a> for now.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</UL>
+<p>
+I have now corrected a lot of issues, and can compile all RR@Home sources for Robocode 1.2.6 Beta. It is running on Java 5. However, I currently get some exceptions that I need to fix. But it seems like I will soon be able to run it without too many errors. When this is possible I will upload the files so you guys are able to try it out! :-) --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+Oh, hey, I also have code to let users run focused competitors offline by modifying the RUNONLY variable in the properties file.  That seems like it might be usefull for someone else.  If you'd like the source, let me know how to get it to you.  This is for RR@Home, my previous comment was for <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a>.  Sorry if that was confusing. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Simonton: I should like all your modifications, that is if I continue developing on RR@Home. ;-)&nbsp;&nbsp;--<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+Well.. I finally got a new (alpha) version up and running that runs fine with the Robocode 1.2.5A client. It requires Java 5 like the Robocode client. You can download the new version from here: <a rel="nofollow" href="http://robocode.sourceforge.net/files/RoboRumble.zip">[RoboRumble.zip]</a> --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+Looks like only one round is fought instead of the number in the roborumble.txt file. BTW, I use v1.2.5.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+<PRE >
+ G:\Applicaties\RoboHome125<a href="robowiki?action=edit&id=RoboHome125" class=wikipageedit>?</a>&gt;roborumble
+ G:\Applicaties\RoboHome125<a href="robowiki?action=edit&id=RoboHome125" class=wikipageedit>?</a>&gt;cd robots
+ G:\Applicaties\RoboHome125<a href="robowiki?action=edit&id=RoboHome125" class=wikipageedit>?</a>\robots&gt;java -Dsun.io.use<a href="robowiki?CanonCaches" class=wikipagelink>CanonCaches</a>=false -Xmx512M -cp  .;../robocode.jar;../codesize.jar; roborumble.RoboRumbleAtHome<a href="robowiki?action=edit&id=RoboRumbleAtHome" class=wikipageedit>?</a> ./roborumble/roborumble.txt
+ Iteration number 0
+ Downloading participants list ...
+ Downloading missing bots ...
+ Downloading ...simonton.micro.<a href="robowiki?WeeklongObsession" class=wikipagelink>WeeklongObsession</a> 1.6.3
+ Unable to download simonton.micro.<a href="robowiki?WeeklongObsession" class=wikipagelink>WeeklongObsession</a> 1.6.3 from site.
+ Could not download bot simonton.micro.[WeeklongObsession 1]<a href="robowiki?action=edit&id=WeeklongObsession_1" class=wikipageedit>?</a>.6.3.jar
+ Downloading ...simonton.mini.<a href="robowiki?WeeksOnEnd" class=wikipagelink>WeeksOnEnd</a> 1.10.2
+ Unable to download simonton.mini.<a href="robowiki?WeeksOnEnd" class=wikipagelink>WeeksOnEnd</a> 1.10.2 from site.
+ Could not download bot simonton.mini.[WeeksOnEnd 1]<a href="robowiki?action=edit&id=WeeksOnEnd_1" class=wikipageedit>?</a>.10.2.jar
+ Ignoring simonton.micro.[WeeklongObsession 1]<a href="robowiki?action=edit&id=WeeklongObsession_1" class=wikipageedit>?</a>.6.3.jar: .\simonton.micro.[WeeklongObsession 1]<a href="robowiki?action=edit&id=WeeklongObsession_1" class=wikipageedit>?</a>.6.3.jar (Het systeem  kan het opgegeven bestand niet vinden)
+ Ignoring simonton.micro.[WeeklongObsession 1]<a href="robowiki?action=edit&id=WeeklongObsession_1" class=wikipageedit>?</a>.6.3.jar: .\simonton.micro.[WeeklongObsession 1]<a href="robowiki?action=edit&id=WeeklongObsession_1" class=wikipageedit>?</a>.6.3.jar (Het systeem kan het opgegeven bestand niet vinden)
+ Ignoring simonton.mini.[WeeksOnEnd 1]<a href="robowiki?action=edit&id=WeeksOnEnd_1" class=wikipageedit>?</a>.10.2.jar: .\simonton.mini.[WeeksOnEnd 1]<a href="robowiki?action=edit&id=WeeksOnEnd_1" class=wikipageedit>?</a>.10.2.jar (Het systeem kan het opgegeven bestand niet vinden)
+ Ignoring simonton.mini.[WeeksOnEnd 1]<a href="robowiki?action=edit&id=WeeksOnEnd_1" class=wikipageedit>?</a>.10.2.jar: .\simonton.mini.[WeeksOnEnd 1]<a href="robowiki?action=edit&id=WeeksOnEnd_1" class=wikipageedit>?</a>.10.2.jar (Het systeem kan het opgegeven bestand niet vinden)
+ Downloading rating files ...
+ Removing old participants from server ...
+ Preparing battles list ... Using smart battles is true
+ Prioritary battles file not found ...
+ Executing battles ...
+ Fighting battle 0 ... dft.Cyanide 1.90,kano.gamma.<a href="robowiki?KanoGamma" class=wikipagelink>KanoGamma</a> 1.8
+ RESULT = dft.Cyanide wins 125 to 41
+ Fighting battle 1 ... timmit.nano.TimDog<a href="robowiki?action=edit&id=TimDog" class=wikipageedit>?</a> 0.33,kawigi.mini.Coriantumr 1.1
+ RESULT = kawigi.mini.Coriantumr wins 134 to 32
+</PRE>
+<p>
+<PRE >
+ G:\Applicaties\RoboHome125<a href="robowiki?action=edit&id=RoboHome125" class=wikipageedit>?</a>\robots&gt;cd ..
+</PRE>
+<p>
+Aww, sorry for spamming y'all's outputs, guys.  Sounds like I'll soon be able to let you at those bots, though!  Thanks &amp; keep it up, <a href="robowiki?Fnl" class=wikipagelink>Fnl</a>.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+I also noticed that the roborumble.txt, meleerumble.txt and teamrumble.txt are not equal to what I use regarding several URL's. You can find correct working versions here: <a href="robowiki?RoboRumble/roborumble_txt" class=wikipagelink>RoboRumble/roborumble txt</a> -- <a href="robowiki?RoboRumble/meleerumble_txt" class=wikipagelink>RoboRumble/meleerumble txt</a> -- <a href="robowiki?RoboRumble/teamrumble_txt" class=wikipagelink>RoboRumble/teamrumble txt</a> <br>
+Tip: If you set 'UPLOAD=NOT', the results are not uploaded but kept locally in a file, so you can easily check them without contaminating the rankings.   -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>: Thanks for the hint. I will definitely use the real onces. Looking into all the pages here on <a href="robowiki?RoboWiki" class=wikipagelink>RoboWiki</a> for RR@Home is so "confusing", so I have a hard time finding the right info and files. --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+Simonton: I will have a look with the issue you mentioned. I think it might be related to what <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a> told. --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+Yeah, even the RR@Home info is rather scattered. Nice moment for a re-write when the 'new' RR@Home is ready. You can forget about <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>'s bots, they are not downloadable on purpose as they use (too) much memory. Btw, I mailed you <a href="robowiki?Fnl" class=wikipagelink>Fnl</a> a bit more info, I hope it is usefull.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>: Thank you. Your info is very helpful. I am working on fixing as much as possible. I am also trying to get in contact with Albert. That is, if it is okay that I update it or perhaps even put it on SourceForge<a href="robowiki?action=edit&id=SourceForge" class=wikipageedit>?</a> as an independent project beside Robocode. --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+TEll me when you finish, i'm itching to finally support and not cause to much dead lag on my resources. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+I have now made an <a rel="nofollow" href="http://robocode.sourceforge.net/files/robocode-setup-1.3-Alpha.jar">[1.3 Alpha]</a> (unofficial) version that I should like you to test. This is Robocode with <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>@Home built-in! In the coming Beta, <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> should be easier to startup and configurate, so this version is a very basic version. --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+Okay, its downloaded and I am attempting to run it now, i'll tell you what I find out. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Only a few minutes into use I noticed it "cannot" download missing robots, this may be because the program itself or because the Repository is down, but if its the latter it should skip the download after a certain length of time. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Yes, it seems like the Repository is down, which is good for making a timeout-mechanishm for ignoring the Robocode Repository if it is not responding. ;-) --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+I have replaced the <a rel="nofollow" href="http://robocode.sourceforge.net/files/robocode-setup-1.3-Alpha.jar">[1.3 Alpha]</a> with a new improved version, which should not hang when attempting to download robots. This was a hard one as I had to rewrite the part used for the file transfer to be multi-threaded and do proper cleanup and error handling. I sure hope this works much better! At least it did while I tested it against Robocode Repository, which "luckily" did not response to my download requests. --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+I'll give it a shot when I get home (this compy doesn't have java on it) --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Thanks to <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a> a lot of issues have been spotted and have now been fixed. I have compiled the last <a rel="nofollow" href="http://robocode.sourceforge.net/files/robocode-setup-1.3-Alpha.jar">[Robocode 1.3 Alpha]</a> version, and the next version will be a Beta. It turned out that Robocode was not able to play team battles thru the robocode.control.RobocodeEngine<a href="robowiki?action=edit&id=RobocodeEngine" class=wikipageedit>?</a> class, which might be the reason that <a href="robowiki?Albert" class=wikipagelink>Albert</a> was accessing internal classes (which is a hack! ;-) in Robocode. This issue is now fixed, and also the "number of played rounds" issue has been fixed in the new Alpha. You guys should give the new version a try, and tell me if there are still "blocking" issues left. Later on, my plan is to improve the GUI of Robocode to make it easier to use <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>@Home for newbies. --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+<hr noshade class=wikiline size=1>
+At the moment it is advised not to use Robocode 1.3_Beta for running RR@Home. The problem is that a 100% radarlock with 1.1.2/1.1.3 no longer is a 100% radarlock with 1.3_Beta. Some bots without radarlock-lost recovery (like stefw.Tigger) therefor perform very badly. Other bots may be influenced as they regularly miss information (<a href="robowiki?GresSuffurd" class=wikipagelink>GresSuffurd</a> gets around 6 to 7 radarsweeps per round instead of zero).
+<p>
+As a result, bots that use the 'Rules'-class will not be updated in the ranking, as the previous stable version 1.1.3 does not support this class.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Okay, okay, (gets 1.1.3), the new ones aren't working, so. Also btw, a small bug.
+<p>
+<pre>
+Downloading ...bayen.nut.Squirrel 1.621
+java.util.zip.ZipException: error in opening zip file
+Downloaded file is wrong or corrupted:bayen.nut.Squirrel_1.621.jar
+Could not download bot bayen.nut.Squirrel_1.621.jar
+</pre>
+<p>
+--<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+I seem to have more success with 1.2.4, it seems stable enough, bots like SandBoxDT<a href="robowiki?action=edit&id=SandBoxDT" class=wikipageedit>?</a> and Kabuto don't malfuntion, and the newer bots seem to work like they always did. Now that is just for regular battles, I'm not sure how well it plays with the rumble. --<a href="robowiki?Ne" class=wikipagelink>Ne</a>
+<p>
+Yes, I use later versions for development, but 1.1.3 is the latest version that works with the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> client. Versions 1.1.4 and 1.1.5 will work, but they are buggy and seem to give very tainted ratings. (<a href="robowiki?Dookious" class=wikipagelink>Dookious</a> gets an extra 10-15 rating points if I process its rumble battles with 1.1.5.) Soon the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> client will be integrated into Robocode (with 1.3, thanks to <a href="robowiki?Fnl" class=wikipagelink>Fnl</a>'s hard work), but until then the Rules class is a problem for rumble bots. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Have you guys tried out the latest version 1.3 Beta 2? This version fixes some of the issues, among other things the radar lock problem. --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+I have checked and the 'known problems' (radar, <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a>) are solved. As soon as the SPI problem for RR@Home is solved I'll be happy to do some more testing regarding RR@Home.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Okay. The SPI problem (ImageUtil<a href="robowiki?action=edit&id=ImageUtil" class=wikipageedit>?</a> is accessed, even if it shouldn't) has been solved, but not released yet. --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+Is it in the CVS? --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Yes, but now it is released, i.e. Robocode 1.3 has just been released. ;-) --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+I released Robocode 1.3.1 yesterday. Still, I found a bug with <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a>, that gave problems when the java.io.FileReader<a href="robowiki?action=edit&id=FileReader" class=wikipageedit>?</a> is used. <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a> is denied access to this class when running without a GUI. I have now fixed this for the coming 1.3.2, and I think this will potentially fix problems with existing robots in <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> which writes data to it's data file. Just so you all know. --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+<PRE >
+ Fighting battle 1 ... rc.yoda.Yoda 1.0.5a,ar.[QuantumChromodynamics 1]<a href="robowiki?action=edit&id=QuantumChromodynamics_1" class=wikipageedit>?</a>.1 1.5
+ Exception in thread "Application Thread" java.lang.ArrayIndexOutOfBoundsException<a href="robowiki?action=edit&id=ArrayIndexOutOfBoundsException" class=wikipageedit>?</a>: 1 &gt;= 1
+        at java.util.Vector.elementAt(Unknown Source)
+        at robocode.peer.ContestantPeerVector<a href="robowiki?action=edit&id=ContestantPeerVector" class=wikipageedit>?</a>.elementAt(ContestantPeerVector<a href="robowiki?action=edit&id=ContestantPeerVector" class=wikipageedit>?</a>.java:61)
+        at robocode.battle.BattleResultsTableModel<a href="robowiki?action=edit&id=BattleResultsTableModel" class=wikipageedit>?</a>.getValueAt<a href="robowiki?action=edit&id=ValueAt" class=wikipageedit>?</a>(BattleResultsTableModel<a href="robowiki?action=edit&id=BattleResultsTableModel" class=wikipageedit>?</a>.java:84)
+        at roborumble.battlesengine.BattlesRunner<a href="robowiki?action=edit&id=BattlesRunner" class=wikipageedit>?</a>.runBattles(BattlesRunner<a href="robowiki?action=edit&id=BattlesRunner" class=wikipageedit>?</a>.java:95)
+        at roborumble.RoboRumbleAtHome<a href="robowiki?action=edit&id=RoboRumbleAtHome" class=wikipageedit>?</a>.main(RoboRumbleAtHome<a href="robowiki?action=edit&id=RoboRumbleAtHome" class=wikipageedit>?</a>.java:94)
+</PRE>
+I think it doesn't like the "_1.1 1.5" in <a href="robowiki?QuantumChromodynamics" class=wikipagelink>QuantumChromodynamics</a>'s name.  It does this every time it tries to run a battle with that bot. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Actually, the bot name is listed as <a href="robowiki?QuantumChromodynamics" class=wikipagelink>QuantumChromodynamics</a> 1.1_1.5, which came about when I had to create a new jar compiled under Java 1.5 because roborumble didn't like my 1.6 compiler. I guess I'll rebuild the jar under the name <a href="robowiki?QuantumChromodynamics" class=wikipagelink>QuantumChromodynamics</a> 1.2 and post it again. Why does roborumble hate this bot so much? -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<UL >
+<li> It has something to do with priority battles (when the server 'orders' the battles) and the replaceing of underscores with spaces and vice versa. Something I shortly looked at and could not find the cause, so did <a href="robowiki?Fnl" class=wikipagelink>Fnl</a>. It is still on my to-do list (next to alot of other things :-(   )  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<li> I could poke my nose into the code and fix it, i've been in that part of the code before to fix the load bug. But it would mean checking every underscore as a space and a underscore. Which depending on the number of spaces, could take a little longer. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<UL >
+<li> EDIT: Unless you are (now that I look I sure you are) talking about roborumble, which I have not messed with much. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</UL>
+</UL>
+<p>
+If you don't pack it via robocode, there could be many reasons. ;) I try to keep my versions rather straight forward. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Any progress on rebuilding that bot?  It's actually slowing down my client a fair amount, because it takes it a minute to figure out that it doesn't like that name every time it tries to run a battle with it.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+<UL >
+<li> You can easily hack BotsDownload.java to ignore certain bots, as I have done for this one (and others in the past). I can e-mail you the source code when I get home if you want, if you can't find where to edit it. Something like <code>if (botName.indexOf("blahblah") != -1) return false;</code> does the trick. Sometimes an ultra-<a href="robowiki?SlowBot" class=wikipagelink>SlowBot</a> drives me to do this temporarily, too, though I try not to discriminate against anyone. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+Yes, there is definitely a problem with underscores with priority battles in <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>. Unfortunately, it requires a redesign of how robots are represented in <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>. Currently they are modelled like strings, where dots are replaced by underscore from time to time and vice versa. This is definitely not good. E.g. "1.5_2.0" could become 1_5_2_0 and when it is reversed it becomes 1.5.2.0. See the problem? I will look into this issue soon, I promise! :-) --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+Feel free to put it at the bottom of the priority list - no underscores in bot names and verisons is something we can all live with, I think. =) Thanks as always, though, <a href="robowiki?Fnl" class=wikipagelink>Fnl</a>, you rock. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Dump it, and put it on the list for Robocode 2 (it hasn't been supported yet, why start on the nearly last version?). ;) --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Okay. It's dumped! ;-) --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+I have had the bot rebuilt for days now, but, as Murphy's law dictates, every time I try to get to the Robocode Repository it isn't working. I'll try to upload it one more time. --<a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<UL >
+<li> That should fix it, let me know if it still doesn't work. --<a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+</UL>
+<p>
+Yes, it is quite anoying when the Robocode Repository is down (often). --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+<hr noshade class=wikiline size=1>
+<tt>hennes.SimpleBot<a href="robowiki?action=edit&id=SimpleBot" class=wikipageedit>?</a> 1.0</tt> is getting a lot of 0 scores.  Perhaps it uses the Rules class, or one of the new setAllColors<a href="robowiki?action=edit&id=AllColors" class=wikipageedit>?</a> methods?  Or some real bug?  Mr. Hennes, please make sure your bot runs with <a href="robowiki?RoboCode" class=wikipagelink>RoboCode</a> version 1.0.7 (available from the sourceforge page, where you downloaded robocode).  This is the earliest version used in the rumble, and does not support all the features in the newer versions.  Until then, your bot will perform very badly :).  --<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> Seems that it is not packed with Robocode itself, the properties file says 'source included' but there is none in the jar-file. Please do check the correct working of the jar-file before uploading.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</UL>
+<p>
+Um...For some reason my client can't find 'participmelee.txt' and throws an UnknownHostException<a href="robowiki?action=edit&id=UnknownHostException" class=wikipageedit>?</a> even though i am connected.
+<pre>
+&gt;java -Dsun.io.useC
+anonCaches=false -Xmx256M -cp .;../robocode.jar;../codesize.jar; roborumble.Robo
+RumbleAtHome ./roborumble/meleerumble.txt
+Iteration number 0
+Downloading participants list ...
+Unable to retrieve participants list
+java.net.UnknownHostException: robowiki.net
+Downloading missing bots ...
+Participants file not found ... Aborting
+java.io.FileNotFoundException: .\roborumble\files\participmelee.txt (The system
+cannot find the file specified)
+Battles input file not found ... Aborting
+java.io.FileNotFoundException: .\roborumble\files\participmelee.txt (The system
+cannot find the file specified)
+Downloading rating files ...
+Unable to ratings for meleerumble
+java.net.UnknownHostException: rumble.fervir.com
+Unable to ratings for minimeleerumble
+java.net.UnknownHostException: rumble.fervir.com
+Unable to ratings for micromeleerumble
+java.net.UnknownHostException: rumble.fervir.com
+Unable to ratings for nanomeleerumble
+java.net.UnknownHostException: rumble.fervir.com
+Preparing melee battles list ...
+Participants file not found ... Aborting
+java.io.FileNotFoundException: .\roborumble\files\participmelee.txt (The system
+cannot find the file specified)
+Uloading results ...
+Can't open result file for upload
+Updating number of battles fought ...
+Can't open # battles file ... Aborting # battles update
+</pre>
+--<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+I get almost the exact same output running 1v1:
+<p>
+<pre>
+java -Xmx256M -Dsun.io.useCanonCaches=false -cp libs/robocode.jar;libs/codesize.jar;libs/roborumble.jar roborumble.RoboRumbleAtHome ./roborumble/roborumble.txt
+Iteration number 0
+Could not load properties file: ./roborumble/files/codesize1v1.txt
+Downloading participants list ...
+Unable to retrieve participants list
+java.net.UnknownHostException: robowiki.net
+Downloading missing bots ...
+Participants file not found ... Aborting
+java.io.FileNotFoundException: .\roborumble\files\particip1v1.txt (The system cannot find the file specified)
+Battles input file not found ... Aborting
+java.io.FileNotFoundException: .\roborumble\files\particip1v1.txt (The system cannot find the file specified)
+Downloading rating files ...
+Unable to ratings for roborumble
+java.net.UnknownHostException: rumble.fervir.com
+Unable to ratings for minirumble
+java.net.UnknownHostException: rumble.fervir.com
+Unable to ratings for microrumble
+java.net.UnknownHostException: rumble.fervir.com
+Unable to ratings for nanorumble
+java.net.UnknownHostException: rumble.fervir.com
+Could not load properties file: ./roborumble/files/codesize1v1.txt
+Could not load properties file: ./roborumble/temp/ratings_roborumble.txt
+Could not load properties file: ./roborumble/temp/ratings_minirumble.txt
+Could not load properties file: ./roborumble/temp/ratings_microrumble.txt
+Could not load properties file: ./roborumble/temp/ratings_nanorumble.txt
+Preparing battles list ... Using smart battles is false
+Participants file not found ... Aborting
+java.io.FileNotFoundException: .\roborumble\files\particip1v1.txt (The system cannot find the file specified)
+</pre>
+<p>
+I use Robocode 1.3.4, and I have not modified my roborumble.txt file at all other than changing the user name and making NUMBATTLES = 30.
+<PRE >
+ -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+</PRE>
+<p>
+Under the PL (micro) I see that Decado is missing a pairing...Grinnik also. Any idea what's happening? Is there a bot in the rumble that isn't being run? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Both of them have not faced timmit.micro.TimXJ<a href="robowiki?action=edit&id=TimXJ" class=wikipageedit>?</a> 0.22, but don't ask me why :P --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+Ok, I'm using version 1.1.3, and roborumble works for me now :D --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Is the problem in your previous comment for 1.4? I have no problem with 1.4 once I put the roborumble.txt file in place, which it was missing. I know that <a href="robowiki?WeeksOnEnd" class=wikipagelink>WeeksOnEnd</a> will die on 1.1.3 because of the lack of the Rules class - Simonton has been waiting a while for a stable RR client that included the Rules class to make it into circulation... -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<UL >
+<li> *sigh*.  And I guess I'm still waiting.  I thought maybe <a href="robowiki?WeeklongObsession" class=wikipagelink>WeeklongObsession</a>'s scores we down from before just because the version I was using back then inflated them.  Especially since <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a> mentioned that it seemed to be running fine on his 1.3.x version.  But <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison?game=minirumble&amp;name1=simonton.mini.WeeksOnEnd%201.10.2b&amp;name2=simonton.mini.WeeksOnEnd%201.10.2">[looking at WeeksOnEnd]</a> now, there are definitely some scores that I have to explain with out of memory exceptions.  E.g. losing to Merkava 0.3.0, who I previously beat with 97.7 percent.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+Are you still getting the UnknownHostException<a href="robowiki?action=edit&id=UnknownHostException" class=wikipageedit>?</a> with the version 1.4? If so, under what OS'es are you running? --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+<UL >
+<li> Let me check if it works with 1.4 now...Ok, now when i run either melee or 1v1 i get:
+</UL>
+<pre>
+Exception in thread "main" java.lang.NoSuchMethodError: robocode.util.Utils.copy
+(Ljava/io/File;Ljava/io/File;)Z
+        at roborumble.netengine.BotsDownload.downloadBot(BotsDownload.java:217)
+        at roborumble.netengine.BotsDownload.downloadMissingBots(BotsDownload.ja
+va:157)
+        at roborumble.RoboRumbleAtHome.main(RoboRumbleAtHome.java:49)
+</pre>
+Dunno why... --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<UL >
+<UL >
+<li> Correct that, i get that with meleerumble. With roborumble, only like 1% of the bots are able to download, the rest are, i.e.
+</UL>
+</UL>
+<pre>
+Iteration number 0
+Downloading participants list ...
+Downloading missing bots ...
+Downloading ...amk.Punbot.Punbot 0.01
+Unable to download amk.Punbot.Punbot 0.01 from site.
+Could not download bot amk.Punbot.Punbot_0.01.jar
+Downloading ...apv.MicroAspid 1.8
+Unable to download apv.MicroAspid 1.8 from site.
+Could not download bot apv.MicroAspid_1.8.jar
+</pre>
+--<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+My brand new 1.4 installation generates this output when executing Roborumble:
+<p>
+<pre>
+C:\Users\Aaron\Applications\Robocode\1.4&gt;roborumble
+
+C:\Users\Aaron\Applications\Robocode\1.4&gt;java -Xmx256M -Dsun.io.useCanonCaches=f
+alse -cp libs/robocode.jar;libs/codesize.jar;libs/roborumble.jar roborumble.Robo
+RumbleAtHome ./roborumble/roborumble.txt
+Iteration number 0
+Downloading participants list ...
+Downloading missing bots ...
+Trying to download bayen.nut.Squirrel 1.621
+Could not connect to http://www.freewebs.com/bayen/files/bayen.nut.Squirrel_1.62
+1.jar
+Could not download bayen.nut.Squirrel_1.621.jar
+Trying to download bvh.fry.Freya 0.81
+Could not find bvh.fry.Freya 0.81 from http://home.kpnplanet.nl/~B.van.Hest@kpnp
+lanet.nl/jars/bvh.fry.Freya_0.81.jar
+Could not download bvh.fry.Freya_0.81.jar
+
+... "can't download"s snipped ...
+
+Ignoring winamp32.micro.MicroMacro_1.0.jar: .\robots\winamp32.micro.MicroMacro_1
+.0.jar (The system cannot find the file specified)
+Ignoring winamp32.micro.MicroMacro_1.0.jar: .\robots\winamp32.micro.MicroMacro_1
+.0.jar (The system cannot find the file specified)
+Downloading rating files ...
+Removing old participants from server ...
+Preparing battles list ... Using smart battles is true
+Prioritary battles file not found ...
+Executing battles ...
+Fighting battle 0 ... ntc.Evader 1.2,drm.Magazine 0.39
+.robotcache.abc.Shadow_3.66d.jar_.abc.a: Got an error with this class: java.lang
+.ClassNotFoundException: Could not find: .robotcache.abc.Shadow_3.66d.jar_.abc.a
+: java.io.FileNotFoundException: C:\Users\Aaron\Applications\Robocode\1.4\robots
+\robotcache\abc\Shadow_3\66d\jar_\abc\a.class (The system cannot find the path s
+pecified)
+.robotcache.abc.Shadow_3.66d.jar_.abc.b: Got an error with this class: java.lang
+.ClassNotFoundException: Could not find: .robotcache.abc.Shadow_3.66d.jar_.abc.b
+: java.io.FileNotFoundException: C:\Users\Aaron\Applications\Robocode\1.4\robots
+\robotcache\abc\Shadow_3\66d\jar_\abc\b.class (The system cannot find the path s
+pecified)
+.robotcache.abc.Shadow_3.66d.jar_.abc.c: Got an error with this class: java.lang
+.ClassNotFoundException: Could not find: .robotcache.abc.Shadow_3.66d.jar_.abc.c
+: java.io.FileNotFoundException: C:\Users\Aaron\Applications\Robocode\1.4\robots
+\robotcache\abc\Shadow_3\66d\jar_\abc\c.class (The system cannot find the path s
+pecified)
+.robotcache.abc.Shadow_3.66d.jar_.abc.d: Got an error with this class: java.lang
+.ClassNotFoundException: Could not find: .robotcache.abc.Shadow_3.66d.jar_.abc.d
+: java.io.FileNotFoundException: C:\Users\Aaron\Applications\Robocode\1.4\robots
+\robotcache\abc\Shadow_3\66d\jar_\abc\d.class (The system cannot find the path s
+pecified)
+.robotcache.abc.Shadow_3.66d.jar_.abc.e: Got an error with this class: java.lang
+.ClassNotFoundException: Could not find: .robotcache.abc.Shadow_3.66d.jar_.abc.e
+: java.io.FileNotFoundException: C:\Users\Aaron\Applications\Robocode\1.4\robots
+\robotcache\abc\Shadow_3\66d\jar_\abc\e.class (The system cannot find the path s
+pecified)
+.robotcache.abc.Shadow_3.66d.jar_.abc.f: Got an error with this class: java.lang
+.ClassNotFoundException: Could not find: .robotcache.abc.Shadow_3.66d.jar_.abc.f
+: java.io.FileNotFoundException: C:\Users\Aaron\Applications\Robocode\1.4\robots
+\robotcache\abc\Shadow_3\66d\jar_\abc\f.class (The system cannot find the path s
+pecified)
+
+... etc ...
+</pre>
+<p>
+This output continues for every class in every robot JAR in my robots directory. My guess from looking at the output and the structure of the robots/robotcache directory is that it is related to the translation of dots into slashes. Anyone seen this before?
+<p>
+Robocode: 1.4; Java: 1.6; OS: Windows Vista; roborumble.txt: Copied from a 1.3.5 jar (since 1.4 doesn't come with the file).
+<p>
+-- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<p>
+<UL >
+<li> I think I had a problem similar to this.  Does the .txt file you're using have "BOTSREP=./robots/"? -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Indeed. What does that setting do? -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li> It tells roborumble where the robots directory is.  But since you have that ... do/did you have stuff in your .robotcache, but no robot.database file?  Or perhaps the robot.database file was from an older version (I think that problem happens then)?  A solution may be to delete your .robotcache directory and let the new version rebuild it.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> In case you delete the .robotcache directory, you should also delete the robot.database file, otherwise robocode does not 'see' that something has changed (at least the older versions of robocode did not)  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</UL>
+<li> I'll try that, as soon as I can access that computer again (which might be a couple days). Thanks! -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Could someone explain why this is happening? It looks to me like Waylander should have won....or else the scores are backwards.
+<p>
+Fighting battle 14 ... kc.micro.Thorn 1.142,jk.Waylander 0.2.3
+RESULT = kc.micro.Thorn 1.142 wins 2583 to 2617
+<p>
+-- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<UL >
+<li> I asked that same question once.  The answer is, Waylander did win, and the scores are the only thing that matters, not the output from roborumble.  When the scores are close, sometimes it prints them backwards.  For a more technical explanation, somebody else would have to fill you in.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+An even more funny result...I don't know if this is normal...but this is a definate bug. (not the score, but who it says won)
+<pre>Fighting battle 11 ... jk.Waylander 0.1.4,abc.Shadow 3.66d
+RESULT = abc.Shadow 3.66d wins 2463 to 2468</pre>
+-- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+The Roborumble (1.4.3) just hangs on me.  I am using the same folder to run console battles, so it shouldn't have anything to do with building the robot database.  I get as far as the first matchup listing and my CPU load drops to nothing.  I have a dual CPU machine, but I set the affinity for [cmd] and [java] to one CPU (as I did with Roborumble@Home) but no dice.  /shrug -- Martin
+<p>
+1.4.4 fixes it. Check on the <a href="robowiki?Robocode/News" class=wikipagelink>Robocode/News</a> page. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+What the heck?
+<p>
+<pre>
+D:\Robocode_1.4.5&gt;java -Xmx256M -Dsun.io.useCanonCaches=false -cp libs/robocode.
+jar;libs/codesize.jar;libs/roborumble.jar roborumble.RoboRumbleAtHome ./roborumb
+le/roborumble.txt
+Iteration number 0
+Downloading participants list ...
+Downloading missing bots ...
+Trying to download bayen.nut.Squirrel 1.621
+Could not connect to http://www.freewebs.com/bayen/files/bayen.nut.Squirrel_1.62
+1.jar
+Could not download bayen.nut.Squirrel_1.621.jar
+Trying to download cjk.Merkava 0.3.0
+Could not find cjk.Merkava 0.3.0 from http://www.krill-labs.com/robocode/robots/
+cjk.Merkava_0.3.0.jar
+Could not download cjk.Merkava_0.3.0.jar
+
+... "can't download"s snipped ...
+
+Ignoring winamp32.micro.MicroMacro_1.0.jar: .\robots\winamp32.micro.MicroMacro_1
+.0.jar (The system cannot find the file specified)
+Ignoring winamp32.micro.MicroMacro_1.0.jar: .\robots\winamp32.micro.MicroMacro_1
+.0.jar (The system cannot find the file specified)
+Downloading rating files ...
+Removing old participants from server ...
+Preparing battles list ... Using smart battles is true
+Prioritary battles file not found ...
+Executing battles ...
+Fighting battle 0 ... projectx.ProjectNano 1.0,shu.nitro.LENIN .T34
+Exception in thread "Application Thread" java.lang.ArrayIndexOutOfBoundsExceptio
+n: 0
+        at roborumble.battlesengine.BattlesRunner.runBattles(Unknown Source)
+        at roborumble.RoboRumbleAtHome.main(Unknown Source)
+
+</pre>
+<p>
+Robocode 1.4.5, Java 1.6, Windows XP. Error usually occurs within 5 battles and does not appear to be bot-dependant. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<UL >
+<li> Whoops, never mind. When I tried to delete the robot cache, I forgot to also remove the robot.database file. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+</UL>
+<hr noshade class=wikiline size=1>
+Rankings have gone, it will repair itself over time when battles are fought. If someone just started his client (10-15 minutes before this timestamp), please check your settings and environment.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<hr noshade class=wikiline size=1>
+Just got this while building 
+Fighting battle 3 ... mld.Moebius 2.3,sL300.Mozart life
+RESULT = mld.Moebius 2.3 wins 2533 to 2644
+<p>
+Nice to see I can win when I lose in points!  --<a href="robowiki?Miked0801" class=wikipagelink>Miked0801</a>
+<UL >
+<li>I've seen it more while running my client. The score itself is ok though. Either Moebius has generated more bulletdamage, or did win more rounds.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</UL>
+<hr noshade class=wikiline size=1>
+So is the Rules class problem officially resolved with current version of Robocode (1.4.7)? I wanna put my robot in the rumble and start using the @Home client, but I can't see whether this problem has been addressed. -- <a href="robowiki?RobertWalker" class=wikipagelink>RobertWalker</a>
+<p>
+There's nothing stopping someone from running a Robocode 1.07 client or anything like that, but I think everyone running right this minute is using a more recent version. Until we revamp the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> server a bit to require a newer version, there will always be some risk associated - unless you're doing something in a <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> restricted division, I would just use your own copies of the methods in the Rules class, but it's up to you. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Something needs to be done about Frederick.  It's commonly getting 0 scores against the better bots, which somehow means that when they are release they get stuck running battle after battle against Frederick until it finally gets lucky to get a couple points AND that score gets submitted to the server.  <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> just ran 49 battles in a row against Frederick on my client, in 7 of which it scored.  This is a waste of RR@H processing power.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Well, it might error out, but really I think it just isn't very good at all, some bots don't even fire at all, such as Serenity, so its not really an error so much as the lower, older or bots of less then outstanding quality just can't hit the big guns. It does something, but generally the bots that can't even hit the better ones run many many more battles, because they get no score at all(specially against the big and bad surfers). So what do you prepose, we remove all the bottom, non-firing and head on firing robots? This is probably also why the sample bots are not in the general rumble because they would 9 times out of 10 (100? 1000?), not get any score at all and would load down the clients. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+I think the ideal solution, long-term, is a system that gracefully handles 0 scores - whether that's just making it register as 0.1, or a different rating calculation altogether. Not sure what's a good solution in the meantime, though... Simonton, is that the only one you've noticed getting 0 so many times? I know I see 0 scores go by sometimes (and even that specific bot), but I thought usually it was just once or twice before they got some points. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<UL >
+<li> Yes, I'm seeing it right now with <a href="robowiki?Phoenix" class=wikipagelink>Phoenix</a> vs. <a href="robowiki?PatternRobot" class=wikipagelink>PatternRobot</a>.  About 25 battles in one iteration.  It would be 50 if it weren't for the fact that other bots are also running priority battles right now.  (I have my NUM_BATTLES set to 50).  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Oh look, and there's 10 in a row of <a href="robowiki?PatternRobot" class=wikipagelink>PatternRobot</a> vs. <a href="robowiki?WaveSerpent" class=wikipagelink>WaveSerpent</a>, too. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> What about the now-fixed rumble exclude filter? Couldn't you exclude <a href="robowiki?PatternRobot" class=wikipagelink>PatternRobot</a> on your client temporarily? -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li> Well, that doesn't really help in this situation.  <a href="robowiki?PatternRobot" class=wikipagelink>PatternRobot</a> will run every time against whichever bot it got a 0 score, until it gets a non-zero score AND roborumble starts a new iteration.  If I notice a bot running 30,000 times in a row, chances are one of those times it got a non-zero score, so I could just re-start roborumble and it should be taken care of.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+Well, in the next version of <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> I'll add some shutout prevention....basically just go to a dangerous spot on a low-power bullet in the last round if I haven't been hit yet.  It stands to reason that it might actually up my score some, because then when I DO get hit, it is with a small bullet and not with one that could be, for instance, power 3, due to a bad starting position, or whatever -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+<UL >
+<li> I'm not sure if anyone still does it, but some people have done just that before: <a href="robowiki?ImperfectPerfection" class=wikipagelink>ImperfectPerfection</a>. It may be a good idea in terms of <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> score, but something about it just seems a little inelegant to me. I'd like to see a version with just that change, though, and see how many points are really there. =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+Somebody's client is removing bots from the rumble, with the result that other clients have to run an iteration with that bot as a focused competitor...If you want to exclude bots, could you upgrade to 1.4.9, where the exclude filter has been fixed so that it doesn't remove the excluded bots from the rumble? Thanks.. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<UL >
+<li> I'm not sure if that's the problem - it seems like the same version of Dookious would be disappearing / reappearing if that were the case, but it seems to be reverting back 1.58 instead of staying with 1.573. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> Oh, I'm the dummy! I was testing to make sure the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> client didn't choke on the <a href="robowiki?RoboRumble/Participants" class=wikipagelink>/Participants</a> page from the new wiki and I forgot to change it back. (It worked fine, by the way - it just parses between <em>pre</em> tags.) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+I do not know why, but my bots are not being downloaded through the Roborumble client.  I am using a URL (rather than <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a> id).  If you paste the URL into a browser, it download the file.  I can only guess at the cause of the problem. -- Martin
+<UL >
+<li>I've tested every other URL of missing bots and none of them were downloadable via a browser, so it appears to be isolated to my Comcast host.  Maybe the tilde is causing the problem?  It was never a problem in the past. -- Martin
+</UL>
+<p>
+It should be normal but I updated jab.micro.Sanguijuela with the 0.4 version (repository and participants list) three days ago and the 0.3 version appears and disappears in the rumble for some reason. The robots folder of people running the rumble? any kind of bug? I don't know. 
+<p>
+Well, it's my guess that someone is probably running a <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> client with an out of date participants list. It's possible they misconfigured the participants list url sometime between when you released 0.3 and when you released 0.4. In any case I don't think there's much that can be done about it except hope that whoever is running the bad client gets it fixed. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+I think that it should be some kind of bug. At the stelo.<a href="robowiki?RamTrackSurfer" class=wikipagelink>RamTrackSurfer</a> rating details the enemies list stops at letter "b" and the same thing happens at "s" with gh.mini.Gruwel. Also apv.<a href="robowiki?LauLectrik" class=wikipagelink>LauLectrik</a> throws a ArrayIndexOutOfBoundsException<a href="robowiki?action=edit&id=ArrayIndexOutOfBoundsException" class=wikipageedit>?</a> when looking its details. --Jab<a href="robowiki?action=edit&id=Jab" class=wikipageedit>?</a>
+<UL >
+<li> Those last issues are due to corrupted resultsfile on the server. A line that does not conform to the 'rules' is present because of the diskfull problem. That can only be solved by editing the resultsfile by hand, and the only one that can do that currently is Pulsar. About your first problem, has version 0.3 had 2000 battles in mini- and microrumble (and nano)? If not, that can cause the problem. Obsolete versions are deleted <em>after</em> getting the participantslist, so if there are still prioritybattles open for it, the server can choose the obsolete version to fight.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</UL>
+<p>
+Just to let you know an incidence. jab.avk.ManuelGallegus<a href="robowiki?action=edit&id=ManuelGallegus" class=wikipageedit>?</a> 0.5 has a battle against ad.last.Bottom 1.0 (the unbeatable :P ) and ManuelGallegus<a href="robowiki?action=edit&id=ManuelGallegus" class=wikipageedit>?</a> get 0.0 % Score. I have run many battles in Robocode between them trying to understand what happened but I'm not getting any Exception. --Jab<a href="robowiki?action=edit&id=Jab" class=wikipageedit>?</a>
+<p>
+Checking my local copy of the battles file shows it as being from "darkstorm", I believe when "darkstorm" was running the 1.6.1 Beta client (see <a href="robowiki?RoboRumble/RankingChat" class=wikipagelink>RoboRumble/RankingChat</a>). I think the results from darkstorm are fine now that he's back on the 1.6.0 client, and you would probably be best off re-releasing ManuelGallegus<a href="robowiki?action=edit&id=ManuelGallegus" class=wikipageedit>?</a> 0.5 if you're concerned that bad results from that client before are affecting your score.
+<p>
+Thanks for the info. About re-releasing I have no problem in waiting for the next version of the bot. I'm trying hard to put ManuelGallegus<a href="robowiki?action=edit&id=ManuelGallegus" class=wikipageedit>?</a> in the Top-100 :P
+Yeah! After two days, ManuelGallegus<a href="robowiki?action=edit&id=ManuelGallegus" class=wikipageedit>?</a> 0.6 reach the Top-100 :D  --Jab<a href="robowiki?action=edit&id=Jab" class=wikipageedit>?</a>
+<hr noshade class=wikiline size=1>
+On 11 July there was a hickup of the server, and after that several bots started from zero battles again, f.e. usa.nano.Nemo. Maybe the disk of the server is full ? I am stopping my client till further notice.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+I've noticed some weirdness as well and it seems like many of us have. At one point today, I noticed the server stopped responding to HTTP requests altogether (they were timing out) for some reason. Immediately when it started responding again, the results page lost all the bots (see comments by <a href="robowiki?Tim_Foden" class=wikipagelink>Tim</a> and <a href="robowiki?Voidious" class=wikipagelink>Voidious</a> <a href="robowiki?RoboRumble/ParticipantsChat" class=wikipagelink>RoboRumble/ParticipantsChat</a> here). In addition there was apparently some corruption on <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>' battle list (see comment by <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a> in <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>, and here's another example of a <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetails?game=roborumble&amp;name=cf.star.Star2%201.23&amp;compare=true">[clearly corrupted results file]</a> listing over 20 thousand battles yet missing battles against ones like Druss and Moron and many others). Then as you notice some bots seemed to have started at 0 battles again. I think that sums up the issues we've seen with the RR server in the last 12 or 24 or so hours. I'm not sure what the cause of this issue is, perhaps a disk full issue, but I don't think a disk full problem would explain why it wasn't responding to HTTP requests for a short time. Either way there certainly seems to be corruption of results files for some reason or another. Anyone been in contact with <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a> recently or have any other ideas? -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Today's problem: I've tryed to look at the currentsRankings<a href="robowiki?action=edit&id=CurrentsRankings" class=wikipageedit>?</a> page but i've got this error:
+<DL >
+<dt><dd><i>(See <a rel="nofollow" href="http://homepages.ucalgary.ca/~agschult/Rankings.html">[here]</a>, because the wiki isn't fond off html)</i>
+</DL>
+<a href="robowiki?Asdasd" class=wikipagelink>Asdasd</a>
+<p>
+Yeah, I just noticed that myself and was about to post about it. Also, since the wiki doesn't like html I replaced your paste of it with an offsite archive of the error. The RR server certainly seems to be acting up lately... -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+The same happened the last time the server got out of disk space. This could be another big crash. So many ideas to test and no rumble. :( -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Yes.  I just sumbitted a new version to test too.  So how do we go about trying to sort this problem out?  Does anyone have access to the server? -- <a href="robowiki?Tim_Foden" class=wikipagelink>Tim Foden</a>
+<p>
+<a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a> runs the server, and I don't know of anyone but him having access to it. I'll drop him an e-mail and see if he could take a look. Maybe I'll CC David Alves and see how that RR server rewrite is coming along, too... :-P -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I've actually been working on it the past two weeks. =) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Good to hear =) Any idea (even vague) on how long before we could have a barebones server to upload to/get rankings from? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Hey guys, in case you missed it, Pulsar got the server back up. He said some weird characters showed up in some data files and the RR scripts were choking on them, but he wasn't sure of the cause. Looks like the rankings are at least showing up again. Could someone check and post here if they can upload results successfully? -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Uploading is working fine, except for a few bots. Must be because of the corrupted details files. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+It would be nice if this problem was fixed, my clients are choking trying to upload those bots' results. It is making the rumble quite slow... -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+This can be fixed by manually editing the involved files on the server, or by deleting the involved files altogether. I don't see another solution. (or you could (temporarily) move those bots to the bottom of the participants page, like I did with cx.mini.Blackswans)  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+One way to alleviate the problem (although not get rid of it completely) is to remove the results1v1.txt file between each iteration, so all the failed uploads from all the previous iterations don't get qued to upload this time. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+What is the latest "Rumble save" version of Robocode? I'm using 1.54 in both my clients but I'm getting 0 results from bots that probably use features from later versions. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+I'm also using 1.5.4...  I think <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a> has been using 1.6.0 though. 1.6.1beta1 was buggy, IIRC. 1.6.1beta2 fixed it, I think. The new painting stuff is kinda silly IMHO, purely from performance reasons, because it can always be called (even when not painting). But I guess it makes implementing some of the more interactive painting stuff simpler. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Erm.. it seems like a large number of entries in the team rumble have broken downloads:
+<br>CharlieN.OmegaTeam.OmegaTeam 1.0, jabteam.Enjambre 0.0.1, Krabb.sliNk.GarmTeam0.9u, Krabb.sliNk.SlartibartfassTeam 0.5, pedersen.ImWithDroidTeam 1.3, and pedersen.ImWithStupidTeam 1.3
+<br>or is this just me? Anyone able to fix the downloads for them or at least have a zip of them? -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+new problem, help please: 
+java.io.IOException: Server returned HTTP response code: 500 for URL: <a rel="nofollow" href="http://rumble.fervir.com/rumble/UploadedResults">http://rumble.fervir.com/rumble/UploadedResults</a>
+Unable to upload results
+<a href="robowiki?Asdasd" class=wikipagelink>Asdasd</a>
+<p>
+another problem: 
+Exception in thread "Application Thread" java.lang.ArrayIndexOutOfBoundsException<a href="robowiki?action=edit&id=ArrayIndexOutOfBoundsException" class=wikipageedit>?</a>: 1
+<PRE >
+	at roborumble.battlesengine.BattlesRunner<a href="robowiki?action=edit&id=BattlesRunner" class=wikipageedit>?</a>.runBattles(Unknown Source)
+	at roborumble.RoboRumbleAtHome<a href="robowiki?action=edit&id=RoboRumbleAtHome" class=wikipageedit>?</a>.main(Unknown Source)
+</PRE>
+it appears random during the battle (whit bot dreadnught and shadow) and stop the current roborumble, but no newline in the partecipants list... HELP!
+<p>
+roborumble version: 1.6.0.1 (actualy running with firefox and azureus), OS: Linux UBUNTU, VM: sun 1.6.0(the latest), amd dual processor (cpu used in this moment: 9%), 2GB ram (used in this moment: 22%), upload band used: 40kb/s for azures (limted), roborumble takes about 10kb/s. azureus with no limit goes to 60 kb/s...(so actulally i'm "surfing te web" at 70 ks/s in upload, download's band it's only at 40 ks/s, 25 ks/s for azureus, today p2p it's slow :-( )
+if you need more information i've the log file.
+<a href="robowiki?Asdasd" class=wikipagelink>Asdasd</a>
+<p>
+Delete the robots/.robotcache/ and robots/robot.database. This should sort out that problem. The download speeds shouldn't affect robocode at all. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+About the HTTP error 500, there are still some bots listed in the mini/micro/nano rumble that have corrupted details files. I'll try weeding them out later today. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+@ Skilgannon: deleted the file, now everything seems right.
+Still only the http error, but i think at the end of many tryes it upload the result (i hope).
+<a href="robowiki?Asdasd" class=wikipagelink>Asdasd</a>
+<p>
+Thanks <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a> for fixing your own bot links for the team rumble and uploading a zip that included all the other ones with broken links. Another problem with the team rumble seems to be cropping up however: Whenever a battle that involves <a href="robowiki?ArmyOfShiz" class=wikipagelink>ArmyOfShiz</a> happens, the rumble client locks up and stops processing. I can't duplicate this outside of the the rumble client either. Is anyone else seeing this happen? -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Hey, i have that problem with kawigi.sbf.<a href="robowiki?TidalWave" class=wikipagelink>TidalWave</a>. But <a href="robowiki?ArmyOfShiz" class=wikipagelink>ArmyOfShiz</a> is ok here. Haven't checked it outside the rumble jet... --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+Hmm, I re-downloaded <a href="robowiki?ArmyOfShiz" class=wikipagelink>ArmyOfShiz</a>, cleared my rumble temp files, and rebuilt the robot database, but <a href="robowiki?ArmyOfShiz" class=wikipagelink>ArmyOfShiz</a> is still locking it up. Also ImWithStupidTeam<a href="robowiki?action=edit&id=ImWithStupidTeam" class=wikipageedit>?</a> seems to lock it up as well. I find that interesting considering according to <a rel="nofollow" href="http://rumble.fervir.com/rumble/PremierLeague?game=teamrumble">[this]</a> it's missing  battles against 9 opponants out of a 35 bot group, which is very large. Actually, in general, the team primere league looks quite odd. Also, despite the "battles per bot" being set to 200,  a very vast marjority of the battles my team rumble client is running only involve bots with far over 200 battles. Anyone have any idea what the heck is up with this? The fequent lockups also seem to make it difficult to get many battles contributed at all... -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Team battles usually consume a lot of memory, maybe that's what's causing your client to hang? You could try increasing the default 128M in the batch file. Bots with more battles than the "battles per bot" setting get chosen if they have missing pairings. I'll try running my teamrumble client later today to see if I also run into problems. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Well, I already had an increased memory limit and that isn't the issue in this case. <a href="robowiki?ArmyOfShiz" class=wikipagelink>ArmyOfShiz</a> locks up 2 of my rumble clients despite being identical in settings so far as I can see to my third client.  ImWithStupidTeam<a href="robowiki?action=edit&id=ImWithStupidTeam" class=wikipageedit>?</a> makes all three clients however. No problems with <a href="robowiki?TidalWave" class=wikipagelink>TidalWave</a> like Krabb notes on any of my three clients. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+One other observation, is that despite being around for quite some time, florent.XSeries.Xmen has never ever batteled ImWithStupidTeam<a href="robowiki?action=edit&id=ImWithStupidTeam" class=wikipageedit>?</a> (update: and in fact, 9 bots have not!), and to me this indicates that there is definitely something going on odd with ImWithStupidTeam<a href="robowiki?action=edit&id=ImWithStupidTeam" class=wikipageedit>?</a> and my clients aren't alone about this. I've tried some more but it seems to behave just fine outside the rumble despite locking the client when inside the rumble. If I figure anything else out that might help tracking the problem down I'll post here. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Lots of bad results in the last 2 days, anyone running a buggy client? I'm currently on holidays with limited net access... -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+I just uploaded a new bot (djc.DynaBot<a href="robowiki?action=edit&id=DynaBot" class=wikipageedit>?</a> 0.1.0) which seems to be performing badly on the Rumble, though it wins consistently when I run him
+against the bots Rumble has him losing to.  Example, against el33t.EL33tGangstarr2_2.0 my bot wins 35 rounds and outscores 5000 to 600
+reliably -- djc<a href="robowiki?action=edit&id=Djc" class=wikipageedit>?</a>
+<p>
+I also reported a similar incidence, the problem was someone running the 1.6.1 beta client. As far as I know the solution is not easy. First we have to know who is running this server (I don't know how) to alert him or her, and then the affected bots should be re-released. I also checked my bot before reporting the problem looking for posible runtime exceptions in the bot code. Good luck! -- Jab<a href="robowiki?action=edit&id=Jab" class=wikipageedit>?</a>
+<p>
+I wrote my bot with Robocode 1.6.1 beta 2...I thought it was the official current release; is that incorrect? -- djc<a href="robowiki?action=edit&id=Djc" class=wikipageedit>?</a>
+<p>
+<UL >
+<li> djc, I'm still using 1.5.4 (the current minimum rev for the rumble) after running into problems with one of the betas.  Your bot, as well as com.syncleus.robocode.Dreadnaught, gets all 0 scores on my client.  But 0 scores don't get uploaded to the server, so there is probably something else going on.  In any case, you may want to make your bot compatible with 1.5.4 for access to more clients.  -- <a href="robowiki?Darkcanuck" class=wikipagelink>Darkcanuck</a>
+</UL>
+<p>
+<UL >
+<li> djc, 1.6.1 beta 2 is the current beta release, but the current stable release is 1.6.0. Personally I use 1.6.0 and the rumble results from here seem good from here, and 1.5.4 (the release prior to 1.6.0) is also a good option as other people note. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</UL>
+<p>
+Thanks.  I'm also noicing in Rumble that the first bot in 1v1 wins a disproportionate number of matches.  Where is 1.6.0 downloadable from?  -- djc<a href="robowiki?action=edit&id=Djc" class=wikipageedit>?</a>
+<p>
+<UL >
+<li> Go to the downloads section on robocode.sourceforge.net and further down the page you'll find 1.6.0.  1.5.4 is available by clicking on "View older releases". -- <a href="robowiki?Darkcanuck" class=wikipagelink>Darkcanuck</a>
+</UL>
+<p>
+The rankings, or better the ratings, are quite messed up, so I checked the global resultsfile. It appears that meleebattles have been fought with one-on-one participants and that the results have been uploaded to the one-on-one ranking. I don't know if that is due to the beta-version or that someone accidentaly made a mistake editing his roborumble.txt file. Please note that meleebattles have their own startup-script and files and that it is very advisable to have different 'installs' for each type of roborumble (one-on-one, melee, team).  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Heh, this kind of stuff makes me hope that future incarnations of the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> server (<a href="robowiki?Roborumble.org" class=wikipagelink>Roborumble.org</a>?) will be most robust with this kind of stuff. Ideally I think it would be good if the protocol also in the future included clients reporting versions, allowed the server to blacklist versions. Anyways, that's a discussion for another page, but these kind of problems make me think it's more important than I previously thought it. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+<UL >
+<li> I couldn't agree more, especially about having the ability to decide which Robocode versions are OK / recognized for <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> clients. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+<UL >
+<li> @aramies: please check your roborumble.txt file! It seems that your client still produces the problem as I noted above !  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</UL>
+<p>
+<UL >
+<li> I agree that we should do something to "synchronize" the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> server and client's. Currently, I have only been working on the client side. So if you have a good idea for how I could help improving this, please tell me about it. We could have the discussion here: <a rel="nofollow" href="http://groups.google.com/group/robocode-developers">http://groups.google.com/group/robocode-developers</a>. Or one a new page or something to discuss this? --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+</UL>
+<p>
+Sorry guys for the buggy beta versions of Robocode 1.6.1. A lot of stuff inside Robocode has been restructured for the future in mind, making it possible to extend Robocode with better features, and make it more stable etc. This has caused a lot of unwanted side-effects, but I think we are almost there. Don't hesitate with trying out the new Robocode 1.6.1 Beta 3, which correct the problems described on this page. :-)  --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+Erm... looks like there's corruption in <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetails?game=minimeleerumble&amp;name=kawigi.mini.Coriantumr%201.1&amp;compare=true">[Coriantumr's melee results page]</a>... and probably elsewhere too. Heh.. and lots of error 500 codes from the server when uploading any melee results also... Hopefully this could get fixed up soon... =\ -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Still a bad client running? The ratings are now completely useless :(. I'll use the rumble for details comparison then, should be ok if I put an obviously wrong download link in the participants page. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+This stuff with bad clients and corrupted details files recently is indeed being highly problematic.. It's part of why lately I started to get working with Polylunar, because the team rumble seems to be the only part of the rumble that's safe from all that mess right now. Personally, I'm hoping that <a href="robowiki?Roborumble.org" class=wikipagelink>Roborumble.org</a> will be done soon and it and the clients will use a new protocol that makes it easier to get rid of bad client results... but of course that doesn't seem to be going quickly. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Guys, I found a serious problem with Robocode 1.6.1 regarding the scores and rankings (Thanks Liam Noonam for reporting the issue). The bug is "small", but big enough to let some robots get higher or less scores from time to time. So DON'T use 1.6.1. Use 1.6.0 instead. I am working on a new version 1.6.1.1 that solves this bug, but also two other bugs that has no impact on <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>. --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+Wouldn't a simple fix be to have all future rumble clients check a page on the wiki (similar to downloding the participants list) which lists the approved versions?  It wouldn't fix rogue 1.6.1 clients but could minimize this problem for future versions...  -- <a href="robowiki?Darkcanuck" class=wikipagelink>Darkcanuck</a>
+<p>
+That would be a simple fix that would work to some extent, but it wouldn't allow bad results from rouge clients to be easily cleaned. Personally I think that matters, because often we don't know a client version is bad until after it has uploaded bad results. For that reason, I'd consider a protocol update to be far more desireable. Making the clients check a wiki page wouldn't be a bad short-term measure in the meantime though I suppose. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Another check that should be made in the server (in one-on-one at least), is if the number of battles is near 35. That way you can avoid that someone is running battles in meleemode with the one-on-one settings. And I mean 'near 35' as with rambots you sometimes get a sum of 34 or 36 battles won.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+In order to avoid other kinds of goofy config errors (i.e. wrong field size), I think the client should probably send certain other configuration options like field size that the server should check. It might be good to also have the client send the participants url it's using, but at very least I think both field size and like you say, number of rounds, should be checked. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<UL >
+<li> afaik, fieldsize is currently already checked by the server. -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</UL>
+<p>
+I think that you have already noticed that something weird is happening in the <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> roborumble. Many bots are missing in the rankings. --Jab<a href="robowiki?action=edit&id=Jab" class=wikipageedit>?</a>
+<UL >
+<li> yep, probably diskfull problem. <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a> already deleted the 'general' resultsfiles, so there is enough room now. The rankings will appear slowly again. The only thing is that there will be more bots with corrupted details from now on.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<li> Ouch! --Jab<a href="robowiki?action=edit&id=Jab" class=wikipageedit>?</a>
+</UL>
+<p>
+Another issue, I'm running the teamrumble version 1.6.0 and I have ITERATE=YES, RUNONLY=SERVER and BATTLESPERBOT=200. The priority battles works fine the first iteration but after that it doesn't take into account the teams with less battles than 200. May be I'm missing something. Thanks! --Jab<a href="robowiki?action=edit&id=Jab" class=wikipageedit>?</a>
+<UL >
+<li> I have ITERATE=NOT, in that case after each iteration my client asks the server for new battles, and that should work better.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<li> I've found that ITERATE=YES is completely broken as far as choosing good bots to battle. I have reported the bug and <a href="robowiki?Fnl" class=wikipagelink>Fnl</a> has assigned it to himself though no comment on it yet I think. But yes, in the meantime ITERATE=NOT with a loop in the bash script works well enough. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<li> Thanks. --Jab<a href="robowiki?action=edit&id=Jab" class=wikipageedit>?</a>
+</UL>
+<p>
+Hi, I am trying to fix the ITERATE problem (and other <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> issues as well). I made a 1.6.1.3 Alpha version with a fix (hopefully), and I should like to know if this version fixes the problem? You can download it from <a rel="nofollow" href="http://robocode.sourceforge.net/files/robocode-setup-1.6.1.3-Alpha.jar">[here]</a>. If this version fixes the problem, the ITERATE feature has been "broken" in <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> since forever. --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+Just tested 1.6.1.3 Alpha here with upload disabled (don't want to upload results with a little-tested version yet) and ITERATE finally seems to work nicely. Thanks! -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+<a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>: Thanks. You are welcome! =) It seems like it never worked the way it should, and the bug was hard to detect. I am very happy that we finally got rid of this bug! :-) --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+<pre>
+java.io.IOException: Server returned HTTP response code: 500 for URL: http://rumble.fervir.com/rumble/UploadedResults
+Unable to upload results roborumble,35,800x600,lRem,1226703762889,SERVER vuen.Fractal 0.55,3027,1790,17 gm.GaetanoA 2.15,2457,1202,18
+java.io.IOException: Server returned HTTP response code: 500 for URL: http://rumble.fervir.com/rumble/UploadedResults
+Unable to upload results roborumble,35,80 0x600,lRem,1226703810574,SERVER stefw.Tigger 0.0.23,3960,1811,30 amk.ChumbaMini 0.2,1765,1384,5
+</pre>
+This happens most time, as I watched approximately 2 battles in 10 were OK... --lRem
+<p>
+The rumble.fervir.com server has been kind of broken for a while. You'd want to point your client at <a rel="nofollow" href="http://darkcanuck.net/rumble/">[this URL]</a> (See <a rel="nofollow" href="http://testwiki.roborumble.org/w/index.php?title=Darkcanuck/RRServer">[here]</a> for more information). There's so new fanciness in that server too :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+<p>
+Wow, missed that. Anyways, the testwiki is the live one now, yes? --lRem
+<p>
+As I understand, it's where new content should be going and it would probably be good if more information could be migrated there probably. Personally I still check both wikis and I think most people do, so conversation on this wiki is still probably fine I'd think. --<a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+(moved from main page) Hi, When I'm running the melee roborumble it seems to be fighting the bots 1 on 1. it declares  the 2 bots fighting and then the 1st and second place winner..  Can someone confirm my bot  "justin.MallaisV08<a href="robowiki?action=edit&id=MallaisV08" class=wikipageedit>?</a> (and others) are actually fighting melee (10 bots) 1000*1000 bf.... there also seems to be alot of errors while running meleeRumble ,,, is that normal??  Thanks guys -justin (jlm0924)
+<p>
+<UL >
+<li> Errors aren't normal -- can you post some of the rumble output here so we can take a look?  Which version are you running?  How did you setup &amp; run the melee client?  You used the meleerumble.sh/bat file and just changed your name and the server info in the meleerumble.txt file, right?  --<a href="robowiki?Darkcanuck" class=wikipagelink>Darkcanuck</a>
+</UL>
+<p>
+<p>
+I just updated my version of robocode to latest (1.7.1 I believe) and entered my "name"... I didn't change the server info...  if you can post where or how to copy the output from I will.. though I am late for school and will have to do first thing when I return this evening... -justin
+<p>
+<UL >
+<li> You should be able to copy the output the rumble client sends to the console when running (you said there were errors?).  Information on getting started with the rumble client is here: <a href="robowiki?RoboRumble/StartingWithRoboRumble" class=wikipagelink>RoboRumble/StartingWithRoboRumble</a>.  Please note that page lists the official versions as 1.5.4 and 1.6.0 (we have not tested 1.7.x yet).  I've temporarily suspended your uploads just in case while this gets sorted out.  Also, your bot isn't packaged correctly:  it should be something like package.botname_version.jar -- did you use the bot packager built in to robocode?  I'm going to remove the current version from the participants list since no one else can download/run it.  Don't worry, everyone has trouble with roborumble on the first try.  :)  --<a href="robowiki?Darkcanuck" class=wikipagelink>Darkcanuck</a>
+</UL>
+<p>
+The exact same problem happened to me (including the "2 bots fighting"). Changed to 1.6.0 and all fixed :) --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+<UL >
+<li> Yep, I just downloaded 1.7.1 and tried the meleerumble -- looks like it only sends two bots into the arena!  Going to poke around the code a bit and will file this bug for Fnl &amp; Pavel. --<a href="robowiki?Darkcanuck" class=wikipagelink>Darkcanuck</a>
+</UL>
+<p>
+cool ... :)  well I repackaged my bot for repository and reinstalled 1.5.4 ... The getGraphics method isn't supported in 1.5.4 :P .. It took a few tries but I believe my bot is up and competing.. :)  
+<p>
+DarkcanuckCan<a href="robowiki?action=edit&id=DarkcanuckCan" class=wikipageedit>?</a>, can you un-suspend my uploads now pls, and confirm the proper url to use? thx - justin
+<p>
+justin, I unsuspended you yesterday once the 1.7.1 rejection was working.  There are three URLs:  UPDATEBOTSURL, RESULTSURL and RATINGS.URL should all point to <a rel="nofollow" href="http://darkcanuck.net/rumble/">http://darkcanuck.net/rumble/</a>... instead of fervir.com.  I would suggest running your client with "UPLOAD=NOT" first to test that everything is working ok.  Your bot seems to be doing well!  --<a href="robowiki?Darkcanuck" class=wikipagelink>Darkcanuck</a>
+<p>
+Thxs DarkCanuck<a href="robowiki?action=edit&id=DarkCanuck" class=wikipageedit>?</a> :) and ya I'm pleased my bot is holding up :) 
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RoboRumble/ReportedProblems" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RoboRumble/ReportedProblems">View other revisions</a><br>Last edited April 7, 2009 22:32 EST by CPE0011d8d68637-CM001ceacce44e.cpe.net.cable.rogers.com <a href="robowiki?action=browse&diff=1&id=RoboRumble/ReportedProblems">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

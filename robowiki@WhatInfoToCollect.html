@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>WhatInfoToCollect - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='What, Info, To, Collect'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=WhatInfoToCollect">WhatInfoToCollect</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>More than one opinion here- 
+<p>
+Dave Mold says to collect acceleration and change in heading.
+<p>
+Plenty say to collect velocity and change in heading (these could be equivalent for <i>good</i> data)
+<p>
+Paul Evans says to collect what firing angle should have been used based on distance and last direction of motion.
+<p>
+A good circular aimer might collect only the velocity for several turns and the change in heading for several turns (to average them).
+<p>
+Other ideas?  Is it worthwhile to save information about your opponent's offense?
+--<a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+This depends heavily on what aiming methods and movement system you are using. Heading change and velocity is good for playback when <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a>. 0.9.9.x versions of <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> used to keep information on what dodging angles it had used and how they had worked. Is that what you mean by "opponent's offense"? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+That's the general idea, although I was thinking in a more advanced sense - if you try and track their bullets, store the powers the opponent tends to use, and when you got hit, if it appears he used direct, linear, circular, pattern, statistical, or other aiming techniques.  Just a thought that probably goes under <a href="robowiki?DodgingBullets" class=wikipagelink>DodgingBullets</a>.  -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Well, I think that might be a bit too much work for a rather slow learning process. Few bots rely on linear or circular aim alone, but instead use them if it seems you are moving in a particular pattern. If you have a good pattern matcher yourself you might use it to neutralise any pattern matcher the enemy might have by making sure you don't go where your own pattern matcher guesses you'll go. Same thing with statistical aim (which is what those 0.9.9.x version of Marshmallow tried to do). But you'll need something along the lines of <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a> to do the "avoid" part of the plan. (Which is where Marshmallow failed since it doesn't use anti-grav...). Indeed, if it seems the enemy relies in <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a> you might shift to a particular movement strategy where direct aim never hits. (Like moving like <a href="robowiki?Walls" class=wikipagelink>Walls</a> or some such). -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It's certainly easy to shift to a movement that beats <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a>.  One thing I toyed with was a bullet dodging technique that wasn't quite perfect, and I had it just print "AM I HIT?" every time it got hit by a defensive virtual bullet.  Then it would print "I'M HIT" in onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a>.  Virtually all the time, the "I'M HIT" message came amidst a few "AM I HIT" messages.  It seems like one could figure out what's hitting me most of the time when I get hit, and use that to my advantage.  Pattern-matching yourself is a good idea, too, sometimes, I think I've noticed <a href="robowiki?MogBot" class=wikipagelink>MogBot</a> doing it.  It may be even better to implement multiple pattern-matchers (an acceleration-change in heading one, a velocity-change in heading one, one that just looks for the frequency in changes in direction, etc), to have good defense against any of them (of course, after awhile, there's just a bullet everywhere.
+<p>
+The avoid part can be done without antigravity, antigravity is just a convenient way to do it that doesn't take much processor time if it's done right.  <a href="robowiki?SpareParts" class=wikipagelink>SpareParts</a> has a Bullet-dodging movement that works well in general (dodges just <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a>, <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a>, and <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a>, both with velocity averaging and without).  It just searches for the closest point that it can be at that doesn't intersect any "Virtual Lasers" that I create for each projected bullet.
+-- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Yes, it is because avoiding direct aim is so easy I thought it might be worth it to implement a check for it and the antidote. And while few bots rely on circular or linear aim some does rely on direct aim. Try using direct aim only against <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> and you might find that it is quite effective... The problem with pattern matching is that it is time consuming. Though you can of course record lots of parameters and empirically try to figure what works best. Your search for "safe" points is something like what I mean when I speak about <a href="robowiki?WantedTerrain" class=wikipagelink>WantedTerrain</a>. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+But collecting info doesn't cost anything so you could collect just about anything. Marshmallow certainly does... It's when it comes to <strong>using</strong> the info where you might pay a price (like with <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a>) and certainly when you want to save data between matches, which is where <a href="robowiki?WhatToSaveBetweenRounds" class=wikipagelink>WhatToSaveBetweenRounds</a> (and matches) comes in. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=WhatInfoToCollect" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=WhatInfoToCollect">View other revisions</a><br>Last edited May 4, 2006 21:50 EST by <a href="robowiki?Wcsv" title="ID 6902 from r204174.res.Lehigh.EDU">Wcsv</a> <a href="robowiki?action=browse&diff=1&id=WhatInfoToCollect">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

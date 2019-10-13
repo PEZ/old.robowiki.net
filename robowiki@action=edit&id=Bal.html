@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing Bal - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Bal'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing Bal</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="Bal"  />
+<input type="hidden" name="oldtime" value="1171479592"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="10"  />
+<input type="hidden" name="captchaArg2" value="5"  />
+<input type="hidden" name="captchaOp" value="+"  />
+<input type="hidden" name="captchaId" value="197250781887"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">Hi...
+
+I&#39;ve just released my first &#39;bot [[N]]
+
+----
+
+At the risk of repeating myself, welcome to the RoboWiki =) Feel free to post any questions you have, people are generally pretty helpful around here. -- [[Voidious]]
+
+Thanks, I can see that you are from the comments I&#39;ve read around the wiki, because I have a tendency to lurk around a forum or wiki for a few days before joining, to see the general attitude of the people there. I think this may be the only forum / wiki that may hold my interet longer than a month. I tend to get bored very easily with things, especially if I run into any difficulty whatsoever, but it is a habit that I am trying to break :) And I guess I should use the summary field when editing, eh? -- Bal
+
+Welcome to RoboWiki! I&#39;m pretty new myself only been here a little while. Trust me, its hard to get bored here! There are so much you can program its crazy. If you have any questions just ask, I would be happy to help if I know how. --[[Chase-san]]
+
+Hey, welcome! Same goes for me, i&#39;ll try to answer any questions you have if I know the answer. --[[wcsv]]
+
+Question guys, If i did this: &lt;pre&gt;
+
+    if (Random &gt;= 0.1) {...}
+    else if (Random &gt;= 0.2) {...}
+
+&lt;/pre&gt;
+
+Would that be legal robocode? If not, how would I go about doing else if statements? -- [[Bal]]
+
+Yes, that&#39;s legal Java / Robocode. (But it&#39;s not a loop. =)) -- [[Voidious]]
+
+Minor technicalities aside, thanks -- [[Bal]]
+
+Oh, would it work like it should if i had one for every decimal? like 0.1, 0.2, 0.3, or would it call a different one due to &gt;=, or do I avoid that by going in order. -- [[Bal]]
+
+If you had &quot;Math.random()&quot; in each if statement, it would generate a new random number each time; I read what you posted thinking you meant something like &quot;double Random = Math.random()&quot; before the if statements. (I think that&#39;s the issue you&#39;re asking about... ?) Also, if you do &gt;= 0.1 first, it will never reach &gt;= 0.2, &gt;= 0.3, etc, because that would&#39;ve matched the first one. -- [[Voidious]]
+
+So the code should be:
+&lt;pre&gt;
+double Random = Math.random();
+if (Random &lt;= 0.1) {...}
+else if (Random &lt;= 0.2) {...}
+...  
+&lt;/pre&gt;
+
+So it would be limited to the .X to .A range where .X is the decimal before it, if you understand, heck, if I even understand :P -- [[Bal]]
+
+Yeah, I think that would work the way you want it to =) So if you went up the scale to .9 like that (and one last &quot;else&quot;), you&#39;d have 10 branches that each execute 10% of the time. -- [[Voidious]]
+
+Cool, Now its time to think of a way to implement that :) -- [[Bal]]
+
+If I put the code above in my main run, or onscannedrobot, would it loop? Also, having Random = Math.random(); at the end of the command would refresh the variable for the next run through, correct? -- [[Bal]]
+
+It would loop if you put it in your loop. For example:
+&lt;pre&gt;
+public void run(){
+  while (true){
+    double Random = Math.random();
+    if (Random &lt;= 0.1) {...}
+    else if (Random &lt;= 0.2) {...}
+    ...
+    //other main loop code
+  }
+}
+&lt;/pre&gt;
+-- [[nfwu]]
+
+The onScannedRobot event is executed each tick, while the run method is executed once at the beginning of the round, if that helps clarify things. If you declare &quot;double Random&quot; in the onScannedRobot event, its scope is only in that method, so doing something to it at the end will have no effect; but if you declare it as an instance variable (in the class itself), that would set it for the next time through the loop. I&#39;d say it seems clearer to just set it to Math.random() before you use it, though. -- [[Voidious]]
+
+The answer is &#39;yes, that works&#39;.  I assume you are trying to do random movement.  One thing you may find from taking a new random approach every tick is that your movement will tend to average out, either along a path of travel or even crossing back and forth between your point of origin, making you vulnerable to an averaged linear targeting or head-on targeting.  Then again it may work splendidly.  That&#39;s for you to discover.  A very minor note: you don&#39;t really need &lt;= .. you can do &lt; just as well (and in theory more precisely, though it is trivial) an it is a less costly comparison. -- Martin
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 10 + 5 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that Bal has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=Bal">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

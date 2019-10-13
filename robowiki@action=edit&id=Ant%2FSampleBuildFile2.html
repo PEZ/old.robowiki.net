@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing Ant/SampleBuildFile2 - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Ant, Sample, Build, File2'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing Ant/SampleBuildFile2</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="Ant/SampleBuildFile2"  />
+<input type="hidden" name="oldtime" value="1192721017"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="4"  />
+<input type="hidden" name="captchaArg2" value="4"  />
+<input type="hidden" name="captchaOp" value="+"  />
+<input type="hidden" name="captchaId" value="027025639618"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">The way I package is to manually edit the Phoenix.properties file to have the latest version number. This is then parsed by the ant build file to generate a jar with the right name.
+
+Tools used by this build file: 
+* Pack task http://sadun-util.sourceforge.net/pack.html
+* Codesize utility (comes with Robocode now)
+* yGuard Obfuscator http://www.yworks.com/en/products_yguard_about.htm
+
+----
+&lt;pre&gt;
+&amp;lt;?xml version=&quot;1.0&quot;?&amp;gt;
+&amp;lt;!-- ====================================================================== 
+
+     Phoenix build file
+
+     ====================================================================== --&amp;gt;
+
+&amp;lt;project name=&quot;Phoenix&quot; default=&quot;Phoenix&quot; basedir=&quot;.&quot;&amp;gt;
+	
+	&amp;lt;property name=&quot;robot.properties.file&quot; location=&quot;davidalves/Phoenix.properties&quot; /&amp;gt;
+	&amp;lt;property name=&quot;team.properties.file&quot; location=&quot;davidalves/PhoenixTeam.team&quot; /&amp;gt;
+	&amp;lt;property name=&quot;robot.name&quot; value=&quot;Phoenix&quot; /&amp;gt;
+	&amp;lt;property name=&quot;robocode.jar&quot; location=&quot;c:/robocode/dev/robocode.jar&quot; /&amp;gt;
+	
+	&amp;lt;taskdef name=&quot;obfuscate&quot; 
+		classname=&quot;com.yworks.yguard.ObfuscatorTask&quot; 
+		classpath=&quot;yguard.jar&quot;/&amp;gt;
+	&amp;lt;taskdef name=&quot;pack&quot;
+		classname=&quot;org.sadun.util.ant.Pack&quot;
+		classpath=&quot;pack.jar&quot;/&amp;gt;
+	
+	&amp;lt;description&amp;gt;Phoenix&amp;lt;/description&amp;gt;
+	
+	&amp;lt;!-- Load version number from Phoenix.properties file --&amp;gt;
+	&amp;lt;property file=&quot;${robot.properties.file}&quot; /&amp;gt;
+	
+	&amp;lt;target name=&quot;Phoenix&quot; description=&quot;Make Phoenix jar&quot;&amp;gt;
+		
+		&amp;lt;!-- Make date stamp --&amp;gt;
+		&amp;lt;tstamp/&amp;gt;
+		
+		&amp;lt;property name=&quot;backup.file&quot; location=&quot;${robot.name}_${robot.version}_${DSTAMP}.jar&quot; /&amp;gt;
+		&amp;lt;property name=&quot;release.file&quot; location=&quot;${robot.classname}_${robot.version}.jar&quot; /&amp;gt;
+		&amp;lt;property name=&quot;temp.file&quot; location=&quot;${robot.name}_temp.jar&quot; /&amp;gt;
+		
+		&amp;lt;delete file=&quot;${backup.file}&quot; failonerror=&quot;false&quot; /&amp;gt;
+		&amp;lt;delete file=&quot;${release.file}&quot; failonerror=&quot;false&quot; /&amp;gt;
+		&amp;lt;delete file=&quot;${temp.file}&quot; failonerror=&quot;false&quot; /&amp;gt;
+		
+		&amp;lt;jar duplicate=&quot;add&quot; basedir=&quot;.&quot; destfile=&quot;${backup.file}&quot; compress=&quot;true&quot;&amp;gt;
+			&amp;lt;include name=&quot;davidalves/**/*.java&quot; /&amp;gt;
+			&amp;lt;include name=&quot;davidalves/**/*.class&quot; /&amp;gt;
+			&amp;lt;include name=&quot;${robot.properties.file}&quot; /&amp;gt;
+			&amp;lt;include name=&quot;${team.properties.file}&quot; /&amp;gt;
+		&amp;lt;/jar&amp;gt;
+		
+		&amp;lt;!-- &quot;pack&quot; task selects only the minimal set of classes needed to run the bot. 
+			 This can also be done with the &quot;classfileset&quot; task from ant-contrib --&amp;gt;
+		&amp;lt;pack classes=&quot;${robot.classname}&quot; targetjar=&quot;${temp.file}&quot; excludepkg=&quot;java,javax,sun,robocode&quot;&amp;gt;
+			&amp;lt;classpath path=&quot;.&quot; /&amp;gt;
+			&amp;lt;classpath location=&quot;${robocode.jar}&quot; /&amp;gt;
+			&amp;lt;resource name=&quot;davidalves/Phoenix.properties&quot; /&amp;gt;
+		&amp;lt;/pack&amp;gt;
+		
+		&amp;lt;!-- Print codesize--&amp;gt;
+		&amp;lt;java fork=&quot;yes&quot; jar=&quot;/robocode/codesize.jar&quot;&amp;gt;
+			&amp;lt;arg value=&quot;${temp.file}&quot; /&amp;gt;
+		&amp;lt;/java&amp;gt;
+		
+		&amp;lt;!-- Obfuscate release jar --&amp;gt;
+		&amp;lt;obfuscate replaceclassnamestrings=&quot;true&quot; logfile=&quot;obf.txt&quot;&amp;gt;
+			&amp;lt;inoutpair in=&quot;${temp.file}&quot; out=&quot;${release.file}&quot; /&amp;gt;
+			&amp;lt;expose&amp;gt;
+				&amp;lt;class name=&quot;davidalves.Phoenix&quot; methods=&quot;public&quot; fields=&quot;none&quot; /&amp;gt;
+			&amp;lt;/expose&amp;gt;
+			&amp;lt;externalclasses&amp;gt;
+				&amp;lt;pathelement location=&quot;${robocode.jar}&quot;/&amp;gt;
+			&amp;lt;/externalclasses&amp;gt;
+		&amp;lt;/obfuscate&amp;gt;
+	&amp;lt;/target&amp;gt;
+&amp;lt;/project&amp;gt;
+&lt;/pre&gt;
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 4 + 4 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that Ant/SampleBuildFile2 has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=Ant/SampleBuildFile2">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Ant" class=wikipagelink>Ant</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

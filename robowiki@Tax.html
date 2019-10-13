@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Tax - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Tax'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Tax">Tax</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>(I removed the earlier hype/discussion because it wasn't relevant anymore. :P)
+<p>
+I am considering starting work back up on Tax, but before I begin I want to have a cohesive design to follow, and there is a crucial question that I need to answer before I can continue.
+<p>
+Suppose that I had implemented a neural network, which, when provided with an n-length vector of real numbers, found the centroid vector of m different categories (where m is determined by the neural network) that these vectors fell into.  To explain, if these were two-dimensional vectors, and we graphed two spherical masses of these point-vectors (say 100 points in each, with the points scattered in roughly spherical shapes), the neural network would return two vectors, where each one was the center of one of the spherical point-clouds.  This neural network may be used to categorize ANY set of real vectors.  This includes, but is not limited to, movement patterns (say, a bot's lateral and advancing velocity for the last 60 ticks), acceleration patterns, delta-heading patterns, etc.  I can tune the neural network to produce a fewer or greater number of categories, so I can tune it to, for instance, produce 3 categories of movement patterns.  I could then store statistics for each category of movement.  [Ed: Sorry, this is a bad explanation.  It returns more than just the centroids.  Suffice it to say that it can categorize vectors.]
+<p>
+The simple question is this:  What input should I give this network?  Any thoughts are very welcome, though I realize that it is hard to guess the right input without experimentation.  I just want an idea as to what direction to head in.  In the past I have tried lateral velocity, with some success, mostly with only 3 or so ticks of information.  I had expected acceleration patterns to be more telling, as well as using a lot more information than 3 ticks, but neither worked nearly as well as I had hoped.  Keep in mind that this may be due to my implementation, which was a semi-realtime categorization/segmentation/statistics gathering, all during a battle.  It may have been merely wrong, or it may not be the correct way to do it.  My goal is to create categories of movement in advance based on thousands of battles against many bots and then save them to file -- this should produce better results.
+<p>
+Another question is, how do you all feel about using many, many statistical segments with varying amounts of information used for segmentation, and choosing between them based on margin of error?  I have experimented with this heavily in the past (namely my old bot Statistician), with little/no success.  It is possible that my implementation was faulty, but it may also be possible that many cooks spoil the broth, even if you have a way of choosing, statistically, the best cook.
+<p>
+Thanks all for any input!
+<p>
+-- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<hr noshade class=wikiline size=1>
+I too have experimented a lot with different inputs and trying to select the segment with the best guess. Both always without any success. But I think that my implementations have been to blame. As for acceleration you might try feeding the network with the velocity of the last three ticks and then maybe a rolling average of the last 20 ticks or so. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Tax" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Tax">View other revisions</a><br>Last edited May 5, 2006 6:20 EST by <a href="robowiki?Florent" title="ID 6624 from 156.187.103-84.rev.gaoland.net">Florent</a> <a href="robowiki?action=browse&diff=1&id=Tax">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

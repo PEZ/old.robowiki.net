@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>SymbolicDynamicSegmentation - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Symbolic, Dynamic, Segmentation'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=SymbolicDynamicSegmentation">SymbolicDynamicSegmentation</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>It is an hybrid method between <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> and Log Targeting. With low segmentation, it works like an statistical gun. With high segmentation it works like a <a href="robowiki?PatternMatcher" class=wikipagelink>PatternMatcher</a> (in a way similar to Iiley's <a href="robowiki?Waves" class=wikipagelink>Waves</a> pattern matcher).
+<p>
+It works as follows:
+<p>
+<OL >
+<li> Every turn, it launches a <a href="robowiki?Waves" class=wikipagelink>Waves</a>. When it hits it records the bearing it hit. Instead of adding it to a bearings list, classified by a key (see next item).
+<li> The key is calculated every time a wave is created, and it is an String created from the variables you want to segment that represent the current state of the enemy (this is why I call it Symbolic, because it maps continuous values into a symbol space. The idea is the same implemented in <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a>, but you can use more sophisticated keys if you are not restricted by <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a>). For example, if you are segmenting by enemy velocity and acceleration, you define a function: f(velocity, acceleration) -&gt; String(2)
+<li> When it is about to fire, it calculates the key that corresponds to the current state of the enemy.
+<li> Then, it just searches for all the pairs (key, bearing) previously recorded (or the last 100, or whatever you want) and returns you a list of "bearings to hit". 
+<li> Finally , it uses a <a href="robowiki?KernelDensity" class=wikipagelink>KernelDensity</a> function to estimate the probability function for a given state and calculate the best bearing to fire (which is the máximum probability point).
+<li> If the search for the keys fails (or doesn't return enough results) it removes the last symbol of the string and tries again. The process is iterative. It means that it works with a high segmentation when there is data available, but reduces it when there is not enough data available. This is because it has DynamicSegmentation<a href="robowiki?action=edit&id=DynamicSegmentation" class=wikipageedit>?</a>.
+</OL>
+<p>
+Some notes: 
+<UL >
+<li> The order of the symbols in the string is important, because it segments by removing them from the end of the string (ie. the last ones should be the least common).
+<li> You can segment for the same variable but with different precision. For example, first for distance in 25 pixels per bucket, then 100.
+<li> Depending on the implementation (hihg segmentation and no minimum number of observations per key), and with enough data available, it behaves like a <a href="robowiki?PatternMatcher" class=wikipagelink>PatternMatcher</a>.
+<li> If not it behaves like an <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> gun.
+<li> I found two problems right now: The first one is that saving data is not straigh, because to store it eficiently you should save only one bearing per key, compress the keys and probably remove the least used. The second one that you will probably get an <a href="robowiki?SlowBot" class=wikipagelink>SlowBot</a>, because it needs a lot of calculations.
+</UL>
+<p>
+For an implementation, you can check <a href="robowiki?Virus" class=wikipagelink>Virus</a> page.
+<p>
+-- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+That is a realllly slow gun. I just adapted it to <a href="robowiki?ChumbaWumba" class=wikipagelink>ChumbaWumba</a>, and it runs at about 30-40 fps versus a normal unmodded chumbawumba. -- <a href="robowiki?AaronKrill" class=wikipagelink>AaronKrill</a>
+<p>
+Its really odd going throught the wiki and seeing comments on things I don't remember doing. -- <a href="robowiki?Krillr" class=wikipagelink>Krillr</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=SymbolicDynamicSegmentation" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=SymbolicDynamicSegmentation">View other revisions</a><br>Last edited July 29, 2006 6:56 EST by 1Cust5440.an3.sea18.da.uu.net <a href="robowiki?action=browse&diff=1&id=SymbolicDynamicSegmentation">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

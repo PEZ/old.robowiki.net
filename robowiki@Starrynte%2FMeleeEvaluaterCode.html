@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Starrynte/MeleeEvaluaterCode - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Starrynte, Melee, Evaluater, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/MeleeEvaluaterCode">Starrynte/MeleeEvaluaterCode</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package Put_Your_Package_Here;
+import robocode.*;
+import java.util.Vector;
+import java.util.Iterator;
+
+public class MeleeEvaluate
+{
+	int currentStage=0; //the stage we're in
+	private int totalOthers; //total other bots (in the beginning of the battle)
+	static private double rating[][]; //holds the ratings
+	/*
+	 * Ratings:
+	 *    Survival: The average energy gain during a stage
+	 *    Hitrate: The average hitrate during a stage
+	 *    Infliction: The average damage inflicted during a stage
+	 *    Damage: The average damage encountered during a stage
+	 *    Survival up through a stage: How often you survive up to and through an ENTIRE stage
+	 *    Survival in a stage only: How often your survive in one SINGLE stage
+	 *
+	*/
+	static private double prevRating[][]=null; //the previous ratings, for averaging
+	static private AdvancedRobot robot; //the robot
+	static private int[] bulletsFired; //bullets fired so far, by stage
+	static private int[] rounds; //number of rounds in each stage
+	private int stages; //total stages
+	static private final int NUMSTATS=5; //number of ratings
+	int others=10; //robot.getOthers(): to prevent multiple printing up stats at the end of a battle
+	
+	public MeleeEvaluate(){
+		throw new RuntimeException("YOU MUST SPECIFY EXACTLY ONE (1) ADVANCED ROBOT AS A PARAMETER!");		
+	}
+
+	public MeleeEvaluate(Robot robot){
+		this();
+	}	
+
+	public MeleeEvaluate(AdvancedRobot bot){
+	//	this.init(robot);
+		if(rating==null){
+			stages=(int)Math.ceil((bot.getOthers()+1)/2);
+			rating=new double[stages][NUMSTATS];//5 default stages (98,76,54,32,1) ... with 5 ratings: survival, hitrate, inflicted, damage, and survival stage (described above)
+			bulletsFired=new int[stages];//see above
+			rounds=new int[stages];//see above
+		}
+		
+		robot=bot;
+		this.currentStage=0;
+		this.totalOthers=bot.getOthers();
+		this.others=bot.getOthers();
+	}
+
+	public void execute(){
+		if(this.others&gt;-1 || robot.getOthers()&gt;0){//the next 3 lines of code, including this one, along with the last 3 in this function, prevent multiple printing of stats
+			this.others=robot.getOthers();			
+		}
+		Vector v=robot.getAllEvents();
+		Iterator i=v.iterator();
+		while(i.hasNext()){
+			Object obj=i.next();
+			if(obj instanceof RobotDeathEvent){ onRobotDeath((RobotDeathEvent)obj); }
+			if(obj instanceof HitByBulletEvent){ onHitByBullet((HitByBulletEvent)obj); }
+			if(obj instanceof BulletHitEvent){ onBulletHit((BulletHitEvent)obj); }
+			if(obj instanceof BulletMissedEvent){ onBulletMissed((BulletMissedEvent)obj); }
+			if(obj instanceof BulletHitBulletEvent){ onBulletHitBullet((BulletHitBulletEvent)obj); }
+			if(obj instanceof HitRobotEvent){ onHitRobot((HitRobotEvent)obj); }			
+			if(obj instanceof DeathEvent){ onDeath((DeathEvent)obj); }
+		}
+		if(this.others==0){ rating[currentStage][4]++; onDeath(null); }
+		if(this.others==0){
+			this.others=-1;
+		}
+	}
+
+	public void onRobotDeath(RobotDeathEvent e){
+		int tempStage=currentStage;
+		currentStage=(int) Math.ceil(((((double)totalOthers)-1d)-robot.getOthers())/2); //currentStage with 10 bots: 9,8 - 0 | 7,6 - 1 | 5,4 - 2 | 3,2 - 3 | 1 - 4 
+		if(tempStage+1==currentStage &amp;&amp; robot.getOthers()&gt;0){ //if the stage changed AND there are robots left (no robots left handled later)						
+			rating[tempStage][4]++; //update survival stage
+			rounds[currentStage]++;			
+		}
+	}
+
+	public void onHitByBullet(HitByBulletEvent e){
+		rating[currentStage][0]-=((e.getBullet().getPower()&gt;1) ? (e.getBullet().getPower()*4) + (2*(e.getBullet().getPower()-1)):e.getBullet().getPower()*4); //update survival using formula
+		rating[currentStage][3]-=((e.getBullet().getPower()&gt;1) ? (e.getBullet().getPower()*4) + (2*(e.getBullet().getPower()-1)):e.getBullet().getPower()*4); //update damage using formula
+	}
+
+	public void onBulletHit(BulletHitEvent e){
+		rating[currentStage][0]+=e.getBullet().getPower()*2; //update survival: you lose &lt;power&gt; amount of energy for shooting, but you get 3*&lt;power&gt; energy back
+		rating[currentStage][1]=((rating[currentStage][1]*((double)bulletsFired[currentStage]))+1)/(++bulletsFired[currentStage]); //update hitrate: first calculate the bullets hit based on hitrate before, then update new hitrate and bullets fired
+		rating[currentStage][2]+=((e.getBullet().getPower()&gt;1) ? (e.getBullet().getPower()*4) + (2*(e.getBullet().getPower()-1)):e.getBullet().getPower()*4); //update damage inflicted using formula
+	}
+
+	public void onBulletMissed(BulletMissedEvent e){
+		rating[currentStage][0]-=e.getBullet().getPower(); //update survival: energy expended for firing
+		rating[currentStage][1]=(rating[currentStage][1]*((double)bulletsFired[currentStage]))/(++bulletsFired[currentStage]); //update hitrate: first calculate the bullets hit based on hitrate before, then update new hitrate and bullets fired
+	}
+
+	public void onBulletHitBullet(BulletHitBulletEvent e){
+		rating[currentStage][0]-=e.getBullet().getPower(); //update survival: energy expended for firing
+		//don't need to update hitrate: bulletHitBullet isn't entirely your fault
+	}
+
+	public void onHitRobot(HitRobotEvent e){
+		rating[currentStage][0]-=0.6d; //update survival: hit robot loses 0.6 energy
+		rating[currentStage][3]+=0.6d; //update damage: i lose 0.6 energy
+	}
+
+	public void onDeath(DeathEvent e){
+		rounds[0]++;
+		this.printStats();
+	}
+
+	public double[][] getRawStats(){
+		return rating;
+	}
+
+	public double[][] getStats(){
+		double[][] stats=rating;
+		int round=robot.getRoundNum()+1;
+		for(int i=0;i&lt;stages;i++){
+			for(int j=0;j&lt;NUMSTATS;j++){
+				stats[i][j]/=round;
+			}
+		}
+		return stats;
+	}
+				
+
+	public void printStats(){
+		int round=robot.getRoundNum()+1;		
+		robot.out.println();
+		for(int i=0;i&lt;stages;i++){
+			robot.out.println("Stage " + (i+1) + ":");
+			robot.out.println("Average energy gain: " + (rating[i][0]/round));
+			robot.out.println("Average hitrate: " + rating[i][1]);
+			robot.out.println("Average inflicted damage: " + (rating[i][2]/round));
+			robot.out.println("Average damage encountered: " + (rating[i][3]/round));
+			robot.out.println("Average survival up through this stage: " + (rating[i][4]/round));
+			robot.out.println("Average survival in this stage only: " + (rating[i][4]/rounds[i]));
+		}
+	}	
+	
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Starrynte/MeleeEvaluaterCode" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Starrynte/MeleeEvaluaterCode">View other revisions</a><br>Last edited February 18, 2008 19:58 EST by <a href="robowiki?Starrynte" title="ID 12409 from cpe-75-84-83-181.socal.res.rr.com">Starrynte</a> <a href="robowiki?action=browse&diff=1&id=Starrynte/MeleeEvaluaterCode">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

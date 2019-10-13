@@ -1,0 +1,360 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>TrigChallenges - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Trig, Challenges'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=TrigChallenges">TrigChallenges</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Like all Robocoders, I am frequently faced with trig challenges when implementing a new algorithm for my robot. 
+Sometimes i am able to solve them myself, but some remain unsolved.
+I hope the latter categorie of challenges can be met by the trig guru's that visit this site :-)
+<p>
+note: i am not a trig expert and some of my calculations may be wrong :-)
+So, it would be useful if some of you trig guru's could check my solutions.
+<p>
+Feel free to add more challenges (with solution or open) to this page. good luck! -- <a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<br>
+<br>
+<p>
+<hr noshade class=wikiline size=1>
+<br>
+<img src="http:/robocode/uploads/vic/fig1.png">
+<p>
+1: how do i calculate the angle 'a' in a circle with radius 'r', given the arc length 'arcd'?
+<UL >
+<li> a = arcd / r
+</UL>
+<p>
+2: how do i calculate the angle 'a' in a circle with radius 'r', given the chord 'd'?
+<UL >
+<li> a = 2 * asin (d / (2 * r))
+</UL>
+<p>
+<br>
+<hr noshade class=wikiline size=1>
+<br>
+<img src="http:/robocode/uploads/vic/fig2.png">
+<p>
+3: how do i calculate point p1(x1, y1), given angle 'a', center p0(x0, y0) and radius 'r'?
+<UL >
+<li> x1 = x0 + (sin(a) * r)
+<li> y1 = y0 + (cos(a) * r)
+<li><pre>
+Point calcPoint(double a, double x0, double y0, double r)
+{
+     x1 = x0 + (Math.sin(a) * r);
+     y1 = y0 + (Math.cos(a) * r);
+     return Point(x1, y1);
+} 
+</pre>
+</UL>
+<p>
+4: how do i calculate radius r, given point p1(x1, y1) and center p0(x0, y0)?<br>
+<UL >
+<li> the radius is the same as the distance between the two points. Use the law of pythagoras: a^2 + b^2 = c^2, where c is the radius. Therefore, c = square root of a^2 + b^2.
+<li><pre>
+double calcRadius(double x0, double y0, double x1, double y1)
+{
+     return (Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)));
+} 
+</pre>
+</UL>
+<p>
+5: how do i calculate angle 'a', given point p1(x1, y1) and center(x0, y0)?<br>
+<UL >
+<li> first calculate the radius r (see 4) the use the inverse sine (arcsine or asine) to get the angle.
+<li><pre>
+double calcAbsoluteAngle(double x0, double y0, double x1, double y1)
+{
+     double r = calcRadius(x0,y0,x1,y1);
+     if(y1 &lt; y0)
+     {
+          return (Math.asin ((x1 - x0) / r));
+     }
+     else
+     {
+          return ( Math.PI - Math.asin ((x1 - x0) / r));
+     }
+} 
+</pre>
+<li> It seems like an easier way to do this is to use the arc tangent:
+</UL>
+<pre>
+double calcAbsoluteAngle(double x0, double y0, double x1, double y1)
+{
+     return Math.atan2(x1-x0, y1-y0);
+} 
+</pre>
+<p>
+<UL >
+<li> how do i calculate center (x0,y0), given angle a, radius r, point p1(x1,y1)? (if it is possible) --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<UL >
+<li> Assuming that angle is from the robocode perspective (0 degrees is north), x0 = x1 - r*sin(a) and y0 = y1 - r*sin(a). It's just simply the reverse of how you find the point from a center, angle, and radius. Hope that helps. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</UL>
+</UL>
+<br>
+<hr noshade class=wikiline size=1>
+<br>
+<img src="http:/robocode/uploads/vic/fig3.png">
+<p>
+how do i calculate the point p2 (x2,y2), given angle 'a', center(x0, y0) and point p1 (x1,y1)?<br>
+<UL >
+<li> first calculate the radius (see 4)
+<li> then calculate the absolute angle a1 (see 5)
+<li> the calculate the Point (see 3)
+<li><pre>
+Point calcPoint(double a, double x0, double y0, double x1, double y1)
+{
+     double r = calcRadius(x0,y0,x1,y1);
+     double a1 = calcAbsoluteAngle(x0,y0,x1,y1);
+     return calcPoint(a+a1, x0, y0, r);
+} 
+</pre>
+<li> Make sure you don't call all the functions on this page "calcPoint", because it could get confusing.
+</UL>
+<br>
+<hr noshade class=wikiline size=1>
+<br>
+<img src="http:/robocode/uploads/vic/fig4.png">
+<p>
+how do i calculate angle 'a', given a non rotating square B1 defined by center P1 (x1, y1) and width 'w', and center(x0,x1)?
+<UL >
+<li> ?? couldn't figure out this one
+</UL>
+<p>
+<UL >
+<li> lemme try:
+<UL >
+<li> the corners:
+<UL >
+<li>c1 = (x1 + w/2, y1 + w/2)
+<li>c2 = (x1 - w/2, y1 - w/2)
+<li>c3 = (x1 + w/2, y1 - w/2)
+<li>c4 = (x1 - w/2, y1 + w/2)
+</UL>
+<li> we also know (only one of those is correct (the one with the largest a))
+<UL >
+<li>ll(p0, c1).(p0, c2)ll = ll(p0, c1)ll*ll(p0, c2)ll*cos(a)
+<li>ll(p0, c3).(p0, c4)ll = ll(p0, c3)ll*ll(p0, c4)ll*cos(a)
+<li>ll(p0, c1).(p0, c3)ll = ll(p0, c1)ll*ll(p0, c3)ll*cos(a)
+<li>ll(p0, c1).(p0, c4)ll = ll(p0, c1)ll*ll(p0, c4)ll*cos(a)
+<li>ll(p0, c2).(p0, c3)ll = ll(p0, c2)ll*ll(p0, c3)ll*cos(a)
+<li>ll(p0, c2).(p0, c4)ll = ll(p0, c2)ll*ll(p0, c4)ll*cos(a)
+</UL>
+<li> thus (for the first one)
+<UL >
+<li> a = cos^-1(ll(p0, c1).(p0,c2)ll/(ll(p0, c1)ll*ll(p0,c2)ll))
+</UL>
+<li> and if we transform the vectors into coordinates we get (also, only for the first one, you'll need to max it out yourself):
+<UL >
+<li> a = cos^-1(((x1+w/2-x0)*(x1-w/2-x0)+(y1+w/2-y0)*(y1-w/2-y0)) / (sqrt((x0-x1-w/2)^2+(y0-y1-w/2)^2) * sqrt((x0-x1+w/2)^2+(y0-y1+w/2)^2)) )
+</UL>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<li>Didn't check for errors, but I think it's correct ...
+</UL>
+</UL>
+<p>
+-- <a href="robowiki?FnH" class=wikipagelink>FnH</a>
+<p>
+A rough calculation is;
+<UL >
+<li> BOT_SIZE = 40 unit;
+<li> radius = distance(pt1, pt2);
+<li> angleDegrees = (360.0 * BOT_SIZE)/2.0*PI* radius;
+</UL>
+-- SSO<a href="robowiki?action=edit&id=SSO" class=wikipageedit>?</a>
+<p>
+Solving exactly would require you first select which two points on the square are deciding the angle -- there are 6 possibilities.  That part is easy.  Then, it just becomes a law of cosines problem.  Alternatively, you could calculate the angle for all 6 possible combinations and choose the largest one. -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+ok got it.. <a href="robowiki?FnH" class=wikipagelink>FnH</a> took a shot at nano's second option so i'll take one at the first:
+<p>
+<pre>
+///////////////////////////////
+// first of all, determine which two corners define the projected angle:
+//////////////////////////////
+
+xmin = x1 - w/2;
+xmax = x1 + w/2;
+ymin = y1 - w/2;
+ymax = y1 + w/2;
+
+if(y0 &gt;= ymin &amp;&amp; y0 &lt;= ymax)			//if p0 in horizontal bar defined by B1
+{
+	if (x0 &lt; xmin)				//choose left or right corners"
+	{
+		corner_1.set(xmin, ymin);
+		corner_2.set(xmin, ymax);
+	}
+	else
+	{
+		corner_1.set(xmax, ymin);
+		corner_2.set(xmax, ymax);
+	}
+}
+else if(x0 &gt;= xmin &amp;&amp; x0 &lt;= xmax)		//else if p0 in vertical bar defined by B1
+{
+	if (y0 &lt; ymin)				//choose top or bottom corners"
+	{
+		corner_1.set(xmin, ymin);
+		corner_2.set(xmax, ymin);
+	}
+	else
+	{
+		corner_1.set(xmin, ymax);
+		corner_2.set(xmax, ymax);
+	}
+}
+else						//or else opposing corners define the angle"
+{
+	if(x0 &lt; xmin)
+	{
+		furthest_x = xmax;
+		 closest_x = xmin;
+	}
+	else
+	{
+		furthest_x = xmin;
+		 closest_x = xmax;
+	}
+
+	if(y0 &lt; ymin)
+	{
+		furthest_y = ymax;
+		 closest_y = ymin;
+	}
+	else
+	{
+		furthest_y = ymin;
+		 closest_y = ymax;
+	}
+	
+	corner_1.set = (furthest_x,  closest_y);
+	corner_2.set = ( closest_x, furthest_y);
+}
+</pre>
+<p>
+<img src="http:/robocode/uploads/vic/fig4b.png">
+<p>
+<pre>
+///////////////////////////////
+// then, using the law of cosine, calculate the angle:
+//////////////////////////////
+
+La = distance(p0, corner_1);
+Lb = distance(p0, corner_2);
+Lc = distance(corner_1, corner_2);
+
+//law of cosine: Lc^2 = La^2 + Lb^2 ? 2 * La * Lb * cos(angle).
+//therefore: cos(angle) = (Lc^2 - (La^2 + Lb^2)) / (- 2 * La * Lb)
+//therefore: angle = acos ((Lc^2 - (La^2 + Lb^2)) / (- 2 * La * Lb))
+
+a = Math.acos ((Lc * Lc - (La * La + Lb * Lb)) / (- 2 * La * Lb));
+</pre>
+<p>
+-- <a href="robowiki?Vic_Stewart" class=wikipagelink>Vic Stewart</a>
+<p>
+<br>
+<hr noshade class=wikiline size=1>
+<br>
+<img src="http:/robocode/uploads/vic/fig5.png">
+<p>
+6. how do i calculate the maximum angle 'a' given bullet power 'Bp' and Robot velocity 'vR' (assuming instantaneous max speed and direction of the robot)
+<UL >
+<li>a = (20 - 3 * Bp) / vB; -- shouldn't this be vR/(20-3*Bp) ?
+<UL >
+<li>(vB=8,&nbsp;Bp=0.1&nbsp;=&gt;&nbsp;a=23.3&nbsp;degrees)
+<li>(vB=8,&nbsp;Bp=3.0&nbsp;=&gt;&nbsp;a=41.6&nbsp;degrees)
+</UL>
+<li> Another significant question is the maximum angle if the opponent doesn't move in an arc, but rather continues in a direction perpendicular to your position at fire-time:
+</UL>
+<img src="http://students.cs.byu.edu/~kawigi/robots/fig5.png">
+because here:
+<UL >
+<UL >
+<li> a = asin(vR/vB). -- I think atan(vR/vB) is correct if moving in a tangent as in the drawing. Sanity check: intuitively I think the angles should be less than when moving in an arc. Using asin is correct if the robot is moving in a chord.
+</UL>
+</UL>
+-- atan(vR/vB is correct if the cord comes in so that the right angle is between vR and vB.  This cord gives a smaller angle, the cord drawn gives a larger angle, it is the optimal value of the angle the opponent moves at to get the greatest angle.  I think the page on <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a> discusses this. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<UL >
+<UL >
+<UL >
+<li>(vB=8,&nbsp;Bp=0.1&nbsp;=&gt;&nbsp;a=24&nbsp;degrees)
+<li>(vB=8,&nbsp;Bp=3.0&nbsp;=&gt;&nbsp;a=46.7&nbsp;degrees)
+</UL>
+</UL>
+</UL>
+<br>
+<p>
+-- I don't get the same results here, Kawigi. if I do atan(8/11) I get a=36 degrees. What am I doing wrong? How do I get this 46.7 degrees result? anyone? --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<br>
+-- It's not the atan(8/11), because the bullet trajectory is the hypotenuse of the triangle, not the line between you and the target (because that line would miss :-p), so it's the asin(8/11).  The point being that they can get that far still before the bullet has traveled long enough to hit them. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<br>
+-- Ok, thanx. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<br>
+<hr noshade class=wikiline size=1>
+<br>
+<img src="http:/robocode/uploads/vic/fig6.png">
+<p>
+7. how do i calculate the point p2 defined as the intersection of circle C and Line L given radius r, center p0(x0,y0) and point p1(x1,y1)
+<UL >
+<li>x2 = x0 + (sin(a) * r)
+<li>y2 = y0 + (cos(a) * r)
+</UL>
+<p>
+<UL >
+<li> first calculate the absolute angle(see 5)
+<li> the calculate the Point using the new radius (see 3)
+<li><pre>
+Point calcPointFromRadius(double r, double x0, double y0, double x1, double y1)
+{
+     double a = calcAbsoluteAngle(x0,y0,x1,y1);
+     return calcPoint(a, x0, y0, r);
+} 
+</pre>
+</UL>
+<p>
+<br>
+<hr noshade class=wikiline size=1>
+<p>
+Given a origin point and a bearing from the point (Robocode style - 0 up, +ve clockwise) to generate a line that extends both sides of the origin point how do you calculate the perpendicular distance from the line of any other point so that you get positive distances for points to the right of the line (facing in the direction of the bearing) and negative distances for those points on the left of the line.  Thanks <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>.
+<p>
+I'm not sure I fully understand the question. But maybe this?<pre>relativeBearing = normalRelativeAngle(bearingFromOriginToAnyPoint - lineBearing);</pre> -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Good approach to it - if you want the actual distance, it would be the sine of the above times the distance to the other point. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Thanks - it's so obvious (but I could not sort it out)  <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<p>
+Making a left/right stat segmenter? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Nah - just trying to rate different points for Melee movement.  -- <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<p>
+Seems like you'd do that with <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a> instead. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Isn't that basically what this is, just relative to a different system? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Nah, it's distance, velocity needs a time component. If it's a left/right segmenter I'd rather use <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a> or <pre>bearingDelta = normalRelativeAngle(newBearing - oldBearing)</pre> -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+You're right, of course. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+It seems like lateral velocity would be better than bearingDelta in a few cases, when your movement influences the bearingDelta more (and in the opposite direction) than the opponent's movement.  But they'd have the same sign about 90% of the time. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Any examination of magnitude is automatically wrong, though. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+(Refering to Kawigis' alert about bearingDelta.) Yes, if you just go with the bearings as reported by your radar. (That's why my very first attempts with <a href="robowiki?AngularTargeting" class=wikipagelink>AngularTargeting</a> failed so brutally.) But done right I think it maybe better removes your own movement than lateralVelocity. If you check some of my bot code published here on the wiki you'll find that I calculate it like so:<pre>oldBearing = bearing(myOldPosition, enemyOldPosition);
+newBearing = bearing(myOldPosition, enemyNewPosition);</pre>
+Which, of course, could be exactly what Pauls more general description is about. It also serves to illustrate that, if you're like me and don't know much trig at all, using coordinates for about everything is the way to go. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+<br>
+<br>
+btw, visit the <a href="robowiki?Trigonometry" class=wikipagelink>Trigonometry</a> page for more resources.
+<p>
+Quick note: All of the trig being done is using robocode trigonometry, or at least should be. Not all of this is applicable in normal unit circle trig, though often replacing instances of 'sin' with 'cos' would fix it, and some of the trig being done isn't dependent on robocode trig as it analyzes smaller sub-portions, and normal laws hold. Just a caution before extending experience between the two. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=TrigChallenges" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=TrigChallenges">View other revisions</a><br>Last edited April 8, 2008 17:55 EST by <a href="robowiki?Rednaxela" title="ID 13292 from h134-28.reznet.ucalgary.ca">Rednaxela</a> <a href="robowiki?action=browse&diff=1&id=TrigChallenges">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

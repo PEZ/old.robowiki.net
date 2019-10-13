@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Fractal/Movement - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Fractal, Movement'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Movement">Fractal/Movement</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Fractal" class=wikipagelink>Fractal</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>This is where I'll describe Fractal's movement. Right now, it does nothing impressive besides curve flattening, so for now, some hopefully intimidating graphs:
+<p>
+Fractal's internal movement analysis, graphed with Fractal's grapher:
+<p>
+<img src="http:/robocode/uploads/vuen/fractalgraph2.jpg">
+<p>
+This is a 3D curve plotting angle horizontally from -50 to 50, distance vertically from 100 (bottom) to 890 (top), and chance to hit as brightness.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<a href="robowiki?StatistRobot" class=wikipagelink>StatistRobot</a> graphs:
+<p>
+<img src="http:/robocode/uploads/vuen/statistrobot1.jpg"> <img src="http:/robocode/uploads/vuen/statistrobot2.jpg">
+<p>
+I'll get some graphs from other programs sometime soon...
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Well, if there ever was a flat movement, this is it! Nothing impressing? I'll graph it with <a href="robowiki?RoboGrapher" class=wikipagelink>RoboGrapher</a> / <a href="robowiki?GloomyDark" class=wikipagelink>GloomyDark</a> now. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+OK, here's <a href="robowiki?RoboGrapher" class=wikipagelink>RoboGrapher</a>'s results:
+<p>
+<img src="http:/robocode/uploads/pez/Fractal_0.1.png">
+<p>
+Your scanner is broken. Quite often (as you can see on the graph) it slips off its enemy and since you move from inside the scanned robot event this makes Fractal stand still like a <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a>. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Interesting; my movement has absolutely nothing to do with the scanner, and it is completely isolated from the scan event. There's nothing I hate more than event-driven programming, so the scanned robot event is the last place I would put any movement code. However, I also graphed it with <a href="robowiki?RoboGrapher" class=wikipagelink>RoboGrapher</a> and received similar results; I was going to post them to inquire, but it looks like you beat me to it. :) - When does <a href="robowiki?GloomyDark" class=wikipagelink>GloomyDark</a> launch a wave? I think it may show a spike there because Fractal has a slight crash bug which causes it to sit still. Once I weed that out I'll see about flattening <a href="robowiki?GloomyDark" class=wikipagelink>GloomyDark</a>'s curve as well. Fractal's curve is far more predictable than <a href="robowiki?StatistRobot" class=wikipagelink>StatistRobot</a> lets on, because it still only gets about 20% in the curve flattening challenge. In any case, I'm currently working on a nice-looking Swing applet to graph Fractal's movement curve output in full detail, so other robots will have Fractal as a graphing utility (in addition to all the others out there). I added an explanation of its curve above. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+Another interesting question - when <a href="robowiki?GloomyDark" class=wikipagelink>GloomyDark</a> fires a wave, is it right when it fires, or would it continue firing waves when it's not firing and running up to ram or something?  Or would it fire waves if it was disabled? -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Sorry if I insulted you with accusations of practising event driven programming, Vuen. =) I don't know what you mean by <strong>slight</strong> crash bug. But what I see is that quite often Fractal just sits there doing nothing. Same thing as one of my bots would do if they slipped with their scanners. And it doesn't start doing stuff until Gloomy enters its line of sight. And, Gloomy only fires waves when it fires real bullets. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Lol =). I see what you mean though by crash bug, but it always only happens during a match; Fractal just runs straight into a wall and stops moving. Fractal's radar is currently temporary anyway, but I added some ECC to help the radar keep its lock until I build a real radar handler. I don't really remember how its information system is built because I haven't played in there for over a month, but I'm pretty sure it's still only like half built and is missing a lot of error-checking to get it working properly. About not doing anything until it sees the opponent, it's programmed to not react until it has information on the enemy, and Fractal was originally not supposed to move until the enemy's bullet almost hits it. If you have Fractal 0.0, try it to see it; I removed this strategy when I removed its pluggable movement manager in 0.1, but will be adding the sitting still soon. Anyway I'm working on it right now (which is bad, because I have like 9 outstanding assignments to do... stupid university), and I'll try to fix the crash bug and get the grapher done *cringe* by tonight. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+<img src="http:/robocode/uploads/vuen/robographer.jpg">
+<p>
+Better? I think I fixed the crash bug =). Thanks for pointing out the radar problem PEZ; I'll try to see what I can get done on this grapher and I'll upload a new version of Fractal later tonight. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a> -Oh, I just noticed a bug in <a href="robowiki?RoboGrapher" class=wikipagelink>RoboGrapher</a>; it's not multiplying the percentage by 100. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+Seems you got some work done! That curve looks really good. I'll add the percentage problem to the bug list. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+If you check the curve on the different "Acceleration" segments you'll see that you have some room for improvement. I suggest you work with the "Constant" (no acceleration) segment first and see if you can get it flatter. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Fractal" class=wikipagelink>Fractal</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Fractal/Movement" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Fractal/Movement">View other revisions</a><br>Last edited September 22, 2003 7:52 EST by <a href="robowiki?PEZ" title="ID 1663 from 212.75.87.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=Fractal/Movement">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

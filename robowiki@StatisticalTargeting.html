@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>StatisticalTargeting - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Statistical, Targeting'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=StatisticalTargeting">StatisticalTargeting</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?StatisticalTargeting/OldPage" class=wikipagelink>/OldPage</a>
+<p>
+<dl><dt> </dt><dd><a href="robowiki?StatisticalTargeting#What_it_is">What it is</a></dd>
+<dt> </dt><dd><a href="robowiki?StatisticalTargeting#GuessFactorTargeting">GuessFactorTargeting</a></dd>
+<dt> </dt><dd></dd></dl>
+
+
+<p>
+<hr noshade class=wikiline size=1>
+<H2><a rel="nofollow"  name="What_it_is"></a>What it is</H2>
+
+<a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> decribes targeting techniques which gather statistics on what type of attack will hit the target the most.  This is typically done either by using a virtual guns array, by which you record which gun would have hit each turn and select the one with the highest percentage, or by using firing angle statistics, in which the firing angle to hit is recorded and then the most probable angle can then be selected.  It is based around exploiting spikes in the target's <a href="robowiki?MovementProfile" class=wikipagelink>MovementProfile</a>.
+<p>
+<p>
+To implement a statistical targeting system:
+<p>
+<strong>Step 1:</strong>
+<p>
+Statistics to Collect - Early methods of statistical targeting would keep track of the average of a variable (typically firing angle) or have a log of positions.  The variable method was very quick and simplistic, but not very accurate.  Keeping track of a log of positions was more exact, but had the downside of large processor and memory consumption as the log grew.  The typical approach to statistical targeting is using a <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> system in some form. Having an array of targeting systems which return a recommended angle to shoot at. This array can either be complete targeting algorithms (<a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a>, <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a>, <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a>, <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a>, etc) or just simple firing angles.  Each gun then is incremented based on their hit rate, so that when selecting a method you can choose the gun most likely to hit.
+<p>
+<strong>Step 2:</strong>
+<p>
+Gathering Data - The most basic way of gathering data is to increment each gun when it hits the target, but this yields a very slow learning process.  To speed that method, the use of <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> came about, so that when one bullet is fired, a virtual bullet is fired at the angle each gun returns, and it can then be checked as to whether any hit the target.  In another line, one can compare the targets change in position at the end of the bullet travel time, and determine the offset from where it was at fire and where it was after it should hit.  Finally, Waves are a combination of the two latter methods, with a circular wave emmitting from you representing all possible firing angles, and that wave gets checked every tick to see if and where it would hit the target.
+Data is typically gathered at each fire, because targets often have different behavior when a bullet is fired from its normal behavior.  But if the target follows a certain behavior without regard for fire, learning speed can be drastically increased with statistics gathered every tick. So while processor efficiency and safety have been favoring on fire statistics, being able to mark similarities between on fire and not can greatly increase learning.
+<p>
+<strong>Step 3:</strong>
+<p>
+Applying Data - Once you get the results for hit percentages, it is often useful to perform <a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a> of the data.  Hit percentages may vary based on the circumstances, with a certain gun being much more effective at a certain distance, or when the target is near a wall, etc.  The <a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a> page goes into a bit more detail on the subject.
+It can also be useful to deal with data in multiple ways, keeping one set of hit percentages for the long haul and a short term rolling average set to pick up on quick changes.
+<hr noshade class=wikiline size=1>
+<p>
+<H2>Development</H2>
+
+Many of these techniques were being developed in different stages by different people at different times, and so I will not attempt to chronicle the chronological development of each of these techniques. I will be listing and describing the different implementations of <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> in terms of how advanced the idea was.
+<p>
+<em><a href="robowiki?AveragedBearingOffsetTargeting" class=wikipagelink>AveragedBearingOffsetTargeting</a></em> - A very simplistic single variable approach to statistical targeting.  This method works by keeping track of the angle between the targets position at time of fire and when it should be hit, and then firing at that average angle.  Becomes more effective if a rolling average is used, but if a target has multiple spikes in its profile, it usually results in firing between them and not hitting anything.
+<p>
+<em><a href="robowiki?AngularTargeting" class=wikipagelink>AngularTargeting</a></em> - The original form of <a href="robowiki?AngularTargeting" class=wikipagelink>AngularTargeting</a> was the same as <a href="robowiki?AveragedBearingOffsetTargeting" class=wikipagelink>AveragedBearingOffsetTargeting</a> (IIRC).  A more effective version was used in <a href="robowiki?Gouldingi" class=wikipagelink>Gouldingi</a> called <a href="robowiki?AngularTargeting/Factored" class=wikipagelink>AngularTargeting/Factored</a>, which multiplied the bearing change by a factor that was continually averaged and dependent upon the current direction and velocity. The downside was that if the target was to stay still for a moment, it would taint the factor with a value of 0 from which it would not recover.
+<p>
+<em><a href="robowiki?LaserTargeting" class=wikipagelink>LaserTargeting</a></em> - The next step up in complexity, kept a log of correct firing angles, from which it would randomly select one at time of fire.  Logically you would be selecting firing angles with the same probability that the opponent would be moving to them.  Main problems were the somewhat simplistic method of gathering the data, and the difficulty with keeping an extended log, resulting in a much longer learning speed and the requirement of segmentation on a lateral direction.
+<p>
+<em><a href="robowiki?BestPSpace" class=wikipagelink>BestPSpace</a></em> - While not really a firing technique in itself, this method described segmenting the probability graphs based on different variables to select the best probability.
+<p>
+<hr noshade class=wikiline size=1>
+<H2><a rel="nofollow"  name="GuessFactorTargeting"></a><a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a></H2>
+
+<p>
+An advanced combination of <a href="robowiki?LaserTargeting" class=wikipagelink>LaserTargeting</a> and <a href="robowiki?BestPSpace" class=wikipagelink>BestPSpace</a>, <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> works by gathering firing angle data (usually via waves) and storing hits in an array.  This is similar to a <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> technique, but instead of individual guns each bin is a firing angle, and the bin with the highest value represents the most likely firing angle.  It works by dividing the distance it did travel by the maximum distance it could have traveled, getting a factor between -1 and 1.  This automatically takes into account lateral direction, and sometimes considers velocity or heading.  It provides a fast learning speed, is easily segmentable, and is the current killer targeting method.  It works very well against very simple movers and <a href="robowiki?RandomMovement" class=wikipagelink>RandomMovement</a>, although is vulnerable to <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> techniques, and is not as efficient as <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> against most pattern movers.
+<p>
+<p>
+-- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=StatisticalTargeting" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=StatisticalTargeting">View other revisions</a><br>Last edited August 9, 2007 13:48 EST by 193.1.100.110 <a href="robowiki?action=browse&diff=1&id=StatisticalTargeting">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

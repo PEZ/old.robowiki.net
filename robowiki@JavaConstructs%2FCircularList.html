@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>JavaConstructs/CircularList - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Java, Constructs, Circular, List'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/CircularList">JavaConstructs/CircularList</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?JavaConstructs" class=wikipagelink>JavaConstructs</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>OK, for my new "flat as pizza" movement I need a circular list construct. I want to be able to start with any object in the list and move forward or backwards without worrying about where the list starts and ends. (The start and end are connected.) My problem is that, even after trying, I find it hard to construct a clean implementation. I have browsed the Collections part of the <a href="robowiki?JavaAPI" class=wikipagelink>JavaAPI</a> for a while now and it doesn't excactly jump at me... I ask the API questions like:
+<UL >
+<li> Is there a fixed and ready class I can use?
+<li> What interface should I implement?
+<li> Is there an implementation sceleton I could start with?
+</UL>
+But.. It doesn't really answer me like it usually does. Anybody of my fellow Robocoders have an idea? Note that I won't be changing the list, or its content, any after constructing it. I can create it as a static and then use it the whole battle. TIA!
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Off the top of my head:  Could you have an normal array containing all the values for you movement, and then have a pointer class that holds an integer which contains the index of the point in the array that you are add, and 2 methods clockwise() and anticlockwise() for example, that simple add or take 1 from the integer, unless it is at the beginning and end, in which case it goes to the opposite end.  It's not very elegant, but it might work. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Ok, i just googled for circular lists and i found this: <a rel="nofollow" href="http://www.cs.williams.edu/~bailey/JavaStructures/bailey/structure/CircularList.java">http://www.cs.williams.edu/~bailey/JavaStructures/bailey/structure/CircularList.java</a> to go with the iterator: <a rel="nofollow" href="http://www.cs.williams.edu/~bailey/JavaStructures/bailey/structure/CircularListIterator.java">http://www.cs.williams.edu/~bailey/JavaStructures/bailey/structure/CircularListIterator.java</a> .I have never used this code, nor have i actually read it. But it seemed relevant so i thought i'd post it here anyway -- <a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+I've decided my explanation wasn't very good, so i've put together a quick proof of concept.  You can find it here: <a href="robowiki?CircularBot" class=wikipagelink>CircularBot</a>.  It actually goes round in a square, turning round at random.  You can set a route of Point2Ds that it goes through in order, turning round whenever it likes. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Thanks! Two suggestions in less than a day. And they said Robocoders are too competetive to share. The full implementation answers all my questions above and also shows why it wasn't as easy as I had hoped it would be. <a href="robowiki?Tango" class=wikipagelink>Tango</a>'s suggestion shows that it can be made quite simple as well, I think I'll start with that and see where it leads. I'll post the result here eventually. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yes, mine is overly simple, really.  If you want to do anything proper you want a full list done using all the right interfaces and everything. Good luck! -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+There is a Holy Grail of Linked Lists, and in my hardcore Software Engineering class it was known as CDLLWHN -- Circular Doubly-Linked List With a Head Node.  It is a pristine implementation in which there are absolutely no special cases.  If you want I can write one for you that implements List.  What special functionality do you need?  (That is, beyond what <a href="robowiki?LinkedList" class=wikipagelink>LinkedList</a> already provides?)  If you just want a low-level linked-list that simulates an infinite loop (with a beginning but no end), then a plain Circular Doubly-Linked List (without head node) would be what you wanted, probably comprised of simple Nodes with previous and next Node references, and a data Object.  Is there a reason, besides elegance, that you want to implement Collection or List? -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+No reason really. I just like to work with the Collection classes, they usually do what I want. For the purpose I indent for the circular list I don't need much. <a href="robowiki?Tango" class=wikipagelink>Tango</a>'s implementation should be enough. Since I'm not going to grow or shrink or alter the list in any way, arrays will do. I can see when I start to need to alter the list I will have to work with a linked list instead. But I usually don't solve problems I don't have yet. There are plenty of present problems. =) However, if you would be so kind as to serve us Robocoders with a more solid implementation I would be very happy. I like when the wiki gets code added to it! If you do all the hard work with the list I will be using it. It's that if I do it myself I will probably do it in a not-so-robust way. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<hr noshade class=wikiline size=1>
+I took a guess at the functionality that you wanted, and after looking at the source to java.util.<a href="robowiki?LinkedList" class=wikipagelink>LinkedList</a>, I decided that this is probably the best way to go about it.
+<pre>
+	import java.util.*;
+
+	public class CircularLinkedList extends LinkedList {
+		private class CircularListIterator implements ListIterator {
+			private ListIterator wrappedIterator;
+
+			CircularListIterator(ListIterator iter) {
+				wrappedIterator = iter;
+			}
+
+			public void add(Object o) {
+				wrappedIterator.add(o);
+			}
+
+			public boolean hasNext() {
+				return true;
+			}
+
+			public boolean hasPrevious() {
+				return true;
+			}
+
+			public Object next() {
+				if (!wrappedIterator.hasNext())
+					wrappedIterator = listIterator(0);
+
+				return wrappedIterator.next();
+			}
+
+			public int nextIndex() {
+				return wrappedIterator.previousIndex() % size();
+			}
+
+			public Object previous() {
+				if (!wrappedIterator.hasPrevious())
+					wrappedIterator = listIterator(size());
+
+				return wrappedIterator.previous();
+			}
+
+			public int previousIndex() {
+				return (wrappedIterator.nextIndex() + size()) % size();
+			}
+
+			public void remove() {
+				wrappedIterator.remove();
+			}
+
+			public void set(Object o) {
+				wrappedIterator.set(o);
+			}
+		}
+
+		public ListIterator circularIterator(int index) {
+			return new CircularListIterator(listIterator(index));
+		}
+	}
+</pre>
+If this isn't what you wanted, let me know. -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+Looks good to me. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Sorry for not specifying very exactly what functionality I want. It's still just a baby idea in my head. But your implementation seems to have everything I should need. I had missed the ListIterator<a href="robowiki?action=edit&id=ListIterator" class=wikipageedit>?</a> in the Collections API. It was what I was exepecting to find when I browsed the API. I must have been really thick when browsing. ... Thanks for the help <a href="robowiki?Nano" class=wikipagelink>Nano</a>. Now expect a few <a href="robowiki?Trigonometry" class=wikipagelink>Trigonometry</a> related API questions from me. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?JavaConstructs" class=wikipagelink>JavaConstructs</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=JavaConstructs/CircularList" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=JavaConstructs/CircularList">View other revisions</a><br>Last edited December 23, 2003 9:07 EST by <a href="robowiki?PEZ" title="ID 1949 from 192.168.0.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=JavaConstructs/CircularList">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

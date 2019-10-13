@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Starrynte/Knowledge - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Starrynte, Knowledge'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Knowledge">Starrynte/Knowledge</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package ntc;
+import robocode.*;
+import java.awt.geom.*;
+import java.awt.Graphics2D;
+import java.awt.Color;
+
+
+public class Knowledge extends AdvancedRobot
+{
+	static String headDelta;
+	static String velocity;
+	double lastHeading=0;
+	Point2D.Double predictedPos=new Point2D.Double();
+	int direction = 1;
+	
+	/**
+	 * run: Knowledge's default behavior
+	 */
+	public void run() {
+		if(getRoundNum()==0){
+			headDelta="";
+			velocity="";
+		}
+		setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
+		setFire(0.1);
+		setColors(Color.WHITE,Color.BLACK,Color.GREEN);
+		
+		setAdjustGunForRobotTurn(true);
+		setAdjustRadarForGunTurn(true);
+		
+		double currentDirection=18D;
+		double maxX = getBattleFieldWidth()-currentDirection;
+		double maxY = getBattleFieldHeight()-currentDirection;
+		double futureX, futureY;
+		currentDirection=45;
+		while(true){
+			double time = getTime();
+			double ahead = currentDirection*(Math.sin(time/17D)-Math.cos(time/23D));
+			setAhead(ahead);
+			execute();
+			futureX = ahead*Math.sin(getHeadingRadians())+getX();
+			futureY = ahead*Math.cos(getHeadingRadians())+getY();
+			if (futureX &lt; 18D || futureY &lt; 18D || futureX &gt; maxX || futureY &gt; maxY){
+				currentDirection = -currentDirection;
+			}
+			scan();
+			execute();
+		}
+	}
+
+
+	
+	public void onScannedRobot(ScannedRobotEvent e) {
+		setTurnRightRadians(normalRelativeAngle(Math.PI/2-e.getBearingRadians()));
+		double myX=getX();
+		double myY=getY();
+		double myHeading=getHeadingRadians();
+		double myGunHeading=getGunHeadingRadians();		
+		headDelta += (char)(int)(e.getHeading()-lastHeading);
+		velocity += (char)(int)(e.getVelocity());
+		lastHeading=e.getHeading();		
+		if(headDelta.length()&gt;50 &amp;&amp; getGunHeat()/getGunCoolingRate()&lt;4){
+			double bulletPower=2.5;
+			String currentH=headDelta.substring(headDelta.length()-7);
+			String currentV=velocity.substring(velocity.length()-7);
+			int startIndex=-1;
+			double diff=Double.POSITIVE_INFINITY;
+			
+			for(int i=0;i+7&lt;=headDelta.length()-14;i++){
+				double thisDiff=0;
+				if(headDelta.substring(i,i+7).equals(currentH) &amp;&amp;
+					velocity.substring(i,i+7).equals(currentV)){
+					startIndex=i+7;
+					break;
+				}
+				for(int j=0;j&lt;currentH.length();j++){
+					thisDiff+=Math.pow(((double)(int)currentH.charAt(j))-((double)(int)headDelta.substring(i,i+7).charAt(j)),2);
+					thisDiff+=Math.pow(((double)(int)currentV.charAt(j))-((double)(int)velocity.substring(i,i+7).charAt(j)),2);
+				}
+				if(thisDiff&lt;diff &amp;&amp; thisDiff/3&lt;1){
+					startIndex=i+7;
+					diff=thisDiff;
+				}
+			}
+			if(startIndex==-1){
+				setTurnGunRightRadians(normalRelativeAngle(e.getBearingRadians()+myHeading-myGunHeading));
+			}else{
+				double bD=0;
+				double bT=0;
+				double eX=myX+Math.sin(e.getBearingRadians()+myHeading)*e.getDistance();
+				double eY=myY+Math.cos(e.getBearingRadians()+myHeading)*e.getDistance();
+				double eH=e.getHeadingRadians();
+				int index=startIndex;
+				double battleFieldWidth=getBattleFieldWidth();
+				double battleFieldHeight=getBattleFieldHeight();
+				while((++index)&lt;headDelta.length()-1){
+					eH+=((double)(int)headDelta.charAt(index));
+					double dX=Math.sin(Math.toRadians(eH)) * ((double)(int)velocity.charAt(index));
+					double dY=Math.cos(Math.toRadians(eH)) * ((double)(int)velocity.charAt(index));
+					
+					eX+=dX;
+					eY+=dY;
+					if(distance(myX,myY,eX,eY)&lt;=bD){
+						setTurnGunRightRadians(normalRelativeAngle(Math.atan2(eX-myX,eY-myY)-myGunHeading));
+						bulletPower=(20-(distance(myX,myY,eX,eY)/bT))/3;
+						break;
+					}
+					bD+=Rules.getBulletSpeed(bulletPower);
+					bT++;
+				}
+				predictedPos.setLocation(eX,eY);
+			}
+			
+			if(getGunHeat()==0d){
+				setFire(bulletPower);
+			}
+		}else{
+			setTurnGunRightRadians(normalRelativeAngle(e.getBearingRadians()+myHeading-myGunHeading));
+			if(getGunHeat()==0d){
+				setFire(3);
+			}
+		}
+		double radarAmt=normalRelativeAngle( getHeadingRadians() + e.getBearingRadians() - getRadarHeadingRadians());
+		radarAmt += (radarAmt &lt; 0.0 ? Math.atan( -18 / e.getDistance()) : Math.atan( 18 / e.getDistance()));
+		setTurnRadarRightRadians(radarAmt);
+	}
+
+	public void onPaint(Graphics2D g){
+		g.setColor(Color.GREEN);
+		g.fillOval((int)predictedPos.getX(),(int)(getBattleFieldHeight()-predictedPos.getY()),10,10);
+	}
+
+	public double normalRelativeAngle(double angle) {
+		//taken from OddBot
+		return robocode.util.Utils.normalRelativeAngle(angle);
+	}
+	
+	public double distance( double x1,double y1, double x2,double y2 ) {
+                double xo = x2-x1;
+                double yo = y2-y1;
+                double h = Math.sqrt( xo*xo + yo*yo );
+                return h;
+        }
+}
+
+</pre>
+The onPaint and out.println(":)"); are for debugging. I need them, because it is not workingfor some reason i don't know! (i think it has something to do with the finding of the start index)--<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Starrynte/Knowledge" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Starrynte/Knowledge">View other revisions</a><br>Last edited December 28, 2006 19:18 EST by <a href="robowiki?Starrynte" title="ID 8009 from cpe-75-84-95-139.socal.res.rr.com">Starrynte</a> <a href="robowiki?action=browse&diff=1&id=Starrynte/Knowledge">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

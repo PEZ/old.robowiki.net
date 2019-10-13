@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Vibora - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Vibora'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Vibora">Vibora</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Vibora is another pattern matcher bot. Not finished yet, and not competitive nowdays against the top-bots (I'w have to change the movement to make it competitive). But I wanted to release something before going holidays, to here it is.
+<p>
+Nov. 2003 - v1.1 released.
+<p>
+<H4>What's special about it?</H4>
+
+<p>
+It is able to use all the battle history for its pattern matcher (most pattern matchers are limmited to 5.000-10.000 last observations) and it is able to "average" several patterns to create a best estimate (like Aspid).
+<p>
+The previous version was skipping many, many turns. In order to avoid it, I added <a href="robowiki?MultiThreading" class=wikipagelink>MultiThreading</a> to the bot: The main thread (the bot one) controls the bot and searches for the best patterns. The second one deals with insertion of enemy information into the data structures (inserting is very time consuming, because it precalculates the indexes).
+<p>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<p>
+As always, from the <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a>.
+<p>
+<H4>How competitive is it?</H4>
+
+<p>
+It has a good gun (at least equal - I hope - to Aspid), but it uses Aspid/MicroAspid<a href="robowiki?action=edit&id=Vibora/MicroAspid" class=wikipageedit>?</a> movement, which dates from Dec'02, and became quite obsolete againts the top-bots. It's not finished yet, and I plan to change its movement...
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+<p>
+It uses Random Movement, exactly the same as Aspid and <a href="robowiki?MicroAspid" class=wikipagelink>MicroAspid</a>.
+<p>
+<H4>How does it fire?</H4>
+
+<p>
+It features a <a href="robowiki?PatternMatcher" class=wikipagelink>PatternMatcher</a> with the same principles as Aspid (it is able to match several patterns and "average" them). The advantage over Aspid is that it can use all the previous history (not only the last 5.000 observations like Aspid). It should give it some advantage in long matches (ie. more than 10 rounds). The <a href="robowiki?PatternMatcher" class=wikipagelink>PatternMatcher</a> is also a <a href="robowiki?SymbolicPatternMatcher" class=wikipagelink>SymbolicPatternMatcher</a> (it makes easier to process the data) and the information is heavily indexed and stored in a tree-like structure to make it fast to retrieve it.
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+<p>
+It just moves randomly and is confident in his luck.
+<p>
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a> strategy?</H4>
+
+<p>
+I's just a 1v1 bot.
+<p>
+<H4>How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a>?</H4>
+
+<p>
+Don't know.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+<p>
+Nothing yet.
+<p>
+<H4>Where did you get the name?</H4>
+
+<p>
+It's just another snake's name. Because is based on Aspid (the concepts are the same) I thought t would be a good idea.
+<p>
+<H4>Can I use your code?</H4>
+
+<p>
+Not for the moment, but I'w be happy to comment how it works with anybody interested.
+<p>
+<H4>What's next for your robot?</H4>
+
+<p>
+Put in a good state-of-the-art movement.
+<p>
+Also, it seems the gun is not as good as expected. Once the skipped turns problem was fixed, I expected it to place close to Aspid, but it didn't happen :-(
+<p>
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+<p>
+It's not really tested...
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+<p>
+<a href="robowiki?Aspid" class=wikipagelink>Aspid</a>
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+Cool! So you're into movement a while now? That's bad news for us as your competitors! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I'm curious as to why the data insertion is the sow part, and not the pattern searching? I don't know much about <a href="robowiki?MultiThreading" class=wikipagelink>MultiThreading</a>, but maybe I should make some experiments with it. My gun also skips more turns than I would like it to, even if it's not a very slow gun imho...  -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+I'm using a VariableLengthMultiplePatternsSymbolicPatternMatcher<a href="robowiki?action=edit&id=VariableLengthMultiplePatternsSymbolicPatternMatcher" class=wikipageedit>?</a> (nice name for a page). The information is stored using a tree, where each node is one of the symbols. Also, each node has a vector containing all the indexes that match a given pattern (defined by the path you follow from the root node to the current node). Thus, to search for a given string of symbols (pattern), Vibora just goes down the tree, and then returns a vector containing ALL the indexes that match. It makes the time necessary to retrieve ALL the past patterns that match the current pattern linear to the lenght of the pattern (it is FAST). But it creates many objects when inserting new data. Also uses sorted maps that are able to search the leafs of a node very eficiently, but take a longer time to insert... So matching the patterns is fast, but inserting the data is slow. As I don't need the pattern matcher to have ALL the data there (I can live with some delay in the data used for pattern seaching) the update is made by another thread. This way I don't skip turns. 
+<p>
+Anyway, there is probably a bug, because I'm not getting the expected results.
+-- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Wow, I will have to read that paragraph a couple more times to see if I understand what your talking about :). Looks like the memory consumption will be huge? -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<hr noshade class=wikiline size=1>
+Here it goes a graphical explanation:
+<p>
+To make it simple, I'w not include heading change for now, and assume bots accelerate/deccelerate a 4 per turn (to make the exaple shorter).
+Also, I'w will assume the maximum deep for the tree is 3
+<p>
+Imagine you have a bot that moves like follows (the values are the velocity of the bot each turn):
+<pre>
+8,8,8,4,0,4,8,8,4,0,0,4,8,8,8
+</pre>
+The first thing Vibora does is to translate this into a symbolic space and convert it to an string:
+<pre>
+velocity -&gt; { A,B,C } where A=8, B=4, C=0
+The resulting string will be: *AAABCBAABCCBAAA 
+(The first asterisc is there just for convenience, to match the root node)
+</pre>
+Then, it inserts the string into the tree, step by step. Note that the 1st level of the tree contains a length 1 matches, the 2nd level of the tree contains the lenght 2 matches, the 3rd level contains the lenght 3 matches and so on:
+<pre>
+The empty tree will be:
+*
+Then inserts the elements as follows (the example is for the first 7 elements only):
+
+*     *      *         *              *
+|     |      |         |--------|     |--------|-----| 
+A(1)  A(1,2) A(1,2,3)  A(1,2,3) B(4)  A(1,2,3) B(4)  C(5)
+      |      |         |        |     |        |     |
+      A(2)   A(2,3)    A(2,3)   A(4)  A(2,3)   A(4)  B(5) 
+             |         |        |     |        |     |
+             A(3)      A(3)     A(4)  A(3)     A(4)  A(5)
+
+*                           *  
+|--------|-----------|      |-----------|-----------|
+A(1,2,3) B(4,6)      C(5)   A(1,2,3,7)  B(4,6)      C(5)
+|        |----|      |      |------|    |----|      |
+A(2,3)   A(4) C(6)   B(5)   A(2,3) B(7) A(4) C(6)   B(5)
+|        |    |      |      |      |    |    |      |
+A(3)     A(4) B(6)   A(5)   A(3)   C(7) A(4) B(6)   A(5)
+</pre>
+<p>
+Now the enemy bot keeps moving and at a certain moment we want to target it. Matching the longest sequence, or a number of sequances of a  minimum lenght, or a minimum number of sequences is now very easy:
+<p>
+Assume the last movements of the bot where 4,8,8. 
+Then translate into an string *AAB (the leftmost character is the most recent observation) , and then go down the tree. For the example tree it will start from the '*' node, then move to the 1st level 'A' node, then down to the 2nd level 'A' node, and it will find no more nodes to go down, so it will return (2,3). 
+<p>
+Vibora has been able to retrieve all the patterns that match the current one with the longest sequence in a very fast way (it imposes also some conditions on the minimum number of indexes returned). It allows it to search all the history (not only the most 5000 to 10000 most recent observations).
+<p>
+Now it just goes to the original series, projects the future positions from time 2 and 3, and "averages" the resulting bearings to decide where to shot.
+<p>
+Memory is not an issue, because I'm not one of these masochistic people that runs 1000 rounds matches :-)
+<p>
+-- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+1000 matches is not enough! :) -- <a href="robowiki?Frakir" class=wikipagelink>Frakir</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+12.07.2005 Does anyone has a copy of this Bot, preferable the source? The Repository seems not to have one. Thanks.  --bjd
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Vibora" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Vibora">View other revisions</a><br>Last edited July 12, 2005 12:30 EST by 62.157.215.130 <a href="robowiki?action=browse&diff=1&id=Vibora">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

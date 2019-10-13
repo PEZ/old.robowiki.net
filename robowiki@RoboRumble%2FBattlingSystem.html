@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RoboRumble/BattlingSystem - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Robo, Rumble, Battling, System'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/BattlingSystem">RoboRumble/BattlingSystem</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Someone with time and kindness enough maybe can copy/paste some of the discussions on other pages about this here?
+<hr noshade class=wikiline size=1>
+There's a rather big problem with the current battle system (RR makes sure every bot get 500 battles and then tries to make its pairing table is complete). There is too much room for randomness. I've noticed as much as 10 points difference for the exact same source code of <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a>. This makes it pretty hard to know if a particular update is good or not. <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a> and I are scetching on a different battling scheme which would try make sure each pairing is run at least trice. This should iron away much of the randomness I think. Anyone with suggestions, opinions, whatever on this issue, please share. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I like this idea. This would stabilise the result table and thus make it easier to determine the problem bots. The <a href="robowiki?PremierLeague" class=wikipagelink>PremierLeague</a> would profit as well. But i have to admit that i dont see how this could limit the influence of randomness on the rating (apart from the somewhat higher total number of battles). Maybe thats because i never really looked into the rating system :-). Does the distribution of battles to the opponents have any effect on the overall rating of a specific bot? I mean, if i have two releases of the same bot and both get identical results for all pairings, could the rating still be different (maybe because the first release fought more battles vs problem bots than the second)? --<a href="robowiki?Mue" class=wikipagelink>Mue</a>
+<p>
+No, with identical results the rating should be the same. The results in a particular pairing are just accumulated. <a href="robowiki?Ascendant" class=wikipagelink>Ascendant</a> might have some bad luck against, say, <a href="robowiki?Nimrod" class=wikipagelink>Nimrod</a> and get beaten by 44% in the first meet. Then if A makes up for it in the next meet and beats N by 56% the results would be a 50% score. In a third meet A might have some good luck and beat N by 70%. And so on. You're right, the PL will definately benefit from it. But since it does so will the regular ratings. At least I think it will. There will not be that many more battles faught for a particular bot, will it? At least not with the current number of participants. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+If the rating would be the same, good luck and bad luck would just even out each other somewhat better due to the increased number of battles (ca. 870 instead of 7xx). But after looking at the server code, i think the same results do not necessarily lead to the same rating.
+<p>
+To me it looks like every battle has a small influence on the ratings of the participating bots. The result is compared to the expected result, and then the rating of both bots is adjusted to better predict this result. So consider a release of <a href="robowiki?Ascendant" class=wikipagelink>Ascendant</a> that has fought at least one battle vs every other bot and has a rating based on all these results. But for some reason now many battles vs problem bots of A are uploaded. Since A performs worse than expected (my definition of problem bot) its rating is going to drop a small amount for each battle, while the rating of its respective opponent increases slightly. The rating would change even if these new battles just confirm the bad results that are already known.
+<p>
+Thus these two lines in the details sheet have different impact on the rating, since the first caused 16 adjustments while the second caused only 2:
+<pre>
+gm.GaetanoA_2.15	71.7	16	82.8	-11.0
+timmit.nano.TimCat_0.13	96.8	2	85.7	11.0
+</pre>
+<p>
+If this is really correct, i believe this to be the main reason for randomness in the rating since even for older bots with lots of battles the number of battles for different pairings varies a lot. Making sure that each pairing is run at least trice should lead to a more uniform distribution of battles to opponents and thus reduce this effect. Maybe setting up the server to always select pairings with the least number of battles would be a good idea as well? --<a href="robowiki?Mue" class=wikipagelink>Mue</a>
+<p>
+Thanks for the research! Yeah, selecting the pairing with the least number of battles sounds like a good idea. What if we would make this the only rule? Each iteration the client gets a list of the NUM_BATTLES pairings with the lowest battle count. The server selects these on random if it has many pairings with equal battle count. This should give any given bot 3 pairings against each enemy as quick as any other scheme, shouldn't it? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Personally I don't think the current battle system is that susceptible to randomness. The relatively large number of entries balances out the random factor, imho. I find it very hard to believe that the <strong>exact</strong> same source code can rank 10 points lower/higher. Sometimes there are very small differences in the code (or saved data) that can make it look so. Anyway, I'm all for the least number of pairings battle, I'm still waiting for Shadow to meet DT a couple more times... ;) -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Better beleive it man. CC 1.9.7.10 and .20 are using the identical source code and the same saved data. The latter got 12 points less. I guess I see this randomness more since I release 2-3 version a day. =) Some of my releases are identical and a difference of 5 points is not uncommon. Maybe a change in battling scheme won't help, but it could be worth a try. Better do it while <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a> is still active. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Maybe your not letting each version fight enough battles... With Shadow I got exactly the same rating with 3.25 and 3.13, I could even find out exactly how many points each tweak from 3.13 to 3.21 costed me, since I removed them one by one from 3.21 -&gt; 3.25.
+<p>
+@<a href="robowiki?Mue" class=wikipagelink>Mue</a>: The server recalculates all pairings for a bot when a new result is uploaded, so those two lines adjusted the ranking the same number of times (the total number of battles). Also, running lots of battles against one of your problem bots will also change your enemy's ranking, so every battle will have less impact on your (and his) score. You will also gain more and more points from all your other pairings when you lose points, balancing out the points you lost against him.
+<p>
+Still, a new battling system would be very welcome, if anything it will surely stabilise the PL rankings a lot, since it is very sensible to lucky/unlucky draws...
+<p>
+-- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Are you sure the server recalculates all pairings after the upload of a new result? I looked at the class UploadedResults<a href="robowiki?action=edit&id=UploadedResults" class=wikipageedit>?</a> in the server directory of roborumble, guessing that this is the code the server executes when a result is uploaded. It adjusts the ratings of the participating bots, but i dont see there any code that considers other pairings. Well, maybe its just old source code here... --<a href="robowiki?Mue" class=wikipagelink>Mue</a>
+<p>
+You probably have the latest source code. But it could be a bit entangled to follow. With some luck an effort to upgrade the battling system could result in a start at refactoring the rating code as well.
+<p>
+ABC. Of course I'm taking about results from bots who have gotten "enough" battles. At least enough so that the battling system has stopped priorituzing them. And of course two identical versions of a bot <em>could</em> get the same rating. But any conlcusions drawn from a 5 point difference between two different versions might be just a mirage. That's where I think the problem is. And, the PL really needs some stabler grounding I think. As it is now the PL ranking table is reordered every day. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I also thought, when I read the code, that it only updated the participating bots' ratings. But Albert said that it would re-evaluate all the pairings they participated in. I guess there is some obfuscated outer loop, the code sure is hard to follow... -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+The server updates the ratings of the bot's uploaded results, compared against all other bots in the rumble. So a bot just needs a match from time to time to have it's rating up to date. About stability, I don't think it is an easy way to have a completely stable system (unless much calc power is used). Note that you always need to compromise between recognizing improvement in learning bots vs. having a longer data window. Any way, who does need stability? Just make a killer bot :-) -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Yeah! Just make one. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I just released <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> 1.9.8.18 - hopefully a killer bot! =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I'm reluctant to make too many changes to the current system as it works well and don't have the time anyway. But some modifications can be done of course. Of course that won't exactly help to clarify the source when yet another person tries to change things. I have yet to send you the changes (solved the deadlocks/file lock issues on the server) and additions (comparison) I made so far <a href="robowiki?Albert" class=wikipagelink>Albert</a>, someone should remind me! -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+I agree with Pulsar there. The rating system works quite good, so i'm not convinced a change is necessary. The other way to select pairings however should lead to a fairer and more uniform distribution of battles to pairings without any risk to destroy the current system. Thats why i still think it to be a good idea. --<a href="robowiki?Mue" class=wikipagelink>Mue</a>
+<UL >
+<UL >
+<li> Don't get me wrong I agree with <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, just that overall it works well but the uniform distribution AND more than one match against each oppponent would improve it further. It's definatly not stable at 500 battles for sure at least! I think it needs more like 700 and sometimes 800 currently. -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<li> Didnt misunderstand you, in fact i still agree with you completely :-). I just got the impression that more general changes, like changing the way the points are calculated, were considered. --<a href="robowiki?Mue" class=wikipagelink>Mue</a>
+</UL>
+</UL>
+<p>
+Well, I'm telling you the rating system is a bit too random to trust when the gains/losses are around 5 points or less. That might be quite good, but worse than I previously thought it was. The solution is, as Albert says, to make improvements that are bigger than that. But still... I won't start to work on a new battling system on my own, that's for sure. =) I'll work on making CC gain 20 points ground instead. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I was looking at the details sheet for <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> 2.11 and I noticed that it had battled the latest version of Shadow, along with other bots released after Paul had uploaded a newer version of DT. Could something like this be happening to other bots? That is, they for some reason fight an older version of a bot, which wouldn't show up on their details sheet, but it still contributes to their overall rating. Or does 2.11's detail sheet just say 3.25 when it should have an older version of Shadow listed instead? -- <a href="robowiki?Alcatraz" class=wikipagelink>Alcatraz</a>
+<p>
+Sometimes old versions of bots "wakes up" to fight battles. I don't think it impacts the rating of the opponents though. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RoboRumble/BattlingSystem" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RoboRumble/BattlingSystem">View other revisions</a><br>Last edited May 5, 2006 6:25 EST by <a href="robowiki?Florent" title="ID 6624 from 156.187.103-84.rev.gaoland.net">Florent</a> <a href="robowiki?action=browse&diff=1&id=RoboRumble/BattlingSystem">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

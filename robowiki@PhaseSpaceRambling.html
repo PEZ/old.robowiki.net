@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>PhaseSpaceRambling - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Phase, Space, Rambling'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=PhaseSpaceRambling">PhaseSpaceRambling</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>(Linked from a long way down in the <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a> discussion, as this is off topic, rather rambling, and of questionable practical use even if it makes any sense! So you'll need to go back to <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a> to get the context.)
+<p>
+I didn't follow this discussion all the way down - there's rather a lot of detail in it! However, it's an interesting line of thought. And it triggers some in me:
+a) A chaos-theory/phase space perspective on this approach.
+b) Is this not, in some sense, taking a multi-segmented GF type gun and "collapsing" it towards being a pattern matcher? 
+<p>
+a) Aplogies in advance for lots of words to follow :) The concept of "phase space", which crops up a lot in chaos theory and dynamical systems analysis, seems to be relevant here. Take some system which has a number of variables which change in time and are inter-related in some way, and plot a single point on a multi-dimensional graph where each axis represents one of the original variables. This is phase space. Repeat this for succeeding samples of the system state as time moves on, and you get the system tracing out a trajectory in phase space, which gives an alternative view of the characteristics which govern the way the system changes with time. Some sort of repeatable system e.g. a simple pendulum, forms a closed curve in phase space and follows it around forever. Something that follows more complex rules may look almost completely unpredictable in real space and real time, bouncing round seemingly at random, but in phase space follows a line which almost but not quite falls into some sort of pattern confined to a small area of phase space. This pattern may be infinitely complex (a strange attractor) whilst still only visiting a small part of the total avaialble phase space.
+<p>
+Now, I'm thinking: you are choosing a number of variables measured continuously on the enemy bot - there's a system moving through real space. You plot these variables as a cell in your multi-dimensional array, which due to the need for segementation is basically the same as plotting a smudge rather than a point in a grainy representation of the phase space. And as in phase space the system will only visit a constrained area of the total available phase space because of the internal rules it is governed by, and will spend more time in some area than others, only certain cells in your multi-dimensional array will be visited, and some of those only rarely. 
+<p>
+Although with a complex system it is not possible to precisely predict its future path through phase space, and hence the changes in real space, knowing roughly where you are on the phase space diagram does give you a bit of a handle on where it is likely  to be in the near future. If you start with a smduge in phase space representing the region within which we know the system to lie to the limits of our measuring ability, in a complex system it will stretch out in unpredictable ways as time continues so the ability to make predictions of where it will be in the future weakens as we look further forward in time. But in the short to medium term, rough predictions made on the basis of knowing what the attractor looks like does produce better results than purely random guesses.
+<p>
+If the system under study was really completely and unpredictably random, the phase space trajectory would fill all of the available phase space volume with uniform density and nothing better than random guesses of future position would be possible. Bots cannot move completely randomly, since the movement physics impose certain restrictions. In a real complex but deterministic system if you knew the point in phase space with inifinite accuracy and had infinite computing power you could perfectly predict its future history forever since the phase space trajectory would never branch. Calls to Math.random by many bots in their movement schemes destroy this pure picture (unless you somehow include the current value of the random seed as one of your variables to be plotted :)). But it does sound like the amount of muddiness introduced by this randomness to the phase space picture is not enough to hide the order there.
+<p>
+So maybe the problem of movement flattening vs. multi-segmented guns can be visualised one of trying to produce as complex a strange attractor as possible, vs. all possible sets of variables which might be chosen for the phase space dimensions. Whether that helps or not is debatable :)
+<p>
+b) Pattern-matchers store a set of representations of the state of the target represented by a number of variables at that instant in time. i.e. effectively a list of samples of the target's trajectory through phase space. Limiting a GF array to only cells that the target visits looks to me like capturing the same data points in the same order, but storing them in terms of frequency rather than time ordering, thus giving a more statistical and less deterministic approach to future prediction. If you then introduce some sort of weighting for more recent data points to be more significant in the array cells (e.g. stored values decay with time unless they get topped up by a new visit) then a sense of time ordering is added on top of the pure statistical approach, and you are tending towards thew pure pattern matcher approach.
+<p>
+Again, not of much practical use, but I thought it was an interesting thing to think about :) -- <a href="robowiki?Shrubbery" class=wikipagelink>Shrubbery</a>
+<p>
+I like it when people jot down their brainstorms like this :-) Some thoughts of my own on your mind wanderings:
+<p>
+a)
+<p>
+The theory of 'phase space' is unknown to me. From your explanation it indeed sounds very similar to the DynamicSegmentation<a href="robowiki?action=edit&id=DynamicSegmentation" class=wikipageedit>?</a> part of <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a>. I would be curious if anyone could ever put this into practise. In the past I have thought about such a targeting system a lot. The biggest problem lies in the area of performance. A robocode robot is only allowed a small amount of processing time. All implementations I could think of stranded on that problem. Summarized, it comes down to the process of reweighing the data tree periodically. This gets very processing expensive. I think implementations of 'phase space' in robocode (iterating towards an approximation of the 'phase space' pattern) cannot be tree based.
+<p>
+b)
+<p>
+I have also suggested before that <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> and highly segmented <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> have a lot in common. See <a href="robowiki?ZoomTargeting" class=wikipagelink>ZoomTargeting</a>.
+<p>
+-- <a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Great minds think alike! And I think we'll leave off the remainder of that particular aphorism... ;)
+<p>
+"Chaos" by James Gleik has some good description of phase space, and the sort of attractors that can arise for different sorts of systems. As well as being a good read from the perspective of anyone interested in the history of science and some of the personalities involved. "The Arrow of Time" by Peter Coveny and Roger Highfield touches on this as well, within the context of arguing that the lack of determinism in these sort of systems and the expansion of the area of uncertainty in phase space as time goes by provide a means of putting the direction of time firmly back in the centre of scientific theory as opposed to treating it as some sort of interpretation of illusion that our consciousness imposes on a time-reversible "fundamental" reality. Both very good reads, scientific enough to give useful insight but still be understandable by non-specialists.
+<p>
+-- <a href="robowiki?Shrubbery" class=wikipagelink>Shrubbery</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=PhaseSpaceRambling" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=PhaseSpaceRambling">View other revisions</a><br>Last edited June 27, 2005 11:10 EST by <a href="robowiki?Shrubbery" title="ID 4445 from cflodc1.gs.com">Shrubbery</a> <a href="robowiki?action=browse&diff=1&id=PhaseSpaceRambling">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Squirrel/Movement - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Squirrel, Movement'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Movement">Squirrel/Movement</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Squirrel" class=wikipagelink>Squirrel</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package bayen;
+import robocode.*;
+import java.util.*;
+import java.awt.geom.*;
+
+/**
+ * FleetFeet - Squirrel's movement
+ */
+public class FleetFeet
+{
+	AdvancedRobot Squirrel;
+	double dir = 1;
+	ScannedRobotEvent lastScan;
+	double iD = 225;
+	
+	public FleetFeet(AdvancedRobot robot) {
+		Squirrel = robot;
+	}
+	
+	public void onScannedRobot(ScannedRobotEvent e) {
+		if(Squirrel.getTime()&lt;30)
+		lastScan = e;
+		double dif = lastScan.getEnergy() - e.getEnergy();
+		if(dif&lt;=3 &amp;&amp; dif&gt;0){
+		    dir=-dir;
+			if(dif==3)
+			iD=225;
+			else if(dif&gt;=2)
+			iD=300;
+			else if(dif&gt;=1)
+			iD=340;
+			else if(dif&gt;=0)
+			iD=iD;
+	    }
+		Squirrel.setTurnRight(normalRelativeAngle(
+		e.getBearing()+90-(e.getDistance()&gt;(iD+100)?45:20)*dir*
+		(e.getDistance()&lt;(iD)?-1:1)));
+		Squirrel.setAhead(100*dir);
+		lastScan = e;
+	}
+	
+	public void onHitWall(HitWallEvent e) {
+		dir=-dir;
+	}
+	public void onHitRobot(HitRobotEvent e) {
+		dir=-dir;
+	}
+	public void onHitByBullet(HitByBulletEvent e) {
+		System.out.println("hit");
+	}
+	private double normalRelativeAngle(double angle) {
+        angle = Math.toRadians(angle);
+        return Math.toDegrees(Math.atan2(
+               Math.sin(angle), Math.cos(angle))); 
+    }
+	
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Squirrel" class=wikipagelink>Squirrel</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Squirrel/Movement" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Squirrel/Movement">View other revisions</a><br>Last edited September 17, 2006 20:50 EST by <a href="robowiki?Bayen" title="ID 8008 from pool-71-162-231-158.phlapa.fios.verizon.net">Bayen</a> <a href="robowiki?action=browse&diff=1&id=Squirrel/Movement">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

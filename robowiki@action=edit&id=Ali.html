@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing Ali - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Ali'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing Ali</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="Ali"  />
+<input type="hidden" name="oldtime" value="1147988045"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="6"  />
+<input type="hidden" name="captchaArg2" value="5"  />
+<input type="hidden" name="captchaOp" value="-"  />
+<input type="hidden" name="captchaId" value="270035728187"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">== Ali - a bot by [[PEZ]] ==
+
+Download it from the RobocodeRepository: http://www.robocoderepository.com/BotDetail.jsp?id=2416
+
+=== How does it fire? ===
+It uses a log of all ticks with information in five dimensions together with the GuessFactor that would have hit the enemy at that tick. When firing the current tick is compared to every tick in the log and the &quot;closest&quot; ones are examined for the most commonly occuring guess factor which is then used to aim the gun. From what I understand this gun is very similar in design to [[Cigaret]]&#39;s gun. Even though that&#39;s accidental. I just realized I can suddenly understand some of what&#39;s going on in [[Cigaret]]! =) Also see /BumbleBee.
+
+=== How does it move? ===
+CassiusClay/Butterfly (that is, WaveSurfing)
+
+Which means this bots floats like a butterfly and stings like a bumble-bee. =)
+
+=== How competetive? ===
+With Butterfly movement it&#39;s bound to be competetive. But the gun is yet not very good. Rumble performance:
+
+* Version 0.1 - &#39;&#39;&#39;1973&#39;&#39;&#39; (PM gun)
+* Version 0.2 - &#39;&#39;&#39;2042&#39;&#39;&#39; (Fuzzy GF gun)
+* Version 0.2.1 - &#39;&#39;&#39;2043&#39;&#39;&#39;
+** Bug fixes in the fuzzy matching.
+** The log is now cleaned and truncated to 8000 waves when it reaches 12000 waves. (Based on how often each scan is fuzzily matched.)  
+* Version 0.2.2 - &#39;&#39;&#39;2042&#39;&#39;&#39;
+** Uses normalized real data instead of crude indexes
+* Version 0.2.3 - &#39;&#39;&#39;1999&#39;&#39;&#39;
+** Only runs the matching once before firing
+** Uses straight differences when matching (so called Manhattan distance)
+** Tweaked dimensions weighting
+* Version 0.2.4 - &#39;&#39;&#39;1987&#39;&#39;&#39;
+** Back to Euclidian distances in matching
+** Reset the dimension weighting back to 0.2.2
+* Version 0.2.5 - &#39;&#39;&#39;2046&#39;&#39;&#39;
+** Back to 0.2.3 config
+** Gunalignment and &quot;only-run-matching-once-per-bullet&quot; re-visited.
+* Version 0.3 - &#39;&#39;&#39;1974&#39;&#39;&#39;
+** Segmentation on velocity and wall proximity only
+** Removed MultipleChoice. Now only uses the best matching log entry.
+* Version 0.3.1 - &#39;&#39;&#39;1995&#39;&#39;&#39; - As of May 2005. Not comparable with the above scores, but with the below.
+** Segmentation wall proximity, time since velocity change and distance traveled last 15, 60 and 120 ticks (TronsGun inspired)
+** Reinstalled MultipleChoice. Using the 15 best matching entries.
+** Chebyshev Distance (|a - b|) used for comparing log entries
+* Version 0.4.1 - &#39;&#39;&#39;2018&#39;&#39;&#39;
+** ApproachVelocity dimension removed
+** Dimensions somewhat normalized around 0-75
+* Version 0.4.2 - &#39;&#39;&#39;2032&#39;&#39;&#39;
+** Reverse wall distance dimension added
+** Tuned the threshold to select the log entries used for MultipleChoice
+** Tuned the weights on each dimension
+* Version 0.4.3 - &#39;&#39;&#39;2032&#39;&#39;&#39;
+** Using a fixed cluster size (100) of the &#39;&#39;&#39;best&#39;&#39;&#39; matching log entries.
+** To speed things up the log is first filtered through a coarse selection of half-good matches.
+** Weighting of dimensions: Firedistance = 1 and all others 2.
+* Version 0.4.4 - &#39;&#39;&#39;2031&#39;&#39;&#39;
+** Minor tweak of cluster size and coarse filtereing threshold
+** Refactored the selection process
+* Version 0.4.5 - &#39;&#39;&#39;2034&#39;&#39;&#39; (Top 10!)
+** Tweaking weights of segmentation dimensions
+* Version 0.4.6 - &#39;&#39;&#39;2037&#39;&#39;&#39;
+** Using Euclidian distances for phase-2 cluster selection
+* Version 0.4.7 - &#39;&#39;&#39;2037&#39;&#39;&#39;
+** [[DCBot]] inspired weighting of the dimensions (an experiment)
+** Added segmentation on approach angle and time-since-fired. (Also DCBot inspired)
+** Squared Euclidian distances used for both phase 1 &amp; 2. (Squared since it should render the exact same results and I save quite a few calls to Math.sqrt() this way.)
+** Some other stuff too that I can&#39;t really recall. All in all too many experiments in one batch to really be useful for feedback. But it seems in my little testing that the short-battle performance has imporoved.
+(Everything is about the gun in this bot. The movement is always the same as the current dev version of CassiusClay.)
+----
+=== Comments or questions anyone? ===
+
+An alligator floating like a butterfly and stinging like a bumble-bee? :-) -- [[Jonathan]]
+
+If it was an alligator it would instead just bite, roll and drown its enemies. =) -- [[PEZ]]
+
+/BumbleBee reminds me of DuelistMicroMkII&#39;s gun. --[[David Alves]]
+
+Yeah, from the descriptions they sound very similar! Though you talk about your gun as a PatternMatching gun. I think of B/umbleBee as purely StatisticalTargeting. Most StatisticalTargeting guns are 1-length matchers, aren&#39;t they? Or 2-length when they deal with acceleration maybe. I might be wrong here, but I think [[Cigaret]]&#39;s gun is similar to our two guns as well. -- [[PEZ]]
+
+Here&#39;s the distinction: GF guns break all possible situations into segments and then look for the segment that the opponent is currently in. PM guns look at a the history of recent moves and try to find a time in the past that the enemy has moved in a similar way. GF guns break things up into discrete chunks whereas PM guns try to find the most similar previous state. DuelistMicroMkII and /BumbleBee are a cross between the two because they only look at the current enemy state like a GF gun would, but then they find the most similar previous state (like a PM gun) rather than looking in a specific segment. TronsGun also seems similar, incidentally. I count acceleration as being part of the &quot;current enemy state&quot;. &quot;State matcher&quot; is probably a good name for this type of gun, since it works like a PM gun but operates on  the current enemy state instead of operating on patterns of enemy moves. --[[David Alves]]
+
+Like all my micro and nanobots, DuelistMicroMkII includes source, so feel free to take a look at the gun. I was going to match on more factors than the 2 I use, but I ran out of space. --[[David Alves]]
+
+Your distinction is very different from mine. Whether it&#39;s a GF gun or not is only dependent on if it uses GFs for the actual aiming or not. Instead of storing heading and velocity in the log for replay, /BumbleBee simply stores the GF, just like Bee does. The difference between [[Bee]] and BumbleBee is only on how they store the data. Bee decides beforehand what segmentations to use. /BumbleBee makes the decision later. /BumbleBee could build up the same buffers on the fly as Bee does continously. The matching part is similar between the two guns. If BumbleBee is a state matcher, so is Bee. If Bee is a StatisticalTargeting, so is /BumbleBee. -- [[PEZ]]
+
+What would you call DuelistMicroMkII? --[[David Alves]]
+
+Haven&#39;t looked at the code yet. I&#39;ll do that first and then answer you. -- [[PEZ]]
+
+OK. So now I have checked. It&#39;s even more similar to [[Cigaret]]&#39;s gun than /BumbleBee is. But it&#39;s still a StatisticalGun I would say. You store the diff-angle and the current target direction instead of the GF. And you only find the best match instead of the best matche&#39;&#39;&#39;s&#39;&#39;&#39; like I do. Otherwise it&#39;s the same. It&#39;s a StatisticalGun that only uses one sample of the statistics. =) But a few simple changes would enable it to use more samples. Even though I suspect you&#39;d have a hard time staying a micro then... -- [[PEZ]]
+
+I wouldn&#39;t call a single match gun a StatisticalGun, there are no statistics involved. A traditional GF gun and a MultipleChoice PM are statistical guns. The difference between a pattern matcher and a &quot;state matcher&quot; is in what you match, PM involves a time series while (traditional) GF guns don&#39;t. When you include time-sice-something in a GF gun, the distinction blurs. -- [[ABC]]
+
+Which would mean Bee is in that blurred zone? Your definition of Statistical vs PM leaves Cigaret and DuelistMicroMkII without any home in either. They are not statistical (since they only look at the best macthing sample) and they are not PM (since they don&#39;t include a time series). What I am beginning to think here is that PM and statistical has all the time been the wrong categorizations. -- [[PEZ]]
+
+There are a lot of different ways you can look at a gun. The PM and GF distinction was good enough when the two main (good) gun types were either statistical gf-based or best match PM-based. These days there are a lot of different combinations of gun characteristics, it&#39;s very hard to classify them all in just two separate groups. I would call Cigaret (and others, like DuelistMicroMkII) a GF-based best match gun. -- [[ABC]]
+
+Yes, but since it&#39;s entirely possible to make a GF based PatternMatching gun and also make it MultipleChoice between several matches the whole distinction is uninteresting to divide guns with. The word pattern-matching doesn&#39;t anywhere state that it involves a time series. It&#39;s just one axis over which to build patterns. -- [[PEZ]]
+
+Agreed, almost every gun can be said to be PatternMatching... So, find a better name for time series matching... :) -- [[ABC]]
+
+== Revisiting ==
+Checking this page I wonder why I almost abandonded this gun path. Version 0.2.5 seems to be a quite good gun and it should be open for improvement. I had planned to go for movement on CassiusClay when I&#39;ve gotten the VirtualGuns thingy somewhat working. But now I wonder... I also wonder if I shouldn&#39;t go for WaveSurfing using these gun principles. -- [[PEZ]]
+
+Hey PEZ, I noticed that sometimes Ali doesn&#39;t finish off a disabled opponent. Probably doesn&#39;t cost it much in rating points, but just letting you know. --[[wcsv]]
+
+Thanks. What I will do if I start working with this gun again is to make it use Bee for all descisions like that. Only the data storage and processing will be different. That should make it possible for me to plug this gun into CC&#39;s VirtualGuns array too, should I fancy. -- [[PEZ]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 6 - 5 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that Ali has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=Ali">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

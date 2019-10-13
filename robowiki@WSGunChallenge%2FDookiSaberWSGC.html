@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>WSGunChallenge/DookiSaberWSGC - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='WSGun, Challenge, Dooki, Saber, WSGC'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/DookiSaberWSGC">WSGunChallenge/DookiSaberWSGC</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?WSGunChallenge" class=wikipagelink>WSGunChallenge</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package voidious.wiki;
+import voidious.gun.*;
+import voidious.utils.*;
+import wiki.kmove.*;
+import robocode.*;
+import robocode.util.Utils;
+import java.awt.Color;
+	
+/**
+ * DookiSaberWSGC - by Voidious
+ *
+ * The gun of Dookious, the movement of Komarious.
+ */
+
+public class DookiSaberWSGC extends AdvancedRobot {
+    KomariMover _movement;
+    private DookiSaber _saber;
+
+    public void run() {
+        _saber = new DookiSaber(this, false);
+    	_movement = new KomariMover(this);
+
+        setColors(Color.black, Color.white, new Color(194, 174, 140));
+        setAdjustGunForRobotTurn(true);
+        setAdjustRadarForGunTurn(true);
+        do {
+            turnRadarRightRadians(Double.POSITIVE_INFINITY); 
+        } while (true);
+    }
+
+    public void onScannedRobot(ScannedRobotEvent e) {
+	    _movement.onScannedRobot(e);
+    	_saber.onScannedRobot(e);
+        setTurnRadarRightRadians(Utils.normalRelativeAngle(getHeadingRadians() + e.getBearingRadians() - getRadarHeadingRadians()) * 2);
+    }
+
+    public void onBulletHit(BulletHitEvent e) {
+        _saber.onBulletHit(e);
+    }
+
+    public void onBulletMissed(BulletMissedEvent e) {
+        _saber.onBulletMissed(e);
+    }
+
+    public void onHitByBullet(HitByBulletEvent e) {
+        _movement.onHitByBullet(e);
+        _saber.onHitByBullet(e);
+    }
+
+    public void onBulletHitBullet(BulletHitBulletEvent e) {
+        _saber.onBulletHitBullet(e);
+    }
+
+    public void onDeath(DeathEvent e) {
+        _saber.onDeath(e);
+    }
+
+    public void onWin(WinEvent e) {
+        _saber.onWin(e);
+    }
+    
+    public void onSkippedTurn(SkippedTurnEvent e) {
+        System.out.println("Turn skipped at: " + e.getTime());
+    }
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?WSGunChallenge" class=wikipagelink>WSGunChallenge</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=WSGunChallenge/DookiSaberWSGC" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=WSGunChallenge/DookiSaberWSGC">View other revisions</a><br>Last edited July 21, 2006 22:07 EST by <a href="robowiki?Voidious" title="ID 7423 from ool-4357f2bb.dyn.optonline.net">Voidious</a> <a href="robowiki?action=browse&diff=1&id=WSGunChallenge/DookiSaberWSGC">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

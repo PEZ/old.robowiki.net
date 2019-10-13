@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing ArbitraryMovement - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Arbitrary, Movement'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing ArbitraryMovement</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="ArbitraryMovement"  />
+<input type="hidden" name="oldtime" value="1147988912"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="11"  />
+<input type="hidden" name="captchaArg2" value="3"  />
+<input type="hidden" name="captchaOp" value="*"  />
+<input type="hidden" name="captchaId" value="362840946371"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">An interesting theory that I&#39;ve thought about a little bit - a well-formulated and well-tweaked *arbitrary* movement pattern may be at least almost as good as a good random movement.  Your computer can&#39;t produce truly random numbers, it only creates arbitrary numbers related to your system&#39;s internal state and previous random numbers.  (I think I remember hearing about someone in Robocode pumping out a random number of random numbers at the beginning so its opponent wouldn&#39;t get the same random numbers as his robot, just in case.  That seems a bit superstitious to me, though.)  A good set of semi-arbitrary numbers can also be taken from the robocode environment to constitute movement that seems random.  For example, a development version of the first version of [[FunkyChicken]] did something like this in onScannedRobot:
+
+&lt;pre&gt;
+setAhead(Math.cos(e.getEnergy()*5+getEnergy()+getTime()/100)*100 + (pattern.charAt(0)-8)*10);
+&lt;/pre&gt;
+
+(pattern.charAt(0) is the last lateral velocity of my opponent plus 8.  It would be easy to sort of &quot;mirror&quot; an opponent using this I think)
+
+The effect is a movement that is based on a function of time, my energy, my opponent&#39;s energy, my opponent&#39;s current direction of movement - things that don&#39;t directly constitute movement in most robots.  Any parameter that changes arbitrarily over time could potentially be added in here for increased effectiveness.  I added the getTime()/100 in this case just to make sure I changed direction sometimes even if the energy part of the equation was staying close to the same (which obviously isn&#39;t very likely).
+
+[[FunkyChicken]] still uses an ArbitraryMovement pattern, but the one above was discarded for a much simpler one that did better against most of my test pool.
+
+----
+
+I think the potential problem with this in comparison with random (even the rough aproximate you get from Math.random()) is that with the former it is harder to achieve an even distribution of numbers. This might make you vulnerable to good StatisticalTargeting. What movement profile does FunkyChicken show? -- [[PEZ]]
+
+FunkyChicken&#39;s profile is weak, but varies quite a bit on distance.  If I remember right (according to StatistBot/SmogPainter), it has a crazy positive spike at close range, but a broad negative hump,  an insane negative spike at normal battle range, and a slightly negative skewed profile that is mostly centered at longer distances.  A negative spike is not likely in movement that doesn&#39;t react to bullet fire, but FunkyChicken *does* react to bullet fire indirectly.  FunkyChicken&#39;s is also using arbitrary numbers to dis-affect head-on and pattern-matching aim.  I think if I used such numbers less often as arbitrary parameters into the Flood movement (rather than using Math.random()), it may still give an effective profile. -- [[Kawigi]]
+
+Yes, I think it&#39;s the coolest way to DodgingBullets I have seen so far. -- [[PEZ]]
+
+(largely refering to PEZ&#39;s first post after that bar)
+Which isn&#39;t to say Math.random() is any useful. MicroSatan and my top-secret-won&#39;t-even-give-his-name-away (:)) MegaBot both use random.nextDouble() for their random number generation. This ensures uniform distribution as part of the function, no extra work on my part. I like :) -- [[Kuuran]]
+
+For all I know Math.random() uses random.nextDouble() for returning values, so if you find Math.random() unuseful (please state why so) what makes nextDouble() useful? -- [[PEZ]]
+
+LoL, actually, you&#39;re right, [[PEZ]].  Here&#39;s Math.random(), copied from the src.zip that ships with the jdk in Math.java:
+&lt;pre&gt;
+
+    public static double random() {
+        if (randomNumberGenerator == null) initRNG();
+        return randomNumberGenerator.nextDouble();
+    }
+&lt;/pre&gt;
+-- [[Kawigi]]
+
+
+A good hash-function can make the not-so-random-distribution more uniform, but I&#39;ll keep it simple and stick with random.nextDouble() :) --[[FnH]]
+
+Heh... I think I&#39;ll keep it simpler and stick with Math.random(). :D. ArbitraryMomement is also something my (sad attempts at) [[NanoBot]]s use; when done with a good formula they can work very well. Look up stuff like chaotic sequences or whatever on google; I don&#39;t remember much about it from my algebra classes but you can supposedly get recursive formulas that never repeat a value. I&#39;m not sure how evenly spread these are or whatever, but, meh. -- [[Vuen]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 11 * 3 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that ArbitraryMovement has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=ArbitraryMovement">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

@@ -1,0 +1,419 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Locke/OldDiscussion - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Locke, Old, Discussion'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/OldDiscussion">Locke/OldDiscussion</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Locke" class=wikipagelink>Locke</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I may have a bug in the projection from 2D to 1D. Found this after chatting with <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> and <a href="robowiki?ABC" class=wikipagelink>ABC</a> about <a href="robowiki?GuessFactors" class=wikipagelink>GuessFactors</a>. Am chasing it right now, hoping it will cause Locke to jump in the ranking.
+<UL >
+<li> No, the projection works fine. So no potential points to be gained here. It looks like a bug because of the weighting system. Observations with different ETA's than the current situation could drag the aiming a little off. I tried to solve this in 0.5.1 by increasing the weight of the ETA dimension, meaning the segment borders will depend more on ETA accuracy. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<li> Well, that does not work. Lost 8 rating points...
+</UL>
+<p>
+Actually I found another bug after that chat: my Waves were not properly aligned. I failed to take into account 
+that bullets may have different bulletpowers. Thanks to <a href="robowiki?Jim" class=wikipagelink>jim</a> for providing the answer to that one. Strangely, this fix seems not to improve the rating at all!
+<UL >
+<li> In fact I lost 7 rating points with this bug fix! And I used <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a> to verify that the waves are now perfectly aligned! This blows my mind.... --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+</UL>
+<p>
+It seems I was still using an older version of <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>'s movement. As I am comparing the two guns through the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>, I should have the same movement. Also, I found out that in all my previous versions I had broken <a href="robowiki?Axe" class=wikipagelink>Axe</a>'s <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a>. That has been repaired now. I expect a big jump in rating points! --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+<UL >
+<li> YEAH! <a href="robowiki?Locke" class=wikipagelink>Locke</a> jumped 50 rating points to 1870, entering the top 20 in the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>! That means that there is a difference of 60 points with <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>, who shares the same movement. So, if I can gain 60 points with improvements on my SOOL<a href="robowiki?action=edit&id=SOOL" class=wikipageedit>?</a> gun, this gun would be <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>'s equal. And then beyond :-) 
+</UL>
+<p>
+Question to you top guns out there: This high in the rankings, where points are hard to find, can 60 rating points be gained by only tweaking a gun? I should mention that this guntype is brand new, and has some (probably small) known bugs, and hasn't been tweaked very much. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Maybe the question is old. But I just saw it. The answer is a definite YES. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Hmm, interesting. Watch this space ;-) --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+In version 0.5.3 I now fire waves every tick. I'm curious how that will translate to rating points. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+<UL >
+<li> very disappointing. It dropped two points. Have all you people who at one stage implemented this had good results with firing waves every tick? Maybe there are some special tips and tricks on this subject? please advise :-/ --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<li> In theory when you fire waves every tick you lose some accuracy against bots that react to fire. If you run TGrapher against these bots you'll notice that it draws different graphs for "real" waves and for "virtual" ones. However, if your statistics are heavily segmented the learning speed drops dramatically if only real waves are collected. And it seems that the right mix of heavy segmentations can compensate some for the fire-reaction of these bots. Particularly the time-since-velocity-change segmentation helps in this. So, it might be that your stats are not segmented enough for you to <em>need</em> firing waves every tick. It could also be that you lack the right mix of segmentations to compensate for the "virtual" wave inaccuracy against some bots. A boring alternative is that you have a major bug in your gun code somewhere. Then it won't matter much how you collect waves. I have had those situations many times. And, 2 points drop is probably within the margin of error anyway. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<li> If the major advantage of this to segmented GF guns is to increase learning speed that might explain it. <a href="robowiki?Locke" class=wikipagelink>Locke</a>'s gun has Dynamic Segmentation. Simply put, it starts with one segment, and when it has enough data it kinda splits it into more segments etc. If I quickly fill this first segment with data collected every tick I basically have a bad quality (large spike) segment against flattener movement bots (but not against 'spike only' bots like walls and spinbot... too bad there aren't more of those in the rumble ;-). That segment will eventually split into slightly better segments but that would take probably as much time as only collecting real fire waves. With a GF gun, the fixed segments are an advantage in this case, because they can never have bad quality data (I assume you use fixed segments without stealing from neighbouring segments when you have little data). Then again, you may be right and I may have a major bug in there yet. Thanx! --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+</UL>
+<p>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+v0.5.6 discussion:
+<p>
+<p>
+<p>
+<p>
+<p>
+<p>
+Does anyone have experience with increasing firepower for weaker opponents? My theory is that if it is weak enough, you can trade a little accuracy for more bullet damage points. This also shortens the matches which will give the opponent less time to hit you and get damage points. I was convinced this would work. But in practise, it doesn't seem to gain any points for me. After some thinking I have found that maybe the higher firepower bullets expose some of the guns weaknesses which counterbalance the score gain, such as less data in higher power segments and maybe buggy <a href="robowiki?BulletETA" class=wikipagelink>BulletETA</a> interpolation, when using less power segments to fill up the missing data. So, my question: who can tell me if this is a dead end street, or a definite rating point gainer (if I get it bugfree)? --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<UL >
+<li> Very interesting idea... Please let me know if u succeed. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+</UL>
+<p>
+<UL >
+<li> The first results are disappointing. Lost 7 rating points. The question above still stands: has anyone experimented with this technique? --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<li> I would think that the problem with this is to accurately find out that you are dealing with a weak opponent. You could be facing a very strong opponent and just have some very good luck in the first couple of rounds. Or am I missing something? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<li> I think that was not so much the problem, but I may be wrong. I compensated for the luck factor you mentioned by gradually boosting power as the match progresses. So say in round 5, even if <a href="robowiki?Locke" class=wikipagelink>Locke</a> wins all first four matches, there is hardly any bullet power increase. But in round 35, when <a href="robowiki?Locke" class=wikipagelink>Locke</a> has won at least 75% of the rounds, it will fire power 3 every shot. While writing this down, I'm thinking that 35 rounds per match is probably too short to reasonably assume that one bot is better than the other. But maybe I'll try again later with much more conservative parameter values (never increase power in the first 10/15 rounds, only increase power if winning 80/85%, max power 2.5, not 3.0). --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+</UL>
+<p>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+v0.5.8 discussion:
+<p>
+I'm beginning to suspect that I'm on the wrong track. If this version (with two true bugfixes) again performs worse then there must be a major issue with <a href="robowiki?Locke" class=wikipagelink>Locke</a>'s gun which must be resolved first. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+<UL >
+<li> Well, fortunately it didn't perform any worse this time. But not better either. :-| I've spend the good part of a day aligning waves and getting ETA right (see <a href="robowiki?BulletETA" class=wikipagelink>BulletETA</a> page) and it didn't change a thing. The whole 0.5 branch has basically been about better accuracy. It seems that <a href="robowiki?Locke" class=wikipagelink>Locke</a>'s gun has bigger problems than that. Still have 60 points to try and gain before catching up with Raiko's gun. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+</UL>
+<p>
+I think you cant compare your gun with that of Raiko's in the RR. R used a really smart segmentation that works amazing straight after a few rounds. Of cause a SOOG should perform better but remember that it needs lots of ronds to find the "perfect" segmentation for each enemy. To find out the true performance of your gun you should compare your and Raikos gun over 500, 1k ... rounds, imho --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+Actually I designed this gun to be a quick learner as well. And against Walls and Spinbot it does learn very fast :-p. I have observed in a lot of battles that <a href="robowiki?Locke" class=wikipagelink>Locke</a> outperforms the opponent in the early rounds, and as the opponents gun comes up to speed the match becomes more equal or even turns around. But I do think you are right that the difference in Segmentation is very important, and may be a weak spot of <a href="robowiki?Locke" class=wikipagelink>Locke</a> at this time. Fortunately I have hardly worked on tuning that part of the gun, so I think there is a lot of progress to be made there.
+<p>
+I'm definitely not sure that this gun should in theory perform better then <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>'s gun. The SelfOrganizingObservationLog<a href="robowiki?action=edit&id=SelfOrganizingObservationLog" class=wikipageedit>?</a> is just an idea that I came up with, which in theory has some advantages over GF targeting but may also have yet undiscovered weak points. And in practise, <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> targeting has evolved over many years now, with many people working on it. <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>'s gun has hand-tuned, fixed Segmentation that has proven to be very, very, very efficient as you point out. It remains to be seen if Dynamic Segmentation the SOOL way can converge to that level. But I sure as hell will give it a go ;-) 
+<p>
+One thing I will address soon about Segmentation: <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>'s gun is heavily segmented. But not all segments are equal. Some segments will get much less data, but to compensate these segments are much more predictable (for example a close to the wall segment, or a segment where time_since_last_decelleration has a high value). Basically these segments result in Situational targeting when used, and play a very important role in the first stages of a match. Other segments are not so predictable and need lots of data to reveal patterns in the opponents behavior. These segments start playing a role later on in the match when there is enough data, and when used they classify as Statistical targeting. In <a href="robowiki?Locke" class=wikipagelink>Locke</a>'s gun this distinction is not yet made as all Segments are of the some size (same number of observations). This probably results in Situational segments polluted with too much irrelevant data and Statistical segments that have much to little data. The trick will be how to determine how big a segment must be. I'm thinking along the lines of calculating the <a href="robowiki?Entropy" class=wikipagelink>Entropy</a> of a segment and grow or shrink it accordingly. Any thoughts on this?
+<p>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+I had a quite similar idea of a SOOG gun but if was so slow and didnt work 100% accurate i threw it away. My idea was to store all waves of my gun in an array. These waves had a field that contained an array were i put many information about my enemy in, like: current speed, last speed, heading change since last scan, distance to wall/center ... .Then i had an array in which i saved the priority of all these values. So when my gun was cool and able to shoot i iterated all past waves and compared them ( their values ) with the current enemies value and took the 100 best of them. For the compare algo i used the priority array mentioned above. With these best factors i calculated that one found most with a certain tollerance and shot with it. After each round i compared all waves to find out which value the guessfactor influences much and which not so much and increased the priority of those that did. What do you thing about this??? If u understood something not because of my bad english or my strange way to exlpain things just tell and i will try to rephrase. --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+Wow! That sounds amazingly like <a href="robowiki?Locke" class=wikipagelink>Locke</a>'s gun! I also keep an array of waves (Log) with situational data, dynamic priority (currently that is fixed, but changing priorities after each round is already designed). One difference is that I preorder the waves (I call them observations) to make the search process faster. I did not understand this sentence: "With these best factors i calculated that one found most with a certain tollerance and shot with it.". Do you mean you choose the single best wave and use that for aiming? In that case that is also a difference with my gun. <a href="robowiki?Locke" class=wikipagelink>Locke</a> does <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a> of the best 49 (currently) waves. Your gun would then basically be a Situational targeting type gun. So how did you store the opponent's movement when collecting waves? Did you store a GF, or distance+heading or what? --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+I store GF's (real factors <strong>no factor index</strong>).Here a rephrase of my sentence: I take the factors of the 100 best-matching waves. What i do then is similar to abc's MultipleChoise<a href="robowiki?action=edit&id=MultipleChoise" class=wikipageedit>?</a>. I take something like an average of these factors and shoot with it. better? --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+Yep, thanx. I've been considering using GF's as well for performance reasons, but heading+distance which I'm using now does have its advantages. I'm sticking with that for now. The major difference then is the preordering of the array. That was the idea that started me working on this gun in the first place because without it I knew there would be performance problems. Still, amazingly similar! --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Sure and i wish you good luck. I threw my code away but hopefully you get bring it working. Maybe i will take my code someday and continue but not in the next time. Watching this place and the rankings ... --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+I guess this kind of thing happens all the time. I wonder how many people have some rusty little bot somewhere in the corner of their garage with <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> movement that they did not get to work properly? I know of at least one :-) --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+v0.5.9 discussion:
+<p>
+The 0.6 branch will take me a little bit longer to work on, so in the mean time I'm trying out some smaller tweaks and doing some general sanity checking. For starters, I am wondering if a smaller fixed segment size (more Situational Targeting) or a bigger fixed segment size (more Statistical Targeting) will produce better results. Currently I'm using 49 observations per segment. I'll try 15 and 149 respectively. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+I think you might have a bug in your gun. From what I understand of it it sounds like the gun should perform really well. What segments/properties do you use to sort the log? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+My Possible Bug list is growing very short. The only think left to investigate is how I adjust distance travelled with differing BTT's (as we are coincidently discussing on the <a href="robowiki?Shiva" class=wikipagelink>Shiva</a> page). All other bugs have been eliminated or fixed I think. In fact I think there are 2 main reasons for this gun to underachieve:
+<UL >
+<li> fixed segment size (see 0.5.8 discussion). I will address that in the 0.6 branch.
+<li> the log sorting means that similar Observations will be in each other's neighbourhood. But that is not a perfect science, compared to the fixed segments of GF Targeting. It may happen that relevant observations are not used in the actual targeting because they are in a different, but close, neighbourhood.
+</UL>
+<p>
+At this time <a href="robowiki?Locke" class=wikipagelink>Locke</a> uses the following segmentation dimensions:
+<UL >
+<li> MyBearing<a href="robowiki?action=edit&id=MyBearing" class=wikipageedit>?</a> (<a href="robowiki?RelativeHeading" class=wikipagelink>RelativeHeading</a>)
+<li> <a href="robowiki?BulletTravelTime" class=wikipagelink>BulletTravelTime</a>
+<li> Velocity
+<li> CenterBearing<a href="robowiki?action=edit&id=CenterBearing" class=wikipageedit>?</a> (Bearing of the BF Center)
+<li> Distance to closest Wall
+<li> Distance to closest Corner
+<li> TimeSinceLastDecelleration<a href="robowiki?action=edit&id=TimeSinceLastDecelleration" class=wikipageedit>?</a>
+</UL>
+<p>
+(I have more dimensions waiting to be added (like Accelleration), but I first wanted to make sure the gun was working properly.)
+<p>
+The Log is sorted by inserting a new Observation inbetween the two closest existing ones in the Log. This closeness is determined by a distance() method, which basically is a Pythagorean distance over all 7 dimensions. Here's the code:
+<p>
+<pre>
+    int distance(Situation other)
+    {
+        int result = 0;
+        for(int i = 0; i &lt; NumDimensions; i++)
+        {
+            result += (weight[i] * Math.pow(dimension[i] - other.dimension[i], 2));
+        }
+        return result;
+    }
+</pre>
+<p>
+Notice I don't do the Math.sqrt() in the end. This is basically for performance reasons and I didn't think it would have any bad consequences, because I'm only searching for the minimum in the Log.
+The weight array holds different weights for each segmentation dimension. All are 1.0 at this time, except for the <a href="robowiki?RelativeHeading" class=wikipagelink>RelativeHeading</a>, which has a heavier weight. This tweak gained me 12 points in the Rumble.
+<p>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Ummm, OK, you might be bugfree then I guess. If it easy to do I would exchange relative_heading for last_velocity (and thus nail all acceleration segments at once). And change time_since_deccel to time_since (last_velocity != velocity). According to my tests relative heading isn't too effective. And checking the time_since_velocity_changed for most enemies happens to catch both time_since_deccel (low) and time_sine_accel (high). You can always change back if I am wrong about this. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Oh no! I'm not saying I am bugfree! I just don't know where any bug(s) might be at this stage. Anyway, thanks for your pointers. I will test them in the next version. I will also include your firepower=1.9 and distance segmentation tips. Let's see what happens. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Interesting things happened with the segmentation size test. It seems smaller segments (more Situational targeting) work better than bigger segments (more Statistical targeting). This especially shows against the surfers. Maybe this is another clue to the discussion on the <a href="robowiki?GhostBuster" class=wikipagelink>GhostBuster</a> page about surfers performing worse against PM guns. Situational targeting shares a lot of properties with PM targeting. 
+<p>
+Another thing was surprising: using bigger segments eliminated all my extreme problem bots! So it seems those problem bots need Statistical targeting. This again points me to the direction of Dynamic segment size.
+<p>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+I'm not a <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> advocate usually. But this sounds like a case where it could work. Can you collect data in such a way that you have both small anmd large segments available and pick out two gun bearing suggestions? Measure the <strong>unsegmented</strong> performance of both virtually (I would use raw virtual hit rates rather than which one is usually closest), and always use the one with the best stats over all? I mean, no rolling stats or anything fancy. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Maybe that would work, but I'd rather try and design this gun in such a way that it converges to the opponent's  particular weaknesses in a more elegant way. <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> would be my absolute last resort, when all else fails. ;-) --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Ditto that! Even though i think raw == elegant, but then I do design <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a>s, don't I? =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+v0.5.10 discussion:
+<p>
+<b>the <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> branch.</b>
+<p>
+In this branch I will test all the tips <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> has given me from the kindness of his heart :-)
+<p>
+For starters, I have taken his incredibly complex firepower algorithm to the testbench. Let's hope it works out!
+<p>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+=) Check question. d &lt; 180. That's what I do yes. But it's also on a segmentation indexing boundary. Which is important. Is it so for this Locke too? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Well.. I don't know. <a href="robowiki?Locke" class=wikipagelink>Locke</a> has no rigid indexing boundaries. I could speculate that around d==180 there may be some heavy extrapolation (because the neighbourhood will spill over that boundary) that could mess up aiming, so I guess it may be important. Maybe in <a href="robowiki?Locke" class=wikipagelink>Locke</a>'s case I should sort of fade the bulletpower from 1.9 to 3.0 between distances 180 and 140. I mention 140 because that is where <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>'s gun starts firing 3.0.
+<p>
+Initial results are good: +8 points. Thanks for that, <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>! And I even introduced a small bug in there, so the next version should gain even more points. 
+<p>
+I did notice something interesting: Although my rating score went up 8 points, my number of losses almost doubled. Maybe (hopefully) that is because of the bug. But I think not. I think it can be explained by the fact that my power management was much more conservative than yours. <a href="robowiki?Locke" class=wikipagelink>Locke</a> often won matches on survival against strong bots, but with this version that advantage seems lost. 
+<p>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+140 or 180 doesn't matter much I think. What matters for my (and Raiko's) gun which both have rigid indexing boundaries is that those power 3 bullets resides in a slice by themselves and do not contaminate the stats for "normal" bullets. What matters for you more is probably where your gun starts hitting the enemy really easily as to allow you to fire power 3 and collect maximum points. The balace between survival and bullet damage is delicate. But I think it's always best to maximize damage. Survival is best built with good movement and accurate targeting. You're closing in on <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> now I see. Since T has a movement that performs comparable to Raiko's that can only mean your gun is starting to work as good as mine does. And my gun is pretty good, if I'm allowed to say so myself. It's soon time for you to explain in more detail how your gun works. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Soon, <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, soon.... :-)
+The bug was only small, so your firepower management has in the end gained me 9 points. Hopefully your other tips will prove to be equally productive :-)
+I think I will need to experiment more with firepower management in the future, but right now I'll concentrate on other stuff.
+<p>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+You probably know this already. But anyway, to get a stable rating you need to let the bot get some 650+ battles. At 500 it is very unlikely it has met all opponents and from there the rating can vary quite much. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yes I know that, and I always wait for that. Maybe you observed me changing a couple of scores on this page? That was because it still changed a bit even after 650 battles. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+TimeSinceLastVelocityChange<a href="robowiki?action=edit&id=TimeSinceLastVelocityChange" class=wikipageedit>?</a> didn't change much over TimeSinceLastDecelleration<a href="robowiki?action=edit&id=TimeSinceLastDecelleration" class=wikipageedit>?</a>. But maybe in combination with segment lastVelocity it will make a difference, so I'll leave it in for now. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Yes, segmentations can interact in interesting ways. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I've added a BulletPower<a href="robowiki?action=edit&id=BulletPower" class=wikipageedit>?</a> segmentation dimension. This should take care of the theoretical d==180 indexing boundary problem. It also will mean that there is now adequate segmentation on Distance. combining <a href="robowiki?BulletETA" class=wikipagelink>BulletETA</a> and BulletPower<a href="robowiki?action=edit&id=BulletPower" class=wikipageedit>?</a> will do that, right? --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Yep. Since you nail down the other parameter to bullet flight time it should be equivalent to distance segmentation. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+This version hovered around 1885 for a long time, but eventually settled at 1879, so again +2 rating points. It seems that after 626 battles no more are being fought, so I'll take this as the score for now. But more importantly, the PBI graph looks much more balanced. The difficult mid segment of bots seems overall higher, and there are less extreme problem bots. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+That's great. I think a balanced PBI graph is a really good sign. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yeah, although that did not really translate in a higher rating. 
+<p>
+Next up: I've added the lastVelocity dimension. Hope it will work....
+<p>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+The rating system is really weird. I tend to concentrate more on the PL performance and the balance of that PBI graph. From there it should be comparatively easy to exploit the peculiarities of the rating system I think. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I also very much like the PL rating. Too bad it does not update in real time, or I might be tempted to use that for version comparison. So how often does it update anyway? --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Twice a day. But it has an element of luck to it so I think it could be dangerous to use it for any definite decisions. Add "&amp;table=2" to the URL and you'll get a raw average %score figure that I think is less arbritrary. The PBI graph gives the same info actually. If you just "zoom out" and consume the big picture. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yes, I can see that element of luck you mention. The PL rating is much more vulnerable to the shortness of the matches than the ELO rating is. Especially when you and your opponent are about equally matched. In that case it's just a flip of the coin really. The PL system only takes a one bit boolean (win or lose) as input, while the ELO system takes a double (win ratio) as input. So you could say that the sample bit depth of ELO is much higher. So how is this "raw average" calculated? You mention it's like the PBI graph info, so is it the average win ratio of all matches fought? --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Yes, it's an average of each bots share of the score. The same info as feeds the ELO ranknings. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Next up: I removed the <a href="robowiki?RelativeHeading" class=wikipagelink>RelativeHeading</a> dimension. Your tests showed that it did not work for you, so I will try removing it completely. In theory it should improve learning speed, and make all other dimensions much more important relatively. Let's see what happens. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Mind you that my tests where with the <a href="robowiki?TargetingChallenge" class=wikipagelink>TargetingChallenge</a>. You've got my complete attention with this gun experiment of yours I tell ya! =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Ok, it seems after 565 battles <a href="robowiki?Locke" class=wikipagelink>Locke</a> has already had all the pairings under its belt. The score is: 1967, meaning down 9 rating points on removing the <a href="robowiki?RelativeHeading" class=wikipagelink>RelativeHeading</a> segmentation. My guess is that the pros on this segment outweigh the cons in my case. I must note that in my gun RH is currently the most important segmentation dimension. I've weighted it a factor 100 (!!) heavier than all other axes. In practise that means that it's practically a fixed segmentation. So, <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, maybe there are a few points for you to gain here after all. But now I would suggest if you try this again, you should weigh this segment in very heavily. In theory all this makes sense to me. This dimension should have a real impact, so if it doesn't work in your gun, maybe there's some counter effect with segmented GF guns that do not occur in my gun. I don't think it is learning speed, because most bots will move in one RH segment anyway. Maybe it is the fact that you have to take another segmentation dimension away for memory purposes? 
+<p>
+Next test: Again I will try firing waves every tick. It didn't really work last time, but with all these changes I'll give it a go again. Maybe it is the combination of all your tips that may do the trick. This will be the last of those that I have on my list, btw. So next up I will remove the things that did not work for <a href="robowiki?Locke" class=wikipagelink>Locke</a>'s gun and hopefully in the end I'll have gained 10+ points with this testing branch. 
+<p>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+<UL >
+<li> 1876, That's +9 rating points! The last attempt at this did not gain any points, so that's kinda weird. It could be explained by the fact that I now have much more segmentation dimensions, slowing down learning. Also, the influence of 'reversal segmentation' (segmentation on TimeSinceLastVelocityChange<a href="robowiki?action=edit&id=TimeSinceLastVelocityChange" class=wikipageedit>?</a>, Velocity, LastVelocity<a href="robowiki?action=edit&id=LastVelocity" class=wikipageedit>?</a>) has increased relative to the others by the removal of the <a href="robowiki?RelativeHeading" class=wikipagelink>RelativeHeading</a>, and the addition of the LastVelocity<a href="robowiki?action=edit&id=LastVelocity" class=wikipageedit>?</a> segment. And this reversal segmentation needs lots of data to become useful, as explained by <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> somewhere else on this wiki. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+</UL>
+<p>
+Hehe, i am the logo-man today...Googling on Philosophy i find one 'bot' after another. How about <img src="http://oregonstate.edu/instruct/phl302/images/jlocke2.jpeg"> as a logo? <br>
+This <a rel="nofollow" href="http://oregonstate.edu/instruct/phl302/philosophers/locke.html">[|Locke]</a> may not be the Locke you named your bot after, but it is another great philosopher (like <a href="robowiki?Aristocles" class=wikipagelink>Aristocles</a>) --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<UL >
+<li> Thanks! I'll take it :-) Actually this bot is named after the Locke you mention. Just in an indirect way ... it was the pseudonym of a character in the book Ender's Game. BTW, good to see you here again! It's been lonely in the dutch camp lately.. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<li> sorry i left defending the Dutch honour to you alone, but i see you are doing a great job! I have been (and still am) working on a project that leaves me very little time for Robocode. Apart from my normal working week a lose some 4 to 6 hours a day in the traffic. The time remaining is for the family and basic things like eating, sleeping...It's amazing to see how fast development in the Robocode world takes place. As soon as i get some more spare time i first have some huge catching up to do :) I will try to at least visit this place more often. succes --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+</UL>
+<p>
+Next up: restoring the <a href="robowiki?RelativeHeading" class=wikipagelink>RelativeHeading</a> dimension. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+It doesn't seem to matter all that much what segmentations you do. That's a bit curious I think. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It doesn't? Is minus 9 not significant you think? What range of points would you have expected to be gained or lost? --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+9 points is a difference. But I would expect the differences to be bigger when throwing segmentations in and out like you are doing now. Maybe I should try with CC. Suggest a segmentation going in or out of CC please. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Wait. You didn't fire <a href="robowiki?Wave" class=wikipagelink>waves</a> every tick before? Man. Had I known I would have suggested that first thing! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+You did suggest that before. And I did test it then =) But it didn't work too well at that time. 
+<p>
+I'm suspecting that the amount of impact (or better: lack of impact) of these tests is inherent to this gun's design. My segmentation is much more fuzzy than the rigid segments of your type of gun. I'm not sure yet if this is going to prove to be an advantage or a disadvantage. 
+<p>
+Are you asking *moi* to suggest segmentation for CC? =) Well, I only would suggest that you try <a href="robowiki?RelativeHeading" class=wikipagelink>RelativeHeading</a> one more time. I've been trying to figure out how that would have to be done with fixed segmentation. In <a href="robowiki?Locke" class=wikipagelink>Locke</a>'s case <a href="robowiki?RelativeHeading" class=wikipagelink>RelativeHeading</a> makes sure that only collected waves that have the same, or very similar, RelativeHeadings<a href="robowiki?action=edit&id=RelativeHeadings" class=wikipageedit>?</a> are grouped together. That would translate for fixed segmentation in one of these possible solutions:
+<OL >
+<li> use an absurdly high number of segment divisions (<a href="robowiki?Locke" class=wikipagelink>Locke</a> has 127!). That would explode your memory consumption so that's just not practical. But if you want to try, go for say 20 divisions :-)
+<li> use less divisions, but use a non-linear scale, with more detail around 90/-90 degrees, and more coarseness at around 0/180/-180 degrees. For instance, use these 8 RH segments: -180:-95, -95:-90, -90:-85, -85:0, 0:85, 85:90, 90:95, 95:180.
+<li> I know <a href="robowiki?ABC" class=wikipagelink>ABC</a> takes the abs(angle), but I have no idea how he compensates for clockwise/counterclockwise. But if you can wrap your mind around that, you could double the granularity like so:  0:75, 75:85, 85:88, 88:90, 90:92, 92:95, 95:105, 105:180
+</OL>
+<p>
+Good luck :-) I'm very curious if and how this would work for you! --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+I'll try 11 with absolute values. Accounting for clockwis/counterclockwise shouldn't be necessary since I'm using <a href="robowiki?GuessFactors" class=wikipagelink>GuessFactors</a> to begin with, should it? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Well...if it's that simple, why am I not using that? (slaps head and decides his mind is cooked for the day :) --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+I might be wrong and that might be why it doesn't work... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yeah! 1888 rating points! that's +12 compared to the previous version without the RH segmentation! And ... small detail ... I have passed Tityus in the rankings =) It seems the more segmentation axes I have, the more positive impact comes from firing waves every tick. The PBI graph is now very curious: I'm stronger against the wavesurfers, and stronger against the majority of the midrange bots, but I am suffering from some terrible problem bots again. The same names as before, but worse PBI indices. Maybe just because I did not improve against those bots, while my rating has gone up... 
+<p>
+Anyway, that's the end of the <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> branch. You helped me gain <b>18</b> points, man! Thanks a lot for that!
+<p>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Great! And there seems to be lessons in this for me too. Must sort it out. And I must be doing something wrong with RH segmentation because I lose lots of rating points when I use it. Yes, firing waves every tick is only necessary and beneficial when you have lots of segmentations. That's the <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> lesson once again. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+version 0.6 discussion:
+<p>
+In the 0.6 branch I will concentrate on the ordering of the log. While browsing through the code, I suspect that this may not be without some design errors. First up, I will test a faster algorithm for searching the log. I don't expect to gain any rating points, except if the previous algorithm was buggy. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Ooops... lost 11 points. But I found two small bugs, although I doubt that these result in -11 points. But you never know with robocode... --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+1881 with the bugs fixed. Thats still -7 points. It seems the old algorithm works better, so revert, revert, revert.... --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+version 0.6.1 fixes a design error I found in the log re-ordering algorithm which caused some observations to be moved to a worse place in the log. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+1879! That's -9 points, and I am SO sure that this is a genuine fix! I think I may have a real problem with log ordering. Must find out. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+0.6.3: A desperate attempt to see how much the log ordering influences the rating. I've increased the search loop size so there's a bigger chance to find the optimal neighbourhood, so Observations can be inserted and re-inserted better into the Log. Trying to exchange performance for rating points. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Well, it's good I checked the rumble progress before going to bed! I'm very pleased with its performance so far. +10 points seem within reach, but more importantly it gives the top bots a hell of a scare, which is convincing me that I'm on the right track. <a href="robowiki?Locke" class=wikipagelink>Locke</a> 0.6.3 is a problembot for <b>all</b> 1900+ ranked bots except <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> and Lacrimas!. Furthermore, <a href="robowiki?Locke" class=wikipagelink>Locke</a> beat <a href="robowiki?SilverSurfer" class=wikipagelink>SilverSurfer</a>, <a href="robowiki?BoxingVirus" class=wikipagelink>BoxingVirus</a>, Aleph, Pugilist, Tron, Okami, YALT, <a href="robowiki?PulsarMax" class=wikipagelink>PulsarMax</a> and <a href="robowiki?BlestPain" class=wikipagelink>BlestPain</a> and it gave <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a> and <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> a near loss... Of course, there are 250 more matches to run as I write this, but I'm pleased already. I think I'll sleep well tonight :-) --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+DT and Lacrimas are two really tough bots to beat. Those scalps you've gotten there make a hella nice price shelf! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Aaargh... that is disappointing! <a href="robowiki?Locke" class=wikipagelink>Locke</a> fell back to 1890 points. Well, it's a small improvement anyway so I schould be glad, although I doubt if those few points won will justify the performance penalty. But, on a more positive note, the PBI graph looks much more balanced compared to version 0.5.10.8 so I guess I'll keep this configuration for now. 
+<p>
+About DT and Lacrimas, these bots have amazingly flat PBI graphs. Especially Lacrimas. Does anyone have any idea how <a href="robowiki?Iiley" class=wikipagelink>iiley</a> managed to achieve that? Is there a trick involved?
+<UL >
+<li> Oops, I actually meant <a href="robowiki?BlestPain" class=wikipagelink>BlestPain</a>, not Lacrimas. <a href="robowiki?BlestPain" class=wikipagelink>BlestPain</a> is the one with the extremely flat PBI index. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+</UL>
+<p>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+The <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> is sometimes a very strange beast. My 0.6.4 hack was not supposed to lose 8 points! In the coarse search_the_log function I now started at a random point to avoid streaks of missing global minima. I cannot understand how this can be worse than starting at a fixed point. Maybe I am simply wrong. Have to think it over... --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Yes, a true <a href="robowiki?GhostBuster" class=wikipagelink>GhostBuster</a> must stop guarding her/his sanity. =) I think that to get a better measure on your gun you should switch off the <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a> in your <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> movement. Since that trick take advantage of a weakness of the rating system your rating can be very influenced by your guns performance, or even luck, against a few head-on targeters. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+My sanity is lost beyond repair anyway, so no worries there :-) I need the <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a> to compare my rating with that of <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>. But it could be very true that this trick increases the margin of error. I'll try reentering a previous version under a new version number to check that out. Bumping the above topic: Does nobody have any clue why <a href="robowiki?BlestPain" class=wikipagelink>BlestPain</a> has such a ridiculously low specialization index (8!) --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Release a Raiko without the <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a> too and use it for measure. It would be good to have there for anyone doing gun development. Especially since Raiko's gun might be the best RR gun out there yet. About <a href="robowiki?BlestPain" class=wikipagelink>BlestPain</a>, I don't think it holds the record in low specialization index, but it's certainly one of the lowest. To get that you need a genuily good movement and likewise gun I guess. That RaikoNMT<a href="robowiki?action=edit&id=RaikoNMT" class=wikipageedit>?</a> bot might well compete. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Great idea! one RaikoNMT<a href="robowiki?action=edit&id=RaikoNMT" class=wikipageedit>?</a> coming up .... So who is the current holder of the record of lowest specialization index then?
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<UL >
+<li> Dunno really, but <a href="robowiki?Quest" class=wikipagelink>Quest</a> has 6.8 and <a href="robowiki?Sedan" class=wikipagelink>Sedan</a> has 7.7. And ad.last.Bottom somewhat proves me wrong on my statement above. I guess you can reverse it totally too. =)-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</UL>
+<p>
+Yeah!
+<p>
+Fighting battle 0 ... axeBots.<a href="robowiki?SilverSurfer" class=wikipagelink>SilverSurfer</a> 2.33.2,vic.Locke 0.6.5
+RESULT = vic.Locke 0.6.5 wins 3185 to 2058
+<p>
+=)
+<p>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+<a href="robowiki?PEZ" class=wikipagelink>PEZ</a> and <a href="robowiki?ABC" class=wikipagelink>ABC</a> (and others who might feel adressed), would you consider releasing a bot (p:Zlatan?) made of <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>'s movement without the <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a>, and your guns? I have a feeling that your guns might be even better then <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>'s within the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> environment. I'd like to see and participate in that competition! --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+I'm pretty sure my gun isn't better than <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>'s. But it's easy enough for me to put that bot together. I'll do it. wiki.RaikoNMTBee<a href="robowiki?action=edit&id=RaikoNMTBee" class=wikipageedit>?</a> or something. My guess is it'll trail RaikoNMT<a href="robowiki?action=edit&id=RaikoNMT" class=wikipageedit>?</a> by some 30 points. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+30 points? I think you are underestimating yourself big time! But we will see.. How about naming this competition something like ... BestRRGunChallenge<a href="robowiki?action=edit&id=BestRRGunChallenge" class=wikipageedit>?</a>? --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+<UL >
+<li> It looks like I am going to be right =) You are just like Germany, <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>: creating an underdog position for yourself, and then proving that wrong ;-) Bee trails Raiko by only a few points. (but still 100+ matches to go) --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<li> Nah. I just think that my movements are well up to the standard of <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>'s. Yet all my bots in the different categories trail his by 30+ points. And <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a> lost 40+ points by using the <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a> gun. (Maybe you missed the gun experiments discussed on the <a href="robowiki?SilverFist" class=wikipagelink>SilverFist</a> page?). If the RRGC ratings passes the test after 650+ rounds I guess it indicates that I have succeeded in improving my gun in <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a>. That would feel really good. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</UL>
+<a href="robowiki?RRGunChallenge" class=wikipagelink>RRGunChallenge</a>? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li> No, I didn't miss them, but they were not in my immediate memory neighbourhood either :-) Time for me to submit my <a href="robowiki?LockeRRGC" class=wikipagelink>LockeRRGC</a>. I think I have a lot of work still to do to catch up with you guys. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+</UL>
+<p>
+Deal! --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Come one <a href="robowiki?Vic" class=wikipagelink>Vic</a>, eye on the prize. Lets try and push one another to the 2K mark. We are neck and neck now. I have a small tweak that I am testing now that I think can get me over the 1.9K hump. Cooperate and graduate. =^&gt; -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+You don't think it would be some pretty good gun <a href="robowiki?Vic" class=wikipagelink>Vic</a> would have to produce to reach 2K with non-adaptive <a href="robowiki?RandomMovement" class=wikipagelink>RandomMovement</a>? =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It would have to be a heck of a gun. But I do not think it possible to do so. I believe the combination of very good guns with very good movement will beat a great gun with just above average movement. Maybe I am wrong to feel that way but I always have. On a side note, how do you make sure that your enemy gets at least one measly point? -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+(edit conflict) What <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> said! I have no doubt you will leave <a href="robowiki?Locke" class=wikipagelink>Locke</a> way behind with your <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> movement. I've seen it happen with <a href="robowiki?PulsarMax" class=wikipagelink>PulsarMax</a>, Shiva and Ascendant recently. But rest assured, <a href="robowiki?Jim" class=wikipagelink>jim</a>, when I'm pleased with this gun I will move on to movement and go for 2K! And beyond! --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+I wish you good luck then! I was hoping to get a little <a href="robowiki?Jam" class=wikipagelink>Jam</a> v. <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> micro.* competition going as it seemed to serve those two pretty well. I have no doubt you will make it to the top. If you have not done so already, try adding a segment in for when you are using the Musashi trick and you are not. I have found that when you move predictably some of your enemies will too. This in effect also polutes your own stats. Adding that segment was pretty killer vs. VertiLeech<a href="robowiki?action=edit&id=VertiLeech" class=wikipageedit>?</a>. If you have not add it and run 100 or so vs. Verti and then actually watch a 35 round match. It is quite funny. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+Thanx! That's a good tip but I will not use it. I'm not creating this gun to be permanently on top of <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>'s movement. When I get going with my new movement -the design is ready- it will not use the <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a>, but be completely adaptive like todays <a href="robowiki?WaveSurfers" class=wikipagelink>WaveSurfers</a>. But it's not <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> of course because as always I want to invent something new =) But anyway, I still will compete with you until <a href="robowiki?Locke" class=wikipagelink>Locke</a> reaches about 1930 I think. So until that happens the fight is on! --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Version 0.6.5 did not gain me any rating points. But the PBI graph looks more balanced and I believe this tweak will be very beneficial in the 0.7 branch when the log order becomes even more important than it is now. 
+<p>
+Next up: reducing the <a href="robowiki?RelativeHeading" class=wikipagelink>RelativeHeading</a> weight from 100 to 10 (all other dimensions have weight 1 at this point)
+<p>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+From version 0.6.7 onwards <a href="robowiki?Locke" class=wikipagelink>Locke</a> will not have the <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a> in its arsenal, since I'll be comparing it with the entrants of the <a href="robowiki?RRGunChallenge" class=wikipagelink>RRGunChallenge</a>. But right now I will need to keep <a href="robowiki?LockeRRGC" class=wikipagelink>LockeRRGC</a> to finish, since that is my new benchmark. That will mean that until the <a href="robowiki?LockeRRGC" class=wikipagelink>LockeRRGC</a> has finished I have two similar bots in the Rumble. But be assured, it's only for a few hours, and I am running two clients on separate computers to help speed up the process. I have been running two clients regularly for the last few weeks now, sometimes even when I had no updated bot in there. Just collecting some Karma ;-) --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Reducing the RH weight had hardly any impact...which is good, because it allows more room for the other segmentation axes. I'll try reducing some more later on.
+<p>
+I've experimented with adding another segmentation on EnemyBearing<a href="robowiki?action=edit&id=EnemyBearing" class=wikipageedit>?</a>. In theory this should work better against any enemy movement that reacts to my movement. Of course that means mirrorers, but my guess was that a lot of bots may have this small amount of predictability. but, I was wrong. Lost 7 points in the process....
+<p>
+Next up: some bullet power tweaks. First of all, BP=2.0
+<p>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Basically I'm not expecting the 0.6.8 branch to do a lot pointwise. Just submitting some small tweaks to see if the ranking is indeed more stable without the <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a>. 
+<p>
+Next up: conserving firepower when me or enemy is low on energy.
+<UL >
+<li> I did not expect this! What a nice surprise! +7 rating points for such a minor tweak! The credits here go to <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>, who's elegant one line of code I used.
+</UL>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+<p>
+Please don't hate me, <a href="robowiki?ABC" class=wikipagelink>ABC</a>! I just can't keep <a href="robowiki?Locke" class=wikipagelink>Locke</a> under control :-/
+<pre>
+abc.tron3.Shadow_3.07 61.8 1 22-6-2004:14:33 34.8 27.0 
+abc.tron3.Tron_3.06   55.0 1 22-6-2004:14:24 41.9 13.1 
+</pre>
+<p>
+;-)
+<p>
+--<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+impressive! And how about this one: 
+<pre>
+apv.ScruchiPu_1.0	 99.7	1 22-6-2004:14:51	60.3	39.4
+</pre>
+did you cause <a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a> to "throw exceptions" instead of firing bullets? --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<p>
+Yeah, I've seen that a few times before. It's a very sporadic occurance so I never thought much of it. It's weird though. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+It happens all the time with <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a> against <a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a>. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Now that's weird: when going from 1.9 to 2.0 bulletpower I lost two points. Now when I go from 2.0 to 1.8 I lose 12 points! That's an awfully big difference. Hopefully 1.9 will restore those lost 14 points completely..... Can anyone explain that big difference? --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+<p>
+Not other than that 1.9 is probably more optimal against the whole range of bots than 1.8. The difference between 1.9 and 2.0 power is too small I think. But it's not a coincidence that Tityus, Raiko and Pugilist use power 1.9. It's proven to be a very good choice of power. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Actually Raiko uses 2.0, that's why I tried it. But it looks like 1.9 is the better choice. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Gotcha! Raiko and Pugilist and that family of robots uses either 1.9 or 2.0 in different versions. It's not because 2.0 is better. It's because it saves 3 bytes. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Haha! What a great reason for using 2.0 :-) 1841 at 512 matches.... still 6 points below the 2.0 version. Something isn't right. I think i'll run the 2.0 version a second time and see what happens. Maybe it was that <a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a> fluke or something in the previous 2.0 version... --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Locke" class=wikipagelink>Locke</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Locke/OldDiscussion" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Locke/OldDiscussion">View other revisions</a><br>Last edited July 19, 2004 9:55 EST by <a href="robowiki?Vic_Stewart" title="ID 2928 from 212.54.60.xxx">Vic Stewart</a> <a href="robowiki?action=browse&diff=1&id=Locke/OldDiscussion">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

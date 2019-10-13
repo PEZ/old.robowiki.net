@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing Ant/MinimalJarSample - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Ant, Minimal, Jar, Sample'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing Ant/MinimalJarSample</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="Ant/MinimalJarSample"  />
+<input type="hidden" name="oldtime" value="1152657922"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="6"  />
+<input type="hidden" name="captchaArg2" value="3"  />
+<input type="hidden" name="captchaOp" value="-"  />
+<input type="hidden" name="captchaId" value="122641800277"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">You can get the &amp;lt;pack&amp;gt; task here: http://sadun-util.sourceforge.net/pack.html
+
+You can get yguard, a free obfuscator, here: http://www.yworks.com/en/products_yguard_about.htm
+
+Using both will shrink your Jar file by quite a bit. Even if you&#39;re including source code with your bot, obfuscating your robot will make your .class files much smaller. The only downside is that if your robot throws an exception, the stack traces are giberish, like NullPointerException in class davidalves/A/B/A.class (unknown source)
+
+--[[David Alves]]
+&lt;pre&gt;
+&amp;lt;?xml version=&quot;1.0&quot;?&amp;gt;
+&amp;lt;!-- ====================================================================== 
+
+     Phoenix
+                   
+     by David Alves                                                                
+
+     ====================================================================== --&amp;gt;
+
+
+&amp;lt;project name=&quot;Phoenix&quot; default=&quot;Phoenix&quot;&amp;gt;
+	
+	&amp;lt;taskdef name=&quot;obfuscate&quot; 
+		classname=&quot;com.yworks.yguard.ObfuscatorTask&quot; 
+		classpath=&quot;yguard.jar&quot;/&amp;gt;
+	&amp;lt;taskdef name=&quot;pack&quot;
+		classname=&quot;org.sadun.util.ant.Pack&quot;
+		classpath=&quot;pack.jar&quot;/&amp;gt;
+	
+	&amp;lt;description&amp;gt;Phoenix&amp;lt;/description&amp;gt;
+	
+	&amp;lt;target name=&quot;Phoenix&quot; description=&quot;Make Phoenix jar&quot;&amp;gt;
+		&amp;lt;delete file=&quot;phoenix.jar&quot; /&amp;gt;
+		&amp;lt;delete file=&quot;phoenix-obf.jar&quot; /&amp;gt;
+		
+		&amp;lt;pack classes=&quot;davidalves.Phoenix&quot; targetjar=&quot;phoenix.jar&quot; excludepkg=&quot;java,javax,sun,robocode&quot;&amp;gt;
+			&amp;lt;classpath path=&quot;c:/phoenix&quot;/&amp;gt;
+			&amp;lt;classpath location=&quot;c:/robocode/clean_install/robocode.jar&quot;/&amp;gt;
+			&amp;lt;resource name=&quot;davidalves/Phoenix.properties&quot;/&amp;gt;
+		&amp;lt;/pack&amp;gt;
+		
+		&amp;lt;java fork=&quot;yes&quot; jar=&quot;/robocode/codesize.jar&quot;&amp;gt;
+			&amp;lt;arg value=&quot;c:/phoenix/phoenix.jar&quot; /&amp;gt;
+		&amp;lt;/java&amp;gt;
+		
+		&amp;lt;obfuscate replaceclassnamestrings=&quot;true&quot; logfile=&quot;obf.txt&quot;&amp;gt;
+			&amp;lt;inoutpair in=&quot;phoenix.jar&quot; out=&quot;phoenix-obf.jar&quot;/&amp;gt;
+			&amp;lt;expose&amp;gt;
+				&amp;lt;class name=&quot;davidalves.Phoenix&quot; methods=&quot;public&quot; fields=&quot;none&quot; /&amp;gt;
+			&amp;lt;/expose&amp;gt;
+			&amp;lt;externalclasses&amp;gt;
+				&amp;lt;pathelement location=&quot;/robocode/clean_install/robocode.jar&quot;/&amp;gt;
+			&amp;lt;/externalclasses&amp;gt;
+		&amp;lt;/obfuscate&amp;gt;
+	&amp;lt;/target&amp;gt;
+	
+	&amp;lt;target name=&quot;backup&quot; description=&quot;full backup&quot;&amp;gt;
+		&amp;lt;tstamp/&amp;gt;
+		&amp;lt;jar compress=&quot;true&quot; destfile=&quot;phoenix-backup${DSTAMP}-${TSTAMP}.jar&quot; manifest=&quot;MANIFEST.MF&quot;&amp;gt;
+			&amp;lt;fileset dir=&quot;.&quot;&amp;gt;
+				&amp;lt;include name=&quot;davidalves/**/*.*&quot;/&amp;gt;
+			&amp;lt;/fileset&amp;gt;
+		&amp;lt;/jar&amp;gt;
+	&amp;lt;/target&amp;gt;
+&amp;lt;/project&amp;gt;
+&lt;/pre&gt;
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 6 - 3 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that Ant/MinimalJarSample has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=Ant/MinimalJarSample">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Ant" class=wikipagelink>Ant</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

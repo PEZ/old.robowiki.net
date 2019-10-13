@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>PluggableRobot/Component - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Pluggable, Robot, Component'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Component">PluggableRobot/Component</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?PluggableRobot" class=wikipagelink>PluggableRobot</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+/*
+ * PluggableRobot, by Robert J. Walker
+ * Home page: http://robowiki.net/cgi-bin/robowiki?PluggableRobot
+ * This software is made available under the RoboWiki Limited Public Code License (RWLPCL). The full
+ * text of the license may be found at http://robowiki.net/cgi-bin/robowiki?RWLPCL.
+ */
+package rjw.pluggablerobot;
+
+/**
+ * Components encapsulate the main combat behavior of the robot into pluggable modules. Any code
+ * that actually sets an action for the robot (moving, turning, rotating the turret or radar, etc.)
+ * should be done in the go() method. Components should NEVER call any blocking methods;
+ * PluggableRobot will call execute() automatically when all components have had a chance to act.
+ * @author Robert J. Walker
+ */
+public interface Component {
+	/**
+	 * Asks this Component to execute any actions that it wants to take this turn. PluggableRobot
+	 * will call this method once per turn for each registered Component. Don't put any blocking
+	 * calls in here; PluggableRobot will call execute() for you automatically after calling go() on
+	 * each Component.
+	 */
+	public abstract void go();
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?PluggableRobot" class=wikipagelink>PluggableRobot</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=PluggableRobot/Component" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=PluggableRobot/Component">View other revisions</a><br>Last edited November 2, 2007 23:48 EST by <a href="robowiki?RobertWalker" title="ID 10744 from mind4.fttp.xmission.com">RobertWalker</a> <a href="robowiki?action=browse&diff=1&id=PluggableRobot/Component">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

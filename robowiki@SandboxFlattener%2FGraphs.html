@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>SandboxFlattener/Graphs - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Sandbox, Flattener, Graphs'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Graphs">SandboxFlattener/Graphs</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?SandboxFlattener" class=wikipagelink>SandboxFlattener</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>These graphs are drawn with <a href="robowiki?Iiley" class=wikipagelink>iiley</a>'s <a href="robowiki?SmogPainter" class=wikipagelink>SmogPainter</a> application from data gathered by <a href="robowiki?Iiley" class=wikipagelink>iiley</a>'s <a href="robowiki?StatistRobot" class=wikipagelink>StatistRobot</a> bot. The graphs are segmented on distances. I have run <a href="robowiki?StatistRobot" class=wikipagelink>StatistRobot</a> against <a href="robowiki?MakoHT" class=wikipagelink>MakoHT</a> (since that was what <a href="robowiki?Tango" class=wikipagelink>Tango</a> asked for). And, for reference, <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> (the king of flattening) and <a href="robowiki?Mako" class=wikipagelink>Mako</a> since it hosts the exact same guns as <a href="robowiki?MakoHT" class=wikipagelink>MakoHT</a> and it illustrates why <a href="robowiki?MakoHT" class=wikipagelink>MakoHT</a> places 10+ positions ahead of Mako in <a href="robowiki?EternalRumble" class=wikipagelink>EternalRumble</a>. Actually the difference in movement gives an even bigger advantage than that. Mako1.2.4+ saves enemy data between matches, which gives it an extra edge in <a href="robowiki?EternalRumble" class=wikipagelink>EternalRumble</a>.-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Please don't ask me for more profiling graphs. Instead encourage <a href="robowiki?Iiley" class=wikipagelink>iiley</a> to upload <a href="robowiki?StatistRobot" class=wikipagelink>StatistRobot</a> and <a href="robowiki?SmogPainter" class=wikipagelink>SmogPainter</a>. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+<H3>Distances 91-250</H3>
+
+<img src="http:/robocode/uploads/pez/MakoHT1.2.2.2_91-250.jpg">
+<img src="http:/robocode/uploads/pez/DT1.61_91-250.jpg">
+<img src="http:/robocode/uploads/pez/Mako1.2.5_91-250.jpg">
+<H3>Distances 251-490</H3>
+
+<img src="http:/robocode/uploads/pez/MakoHT1.2.2.2_251-490.jpg">
+<img src="http:/robocode/uploads/pez/DT1.61_251-490.jpg">
+<img src="http:/robocode/uploads/pez/Mako1.2.5_251-490.jpg">
+<H3>Distances 491-810</H3>
+
+<img src="http:/robocode/uploads/pez/MakoHT1.2.2.2_491-810.jpg">
+<img src="http:/robocode/uploads/pez/DT1.61_491-810.jpg">
+<img src="http:/robocode/uploads/pez/Mako1.2.5_491-810.jpg">
+<hr noshade class=wikiline size=1>
+It's the read curve I look at. I have never figured what the blue curve is about. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I've always thought the blue curve was the same as the red curve but with a larger factor of change each VB hit.  Or it could be just the latest 50 VBs or something. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+&gt;I've always thought the blue curve was the same as the red curve but with a larger factor of change each VB hit.  
+<p>
+Yes,you are right. -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+<p>
+Yipee!!!!!!!! -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I still don't get it. Sorry for my thick head. "Larger factor of change each VB hit" ¿que? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Basically, everytime a VB hits it adds a certain amount to the probitility score thing for the bearing it was fired at.  For the blue line that certain amount is higher. Does that make any more sense? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Shouldn't this mean that the values for the blue one are n*values for the red one? I can't seem to find an n for wich this holds ...
+<p>
+My explanation was a bit of a simplification.  There's probably some smoothing process on the red one, and the blue one probably uses only the latest few VB hits, hence it having lots of high peaks and lots of low troughs, because some of the bearings won't have had any hits, and some won't have had any misses. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a> (PS NB: i've never done anything like this, so i'm only guessing, but iiley said i was right, so...)
+<p>
+You are all wrong,hehe~~~;}
+and i said you <a href="robowiki?Tango" class=wikipagelink>Tango</a> was right not mean your "Or it could be just the latest 50 VBs or something",is your "I've always thought the blue curve was the same as the red curve but with a larger factor of change each VB hit.  "
+<p>
+I dont know how to explain it in English,i just said these:
+blue and red curves value is a array in double (blue=new double[101])
+<p>
+blue[index]: index is the angle index,example index=50 means the shoot bearing is 0 degrees,0 means the shoot bearing is -50 degrees,and 100 means 50 degrees.
+blue[index]'s value is 0 when initialized,then when the VB start hit,if a bullet with 0 degrees shoot angle hited,blue[50]+=0.01,and others*=0.99.(this is same to <a href="robowiki?DuelistMicro" class=wikipagelink>DuelistMicro</a>'s,you can have a look into <a href="robowiki?DuelistMicro" class=wikipagelink>DuelistMicro</a>,then you can know what blue[] means).
+<p>
+red[index]:index is same to blue's.
+red[index]'s value is 0 too when initialized,then when the VB statt hit,if a bullet with 0 deredds shoot angle hited,red[50]+=0.01,and others dont change.so it is flater than blue curve.;]
+<p>
+I will release <a href="robowiki?StatistRobot" class=wikipagelink>StatistRobot</a> and <a href="robowiki?SmogPainter" class=wikipagelink>SmogPainter</a>'s source code soon,then you can understand how it works clearly.Hi,PEZ,can you copy the source which i sended to you to robowiki then give a link then we can download it,i am not in home so i cannot get the source this time,Thanx. -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+<p>
+OK. Do you want me to the <a href="robowiki?StatistRobot" class=wikipagelink>StatistRobot</a> and <a href="robowiki?SmogPainter" class=wikipagelink>SmogPainter</a> you sent me downloadable? Just say "yes" and I'll do it right away. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+and...dont compare red curve and blue curve,they are all div a number before drawing,but not dived the same number.so...only same color curve can be comparable. -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+<p>
+Let's see if I understand this:
+The blue one is a rolling average while the red one is just an accumulation ...
+<p>
+Yes,and ...Yes.;] -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?SandboxFlattener" class=wikipagelink>SandboxFlattener</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=SandboxFlattener/Graphs" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=SandboxFlattener/Graphs">View other revisions</a><br>Last edited April 21, 2003 3:59 EST by 218.104.153.xxx <a href="robowiki?action=browse&diff=1&id=SandboxFlattener/Graphs">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

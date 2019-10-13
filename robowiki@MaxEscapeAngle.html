@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>MaxEscapeAngle - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Max, Escape, Angle'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=MaxEscapeAngle">MaxEscapeAngle</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?MaxEscapeAngle" class=wikipagelink>MaxEscapeAngle</a> is the furthest angle an enemy can theoretically be relative to where they were when we fired.
+In other words, <a href="robowiki?MaxEscapeAngle" class=wikipagelink>MaxEscapeAngle</a> is the maximum angle difference during <a href="robowiki?BulletTravelTime" class=wikipagelink>BulletTravelTime</a>. In order to achieve the maximum angle, the enemy should orbit the attacker at full speed.
+<p>
+This is calculated like so:
+<pre>
+ Math.asin(8.0 / (20.0 - 3.0 * bulletPower))
+</pre>
+<em>Rationale</em>:
+<pre>
+                                       /|
+                                      /a|
+ bullet speed * bullet travel time   /  |
+                                    /   |  
+                                   /____|
+
+
+                      lateral velocity * bullet travel time
+
+
+</pre>
+(Figure from <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a>)
+<p>
+<pre>
+BulletPower
+	MaxEscapeAngle	MaxEscapeAngle (degrees)
+0.1 	0.418172793	23.95953613
+0.2 	0.42505527	24.35387302
+0.3 	0.432176489	24.76188883
+0.4 	0.439549592	25.18433653
+0.5 	0.447188745	25.62202775
+0.6 	0.455109243	26.07583882
+0.7 	0.46332763	26.54671771
+0.8 	0.471861837	27.03569179
+0.9 	0.480731339	27.54387678
+1.0 	0.489957326	28.07248694
+1.1 	0.499562917	28.62284673
+1.2 	0.509573387	29.19640441
+1.3 	0.520016446	29.79474763
+1.4 	0.530922556	30.41962172
+1.5 	0.542325303	31.07295097
+1.6 	0.554261834	31.75686386
+1.7 	0.566773382	32.47372274
+1.8 	0.579905879	33.22615937
+1.9 	0.593710703	34.01711753
+2.0 	0.608245579	34.84990458
+2.1 	0.623575676	35.72825446
+2.2 	0.639774963	36.65640524
+2.3 	0.656927894	37.63919579
+2.4 	0.675131533	38.68218745
+2.5 	0.694498266	39.7918195
+2.6 	0.715159313	40.97561034
+2.7 	0.737269359	42.24242262
+2.8 	0.761012754	43.60281897
+2.9 	0.786612042	45.06955012
+3.0 	0.814339942	46.65824177
+
+</pre>
+<p>
+<H3>See also</H3>
+
+<UL >
+<li> <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a>
+<li> <a href="robowiki?RandomTargeting" class=wikipagelink>RandomTargeting</a>
+<li> <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>
+</UL>
+<p>
+-- <a href="robowiki?Stelokim" class=wikipagelink>Stelokim</a>
+<hr noshade class=wikiline size=1>
+<p>
+Isn't it perpendicular, and not, as you say, 'orbiting the enemy'? Unless i misunderstand your meaning? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+The two are same. If you are perpendicular to something, you orbit it. -- <a href="robowiki?Stelokim" class=wikipagelink>Stelokim</a>
+<p>
+No, to acheive maximum escape angle, you stay perpendicular to the line through you and your enemy <strong>at the time of fire</strong>, so you continure in a straight line until the bullet would reach you, ever increasing your distance from the point of fire.  However, I might just bet using maximum orbital escape angle as the basis for GF calculations would prove slightly more fruitful, if there's any mathematical difference.  --<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+No!
+<p>
+Some maths:
+<PRE >
+ Orbit: radius = 1, arc length = 1, then angle = 1 radian
+ Perpendicular <strong>at the time of fire</strong>: radius = 1, perpendicular line length = 1, then angle = pi / 4 = 0.78539816339744830961566084581988
+</PRE>
+<p>
+Increasing your distance does not help. Lateral distance from <strong>the time of fire</strong> does.
+<p>
+-- <a href="robowiki?Stelokim" class=wikipagelink>Stelokim</a>
+<p>
+You have to remember that if you move away from the point of fire, the bullet is going to take longer to reach you, so you can actually travel farther than just "1" in your example.  --<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+<p>
+<PRE >
+ Assuming bullet speed=2, tank speed=1
+ Orbit: radius = 2, arc length = 1, then angle = 0.5 radian
+ Perpendicular <strong>at the time of fire</strong>: radius = 2, perpendicular line length = a, bullet travel length = 2a, then angle = 0.52359877559829887307710723054658
+</PRE>
+<p>
+You two are right. I was wrong. Thank you for the good information. :)
+<p>
+-- <a href="robowiki?Stelokim" class=wikipagelink>Stelokim</a>
+<p>
+Hmm, I'm not sure where this post should go, so I'll put it here. 
+Neways: I've thought of using mea for linear targeting like this: Calculate the mea, find the angle, and aim with that angle in the direction the enemy is going. Unless it is already being used? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<UL >
+<li> That wouldn't be linear targeting unless the opponent happens to be going full speed perpendicular to your bot (which, admittedly, is probably 1/2 the time).  Be careful, if your enemy is not traveling at full speed, you may end up shooting at an angle he could never reach!  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+That's true..Would anyone mind checking my pseudocode on the <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a> page? It is a bit messy, but...(I fixed the full speed 'problem') --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+Nvm about trying this, enemy might not travel perpendicular to my bot...I can (and am) making a bot that draws the max escape angle on the battlefield... --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Has anybody ever tried using <a href="robowiki?PrecisePrediction" class=wikipagelink>PrecisePrediction</a> to calculate the MEA for their surfing? I know Dookious and Garm use it for their gun, but right now I'm hooked on movement =). The reason I'm asking is because I just gave it a try, and it really hurt my score against everybody from Dookious to Raiko to <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>... so I'm not sure if it's a bug, or just a bad idea =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+I don't unse <a href="robowiki?PrecisePrediction" class=wikipagelink>PrecisePrediction</a> in the gun any more, it was too slow (and not bugfree). But it is on my todo-list to test my MEA approximation (currently used in the gun) also for surfing. I'll do a quick hack, lets see if it works. --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+I have also tried it for surfing and found it to perform worse. (My logic is that your surf stats are to simulate the enemy's gun and 99% of bots don't use precise max escape angles in their guns.) If you are curious, you could very easily flip Dookious to use precise escape angles in the movement - there are constants for "traditional" or "precise" max escape angles in the Wave class, so just switch which one's used in DookiCape<a href="robowiki?action=edit&id=DookiCape" class=wikipageedit>?</a>. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I tried this in Horizon briefly. <em>Very briefly</em>. I had the same performance results and rationalization as Voidious. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<p>
+I'm not using it because it would throw of how precisely I predict simple linear targeting.  Or ... I guess that depends on whether you're taking walls into account ... -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Yeah, I thought it might be something like that. But Dookious uses precise angles in the gun, and it didn't help against him, so there must be something else as well. I don't have any wall segmentation in my movement...so that isn't screwing stuff up. While I'm at it, does wall segmentation help in movement? Both reverse and forward, or just forward, or what? And what kind of slices? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+<UL >
+<li> I meant whether you're taking walls into account *when calculating the MEA*.  If you do, so that the MEA becomes smaller when you're near a wall, it would really mess up being able to predict a simple targeter that does *not* take walls into account.  If you don't, then I suppose the simple targeter may still hit the same GF in your stats every time, thus being dodgable, even if it's a different "GF" in his eyes.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+<UL >
+<li> Yeah, I got that, but it triggered this other thing in my head as well =). What you're saying is that the precise prediction takes walls into account, but the simple targeter might not, causing a mismatch between his gun and my stats, causing me to think his bullet is where it isn't, causing me to get hit. =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+<UL >
+<li> Interestingly, some simple targeters do take walls into account, including the <a href="robowiki?WaveSurfingChallenge" class=wikipagelink>WaveSurfingChallenge</a> bots. They won't shoot at a spot that's out of bounds, so wall segmentation <em>should</em> matter a lot against them. Interesting that <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a> rocks the house in that challenge without wall segmentation! You sure you don't have any? =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+<UL >
+<li> Not yet =) Although I did find that setting the 'best' distance to 400 helped against not only the WSC bots, but lots of other simple bots. It was this discussion that prompted me to run the WSC with the latest version, and it seems that I'm the strongest against bot C by a big margin. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+I think maybe one reason precise MEA helps in the gun is that you won't ever be shooting out of bounds, but that will never be an issue in <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> with precise prediction anyway. I would say yes, you should try some wall segmentation, forward and reverse. If you are viewing it as the "wall distance" is the GF you'll be at if/when you hit the wall, I'd start with slices of .25 / .5 / .75 or .3 / .65, with equal or more forward segments than reverse. I'm sure you'll want to experiment with that, but it's a start. =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I implemented the MEA calculation from the gun in my movement. It is better vs. some bots and worse vs other. Especially a combination of traditional normalised buffers and precise MAE buffers gives good results! --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+How about segmenting your movement on the MEA? That should work for the bots that it helps against, but if you have it buffered in parallel with a buffer without this segmentation, it won't affect you against the bots it doesn't help against. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+<UL >
+<li> I think the common method of measuring wall distance is basically the same as measuring MEA... i.e., what GF would I hit the wall at if I continued orbiting normally? -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> Yes, but wouldn't this be more accurate? I mean, most bots <em>do</em> have some form of <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>, so they aren't very likely to continue in that same orbit until they hit a wall. Though maybe I should just shut up and give it a try =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> Hmm... Well, measuring MEA directly would take the angle-to-wall into account, too, so maybe it really would be better! Let me know what you find =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> Oh, and also, I do account for <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> in my precise <a href="robowiki?MaxEscapeAngle" class=wikipagelink>MaxEscapeAngle</a>, if I confused that point. But my wall distance calculation doesn't use wall smoothing. Of course most bots will not run right into the wall, but it's more a matter of measuring their wall distance than predicting where they'll move. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+I'm getting drammatically better results after changing from Math.atan( 8 / v ) to Math.asin( 8 / v ).  Doh. -- Martin
+<p>
+Hehe, yeah, before you would have had trouble hitting Walls, huh? I take it we'll be seeing a new version of Ugluk soon? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<UL >
+<li>Well, I still allow a 10% overrun and noticed that <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> was often peaking on the extreme ends of my range, even though it was supposed to be out of range.  I've been testing each feature and tweak against the TC2K6 bots of Butterfly (because it sucks), CC (because it rocks), and <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> (because everything I do that improves performance against CC degrades performance against GrubmGrb<a href="robowiki?action=edit&id=GrubmGrb" class=wikipageedit>?</a>).  As far as a new version of Ugluk .. I doubt it will be soon.  My work-in-progress is dubbed Hubris, and I wrote about it on the new wiki when I moved my bot pages there.  I am doing lots and lots of testing and graphics.  I keep stalling on coding the new movement engine, though I've got the geometry and logic worked out. -- Martin
+</UL>
+<p>
+Heh... interesting. I was using Math.atan too for some reason. Math.asin but somewhere I referenced used atan...... Maybe this will help alot... I wonder where I saw atan before -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=MaxEscapeAngle" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=MaxEscapeAngle">View other revisions</a><br>Last edited February 6, 2008 21:34 EST by <a href="robowiki?Martin_Alan_Pedersen" title="ID 13117 from 208.147.70.132">Martin Alan Pedersen</a> <a href="robowiki?action=browse&diff=1&id=MaxEscapeAngle">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

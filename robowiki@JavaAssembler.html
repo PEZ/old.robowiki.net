@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>JavaAssembler - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Java, Assembler'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=JavaAssembler">JavaAssembler</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>So I have several Java tools:
+<UL >
+<li> Compiler
+<li> Decompiler
+<li> Disassembler
+</UL>
+<p>
+Notice what's missing? Everything I Google up is dead. And writing my own is currently a little over the top (would be a fun project though...). -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+Eh... I'm not sure I understand what this is about. What's a Java assembler?-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Just like any other assembler (perhaps you should look up that), but for Java. ;-) -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+It's strange, looks like the existing ones were deliberately removed form the web. If you find one please share, I wouldn't mind experimenting with java bytecode... -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Well, I am an old assembler programmer so no need to look that up. =) But I thought the best assembly language for Java was Java itself. Never realized there were assemblers for it. And, it seems you have troubles finding one too. What's the difference between the decompiler and the disassembler? Can you show some sample output from the latter? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Your example:
+<pre>public class Test {
+	public static void main(String[] args) {
+		System.out.println("You gave me " + args.length + (args.length==1?" argument":" arguments"));
+		for(int i=0; i&lt;args.length; i++) {
+			printArg(i, args[i]);
+		}
+	}
+	
+	static void printArg(int num, String str) {
+		System.out.println((num * 2 + 2) / 2 - 1 + ": " + str);
+	}
+}</pre>
+<p>
+Disassembled using javap:
+<pre>Compiled from "Test.java"
+public class Test extends java.lang.Object{
+public Test();
+  Code:
+   0:   aload_0
+   1:   invokespecial   #1; //Method java/lang/Object."&lt;init&gt;":()V
+   4:   return
+
+public static void main(java.lang.String[]);
+  Code:
+   0:   getstatic       #2; //Field java/lang/System.out:Ljava/io/PrintStream;
+   3:   new     #3; //class StringBuffer
+   6:   dup
+   7:   invokespecial   #4; //Method java/lang/StringBuffer."&lt;init&gt;":()V
+   10:  ldc     #5; //String You gave me 
+   12:  invokevirtual   #6; //Method java/lang/StringBuffer.append:(Ljava/lang/String;)Ljava/lang/StringBuffer;
+   15:  aload_0
+   16:  arraylength
+   17:  invokevirtual   #7; //Method java/lang/StringBuffer.append:(I)Ljava/lang/StringBuffer;
+   20:  aload_0
+   21:  arraylength
+   22:  iconst_1
+   23:  if_icmpne       31
+   26:  ldc     #8; //String  argument
+   28:  goto    33
+   31:  ldc     #9; //String  arguments
+   33:  invokevirtual   #6; //Method java/lang/StringBuffer.append:(Ljava/lang/String;)Ljava/lang/StringBuffer;
+   36:  invokevirtual   #10; //Method java/lang/StringBuffer.toString:()Ljava/lang/String;
+   39:  invokevirtual   #11; //Method java/io/PrintStream.println:(Ljava/lang/String;)V
+   42:  iconst_0
+   43:  istore_1
+   44:  iload_1
+   45:  aload_0
+   46:  arraylength
+   47:  if_icmpge       63
+   50:  iload_1
+   51:  aload_0
+   52:  iload_1
+   53:  aaload
+   54:  invokestatic    #12; //Method printArg:(ILjava/lang/String;)V
+   57:  iinc    1, 1
+   60:  goto    44
+   63:  return
+
+static void printArg(int,java.lang.String);
+  Code:
+   0:   getstatic       #2; //Field java/lang/System.out:Ljava/io/PrintStream;
+   3:   new     #3; //class StringBuffer
+   6:   dup
+   7:   invokespecial   #4; //Method java/lang/StringBuffer."&lt;init&gt;":()V
+   10:  iload_0
+   11:  iconst_2
+   12:  imul
+   13:  iconst_2
+   14:  iadd
+   15:  iconst_2
+   16:  idiv
+   17:  iconst_1
+   18:  isub
+   19:  invokevirtual   #7; //Method java/lang/StringBuffer.append:(I)Ljava/lang/StringBuffer;
+   22:  ldc     #13; //String : 
+   24:  invokevirtual   #6; //Method java/lang/StringBuffer.append:(Ljava/lang/String;)Ljava/lang/StringBuffer;
+   27:  aload_1
+   28:  invokevirtual   #6; //Method java/lang/StringBuffer.append:(Ljava/lang/String;)Ljava/lang/StringBuffer;
+   31:  invokevirtual   #10; //Method java/lang/StringBuffer.toString:()Ljava/lang/String;
+   34:  invokevirtual   #11; //Method java/io/PrintStream.println:(Ljava/lang/String;)V
+   37:  return
+
+}</pre>
+<p>
+In many cases javac generates nearly perfect bytecode, but it doesn't know how to use the stack effectively. The best bytecode reference I found is at <a rel="nofollow" href="http://cat.nyu.edu/~meyer/jvmref/">http://cat.nyu.edu/~meyer/jvmref/</a> (yes, the assembler that gets mentioned there results in a 403). I don't think I will use a Java assembler a lot, but at least I want to try it. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+<a rel="nofollow" href="http://www.sable.mcgill.ca/software/#soot">http://www.sable.mcgill.ca/software/#soot</a> jasmin sable 1.27 is downloadable there. --<a href="robowiki?Goofy" class=wikipagelink>Goofy</a>
+<a rel="nofollow" href="http://bmrc.berkeley.edu/courseware/cs164/spring98/proj/jasmin/src/jasmin/">http://bmrc.berkeley.edu/courseware/cs164/spring98/proj/jasmin/src/jasmin/</a> is the jasmin source, I think --<a href="robowiki?Goofy" class=wikipagelink>Goofy</a>
+<p>
+Perfect bytecode? In what sense? Speed? <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a>? Usually jikes produces smaller code than javac. Anyway, it might get something of a nightmare to maintain code that you've hand-shrink using an assembler. And that assembly doesn't look anywhere as "user friendly" as assembly for other processors do. Also, something must be missing from it. I can't see how assembling it would produce a program equivalent to the program produced by compiling the java source file... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Speed, <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a>, file size, everything you want the way you want, but only if it can be done better in assembly. For example
+<pre>multiply(double first, double second) {
+    return first*second;
+}</pre>
+can't be done more efficient (besides that x*y is more efficient than multiply(x, y)).
+<p>
+Java works with a stack which works a bit like Forth. You can 'push' things on the stack and 'pop' them off. If you want to substract an int from another, first push the 2 ints on the stack and then use isub (no need for parentheses to get the right order!). The two input values are then popped off, and the result pushed on the stack. You can duplicate the top item with dup, pop it off, swap the two top items, etc. If you call a method (which is done by first pushing the object on the stack, then calling the method), the top items are used as arguments (number of items depends on method). Complex function calls are really easy that way: first push the object, then do everything to get the first argument, leave it on the stack, get the second argument, etc, and finally call the method. Looks like this (I put the stack contents between parentheses):
+<PRE >
+ (stack is empty)
+ push object you want to call (object)
+ push 100 (object 100)
+ duplicate (object 100 100)
+ push 50 (object 100 100 50)
+ subtract (object 100 50)
+ divide (object 2)
+ duplicate (object 2 2)
+ push some object (object 2 2 otherobject)
+ get some field of that object which currently contains 4 (object 2 2 4)
+ multiply (object 2 8)
+ call method which takes 2 ints, so the 3rd from top element is the object that is called (resultvalue)
+ pop (empty)
+</PRE>
+And then all you did is gone. ;-) Note that you can't use the first argument's value in the second in the Java language (or you need to get it again). Do you now see how it can be equivelant, and better?
+<p>
+About this:
+<PRE >
+   33:  invokevirtual   #6; //Method<a href="robowiki?action=edit&id=JavaAssembler/Method" class=wikipageedit>?</a> java/lang/StringBuffer<a href="robowiki?action=edit&id=JavaAssembler/StringBuffer" class=wikipageedit>?</a>.append:(Ljava/lang/String<a href="robowiki?action=edit&id=JavaAssembler/String" class=wikipageedit>?</a>;)Ljava/lang/StringBuffer<a href="robowiki?action=edit&id=JavaAssembler/StringBuffer" class=wikipageedit>?</a>;
+</PRE>
+I think the names are stored somewhere at the beginning of the file with an ID, and called by that ID to save space when used more than once (and it is of course faster). What you see above is first a label, then the instruction name, then that ID, and then a comment by the disassembler that the object StringBuffer<a href="robowiki?action=edit&id=StringBuffer" class=wikipageedit>?</a> is called with method append (#6) which takes a String and returns a StringBuffer<a href="robowiki?action=edit&id=StringBuffer" class=wikipageedit>?</a>. I'm sure many (if many?) Java assemblers take a name, not necessarily the ID.
+<p>
+Btw, don't get me wrong. The language makes large projects much more maintainable. If you can easily follow assembler code (remember that you can indent it, and can use any labels you want), or you want to try it, or are very limited in size/speed (<a href="robowiki?NanoBots" class=wikipagelink>NanoBots</a>!), it is useful. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=JavaAssembler" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=JavaAssembler">View other revisions</a><br>Last edited October 16, 2004 14:10 EST by <a href="robowiki?Jonathan" title="ID 3545 from 213-73-203-9.cable.quicknet.nl">Jonathan</a> <a href="robowiki?action=browse&diff=1&id=JavaAssembler">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

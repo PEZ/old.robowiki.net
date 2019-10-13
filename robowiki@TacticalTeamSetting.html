@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>TacticalTeamSetting - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Tactical, Team, Setting'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=TacticalTeamSetting">TacticalTeamSetting</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I played some team battle but I think that there's almost no place for global team strategie or collaborative strategie.
+I think that we should define some rules so it become more interesting. In Quake it's a little bit similar : In teamdeathmatch you have no strategy appart from being together because you could be in different rooms, but it's not the case here. Real collaborative strategy are in "capture the flag" or fortress.
+<p>
+So i would like to add some rules or something else in order to have a real team play. <a href="robowiki?SoccerRobocode" class=wikipagelink>SoccerRobocode</a> was a attempt to do this. --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<p>
+<H3>Please post any idea you have about it even the crasiest one:</H3>
+
+<p>
+We could set rules as Albert suggest in <a href="robowiki?CoopRobot/Chat" class=wikipagelink>CoopRobot/Chat</a>, we limit function like moveTo(x, y), shootHeadOn<a href="robowiki?action=edit&id=HeadOn" class=wikipageedit>?</a>(TargetName<a href="robowiki?action=edit&id=TargetName" class=wikipageedit>?</a>), shootLinear(TargetName<a href="robowiki?action=edit&id=TargetName" class=wikipageedit>?</a>), we just must decide wich one....
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Another idea comes frome Quake it's the "freeze mod". If you are hit (power doesn't matter) you can't move anymore, you are freezed. If one of your teammate stay for some times (like 10 frame) near you (maybe a distance of 50) you are "defreezed" wich mean you can move again. When all ennemi bots are freezed you get 1 point. --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<p>
+I've been thinking about this one, and i think i know how to do it quite easilly, so i will give it a go over the next couple of days, and get back to you. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+That would be cool, I also thought about it. I think it can be a really cool mod because you must decide between freezing enemies or defreezing your teammate. --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<p>
+Ok, here's a page, it's not ready yet though: <a href="robowiki?RobocodeFreeze" class=wikipagelink>RobocodeFreeze</a> -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+I was just telling Jim the other day that the first thing I'm doing when Robocode goes open-source is to make free-for-all Death-match robocode.  A little off topic, but just a fun thought. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<DL >
+<dt><dd> What's the difference between that and the current robocode?  Melee is free-for-all death-match, isn't it?
+</DL>
+Or do you mean mutliplayer human controlled ? --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<p>
+Melee is last-man-standing, primarily.  The way a true robocode death match would work would be as follows:
+<OL >
+<li> When you die, you are 'respawned' in a random location
+<li> You don't get survival points.  Damage points, maybe.  But your score should ultimatly be a count of how many opponents you finished off.
+<li> You would lose a point if you 'suicided' (maybe there would be something to this, or maybe not.  Maybe we could call it a death and respawn if you get disabled, or maybe we'll just ignore this aspect of death-match-type games.)
+</OL>
+The fundamental difference is that the focus is on killing more than surviving.  Maybe, while I'm on the idea of putting FPS concepts into Robocode 'mods', we could add an "Instagib" version :-p -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Ah, i see.  Sounds good.  How about simply +1 point everytime you kill, -1 point everytime you die? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I think this can be quite easy to implement (just take a look at the EnergySetter<a href="robowiki?action=edit&id=EnergySetter" class=wikipageedit>?</a> class in <a href="robowiki?SoccerRobocode" class=wikipagelink>SoccerRobocode</a>) the whole thing is how assembling the results, maybe by setting up a referee (a bot) with coordinate (-500;-500). We can make it much simpler if there's a time limit (and no frag limit) so each bot can check for a finish without connecting each others. --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<p>
+This kind of communication can be done by simple file i/o; when a bot hits the frag limit, a file could simply be created called endround; all robots simply check if this file exists every tick, and if it does, they end the round. A configuration deathmatch.txt file should be available which the bots read to initialize themselves and retrieve game parameters such as timelimit or fraglimit; they should all block and wait for the file so that they each read it one by one. 
+<p>
+I am an extremely big fan of this deathmatch mode; I had never thought of this before. I'd love to participate in the development of this, and I'd love to play it as well. My vote for scoring is that we have various scoring types; the of course classic +1 for a kill, the survival -1 for death, the +1 kill -1 death, etc.
+<p>
+-- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+I think either mode has some merit, although I'd say for team deathmatch, it should just count kills and then count negative kills when you kill a teammate.  About detecting if the round should be over, it seems like you could modify the Battle class to figure that out for you, and the RobotPeers<a href="robowiki?action=edit&id=RobotPeers" class=wikipageedit>?</a> could get the info from their reference to the Battle. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Just made a first test (little set of class) with no communication so you don't have real result. The finish is decided by time limit (7000). You can get it here <a rel="nofollow" href="http://www.geocities.com/synnalagma/dm.html">http://www.geocities.com/synnalagma/dm.html</a> but note that's only the basic idea and not a release. The problem with file is that you must change the SecurityManager<a href="robowiki?action=edit&id=SecurityManager" class=wikipageedit>?</a> (otherwise you can not acces file out of your directory) --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<p>
+I think it's time for a new page <a href="robowiki?RobocodeDeathMatch" class=wikipagelink>RobocodeDeathMatch</a>, There's an alpha release, fixed the communication stuff. --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<hr noshade class=wikiline size=1>
+<p>
+I completely agree with the need of setting some rules that allow for a real team play. 
+<p>
+A very simple setting would be:
+<p>
+<UL >
+<li> Head-on targeting only.
+</UL>
+<p>
+Seems really stupid, but since head-on targeting is easily avoidable, it would create the need to coordinate bots to attack the enemy so it can't avoid all hits. 
+<p>
+One issue is how do you fire at a bot using head-on targeting, if you don't know where the bot is (because you haven't scaned it). A possible solution would be to add an additional rule stating that you must have you radar locked and your gun correctly pointed to the bot before firing. It would create also the need to deal with bots firing and bots gatering intelligence (spining the radar). 
+<p>
+It could be implemented using a class that extends <a href="robowiki?TeamRobot" class=wikipagelink>TeamRobot</a>:
+<pre>
+public class RestrictedTeamRobot extends TeamRobot {
+
+   public void lock(target) { ... }
+   public void setFire() { ... would override the normal setfire ... }
+   public bullet setFireBullet() { ... would override the normal setFireBullet ... }
+
+}
+</pre>
+<p>
+-- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Sounds good.  How about altering the getOthers() method to return a list of bot names and exact locations.  No radar.  Then everyone has the same info.  Remove the turnGun() and turnRadar() methods, and alter the fire() method so it takes a name and a power.  Then it automatically fires directly at the enemy bot.  I'm not sure if the gun would have to turn first, or it we should make the gun turn instantly... -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I think it would not be a good idea to remove the radar, gathering data is an important part of robocode. --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<p>
+Very simple: just don't let the robot control his gun. He can control every other aspect of his bot (including radar), but for gunning only has the method
+<PRE >
+ pointGunAt<a href="robowiki?action=edit&id=GunAt" class=wikipageedit>?</a>(name)
+</PRE>
+This points the gun head-on at the indicated robot. The setFire(power) method would only fire if the gun is already pointed directly at the enemy (so you can't be clever and switch targets and fire while switching to lead :). So simply make a class extend <a href="robowiki?TeamRobot" class=wikipagelink>TeamRobot</a> and override all gun control methods and make them blank, and add the above method. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+That's pretty much what i was saying, i just couldn't work out how to move the gun.  It seems like you've got it!  But would you use gunTurnCompleteCondition<a href="robowiki?action=edit&id=TurnCompleteCondition" class=wikipageedit>?</a>, or would you actually check if it's pointing at the enemy?  If you just check it's finished moving, then you will always fire behind where it is when you fire, so after it's moved (unless it has a -ve guess factor) you will always miss by a very large amount. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+The robot should only be allowed to fire if the gun had completed the turn from last turn; this means it is currently pointing at where the enemy was last turn. Alternatively, if the gun is within a few degrees of head-on, fire should be allowed; I would opt for the latter because it allows an extra tick in front where the robot can fire head-on. A boolean method isGunReady<a href="robowiki?action=edit&id=GunReady" class=wikipageedit>?</a>() and a GunReadyCondition<a href="robowiki?action=edit&id=GunReadyCondition" class=wikipageedit>?</a> or GunReadyEvent<a href="robowiki?action=edit&id=GunReadyEvent" class=wikipageedit>?</a> could be created to inform the robot of when it can fire. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+<hr noshade class=wikiline size=1>
+While coding <a href="robowiki?SoccerRobocode" class=wikipagelink>SoccerRobocode</a>, I understood that we can made all thinkable change to the game (almost). So I thought about another idea : we can make different class (like in team fortress for Quake) like medecineBot (it heal bot when it hit it), radarBot (can't fire), and gunBot (like droid). Maybe too complicated... --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<p>
+Would it not be a good idea to wait until robocode is open sourced before making *too* many changes?  -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I don't think so, when robocode will be open source we can redo it properly, but I don't want to wait until this (we don't know when). I just wrote this so we can feel free to implements any idea... --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<p>
+Wich class would be cool (feel free to add any idea):
+<UL >
+<li>RadarBot<a href="robowiki?action=edit&id=RadarBot" class=wikipageedit>?</a>
+<li>GunBot<a href="robowiki?action=edit&id=GunBot" class=wikipageedit>?</a>
+<li>Maybe an interface for slow but lot of energy bot
+</UL>
+<hr noshade class=wikiline size=1>
+Just put your name below a mod with I for "interesting", M for "maybe" and F for "forget it"
+<p>
+<strong>Freeze Mod</strong>
+I-<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a> I-<a href="robowiki?Tango" class=wikipagelink>Tango</a> M-Albert F-? M-<a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+<strong>Restricted Head On</strong>
+M-<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a> I-Albert I-<a href="robowiki?Tango" class=wikipagelink>Tango</a> F-<a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a> M-<a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+<strong>Class Based</strong>
+M-<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a> I-Albert I-<a href="robowiki?Tango" class=wikipagelink>Tango</a> I-<a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a> F-<a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+<strong>Death Match</strong>
+I-<a href="robowiki?Tango" class=wikipagelink>Tango</a> I-<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a> I-<a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a> I!!!-<a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=TacticalTeamSetting" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=TacticalTeamSetting">View other revisions</a><br>Last edited October 30, 2003 13:46 EST by <a href="robowiki?Tango" title="ID 1197 from webcacheH06a.cache.pol.co.uk">Tango</a> <a href="robowiki?action=browse&diff=1&id=TacticalTeamSetting">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

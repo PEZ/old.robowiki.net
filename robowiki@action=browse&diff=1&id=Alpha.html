@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Alpha - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Alpha'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Alpha">Alpha</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><b>Difference (from prior major revision)</b>
+(no other diffs)<br> <br><strong>Changed: 66c66,68</strong><br><table width="95%" bgcolor=#ffffaf class=wikidiffold><tr><td>
+ Hmm, I currently calculate the distance the wave has passed by, distanceToImpact<a href="robowiki?action=edit&id=ToImpact" class=wikipageedit>?</a> positive means it hasn't hit yet, negative it has already passed. All I really do is record it at waveSpeed (or there abouts) to aproximate the perfect factor, where as for you I would have to record at about -waveSpeed/2 (ranging from -5.5 to -9.85). But according to that I should check around waveSpeed*1.5? (Mind you I still plan to try my interpolation) --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a><br></td></tr></table><table width="95%" bgcolor=#cfffcf class=wikidiffnew><tr><td>
+ Hmm, I currently calculate the distance the wave has passed by, distanceToImpact<a href="robowiki?action=edit&id=ToImpact" class=wikipageedit>?</a> positive means it hasn't hit yet, negative it has already passed. All I really do is record it at waveSpeed (or there abouts) to aproximate the perfect factor, where as for you I would have to record at about -waveSpeed/2 (ranging from -5.5 to -9.85). But according to that I should check around waveSpeed*1.5? (Mind you I still plan to try my interpolation) --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a><br> <br> Assuming you have the fire time, location, and speed correctly, yes, I make the wave break when it's at (distance to enemy - (1.5 * wave speed))... 1 for the extra "wave speed" the bullet goes before checking for collisions, and .5 for the averaging of things. How often this ends up as a different bin is something I haven't tested, though, and it's probably fairly rare. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a><br></td></tr></table>
+<hr class=wikilinediff>
+<div class=wikitext><strong><a href="robowiki?Alpha/VersionHistory" class=wikipagelink>Version History</a></strong>
+<H3>Bot Name</H3>
+
+Alpha
+<p>
+<H4>Author</H4>
+
+<a href="robowiki?MarijnK" class=wikipagelink>MarijnK</a>
+<p>
+<H4>Extends</H4>
+
+<a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>
+<p>
+<H4>What's special about it?</H4>
+
+It's my first attempt at a bot.
+<p>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<a rel="nofollow" href="http://coloelja.xs4all.nl/~mkruisselbrink/robocode/mk.Alpha_0.2.1.jar">http://coloelja.xs4all.nl/~mkruisselbrink/robocode/mk.Alpha_0.2.1.jar</a>
+<p>
+<H4>How competitive is it?</H4>
+
+It seems to do fairly well as a melee bot. My first version placed #21 in de melee rumble.
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+A simple form of <a href="robowiki?MinimumRiskMovement" class=wikipagelink>MinimumRiskMovement</a>
+<p>
+<H4>How does it fire?</H4>
+
+It uses <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> in the current version, although I didn't notice great improvements over the previous circular targetting gun. It uses bezier curves to estimate the speed/heading/location of enemies between scans.
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+It doesn't.
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+Currently it is only a melee bot, so no different strategy.
+<p>
+<H4>How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a>?</H4>
+
+It simply chooses the closest target.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+Nothing.
+<p>
+<H4>Where did you get the name?</H4>
+
+Alpha is the first letter of the Greek alphabet, and this is my first bot...
+<p>
+<H4>Can I use your code?</H4>
+
+Currently it's not yet open source, but once I'm satisfied with my bot I'll probable release the source for everyone to see/use.
+<p>
+<H4>What's next for your robot?</H4>
+
+Improved gun, probably a better movement as well, and most likely a special 1on1 movement as well.
+<p>
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+Don't know yet :)
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+None, it is my first bot.
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+<p>
+That's an interesting idea with the bezier curves - do you use them for interpolation or extrapolation? -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I use them to interpolate date between two scans. This allows me to acquire quite accurate statistics even with quite a lot of ticks without a scan. Only when I'm actually going to fire I need a pretty recent scan of my target. -- <a href="robowiki?MarijnK" class=wikipagelink>MarijnK</a> 
+<p>
+It seems like a fairly nice strategy, especially if you are planning on building a pattern matcher that is resilient to missed scans.  I also do interpolation of missed scans with my <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> bots, but I use linear interpolation (under the assumption that the effect on either the final bearing or the timing of the wave hit is negligible almost all of the time).  By the way, you shouldn't be too surprised to not see a big difference in melee when upgrading from circular targeting to <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> - I'd expect you to find a much bigger difference one-on-one, and in melee, <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> is only really even noticeably better against other more advanced bots.  It does get a bit better with smarter segmentation, however. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I was planning something like that to get a *perfect* factor, as the wave may come up a little to long or a little to short to be exactly on point with whrere would be the optimal place to record the guessfactor. So I would just interpolate and get the location of the enemy in this ghost space between ticks. I however haven't gotten around to coming up with the equation I need. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Instead of recording wave hits after the wave has definitely passed the enemy (for now, ignoring the 1-tick adjustment because bullets advance an extra time before checking for collisions), I do it after they have passed (that distance - (bullet velocity / 2)) so that it should average out to being this "perfect factor", as you call it. (If you wait until they've definitely passed, on average they are (bullet velocity / 2) past the enemy instead of right on them.) However, I now have doubts that either of these ideas are worth the effort =) But it's always nice to be convinced your implementation is "right" even if you can't prove it performs better, IMO. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Hmm, I currently calculate the distance the wave has passed by, distanceToImpact<a href="robowiki?action=edit&id=ToImpact" class=wikipageedit>?</a> positive means it hasn't hit yet, negative it has already passed. All I really do is record it at waveSpeed (or there abouts) to aproximate the perfect factor, where as for you I would have to record at about -waveSpeed/2 (ranging from -5.5 to -9.85). But according to that I should check around waveSpeed*1.5? (Mind you I still plan to try my interpolation) --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Assuming you have the fire time, location, and speed correctly, yes, I make the wave break when it's at (distance to enemy - (1.5 * wave speed))... 1 for the extra "wave speed" the bullet goes before checking for collisions, and .5 for the averaging of things. How often this ends up as a different bin is something I haven't tested, though, and it's probably fairly rare. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Alpha" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Alpha">View other revisions</a><br>Last edited January 12, 2007 7:41 EST by <a href="robowiki?Voidious" title="ID 8561 from pool-72-75-193-206.bflony.east.verizon.net">Voidious</a> <a href="robowiki?action=browse&diff=1&id=Alpha">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

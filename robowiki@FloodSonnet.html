@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>FloodSonnet - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Flood, Sonnet'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=FloodSonnet">FloodSonnet</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>A work in progress, and an effort in taking all <a href="robowiki?Iiley" class=wikipagelink>Iiley</a> learned from me in code obfuscation when he wrote <a href="robowiki?MeleeXaxa" class=wikipagelink>MeleeXaxa</a> and putting it into a Sonnet.  It still has a bug somewhere, but eventually I think it will have good odds of winning the sonnet 1-on-1 division of the <a href="robowiki?RobocodeLittleLeague" class=wikipagelink>RobocodeLittleLeague</a>.  It may also become the first non-<a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a> in that tournament, if no one gets there in the next day or so.  Here's the current lines breakdown:
+<p>
+<PRE >
+ global variable declarations: 1 line (why use more?)
+ radar: 2 lines (I may be able to bum this one down one more yet, I haven't decided if I will yet, though)
+ movement: 3 lines (turn, drive, set max velocity)
+ targeting: 2 lines (aim/fire, set<a href="robowiki?AdjustGunForRobotTurn" class=wikipagelink>AdjustGunForRobotTurn</a>)
+ VB management: 4 lines (variable declarations, removing the custom event, adding the custom event, returning from the test method, using PEZ's event-style bullet)
+ Finding the bearing to shoot at from my stat buffer: 0 lines (ha!)
+ File I/O (melee-compatible) : 2 lines (ha again! You'd thought it would be more, eh?  Could have been 1, but I need to close my output stream...)
+</PRE>
+<p>
+It should essentially be equivalent to <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> without <a href="robowiki?DynamicDistancing" class=wikipagelink>DynamicDistancing</a> (as that would take at least about 3 more lines to do right.  I suppose I could fudge it, but it would be too much effort to save the distancing data, too).  Current codesize is 1920 bytes.
+<p>
+<strong>Update</strong>:
+I found the bugs in the gun now I'm pretty sure, it works much closer to where I expected.  I also added some melee logic in there, and it's becoming quite a bloated Sonnet, over 3000 bytes currently.  Getting close to releasing it here... -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+And the classic templated page:
+<p>
+<H4>What's special about it?</H4>
+
+<p>
+14 lines of Flood-style power.  An interesting example of statistical targeting, including file I/O, in a <a href="robowiki?Sonnet" class=wikipagelink>Sonnet</a>.  I hope it will be a competitive <a href="robowiki?Sonnet" class=wikipagelink>Sonnet</a> for quite some time (right now, it's only the 5th officially competing <a href="robowiki?Sonnet" class=wikipagelink>Sonnet</a>, so it will at least be in the top 5).  If it doesn't win the <a href="robowiki?Sonnet" class=wikipagelink>Sonnet</a> division, at least it will win some Obfuscated Java Contests or something.
+<p>
+It's also the first <a href="robowiki?MegaBot" class=wikipagelink>MegaBot</a> designed for the <a href="robowiki?RobocodeLittleLeague" class=wikipagelink>RobocodeLittleLeague</a>, the first version (version 0.9) is 3281 bytes.
+<p>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<p>
+<a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=1779">http://www.robocoderepository.com/BotDetail.jsp?id=1779</a>
+<p>
+<H4>How competitive is it?</H4>
+
+<p>
+Among current <a href="robowiki?Sonnet" class=wikipagelink>Sonnet</a>s, it's probably the best over a lot of rounds one-on-one.  And since it saves data it doesn't lose that.  It is ok in melee, but not spectacular.  Just good enough to beat the bots not designed for melee I suppose.
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+<p>
+In duels, it uses a movement based on <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>'s movement.  In melee, it uses a simplified <a href="robowiki?MinimumRiskMovement" class=wikipagelink>MinimumRiskMovement</a>, trimmed from the more complicated algorithm used by <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a>.
+<p>
+<H4>How does it fire?</H4>
+
+<p>
+Basically a variant on <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>'s gun.  Differences are that it doesn't interpolate scans like <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>, it seperates melee stats from one-on-one stats, and it doesn't fire a wave every scan in one-on-one battles (it does still in melee).
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+<p>
+By picking a new speed and direction when its fired upon (sometimes).
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+<p>
+Movement is different, <a href="robowiki?FloodMovement" class=wikipagelink>FloodMovement</a> in <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a>, <a href="robowiki?MinimumRiskMovement" class=wikipagelink>MinimumRiskMovement</a> in <a href="robowiki?Melee" class=wikipagelink>Melee</a>.  It also spins and locks its radar in melee, and (of course) only locks in one-on-one battles.
+<p>
+<H4>How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a>?</H4>
+
+<p>
+Generally tries to avoid everyone and tries to target those close to it (without complete success)
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+<p>
+Targeting information - a 6-dimensional array of ints.
+<p>
+<H4>Where did you get the name?</H4>
+
+<p>
+Flood from my Flood series of robots, and Sonnet from the lines count.
+<p>
+<H4>Can I use your code?</H4>
+
+<p>
+If you can figure out what it does, kudos.  It's mostly open-source to be eligible for the <a href="robowiki?RobocodeLittleLeague" class=wikipagelink>RobocodeLittleLeague</a> line-based competition, not so that people can learn from it.
+<p>
+<H4>What's next for your robot?</H4>
+
+<p>
+Fix it up, find any bugs, improve melee tracking and movement.
+<p>
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+<p>
+I suppose <a href="robowiki?SonAsh" class=wikipagelink>SonAsh</a> would be the current bot to beat in its division, even if it's less consistent (i.e. - doesn't beat weaker bots as readily) as MicroAspidSonet<a href="robowiki?action=edit&id=MicroAspidSonet" class=wikipageedit>?</a>
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+<p>
+<a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>, <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a>
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=FloodSonnet" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=FloodSonnet">View other revisions</a><br>Last edited December 1, 2003 19:56 EST by <a href="robowiki?Kawigi" title="ID 1899 from guard.cs.byu.edu">Kawigi</a> <a href="robowiki?action=browse&diff=1&id=FloodSonnet">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

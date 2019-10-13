@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>VirtualGuns - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Virtual, Guns'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=VirtualGuns">VirtualGuns</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?VirtualGuns/Help" class=wikipagelink>/Help</a> - <a href="robowiki?VirtualGuns/CodeSnippets" class=wikipagelink>/CodeSnippets</a> - Discussions <a href="robowiki?VirtualGuns/AsOf20060129" class=wikipagelink>/AsOf20060129</a>
+<H2>What is <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a>?</H2>
+
+<a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> is a way to choose the best aiming method against a given enemy by keeping track of each methods' virtual hit rate (or some other measure). There are obvious advantages:
+<p>
+<H2>What are the advantages</H2>
+
+<p>
+<UL >
+<li> Enemies tend to move quite differently, <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> will make your robot adapt.
+<li> In theory it's can be quite easy to implement.
+<UL >
+<li> And can be implemented in very many ways. <a href="robowiki?OrcaM/Code" class=wikipagelink>OrcaMs</a>' NNCandidate is one way. <a href="robowiki?MakoHT/Code" class=wikipagelink>MakoHT/Code</a> is another. <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> was my first bot using <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> and the design is outlined below.
+</UL>
+<li> You can let your bot explore quite different <a href="robowiki?Targeting" class=wikipagelink>Targeting</a> techniques, even quite simple ones, in the hope that it will find weaknesses against particular opponents.
+<UL >
+<li> For example against some bots <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a> is better than many other targeting implementations. (Against a truly flat movement it can be better to just guess head-on all the time than risking to guess differently and wrong too many times.)
+</UL>
+</UL>
+<p>
+<H2>Disadvantages</H2>
+
+<UL >
+<li> The main disadvantage is that in practice it can be quite hard to implement.
+<li> You risk messing up things so that the array performs worse than your best gun would do on its own.
+</UL>
+<p>
+<H2>How does it work?</H2>
+
+<a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> was my  first bot using <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> (ehh, it was my first bot, period). It uses the following strategy for this:
+<OL >
+<li> Everytime the robot is ready to shoot it creates an array of virtual guns and aims each of them
+<li> When firing it stores this virtual gun array in an event
+<li> The event's test() method checks wether a particular virtual gun has either hit or missed (using <a href="robowiki?Wave" class=wikipagelink>Wave</a>s).
+<OL >
+<li> Statistics are updated for each gun which has either hit or missed
+<li> When all guns are finished the event is deregistrered and the virtual gun array is disposed.
+</OL>
+</OL>
+Note that there's no event handler for this event. I only use it to store the copy of the virtual guns array and to get Robocode to run the test each tick. Like <a href="robowiki?VirtualBullets/VirtualBulletsBot" class=wikipagelink>VirtualBullets/VirtualBulletsBot</a> does.
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<H2>What bots are using this?</H2>
+
+Please add relevant bots to this list.
+<UL >
+<li> <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a>
+<li> <a href="robowiki?Duelist" class=wikipagelink>Duelist</a> also uses "virtual guns", it used them to decide how fast it should adapt its aim, ranging from "fire using whichever virtual bullet hit last time" to "fire using the virtual bullet that has been most effective on average over all data vs. this bot". --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<li> <a href="robowiki?Mako" class=wikipagelink>Mako</a>, <a href="robowiki?MakoHT" class=wikipagelink>MakoHT</a>
+<li> <a href="robowiki?OrcaM" class=wikipagelink>OrcaM</a>
+<li> <a href="robowiki?GB" class=wikipagelink>GB</a>
+<li> <a href="robowiki?SpareParts" class=wikipagelink>SpareParts</a> has a bunch of them, which help him proof himself against brutally simple robots (I made robots later that did much better against good robots and ranked higher, but couldn't beat Walls).
+<li> <a href="robowiki?Ascendant" class=wikipagelink>Ascendant</a>
+<li> <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> (as of this writing in a development version)
+<li> <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> presently uses two <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> guns in a VG array. One has a higher depth on the <a href="robowiki?RollingAverage" class=wikipagelink>RollingAverage</a>s and uses non-firing waves, the other uses only "real" waves and has a much lower rolling depth (aimed at <a href="robowiki?WaveSurfers" class=wikipagelink>WaveSurfers</a> / adaptive movements).
+<li> All of <a href="robowiki?Greywhind" class=wikipagelink>Greywhind</a>'s bots use VGuns so far - all simple targetings, Laser, GF, and PM are included in Constitution and Strength.
+<li> <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> has a VG array of simple targeters (HOT, CT, random, av velocity CT and orbital)
+<li> <a href="robowiki?Ugluk" class=wikipagelink>Ugluk</a> has been using multiple simple targeters since before 0.3.0 (first Roborumble entry).  I wanted to be able to defeat all sample bots before I entered, and what works for Walls does not work for <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a>.  Ugluk varies as to how many guns he has, but it has been as high as eleven at once.
+<li> <a href="robowiki?Perpy" class=wikipagelink>Perpy</a> uses four different guns, using virtual bullets to assess hitrate. Respectively, they are HOT, CT, a GF gun and a patternmatcher.
+<li> <a href="robowiki?Squirrel" class=wikipagelink>Squirrel</a> uses a pretty big virtual guns array, including 4 GF guns, 3 <a href="robowiki?AntiSurfer" class=wikipagelink>AntiSurfer</a> GF guns, 1 CT gun, 1 LT gun, and 1 HOT gun.
+</UL>
+<p>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+One detail that I think makes sense is this: weight your <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> data (hits and misses) proportional to the difficulty of hitting the enemy in that situation. For instance, 12.5% vs 12% at distance of 500 is the same ratio as 25% vs 24% at a distance of 250, but if you have an even number of data from each distance, the latter has more effect on that calculation, while it should be the same. So far, I've been weighting my <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> data proportional to distance, but I'll be making it bullet time (slightly more accurate) and total reachable escape angle (which I already calculate precisely in <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>). -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Sounds reasonable.  Would it also be helpful to take into account the percent of maximum escape angle taken up by the bot at each distance?  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+The above two factors are actually my attempt to calculate exactly what you said - the average hit rate for <a href="robowiki?RandomTargeting" class=wikipagelink>RandomTargeting</a> in that situation = exactly proportional to bot width / total escape angle. That percentage is proportional to both bullet time and the total escape angle. Can you think of any other factors? I would definitely add them if I knew them, but I think those two paint the whole picture. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+If your escape angle calculation takes into account wallsmoothing, then I can't think of anything else.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+<UL >
+<li> Yep, <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> uses precise escape angles that take walls into account. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> Hmm, hey wait. Distance is a factor in both bullet time and total escape angle, so I may be counting that one more than I should. Maybe it should be just distance and total escape angle? I decided on bullet time instead of distance before adding in the total escape angle thing... -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<li> Yes, you are right.  You're not going to get it exact, because to convert bot width to an angle requires knowing the angle at which the bullet would hit the bot (because the bot is a square) as well as the distance to the bot (which can vary depending on whether the bot advances or retreats, e.g. for wall smoothing), but you already knew that.  Anyway (bot-width-angle / escape-angle) or (bot-width / escape-distance) do encompass the whole picture, they're just slippery variables to nail down.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Has anyone tried <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> within <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a>? I think this could be effective against surfers, because your anti-surfer VirtualGun<a href="robowiki?action=edit&id=VirtualGun" class=wikipageedit>?</a> could choose between pattern-matching, a small DC gun, a lightly segmented GF gun, etc, and your regular gun could be just one, big GF gun. You can choose between your array of anti-surfer guns (which are treated as one gun by the 'main' virtual gun system) and your main gun using gun stats that have a very high rolling depth, but between the anti-surfer guns with a low depth. Because surfers constantly evolve their movement, at different points their movement might be more susceptible to different types of guns. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<UL >
+<li> I would imagine that a literal implementation of this would be ridiculously slow. However, an equivalent method would be to put all of the guns in a single array and modify the method used to choose between them to consider the anti-surfer guns as a collective group. Only if it picks the group would the choice function look at the individual anti-surfer guns. On the other hand, by itself it is probably really slow to have several pattern-matching guns and DC guns in a VG array, so it might not be practical either way. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<li> I understand what you're saying, but I have to ask - when would this ever be preferable to just choosing the best of all your guns? Do you really want to penalize choosing your best <a href="robowiki?AntiSurfer" class=wikipagelink>AntiSurfer</a> gun by grouping it with your worst <a href="robowiki?AntiSurfer" class=wikipagelink>AntiSurfer</a> gun in terms of VG rating? Also, I think it's really hard not to lose performance as you add more guns to a VG; often, it's best to cut the weaker guns even if they are better sometimes, because your chooser will never be perfect. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=VirtualGuns" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=VirtualGuns">View other revisions</a><br>Last edited September 30, 2007 18:00 EST by <a href="robowiki?Voidious" title="ID 8561 from cpe-204-210-154-119.hvc.res.rr.com">Voidious</a> <a href="robowiki?action=browse&diff=1&id=VirtualGuns">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

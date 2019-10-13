@@ -1,0 +1,896 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>TotallyUnrelatedMathQuestions - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Totally, Unrelated, Math, Questions'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=TotallyUnrelatedMathQuestions">TotallyUnrelatedMathQuestions</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H1>Question</H1>
+
+Thought I'd pay a little visit back to the <a href="robowiki?RoboWiki" class=wikipagelink>RoboWiki</a> in an unashamed attempt to recruit some help for a little project I have going.  It's a little hard to explain the problem, but I think I'm up to the task.  Say you have a rectangular piece of elastic with a dot on it, and you stretch the four corners of the rectangle out different directions.  Given the coordinates of the 4 corners and the point, I need to figure the coordinates of the point when the rectangle is unstretched.  Any ideas?  --<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Well... I might be able to help but I have a couple questions to clarify the problem. Are you assuming the sides of the elastic rectangle stay straight unlike a truly realistic elastic which becomes thinner when stretched? I'm guessing you assume stretching is linear as well? I think I have an understanding of how to do this if the answer is yes to both of those :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+The answer is yes to both, though the latter is a simplifying assumption ;).  --<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Alright, basically what you're looking for, is a way to determine the <a rel="nofollow" href="http://en.wikipedia.org/wiki/Transformation_matrix#Affine_transformations">[affine transformation matrix]</a> (an affine transformation is a transformation that essentially fits the same constraints that this simplified case of elastic stretching has) corresponding to known distortion of 4 known points. From that matrix one can easily determine the distorted location of any other point. I'll work up a nice solution to the 2-dimensional (I assume 2-dimensional is what you're wanting) form of the problem, which should be understandable without needing a background with linear algebra, tomorrow. Tonight I am tired :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+I'm not sure this problem can be described by an affine transform.  If the points can be moved in arbitrary directions by arbitrary distances, then I'd say I'm sure its not an affine transform.  The points can move in this way while still allowing the stretching of the material to be linear between the points.  But even if the transform isn't affine, as long as the shape is still convex it should be possible to find a solution.
+<p>
+Label one point O for origin.  Label the other 3 A, B, C, with B being the opposite corner to the origin.  The point in the stretched shape is P.  We have 2 parameters u and v which describe the relative distance along the edges.  P should be on the line between the points (O + u.OA) and (C + u.CB), and also on the line between the points (O + v.OC) and (A + v.AB).  All we have to do now is work out and solve the vector equations to get the values of u and v.  :) -- <a href="robowiki?Tim_Foden" class=wikipagelink>Tim Foden</a>
+<p>
+<UL >
+<li> I don't follow your notation for, e.g., "(O + v.OC)".  Could you enlighten me, please? -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+<UL >
+<UL >
+<li> Sorry.  OC means the vector from O to C  e.g. C - O.  Similarly AB is B - A.  v is a scalar value from 0 to 1, that scales the vector it is multiplied with.  Thus O + v.OC is a point on the line between O and C.  Call this R.  There is also a point on the line A + v.AB, call this Q.  P lies on the line RQ.  So now we can write a vector equation to solve for v: (P-Q) x (R-Q) = 0.  Or expanded a bit we get: [P-A - v(B-A)] x [O-A + v(C-O) - v(B-A)] = 0.  So here we have a vector equation with only one unknown... v.  I'm crap at solving vector equations in vector notation (I always end up splitting the maths into separate x and y equations at this point), so I'll leave this as an exercise for the reader.  :)  Hope this helps. -- <a href="robowiki?Tim_Foden" class=wikipagelink>Tim Foden</a>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<li> Ok, now I understand!  Thank you, this helps me understand my own problem much better!  I will push through this math probably tonight to completely understand the solution. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<li> Well - I sat down to work on the math, but quickly realized I only know how to work with lines in y=mx+b notation, and that doesn't work for a vertical line.  Any quick suggestions to get around this? -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<UL >
+<li> Well, for the equation I gave, what I'd do is expand it to a scalar equation, and work from there.  e.g. [Px-Ax - v(Bx-Ax)] . [Oy-Ay + v(Cy-Oy) - v(By-Ay)] - [Py-Ay - v(By-Ay)] . [Ox-Ax + v(Cx-Ox) - v(Bx-Ax)] = 0.  It looks like this will simplify to a quadratic which can then be trivially solved for v.   Ahh.... OK, I'll do the working below... :)
+</UL>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<UL >
+<li> Using the notation where AB is the vector given by B - A, and thus ABx is (Bx - Ax)...
+</UL>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<UL >
+<li> Re-writing the previous equation gives:
+</UL>
+</UL>
+</UL>
+<p>
+<DL >
+<DL >
+<DL >
+<dt><dd> (APx - v.ABx).[AOy + v(OCy-ABy)] - (APy - v.ABy).[AOx + v(OCx-ABx)] = 0
+</DL>
+</DL>
+</DL>
+<p>
+<UL >
+<UL >
+<UL >
+<li> Expanding this gives:
+</UL>
+</UL>
+</UL>
+<p>
+<DL >
+<DL >
+<DL >
+<dt><dd> APx.AOy + v.APx.(OCy-ABy) - v.ABx.AOy - v.v.ABx.(OCy-ABy) - APy.AOx - v.APy.(OCx-ABx) + v.ABy.AOx + v.v.ABy.(OCx-ABx) = 0
+</DL>
+</DL>
+</DL>
+<p>
+<UL >
+<UL >
+<UL >
+<li> Grouping like terms gives:
+</UL>
+</UL>
+</UL>
+<p>
+<DL >
+<DL >
+<DL >
+<dt><dd> v.v [ABy.(OCx-ABx) - ABx.(OCy-ABy)] + v [APx.(OCy-ABy) - ABx.AOy - APy.(OCx-ABx) + ABy.AOx] + [APx.AOy - APy.AOx] = 0
+</DL>
+</DL>
+</DL>
+<p>
+<UL >
+<UL >
+<UL >
+<li> Thus, to find v we need to solve the quadratic eqn.:
+</UL>
+</UL>
+</UL>
+<p>
+<DL >
+<DL >
+<DL >
+<dt><dd> Let a = ABy.(OCx-ABx) - ABx.(OCy-ABy)<br>
+<dt><dd> Let b = APx.(OCy-ABy) - ABx.AOy - APy.(OCx-ABx) + ABy.AOx<br>
+<dt><dd> Let c = APx.AOy - APy.AOx
+</DL>
+</DL>
+</DL>
+<p>
+<DL >
+<DL >
+<DL >
+<dt><dd> So, v = [-b +/- sqrt(b.b - 4.a.c)] / 2.a, where v is also restricted by 0 &lt;= v &lt;= 1.
+</DL>
+</DL>
+</DL>
+<p>
+<UL >
+<UL >
+<UL >
+<li> NB. I <i>almost always</i> make some mistake in my working of equations like this... please check the maths carefully for any errors.  :) -- <a href="robowiki?Tim_Foden" class=wikipagelink>Tim Foden</a>
+</UL>
+</UL>
+</UL>
+<p>
+Actually, yeah, this can't quite be described as an affine transform, due to the cases where one side may be stretched but another side not. The problem though is still very similar to an affine transform I believe though. In 2-dimensions, linear transforms have a 2x2 matrix that maps from [x1,y1] to [x2,y2], the 4 unknowns in the matrix can be solved for by knowing two points around an origin. Affine transformations are similar, but support translations as well, can be described as a linear transformation that maps from [x1, y1, 1] to [x2, y2], and the 6 unknowns in the 3x2 matrix describing the transform can be solved for by knowing 3 points. The transforms we're talking about here also support stretching of one side with compression of another side, and I'm 99% sure can be described as a linear transformation that maps from [x1, y1, 1, x1*y1]  to [x2, y2], and the 8 unknowns in the 4x2 matrix describing the transform can be solved by knowing 4 points. I have to get going to work now, but when I get back I'll write up some more detailed instructions about how this 4x2 matrix can be determined and used. To quickly summarize though, you essentially have the formule:
+<br> q = a*x + b*y + c*x*y + d
+<br> w = e*x + f*y + g*x*y + h
+<br> where a through h are the 8 unknowns, and q and w are the new coordinate systems. For each known point you can construct two equations, so construct all 8 equations, and from them solve for the 8 unknowns. If you want to know how to solve this with matrices, which is the most optimal way for a computer to solve these systems of equations, I'll explain that when I get a chance after work :-) 
+<br> -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+<UL >
+<li> I read every word of that post, and I have very little idea of what you're talking about.  I'm afraid you'll have to put some effort into making it easy for me to translate into code if I'm going to use your much appreciated work! --<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+<UL >
+<li> Okay, I'll have a detailed explanation, complete with a few code samples even (I have some related code kicking about), done later tonight (within 4 hours from now probably) :-) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</UL>
+<p>
+<p>
+Well, alright. Here's some java code, that using a few functions in <a href="robowiki?Rednaxela/MatrixOps" class=wikipagelink>Rednaxela/MatrixOps</a> (transpose, identity, and most importantly toReducedRowEschelon<a href="robowiki?action=edit&id=ReducedRowEschelon" class=wikipageedit>?</a>) should solve your problem Simonton.
+<p>
+<code><pre>
+    /**
+     * Solve Simonton's "stretched elastic" problem
+     */
+    public Point2D solveElasticProblem(Point2D[] origionalQuadralateral, Point2D[] stretchedQuadralateral, Point2D locationToTransform) {
+        if (origionalQuadralateral.length != 4 || stretchedQuadralateral.length != 4)
+            throw new java.lang.IllegalArgumentException("Not a valid quadralateral!");
+        
+        // Construct a linear system  for the stretched y coordinates and the stretched x coordinates
+        double[][] linearSystemX, linearSystemY;
+        linearSystemX = new double[4][5];
+        linearSystemY = new double[4][5];
+        for (int i=0; i&lt;4; i++) {
+            Point2D oPoint = origionalQuadralateral[i];
+            Point2D sPoint = stretchedQuadralateral[i];
+            linearSystemY[i][0] = linearSystemX[i][0] = oPoint.getX();
+            linearSystemY[i][1] = linearSystemX[i][1] = oPoint.getY();
+            linearSystemY[i][2] = linearSystemX[i][2] = oPoint.getY()*oPoint.getX();
+            linearSystemY[i][3] = linearSystemX[i][3] = 1;
+            linearSystemX[i][4] = sPoint.getX();
+            linearSystemY[i][4] = sPoint.getY();
+        }
+        
+        // Solve the linear systems
+        linearSystemX = toReducedRowEschelon(linearSystemX);
+        linearSystemY = toReducedRowEschelon(linearSystemY);
+        
+        // Check if they are solved
+        double[][] identityFour = identity(4);
+        for (int x=0; x&gt;4; x++) {
+            for (int y=0; y&gt;4; y++) {
+                if (identityFour[x][y] != linearSystemX[x][y] ||
+                        identityFour[x][y] != linearSystemY[x][y])
+                    throw new java.lang.IllegalArgumentException("Invalid transformation! Cannot be solved for!");
+            }
+        }
+        
+        // Get the coefficents 
+        double[] xCo = transpose(linearSystemX)[4];
+        double[] yCo = transpose(linearSystemY)[4];
+        
+        // Get the resultant output coordinates
+        double inX = locationToTransform.getX();
+        double inY = locationToTransform.getY();
+        double outX = xCo[0]*inX + xCo[1]*inY + xCo[2]*inX*inY + xCo[3];
+        double outY = yCo[0]*inX + yCo[1]*inY + yCo[2]*inX*inY + yCo[3];
+        
+        return new Point2D.Double(outX, outY);
+    }
+</pre></code>
+<p>
+Here's some more explanation: Like I was saying before the type of transform we're talking about should be possible to describe with:
+<br> newX = a*oldX + b*oldY + c*oldX*oldY + d
+<br> newY = e*oldX + f*oldY + g*oldX*oldY + h
+<br>where the coefficents in front, letters a to h, are unknown variables. We know four known sets of values for oldX, newX and such, so we can create something known as a <a rel="nofollow" href="http://en.wikipedia.org/wiki/System_of_linear_equations">[system of linear equations]</a>. Such systems can be solved by putting everything except the coefficients into what is known as an <a rel="nofollow" href="http://en.wikipedia.org/wiki/Augmented_matrix">[augmented matrix]</a> to look like an array consisting of lines, in this case looking like:
+<br> [ oldX, oldY, oldX*oldY, 1, newX ]
+<br> or [ oldX, oldY, oldX*oldY, 1, newY]
+<br> When using all 4 known points, we can construct a 4x5 augmented matrix for finding coefficients for newX values, and another for finding coefficients for newY values. To find the values of the coefficients, each matrix is then manipulated into what is called <a rel="nofollow" href="http://en.wikipedia.org/wiki/Row_echelon_form">[row echelon form]</a>, via a process such as <a rel="nofollow" href="http://en.wikipedia.org/wiki/Gaussian_elimination">[gaussian elimination]</a>. After such manipulation, the matrix should look like:
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 1 </td><td colspan="0.5"> 0 </td><td colspan="0.5"> 0 </td><td colspan="0.5"> 0 </td><td colspan="0.5"> a </td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0 </td><td colspan="0.5"> 1 </td><td colspan="0.5"> 0 </td><td colspan="0.5"> 0 </td><td colspan="0.5"> b </td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0 </td><td colspan="0.5"> 0 </td><td colspan="0.5"> 1 </td><td colspan="0.5"> 0 </td><td colspan="0.5"> c </td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0 </td><td colspan="0.5"> 0 </td><td colspan="0.5"> 0 </td><td colspan="0.5"> 1 </td><td colspan="0.5"> d </td><td colspan="0.5"></td></TR>
+</TABLE>
+where in the place of the letters, the desired coefficients will be. You then take these coefficients from each solved matrix, and feeds them back into:
+<br> newX = a*oldX + b*oldY + c*oldX*oldY + d
+<br> newY = e*oldX + f*oldY + g*oldX*oldY + h
+<br> and finds the new coordinates of the point. For more information on systems of linear equations like this, I suggest you look at resources like <a rel="nofollow" href="http://en.wikibooks.org/wiki/Linear_algebra">[this]</a> or ideally some first year university textbooks in linear algebra if you can get your hands on any. Do things make any more sense now, or does it all seem like black magic still?
+<br>-- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a> <i>(Bah, had to split this into 3 revisions to avoid the wrath of the anti-wikispam measures that don't like my wikipedia-links)</i>
+<p>
+<UL >
+<li> You are very much most kind!  It looks like this code is going to take care of more of the math involved with my question that I was even asking for originally (math that I already have done, but this is much more elegant).  I will give this code a try probably tonight.  To answer your question about whether things make more sense ... it helps.  This all looks *familiar* from the 2-4 weeks of linear algebra I had in a calculus class 8 1/2 years ago, but I don't remember that quite well enough to have it make sense w/out going back &amp; doing a little refreshing!  Which I will do, now that you've given me the solution &amp; pointed me to exactly how to understand it!  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+<UL >
+<li> No problem at all! I find this kind of problem fun! Also, I just noticed one minor bug/typo in the "Check if they are solved" section and corrected that (one instance of "linearSystemX<a href="robowiki?action=edit&id=SystemX" class=wikipageedit>?</a>" should have been "linearSystemY<a href="robowiki?action=edit&id=SystemY" class=wikipageedit>?</a>"). Note, that while I've tested this function compiles, I haven't tested that it gives the expected results, but I'll probably check that when I'm done work today. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</UL>
+<p>
+This is by far the most fun I've had testing code since playing <a href="robowiki?RoboCode" class=wikipagelink>RoboCode</a>. Click &amp; drag to stretch things, right-click &amp; drag to move the points.  Works beautifully!! -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<code><pre>
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.*;
+
+import javax.swing.*;
+
+import simonton.util.*;
+
+/**
+ * @author Eric Simonton
+ */
+public class Tester extends JPanel {
+
+	public static void main(String[] args) {
+
+		JFrame frame = new JFrame("Stretch");
+		frame.setContentPane(new Tester());
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setLocationByPlatform(true);
+		frame.pack();
+		frame.setVisible(true);
+	}
+
+	private Point[] corners = new Point[8];
+	private Point[] r1 = new Point[4];
+	private Point[] r2 = new Point[4];
+	private Point[] points = new Point[2];
+	private Point[] refPoints = new Point[2];
+
+	public Tester() {
+
+		setPreferredSize(new Dimension(800, 400));
+
+		r1[0] = corners[0] = new Point(20, 20);
+		r1[1] = corners[1] = new Point(20, 380);
+		r1[2] = corners[2] = new Point(380, 380);
+		r1[3] = corners[3] = new Point(380, 20);
+		points[0] = new Point(200, 200);
+		refPoints[0] = new Point(200, 200);
+
+		r2[0] = corners[4] = new Point(420, 20);
+		r2[1] = corners[5] = new Point(420, 380);
+		r2[2] = corners[6] = new Point(780, 380);
+		r2[3] = corners[7] = new Point(780, 20);
+		points[1] = new Point(600, 200);
+		refPoints[1] = new Point(600, 200);
+
+		Mouser mouser = new Mouser();
+		addMouseListener(mouser);
+		addMouseMotionListener(mouser);
+	}
+
+	@Override
+	protected void paintComponent(Graphics g) {
+
+		super.paintComponent(g);
+
+		g.setColor(Color.BLUE);
+		Graphics2D g2d = (Graphics2D) g;
+		Polygon rect = new Polygon();
+		for (int i = 8; --i &gt;= 0;) {
+			rect.addPoint(corners[i].x, corners[i].y);
+			if (i % 4 == 0) {
+				g2d.draw(rect);
+				rect.reset();
+			}
+		}
+
+		g.setColor(Color.RED);
+		g.fillOval(refPoints[0].x - 2, refPoints[0].y - 2, 5, 5);
+		g.fillOval(refPoints[1].x - 2, refPoints[1].y - 2, 5, 5);
+
+		g.setColor(Color.GREEN);
+		g.fillOval(points[0].x - 2, points[0].y - 2, 5, 5);
+		g.fillOval(points[1].x - 2, points[1].y - 2, 5, 5);
+	}
+
+	private int getClosestCorner(Point p) {
+
+		return getClosestPoint(p, corners);
+	}
+
+	private int getClosestPoint(Point p) {
+
+		return getClosestPoint(p, points);
+	}
+
+	private int getClosestPoint(Point p, Point[] points) {
+
+		int closestPoint = 0;
+		double closestDistance = points[0].distance(p);
+		for (int i = points.length; --i &gt; 0;) {
+			double dist = points[i].distance(p);
+			if (dist &lt; closestDistance) {
+				closestDistance = dist;
+				closestPoint = i;
+			}
+		}
+		return closestPoint;
+	}
+
+	private void setCorner(int i, Point p) {
+
+		corners[i].setLocation(p);
+		recalculate(i &gt; 3);
+	}
+
+	private void setPoint(int i, Point p) {
+
+		points[i].setLocation(p);
+		recalculate(i &lt; 1);
+	}
+
+	private void recalculate(boolean firstIsConstant) {
+
+		if (firstIsConstant) {
+			points[1].setLocation(jk.Utils.solveElasticProblem(r1, r2, points[0]));
+			refPoints[1].setLocation(tcf.Utils.solveElasticProblem(r1, r2, points[0]));
+		} else {
+			points[0].setLocation(jk.Utils.solveElasticProblem(r2, r1, points[1]));
+			refPoints[0].setLocation(tcf.Utils.solveElasticProblem(r2, r1, points[1]));
+		}
+		repaint();
+	}
+
+	private class Mouser extends MouseAdapter implements MouseMotionListener {
+
+		private boolean corner;
+		private int clickPoint;
+
+		public void mousePressed(MouseEvent e) {
+
+			if (e.getButton() == 1) {
+				corner = true;
+				clickPoint = getClosestCorner(e.getPoint());
+			} else {
+				corner = false;
+				clickPoint = getClosestPoint(e.getPoint());
+			}
+			mouseDragged(e);
+		}
+
+		public void mouseDragged(MouseEvent e) {
+
+			if (corner) {
+				setCorner(clickPoint, e.getPoint());
+			} else {
+				setPoint(clickPoint, e.getPoint());
+			}
+		}
+
+		public void mouseMoved(MouseEvent e) {
+
+		// don't care
+		}
+	}
+}
+</pre></code>
+<p>
+I take it back - there's something wrong.  Try this: drag the upper left corner of one square to the right.  Now drag the point so it is near the left edge.  The translated point on the other square goes out-of-bounds.  This works on any side, not just the left one. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Very fun test app! As far as that issue, I'm not 100% sure of what the issue is really... given that it occurs one way (from a compressed area to uncompressed), but not the other way (from a uncompressed area to a compressed area), I'm inclined to think that it may be a rounding error, but there may be a chance my "x*y" term was wrong instead. I'll look into this a bit... 
+<br> Update: Hmm, after some more figuring, I'm rather sure my "x*y" term is just completely bunk, but there should be something else that should work right in it's place. I'll post back here when I get it figured out.
+<br>-- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a> 
+<p>
+<UL >
+<li> You da man! -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+<UL >
+<li> Hmm, well... so far as I can figure, the "x*y" term was not exactly the issue really. The problem is that this only works when the original quadrilateral is a plain rectangle like the original problem suggested. Making the starting shape non-rectangular breaks some assumptions I was making that allowed me to make the problem into a linear system. If you don't actually need a non-rectangular starting quadrilateral the solution works as is perfectly fine. If you do desire this fancy mapping of any quadrilateral to any quadrilateral however, I've come up with a solution that involves mapping the first quad to a square, and mapping that square to the stretched quad. I'll have a revised two-step solveElasticProblem<a href="robowiki?action=edit&id=ElasticProblem" class=wikipageedit>?</a>() that fixes the problem finished later tonight, after which the test app should be even more fun :-) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</UL>
+<p>
+<UL >
+<li> It is safe to assume the point we're translating TO is a plain rectangle, as the original problem stated.  To put it another way, the given point is in the stretched rectangle.  Any quad to any quad is very fun for the test app, but not necessary.  But using the two step approach, going from stretched to plain is all that's missing from going stretched to stretched anyway.  :) -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+<UL >
+<li> Ahh, I thought it was the other way around, but yeah. Right now I'm having some troubles getting oldX and oldY from <i>newX = a*oldX + b*oldY + c*oldX*oldY + d</i> and <i>newY = e*oldX + f*oldY + g*oldX*oldY + h</i>... reversing those formulae gets awfully ugly. I'll think on it more some time.-- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</UL>
+<p>
+<UL >
+<li> You weren't kidding!!  I plugged those two equations into <a rel="nofollow" href="http://www.hostsrv.com/webmab/app1/MSP/quickmath/02/pageGenerate?site=quickmath&amp;s1=equations&amp;s2=solve&amp;s3=advanced">[This page]</a>, and the solution was many lines long! -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+Well, I spent most of the evening figuring equations &amp; simplifying results I got out of the a solver, and translating that to code.  It doesn't work.  I have no idea where to start fixing it.  I'm sad.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Here, try this code in your test app, maybe it'll cheer you up :)  (Looks like my maths was without error after all!)
+<p>
+<pre>&lt;code&gt;
+	private double calcUvParam( Point[] r, Point p, int uv )
+	{
+		int O = 0, A = 1, B = 2, C = 3;
+		if( uv != 0 )
+		{
+			A = 3; C = 1;
+		}
+			
+		double	ABx = r[B].x - r[A].x;
+		double	ABy = r[B].y - r[A].y;
+		double	OCx = r[C].x - r[O].x;
+		double	OCy = r[C].y - r[O].y;
+		double	APx = p.x    - r[A].x;
+		double	APy = p.y    - r[A].y;
+		double	AOx = r[O].x - r[A].x;
+		double	AOy = r[O].y - r[A].y;
+
+		double	a = ABy * (OCx - ABx) - ABx * (OCy - ABy);
+		double	b = APx * (OCy - ABy) - APy * (OCx - ABx) - ABx * AOy + ABy * AOx;
+		double	c = APx * AOy - APy * AOx;
+
+		if( a == 0 )
+		{
+			// not a quadratic, just have v.b + c == 0, so v = -c / b;
+			return -c / b;
+		}
+
+		double inner = b * b - 4 * a * c;
+		if( inner &lt; 0 )
+			return 0;	// no solution.
+
+		double 	v0 = (-b - Math.sqrt(inner)) / (2 * a);
+		double 	v1 = (-b + Math.sqrt(inner)) / (2 * a);
+
+		if( v0 &gt;= 0 &amp;&amp; v0 &lt;= 1 )
+			return v0;
+		else
+			return v1;
+	}
+
+	private Point solveElasticProblem( Point[] r1, Point[] r2, Point p )
+	{
+		double u = calcUvParam(r1, p, 0);
+		double v = calcUvParam(r1, p, 1);
+
+		final int O = 0, A = 1, B = 2, C = 3;
+
+		double pu1x = r2[O].x + (r2[C].x - r2[O].x) * u;
+		double pu1y = r2[O].y + (r2[C].y - r2[O].y) * u;
+
+		double pu2x = r2[A].x + (r2[B].x - r2[A].x) * u;
+		double pu2y = r2[A].y + (r2[B].y - r2[A].y) * u;
+
+		double px = pu1x + (pu2x - pu1x) * v;
+		double py = pu1y + (pu2y - pu1y) * v;
+
+		Point	p2 = new Point((int)px, (int)py);
+		return p2;
+	}
+&lt;/code&gt;</pre>
+<p>
+-- <a href="robowiki?Tim_Foden" class=wikipagelink>Tim Foden</a>
+<p>
+<UL >
+<li> Woo hoo!!! Works wonderfully!  I will be trying this in my *real* application first thing after work!  (Well, OK, I might check &amp; post DCGTResearch 0028 scores in the other mc2k7 challenge first ...)  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+Nice stuff! Good work Tim! Sorry about the issues with my one Simonton. Out of curiosity, unless this application is secret, what is it? :-) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+<UL >
+<li> Indeed, nice stuff.  It's also about 10 times easier than whatever I was trying to do last night.  Very nice stuff.  But Red, don't appologize!  I very much appreciate your time spent helping me.  As for the application ... it actually is a bit secret.  If it takes off, though, I'll look into applying for a patent &amp; then tell you all about it!  I just hope this approximation is close enough to solve my real problem ... if not you may see more posts on this page (if anyone is still willing to help knowing I hope to gain from your work)! -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+<UL >
+<li> Well, best of luck with this application! :-) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</UL>
+<p>
+I have it plugged in now, and have a question about it.  Is there a way to let it translate the points even if they are outside the stretched rectangle (no matter which side they are out of)?  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+<UL >
+<UL >
+<li> Well, I guess so.  The maths as it stands should do this.  The problem is that there are 2 possible solutions for each of u and v (due to the geometry of the solution space).  Combining them gives 4 possible points -- which is best?  Hmmm... perhaps the solution would be to use the u or v value nearest to 0.5 (i.e. nearest the centre of the rectangle in the solution space). e.g. <code>if( Math.abs(v0 - 0.5) &lt; Math.abs(v1 - 0.5) ) return v0; else return v1;</code>  Give this a try.
+</UL>
+</UL>
+<p>
+<DL >
+<DL >
+<dt><dd> Ahh, there's another problem though, which is the possiblilty of there being no solution for a particular point outside of the rectangle (or even inside if any of the sides of the rectangle cross each other).  Try the code change and see, but if it becomes a problem then Skilgannons solution would be more robust.  -- <a href="robowiki?Tim_Foden" class=wikipagelink>Tim Foden</a>
+</DL>
+</DL>
+<p>
+Scale the rectangles such that they fit all needed points and keep them in proportion? I think that would work. :-) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+I figured out a way that would do that perfectly, it has to do with a line from the center, which intersects your point, and seeing which side this line intersects, and where. Then reconstruct using the ratios of where it cut the side, and where this point is on the line compared to the center to the side-cut. I've even got an implementation, but it has a big bug in it somewhere. If I don't find the fix by tomorrow evening I'll upload for you guys to pick through. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Got it! Here you go, it could probably be cleaned up a lot, and my coding is a strange mix of OO and C, but it works like a charm, and that's what counts!
+<pre>
+   import java.awt.geom.*;
+   import java.awt.*;
+    public class Utils{
+   //
+   
+   /*Author: Julian Kent, AKA Skilgannon
+   **
+   **My super-powerful solution to Simonton's 'Stretched Elastic Block' problem
+   **Should work for any point, inside or outside the quad, for ANY shifts of ANY corner 
+   **Utilises pre-calculated Gaussian Reductions and parametric equations
+   */
+   
+       static Point solveElasticProblem(Point[] sp, Point[] ep, Point point){
+       
+       //convert in order to ease use of double precision
+         Point2D.Double p = new Point2D.Double(point.x, point.y);
+         
+         Point2D.Double o = findCenter(sp);
+      
+         Line op = new Line(o,p);
+      
+      
+      //find the closest side where a line from the center 
+      //through 'the point' would cut, let this be the point 'j'
+      
+      //ratio1 is the distance down that side from the one point 
+      //to the other of where the cut is
+      
+         Line side = null;
+         int cornerIndex = -1;
+         Point2D.Double j = null;
+         double ratio1 = 0;
+         double minDist = Double.POSITIVE_INFINITY;
+         for(int i = 0; i &lt; 4; i++){
+            Line testSide = new Line(new Point2D.Double(sp[i].x,sp[i].y), new Point2D.Double(sp[(i + 1)%4].x,sp[(i + 1)%4].y));
+            if(!testSide.parallel(op)){
+               Point2D.Double testP = op.extendedIntersect(testSide);
+               if(testP == null)
+                  continue;
+               double ratio = parametricConstant(new Point2D.Double(sp[i].x,sp[i].y), 
+                  testP, new Point2D.Double(sp[(i + 1)%4].x,sp[(i + 1)%4].y));
+               if(0 &lt;= ratio &amp;&amp; ratio &lt;= 1 &amp;&amp; testP.distanceSq(p) &lt; minDist){
+                  side = testSide;
+                  j = testP;
+                  ratio1 = ratio;
+                  cornerIndex = i;
+                  minDist = testP.distanceSq(p);
+               }
+            }
+         }
+         
+         Point2D.Double new_o =findCenter(ep);
+      
+         if(cornerIndex == -1){
+            return new Point((int)new_o.x, (int)new_o.y);
+         }
+      
+         double ratio2 = parametricConstant(o,p,j);
+      
+              
+         Point2D.Double new_j = pointAlongLine(ep[cornerIndex], ep[(cornerIndex + 1)%4], ratio1);      
+         Point2D.Double new_p = pointAlongLine(new_o, new_j, ratio2);
+         return new Point((int)new_p.x,(int)new_p.y);
+      
+      }
+       private static Point2D.Double pointAlongLine(Point2D.Double p1, Point2D.Double p2, double t){
+         return new Point2D.Double((p1.x*t + p2.x*(1-t)), (p1.y*t + p2.y*(1-t)));
+      }
+       private static Point2D.Double pointAlongLine(Point p1, Point p2, double t){
+         return new Point2D.Double((p1.x*t + p2.x*(1-t)), (p1.y*t + p2.y*(1-t)));
+      }
+      //provided the point mid is on the line p1-p2
+       private static double parametricConstant(Point2D.Double p1, Point2D.Double mid, Point2D.Double p2){
+         double dx = (p1.x - p2.x);
+         double dy = (p1.y - p2.y);
+         
+         if(dx == 0 &amp;&amp; dy == 0)
+            return 0.5;
+            
+      //use the diff that has a greater difference, for better accuracy
+         if(Math.abs(dx) &gt; Math.abs(dy))
+            return (mid.x - p2.x)/dx;
+        
+         return (mid.y - p2.y)/dy;
+      }
+       private static Point2D.Double findCenter(Point[] ps){
+         double x = 0, y = 0;
+         for(int i = 0; i &lt; 4; i++){
+            x += ps[i].x/4.0;
+            y += ps[i].y/4.0;
+         }
+         return new Point2D.Double(x,y);
+
+      }
+   
+       static class Line{
+         double x_coeff, y_coeff, const_coeff;
+          Line(){}
+          Line(Point2D.Double p1, Point2D.Double p2){
+            x_coeff = p2.y - p1.y;
+            y_coeff = p1.x - p2.x;
+            const_coeff = x_coeff*p1.x + y_coeff*p1.y;
+            if(x_coeff == 0
+            &amp;&amp; y_coeff == 0
+            ){
+               x_coeff = 1;
+            }
+         }
+      
+          boolean parallel(Line l){
+            return x_coeff == l.x_coeff &amp;&amp; y_coeff == l.y_coeff;
+         }
+      
+          Point2D.Double extendedIntersect(Line l){
+         //solve as matrix
+         //only 2 variables and 2 equations, so math is pre-calculated
+            
+            if(x_coeff != 0){
+               double y_div = (l.y_coeff - l.x_coeff/x_coeff*y_coeff);
+               if(y_div != 0){
+                  double y = (l.const_coeff - l.x_coeff/x_coeff*const_coeff)/y_div;
+                  double x = (const_coeff - y_coeff*y)/x_coeff;
+                  return new Point2D.Double(x, y);
+               }
+            }
+            //solve for x first instead
+            if(y_coeff != 0){
+               double x_div = (l.x_coeff - l.y_coeff/y_coeff*x_coeff);
+               if(x_div != 0){
+                  double x = (l.const_coeff - l.y_coeff/y_coeff*const_coeff)/x_div;
+                  double y = (const_coeff - x_coeff*x)/y_coeff;
+                  return new Point2D.Double(x,y);
+               }
+            }
+            //do it the other way just in case there was something funny and it didn't work...
+            if(l.x_coeff != 0){
+               double y_div = (y_coeff - x_coeff/l.x_coeff*l.y_coeff);
+               if(y_div != 0){
+                  double y = (const_coeff - x_coeff/l.x_coeff*l.const_coeff)/y_div;
+                  double x = (l.const_coeff - l.y_coeff*y)/l.x_coeff;
+                  return new Point2D.Double(x, y);
+               }
+            }
+            if(l.y_coeff != 0){
+               double x_div = (x_coeff - y_coeff/l.y_coeff*l.x_coeff);
+               if(x_div != 0){
+                  double x = (const_coeff - y_coeff/l.y_coeff*l.const_coeff)/x_div;
+                  double y = (l.const_coeff - l.x_coeff*x)/l.y_coeff;
+                  return new Point2D.Double(x,y);
+               }  
+            }
+         	
+            return null;//this shouldn't happen if the lines aren't parallel
+         }
+      }
+   }
+</pre>
+-- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+My solution still has one weakness: finding a point that is always inside the quad. In particular, I'm thinking about when one of the internal angles is greater than 180 degrees. Right now it is still possible to arrange the points so my calculated 'center' is outside of the quad. I'm now thinking using angle bisectors to find the center. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+<UL >
+<li> I appologize for not trying this new solution yet, but never fear I certainly will!  As for this "weakness", it will never happen in my application, so no problem here! -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> It won't? Then I can simplify it to the 'average' of each point - it seems more reliable than the other method's I've been trying. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+Ok, I plugged it in &amp; it works.  An interesting note: your method does not translate the same as <a href="robowiki?Tim_Foden" class=wikipagelink>Tim Foden</a>'s.  I modified the test code up top so you can see.  I'll be doing some investigation to determine which method better suits my application. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+That would probably be because my method depends on finding the 'center' of the block. Currently I'm just taking the average of the 4 points. I still think there must be a reliable method for this that I'm not thinking of. Maybe using Tim's method to find the new 'center', and then using my method to translate the point? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+I think i have a more elegant solution. but i have one question. You say you have the four coordinates of the stretched rectangle, do you also have the four coordinates of unstretched rectangle. If so than a planar homography would work for this problem as well, with out all the nitpicky code -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+<UL >
+<li> Yes, I do.  Planar homography sounds ... smooth.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Then boy do i have some code for you ill clean it up and post -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+<li> May i ask what this project your doing that this relates to, i cleaned up the code but i just realized this computer doesn't have javac on it (just upgraded linux distros) and i want to test it before i put my seal of approval on it. ill post it in the morning -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+<li> Unfortunetly no.  To quote from above, "As for the application ... it actually is a bit secret. If it takes off, though, I'll look into applying for a patent &amp; then tell you all about it!"  I'll understand if that changes your willingness to help. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Not at all, just credit me in the code if you decide to use my elegant solution, which will be more accurate that previous solutions and can be refined to even more precision (with more matching points) if you wish to dive deeper into the math behind it, which i would not recommend. bedtime -- yawn -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+<li> I don't really wish to dive deeper into the math behind it, but I will if that means I can give it an arbitrary number of points to get arbitrary accuracy! -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Planar Homographies are usually used for camera calibrations or image stiching and supplying more points only increases the precision if there is noise in your 4 matching points say from user input, but if you have accurate points anyway you'd be wasting your time -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+<li> Ok, maybe that's not as good as I was hoping then.  The elastic stretch problem is just an approximation of the one I'm trying to solve, but I was hoping it would be good enough.  Does adding extra points allow for non-linear stretching, or does it kinda average out the linear stetching to minimize the error factor from noise?  My previous plan was to lay several "elastic rectangles" against each other to simulate non-linear stretching. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> You're being quite elusive with this "elastic rectangles" problem. But any who. Thats a good question if i know what you mean by it. For example lets say we have an image that spans two piece of toilet paper and we want to map that image onto 1 piece of toilet paper (linear scaling), using the four corners of the double sheet matching up with the four corners of the single sheet. This is a simple version of your "elastic rectangle" problem. Now lets say you have the same sheets of toilet paper and you use 6 matching points to define the homography, is it possible to get a stretch of the 1/2 of the image and a squeeze of the 2nd 1/2 of the image. Is this the kind of non-linear stretching your looking for ? Srry about the toilet paper example i was in the bathroom when i was thinking -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+<li> Lol.  That's pretty much what I was thinking I would do it if only linear stetching is available.  What you described is two different rectangles side-by-side with different linear stretching.  It could produce an image that was narrowed on one side of a line, then suddenly bloated on the other.  What I am thinking of as non-linear stretching would produce an image that gradually changed from narrowed on one side to bloated on the other.  What do these planar homographies do when you feed them extra points? -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+I'm just thinking, they must have all the code for this already in the <a rel="nofollow" href="http://compiz.org/">[Compiz]</a> Desktop Manager to transform all the points from the regular 'square' windows to the floppy 'rubber' windows. They also have non-linear stretching, where the insides bow inwards. Take a look, all that stuff is open source. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+<UL >
+<li> Well, as I understand it, Compiz wouldn't have any of the code for that actually, because OpenGL would be doing that kind of dirty work. One of those software implementations of OpenGL may have this kind of code though. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</UL>
+<p>
+<UL >
+<li> I'm going to have to agree with <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a> on this one, the implementation of the wobbly windows is done in <a href="robowiki?OpenGL" class=wikipagelink>OpenGL</a> by the pipline there are how ever a few tricks they use to get the desired effect. Back to <a href="robowiki?Simonton" class=wikipagelink>Simonton</a> question I believe although i haven't tried this that using my above example a Homography would give you the desired effect of a transition form squeezed to bloated, you could get effects like an exponential strectch by placeing your matching points in a exponential scale acrooss the toilet paper. (if that makes sense) Here's the code i promised
+</UL>
+<pre>import java.awt.Point;
+
+public class PlanarHomography {
+
+	private double[][] homography;
+	
+	/*
+	 * Calculates a Planar Homography to map one plane to another
+	 * given a set of 4 points on a plane and their corresponding 
+	 * points on another plane
+	 *
+	 * @param uv : 4 points on the source plane - format (x,y)
+	 * @param xy : 4 points on the destination plane - format (x,y)
+	 */
+	public PlanarHomography(double[] uv, double[] xy) {
+		homography = new double[3][3];
+		double[][] equ = {{ uv[0], uv[1], 1, 0, 0, 0, -xy[0]*uv[0], -xy[0]*uv[1] },
+			{ 0, 0, 0, uv[0], uv[1], 1, -xy[1]*uv[0], -xy[1]*uv[1] },
+			
+			{ uv[2], uv[3], 1, 0, 0, 0, -xy[2]*uv[2], -xy[2]*uv[3] },
+			{ 0, 0, 0, uv[2], uv[3], 1, -xy[3]*uv[2], -xy[3]*uv[3] },
+		
+			{ uv[4], uv[5], 1, 0, 0, 0, -xy[4]*uv[4], -xy[4]*uv[5] },
+			{ 0, 0, 0, uv[4], uv[5], 1, -xy[5]*uv[4], -xy[5]*uv[5] },
+		
+			{ uv[6], uv[7], 1, 0, 0, 0, -xy[6]*uv[6], -xy[6]*uv[7] },
+			{ 0, 0, 0, uv[6], uv[7], 1, -xy[7]*uv[6], -xy[7]*uv[7] }};
+			
+		// invert the matrix and solve the system of linear equations
+		equ = invert(equ);
+		for (int i = equ.length; --i &gt;= 0;)
+			homography[i/3][i%3] = dot(equ[i], xy);
+		homography[2][2] = 1; // Always one
+	}
+	
+	/*
+	 * Maps a Homogeneous Coordinate from the source plane to its
+	 * Homogeneous Coordinate on the destination plane
+	 *
+	 * @param uv : point on the source plane - format (x,y,1)
+	 * @return corresponding point in the destination plane - format (x,y,1)
+	 */	
+	public double[] map(double[] uv) {
+		double[] xy = new double[3];
+		
+		// calculate x y w
+		for(int i = homography.length; --i &gt;= 0;)
+			xy[i] = dot(homography[i], uv);
+			
+		// scale vector by w
+		for(int i = 0; i &lt; xy.length; i++)
+			xy[i] /= xy[2];
+			
+		return xy;
+	}
+	
+	/*
+	 * Calculates the dot product of two vectors
+	 */
+	private double dot(double[] a, double[] b) {
+		double dot = 0;
+		for(int i = a.length; --i &gt;= 0;)
+			dot += a[i] * b[i];
+		return dot;
+	}
+	
+	/*
+	 * Method to invert an NxN Matrix
+	 */
+	private double[][] invert(double a[][]) {
+		int n = a.length;
+		double x[][] = new double[n][n];
+		double b[][] = new double[n][n];
+		int index[] = new int[n];
+		for (int i=0; i&lt;n; ++i) b[i][i] = 1;
+		
+		// Transform the matrix into an upper triangle
+		gaussian(a, index);
+		
+		// Update the matrix b[i][j] with the ratios stored
+		for (int i=0; i&lt;n-1; ++i)
+			for (int j=i+1; j&lt;n; ++j)
+				for (int k=0; k&lt;n; ++k)
+					b[index[j]][k] -= a[index[j]][i]*b[index[i]][k];
+		
+		// Perform backward substitutions
+		for (int i=0; i&lt;n; ++i) {
+			x[n-1][i] = b[index[n-1]][i]/a[index[n-1]][n-1];
+			for (int j=n-2; j&gt;=0; --j) {
+				x[j][i] = b[index[j]][i];
+				for (int k=j+1; k&lt;n; ++k) {
+					x[j][i] -= a[index[j]][k]*x[k][i];
+				}
+				x[j][i] /= a[index[j]][j];
+			}
+		}
+		return x;
+	}
+	
+	/*
+	 * Method to carry out the partial-pivoting Gaussian
+	 * elimination.  Here index[] stores pivoting order.
+	 */
+	private void gaussian(double a[][], int index[]) {
+		int n = index.length;
+		double c[] = new double[n];
+		
+		// Initialize the index
+		for (int i=0; i&lt;n; ++i) index[i] = i;
+		
+		// Find the rescaling factors, one from each row
+		for (int i=0; i&lt;n; ++i) {
+			double c1 = 0;
+			for (int j=0; j&lt;n; ++j) {
+				double c0 = Math.abs(a[i][j]);
+				if (c0 &gt; c1) c1 = c0;
+			}
+			c[i] = c1;
+		}
+		
+		// Search the pivoting element from each column
+		int k = 0;
+		for (int j=0; j&lt;n-1; ++j) {
+			double pi1 = 0;
+			for (int i=j; i&lt;n; ++i) {
+				double pi0 = Math.abs(a[index[i]][j]);
+				pi0 /= c[index[i]];
+				if (pi0 &gt; pi1) {
+					pi1 = pi0;
+					k = i;
+				}
+			}
+			
+			// Interchange rows according to the pivoting order
+			int itmp = index[j];
+			index[j] = index[k];
+			index[k] = itmp;
+			for (int i=j+1; i&lt;n; ++i) {
+				double pj = a[index[i]][j]/a[index[j]][j];
+				
+				// Record pivoting ratios below the diagonal
+				a[index[i]][j] = pj;
+				
+				// Modify other elements accordingly
+				for (int l=j+1; l&lt;n; ++l)
+					a[index[i]][l] -= pj*a[index[j]][l];
+			}
+		}
+	}
+	
+	public static void main(String[] args) {
+		double[] stretched = { 0, 0, 1680, 0, 1680, 1050, 0, 1050 },
+			unStretched = { 53, 61, 589, 61, 589, 403, 53, 403 };
+		PlanarHomography homography = new PlanarHomography(stretched, unStretched);
+		
+		double[] xy = homography.map(new double[] { 0, 0, 1 });
+		System.out.printf("0 0 1 -&gt; %f %f %f should be 53 61 1\n", xy[0], xy[1], xy[2]);
+	}
+}</pre>
+<p>
+To use this with your elastic rectangle problem replace the stretched and unStretched array with your coordinates be sure the correct corners match up. And to get where you point is on the unstretched rectangle just pass that point to the map function, make sure you specify it as a Homogeneous Coordinate the third componenet == 1. This problem and the math can also be extented into 3 space -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+<p>
+Check <a rel="nofollow" href="http://download.java.net/media/jai/javadoc/1.1.3/jai-apidocs/index.html">[this]</a> out, the method WarpPolynomial<a href="robowiki?action=edit&id=WarpPolynomial" class=wikipageedit>?</a>.createWarp.  (It was easier than delving into the math ...)  I'll let you all know how it goes.  Oh - and there's a demo <a rel="nofollow" href="http://java.sun.com/developer/onlineTraining/javaai/jai/index.html">[here]</a>, it's the last link in the top frame.  I had to copy-paste the source into eclipse to get it to work.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a> 
+<p>
+<H1>Question</H1>
+
+<p>
+Question: how to implement gaussian blur in java, given an Image i, and factor &#963; ? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>, post edited
+<UL >
+<li> Never mind. Answer: use ConvolveOp<a href="robowiki?action=edit&id=ConvolveOp" class=wikipageedit>?</a> which was fortunately included with java :) --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<li> Nice! -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Hmm, neat find. Wonder if this could have applications to small codesize bots.. like... &lt;non-serious&gt;a codesize-cheap way of smoothing some buffers...&lt;/non-serious&gt; -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</UL>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=TotallyUnrelatedMathQuestions" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=TotallyUnrelatedMathQuestions">View other revisions</a><br>Last edited August 30, 2008 14:02 EST by <a href="robowiki?Simonton" title="ID 15092 from 24-247-241-157.dhcp.klmz.mi.charter.com">Simonton</a> <a href="robowiki?action=browse&diff=1&id=TotallyUnrelatedMathQuestions">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

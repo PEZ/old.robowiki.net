@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>TrainingTheNN - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Training, The, NN'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=TrainingTheNN">TrainingTheNN</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Training the network is not straight ahead. It is sensitive both to the training parameters and the order the input/output pairs are presented to it. 
+<p>
+Much of the experience explained here comes from the development of <a href="robowiki?TheBrainPi" class=wikipagelink>TheBrainPi</a>.
+<p>
+<UL >
+<li> Momentum: Seems that a low momentum (ie. 0.1) makes the network to learn better. In any case, the NN was training well with the default momentum (0.3) on ScruciPu<a href="robowiki?action=edit&id=ScruciPu" class=wikipageedit>?</a>, so probably the optimum parameter depends on the problem the NN is trying to solve.
+</UL>
+<p>
+<UL >
+<li> Learning rate: I think the lower the better, but of course, it takes the NN more time to learn how to aim.
+</UL>
+<p>
+<UL >
+<li> Order of the input/output pairs: It is the most interesting part. In ScruchPu<a href="robowiki?action=edit&id=ScruchPu" class=wikipageedit>?</a>, the input/output pairs where presented in the order they happended, and once and only once. The objective was to avoid overtraining and to make the logic of the program simple. It worked OK. But when I tried the same strategy with <a href="robowiki?TheBrainPi" class=wikipagelink>TheBrainPi</a>, the NN failed misserably to learn anything more complex than <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a>. The final version of <a href="robowiki?TheBrainPi" class=wikipagelink>TheBrainPi</a> stores the input/output patterns and feeds them into the NN at random (from the previous history), a given number per turn. It solves the problem ... The question is: Why? My hypotesis is that the inputs/outputs presented to <a href="robowiki?TheBrainPi" class=wikipagelink>TheBrainPi</a> tend to evolve smoothly, so presenting them in a row makes the network to just converge to a local optima represented by some kind of average of the last input/outputs. It didn't happened to <a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a> just because the velocity/turn vectors were changing fast enough to prevent it from happening. If this hypotesis is true, probably Orca will have the same problem, and that can be the reason of its poor performance.
+</UL>
+<p>
+-- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Thanks for sharing! I will try both the momentum and the learning rate levers and see what happens. What about the bias stuff? You have mentioned it elsewhere on the wiki, but I don't quite follow. Maybe you could elaborate some on it? This with the order of the input/output pairs. It sounds amazing. But the Orcas (and GB) don't use paired input/outputs. They have plenty of inputs (from 4 up to 50 something) and just one output. I couldn't just randomize the order of the inputs, could I? GB is quite interesting since it's so arbritrary. In the last Outpost 1-v-1 league GB was one of very few bots beating <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a>. It quite often beats the new <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> also. But then, most of the time, GB just shoots like a very drunk robot... I feed a very shallow history (2 ticks if I remember correctly) of "bearing deltas" (think of it as <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a> with all your own movement removed), distance and bullet power into the net and out comes a guessed bearing. I've tried to compensate for the mislearning by using many nets in a <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> type of array, but it would be much better to try understand how to get more stable predictions from one net. Your path with one brain for all bots sounds great and I think I will try walk it as well. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+By input/output pairs I mean the input vector and its associated output vector (ie. the expected value) : input0 = (x0...xn) output0 = (y0...ym). So you have to keep the inputs and the associated outputs always together, but present the different pairs (that correspond to different times) in a random order, instead of presenting them in arrival order.
+<p>
+The bias is controlled (as the learning rate and the momentum) by a function in the NNPop class (just take a look to <a href="robowiki?TheBrainPi" class=wikipagelink>TheBrainPi</a> source code).
+<p>
+-- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Well, but what is the bias? How does it affect the net? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+If you wanted to go to the completely biological solution - and had a week or so to spare for simulations :p - you could simply have the neural net wipe and retrain over and over with a genetic algorithm designed to optimize some arbitrary function combining hitrate and learning time (a possible example is: minimize learning time / hitrate) controlling the parameters. The program would find everything best for you, you'd just need to be able to write the function. I doubt this is the best tweaking solution, though, it's far too time consuming and the function may not be able to analyze performance nearly as well as a human. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Hmmm, well, this is how I often seek the best parameters for stuff. I call them tuning factors. Sometimes I let my bot find them in battle and sometimes it's just hard labour back at the lab. =) Of course I'm not using any genetic algorithm, since I'm an illiterate dude and know nothing about such stuff. If I can't find the correct parameters for learning rate and momentum just by pondering what Albert wrote (be it because I'm thick headed or because my nets are too different from Alberts) I'll start a lab session with it. Good idea Kuuran, thanks! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Bias is a fixed weight that's added to the neuron inputs. 
+<p>
+Just think for a moment in a linnear regression:
+<p>
+<PRE >
+ y = a + b * x (let's say x is not a single variable but a vector)
+</PRE>
+<p>
+The bias would be "a", that's a constant weight added to the inputs, that allows to center them. A linnear regression without bias would be:
+<p>
+<PRE >
+ y = b * x (so the plane defined would always cross 0 when x is 0).
+</PRE>
+<p>
+The concept is just the same for NN, because to have a neuron you just have to add the non-linnear function to the equations above:
+<p>
+<PRE >
+ with bias --&gt; z = f(y) = f(a + b * x)
+ without bias --&gt; z = f(y) = f(b * x)
+</PRE>
+<p>
+By default NRLIBJ doesn't use biases, so every neuron is modelled as f(b*x). You need to activate the "bias learning" if you want to use it. 
+<p>
+Note that bias behaves in a similar way than "a" in a linnear regression: it can be necessary to predict the outputs accurately, but if not necessary, it can disturb the results. 
+<p>
+-- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Bias basically shifts the centerline where the threshold lies, think of it as memory/general experience. When you're trying to figure out what shade of red something is, you work in the ballpark of reds, you don't have to take time to figure out it's not black, indigo or teal, you immediately start thinking 'is it maroon or burgundy or pink?'. That's the best analogy I can think of at 5 in the morning... -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+<p>
+To get better performance for constant like wall (I mean if say north wall =0 west =1 and so) it can be easier to learn for the network if you put it as 4 input with one value set to 1 and all others set to 0. it can also be true for large data range (like distance to ennemi) but in this case you must discretize the value by yourself. one other thing, for circular data like angle(or date or things like this) it can be easier to learn to put Math.sin or Math.cos since then the network don't need to learn that it is circular. <a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<p>
+<hr noshade class=wikiline size=1>
+Anyone try to use genetic algorithms to evolve the weights? If so, could anyone give me some help before I jump into the problem to make a bot with evolving weights in a neural network? --<a href="robowiki?DragonTamer" class=wikipagelink>DragonTamer</a>
+<p>
+If you know the correct value for the neural network at any point, then you shouldn't use a GA.  Use back propagation or another supervised learning algorithm.  However, if you don't know the correct answers for your particular network, GAs can sometimes find reasonable answers.  I have experimented with GAs for evolving neural networks (about a year ago), but I never got useful results.  They seem to be better suited for building programs (oftentimes in LISP) than for evolving neural networks.  -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+In <a href="robowiki?NRLIBJ" class=wikipagelink>NRLIBJ</a> you can find some methods to train the network using GA, this training is usefull for global search (finding some good initial weight) but not for fine tuning (GA permit avoiding to fall into a local minima). So the response I think is train with GA at the beginning and next use backpropagation.  --<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=TrainingTheNN" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=TrainingTheNN">View other revisions</a><br>Last edited January 14, 2004 7:38 EST by <a href="robowiki?Albert" title="ID 1361 from 80.58.32.174.proxycache.rima-tde.net">Albert</a> <a href="robowiki?action=browse&diff=1&id=TrainingTheNN">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

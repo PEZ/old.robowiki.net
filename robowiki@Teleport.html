@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Teleport - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Teleport'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Teleport">Teleport</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>There seems to be some effect of hitting a "0 wall" (bottom or left side, where either the x or the y is 0) head on and then turning (right?) while on the wall that sometimes causes a bug that 'teleports' the robot to the origin of the playing field.  If you watch <a href="robowiki?Dummy" class=wikipagelink>Dummy</a>'s <a href="robowiki?FootBallDemo" class=wikipagelink>FootBallDemo</a> closely, the score droid that moves to the left side does this accidentally about half the time when he's first getting into position behind the opposing captain.
+<p>
+It appears the the actual effect is that the robot is moved to coordinates far off the battle field, and continued movement away from the battle field sometimes results in the player's coordinates becoming (<a href="robowiki?NaN" class=wikipagelink>NaN</a>, <a href="robowiki?NaN" class=wikipagelink>NaN</a>).  The interesting effect of this is that every bullet then hits the player, and every bullet that the player fires gets a hit.  This is typically good against robots that don't fire unless they see you, because the other effect of residing at <a href="robowiki?NaN" class=wikipagelink>NaN</a>, <a href="robowiki?NaN" class=wikipagelink>NaN</a> is that your opponent can't see you and you can see him in every direction.
+<p>
+So how many robots never fire if they can't see their opponent?  A very simple robot that manipulates this bug (the only one I've made that extends Robot instead of <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> in a long time) can beat 8 of the current top 10 <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> robots on the <a href="robowiki?EternalRumble" class=wikipagelink>EternalRumble</a>, so I suppose the answer is everyone except Gouldingi and <a href="robowiki?GlowBlow" class=wikipagelink>GlowBlow</a>.
+-- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Hehe, yes, as a result of the <a href="robowiki?WhenToFire" class=wikipagelink>WhenToFire</a> discussion <a href="robowiki?Gouldingi" class=wikipagelink>Gouldingi</a> fires from the while(true) loop regardless if it has seen a robot or not. This "limbo" bot is entered into the <a href="robowiki?EternalRumble" class=wikipagelink>EternalRumble</a> i hope? It should stir the league up some. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I wouldn't enter it the the ER, but i would at least post the source here, so people can see exactly how it works. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Well, now the worms are out of the can so there will be a few of these robots in the rumble soon anyway, in'it? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yeah, I wouldn't feel comfortable with putting it into the rumble, as interesting as it would probably be.  <a href="robowiki?SpareParts" class=wikipagelink>SpareParts</a> also fires in its "loop", but not forever.  I think he still beats this little bug, though.  If I think other people are starting to do it, though, I might be tempted to sneak in a warp to <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a> if he gets stuck against an appropriate wall anyways (just kidding).  I released it as a special-interest sort of robot, without source, on the <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a>.  It's called kawigi.tests.<a href="robowiki?WhatTheHeck" class=wikipagelink>WhatTheHeck</a> 0.1 (because that's what I was thinking when I first saw it. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+It's funny to see it happen. Imagine that such a bug has passed unnoticed for so long. It's sweet to see DT get's its ass kicked anyways. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I tried to recreate hitting the 0 wall and turning right but had no success. I guess I get to try again.. I really want to understand what sort of math error could be causing this. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Amazing! One reason why this bug would remain unnoticed is because most people try to avoid the walls. But that doesn't explain all of it, someone should have seen it anyway. Perhaps it is a bug introduced in the latest versions of the jvm? -- <a href="robowiki?Tobe" class=wikipagelink>tobe</a>
+<p>
+That's an interesting question - it could also have something to do strictly with representations of doubles, with strictfp math, or even the ALUs on processors (but I would think that less likely, the bug happens on my Athlon, and Pez's iBook, and I assume on others' pentiums.  That's also an argument against jvm versions, actually.  I'll search for the real bug sometime...) -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+<a href="robowiki?FootBallDemo" class=wikipagelink>FootBallDemo</a> counts over a hundred downloads; I think plenty of people noticed the teleport, it's just that no-one <i>reported</i> the bug. ;-p -- <a href="robowiki?Dummy" class=wikipagelink>Dummy</a><br>
+<p>
+It may be the case that alot of people saw it, it may be the case that people don't pay that close attention :p Anyway, I still can't repeat it, it's not just a matter of hitting the wall and turning, the exact function sequence that's used in the scorekeeper seems to be needed. I also believe copying+pasting that sequence is how <a href="robowiki?WhatTheHeck" class=wikipagelink>WhatTheHeck</a> was made? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Originally, I did take the score-keeper's code and paste it into <a href="robowiki?WhatTheHeck" class=wikipagelink>WhatTheHeck</a>, and then I took out some parts to figure out what seemed necessary. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Did what you found give you any logical clues as to why the bug exists? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Not yet, I still really need to extract a debugging version of Robocode and figure out exactly where the <a href="robowiki?NaN" class=wikipagelink>NaN</a>'s start coming in.  A few things could possibly cause it internally, including dividing zero by zero, taking the asin or acos of a number greater than 1 or less than -1, taking the tangent of a 90 or 270 degree angle, probably some other ways... -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Don't sweat it. This is Mat's work until they release it open source, in'it? Focus on making a DT killer bot instead. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+The bug seems to occur when the bot is exactly 18 pixels from the side wall. I get a different effect but the idea seems to be the same. Try this:
+<p>
+<pre>package vuen;
+import robocode.*;
+
+public class Teleport extends Robot {
+	public void run() {
+		turnLeft(getHeading() + 90);
+		ahead(getX() - 18);
+		turnRight(90);
+		ahead(100);
+	}
+}</pre>
+<p>
+This instantly teleports the bot to 18.001,-8.825285802042654E11 (fix) (not <a href="robowiki?NaN" class=wikipagelink>NaN</a>,<a href="robowiki?NaN" class=wikipagelink>NaN</a>). I'm not sure why the coordinates end up different, but the distance of 18 seems to be the key factor in teleporting. If you decide to look for the bug in Robocode, my suggestion is to start by looking for occurences of the number 18 or 36. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+It sounds like a problem with a less-than instead of a less-than-equals, or vice versa.  An off-by-one type bug. -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+Or an off-by-1E-22.
+Actually, <a href="robowiki?WhatTheHeck" class=wikipagelink>WhatTheHeck</a> also ends up around that sort of coordinate, and to get to <a href="robowiki?NaN" class=wikipagelink>NaN</a>,<a href="robowiki?NaN" class=wikipagelink>NaN</a>, it just keeps moving away from the center :-p  Kind of a silly thing.  In melee, he'll try to stay in that finite limbo until there's only one more enemy left, and then he'll go out all the way. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Bots are 36x36 pixels in size (NOT 40x40, which is what getWidth() and getHeight() report), so I don't wonder about the <a href="robowiki?Teleport" class=wikipagelink>Teleport</a> distance being 18 pixels. It's probably a bug in the wall hit detection code. Anyway, I go experiment with it again. :) -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+I can't get it out of (18, 18, width-18, height-18). Most of the time it puts the bot in a corner or at the other side of the battlefield. <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>'s Teleport always gets teleported to a little over (18, 18). -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+Interesting... This is part of the output of one of my Teleport test bots:
+<pre>(99.00099976479568, 18.000006451466756)
+(-54.84854421736972, 18.001)
+(18.000997042375054, 18.000529543260303)
+(19.000997042354204, 18.000523085337143)
+(21.0009970423125, 18.000510169490823)
+(24.000997042249942, 18.000490795721344)
+(28.00099704216653, 18.000464964028705)
+(33.00099704206227, 18.000432674412906)
+(39.000997041937154, 18.000393926873947)
+(46.00099704179119, 18.00034872141183)
+(54.000997041624366, 18.00029705802655)
+(62.000997041457545, 18.000245394641272)
+(70.00099704129073, 18.000193731255994)
+(78.00099704112391, 18.000142067870716)
+(86.00099704095709, 18.000090404485437)
+(92.00099704083198, 18.00005165694648)
+(96.00099704074857, 18.000025825253832)
+(99.00099704068602, 18.000006451484346)
+(-54.84854426036705, 18.001)
+(18.000996999377726, 18.00052954326043)</pre>
+It first drives to (18, 18), then (100, 18), via a method which continuously adjusts heading and distance. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+Probably there is a black hole there... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Haha! I know you might not have been joking Axe, but you just made me laugh at loud. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Hmm, does this bug still work? I tried Vuens code and didnt get anything.
+<p>
+The teleport issue was fixed in Robocode 1.0.7. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+The main reason why there was a teleport bug is because the collision detection happens only every frame. Like, a robot traveling at 8 px/frame is 2 px away from the wall, so the next frame it goes through the wall, etc, etc, etc. -- <a href="robowiki?Nfwu" class=wikipagelink>nfwu</a>
+<p>
+Version 1.2.1 fixed another teleport bug (i think)
+<a rel="nofollow" href="http://sourceforge.net/project/shownotes.php?group_id=37202&amp;release_id=463711">http://sourceforge.net/project/shownotes.php?group_id=37202&amp;release_id=463711</a> --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Actually, i think it added it! Now Corners teleports each time! This makes it funny because in a battle where it's Corners against Corners, the first Corners teleports, then the second one teleports!
+<p>
+One way i think you can defeat teleport bots is if you shoot them down quickly and kill them before they manage to teleport (this may be easier on a 2000x2000 field, because the teleport bot has to travel farther to hit a wall)
+--<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Ok, fixed again in release 1.2.1A (<a rel="nofollow" href="http://sourceforge.net/project/shownotes.php?group_id=37202&amp;release_id=466792">http://sourceforge.net/project/shownotes.php?group_id=37202&amp;release_id=466792</a>) --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Teleport" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Teleport">View other revisions</a><br>Last edited December 2, 2006 23:33 EST by <a href="robowiki?Starrynte" title="ID 8009 from ca-arcdca-cuda1-c1j-117.arcdca.adelphia.net">Starrynte</a> <a href="robowiki?action=browse&diff=1&id=Teleport">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

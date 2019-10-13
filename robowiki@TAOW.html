@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>TheArtOfWar - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='The, Art, Of, War'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h3>(redirected from <a href="robowiki?action=edit&id=TAOW" class=wikipageedit>TAOW</a>)</h3><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=TheArtOfWar">TheArtOfWar</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H4>Questions and Comments</H4>
+
+Just curious: has anyone used code from <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a>?  Is it just too big and bloated, or are the copyright restrictions too cumbersome?  Would switching to a GPL-style license encourage people to use the code?  I don't have time to compete, but it would be nice if even just a little piece of TAOW contributed to the bot that some day knocks <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> off the 1-on-1 throne. :-) -- <a href="robowiki?Ray_Vermette" class=wikipagelink>Ray Vermette</a>
+<p>
+Ummm, I often dig in the code to see how you have solved on or other issue I stumble across. It's inspiring to read the code and see how I <em>should</em> have structured my own. =) I think I might some day soon base a robot entirely on <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a> code structure and then add aiming techniques and movement from there. Not that I have too high hopes to knock down DT, but I just might. =) What are the copyright restrictions anyway? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+You know PEZ, I found out that structurisation (is that a valid word?) is a bad thing. Just read through fushi's pvp bot and found out that it consists only of pattern matching gun, random movement and centre orbiting movement. But "thanks to" its structure the codesize is about 8500...  -- <a href="robowiki?LRem" class=wikipagelink>lRem</a>
+<p>
+Well, I see nothing bad with 8500 codesize. Unless you're making a <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a> of course. Noone sane would base a mini on TAOW. But even with minibots structure can sometimes save bytes. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+Its movement is based almost entirely on <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravity</a>.  <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravity</a> points are assigned to enemy robots, the predicted paths of enemy bullets, walls, and the battlefield center in a melee battle.
+<p>
+<H4>How does it fire?</H4>
+
+<a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a> has a pretty complex algorithm for <a href="robowiki?Targeting" class=wikipagelink>Targeting</a> and <a href="robowiki?SelectingFirePower" class=wikipagelink>SelectingFirePower</a>, which in retrospect, could be much simplier.  It uses a number of different Aiming<a href="robowiki?action=edit&id=Aiming" class=wikipageedit>?</a> techniques, and keeps track of hits and misses to help it select the best aiming algorithm for each opponent.
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+When <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a> detects a drop in the opponent's energy which might indicate a bullet being fired, it plots three possible bullet paths: one fired using LinearAiming<a href="robowiki?action=edit&id=LinearAiming" class=wikipageedit>?</a> (i.e.: straight at <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a>'s current position), one fired based on <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a>'s average speed, and one using an interative aiming technique.  If <a href="robowiki?AntiGravity" class=wikipagelink>AntiGravity</a> forces were assigned to the bullets' current positions, the combined forces would cause <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a> to move backwards (bad!) instead of dodging left or right (good!), so I assign <a href="robowiki?AntiGravity" class=wikipagelink>AntiGravity</a> forces to the points where I expect the bullets to impact <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a>.
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+If I remember correctly, the only difference is in <a href="robowiki?Melee" class=wikipagelink>melee</a>, <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a> assigns a weak <a href="robowiki?AntiGravity" class=wikipagelink>AntiGravity</a> force to the center of the battlefield to encourage it to stay in the corners (where it is safe!).
+<p>
+<H4>Where did you get the name?</H4>
+
+From "The Art Of War" by Sun Tzu, the world's oldest military treatise.
+<p>
+<H4>Can I use your code?</H4>
+
+Sure.  The source code is available on the <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a>.
+<p>
+<H4>What's next for your robot?</H4>
+
+I think I will leave it alone.  It serves as a useful milestone for robot development and just goes to show you how far robots have advanced since <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a> was written.  It use to rank near the top; now it's lucky if it cracks the top 35 in <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>.  It's still half-decent in <a href="robowiki?Melee" class=wikipagelink>melee</a>.
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+<a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a> is based on two previous robots I wrote: <a rel="nofollow" href="http://www.geocities.com/evilsimon/RayBot/RayBot_Description.html">[RayBot]</a> and a one-on-one robot called, oddly enough, "One".  
+<p>
+<a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a> is open source and the code for it can be found on the <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a> .  You can read more about it at <a rel="nofollow" href="http://web.archive.org/web/20040211130751/http://members.rogers.com/theartofwar/">[The Art of War Home Page]</a>.
+<p>
+-- <a href="robowiki?Ray_Vermette" class=wikipagelink>Ray Vermette</a>
+<p>
+<H4>Comments</H4>
+
+Half-decent in <a href="robowiki?Melee" class=wikipagelink>Melee</a>? Nah! It's one of the very best melee bots out there. And this without updates for what in Robocode land must count as ages.  -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+This bot won the ChampionsLeague<a href="robowiki?action=edit&id=ChampionsLeague" class=wikipageedit>?</a> on <a href="robowiki?EternalRumble" class=wikipagelink>EternalRumble</a> June 12 2003. It does this at times. This is one strong <a href="robowiki?Melee" class=wikipagelink>Melee</a> bot! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+And it's still ranked 4th in Melee on the <a href="robowiki?EternalRumble" class=wikipagelink>EternalRumble</a>.  -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=TheArtOfWar" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=TheArtOfWar">View other revisions</a><br>Last edited January 15, 2007 18:00 EST by <a href="robowiki?Starrynte" title="ID 8009 from cpe-75-84-67-39.socal.res.rr.com">Starrynte</a> <a href="robowiki?action=browse&diff=1&id=TheArtOfWar">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

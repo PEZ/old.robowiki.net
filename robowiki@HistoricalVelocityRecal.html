@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>HistoricalVelocityRecal - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Historical, Velocity, Recal'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=HistoricalVelocityRecal">HistoricalVelocityRecal</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>This is a method of targeting I'm developing for <a href="robowiki?BlueMind" class=wikipagelink>BlueMind</a>.
+<p>
+This method basicaly uses <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a>, but instead of using the current enemy's velocity, you keep a log of all of its recorded velocities: and shooting at the "highest" point in the graph.
+<p>
+This is achieved throught the use of a vector and array pair.
+<p>
+<h3>Implementation</h3>
+<hr noshade class=wikiline size=1>
+<pre>
+       static Vector velocityMap;
+    
+       double[] vArray = new double[321];
+
+       Velocity enemyV = new Velocity(e.getVelocity());
+       velocityMap.addElement(enemyV);
+        
+        for(int flush=0;flush&lt;321;flush++){
+            vArray[flush]=0;
+        }
+        
+        Velocity temp = new Velocity(0);
+        double temp2=0;
+        out.println(velocityMap.size());
+        for(int index=0; index &lt; velocityMap.size(); index++){
+            temp = (Velocity)velocityMap.get(index);
+            temp2 = (temp.v+8)*20;
+            vArray[(int)temp2]++;
+        }
+        
+        Count target = new Count();
+        for(int scan=0; scan &lt; 321; scan++){
+            if(vArray[scan]&gt;target.threshHold){
+                target.value = (scan/20)-8;
+                target.threshHold=vArray[scan];
+            }
+        }
+        
+        double power = (2200/Math.pow(e.getDistance(),1.15));
+	if(power&gt;=getEnergy()){
+            power = getEnergy()-.1;
+        }
+        if(power&gt;3)
+            power=3;
+        if(power&lt;.1)
+            power=.1;
+        double dist = e.getDistance();
+        double playerX = getX();
+        double playerY = getY();
+        double bearing = (Math.toRadians(getHeading())+e.getBearingRadians())%(2*Math.PI);
+        double enemyX = playerX + (dist * Math.sin(bearing));
+        double enemyY = playerY + (dist * Math.cos(bearing));
+        double bulletV = 20 - 3 * power;
+        double enemyH = e.getHeadingRadians();
+        enemyH += (enemyH-lastH)/(getTime()-lastScanT);
+        double gunH = getGunHeading();
+        double predictD = e.getDistance();
+        double predictX = enemyX;
+        double predictY = enemyY;
+        double rawV = target.value;
+        double theta = 0;
+        double time2 = 0;
+        double t=0;
+        double timeTheta = 0;
+        double time0=dist/bulletV;
+        int deltaT = 0;
+        int others = getOthers();
+        double lastDiff=Double.POSITIVE_INFINITY;
+        for(deltaT=-1000;deltaT&lt;=1000;deltaT++){
+            t = time0 + deltaT;
+            predictX = enemyX+((rawV*t)*Math.sin(enemyH));
+            predictY = enemyY+((rawV*t)*Math.cos(enemyH));
+            if (predictX &lt; 20){
+                predictX = 20;
+            }else if(predictX &gt; battleFieldWidth-20){
+                predictX = battleFieldWidth-20;
+            }
+            if (predictY &lt; 20){
+                predictY = 20;
+            }else if(predictY &gt; battleFieldHeight-20){
+                predictY = battleFieldHeight-20;
+            }
+            predictD = Point2D.Double.distance(playerX,playerY,predictX,predictY);
+            timeTheta = Utils.absoluteBearing(playerX, playerY, predictX, predictY);
+            timeTheta = Utils.normalizeBearing(timeTheta - gunH);
+            time2 = (predictD / bulletV) + (timeTheta / 20);
+            if(Math.abs(t-time2) &lt;= lastDiff){
+                theta = Utils.absoluteBearing(playerX, playerY, predictX, predictY);
+                theta = Utils.normalizeBearing(theta-gunH);
+                lastDiff = Math.abs(t-time2);
+            }
+        }
+        turnGunRight(Utils.normalizeBearing(theta));
+        
+        lastH = enemyH;
+        lastScanT = getTime();
+        
+        if(getEnergy()&gt;0.2)
+            fire(power);
+</pre>
+<p>
+--<a href="robowiki?UnderDark" class=wikipagelink>UnderDark</a>
+<p>
+<p>
+<b>Question, Comments, Contributions:</b>
+<hr noshade class=wikiline size=1>
+This sounds very similar to the aiming method that Stampede 1.3.3 currently uses (except it has both a linear and a circular version in a VG array). I have not been able to improve it much further than the gun currently in the RR; however that is probably due to my sloppy implementation rather than a weakness in the concept. I'm curious to see how you fare with this. --<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=HistoricalVelocityRecal" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=HistoricalVelocityRecal">View other revisions</a><br>Last edited September 2, 2005 14:23 EST by <a href="robowiki?UnderDark" title="ID 5263 from d149-67-30-72.try.wideopenwest.com">UnderDark</a> <a href="robowiki?action=browse&diff=1&id=HistoricalVelocityRecal">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

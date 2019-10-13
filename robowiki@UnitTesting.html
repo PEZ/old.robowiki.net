@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>UnitTesting - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Unit, Testing'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=UnitTesting">UnitTesting</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Automatic, relentless, testing is often advocated by ExtremeProgramming<a href="robowiki?action=edit&id=ExtremeProgramming" class=wikipageedit>?</a> folks. I am certainly one of those folks. Though I haven't followed my own advice when it comes to robot development. Shame on me. The main reason is that I don't really know how to do it effectively. I know that <a href="robowiki?Crippa" class=wikipagelink>Crippa</a> has unit tests for some of his robot code, so maybe he can elaborate on the subject some. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Googling on the subject I found that PeterLindberg<a href="robowiki?action=edit&id=PeterLindberg" class=wikipageedit>?</a> on <a href="robowiki?Oops" class=wikipagelink>Oops</a> has code for an (old) robot with some <a href="robowiki?UnitTesting" class=wikipagelink>UnitTesting</a> in place: <a rel="nofollow" href="http://oops.se/cgi-bin/wiki?PeterLindberg%2FFoofy">http://oops.se/cgi-bin/wiki?PeterLindberg%2FFoofy</a>
+Maybe Peter finds his way to this wiki some day and can explain the why's and how's for us. After all, he's one of the ExtremeProgramming<a href="robowiki?action=edit&id=ExtremeProgramming" class=wikipageedit>?</a> authorities in Sweden. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+The, among robocoders, often used Java IDE - <a rel="nofollow" href="http://eclipse.org/">[Eclipse]</a>, has the <a rel="nofollow" href="http://junit.org/">[JUnit]</a> framework integrated. Which should be useful. Anyone with experience of this? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+JUnit is a superb tool I use it everyday.  I am a big devotee if the Extreme Programming approach which basically advocates the creation of your unit tests before you create your code.<br>JUnit is a Java test framework which allows you to write &amp; run unit tests against the methods on your Java classes.  It allows you to test that each individual method on a class is performing as expected.<br>The tests that you write are themselves Java classes that extend the 'TestCase<a href="robowiki?action=edit&id=TestCase" class=wikipageedit>?</a>' class in JUnit.  The execution of these test scripts can be executed automatically by <a href="robowiki?Ant" class=wikipagelink>Ant</a> so that you can ensure that any modifications you make to your code do not introduce unexpected results elsewhere :) <a href="robowiki?Hexkid" class=wikipagelink>Hexkid</a>
+<p>
+For effective testing of robocode stuff it is important to keep things seperated, so that you can test small methods. Additionally it helped me a lot to create a RobotMock<a href="robowiki?action=edit&id=RobotMock" class=wikipageedit>?</a> class that extends <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> and contains some code that simulates the robocode environment. This is neccessary if your code calls anything like getX(), getHeading() or so. I started with basic things like 
+<p>
+<PRE >
+    public double getX() {
+        return 400;
+    }
+</PRE>
+<p>
+and now the robotMock can move around like a 'real' robot and advanced tests like this are possible:
+<p>
+<PRE >
+    public void testGoToFunction<a href="robowiki?action=edit&id=GoToFunction" class=wikipageedit>?</a>() {
+        System.out.println("testing basic goTo funtion");
+        // create new robot to reset everything
+        r = new RobotMock<a href="robowiki?action=edit&id=RobotMock" class=wikipageedit>?</a>();
+        m = new Movement(r);
+        m.goTo(100, 100);
+</PRE>
+<p>
+<PRE >
+        while ( r.getDistanceRemaining<a href="robowiki?action=edit&id=DistanceRemaining" class=wikipageedit>?</a>() != 0) {
+            r.execute();
+        }
+        assertEquals(100, r.getX(), 3);
+        assertEquals(100, r.getY(), 3);         
+    }
+</PRE>
+<p>
+Not everything is simulated, there are no walls and no enemies but it really helps to find some hidden bugs. vario<a href="robowiki?action=edit&id=Vario" class=wikipageedit>?</a>
+<p>
+Cool idea! I'll remember that for when I'm starting on my new movement. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Some versions of <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> had mock methods and mock objects too. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I added some example unit tests for my physics engine <a href="robowiki?Ugluk/Unit_Testing" class=wikipagelink>here</a> that may be of use when writing your own tests.  The purpose of unit tests is to catch bugs anywhere in your system (that you've written tests for) when you make code changes (and run the tests).  A project I worked on would do a nightly run of the tests to get a report on the success rate and another tool measured lines of code that the tests touched.  The goal was 90-100% code coverage and 100% success rate on tests.  Some things that are not practical to test for could include environmental states (running out of memory) and i/o errors.  Pretty hard to deliberately reproduce.  Anyway .. <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> perked up at the mention that I'd written 76 unit tests to cover my physics subsystem, and I'm also working on covering other systems (like turret and radar operation) as well. -- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin Alan Pedersen</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=UnitTesting" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=UnitTesting">View other revisions</a><br>Last edited March 4, 2006 17:13 EST by c-24-7-149-71.hsd1.ca.comcast.net <a href="robowiki?action=browse&diff=1&id=UnitTesting">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

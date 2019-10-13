@@ -1,0 +1,239 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Squirrel - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Squirrel'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Squirrel">Squirrel</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?Squirrel/Nano" class=wikipagelink>/Nano</a>
+<H3>Bot Name</H3>
+
+Squirrel
+<p>
+<H4>Author</H4>
+
+Bayen
+<p>
+<H4>Extends</H4>
+
+<a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>
+<p>
+<H4>What's special about it?</H4>
+
+My first megabot.
+My first semi-good robot. (it's my only one ever to be in the top 100 of the roborumble)
+<p>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<a rel="nofollow" href="http://www.freewebs.com/bayen/files/bayen.nut.Squirrel_1.59.jar">http://www.freewebs.com/bayen/files/bayen.nut.Squirrel_1.59.jar</a>
+<p>
+<H4>How competitive is it?</H4>
+
+Mediumly.....
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+It starts out by trying to circle the enemy (to avoid HOT), if that fails, it "buzzes" back and forth (to avoid LT or CT), and if that fails, it waveSurfs (by avoiding the GF that it was hit at last AT ALL COSTS while having the secondary motive to try and keep a flat movement.  this should help against bots without adaptive guns).
+<p>
+<H4>How does it fire?</H4>
+
+<a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> array!  With one main GF gun, one anti-adaptive GF gun, and one LT gun
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+see Movement
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+it moves from corner to corner using goTo() code instead of circling the enemy.  This creates a Walls-like movement, except without the collision damage.  It will change its destination if it is hit by another bot.
+<p>
+<H4>How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a>?</H4>
+
+basically, whoever it sees.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+Between Rounds:  <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> array information, GF info, <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> info, its gun accuracy, its dodging effectiveness, and what movement pattern it is currently using.
+<p>
+Between Matches: main GF gun data
+<p>
+<H4>Where did you get the name?</H4>
+
+From the ultimate species:  the squirrels.
+<p>
+<H4>Can I use your code?</H4>
+
+Sure!  It's in the JAR and I haven't liscensed it or anything (I may do this later, but for now it isn't worth it ;) )
+<p>
+<H4>What's next for your robot?</H4>
+
+I don't know yet.
+<p>
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+<a href="robowiki?BasicGFSurfer" class=wikipagelink>BasicGFSurfer</a>!!!!!  (the combination of the <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> tutorial bot and the GF tutorial bot...)
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+I use modified versions of code from VirtualBulletsSampleBot<a href="robowiki?action=edit&id=VirtualBulletsSampleBot" class=wikipageedit>?</a>, <a href="robowiki?BasicSurfer" class=wikipagelink>BasicSurfer</a>, and <a href="robowiki?GFTargetingBot" class=wikipagelink>GFTargetingBot</a>.  So that means thanks to PEZ, <a href="robowiki?DavidAlves" class=wikipagelink>DavidAlves</a>, and Voidious!  I also used the <a href="robowiki?WritingArraysToFile" class=wikipagelink>WritingArraysToFile</a> code and the <a href="robowiki?WaveSurfingChallengeBotB" class=wikipagelink>WaveSurfingChallengeBotB</a> code.
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+Help!!!!  My code will compile, but this error occurs whenever I battle:
+<pre>
+bayen.Squirrel: Exception: java.lang.NullPointerException
+java.lang.NullPointerException
+    at bayen.AcornSlingshot.onScannedRobot(AcornSlingshot.java:19)
+    at bayen.Squirrel.onScannedRobot(Squirrel.java:76)
+    at robocode.peer.robot.EventManager.onScannedRobot(Unknown Source)
+    at robocode.peer.robot.EventManager.processEvents(Unknown Source)
+    at robocode.peer.RobotPeer.tick(Unknown Source)
+    at robocode.peer.RobotPeer.turnRadar(Unknown Source)
+    at robocode.Robot.turnRadarRight(Unknown Source)
+    at bayen.Squirrel.run(Squirrel.java:69)
+    at robocode.peer.RobotPeer.run(Unknown Source)
+    at java.lang.Thread.run(Unknown Source)
+</pre>
+WHY?!?!?!?!  Please someone look at my code and tell me. --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+Bug fixed :) --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+Can someone help me implement a VirtualGun<a href="robowiki?action=edit&id=VirtualGun" class=wikipageedit>?</a> array for this bot?  I want to use a CT gun and a HOT gun.  I'm not sure how to begin... -<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+Check out <a href="robowiki?VirtualBullets/VirtualBulletsSampleBot" class=wikipagelink>VirtualBullets/VirtualBulletsSampleBot</a> for a sample of virtual guns. I've also added screenshot of the bot in action at the top of the <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> page. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Thanks!  I'll get right to work :) --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+And I tried, and I failed....  Could someone help with debugging this implementation?  It's basically VirtualBulletsSampleBot<a href="robowiki?action=edit&id=VirtualBulletsSampleBot" class=wikipageedit>?</a> reconfigured onto Squirrel.  The gun source can be found at <a rel="nofollow" href="http://robowiki.net/cgi-bin/robowiki?Squirrel/Gun">http://robowiki.net/cgi-bin/robowiki?Squirrel/Gun</a> .   The code WILL compile, but for some reason it gets an error:
+<pre>
+bayen.Squirrel: Exception: java.lang.NullPointerException
+java.lang.NullPointerException
+    at bayen.AcornSlingshot.onScannedRobot(AcornSlingshot.java:50)
+    at bayen.Squirrel.onScannedRobot(Squirrel.java:87)
+    at robocode.peer.robot.EventManager.onScannedRobot(Unknown Source)
+    at robocode.peer.robot.EventManager.processEvents(Unknown Source)
+    at robocode.peer.RobotPeer.tick(Unknown Source)
+    at robocode.peer.RobotPeer.turnRadar(Unknown Source)
+    at robocode.Robot.turnRadarRight(Unknown Source)
+    at bayen.Squirrel.run(Squirrel.java:74)
+    at robocode.peer.RobotPeer.run(Unknown Source)
+    at java.lang.Thread.run(Unknown Source)
+</pre>
+I have a hunch that the error is somehow in this code because when I take it out, the error goes away.  The downside is:  I can't fire without this code:
+<pre>
+target = new RobotState();
+		target.setLocation(me.project(e.getBearingRadians() + Squirrel.getHeadingRadians(), e.getDistance()));
+		target.heading = e.getHeadingRadians();
+		target.velocity = e.getVelocity();
+		target.name = e.getName();
+</pre>
+However, the error message says that there are some problems with the bot code, too (which is at <a rel="nofollow" href="http://robowiki.net/cgi-bin/robowiki?Squirrel/Bot">http://robowiki.net/cgi-bin/robowiki?Squirrel/Bot</a> ), so I am checking that too.  I am pretty much stumped.  Could someone give me some help? --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+I'd need to see the rest of the code to be able to know for sure, but my first thought is to make sure that 'me' is initialized before that code is executed. --<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a>
+<p>
+You're right!  Thanks so much!  Everyone here is so helpful, it's awesome.  Thanks again!  --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+Hey <a href="robowiki?Bayen" class=wikipagelink>Bayen</a>, do you want to see a fight with hardly any hits? Pitch in <a href="robowiki?Gruwel" class=wikipagelink>Gruwel</a> against <a href="robowiki?Squirrel" class=wikipagelink>Squirrel</a> and watch all the bullets fly by. You will also see a minor issue for improvement: do not shoot yourself disabled.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+I did, it's funny!  :)  But which version of Squirrel do you have?  I thought I put in something so that if it's not hitting 75% or more of the time it won't shoot once its energy drops to 5...  --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+The version I watched is bayen.Squirrel_1.25 (is corrected to bayen.nut.Squirrel_1.25). RR@Home was complaining about it, so I downloaded it and checked what was wrong. Then I also watched some battles against some of my own bots.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+I think I broke something in 1.50!  I dropped almost 75 places in the RR@H.  Maybe it's the flattening for my <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>...  I must improve it! --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+I'm stumped (with another error).  Here it is:
+<p>
+bayen.nut.Squirrel: Exception: java.lang.<a href="robowiki?NullPointerException" class=wikipagelink>NullPointerException</a>
+java.lang.<a href="robowiki?NullPointerException" class=wikipagelink>NullPointerException</a>
+<PRE >
+    at bayen.nut.FleetFeet<a href="robowiki?action=edit&id=FleetFeet" class=wikipageedit>?</a>.onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a>(FleetFeet<a href="robowiki?action=edit&id=FleetFeet" class=wikipageedit>?</a>.java:338)
+    at bayen.nut.Squirrel.onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a>(Squirrel.java:151)
+    at robocode.peer.robot.EventManager<a href="robowiki?action=edit&id=EventManager" class=wikipageedit>?</a>.onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a>(Unknown Source)
+    at robocode.peer.robot.EventManager<a href="robowiki?action=edit&id=EventManager" class=wikipageedit>?</a>.processEvents(Unknown Source)
+    at robocode.peer.RobotPeer<a href="robowiki?action=edit&id=RobotPeer" class=wikipageedit>?</a>.tick(Unknown Source)
+    at robocode.peer.RobotPeer<a href="robowiki?action=edit&id=RobotPeer" class=wikipageedit>?</a>.turnRadar(Unknown Source)
+    at robocode.Robot.turnRadarRight<a href="robowiki?action=edit&id=RadarRight" class=wikipageedit>?</a>(Unknown Source)
+    at bayen.nut.Squirrel.run(Squirrel.java:118)
+    at robocode.peer.RobotPeer<a href="robowiki?action=edit&id=RobotPeer" class=wikipageedit>?</a>.run(Unknown Source)
+    at java.lang.Thread.run(Unknown Source)
+</PRE>
+<p>
+It doesn't happen every round, but it happens often enough to affect my score.  It happens when I get hit by a bullet.  (not EVERY time I get hit by a bullet, but it only happens if I have just been hit by the bullet.)  I don't know why!  --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+What version of Squirrel? If it's a dev version, could you share some source code? I'd start on line 338 of FleetFeet<a href="robowiki?action=edit&id=FleetFeet" class=wikipageedit>?</a>.java, of course... ;) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Okay.  This is what's at 338:
+<pre>
+if(_myLocation.distance(hitWave.fireLocation) &gt; 90 //if they're not too close
+			&amp;&amp; (
+			!(getFactorIndex(hitWave, hitBulletLocation) &lt;= 20  //and not shooting HOT if we're anti-HOT moving
+					&amp;&amp;getFactorIndex(hitWave, hitBulletLocation) &gt;= 25
+					&amp;&amp;waveSurf&amp;&amp;!flatten)
+					
+					|| (
+					!(getFactorIndex(hitWave, hitBulletLocation) &lt;= 42//and not shooting LT if we're antiLTing
+					&amp;&amp;getFactorIndex(hitWave, hitBulletLocation) &gt;= 47
+					&amp;&amp;!waveSurf)
+					)
+					|| (waveSurf &amp;&amp; flatten)//or we are waveSurfing
+					)
+					)
+hitsThisRound++;                  //add a hit to this round
+
+//then make neccessary changes:
+		if(waveSurf &amp;&amp; !flatten){
+			if((hitsThisRound &gt; Squirrel.getRoundNum())){
+				hitsThisRound = 0;
+				waveSurf = false;
+			}
+		}
+		if(!waveSurf){
+			if((hitsThisRound &gt; Squirrel.getRoundNum())){
+				hitsThisRound = 0;
+				waveSurf = true;
+				flatten = true;
+			}
+</pre>
+It's in onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a> and it decides what movement I will be using.
+If waveSurf == true and flatten == false, it will do the anti-HOT movement.
+If waveSurf == false and flatten == false it will do the anti-LT/CT movement.
+If waveSurf == true and flatten == true it will do the waveSurfing movement.
+<p>
+I think this is where the error starts.  If this isn't enough, I can create another release temporarily and upload it.
+<p>
+The error seems to be inside the giant if statement.  I'm still working on pinpointing it.  Help please?!?--<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+It's probably _myLocation. You could confirm that by adding something like:
+<code>if (_myLocation == null) { System.out.println("Yes, it's _myLocation that's the source of my NPE."); }</code>. If it were any of the other objects there, you would see getFactorIndex<a href="robowiki?action=edit&id=FactorIndex" class=wikipageedit>?</a> in the stack trace. I assume "Squirrel" is a reference to the <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> itself? You should be updating that reference each round, too, if you aren't already... (By the way, which line exactly is 338?) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I added that line and it never printed, so I don't think it is _myLocation.  Squirrel is a reference to the <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>, and it does get updated every round (because I reconstruct my movement class every round).  And 338 (which is actually now 339 since I added the debugger line) is <code>if(_myLocation.distance(hitWave.fireLocation) &gt; 90</code>. --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+Oh, then it's gotta be hitWave. If it were fireLocation, you would get the <a href="robowiki?NullPointerException" class=wikipagelink>NullPointerException</a> within Point2D.distance instead. (You'd have another line after onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a> in your stack trace.) Where does hitWave get created? -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+It's hitWave.  I added if(hitWave != null) {...} and the NPE disappeared.  Thanks!  --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+Okay, I've been working at Squirrel for a while today with negligible results.  So I released 1.55 just for fun.  Could someone take a look at it and just give me suggestions if you have time? --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+Are you sure that your GF gun is working properly? Until you're 100% sure, I wouldn't bother with movement. Also, I would disable <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> while you're working on your GF gun. I'd also use the debugging graphics to draw stuff onto the screen so you can visually check if you have any errors. For example, you could draw waves, draw an indicator where GF1 is, etc. Good luck! --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Ironically, the GF gun is fine, but the VG array is awry.  I accidentally messed something up while modifying it and made it select the wrong gun.  Now it should be better in 1.57.  Also, I think my <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> has improved since the last release.  At least, that's what it seemed like when I was testing.  You never know how it will do in the rumble.  I'm just going to wait and see :) --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+YAY!  1.57 finally got into the top 100 of the Roborumble!  That's my first time :D.  I don't know how well 1.58 will do, though.  I just put it in.  All I changed was some segmentations of the main GF gun, but who knows what that will affect.  Anyway, I'm sort of stuck on what to do next.  Any ideas? --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+Congratulations! It could be good to test Squirrel in the <a href="robowiki?MovementChallenge2K6" class=wikipagelink>MovementChallenge2K6</a> and <a href="robowiki?TargetingChallenge2K6" class=wikipagelink>TargetingChallenge2K6</a> to see if it has any deficit. I would test every gun separately in the challenge and use only the best two or three Guns, one vs bad moving bots and one or two vs good ones. --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+You will get your bot processed a whole lot faster if you do not use the new interface options.  (I do not know if there are more interface changes than the setColors method.)  Some people, including David Alves and myself, run the Rumble with 1.0.7, and any bots that try to use the new interface will fail and get a score of 0, which doesn't hurt their rating but it means they are just wasting time and not getting the benefit of battles run by those people (which is a lot).  I am not trying to say you can't use the latest version, but it is beneficial to you to avoid it. -- Martin
+<p>
+I'm using 1.1.3 for RRAH now, because sometimes 1.0.6 was producing nonzero scores for bots even if they immediately crashed due to <code>setColors</code>. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Okay, in the next release I will use the old <code>setColors</code> --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+Wow, adding data saving between matches bumped Squirrel up over 50 places in the rumble!  I didn't know what I was missing!  (and some help from extremely cutting down on the VG array) --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+I dunno, I kinda doubt that you could attribute so much of the jump to the stats saving. It depends on the gun, of course, but I think it's probably only worth 5-10 points, in general. (Unless you pre-loaded it with data on everyone...) Always nice to see such a huge improvement, in any case ;) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Squirrel" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Squirrel">View other revisions</a><br>Last edited November 8, 2006 17:28 EST by <a href="robowiki?Voidious" title="ID 7423 from dhcp253-037.openport.buffalo.edu">Voidious</a> <a href="robowiki?action=browse&diff=1&id=Squirrel">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

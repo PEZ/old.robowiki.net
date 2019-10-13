@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>PhoenixFemto - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Phoenix, Femto'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=PhoenixFemto">PhoenixFemto</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><PRE >
+ #1 in Femto 1-v-1!
+</PRE>
+<p>
+A <a href="robowiki?FemtoBot" class=wikipagelink>FemtoBot</a> by <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'>1</td><td colspan="0.5">davidalves.net.<a href="robowiki?PhoenixFemto" class=wikipagelink>PhoenixFemto</a> 1.0 (80 bytes)</td><td colspan="0.5">3231</td><td colspan="0.5">1100</td><td colspan="0.5">220</td><td colspan="0.5">1680</td><td colspan="0.5">231</td><td colspan="0.5">0</td><td colspan="0.5">0</td><td colspan="0.5">22</td><td colspan="0.5">18</td><td colspan="0.5">0</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>2</td><td colspan="0.5">kawigi.<a href="robowiki?FunkyFemto" class=wikipagelink>FunkyFemto</a> 1.0 (196 bytes)</td><td colspan="0.5">2891</td><td colspan="0.5">900 </td><td colspan="0.5">180</td><td colspan="0.5">1612</td><td colspan="0.5">198</td><td colspan="0.5">0</td><td colspan="0.5">0</td><td colspan="0.5">19</td><td colspan="0.5">22</td><td colspan="0.5">0 </td></TR>
+</TABLE>
+<p>
+Score / codesize gives:
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'>1</td><td colspan="0.5"><a href="robowiki?PhoenixFemto" class=wikipagelink>PhoenixFemto</a> 1.0</td><td colspan="0.5">40.3875</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>2</td><td align="left" colspan="0.5"><a href="robowiki?FunkyFemto" class=wikipagelink>FunkyFemto</a> 1.0</td><td colspan="0.5">14.75</td></TR>
+</TABLE>
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'>1</td><td colspan="0.5">davidalves.net.<a href="robowiki?PhoenixFemto" class=wikipagelink>PhoenixFemto</a> 1.0 (80 bytes)</td><td colspan="0.5">5734	</td><td colspan="0.5">1700	</td><td colspan="0.5">340	</td><td colspan="0.5">3119	</td><td colspan="0.5">567	</td><td colspan="0.5">7	</td><td colspan="0.5">0	</td><td colspan="0.5">34	</td><td colspan="0.5">6	</td><td colspan="0.5">0</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>2</td><td colspan="0.5">arthord.Spinny 1.0	 (34 bytes)</td><td colspan="0.5">907	</td><td colspan="0.5">300	</td><td colspan="0.5">60	</td><td colspan="0.5">506	</td><td colspan="0.5">22	</td><td colspan="0.5">19	</td><td colspan="0.5">0	</td><td colspan="0.5">6	</td><td colspan="0.5">34	</td><td colspan="0.5">0</td></TR>
+</TABLE>
+<p>
+Score / codesize gives:
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'>1</td><td colspan="0.5"><a href="robowiki?PhoenixFemto" class=wikipagelink>PhoenixFemto</a> 1.0 </td><td colspan="0.5">71.675</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>2</td><td colspan="0.5">Spinny 1.0</td><td colspan="0.5">25.914</td></TR>
+</TABLE>
+<p>
+Source code for version 1.0:
+<pre>
+ public class PhoenixFemto extends AdvancedRobot {
+	 
+ 	public void run(){
+ 		//Needed to keep the radar locked
+ 		setAdjustGunForRobotTurn(true);
+		
+ 		do{
+  			//We don't bother with aim, just point the gun (and radar) straight at the enemy.
+ 			turnGunRightRadians(Double.POSITIVE_INFINITY);
+ 		}while(true);
+ 	}
+	
+ 	public void onScannedRobot(ScannedRobotEvent e){
+
+  		//Duelist radar		
+ 		setTurnGunRightRadians(Math.sin(e.getBearingRadians() + getHeadingRadians() - getGunHeadingRadians()));
+
+		//Stay exactly perpendicular. setTurnRight(e.getBearing() + 90 - getVelocity()) costs too much and doesn't raise our score much
+ 		setTurnRight(e.getBearing() + 90);
+
+		//This will always be between +1000 and +infinity or between -1000 and -infinity
+ 		setAhead(1000/Math.sin(e.getEnergy()/2));
+
+		//End our turn with a bang!
+ 		fire(3);
+ 	}
+ }
+</pre>
+<p>
+<p>
+<p>
+this is funny, I mailed this source yesterday to Kawigi:
+<p>
+<pre>
+public class FemtoPower extends AdvancedRobot
+{
+	public void run() {
+		setTurnGunRight(Double.POSITIVE_INFINITY);
+	}
+	
+	public void onScannedRobot(ScannedRobotEvent e) {
+		setTurnGunLeft(getGunTurnRemaining());
+		setTurnLeftRadians(Math.tan(e.getBearingRadians()));
+		setAhead(Math.tan(e.getEnergy()*5)*500);
+		setFire(3);
+	}
+}
+</pre>
+<p>
+they are really similar, it also uses your <a href="robowiki?DuelistNano" class=wikipagelink>DuelistNano</a>-gun. but FemtoPower<a href="robowiki?action=edit&id=FemtoPower" class=wikipageedit>?</a> has only 57 bytes. -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+<p>
+Yes, turn-gun-<strong>left</strong>! Stupid me. My excuse is that I copied <a href="robowiki?Poets" class=wikipagelink>Poets</a>'s gun from a bot where size doesn't matter. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I considered using the <a href="robowiki?DuelistNano" class=wikipagelink>DuelistNano</a> gun, but I thought that aiming directly at the target would gain enough points to be worth the cost in bytes. We'll see if I was right. :-P --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Hey, <a href="robowiki?Rozu" class=wikipagelink>Rozu</a> - I didn't get that from you.  It occurs to me, though, that it has some striking similarities to <a href="robowiki?HaikuChicken" class=wikipagelink>HaikuChicken</a>, too.
+<p>
+David - great job winning the first femto 1-on-1 tournament :-) -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Thanks! :-D --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+oh bad, I sent it to kawigi@hotmail.com. No problem if you didn't get it, as <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> has created nearly the same bot. -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+<p>
+Ah, well, that's your problem for sending it to my hotmail account that only semi-exists for use in MSN messenger.  Use kawigi@yajags.com (or robocode@yajags.com for <a href="robowiki?RobocodeLittleLeague" class=wikipagelink>RobocodeLittleLeague</a> stuff). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=PhoenixFemto" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=PhoenixFemto">View other revisions</a><br>Last edited September 14, 2003 18:14 EST by <a href="robowiki?Kawigi" title="ID 1125 from proxyb.byu.edu">Kawigi</a> <a href="robowiki?action=browse&diff=1&id=PhoenixFemto">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

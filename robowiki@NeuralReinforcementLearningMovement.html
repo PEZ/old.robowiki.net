@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>NeuralReinforcementLearningMovement - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Neural, Reinforcement, Learning, Movement'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=NeuralReinforcementLearningMovement">NeuralReinforcementLearningMovement</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I'm trying to implement a Neural movement using reinforcement learning technics. Reinforcement learning is learning by rewards and punishement. the total rewards must be between -0.9 and 0.9 since I'm using Neural Network(if it's out these value the maximum is used). The idea is to learn whitch action is good to execute in a particular state.
+I'm trying to do this because it could be nice to have a non-handcoded movement (I don't think it will be very good for now because it probably will learn a pattern movement).
+Actually, the bot is trying to learn 8 possibles actions going in the eight direction (relative to robot heading) but I'm not sure this is the best (maybe it will be better to have go ahead, turn left and so on).
+I wonder what should be the rewards function, actually I do this :
+<UL >
+<li> punish if hit by a bullet by -1
+<li> punish if to close to a wall -0.5
+<li> reward if not hit 0.2
+<li> reward if it keep a distance to the other bot 0.125
+</UL>
+<p>
+I think it will be better to have more different rewards so it can better differentiate each state.
+<p>
+If you have any idea about any kind of thing please post it here.
+<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<p>
+I suggest you look at the <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>. It is based on gain/loss rather than punish/reward. So you may use simmilar approch to adjust your movement.
+SSO<a href="robowiki?action=edit&id=SSO" class=wikipageedit>?</a>
+<p>
+How do you plan on getting movement information out of the net, and what function do you plan on using? Do you intend to pick a next movement, then feed it to the net and see if it gives you a negative number, not using it if it does? That's the only way I can see this working.
+<p>
+Please explain further.. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I tried once (that's why I posted a library for TD Learning Network) but I never got it working (but I didn't spend much time on it, so don't think it can't work). It was using a TD net to decide the turn and ahead/back distance every number of ticks. The network was just trying to adjust a goodness function for the next movement based on outcomes of previous matches. It was using the number of points scored as the criteria (I was trying to find a movement that maximized score, not considering only bulled damage but also survivial). The network learned a little bit, but was never able to create really good movements. I think that one of the problems you face when using a NN for movement is that the consecuences of your decisions are delayed in the time (that's the time the bullet takes to reach you). -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+I actually tried making the Flood-movement a learning sort of movement once.  I started it out by giving it 17 choices, from 8 in reverse to 8 ahead, gave it an inverse-square chance of choosing any of them (making it more likely to go full forward or backward than to stand still in the beginning).  Then if I got hit, I would randomly subtract from the probability of that movement while adding to the probability of a randomly selected different movement.  If I didn't get hit, I would add to the probability for that movement from several randomly chosen other movements (so the sum of probabilities is always the same).  It was effective against really simple targeters - against the sample bots, it would quickly eliminate the middle velocities, and eventually the -8 bin, and within 5 or so rounds, it would orbit them so it never got hit.  Against a pure linear targeter (one from my school's competition), it eliminated middle velocities, and then the +8 bin until it was changing directions every time he fired.  Against more complex aiming systems, however, it didn't prove as effective - in order to be effective, it would seem like it would have to stay a step ahead, learning movement before its opponent could lock on to it.  But that meant it was stubborn to change back after it learned a movement, and after 5 or 10 rounds of tuning its movement, it went the rest of the time losing to the statists and patternmatchers, as well as angular types (who would eventually adjust to my movement).  One thing I've considered doing for a future <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a> release is to have a number of movement that I know how to use (that have an effect I understand on my profile and stuff), and randomly choose and eventually rate them maybe.  Could work maybe? -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Ok. I explain a bit further. My actual work goes on Q-learning which is like <a href="robowiki?BestPSpace" class=wikipagelink>BestPSpace</a> targetting the idea is to find which action is the best given a specific state. If your state is big then it require too much data to maintain all the Q-value (value of an action in a specific state), so I use a neural network to approximate a Q-function( which take the state as input and return the q-Value).
+To learn the Q-function we use the following formulae :
+Q(s0,a0)-&gt; r + g max(Q(s2,a2)) + g^2 max(Q(s3,a3)) + ... + g^n max(Q(sn,an))
+where 
+<UL >
+<li> -&gt; mean actualize say Q(s,a)-&gt;d mean Q(s,a) = (1-a)Q(s,a) + a*d where a is the learning rate (in Neural network we simply backpropagate d)
+<li> r is the reward/punishement
+<li> sn is the the state at time n
+<li> an is the action taken at time n
+<li> max mean taking the action that give the max value of Q()
+<li> g is betwenn 0 and 1 and is there to says that we care about actual rewards and the next but less. So if g is big we care a lot about future rewards it can give and if g is 0 we dont't care.
+<li> often the maximum n taken is 1 or 2
+</UL>
+<p>
+Then you take the best Q(s,a) for a given state and execute the action, receive the reward and actualise the q-function.
+<p>
+My actual problem is also that it's says that is better to actualise Q(sn,an) and the other one before Q(s0,a0) (so the question is when beginning to actualise).
+<p>
+Next work will go to Hierarchical Q-learning (I don't hope to much on this but I still need to learn about this:))
+<p>
+I'm suddenly thinking about using this for targetting which migth be a good idea...
+<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+<p>
+Is there some open source bot for a reference on Q-learning...
+<a href="robowiki?PM" class=wikipagelink>PM</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=NeuralReinforcementLearningMovement" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=NeuralReinforcementLearningMovement">View other revisions</a><br>Last edited May 4, 2006 22:11 EST by <a href="robowiki?GrubbmGait" title="ID 6861 from ip219-32-173-82.dyndsl.versatel.nl">GrubbmGait</a> <a href="robowiki?action=browse&diff=1&id=NeuralReinforcementLearningMovement">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

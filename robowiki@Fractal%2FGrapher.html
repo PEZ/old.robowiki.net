@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Fractal/Grapher - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Fractal, Grapher'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Grapher">Fractal/Grapher</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Fractal" class=wikipagelink>Fractal</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><b>NOTE: in the latest version of Fractal, the grapher is not included (sorry!) because it is not compatible with Fractal's new gun. I may eventually write a new grapher (and I do have plans to do so); Fractal's new gun would make for an extremely powerful graphing utility because of the pluggability of its segmentation axis. For this reason, I might simply create the grapher as a new robot. In the meantime, if you'd like to use this grapher, you can ask me (<a href="robowiki?Vuen" class=wikipagelink>Vuen</a>) or anyone who has it for a copy of Fractal 0.32.</b>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Like other robots such as <a href="robowiki?StatistRobot" class=wikipagelink>StatistRobot</a>, <a href="robowiki?GloomyDark" class=wikipagelink>GloomyDark</a> and the Floods, Fractal 0.32 comes with a graphing utility to show a graph of your robot's movement profile. To use it, simply fight your robot against Fractal, then browse to <pre>\robocode\.robotcache\vuen.Fractal_0.32.jar\vuen\cfFractal</pre> and type <pre>java Grapher</pre>
+<p>
+Here are some screenshots of it:
+<p>
+<img src="http:/robocode/uploads/vuen/rapturegraph.jpg"> <img src="http:/robocode/uploads/vuen/sandboxdtgraph.jpg">
+<p>
+The graphing utility segments data across 101 angles and 80 distance ranges.
+<p>
+Anyway, I'm not sure how correct the math behind this utility is and if it's buggy or not, so trust other graphers before this one at least for now. I'll double-check it and improve it in a later version. Let me know what you think! :)
+<p>
+-- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<hr noshade class=wikiline size=1>
+<H3>Questions / Comments:</H3>
+
+Could I wish for a "sidebar" indication of where (on the distance axis) the graphed bot spends the most time? I guess it could use the same "language" of transparancy levels. Also I think that to make this grapher really useful you need at least one dimension more than just distance. Acceleration is a canditate since it often discriminates much and "only" multiplies the need for data by three. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<hr noshade class=wikiline size=1>
+Yes I agree, a column of squares indicating which distances are most important would be good.
+<p>
+It looks like the distance element of the graph is based on the distance the wave traveled which is good (but is not too useful for prediction) you ought to use the distance to the enemy at time of firing (although this may not make much difference).
+<p>
+You may consider using bullet flight time (in ticks) instead of distance for the virtical scale.
+<p>
+Until you start using the data you have collected to shoot at DT you will find strong 'Y' patterns in DT's graph (DT will tend to move in long sweeping arcs until regularly targeted at that position.
+<p>
+DT's stats show that you can create a flat profile against a non-segmented gun - unfortunatly at the expense of more predictable movement against a segmented gun - but I think you have the makings of some strong movement.
+<p>
+Finally - great graphics.  --  <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<hr noshade class=wikiline size=1>
+<p>
+The sidebar indication is a great idea. Right now, for each point it divides the value by the highest on that row to get a value 0&lt;=x&lt;=1 so that the color is normalized for each row. This is useful to find the angle across a row, but now the overall concentration of points; I'll add a sidebar to show the distribution of points across the rows. Anyway, I've been out of the loop in Robocode for about a month so I'm not quite sure how to implement these new graphing concepts that new bots use. The axis you suggest Paul do seem more useful than what it currently uses; I may replace distance with flight time or angle with angle/bulletspeed; I'll see about incorporating the bullet speed directly anyway. Maybe I'll split into two graphs, one incorporating bullet speed as a direct proportion in one of the two axis and one not directly incorporating it (i.e. the one I have now.) I also have plans for adding a tab to view the graph in 2D curve mode (like all the other graphers) rather than 3D, using a sliderbar to view the graph at any distance you want. However I don't currently have plans for segmenting further on things like acceleration or wall distance; these may come later. I'd rather program Fractal to actually use the data that it has first to get a feel on movement graphing before it gets too complicated. Anyway, thanks for the feedback, and more is always welcome! =) -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+The 2D graph mode sounds like a great idea. Using your stats for aiming is the easy part. It'll take you at the most 10 minutes to get it to work. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Fractal" class=wikipagelink>Fractal</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Fractal/Grapher" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Fractal/Grapher">View other revisions</a><br>Last edited May 5, 2006 2:40 EST by <a href="robowiki?Voidious" title="ID 6343 from resnet216-83.resnet.buffalo.edu">Voidious</a> <a href="robowiki?action=browse&diff=1&id=Fractal/Grapher">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

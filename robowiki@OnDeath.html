@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>OnDeath - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='On, Death'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=OnDeath">OnDeath</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><h1>Proper handling of onDeath()</h1>
+First, a test bot:
+<p>
+<pre>
+package davidalves.debug;
+
+import robocode.AdvancedRobot;
+import robocode.DeathEvent;
+import robocode.HitByBulletEvent;
+
+public class OnDeathTestBot extends AdvancedRobot {
+	
+	double totalDamageThisRound;
+	
+	public void run(){
+		totalDamageThisRound = 0;
+	}
+	
+	public void onHitByBullet(HitByBulletEvent e){
+		double bulletPower = e.getBullet().getPower();
+		double damage = 4.0 * bulletPower + (bulletPower &gt; 1 ? 2 * bulletPower - 2 : 0);
+		totalDamageThisRound += damage;
+		out.println("onHitByBullet() called");
+		out.println("&gt; I was hit by a power " + e.getBullet().getPower() + " bullet at time " + e.getTime());
+		out.println("&gt; total damage this round: " + totalDamageThisRound);
+	}
+	
+	public void onDeath(DeathEvent e){
+		out.println("onDeath() called");
+		out.println("&gt; total damage this round: " + totalDamageThisRound);
+	}
+}
+</pre>
+<p>
+And some sample output from a match against sample.<a href="robowiki?TrackFire" class=wikipagelink>TrackFire</a>:
+<pre>
+=========================
+Round 1 of 1
+=========================
+onHitByBullet() called
+&gt; I was hit by a power 3.0 bullet at time 65
+&gt; total damage this round: 16.0
+onHitByBullet() called
+&gt; I was hit by a power 3.0 bullet at time 82
+&gt; total damage this round: 32.0
+onHitByBullet() called
+&gt; I was hit by a power 3.0 bullet at time 99
+&gt; total damage this round: 48.0
+onHitByBullet() called
+&gt; I was hit by a power 3.0 bullet at time 116
+&gt; total damage this round: 64.0
+onHitByBullet() called
+&gt; I was hit by a power 3.0 bullet at time 133
+&gt; total damage this round: 80.0
+onHitByBullet() called
+&gt; I was hit by a power 3.0 bullet at time 150
+&gt; total damage this round: 96.0
+onDeath() called
+&gt; total damage this round: 96.0
+SYSTEM: davidalves.debug.OnDeathTestBot has died
+</pre>
+<p>
+As you can see, the robot doesn't receive the HitByBulletEvent<a href="robowiki?action=edit&id=HitByBulletEvent" class=wikipageedit>?</a> for the bullet that killed it. In fact, it doesn't get any events for that turn, except for the DeathEvent<a href="robowiki?action=edit&id=DeathEvent" class=wikipageedit>?</a>. DeathEvents<a href="robowiki?action=edit&id=DeathEvents" class=wikipageedit>?</a> have a permanent higher priority than all other events, too, so you can't use Event.setPriority() to change the order they arrive in. So how can we get those missing events? Why, with getAllEvents<a href="robowiki?action=edit&id=AllEvents" class=wikipageedit>?</a>(), of course!
+<p>
+New onDeath() method:
+<pre>
+public void onDeath(DeathEvent e){
+	out.println("onDeath() called");
+	out.println("&gt; total damage this round: " + totalDamageThisRound);
+
+	Vector v = getAllEvents();
+	Iterator i = v.iterator();
+	while(i.hasNext()){
+		Object obj = i.next();
+		if(obj instanceof HitByBulletEvent) onHitByBullet((HitByBulletEvent) obj);
+	}
+}</pre>
+and you get:
+<pre>
+=========================
+Round 1 of 1
+=========================
+onHitByBullet() called
+&gt; I was hit by a power 3.0 bullet at time 72
+&gt; total damage this round: 16.0
+onHitByBullet() called
+&gt; I was hit by a power 3.0 bullet at time 89
+&gt; total damage this round: 32.0
+onHitByBullet() called
+&gt; I was hit by a power 3.0 bullet at time 106
+&gt; total damage this round: 48.0
+onHitByBullet() called
+&gt; I was hit by a power 3.0 bullet at time 123
+&gt; total damage this round: 64.0
+onHitByBullet() called
+&gt; I was hit by a power 3.0 bullet at time 140
+&gt; total damage this round: 80.0
+onHitByBullet() called
+&gt; I was hit by a power 3.0 bullet at time 157
+&gt; total damage this round: 96.0
+onDeath() called
+&gt; total damage this round: 96.0
+onHitByBullet() called
+&gt; I was hit by a power 3.0 bullet at time 174
+&gt; total damage this round: 112.0
+SYSTEM: davidalves.debug.OnDeathTestBot has died
+</pre>
+<p>
+Voila! No more missed events. =) This trick was first introduced in Phoenix 0.31. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+<hr noshade class=wikiline size=1>
+<strong>Comments</strong>
+<p>
+Q: Does the same apply to the onWin() event? I mean, when you win, do you miss the last BulletHit<a href="robowiki?action=edit&id=BulletHit" class=wikipageedit>?</a>() event.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+A: No. They are both highest priority (100) events, so they are processed first, but when you win you aren't dead before the others are processed. =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<UL >
+<li> This is not completely true. If you have a continues victorydance in your onWin routine (like I do), you miss that last BulletHit<a href="robowiki?action=edit&id=BulletHit" class=wikipageedit>?</a>() event and all other events after that. I think I try to continue normal flow until all enemybullets are harmless en then hold my winning party. I believe <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> had something like that, just replaying the last scan-event until safe.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</UL>
+<p>
+I've never dealt with manipulating the priority levels of events, but itsn't this a prime example of a good time to set events to a lower priority? -- Martin
+<p>
+It would be, but IIRC, you can't change onDeath and onWin from the highest priority for some reason. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+That's correct. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+And you can't set anything to priority 100. --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=OnDeath" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=OnDeath">View other revisions</a><br>Last edited December 28, 2006 20:06 EST by <a href="robowiki?Starrynte" title="ID 8009 from cpe-75-84-95-139.socal.res.rr.com">Starrynte</a> <a href="robowiki?action=browse&diff=1&id=OnDeath">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

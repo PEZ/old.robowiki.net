@@ -1,0 +1,447 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>SuperSample/Code - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Super, Sample, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Code">SuperSample/Code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?SuperSample" class=wikipagelink>SuperSample</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Mmmm............ I'm a lazy boy
+<UL >
+<li><a href="robowiki?TRACK_CLASS" class=wikipagelink>TRACK CLASS</a>-I used
+</UL>
+<pre>
+package SuperMan;
+import robocode.*;
+import java.awt.Color;
+import java.util.*;
+import java.lang.Math.*;
+/**
+ * SuperMan----DAYDream  ONLY A SAMPLE
+ */
+public class SuperMan extends AdvancedRobot
+{
+	
+    
+    
+          private Vector trackVector;//target vector
+ 	  double previousEnergy = 100;
+          int movementDirection = 1;
+          int gunDirection = 1;
+          int hurt=0;
+          int hurtEnemy=0;
+          static final int NORMAL = 0;
+          static final int CRAZY = 1;
+          static final int FIRE = 2;
+          static final int RAMFIRE = 3;
+          static final int TRACKFIRE = 4;
+          static final int TRACKER = 5;
+          static final int CORNER = 6;
+          static final int SPINBOT = 7;
+          static final int WALL = 8;
+          //&lt;Corner FIRE RamFire Spinbot Tracker TrackFire&gt;
+          
+          static int corner = 0; // Which corner we are currently using
+      	  boolean stopWhenSeeRobot = false; // See goCorner()
+      	  boolean movingForward;//CRAZY METHOD NEEDED
+      	  int turnDirection = 1;//RAMFIRE
+      	  String trackName=null;//TRACKER
+      	  double gunTurnAmt=10;//TRACKER
+      	  int count = 0;
+      	  int others; // Number of other robots in the game
+      	  boolean peek; // Don't turn if there's a robot there
+    	  double moveAmount; // How much to move
+    	
+          //END &lt;Corner FIRE RamFire Spinbot Tracker TrackFire&gt;
+
+	public void run() {
+		// After trying out your robot, try uncommenting the import at the top,
+		// and the next line:
+		
+		//设置颜色
+		setBodyColor(Color.black);
+		setGunColor(Color.black);
+		setRadarColor(Color.black);
+		setScanColor(Color.red);
+		// and the next line:
+		//setColors(Color.red,Color.blue,Color.green);
+		trackVector=new Vector();
+		 setTurnGunRight(99999);
+		 do 
+			{
+			    RunMethod(NORMAL);
+			}   while (true);
+	
+	}
+	public void RunMethod(int x)
+	{
+		switch(x){
+		case NORMAL: {	setAhead(100);
+        				execute();
+        				break;}
+		case CRAZY: {setAhead(40000);
+		            movingForward = true;
+		            setTurnRight(90);
+		            waitFor(new TurnCompleteCondition(this));
+		     		setTurnLeft(180);
+	        		waitFor(new TurnCompleteCondition(this));
+		     		setTurnRight(180);
+		    		waitFor(new TurnCompleteCondition(this));
+		    		break;}
+		case FIRE: 	{turnGunRight(5);
+		            break;}
+		case RAMFIRE:{turnRight(5 * turnDirection);
+		            break;}
+		case TRACKFIRE:{turnGunRight(10); // Scans automatically            
+                       break;}
+		case TRACKER: 	{turnGunRight(gunTurnAmt);
+						count++;
+						if (count &gt; 2)
+						{
+			              	gunTurnAmt = -10;
+			            }
+						if (count &gt; 5)
+						{
+			             	gunTurnAmt = 10;
+			            }
+						if (count &gt; 11)
+						{
+			             	trackName = null;               
+		                }
+						break;}
+		case CORNER:	{goCorner();
+		                int gunIncrement = 3;	
+		                for (int i = 0; i &lt; 30; i++) {
+		    				turnGunLeft(gunIncrement);
+		    			}
+		    			gunIncrement *= -1;
+		    		break;}
+		case SPINBOT:   	{setTurnRight(10000);
+		                    // Limit our speed to 5
+		                    setMaxVelocity(5);
+		                    // Start moving (and turning)
+		                    ahead(10000);
+		                  break;}
+		case WALL:    {	moveAmount = Math.max(getBattleFieldWidth(), getBattleFieldHeight());
+		                // Initialize peek to false
+		                peek = false;
+		
+		// turnLeft to face a wall.
+		// getHeading() % 90 means the remainder of 
+		// getHeading() divided by 90.
+		                turnLeft(getHeading() % 90);
+		                ahead(moveAmount);
+		// Turn the gun to turn right 90 degrees.
+		                peek = true;
+		                turnGunRight(90);
+		                turnRight(90);  
+		              break;}
+					
+		}
+ 						
+	}
+	public void HitMethod(int x,HitRobotEvent e)
+	{
+		switch(x){
+		case NORMAL: {//NULL 
+                     break;}
+		case CRAZY: {// If we're moving the other robot, reverse!
+			          if (e.isMyFault())
+			          {
+				         reverseDirection();
+			          }
+		    		  break;}
+		case FIRE: 	{
+			          double turnGunAmt = normalRelativeAngle(e.getBearing() + getHeading() - 
+
+getGunHeading());
+                      turnGunRight(turnGunAmt);
+		              fire(3);
+		              break;}
+		case RAMFIRE:{	if (e.getBearing() &gt;= 0)
+		                {
+			                turnDirection = 1;
+		                }
+		                else
+		                {
+			                turnDirection = -1;
+		                }
+		                turnRight(e.getBearing());
+		        		if (e.getEnergy() &gt; 16) {
+			            fire(3);
+		                } else if (e.getEnergy() &gt; 10) {
+			            fire(2);
+		                } else if (e.getEnergy() &gt; 4) {
+			            fire(1);
+		                } else if (e.getEnergy() &gt; 2) {
+			            fire(.5);
+		                } else if (e.getEnergy() &gt; .4) {
+			            fire(.1);
+		                }
+		                ahead(40); // Ram him again!
+		                break;}
+		case TRACKFIRE:{ // NULL       
+                       break;}
+		case TRACKER: {	
+			               if (trackName != null &amp;&amp; !trackName.equals(e.getName())) {
+			               out.println("Tracking " + e.getName() + " due to collision");
+		                   }
+		                   // Set the target
+		                   trackName = e.getName();
+		                   // Back up a bit.
+		                   // Note:  We won't get scan events while we're doing this!
+		                   // An AdvancedRobot might use setBack(); execute();
+		                   gunTurnAmt = normalRelativeAngle(e.getBearing() + (getHeading() - 
+
+getRadarHeading()));
+		                   turnGunRight(gunTurnAmt);
+		                   fire(3);
+		                   back(50);
+						   break;}
+		case CORNER:	goCorner();
+		                int gunIncrement = 3;	
+		                for (int i = 0; i &lt; 30; i++) {
+		    				turnGunLeft(gunIncrement);
+		    			}
+		    			gunIncrement *= -1;
+		    			break;
+		case SPINBOT:   {		if (e.getBearing() &gt; -10 &amp;&amp; e.getBearing() &lt; 10)
+		                        {
+			                       fire(3);
+		                        }
+		                        if (e.isMyFault())
+		                        {
+			                       turnRight(10);
+		                        }
+		                    break;}
+		case WALL:    	{	
+			                 if (e.getBearing() &gt; -90 &amp;&amp; e.getBearing() &lt; 90)
+			                 {
+			                     back(100);
+		                     } // else he's in back of us, so set ahead a bit.
+		                     else 
+		                     {
+			                     ahead(100);
+		                     } 
+		                     break;}
+					
+		}
+ 						
+	}
+	public void goCorner() {
+		// We don't want to stop when we're just turning...
+		stopWhenSeeRobot = false;
+		// turn to face the wall to the "right" of our desired corner.
+		turnRight(normalRelativeAngle(corner - getHeading()));
+		// Ok, now we don't want to crash into any robot in our way...
+		stopWhenSeeRobot = true;
+		// Move to that wall
+		ahead(5000);
+		// Turn to face the corner
+		turnLeft(90);
+		// Move to the corner
+		ahead(5000);
+		// Turn gun to starting point
+		turnGunLeft(90);
+	}
+	/**
+	 *onHitWall:撞墙反应事件
+	 */
+	public void onHitWall(HitWallEvent e) {
+		if(hurt&lt;5)
+		{
+			reverseDirection();
+		}
+	    else
+	    {
+		   RunMethod(RAMFIRE);
+	    }
+	}
+	/**
+	 * reverseDirection:  Switch from ahead to back &amp; vice versa
+	 */	
+	public void reverseDirection() {
+		if (movingForward) {
+			setBack(40000);
+			movingForward = false;
+		} else {
+			setAhead(40000);
+			movingForward = true;
+		}
+	}
+	/**
+	 * normalRelativeAngle:  Returns angle such that -180 &lt; angle &lt;= 180
+	 */
+	public double normalRelativeAngle(double angle) {
+		if (angle &gt; -180 &amp;&amp; angle &lt;= 180) {
+			return angle;
+		}
+		double fixedAngle = angle;
+
+		while (fixedAngle &lt;= -180) {
+			fixedAngle += 360;
+		}
+		while (fixedAngle &gt; 180) {
+			fixedAngle -= 360;
+		}
+		return fixedAngle;
+	}
+	/**
+	 * normalAbsoluteAngle:  Returns angle such that 0 &lt;= angle &lt; 360
+	 */	
+	public double normalAbsoluteAngle(double angle) {
+		if (angle &gt;= 0 &amp;&amp; angle &lt; 360) {
+			return angle;
+		}
+		double fixedAngle = angle;
+
+		while (fixedAngle &lt; 0) {
+			fixedAngle += 360;
+		}
+		while (fixedAngle &gt;= 360) {
+			fixedAngle -= 360;
+		}
+		return fixedAngle;
+	}
+	//根据距离判断火力 
+	public void smartFire(double robotDistance) {
+		if (robotDistance &gt; 200 || getEnergy() &lt; 15) {
+			fire(1);
+		} else if (robotDistance &gt; 50) {
+			fire(2);
+		} else {
+			fire(3);
+		}
+	}
+	public void onHitRobot(HitRobotEvent e) {
+		hurtEnemy=hurtEnemy+1;
+		if(hurtEnemy==1)
+		{
+			HitMethod(FIRE,e);
+		}
+		if(hurtEnemy==2)
+		{
+			HitMethod(RAMFIRE,e);
+		}
+		if(hurtEnemy==3)
+		{
+			HitMethod(FIRE,e);
+		}
+		if(hurtEnemy==4)
+		{
+			HitMethod(SPINBOT,e);
+		}
+		if(hurtEnemy&gt;=5)
+		{
+			HitMethod(TRACKER,e);
+		}
+		if(hurtEnemy==6 &amp;&amp; hurt&gt;3)
+		{
+			HitMethod(CRAZY,e);
+			hurtEnemy=0;
+		}
+	}
+	
+	/**
+     * 自定义函数：显示当前敌人的距离
+     */
+    public void showTrack()
+    {
+   		int i=0;
+		out.println("This Time is "+getTime());   	
+		out.println("Track's count is "+trackVector.size());	
+		
+		while(i&lt;trackVector.size())
+		{
+			Track myTrack=(Track)trackVector.get(i);
+			out.println(myTrack.Name+"'s Distance is "+myTrack.Distance);
+			i++;
+		}		
+    }
+
+	/**
+	 * onScannedRobot: What to do when you see another robot
+	 */
+	public void onScannedRobot(ScannedRobotEvent e) {
+		if(!isInVector(e))
+		{
+			Track myTrack=new Track();
+			myTrack.update(e);
+			trackVector.add(myTrack);
+		}
+		if(isInVector(e))
+		{
+		      // Stay at right angles to the opponent
+             setTurnRight(e.getBearing()+90-30*movementDirection); 
+              // If the bot has small energy drop,
+              // assume it fired
+             double changeInEnergy = previousEnergy-e.getEnergy();
+             if (changeInEnergy&gt;0 &amp;&amp; changeInEnergy&lt;=3) 
+	         {
+                 // Dodge!
+                 movementDirection =-movementDirection;
+                 setAhead((e.getDistance()/4+25)*movementDirection);
+              }
+          // When a bot is spotted,
+          // sweep the gun and radar
+          gunDirection = -gunDirection;
+          setTurnGunRight(99999*gunDirection);
+    
+          // Fire directly at target
+          fire(3);
+    
+          // Track the energy level
+          previousEnergy = e.getEnergy();
+
+	    }
+	}
+
+	/**
+	 * onHitByBullet: What to do when you're hit by a bullet
+	 */
+	public void onHitByBullet(HitByBulletEvent e) {
+		turnLeft(90 - e.getBearing());
+	}
+	
+	/**
+     * isInVector:自定义方法，判断该机器人是否已存在于队列中
+     */
+	public boolean isInVector(ScannedRobotEvent e)
+	{
+		int i=0;
+		while(i&lt;trackVector.size())
+		{
+			Track myTrack=(Track)trackVector.get(i);
+			if(myTrack.Name==e.getName())
+			{
+				myTrack.update(e);
+				return true;	
+			}
+			i++;
+		}	
+		return false;
+	}
+	
+	/**
+     * onScannedRobot：有机器人被消灭时产生该事件
+     */
+	public void onRobotDeath(RobotDeathEvent event)
+	{
+		int i=0;
+		while(i&lt;trackVector.size())
+		{
+			Track myTrack=(Track)trackVector.get(i);
+			if(myTrack.Name==event.getName())
+			{
+				trackVector.remove(i);
+			}
+			i++;
+		}				
+	}
+}
+</pre>
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?SuperSample" class=wikipagelink>SuperSample</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=SuperSample/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=SuperSample/Code">View other revisions</a><br>Last edited June 5, 2008 13:01 EST by <a href="robowiki?DAYDream" title="ID 14620 from 60.10.193.14">DAYDream</a> <a href="robowiki?action=browse&diff=1&id=SuperSample/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

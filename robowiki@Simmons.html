@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Simmons - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Simmons'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Simmons">Simmons</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Simmons, a Robot by burk3
+<hr>
+<b>Update:</b> 0.1a<br>
+<p>Doesn't run. Null pointer exception in the modified AGravEngine<a href="robowiki?action=edit&id=AGravEngine" class=wikipageedit>?</a> code during update. Probably due to my conversion of GravPoint<a href="robowiki?action=edit&id=GravPoint" class=wikipageedit>?</a> to Point2D.</p>
+<b>Update:</b> 0.1a<br>
+<p>Well, it runs, sorta. At least there's no <a href="robowiki?NullPointerException" class=wikipagelink>NullPointerException</a> anymore. Now, Simmons just runs straight into the wall. I've got a feeling that it has to do with the way I'm applying the forces that AGravEngine<a href="robowiki?action=edit&id=AGravEngine" class=wikipageedit>?</a> returns.</p>
+<p><b><font size="3">How does it move?</font></b></p>
+<p>Simmons uses AntiGrav<a href="robowiki?action=edit&id=AntiGrav" class=wikipageedit>?</a> type movement in which it tracks the enemy with a GravPoint<a href="robowiki?action=edit&id=GravPoint" class=wikipageedit>?</a>, and will attempt to track an enemy's fired bullet with a gravPoint as well.</p>
+<p><br>
+<b><font size="3">How does it fire?</font></b></p>
+<p><br>
+No targeting implemented yet. Planning to implement <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> if I a) can understand just how it works and b) if I have time (1v1 tourney in java class is in about a week).</p>
+<p><br>
+<font size="3"><b>How does it dodge bullets?</b></font></p>
+<p><br>
+Senses if the enemy has fired a bullet based on change in energy, and assumes enemy has fired directly at Simmons (most kids in my java cllass don't have advanced targeting systems). Creates a gravPoint based on predicted location of the bullet, and will dodge accordingly.</p>
+<p><br>
+<b><font size="3">How does the melee strategy differ from one-on-one strategy?</font></b></p>
+<p><br>
+1v1 only</p>
+<p><br>
+<font size="3"><b>Where did you get the name?</b></font></p>
+<p><br>
+Well, I had recently recieved the Blood Gulch Chronicles DVD, from <a rel="nofollow"  href="http://www.redvsblue.com/">Red vs Blue.com</a> in the mail, and felt like naming my bot after one of the characters on the show. The first one to pop in to my mind was Simmons, so I decided to use that.</p>
+<p><br>
+<font size="3"><b>Can I use your code?</b></font></p>
+<p><br>
+Sure, though it isn't very useful unless you are trying to help me out. I've just gotta figure out where I should host the files (probably my site).</p>
+<p><br>
+<font size="3"><b>What's next for your robot?</b></font></p>
+<p><br>
+Implementation of a targeting system, after I get the robot working that is.</p>
+<p><br>
+<font size="3"><b>What I need</b></font></p>
+<p><br>
+I'd like a bit of help doing something with the vectors (vector in terms of physics) the AGravEngine<a href="robowiki?action=edit&id=AGravEngine" class=wikipageedit>?</a> spits out.</p>
+<p><br>
+<p>
+<font size="3"><b>What other robot(s) is it based on?</b></font></p>
+<p><br>
+I use modified versions of Hanji's <a href="robowiki?Hanji/AGravEngine" class=wikipagelink>Hanji/AGravEngine</a>, and <a href="robowiki?Hanji/GravPoint" class=wikipagelink>Hanji/GravPoint</a>  classes.<br>
+<hr>
+<font size="3"><b>Comments?</b></font>
+<hr>
+How are you applying the X and Y forces to your movement?--<a href="robowiki?Dan" class=wikipagelink>Dan</a>
+<hr>
+I'm using some math stuff i found somewhere. It doesn't seem to be working though. The robot basically hugs the walls and occasionaly gets stuck on them. I think it might stil be the values I have set for the power of the grav points and walls. Do you think you could just tell me what values you use? I need to be done really soon. --<a href="robowiki?Burk3" class=wikipagelink>Burk3</a>
+<hr>
+I'm not looking at my code right now but here is most of it. Wall force is 10000000. Center and corner grav points are -50000, My random points range from 75000 to -75000. The way I add the X and Y force is goTo(getX()-xForce,getY()-yForce); with goTo being a GoTo<a href="robowiki?action=edit&id=GoTo" class=wikipageedit>?</a> function. For more see <a href="robowiki?Cinnamon" class=wikipagelink>Cinnamon</a>, it uses <a href="robowiki?Hanji" class=wikipagelink>Hanji</a>'s classes and has the numbers you want.--<a href="robowiki?Dan" class=wikipagelink>Dan</a> 
+<a href="robowiki?Burk3" class=wikipagelink>Burk3</a>
+<p>
+If those really are your numbers then you should expect to hug the walls. This in ANTIgravity movement, because it repels.  Enemy bots and walls should both repel, the way you have it is bots repel and walls attract.  Make the walls force negative, and it should work. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+No, if you look at <a href="robowiki?Hanji/AGravEngine" class=wikipagelink>Hanji/AGravEngine</a> and <a href="robowiki?Hanji/GravPoint" class=wikipagelink>Hanji/GravPoint</a>, both of which are used in my bot, the wall force, when positive repels, and the grav points force are repulsive when negative. It is a small thing with the math, you change the update method, ie switch around the +/- operators in some places, they can be set so both can be positive or negative repulsive.<br> 
+This is the math:<br>
+<pre>
+//this calculates the force the gravpoint exerts on the bot
+xForce += force * Math.sin(angle);
+yForce -= force * Math.cos(angle);
+//this calculates the force the walls exert on the bot
+xForce -= wallForce/Math.pow(curX, wallDropoff);
+xForce += wallForce/Math.pow(width-curX, wallDropoff);
+yForce += wallForce/Math.pow(height-curY, wallDropoff);
+yForce -= wallForce/Math.pow(curY, wallDropoff);
+</pre>
+As you can see, if you were to switch the +'s and -'s in, say the gravpoint section, positive would become repulsive, negative attractive. The same thing is in <a href="robowiki?Hanji" class=wikipagelink>Hanji</a>'s comment's for those classes. <a href="robowiki?Burk3" class=wikipagelink>Burk3</a>, Good Luck. --<a href="robowiki?Dan" class=wikipagelink>Dan</a>
+<p>
+<hr noshade class=wikiline size=1>
+Red vs Blue rules :D -- <a href="robowiki?Qetu" class=wikipagelink>Qetu</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Simmons" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Simmons">View other revisions</a><br>Last edited February 23, 2004 3:24 EST by <a href="robowiki?Qetu" title="ID 2368 from 80.58.1.46.proxycache.rima-tde.net">Qetu</a> <a href="robowiki?action=browse&diff=1&id=Simmons">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

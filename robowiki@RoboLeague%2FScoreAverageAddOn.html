@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RoboLeague/ScoreAverageAddOn - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Robo, League, Score, Average, Add, On'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/ScoreAverageAddOn">RoboLeague/ScoreAverageAddOn</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H3>A simple <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a> add-on by <a href="robowiki?PEZ" class=wikipagelink>PEZ</a></H3>
+
+<p>
+Some of us more than others advocate long battles to gain real knowledge about a bots' strength. But at the same time we also need to measure the strength of a bot in shorter battles. Especially when it comes to <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>@Home 1v1 performance. Hence the idea to average the score from several shorter battles. Hence the need for this add-on. <a href="robowiki?Axe" class=wikipagelink>Axe</a> has already released a tool that can help with this. But I am the lazy type and need something more immediate. I hacked one of the XSLT's in the <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a> distribution jar. Namely "Season.xml".
+<hr noshade class=wikiline size=1>
+<H4>Usage</H4>
+
+<OL >
+<li> <a rel="nofollow" href="http://pezius.com/robocode/Season.xml">[Download it]</a> and place it in your roboleague/xslt directory. (Create this directory if you don't have it).
+<li> Start up the <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a> GUI.
+<li> Open a "divisions" xml file (or create one and run some seasons).
+<li> Choose '''Competition -&gt; Transform results" from the RL menu.
+<li> Choose '''Competition -&gt; Browse results" from the RL menu.
+</OL>
+You should see something like this:
+<p>
+<img src="http:/robocode/uploads/pez/ScoreAveragerExample.png">
+<p>
+It shows the results from a 100 battle, 3-rounds run. The results starts with a small table presenting an all-seasons average of all battle data. I've also added a "Score %" column since that is what counts in <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>@Home. (Seems like <a href="robowiki?Lacrimas" class=wikipagelink>Lacrimas</a> still has an edge against <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> in this Extreme Fast Learning (EFL) set-up. =)
+<hr noshade class=wikiline size=1>
+<H4>Updates</H4>
+
+<em>Sep 3 2004</em> - The averages listing is now sorted by Score %. Like so: <a rel="nofollow" href="http://robowiki.net/robocode/uploads/pez/CCvsDT_35.html">http://robowiki.net/robocode/uploads/pez/CCvsDT_35.html</a> -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<em>Nov 17 2004</em> - Now the averager is aware of divisons where a "focused competitor" is used. Like so: <a rel="nofollow" href="http://pezius.com/robocode/saao_focus.html">http://pezius.com/robocode/saao_focus.html</a> -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+<H4>Caveats</H4>
+
+Remember to switch off any data saving in the competing bots if you want to get an accurate measure the bots' abilities in shorter battles. This is probably easy with your own bots. Possible with <a href="robowiki?OpenSource" class=wikipagelink>OpenSource</a> bots. Maybe possible with some bots from a properties file. And impossible with many closed source bots. Ask the authors of these bots to either open source their bots (preferred I think), release a non-data-saving version of their bot (second best option) or add a configuration file feature.
+<p>
+This simple hack is mainly meant to deal with RL battle files with only two bots involved. But it also works with divisions where more than two bots duke it out. The score share is then a share of the total collected by all bots.
+<p>
+I really did this little thing for fun and it was a very fast thing. There may be all sorts of bugs and special cases I don't deal with. If it messes up your RL usage, just remove it from your roboleague/xslt directory when you don't intend to use it. (You must restart <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a> for this to take effect.)
+<hr noshade class=wikiline size=1>
+<H4>Code</H4>
+
+It was more than a year ago since I did any XSLT hacking whatsoever, and I have never really learnt how to do it properly. You XSLT purists, close your eyes! Here's the little change I've done to the original transformation style sheet:
+<pre>
+  &lt;xsl:template match="/LEAGUE"&gt;
+    &lt;xsl:if test="@focused_competitor_id = ''"&gt;
+      &lt;h2&gt;Averages&lt;/h2&gt;
+        &lt;p&gt;&lt;div align="center"&gt;&lt;table bgcolor="#fff7e7" border="2" cellspacing="0" cellpadding="3"&gt;
+          &lt;tr bgcolor="#ffdfb0"&gt;
+            &lt;td nowrap=""&gt;Robot&lt;/td&gt;
+            &lt;td nowrap=""&gt;Score&lt;/td&gt;
+            &lt;td nowrap=""&gt;Score %&lt;/td&gt;
+            &lt;td nowrap=""&gt;Survival&lt;/td&gt;
+            &lt;td nowrap=""&gt;Last surv. b.&lt;/td&gt;
+            &lt;td nowrap=""&gt;Bullet dmg.&lt;/td&gt;
+            &lt;td nowrap=""&gt;Bullet dmg. b.&lt;/td&gt;
+            &lt;td nowrap=""&gt;2*Ram dmg.&lt;/td&gt;
+            &lt;td nowrap=""&gt;Ram dmg. b.&lt;/td&gt;
+            &lt;td nowrap=""&gt;#1st&lt;/td&gt;
+            &lt;td nowrap=""&gt;#2nd&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;xsl:for-each select="COMPETITOR"&gt;
+            &lt;xsl:sort select="sum(../SEASON/GROUPING/RESULTS[@id=current()/@id]/@total_score)" data-type="number" order="descending"/&gt;
+            &lt;xsl:variable name="bot"&gt;&lt;xsl:value-of select="@id"/&gt;&lt;/xsl:variable&gt;
+	    &lt;xsl:variable name="seasons"&gt;&lt;xsl:value-of select="count(../SEASON)"/&gt;&lt;/xsl:variable&gt;
+	    &lt;xsl:variable name="scoreSum"&gt;&lt;xsl:value-of select="sum(../SEASON/GROUPING/RESULTS/@total_score)"/&gt;&lt;/xsl:variable&gt;
+	    &lt;xsl:variable name="score"&gt;&lt;xsl:value-of select="sum(../SEASON/GROUPING/RESULTS[@id=$bot]/@total_score)"/&gt;&lt;/xsl:variable&gt;
+            &lt;tr&gt;
+              &lt;td&gt;&lt;xsl:value-of select="$bot"/&gt;&lt;/td&gt;
+              &lt;td&gt;&lt;xsl:value-of select="format-number($score div $seasons, '#.0')"/&gt;&lt;/td&gt;
+              &lt;td&gt;&lt;xsl:value-of select="format-number(100 * $score div $scoreSum, '#.0')"/&gt;%&lt;/td&gt;
+              &lt;td&gt;&lt;xsl:value-of select="format-number(sum(../SEASON/GROUPING/RESULTS[@id=$bot]/@survival) div $seasons, '#.0')"/&gt;&lt;/td&gt;
+              &lt;td&gt;&lt;xsl:value-of select="format-number(sum(../SEASON/GROUPING/RESULTS[@id=$bot]/@last_survivor_bonus) div $seasons, '#.0')"/&gt;&lt;/td&gt;
+              &lt;td&gt;&lt;xsl:value-of select="format-number(sum(../SEASON/GROUPING/RESULTS[@id=$bot]/@bullet_damage) div $seasons, '#.0')"/&gt;&lt;/td&gt;
+              &lt;td&gt;&lt;xsl:value-of select="format-number(sum(../SEASON/GROUPING/RESULTS[@id=$bot]/@bullet_damage_bonus) div $seasons, '#.0')"/&gt;&lt;/td&gt;
+              &lt;td&gt;&lt;xsl:value-of select="format-number(sum(../SEASON/GROUPING/RESULTS[@id=$bot]/@ram_damage) div $seasons, '#.0')"/&gt;&lt;/td&gt;
+              &lt;td&gt;&lt;xsl:value-of select="format-number(sum(../SEASON/GROUPING/RESULTS[@id=$bot]/@ram_damage_bonus) div $seasons, '#.0')"/&gt;&lt;/td&gt;
+              &lt;td&gt;&lt;xsl:value-of select="format-number(sum(../SEASON/GROUPING/RESULTS[@id=$bot]/@n_first_rank) div $seasons, '#.0')"/&gt;&lt;/td&gt;
+              &lt;td&gt;&lt;xsl:value-of select="format-number(sum(../SEASON/GROUPING/RESULTS[@id=$bot]/@n_second_rank) div $seasons, '#.0')"/&gt;&lt;/td&gt;
+	    &lt;/tr&gt;
+          &lt;/xsl:for-each&gt;
+        &lt;/table&gt;&lt;/div&gt;&lt;/p&gt;
+      &lt;hr size="2"&gt;&lt;/hr&gt;
+    &lt;/xsl:if&gt;
+...
+</pre>
+<hr noshade class=wikiline size=1>
+<H4>Comments / Questions / Suggestions / Contributions</H4>
+
+<p>
+I always had to do this manually. Thanks PEZ i like that tool. --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+Sorry, but the link that is on this site is wrong. --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+Thanks! Now corrected. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Sorry, but the link seems to be broken again :( --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+You can always extract the file from the source zip included with roboleague and paste PEZ modifications in it. -- <a href="robowiki?Florent" class=wikipagelink>Florent</a>
+<p>
+Thanks for that hint <a href="robowiki?Florent" class=wikipagelink>Florent</a>, it works now! -- <a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RoboLeague/ScoreAverageAddOn" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RoboLeague/ScoreAverageAddOn">View other revisions</a><br>Last edited May 4, 2006 21:32 EST by <a href="robowiki?UnderDark" title="ID 5263 from d149-67-30-72.try.wideopenwest.com">UnderDark</a> <a href="robowiki?action=browse&diff=1&id=RoboLeague/ScoreAverageAddOn">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

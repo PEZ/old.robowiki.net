@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>TheBrainPi - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='The, Brain, Pi'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=TheBrainPi">TheBrainPi</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I just got a little mad and created this monster. It uses a NN for targeting (just because it's what I'm interested in right now) and goes against all Robocode best practices and accepted principles ... Try it at your own risk.
+<p>
+<H4>What's special about it?</H4>
+
+<p>
+It uses a big brain, implemented trough a big NN. Instead of learning how to target the enemies one by one (and storing data for all of them) it learns to target them all as a whole (in fact, it assumes that ALL bots have commonalities in their movement, so learning how to target one should be good to target the next one).
+<p>
+Also it factors <a href="robowiki?TheBrainPi" class=wikipagelink>TheBrainPi</a> movement into the targeting system (ie. its brain).
+<p>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<p>
+You can download it from the <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a>.
+<p>
+<H4>How competitive is it?</H4>
+
+<p>
+It's a little bit erratic. If you give it some time to readapt it's brain, its quite effective (in fact, it beats many good bots, but deppends on who fought in the previous battles, the brain mod, and some unknown factors).
+<p>
+I haven't tested it so much.
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+<p>
+Just random movement. I added some of Kawigi's code for <a href="robowiki?DynamicDistancing" class=wikipagelink>DynamicDistancing</a>, but I think that in the released version has no effect at all (or may be it has?). Anyway, thanks Kawigi: I discovered the power of <a href="robowiki?DynamicDistance" class=wikipagelink>DynamicDistance</a> when your Flood's were beating my nanoLauLectik<a href="robowiki?action=edit&id=LauLectik" class=wikipageedit>?</a> with just head on targeting.
+<p>
+<H4>How does it fire?</H4>
+
+<p>
+It uses its brain to predict the enemy position. Note that it's a real brain. I just feed it with <a href="robowiki?TheBrainPi" class=wikipagelink>TheBrainPi</a> and the enemy position (and some history) and it predicts the future enemy position. But it's just its brain who does it, so no idea how it aims.
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+<p>
+No bullet dodging. Just <a href="robowiki?RandomMovement" class=wikipagelink>RandomMovement</a>, very similar to Aspid, but with some <a href="robowiki?DynamicDistancing" class=wikipagelink>DynamicDistancing</a> added.
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+<p>
+It's a pure 1v1 bot.
+<p>
+<H4>How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a>?</H4>
+
+<p>
+It's a pure 1v1 bot.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+<p>
+It saves its brain, and some randomly choosen input/output patterns from previous matches, to avoid over-specialization during the first rounds.
+<p>
+<H4>Where did you get the name?</H4>
+
+<p>
+There was a movie called PI, where a guy was trying to discover the formula that rules the markets... He gets mad as the movie goes on. <a href="robowiki?TheBrainPi" class=wikipagelink>TheBrainPi</a> is also the result of madness.
+<p>
+<H4>Can I use your code?</H4>
+
+<p>
+Of course. If you use a signifcative portion of it, please make your bot open source.
+<p>
+<H4>What's next for your robot?</H4>
+
+<p>
+Test this crazy idea and see if it has some future. 
+<p>
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+<p>
+No idea. I have not tested it (almost). 
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+<p>
+The original code was from <a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a>. Also includes some code from Kawigi's <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>.
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+Thrilling new NN project! But it bugs out on my computer. Null pointer exception when it is initializing the net I think... Is it because I'm on Java 1.3.1 you think? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I don't think it's because of Java 1.3. I'm not concious there is any java 1.4 specific call (and if there is, I can fix it). Could you post the error so I can check it? -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+OK, good to hear it's not yet another 1.4 specific bot. I'll post the stack trace as soon as the current league I'm running is finished. All these pattern matchers take forever to run on nmy ageing laptop. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Here's the error message and stack trace. Good news is that it only happens in the first round and then the brain fights, and fights well! Impressing.
+<pre>
+apv.TheBrainPi 0.5: Exception: java.lang.NullPointerException
+java.lang.NullPointerException
+    at apv.TheBrainPi.buildOutput(TheBrainPi.java:231)
+    at apv.TheBrainPi.learn(TheBrainPi.java:177)
+    at apv.TheBrainPi.onScannedRobot(TheBrainPi.java:143)
+</pre>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Just for reference I do not get that under Java 1.4.1 using the Sun JVM. Though I have a hard time seeing how you could have a null pointer be machine-specific, unless your VM doesn't initialize something the way a newer one does.. *puzzled* 
+<p>
+You do, however, have an array which fills up at around round 250.
+<pre>
+apv.TheBrainPi 0.5: Exception: java.lang.ArrayIndexOutOfBoundsException: 100002
+java.lang.ArrayIndexOutOfBoundsException: 100002
+    at apv.TheBrainPi.aim(TheBrainPi.java:195)
+    at apv.TheBrainPi.onScannedRobot(TheBrainPi.java:145)
+    at robocode.peer.robot.EventManager.onScannedRobot(EventManager.java:607)
+    at robocode.peer.robot.EventManager.processEvents(EventManager.java:738)
+    at robocode.peer.RobotPeer.tick(RobotPeer.java:1024)
+    at robocode.AdvancedRobot.execute(AdvancedRobot.java:186)
+    at apv.TheBrainPi.run(TheBrainPi.java:118)
+    at robocode.peer.RobotPeer.run(RobotPeer.java:616)
+    at java.lang.Thread.run(Thread.java:536)
+</pre>
+<p>
+Since <a href="robowiki?TheBrainPi" class=wikipagelink>TheBrainPi</a> isn't codesize restricted, I'd recommend changing the array to a more dynamic storage class, like a <a rel="nofollow" href="http://java.sun.com/j2se/1.4.1/docs/api/java/util/Vector.html">[Vector]</a>, which can continually expand. If whatever data that array holds gets old you could simply also throw it out, which is again much easier to do in a <a rel="nofollow" href="http://java.sun.com/j2se/1.4.1/docs/api/java/util/Vector.html">[Vector]</a>. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Good idea. I'w do as soon as possible. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+But don't use a Vector, it's an old reminesant from Java 1.1 or some such. An <a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a> is probably a better choice. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I thought they were redesigned in 1.2? I might be mistaken.. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+A Vector is a thread safe implementation of an <a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a>. If you are not multi-threaded or if you are willing to worry about synchronization on your own, they are interchangeable. There used to be a significant performance hit for the synchronization in a Vector but that is not so much the case any more. -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=TheBrainPi" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=TheBrainPi">View other revisions</a><br>Last edited May 18, 2006 21:41 EST by <a href="robowiki?Florent" title="ID 6624 from 148.187.103-84.rev.gaoland.net">Florent</a> <a href="robowiki?action=browse&diff=1&id=TheBrainPi">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Skilgannon/CodeSnippets - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Skilgannon, Code, Snippets'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/CodeSnippets">Skilgannon/CodeSnippets</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>NB! Initial velocity is signed, and initialHeading is the result of get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>()! This code takes care of <a href="robowiki?BackAsFront" class=wikipagelink>BackAsFront</a>!
+<p>
+<p>
+<pre>
+      public static boolean reachable(Point2D.Double fromLocation, Point2D.Double toLocation, long timeAvailable, double initialVelocity, double initialHeading){
+      
+         double wantedHeading = absoluteBearing(fromLocation,toLocation);
+         double velocity = initialVelocity;
+         double distanceRemaining = fromLocation.distance(toLocation);;
+         long time = 0;
+         double theta = Math.abs(Utils.normalRelativeAngle(wantedHeading - initialHeading));
+         if(theta &gt; Math.PI/2){
+            theta = Math.PI - theta;
+            velocity = -velocity;
+         }
+         
+         do{
+         
+            double maxTurn = Math.PI/180*(10 - 0.75*Math.abs(velocity));
+            theta = limit(0,theta - maxTurn, Math.PI/2);
+         
+            if(velocity &gt;= 0 &amp;&amp; distanceRemaining &gt; decelDistance(velocity))
+               velocity = limit(0,velocity + 1, 8);
+            else
+               velocity = limit(-1, Math.abs(velocity) - Math.min(distanceRemaining,2), 6)*(velocity&lt;0?-1:1);
+               
+            if(theta == 0)
+               distanceRemaining -= velocity;
+            else{ //rule of cosines
+               double oldDistRem = distanceRemaining;
+               distanceRemaining = Math.sqrt(velocity*velocity + distanceRemaining*distanceRemaining - 2*velocity*distanceRemaining*Math.cos(theta));
+             
+               double acosVal = (velocity*velocity + distanceRemaining*distanceRemaining - oldDistRem*oldDistRem)/(2*velocity*distanceRemaining);
+               if(Math.abs(acosVal) &lt;= 1){
+                  theta =  Math.abs(Math.acos(acosVal));
+                  if(theta &gt; Math.PI/2)
+                     theta = Math.PI - theta;  
+               }
+            }
+            
+            time++;
+            	
+         }while(time &lt; timeAvailable &amp;&amp; distanceRemaining &gt; 0.000001);
+      
+      
+         return  distanceRemaining &lt; 1;
+      }
+
+       static double decelDistance(double vel){
+         int intVel = (int)Math.round(vel);
+         switch(intVel){  
+            case 8:
+               return 6 + 4 + 2;
+            case 7:
+               return 5 + 3 + 1;
+            case 6:
+               return 4 + 2;
+            case 5:
+               return 3 + 1;
+            case 4:
+               return 2;
+            case 3:
+               return 1;
+            case 2:
+            case 1:
+            case 0:
+               return 0;
+               
+            default:
+               return 6 + 4 + 2;
+         
+         
+         }
+      } 
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Skilgannon/CodeSnippets" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Skilgannon/CodeSnippets">View other revisions</a><br>Last edited October 30, 2007 17:56 EST by <a href="robowiki?Skilgannon" title="ID 12382 from ctb-cache4-vif0.saix.net">Skilgannon</a> <a href="robowiki?action=browse&diff=1&id=Skilgannon/CodeSnippets">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

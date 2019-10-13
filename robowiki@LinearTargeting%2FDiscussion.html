@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>LinearTargeting/Discussion - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Linear, Targeting, Discussion'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Discussion">LinearTargeting/Discussion</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Just a question to all you guys: How accurate are these LinearTargetters<a href="robowiki?action=edit&id=LinearTargetters" class=wikipageedit>?</a>? against bots like <a href="robowiki?PatternMatcherChallenge" class=wikipagelink>PatternMatcherChallenge</a>? I've been running my <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a> against PMC and Rapture 2.13 and I'm hitting about 33%. Is this good for a linear against complex movement or what? I'd post my accuracy vs. sample.Walls but it's too weak, especially since I haven't changed calculations if I predict they'll be outside the battlefield. 
+<p>
+[GRYB] Goofy
+<p>
+Linear targetters aren't particularly accurate in the grand scheme of things. The assumption that an opponent will continue moving precisely as it was was you fired doesnt tend to work well against oscillators and bots that fight at distance. There are many ways to improve the accuracy, one way is to iterate through and try to find the point at which the bullet will actually hit the opponent (as in the simplest scenario you just assume the distance will be constant), another is to keep an average of the enemy velocity and use that in your calculations rather than the current velocity.
+As for your hit rate, it would be difficult to grade it really. It is difficult to analyse hit rates, it depends on the power of the bullets you fire (as power is proportional to speed) and the range at which you were firing (its easier to hit at close range). If you wanted to test the accuracy of your gun the best way would most probably be the <a href="robowiki?TargetingChallenge" class=wikipagelink>TargetingChallenge</a>. It has a clear set of rules, and a good test bed of targets, allowing you to easily compare your results to others. Good luck... --<a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a> 
+<p>
+A lot of earlier bots did variations on linear targeting where they did a certain percentage of linear lead from head-on, and if they missed, they would adjust the lead to be less, and if they hit, they would adjust the lead to be more, until they locked in on some percentage that seemed to work ok.  In general, this percentage ends up being lower at long distances, and optimally close to full lead when you're close up.  Note that once you take this and realize that you don't actually need to fire a bullet to see if one would hit if fired in a certain direction - this lead to the idea of <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> used to either rate several simple targeting algorithms to see which is best against a given opponent or for <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>, which was first implemented by firing a "virtual bullet" at every angle (at regular intervals) from -linear lead to +linear lead and figuring out which ones would have hit, then firing at the mode of that data. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+/me nods.  Okay, I'm checking out targetting challenge now, Brainfade, thanks for pointing that one out to me.  Kawigig:  Yeah, I first wanted to implement waves (I'm hand-coding all these to get better practice.  Just stealing ideas for now.) but that kept failing and until I get a better learning system didn't seem particularly possible for me.  I was really proud of my "success" with LinearTargetting<a href="robowiki?action=edit&id=LinearTargetting" class=wikipageedit>?</a>.  With respect to my accuracy:  It's a pretty blanket 33% against Rapture regardless of bullet power.  Against PMC and using PMC rules (.5 power), I get about 53%.  Though I can actually kill the PMC if I use power 3 bullets (at 33%).  Thanks for the heading, guys. --Goofy
+<p>
+<UL >
+<UL >
+<li>@ <a href="robowiki?Goofy" class=wikipagelink>Goofy</a>, Thats the best way to learn. Stealing ideas is OK though =^&gt; -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+</UL>
+</UL>
+<p>
+Kawigi's algorithm is buggy, I fixed one mistake but something else is wrong. If you're going to use one of the ones on this page I suggest you use mine, or for extra bonus points, debug Kawigi's and post the fixed version. His runs faster so it would be great if someone could correct it. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Can you post your algo on this page David? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+"If you're going to use one of the ones on this page I suggest you use mine"... Look near the top, it's the second one. :-) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Yeah, this page is a bit messy. I did <em>look</em> for your contribution... =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Here's my code for it. Uses the trig method then checks for walls.
+<pre>
+package ntc;
+import robocode.*;
+import java.awt.geom.*;
+import java.awt.Color;
+
+//run, movement, etc
+
+public void onScannedRobot(ScannedRobotEvent e) {
+		setTurnRadarLeft(getRadarTurnRemaining());
+		double x=getX() + Math.sin(e.getBearingRadians()+getHeadingRadians())*e.getDistance();
+		double y=getY() + Math.cos(e.getBearingRadians()+getHeadingRadians())*e.getDistance();
+		Point2D.Double enemyPosition=new Point2D.Double(x,y);
+		Point2D.Double myPosition=new Point2D.Double(getX(),getY());
+		
+		double ang=Math.asin((e.getVelocity()*Math.sin(e.getHeadingRadians()-(e.getBearingRadians()+getHeadingRadians())))/(20-(3*3)));
+		Line2D.Double enemyMovement=new Line2D.Double(enemyPosition, projectPoint(enemyPosition,e.getHeadingRadians(),1000));
+		Line2D.Double bulletMovement=new Line2D.Double(myPosition, projectPoint(myPosition,getHeadingRadians() + e.getBearingRadians()+ang,1000));
+		dist=new Line2D.Double(myPosition, enemyPosition);
+		eM=enemyMovement;
+		bM=bulletMovement;
+		//Tango's lineintersect method
+		Point2D.Double intersect=new Point2D.Double(0,0);//point you are actually firing at
+		double num   =   (enemyMovement.getY2()-enemyMovement.getY1())*(enemyMovement.getX1()-bulletMovement.getX1()) -
+		                 (enemyMovement.getX2()-enemyMovement.getX1())*(enemyMovement.getY1()-bulletMovement.getY1());
+		
+		double denom =   (enemyMovement.getY2()-enemyMovement.getY1())*(bulletMovement.getX2()-bulletMovement.getX1()) -
+		                 (enemyMovement.getX2()-enemyMovement.getX1())*(bulletMovement.getY2()-bulletMovement.getY1());
+		
+		intersect.x = bulletMovement.getX1() + (bulletMovement.getX2()-bulletMovement.getX1())*num/denom;
+		intersect.y = bulletMovement.getY1() + (bulletMovement.getY2()-bulletMovement.getY1())*num/denom;
+		//nanos iterative lineintersectwithshape method
+		if(!field.contains(intersect)){ //is where you are firing at in the battlefield?
+			int TRACE_DEPTH = 8;
+			Point2D middle;
+			boolean containsFirst;
+			if ((containsFirst = field.contains(enemyMovement.getP1())) == field.contains(enemyMovement.getP2())){
+			}
+			for (int i = 0; i &lt; TRACE_DEPTH; i++) {
+				middle = new Point2D.Double((enemyMovement.getX1() + enemyMovement.getX2()) / 2, (enemyMovement.getY1() + enemyMovement.getY2()) / 2);
+				if (containsFirst != field.contains(middle)){
+					enemyMovement = new Line2D.Double(enemyMovement.getP1(), middle);
+				}else{
+					enemyMovement = new Line2D.Double(middle, enemyMovement.getP2());
+				}
+			}
+			intersect.x=(enemyMovement.getX1() + enemyMovement.getX2()) / 2;
+			intersect.y=(enemyMovement.getY1() + enemyMovement.getY2()) / 2;	
+		}
+		point=intersect;
+		ang=Math.atan2(intersect.getX()-myPosition.getX(),intersect.getY()-myPosition.getY());
+		setTurnGunRightRadians(robocode.util.Utils.normalRelativeAngle(ang-getGunHeadingRadians()));
+		setFire(3);
+		out.println(intersect);
+		out.println(enemyPosition);
+	}
+
+	public void onPaint(java.awt.Graphics2D g) {
+		g.setColor(Color.red);
+		g.fillOval((int)point.getX()-10,(int)(getBattleFieldHeight()-point.getY())-10,10,10);
+		g.drawLine((int)eM.getP1().getX(),(int)(getBattleFieldHeight()-eM.getP1().getY()),(int)eM.getP2().getX(),(int)(getBattleFieldHeight()-eM.getP2().getY()));
+		g.setColor(Color.green);
+		g.drawLine((int)bM.getP1().getX(),(int)(getBattleFieldHeight()-bM.getP1().getY()),(int)bM.getP2().getX(),(int)(getBattleFieldHeight()-bM.getP2().getY()));
+		g.setColor(Color.cyan);
+		g.drawLine((int)dist.getP1().getX(),(int)(getBattleFieldHeight()-dist.getP1().getY()),(int)dist.getP2().getX(),(int)(getBattleFieldHeight()-dist.getP2().getY()));
+    }
+
+	Point2D.Double projectPoint(Point2D.Double sourceLocation, double angle, double length) {
+        return new Point2D.Double(sourceLocation.getX() + Math.sin(angle) * length,
+            sourceLocation.getY() + Math.cos(angle) * length);
+    }
+}
+</pre>
+In the graphics, the red dot is where it's aiming for, the red line is the straight line iteration of the enemy movement, green line is path of bullet (without taking walls into account), and blue line is simply connecting you and the enemy so if you need to test the MEA you can use that...Although this does not use MEA --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=LinearTargeting/Discussion" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=LinearTargeting/Discussion">View other revisions</a><br>Last edited July 28, 2007 20:34 EST by <a href="robowiki?Starrynte" title="ID 10964 from cpe-75-84-83-181.socal.res.rr.com">Starrynte</a> <a href="robowiki?action=browse&diff=1&id=LinearTargeting/Discussion">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

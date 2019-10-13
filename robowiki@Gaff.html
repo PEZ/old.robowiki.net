@@ -1,0 +1,195 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Gaff - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Gaff'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Gaff">Gaff</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H3>Gaff</H3>
+
+A simpler bot by <a href="robowiki?Darkcanuck" class=wikipagelink>Darkcanuck</a>
+<p>
+<H4>Extends</H4>
+
+<a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>
+<p>
+<H4>What's special about it?</H4>
+
+I got tired of wrestling with learning bots and made Gaff using a simple movement that popped into my head.  This bot was originally a testbed for a new targeting method I'm working on.
+<p>
+<p>
+<H4>How competitive is it?</H4>
+
+My goal is for Gaff to become a <a href="robowiki?ProblemBot" class=wikipagelink>ProblemBot</a> for as many contenders as possible.
+<p>
+Version 1.24 reached position #97 in the rumble.
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+Gaff was originally based on a cornering movement which tried to push enemies into the corners to narrow their escape angle and expose near-wall profile flaws.  But since version 1.10, Gaff uses a multi-mode movement, consisting of:
+<UL >
+<li> the basic cornering movement
+<li> a simple orbital-style movement with bullet avoidance
+<li> a random orbital-style movement which attempts to put Gaff at a random GF every time the opponent fires.
+</UL>
+<p>
+The cornering and simple orbital movement have a bit of randomness mixed in, plus the bullet prediction/dodging code from <a href="robowiki?Leon" class=wikipagelink>Leon</a>.  The random orbit makes no attempt to predict or dodge.
+<p>
+<H4>How does it fire?</H4>
+
+<p>
+Uses a single neural-network with <strike>one hidden layer</strike> no hidden layers.  The code still assumes a virtual gun array and is nicely pluggable so that I can test different combinations if I feel the need to go back to multiple guns.
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+No difference, but the movement algorithm doesn't take more than one opponent into account so melee performance could be pretty bad.
+<p>
+<H4>How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a>?</H4>
+
+Selects the closest target, with some protection against target thrashing.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+Between rounds, saves all neural network weights, targeting stats and bullet dodging data.
+Nothing saved between matches.
+<p>
+<H4>Where did you get the name?</H4>
+
+Blade Runner again.
+<p>
+<H4>Can I use your code?</H4>
+
+Not yet.  But feel free to ask if you're curious and maybe I'll post some snippets
+<p>
+<H4>What's next for your robot?</H4>
+
+<OL >
+<li> <strike>Improve the NN targeting</strike> DONE
+<li> Add a melee strategy, since I prefer that field over 1on1
+<li> Improve targeting against random movers
+<li> Make the multi-mode movement sophisticated enough to secure a top-50 position
+</OL>
+<p>
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+<UL >
+<li> <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> is proving frustratingly difficult to hit in the <a href="robowiki?TargetingChallenge2K7" class=wikipagelink>TargetingChallenge2K7</a>
+<li> DogManSPE<a href="robowiki?action=edit&id=DogManSPE" class=wikipageedit>?</a> is Gaff's worst <a href="robowiki?ProblemBot" class=wikipagelink>ProblemBot</a>, followed by <a href="robowiki?Infinity" class=wikipagelink>Infinity</a>
+</UL>
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+Most of the framework is shared with <a href="robowiki?Leon" class=wikipagelink>Leon</a>.
+Targeting inspired by <a href="robowiki?Engineer" class=wikipagelink>Engineer</a>, inputs to the targeting networks originally based on <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>'s segmentation but heavily refined since then.
+<p>
+<H4>Version History</H4>
+
+<UL >
+<li> 1.28:  Minor tweaks to cornering and movement selection
+<UL >
+<li> Cornering no longer selected when Gaff is already cornered.
+<li> Damage differential now reset every round
+</UL>
+<li> 1.26:  Tweaked movement to improve performance against worst <a href="robowiki?ProblemBots" class=wikipagelink>ProblemBots</a> and a selection of top bots.  No targeting changes.
+<UL >
+<li> Cornering movement now used only when Gaff has a significant energy advantage
+<li> Random and dodging orbital styles selected based on current damage differential; now switches with same round if needed.
+<li> Bullet predictor decay rate decreased dramatically for faster adaptation.
+<li> Distancing adjusted to make orbital modes similar and decrease advantage of segmenting on distance (makes a big difference).
+<li> Fixed some bugs in the random mode which resulted in strange moves.
+<li> Ranked 106 in <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> (1805.94pts, 2059 battles, 20-Aug-2008)
+</UL>
+<li> 1.24:  Mostly movement updates
+<UL >
+<li> Smoothed out dodging orbit movement mode
+<li> Added a random orbit (non-dodging) movement mode
+<li> Movement selection now settles on new random mode if other two modes lose too often
+<li> Increased bullet predictor decay rate
+<li> Minor tweaks to targeting NN to adapt faster and handle lower bullet powers better (but no challenge score improvement)
+<li> Ranked 97 in <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> (1816.7pts, 2061 battles, 17-Aug-2008)
+</UL>
+<li> 1.20:  Further targeting improvements, many movement bug fixes
+<UL >
+<li> Targeting network no longer uses hidden layers.
+<li> Network is retrained at a slower rate but more often.
+<li> Fixed many, many bugs in the orbital movement and bullet dodging classes.
+<li> Removed the "oddball" movement style
+<li> Changed the movement style selection method
+<li> Ranked 117 in <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> (1800.74pts, 2122 battles, 6-Aug-2008)
+</UL>
+<li> 1.10:  Contined improvements to targeting and some new movement
+<UL >
+<li> Targeting method now trains multiple samples per firing wave
+<li> Fixed a major bug in the bullet dodging code
+<li> Credits for both of the above go to <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<li> Added two new movement styles (orbital and "oddball") for situations where cornering isn't working out.
+<li> Ranked 163 in <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> (1768.96pts, 2225 battles, 31-Jul-2008)
+</UL>
+<li> 1.04:  Major improvements to targeting after spending some time with the targeting challenges and <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a>
+<UL >
+<li> Now uses only one targeting method based on a small neural network with only one hidden layer
+<li> Added <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> range limiting using my FutureMove<a href="robowiki?action=edit&id=FutureMove" class=wikipageedit>?</a> class
+<li> Fixed a nasty bug in FutureMove<a href="robowiki?action=edit&id=FutureMove" class=wikipageedit>?</a> that also affected dodging
+<li> Ranked 229 in <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> (1688pts, 2007 battles, 27-Jun-2008)
+</UL>
+<li> 1.00:  Initial release
+<UL >
+<li> Ranked 313 in <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> (1608pts, 23-Jun-2008)
+</UL>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+<p>
+Woah there! You sure got a crazy-good score against Shadow in TC2K7! I'd be really curious about what kind of inputs nodes are getting heavy strong weights in Gaff's targeting NN there. Congrats! -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Thanks -- now I just have to improve the score against the other 9 bots!  I haven't dumped the weights, so I'm not sure which inputs are key to hitting Shadow.  The biggest improvement (based on the 50+ tests/tweaks since version 1.00) seems to be from limiting the <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> range:  unlike most other implementations I've read about on the wiki, Gaff always considers GF+1 = asin(8/bvel) but limits the output to where the enemy could actually move.  So if the enemy can only reach -0.4 to +0.7 then it'll take the peak value in that range, even though the biggest peak might lie outside it.
+<p>
+The network is using distance, speed (absolute), lateral accel, advancing accel, ticks since velocity change, ticks since CCW/CW change and straight-line distance to the wall as inputs.  All of them are split up into smaller feature ranges so there are 4-10 inputs for each of those variables.  I'm playing around with splitting them up into even finer features right now.  -- <a href="robowiki?Darkcanuck" class=wikipagelink>Darkcanuck</a>
+<p>
+Hmm, that sounds like an interesting. So, based on the how you're looking for peaks and such, I presume you have multiple neural net output nodes arranged in a fashion similar to the bins in 'traditional' <a href="robowiki?VisitCountStats" class=wikipagelink>VisitCountStats</a>? Overall, from what you describe of it, I'd say this net is set up and used in a way far more like 'traditional' segmented VCS than other <a href="robowiki?NeuralTargeting" class=wikipagelink>NeuralTargeting</a> that I've taken note of, due to how it sorts the inputs/outputs in to bins/buckets. Actually, I think this has inspired me to look into neural net approaches more, perhaps integrating it into <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a>, by using it in the calculation of differences between situations to create a form of DynamicWeighting<a href="robowiki?action=edit&id=DynamicWeighting" class=wikipageedit>?</a>. My previous neural experiments haven't went too great (neural pattern matching and neural situation-readjustment) but this weighting via neural nets might be more promising. In any case, I'm quite impressed and wish you and Gaff well. It would be nice to see some more Canadians bots ascend the ranks :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Yep, there are 31 output nodes, each corresponding to a slice of the GF spectrum.  I originally started with a single output node which gave the GF to aim at, but performance was pretty lousy.  Neural nets are very strong in classification problems, so Gaff's targeting takes that approach instead. I've also tried using a net to do predictive pattern matching (see <a href="robowiki?Leon" class=wikipagelink>Leon</a>) with decent results, but nowhere near good enough to hit surfers.  There's probably a lot of room for improvement in the latter if I rearranged it as a classifier too.
+<p>
+If you're curious, add "debuglevel=2" (or was it 3?) to Gaff's properties file, turn on painting and you'll see the net's outputs graphed in real time at the bottom left of the screen.  -- <a href="robowiki?Darkcanuck" class=wikipagelink>Darkcanuck</a>
+<p>
+Ahh yes, "debuglevel=2" indeed, and quite pretty graphics. One thing I noticed with it facing <a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a> Gamma6, is that it's bullet prediction seems able to predict where <a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a> is firing to a degree I find somewhat bothersome, of course the gun in Gamma6 isn't meant for performing against adaptive movement anyways. Despite it's good prediction though it does seems hit it's own predictions of the bullet fairly often and may be something you might want to consider looking at making it more cautious of. You may already be aware of it, but it also looks like you sometimes miss detecting the enemy firing at all. That's a very interesting cornering movement you have there by the way, it seems quite good at forcing fairly close combat as well without needing to chase. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Nice work with Gaff, keep it up! Hitting <a href="robowiki?Shadow" class=wikipagelink>Shadow</a> well is like a lifetime goal of mine - up there with becoming an astronaut and climbing Mount Everest. =) So it's good to see someone making progress. Just as an FYI, <a href="robowiki?Engineer" class=wikipagelink>Engineer</a> also outputs an array of <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> bins like this (and even uses the same type of setup for surfing!). Good luck with the other 9 reference bots ;), cheers, -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+By the way, out of curiosity, I ran a anti-surfer challenge I made for my own <a href="robowiki?RougeDC/TargetingLab" class=wikipagelink>testing</a> on Gaff. It appears it's power against <a href="robowiki?Shadow" class=wikipagelink>Shadow</a> doesn't hold true against <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>, but in general isn't too bad against surfers. One interesting thing, is that it doesn't manage to hit the surfers I've found to be weaker like <a href="robowiki?Komarious" class=wikipagelink>Komarious</a> or <a href="robowiki?Stelokim" class=wikipagelink>MatchupWS</a> much better than the stronger surfers.
+<p>
+Custom Surfer Challenge. <a href="robowiki?TargetingChallenge2K7" class=wikipagelink>TargetingChallenge2K7</a> surfers, plus: <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> 1.573c, <a href="robowiki?Chalk" class=wikipagelink>Chalk</a> 2.5.Al, <a href="robowiki?Komarious" class=wikipagelink>Komarious</a> 1.78b, <a href="robowiki?GresSuffurd" class=wikipagelink>GresSuffurd</a> 0.2.10, <a href="robowiki?DarkHallow" class=wikipagelink>DarkHallow</a> .90.9, and <a href="robowiki?Stelokim" class=wikipagelink>MatchupWS</a> 1.2c
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <strong>Bot</strong> </td><td colspan="0.5"> <strong>Author</strong> </td><td colspan="0.5"> <strong>CC</strong> </td><td colspan="0.5"> <strong>RMX</strong> </td><td colspan="0.5"> <strong>SHA</strong> </td><td colspan="0.5"> <strong>WS</strong> </td><td colspan="0.5"> <strong>WOE</strong> </td><td colspan="0.5"> <strong>TC2K7</strong> </td><td colspan="0.5"> <strong>Dooki</strong> </td><td colspan="0.5"> <strong>Chalk</strong> </td><td colspan="0.5"> <strong>Kom</strong> </td><td colspan="0.5"> <strong>Sub1</strong> </td><td colspan="0.5"> <strong>Gres</strong> </td><td colspan="0.5"> <strong>DH</strong> </td><td colspan="0.5"> <strong>MWS</strong></td><td colspan="0.5"> <strong>Sub2</strong> </td><td colspan="0.5"> <strong>Total</strong> </td><td colspan="0.5"> <strong>Comment</strong> </td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> Gaff 1.04 </td><td colspan="0.5"> <a href="robowiki?Darkcanuck" class=wikipagelink>Darkcanuck</a> </td><td colspan="0.5"> 63.52 </td><td colspan="0.5"> 80.64 </td><td colspan="0.5"> 69.22 </td><td colspan="0.5"> 82.22 </td><td colspan="0.5"> 78.13 </td><td colspan="0.5"> <strong>74.74</strong> </td><td colspan="0.5"> 54.37 </td><td colspan="0.5"> 70.19 </td><td colspan="0.5"> 74.43 </td><td colspan="0.5"> <strong>66.33</strong> </td><td colspan="0.5"> 88.37 </td><td colspan="0.5"> 81.53 </td><td colspan="0.5"> 82.08 </td><td colspan="0.5"> <strong>83.99</strong> </td><td colspan="0.5"> <strong>75.02</strong> </td><td colspan="0.5"> 16.0 seasons</td></TR>
+</TABLE>
+-- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+That's an ugly score against <a href="robowiki?Dookius" class=wikipagelink>Dookius</a> -- and I thought CC was hard to hit!
+<p>
+Good catch regarding the bullet dodging: one of the fixes I made in 1.04 broke the dodging code for reverse travel.  Fixed now, just running through some more targeting iterations.  Still stuck around 76 on the TC2K7, each new test brings up the score against 1 bot at the expense of the 9 others.  Interestingly, smoothing the net outputs brought down the Shadow score quite a bit.  Oh, and I did dump the network weights but it didn't reveal anything.  That's the irony of NN, they can solve difficult problems but you can't reverse-engineer the solution.  -- <a href="robowiki?Darkcanuck" class=wikipagelink>Darkcanuck</a>
+<p>
+Well, I doubt anyone could score that great against <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>. Actually, I find it slightly ironic that <a href="robowiki?Voidious" class=wikipagelink>Voidious</a> has a lifelong goal of hitting <a href="robowiki?Shadow" class=wikipagelink>Shadow</a> when <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> appears to be much harder to hit. Perhaps I'll make it my lifelong goal to hit <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> well... ;)
+<p>
+I think for NNs with few inputs one can create a visual map of what inputs result in what outputs, but that gets tricky when you have more than 2 or 3 input dimensions to deal with. If all one is looking at is "importance" of a dimension though, it might be possible to get a useful statistic by getting the maximum theoretical amount an output node could be affected by a single lone input node were all other input nodes 0, and average what that value was for all of the different output nodes, to get a rough comparative measure of how much the network "cares" about that input. Of course, I'm not an expert on NNs but to me that would make sense as a way to get at least marginally useful information out of a dump of the weights. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Are you offering to do the analysis for me?  ;)  With 45 inputs, 20 hidden nodes and 31 outputs, there are a lot of weights to pore over.  Out of my last 20 tests (<a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> is an amazing tool) the targeting released in 1.04 is still the best.  Too many variables to tweak:  inputs, network size/structure, learning rates, training methods... just not enough processor time to try them all.  Right now I'm trying to figure out how to build an <a href="robowiki?AntiSurfer" class=wikipagelink>AntiSurfer</a> method but I'm not sure how to do fast rolling in a NN.  Next test is experimenting with weight decay.  Somewhere in there lies a way to hit <a href="robowiki?Dookius" class=wikipagelink>Dookius</a> better...  -- <a href="robowiki?Darkcanuck" class=wikipagelink>Darkcanuck</a>
+<p>
+<UL >
+<li> You might want to pay attention to if/when Dooki is enabling the flattener. For instance, right now it's probably not being enabled because you're not hitting him much. If you make some progress, you may get a higher score, but still not enough to enable the flattener. Then you could make more progress, trigger the flattener, and end up with the same score - so you really did make progress, but the end score wouldn't tell you that. And if you want to hardcode the flattener on or off for testing, you could do that easily in evaluateFlattener() or setFlattener(boolean) in DookiCape.java. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+<UL >
+<li> Well I have my own things I'm busy with right now, but some time perhaps. ;) Indeed, <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> is a great tool and I have it running something nearly 24/7 these days. In terms of hitting Dooki, keep in mind what Voidious said: For example I added my fast rolling anti-surf gun, which boosted my performance greatly against just about everyone else, it caused my Dookious score to nosedive from 59 to 55 in my targeting challenge. In other words, not only can improving enough to trigger the flattener cause your score to not improve, it can in fact kill your score if Dooki's flattener is effective against you. Well, as far as making a NN "fast rolling", wouldn't that be achieved simply by increasing the learning rate variable or alternatively running additional training iterations on new data when you get it? -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</UL>
+<p>
+Excellent!  Rednaxela, you provided the key to the TC2k7 score breakthrough I was looking for.  Mostly out of laziness (and probably due to the way <a href="robowiki?Leon" class=wikipagelink>Leon</a>'s NN works) I was only training the net once for each firing wave hit -- I already had the learning rate cranked up to compensate.  By retraining the last 5 firing waves each time a new firing wave hit and dialing down the learning rate, Gaff scores almost 2pts higher overall.  9 out of the 10 bot scores are up, including a modest gain against Shadow (71.61).  I'm playing with the retraining count and learning rate now to get an idea if there's more value still hidden in this approach.  Look for a new release soon with a couple of new movement modes to increase survival against the big guys.  -- <a href="robowiki?Darkcanuck" class=wikipagelink>Darkcanuck</a>
+<p>
+Nice stuff there! Looks like Gaff will be on it's way up. Cheers! :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Gaff" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Gaff">View other revisions</a><br>Last edited August 21, 2008 5:55 EST by <a href="robowiki?Darkcanuck" title="ID 13040 from S01060016cbc69598.vc.shawcable.net">Darkcanuck</a> <a href="robowiki?action=browse&diff=1&id=Gaff">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Nfwu/EloSim - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Nfwu, Elo, Sim'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/EloSim">Nfwu/EloSim</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Nfwu" class=wikipagelink>Nfwu</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Used RR@H server code as reference. No licence - use and abuse.
+<p>
+Sample output for this scenario:
+A/B=25/75, A/C=75/25, B/C=25/75
+<pre>nfwu@hideki:~/P/robocode/robots$ java roborumble.Test
+One 1.0 - Battles 665 - Rating 1442.5536219090948
+Two 1.0 - Battles 678 - Rating 1378.7299774349924
+Three 1.0 - Battles 657 - Rating 1402.8007935104706
+nfwu@hideki:~/P/robocode/robots$ java roborumble.Test
+One 1.0 - Battles 653 - Rating 1458.2722117739086
+Two 1.0 - Battles 673 - Rating 1396.3030780290183
+Three 1.0 - Battles 674 - Rating 1421.8044011529028
+nfwu@hideki:~/P/robocode/robots$ java roborumble.Test
+One 1.0 - Battles 652 - Rating 1465.6283157169987
+Two 1.0 - Battles 678 - Rating 1405.416998185054
+Three 1.0 - Battles 670 - Rating 1423.0490446131012</pre>
+<p>
+Code:
+<pre>
+package roborumble;
+
+import java.util.*;
+
+// There are faster ways of doing this,
+// but I wanted to replicate the RR@H server as close as possible.
+// 
+// So, here's an inefficent ELO simulator.
+
+class EnemyStat {
+	double wins;
+	int benemy; //Looks like "Number of Battles agains this enemy"
+}
+
+class RobotStats {
+
+	RobotStats(String n){
+		this(n, 1600);
+	}
+	RobotStats(String n, double r){
+		scoremap = new HashMap&lt;String, EnemyStat&gt;();
+		post = false;
+		name = n;
+		battles = 0;
+		rating = r;
+	}
+
+	String name;
+	int battles;
+	double rating;
+	boolean post;
+	HashMap&lt;String, EnemyStat&gt; scoremap;
+}
+
+public class Test {
+	private static final double min_score = 0.0;
+
+	private static final double max_score = 1.0;
+
+	private static final double rating_change = 3.0;
+
+	static RobotStats[] stats;
+	public static void main(String[] args){
+		//stats = new RobotStats[4];
+		stats = new RobotStats[3];
+
+		stats[0] = new RobotStats("One 1.0");
+		stats[1] = new RobotStats("Two 1.0");
+		stats[2] = new RobotStats("Three 1.0");
+
+		//POST EXPERIMENT
+		//stats[3] = new RobotStats("Post", 2000);
+		//stats[3].post = true;
+
+		//A/B=25/75, A/C=75/25, BC=25/75
+		int rand;
+		for (int i=0;i&lt;1000;i++){
+			rand = (int)(Math.random() * 6.0);
+			if (rand == 1){
+				//battleResults(0, 24.5+Math.random(), 1, 74.5+Math.random());
+				battleResults(0, 25, 1, 75);
+			} else if (rand == 2){
+				//battleResults(1, 74.5+Math.random(), 0, 24.5+Math.random());
+				battleResults(1, 75, 0, 25);
+			} else if (rand == 3){
+				//battleResults(0, 74.5+Math.random(), 2, 24.5+Math.random());
+				battleResults(0, 75, 2, 25);
+			} else if (rand == 4){
+				//battleResults(2, 24.5+Math.random(), 0, 74.5+Math.random());
+				battleResults(2, 25, 0, 75);
+			} else if (rand == 5){
+				//battleResults(1, 49.5+Math.random(), 2, 49.5+Math.random());
+				battleResults(1, 25, 2, 75);
+			} else {
+				//battleResults(2, 49.5+Math.random(), 1, 49.5+Math.random());
+				battleResults(2, 75, 1, 25);
+			}
+			//battleResults((int)(Math.random()*3), 50, 3, 50); //FROM POST EXPERIMENT
+		}
+
+		for (int i=0;i&lt;stats.length;i++){
+			System.out.println(stats[i].name+" - Battles "+stats[i].battles+" - Rating "+stats[i].rating);
+		}
+
+	}
+	static void battleResults(int fid, double fscore, int sid, double sscore){
+	//Get stuff for first
+		double real1 = fscore / (fscore + sscore);
+		if (real1 == 1.0 || real1 == 0.0) return; //RR@H server does this
+		EnemyStat es1 = null;
+		es1 = stats[fid].scoremap.get(stats[sid].name); //First's enemy data of second
+		double wins1 = real1; if (es1 != null) wins1 = es1.wins;
+		int benemy1 = 0; if (es1 != null) benemy1 = es1.benemy;
+	//Get stuff for second
+		double real2 = 1.0 - real1;
+		EnemyStat es2 = null;
+		es2 = stats[sid].scoremap.get(stats[sid].name); //Second's enemy data of first
+		double wins2 = real1; if (es2 != null) wins2 = es2.wins;
+		int benemy2 = 0; if (es2 != null) benemy2 = es2.benemy;
+	//Calculate EnemyStat differences
+		wins1 = 0.7 * wins1 + 0.3 * real1;
+
+		wins2 = 0.7 * wins2 + 0.3 * real2;
+		benemy1++;
+		benemy2++;
+	//Store the EnemyStats away
+		if (es1 == null) {
+			es1 = new EnemyStat(); 
+		}
+		es1.wins = wins1;
+		es1.benemy = benemy1;
+		stats[fid].scoremap.put(stats[sid].name, es1); //First's enemy data of second
+		if (es2 == null) {
+			es2 = new EnemyStat(); 
+		}
+		es2.wins = wins2;
+		es2.benemy = benemy2;
+		stats[sid].scoremap.put(stats[fid].name, es2); //Second's enemy data of first
+
+	//Calculate rating change, anchored to all the other bots.
+		double change1 = 0;
+
+		double change2 = 0;
+		for (int i=0;i&lt;stats.length;i++) {
+			//selectedrating = stats[i].rating;
+
+			//Do stuff for first
+			if (fid != i){
+				double expected = 1.0 / (1+Math.pow(20,(stats[i].rating-stats[fid].rating)/800)); 
+				expected = Math.max(Math.min(expected,max_score),min_score);
+				if (stats[fid].scoremap.get(stats[i].name) != null){
+					double selectedwins = stats[fid].scoremap.get(stats[i].name).wins;
+					selectedwins = Math.max(Math.min(selectedwins,max_score),min_score);
+
+					change1 += rating_change * (selectedwins - expected);
+				}
+			}
+			//Do stuff for second
+			if (sid != i){
+				double expected = 1.0 / (1+Math.pow(20,(stats[i].rating-stats[sid].rating)/800)); 
+				expected = Math.max(Math.min(expected,max_score),min_score);
+				if (stats[sid].scoremap.get(stats[i].name) != null){
+					double selectedwins = stats[sid].scoremap.get(stats[i].name).wins;
+					selectedwins = Math.max(Math.min(selectedwins,max_score),min_score);
+
+					change2 += rating_change * (selectedwins - expected);
+				}
+			}
+		}
+
+		if (!stats[fid].post) stats[fid].rating += change1;
+		if (!stats[sid].post) stats[sid].rating += change2;
+
+		stats[fid].battles++;
+		stats[sid].battles++;
+	}
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Nfwu" class=wikipagelink>Nfwu</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Nfwu/EloSim" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Nfwu/EloSim">View other revisions</a><br>Last edited September 2, 2008 8:14 EST by <a href="robowiki?Nfwu" title="ID 12997 from 220.255.7.219">Nfwu</a> <a href="robowiki?action=browse&diff=1&id=Nfwu/EloSim">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

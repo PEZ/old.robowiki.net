@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>MapleValley - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Maple, Valley'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=MapleValley">MapleValley</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Introduction (22-04-2004):
+Hi. I'm a software engineer who is having a look at this robot programming as a fun way to get into a bit of java programming. I'm new to this very interesting wiki concept, and also totally new to robot programming. So far, my accomplishments are to install the robocode, watch various sample bots fight each other, and then compile a robot of my own that doesn't do anything, except skip turns and print some stuff to std.out on run() and on some events. Be afraid, be very afraid. ;-)
+<p>
+After having browsed through a good part of this site, some of the robocode documentation, and some source code for various robots, I have a couple of questions.
+<p>
+Looking at battles with visible scan arcs, and from the discussions on this site, it seems that the radar has a scan arc with a variable width. Even though I tried looking through the source code of a couple of bots (like VeriLeach<a href="robowiki?action=edit&id=VeriLeach" class=wikipageedit>?</a>) which I think adjusts the width of the radar scan arc, I can't see how it is done. Either I'm dense, or just confused.
+<p>
+Assuming that the scan arc can be adjusted:
+On a successful scan of a robot, the scan event returns a lot of information on the target. See the <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> in the documentation. Among this info we get the bearing and distance to the target, as well as the heading and velocity of the target. Given this information, we have effectively pinpointed the target 100% accurately, which means we have to re-scan the target each turn to update the information, but we don't need to narrow the scan arc to pinpoint it, so why would anyone ever want to use a scan arc which is narrower than the maximum possible scan arc width?
+<p>
+I have probably mis-understood some of this radar scan stuff, so if anyone can explain it to me, that would be great.
+<p>
+People do it because it looks cool.  Personally, I find that double-scanning an enemy really messes me up, depending on my scanner implementation.  Therefore, I'm stuck using the suckier implementation rather than the cooler one (imo). --<a href="robowiki?Goofy" class=wikipagelink>Goofy</a>
+<p>
+The width of the scan arc is the angular difference between the last tick's radar direction and the current one. It can be anything between 0 (most of the sample bots never move the radar) and 45 degrees (or more if you also turn the gun/robot). The only thing you need to make sure is that the enemy can't "escape" your scan arc, the width is irrelevant. Most narrow scanning bots do so because of codesize restrictions, mostly mini/micro/nano bots, or even taste. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+I agree. The goal is to make a scanner that is as stable at delivering one scan per tick as possible. To me the scanner of <a href="robowiki?Aristocles" class=wikipagelink>Aristocles</a> and most other of my bots deliver this. It's the infinite radar with carefully tuned parameters. (I found it in one of <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>'s nanos and tweaked it and the result was the most stable radar I have yet succeeded in creating.) The scan arc width of this radar varies a lot. Which together with the performance proves <a href="robowiki?ABC" class=wikipagelink>ABC</a>'s statement that the width is irrelevant. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> 
+<p>
+Thanks a lot! I was thinking of the scanner as having a cone shape, but in reality it is more like a real radar where a line sweeps clockwise or counterclockwise, and the arc we see is just the area covered from turning the radar in the last tick. Things make a lot more sense now. -- <a href="robowiki?MapleValley" class=wikipagelink>MapleValley</a>
+<p>
+<hr noshade class=wikiline size=1>
+&lt;hijack&gt;
+<p>
+Just as a specific to my "sucky" implementation versus my desired implementation which, unfortunately, screws me up:  I've been making my bots in a modular fashion lately.  As a result I have a "Scanner" class. All it does is manage my radar.  When my bot runs the on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> method, it calls (currently) scanner.on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>, to which I pass a reference to the <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> and the bot that's using the scanner.  (I could clean this up by giving the bot the scanner is attached to when I initialize the scanner, but I like it this way for now...)
+<p>
+How I would like to do it:  on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> in the Scanner class is a void and does a myRobot.set<a href="robowiki?TurnRadarRight" class=wikipagelink>TurnRadarRight</a>( scanDelta );  For some reason, however, this destabilizes the scanner, causing me to miss scans and have to re-acquire the target.  Happens about once every other second.  My guess is that a double scan is causing the problem, but I don't know how calling set<a href="robowiki?TurnRadarRight" class=wikipagelink>TurnRadarRight</a> twice can really screw stuff up.
+<p>
+How I currently do it:  on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> in the Scanner class is a double that returns scanDelta.  Each round where I saw an enemy (I set a boolean in my Robot's on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>) I set<a href="robowiki?TurnRadarRight" class=wikipagelink>TurnRadarRight</a>( scanDelta ).  This results in me setting the radar turn each tick once and only once.
+<p>
+Some day, I'll release my bot source.  (I'll probably release <a href="robowiki?GoofyBot" class=wikipagelink>GoofyBot</a> 0.20's source, since I'm supposed to be re-releasing him with better movement.)  Then you can see my Scanner implementation.
+&lt;/hijack&gt;
+<p>
+--<a href="robowiki?Goofy" class=wikipagelink>Goofy</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=MapleValley" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=MapleValley">View other revisions</a><br>Last edited April 22, 2004 22:36 EST by <a href="robowiki?Rational_Insanity" title="ID 111 from ip68-109-120-181.ri.ri.cox.net">Rational Insanity</a> <a href="robowiki?action=browse&diff=1&id=MapleValley">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

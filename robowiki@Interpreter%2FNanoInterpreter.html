@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Interpreter/NanoInterpreter - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Interpreter, Nano, Interpreter'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/NanoInterpreter">Interpreter/NanoInterpreter</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Interpreter" class=wikipagelink>Interpreter</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+/*
+ * NanoInterpreter by Kinsen Choy
+ * http://robowiki.net/cgi-bin/robowiki?Kinsen
+ */
+
+import robocode.AdvancedRobot;
+import robocode.ScannedRobotEvent;
+
+public class NanoInterpreter extends AdvancedRobot
+{
+    /*
+     * Command	    Usage
+     * CMD_SET	    CMD_SET [Index] [Value]
+     * CMD_IF	    CMD_IF [Location] [Condition]
+     * -------
+     * CMD_CALL     CMD_CALL [# Parameters] [Parameters...] [Class Name] [Method Name]
+     *              [Object Index (0: Robot, 1: Event)]
+     * CMD_VAR_VAL  CMD_VAR_VAL [Index]
+     * CMD_SUBTRACT CMD_SUBTRACT [Value0] [Value1]
+     * CMD_DIVIDE   CMD_DIVIDE [Value0] [Value1]
+     *
+     * Only the first two commands can start a "line" of commands
+     * Numbers that represent a command must be an integer and numbers representing a number must be a double (e.g. 0.0)
+     * CMD_IF will set the interpreter location at the [Location]th token (delimited by spaces) if [Condition] == 0D
+     * CMD_VAR_VAL gets the value stored at [Index]
+     */
+    
+    private static final int ARRAY_SIZE = 8192; // 2 ^ 13
+    
+    private static final int CMD_SET = -1;
+    private static final int CMD_CALL = 0;
+    private static final int CMD_VAR_VAL = 1;
+    private static final int CMD_SUBTRACT = 2;
+    
+    // Hidden commands:
+    // CMD_IF
+    // CMD_DIVIDE
+    
+    private static final String COMMANDS[] =
+            ""
+            .split(" ");
+    private static int myInstruction;
+    
+    private static final int RUN_START = 0;
+    private static final int SCANNED_START = 0;
+    
+    private static double myVariables[] = new double[ARRAY_SIZE];
+    private static Object myObjects[];
+    
+    public void run()
+    {
+        (myObjects = new Object[2])[0] = this;
+        
+        /*setAdjustGunForRobotTurn(true);
+        setAdjustRadarForGunTurn(true);
+        setAdjustRadarForRobotTurn(true);*/
+        executeCommands(RUN_START);
+    }
+    
+    public void onScannedRobot(ScannedRobotEvent e)
+    {
+        myObjects[1] = e;
+        executeCommands(SCANNED_START);
+    }
+    
+    private static String getNext()
+    {
+        return COMMANDS[myInstruction++];
+    }
+    
+    private static void executeCommands(int startIndex)
+    {
+        myInstruction = startIndex;
+        try
+        {
+            while(true)
+            {
+                // 2 codesize used to maintain prefix convention
+                int command = Integer.parseInt(getNext());
+                int value0 = (int) getNextValue();
+                double value1 = getNextValue();
+                if (command == CMD_SET)
+                {
+                    myVariables[value0] = value1;
+                }
+                // Default to CMD_IF
+                // For goto use CMD_IF [Location] 0.0
+                else
+                {
+                    //double value0 = getNextValue();
+                    if (value1 == 0D)
+                    {
+                        myInstruction = value0;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // This should occur whenever there is no more code to execute
+            // OR if there is syntax error in the code being interpreted
+            //ex.printStackTrace();
+        }
+    }
+    
+    private static double getNextValue()
+    {
+        String command = getNext();
+        try
+        {
+            int nextInt;
+            if ((nextInt = Integer.parseInt(command)) == CMD_CALL)
+            {
+                // Syntax: [# Parameters] [Parameters] [Class Name] [Method Name] [Object Index]
+                // Since there is no try-catch block dedicated to the method call,
+                // CMD_CALL is returned if the method returns null
+                //try
+                {
+                    Class classes[] = new Class[(int) getNextValue()];
+                    Object objects[] = new Object[classes.length];
+                    for (int i = 0; i &lt; classes.length; i++)
+                    {
+                        classes[i] = double.class;
+                        objects[i] = Double.valueOf(getNextValue());
+                    }
+                    return ((Number) Class.forName(getNext()).getMethod(getNext(), classes).invoke
+                            (myObjects[(int) getNextValue()], objects)).doubleValue();
+                }
+                //catch (NullPointerException ex)
+                //{
+                //}
+                //catch (Exception ex)
+                //{
+                //ex.printStackTrace();
+                //}
+                //return 0D;
+            }
+            
+            double value0 = getNextValue();
+            if (nextInt == CMD_VAR_VAL)
+            {
+                return myVariables[(int) value0];
+            }
+            
+            if (nextInt == CMD_SUBTRACT)
+            {
+                return value0 - getNextValue();
+            }
+            //if (nextInt == CMD_DIVIDE)
+            return value0 / getNextValue();
+        }
+        catch (Exception ex)
+        {
+            //ex.printStackTrace();
+            // Integer.parseInt(getNext()) consumes the double so it has to go back
+            return Double.parseDouble(command);
+        }
+    }
+}
+</pre>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Download the compiler here (zip containing entire <a href="robowiki?NetBeans" class=wikipagelink>NetBeans</a> project): <a rel="nofollow" href="http://www.geocities.com/seakinsen1/robocode/NanoInterpreter.zip">http://www.geocities.com/seakinsen1/robocode/NanoInterpreter.zip</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Interpreter" class=wikipagelink>Interpreter</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Interpreter/NanoInterpreter" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Interpreter/NanoInterpreter">View other revisions</a><br>Last edited June 15, 2007 4:12 EST by ppp-71-138-52-250.dsl.sndg02.pacbell.net <a href="robowiki?action=browse&diff=1&id=Interpreter/NanoInterpreter">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

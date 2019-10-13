@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Hyperion - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Hyperion'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Hyperion">Hyperion</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?Mue" class=wikipagelink>Mue</a>, tell us a little ´bout it... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Hyperion is my first try to design a really competitive robot. Its a <a href="robowiki?MegaBot" class=wikipagelink>MegaBot</a> designed for <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a> using <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> and a rather simple movement (for now).
+<p>
+<hr noshade class=wikiline size=1>
+<strong>version history</strong> (newest entry on top)
+<p>
+<font size = -1>
+<p>
+<UL >
+<li> <strong>version 0.8</strong> (March 20 2005) - rating: 1903
+<UL >
+<li> basicly a release of the development version of Hyperion, with a lot of code changes made during the development of <a href="robowiki?Ascendant" class=wikipagelink>Ascendant</a>
+<li> updated targeting, uses the same as <a href="robowiki?Ascendant" class=wikipagelink>Ascendant</a> (again)
+</UL>
+</UL>
+<p>
+<UL >
+<li> <strong>version 0.7.3</strong> (May 25 2004) - rating: 1831 (dropped to 1810)
+<UL >
+<li> included wall segmentation in <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>
+<li> removed <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a> (in theory there should be always another gun thats better against a specific opponent)
+<li> really minor movement change
+<li> tuned the fire power selection a bit (not sure if the new one is better though)
+</UL>
+<li> <strong>version 0.7.2</strong> (May 22 2004) - rating: 1793
+<UL >
+<li> reworked <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> (no fixed pattern length any more)
+<li> removed <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> (was never the best gun vs. any bot in my testbed)
+<li> added averaging <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a>
+<li> minor change to movement, will sometimes react to bullet fire now
+</UL>
+<li> <strong>version 0.7.1</strong> (May 12 2004) - rating: 1771
+<UL >
+<li> changed movement a bit to deal with some of its lower ranked problem bots
+<li> improved gun management (made targeting faster)
+<li> increased accuracy of <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>
+</UL>
+<li> <strong>version 0.7</strong> (May 07 2004) - rating: 1726
+<UL >
+<li> initial release
+</UL>
+</UL>
+<p>
+</font>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+<p>
+It randomly picks a position on the battlefield that has roughly the same distance to the opponent as the current position, and will not require the bot to pass its opponent to reach it (meaning it is on the same side of the opponent
+as the current position). Then it moves towards that position and after a random number of ticks a new position is selected.
+<p>
+<H4>How does it fire?</H4>
+
+<p>
+It uses a <a href="robowiki?VirtualGuns" class=wikipagelink>virtual gun array</a>, containing a well tuned guess factor gun and a very fast learning gun.
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+<p>
+There is a chance that a new position is selected, when a bullet is detected.
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+<p>
+Its an <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a> bot. Never tested melee, so its probably throwing exceptions at that.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+<p>
+It saves nothing between battles. Between rounds targeting information is stored.
+<p>
+<H4>Where did you get the name?</H4>
+
+<p>
+Hm, it was the first that came to my mind and was not in use already. Might have something to do with the astronomy book i read back then (Hyperion is a moon of Saturn).
+<p>
+<H4>Can I use your code?</H4>
+
+<p>
+Not at the moment. I will eventually release the source code (though some cleaning up might be required first).
+<p>
+<H4>What's next for your robot?</H4>
+
+<p>
+<UL >
+<li> maybe tune the movement (but no change to wave surfing)
+</UL>
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+<p>
+Its not based on other robots/code in particular. I used some ideas from the wiki, the most important probably being <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a>, <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> and how to implement <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a>.
+<p>
+<H4>Where can I get it?</H4>
+
+<p>
+<a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=2224">http://www.robocoderepository.com/BotDetail.jsp?id=2224</a>
+<p>
+-- <a href="robowiki?Mue" class=wikipagelink>Mue</a>
+<hr noshade class=wikiline size=1>
+<H4>comments, suggestions, questions:</H4>
+
+<p>
+<p>
+Stealing your version history format :) -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+<strong> HALLO MUE. Endlich bin ich nicht mehr der einzige deutsche robocoder in der rumble :D </strong>--<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+Jo, sieht ganz so aus. Dann auch mal 'Hallo' von mir :-) -- <a href="robowiki?Mue" class=wikipagelink>Mue</a>
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Hyperion" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Hyperion">View other revisions</a><br>Last edited March 22, 2005 22:00 EST by <a href="robowiki?Mue" title="ID 3525 from p54BCCDC2.dip.t-dialin.net">Mue</a> <a href="robowiki?action=browse&diff=1&id=Hyperion">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

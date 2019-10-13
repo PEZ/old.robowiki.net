@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Hanji/RobocodeUtils - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Hanji, Robocode, Utils'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/RobocodeUtils">Hanji/RobocodeUtils</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Hanji" class=wikipagelink>Hanji</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>This is just a simple class that contains some useful basic functions. I just provide this for completeness so that my other classes will compile w/o modification.
+<hr noshade class=wikiline size=1>
+<pre>
+ package neh;
+
+ /**
+ * This class contains a set of useful methods for programming
+ * robocode robots, mainly dealing with distances and angles.
+ * Most of these would actually work for any 2d application. All
+ * functions use radians, not degrees.
+ **/
+
+ public class RobocodeUtils {
+	
+	private RobocodeUtils() {}
+	
+	public static final double TWO_PI = Math.PI*2;
+	public static final double HALF_PI = Math.PI/2;
+	
+	/**return the distance between (x1,y1) and (x2,y2)*/
+	public static double dist(double x1, double y1, double x2, double y2) {
+		return Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+	}
+	
+	/**
+	 * Normalizes an angle (reduces it to the coterminal angle theta
+	 * such that  0 &lt; theta &lt; 2*pi)
+	 **/
+	public static double normalizeHeading(double ang) {
+		while (ang &lt; 0) ang += TWO_PI;
+		while (ang &gt; TWO_PI) ang -= TWO_PI;
+		return ang;
+	}
+	
+	/**
+	 * Normalizes a bearing (reduces it to the coterminal angle theta
+	 * such that  -pi &lt; theta &lt; pi)
+	 **/
+	public static double normalizeBearing(double ang) {
+		while (ang &lt; -Math.PI) ang += TWO_PI;
+		while (ang &gt; Math.PI) ang -= TWO_PI;
+		return ang;
+	}
+	
+	/**returns the bearing from (x1,y1) to (x2,y2) in the range -pi to pi*/
+	public static double getBearing( double x1,double y1, double x2,double y2 ) {
+		double xo = x2-x1;
+		double yo = y2-y1;
+		return Math.atan2(xo,yo);
+	}
+ }
+</pre>
+<hr noshade class=wikiline size=1>
+<strong>Questions or comments:</strong>
+<p>
+Here's a shorter, more efficient version of normalizeHeading:
+<p>
+<PRE >
+    public static final double normalizeHeading(double angle) {
+        return Math.abs(angle % TWO_PI);
+    }
+</PRE>
+<p>
+And there are a couple versions of normalizeBearing floating around out there, but I think this is the smallest (accurate) version:
+<p>
+<PRE >
+    public static final double normalizeBearing(double angle) {
+        return Math.atan2(Math.sin(angle), Math.cos(angle));
+    }
+</PRE>
+<p>
+- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+The Math.abs() version doesn't work correctly on negatives I don't think (not that simple).  However, I figured out a way to make Robocode do it- 
+<pre>
+	return robocode.util.Utils.normalAbsoluteAngle(angle);
+</pre>
+<p>
+In <a href="robowiki?SillyBot" class=wikipagelink>SillyBot</a>, the way I do normalizeBearing is using the above:
+<pre>
+	return robocode.util.Utils.normalAbsoluteAngle(angle+Math.PI)-Math.PI;
+</pre>
+I hear that takes 1 byte more than the trig way <a href="robowiki?Nano" class=wikipagelink>nano</a> showed, though, if you're worried about codesize.
+<p>
+Does anyone know if there are any other utils in the robocode class besides 
+normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a> and normalAbsoluteAngle<a href="robowiki?action=edit&id=AbsoluteAngle" class=wikipageedit>?</a>?  - <a href="robowiki?Tyrol" class=wikipagelink>Tyrol</a>
+<p>
+I don't know about the correctness of the normalizeHeading and normalizeBearing functions in this code, I think the following versions are functionally the same and are faster. --Quag<a href="robowiki?action=edit&id=Quag" class=wikipageedit>?</a>
+<pre>
+	public final static double normalizeBearing(final double ang) {
+		return ang % Math.PI;
+	}
+</pre>
+<pre>
+	public final static double normalizeHeading(final double ang) {
+		final double result = ang % Math.PI;
+		if (result &lt; 0)
+			return result + TWO_PI;
+		return result;
+	}
+</pre>
+<p>
+Quaq<a href="robowiki?action=edit&id=Quaq" class=wikipageedit>?</a>, your code doesn't work right. I quickly wrote Normalizer (32 <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a>) as an example:
+<pre>public class Normalizer {
+	public final static double PI2 = Math.PI*2;
+	
+	/**
+	 * Returns normalized heading (0 &lt;= heading &lt; 2*Pi).
+	 * @return 0 &lt;= heading &lt; 2*Pi
+	 */
+	public static double normalizeHeading(final double heading) {
+		return (heading % PI2 + PI2) % PI2;
+	}
+	
+	/**
+	 * Returns normalized bearing (-Pi &lt;= bearing &lt; Pi)
+	 * @return -Pi &lt;= bearing &lt; Pi
+	 */
+	public static double normalizeBearing(final double bearing) {
+		return normalizeHeading(bearing + Math.PI) - Math.PI;
+	}
+}</pre>
+Note that you can use normalizeAbsoluteAngle<a href="robowiki?action=edit&id=AbsoluteAngle" class=wikipageedit>?</a>() and normalize<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>() of robocode.util.Utils (my <a href="robowiki?IDE" class=wikipagelink>IDE</a> shows variables and methods if you open a .class, but doesn't try to get the inside of methods back - it shows nothing instead). Handy for <a href="robowiki?NanoBots" class=wikipagelink>NanoBots</a>.
+<p>
+dist() is more efficient (less (code)size and faster) when written directly in Java ByteCode<a href="robowiki?action=edit&id=ByteCode" class=wikipageedit>?</a>, and getBearing() uses inefficient (more (code)size and slower) variables. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+Oooops... not quite enough test cases. :) Thanks for spotting my errors <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>. --Quag<a href="robowiki?action=edit&id=Quag" class=wikipageedit>?</a>
+<p>
+You can also use:
+<pre>
+	robocode.util.Utils.normalRelativeAngle(angle);
+</pre>
+Clemens(cr)
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Hanji" class=wikipagelink>Hanji</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Hanji/RobocodeUtils" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Hanji/RobocodeUtils">View other revisions</a><br>Last edited December 7, 2004 20:02 EST by chello080108084091.31.11.vie.surfer.at <a href="robowiki?action=browse&diff=1&id=Hanji/RobocodeUtils">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

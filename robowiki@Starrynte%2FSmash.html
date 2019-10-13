@@ -1,0 +1,697 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Starrynte/Smash - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Starrynte, Smash'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Smash">Starrynte/Smash</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package ntc;
+import robocode.*;
+import robocode.util.Utils;
+import java.awt.Color;
+import java.util.Hashtable;
+import java.util.Enumeration;
+import java.util.Random;
+import java.util.Vector;
+import java.util.Iterator;
+import java.awt.geom.*;
+
+/** Smash - a robot by Starrynte
+ *  Minimum-risk movement mainly from HawkOnFire and Coriantumr
+ * Changes
+ *
+ * 1.2 Changed opening radar slightly
+ *     slight change in target selection
+ * 1.2.1 Extrapolate enemies
+ *       Assign getGunCoolingRate() to variable to fix ramming problem
+ *       Fixed opening radar problem
+ *       Slight change in risk function and point-generating function
+ *       Fixed 'tick' problem
+ * 1.2.2 Slight change in target selection
+ *       Deleted useless commented-out code
+ *       Slight change in risk function
+ *       Fixed onDeath problem (see http://robowiki.net/cgi-bin/robowiki?OnDeath)
+ *       Fixed firing while turning gun problem
+ * 1.2.3 Final version will be 1.3
+ *       Added 'lasers' with 1v1 and changed 1v1 movement to MR
+ *       Movement/gun/radar problem when energy&lt;1 fixed
+ *       'Search and wander' mode (when timeSinceLastScan&gt;15) fixed
+ *       
+ */
+
+public class Smash extends AdvancedRobot
+{
+	static Hashtable enemies;
+	static Enemy target,closestEn,badEn;
+	static Point2D.Double nextDestination,lastPosition;
+	static Rectangle2D.Double field;
+	static double myEnergy,myX,myY,myGunHeading,myRadarHeading,myHeading,myGunHeat,gunCoolingRate,dir=1,radarDir=1,lastEnergy=100,curEnergy=100,timeSinceLastScan=0;
+	static long time=0;
+	static int[] finishes;
+	static Vector botNameList=new Vector();
+	static Vector bulletLines=new Vector();
+	static boolean blinuse=false;
+	
+	public void run()
+	{
+		initBattle();
+		while(true){
+			updateEn();		
+			time=getTime();		
+			if(getOthers()==0){
+				break;
+			}else{
+				if(getTime()&gt;3){
+					doMovement();		
+				}
+			}
+			doGunning();			
+			doScanner();
+			timeSinceLastScan++;
+			//if(getTime()&gt;10 &amp;&amp; getTime()%5==0){out.println(closestEn.distance);}
+			execute();			
+		}
+	}
+	public void onScannedRobot(ScannedRobotEvent e){
+		Enemy en=(Enemy)enemies.get(e.getName());
+		if(en==null){
+			en=new Enemy();
+			en.fearFactor=1;
+			en.gun=new MeleePatternMatcher();
+			en.bad=0;
+			enemies.put(e.getName(),en);
+		}		
+		en.energy=e.getEnergy();
+		en.live=true;
+		double x=myX + Math.sin(e.getBearingRadians()+myHeading)*e.getDistance();
+		double y=myY + Math.cos(e.getBearingRadians()+myHeading)*e.getDistance();				
+		en.lastLocation=en.location;
+		en.location=new Point2D.Double(x,y);
+		en.distance=e.getDistance();
+		en.velocity=e.getVelocity();
+		en.headDelta=Utils.normalRelativeAngle(e.getHeadingRadians()-en.heading);		
+		en.heading=e.getHeadingRadians();
+		en.ctime=e.getTime();
+		en.name=e.getName();
+		timeSinceLastScan=0;
+		if(!target.live || time-target.ctime&gt;15 || ((en.distance&lt;target.distance*0.9 || (en.energy&lt;target.energy*0.5 &amp;&amp; en.distance&lt;=target.distance*1.1) || (en.bad&gt;target.bad &amp;&amp; en.distance&lt;target.distance*1.4)) &amp;&amp; myGunHeat/gunCoolingRate&gt;6)){
+			if(!(target==en)){
+				target=en;
+			}
+		}
+		if(!botNameList.contains(e.getName())){
+			botNameList.add(e.getName());
+			if(botNameList.size()&gt;=getOthers()){
+				botNameList.clear();
+				if(getOthers()&gt;1){
+					radarDir*=-1;					
+				}
+			}
+		}		
+		if(target!=null &amp;&amp; (!target.name.equals(en.name))){
+			if(en.distance&lt;100 &amp;&amp; en.energy&lt;=0){				
+				setMaxVelocity(8);
+				setTurnRightRadians(Utils.normalRelativeAngle(e.getBearingRadians()-myHeading));
+				waitFor(new TurnCompleteCondition(this));
+				setAhead(en.distance);
+				waitFor(new MoveCompleteCondition(this));
+			}else if(en.energy&lt;=0 &amp;&amp; en.distance&gt;=100){
+				setTurnGunRightRadians(Utils.normalRelativeAngle(e.getBearingRadians()+myHeading-myGunHeading));
+				setFire(0.1);
+			}
+		}
+		if(getOthers()==1){
+			lastEnergy=curEnergy;
+			curEnergy=e.getEnergy();
+		}
+	}
+	public void onRobotDeath(RobotDeathEvent e) {
+		Enemy en=(Enemy)enemies.get(e.getName());
+		if(en!=null){
+			en.live=false;			
+			if(target.name.equals(en.name)){
+				boolean getDanger=false;
+				boolean update=false;		
+				if(closestEn!=null){
+					getDanger=(closestEn.ctime-time&gt;4 || myEnergy&lt;3 || closestEn.distance&lt;70) &amp;&amp; getOthers()&gt;1;
+				}
+				if(badEn!=null){
+					update=time-badEn.ctime&gt;3 &amp;&amp; getOthers()&gt;1;
+				}
+				setTurnRadarRightRadians(getRadarSweepRadians(false,getDanger,update));
+			}
+			en.bad+=getOthers()*getOthers()+(getEnergy()/2);			
+		}			
+	}
+	public void onHitByBullet(HitByBulletEvent e){
+		Enemy en=(Enemy)enemies.get(e.getName());
+		if(en==null){
+			en=new Enemy();
+			enemies.put(e.getName(),en);
+		}
+		en.live=true;
+		en.fearFactor+=(en.fearFactor&gt;3) ? 0:e.getBullet().getPower()/30;
+		if(getOthers()==1){
+			curEnergy+=e.getBullet().getPower()*3;
+			lastEnergy=curEnergy;
+		}
+	}	
+	public void onHitRobot(HitRobotEvent e){
+		Enemy en=(Enemy)enemies.get(e.getName());
+		if(en==null){
+			en=new Enemy();
+			en.fearFactor=1;
+			enemies.put(e.getName(),en);
+		}		
+		en.fearFactor+=(en.fearFactor&gt;3) ? 0:0.1;		
+		en.energy=e.getEnergy();
+		en.live=true;
+		en.name=e.getName();
+		if(e.getEnergy()&gt;0.5){
+			target=en;
+		}
+		closestEn=en;
+		setTurnRadarRightRadians(getRadarSweepRadians(true,true,false));
+		setTurnGunRightRadians(Utils.normalRelativeAngle(e.getBearingRadians()+myHeading-myGunHeading));
+		if(myGunHeat==0 &amp;&amp; getGunTurnRemainingRadians()&lt;0.5){
+			setFire(Math.min(3,getEnergy()/2));
+		}
+		doMovement();
+		if(getOthers()==1){
+			curEnergy-=0.6;
+			lastEnergy=curEnergy;
+		}
+	}
+	public void onBulletHit(BulletHitEvent e){
+		target.fearFactor-=(target.fearFactor&gt;=1.1) ? e.getBullet().getPower()/30:0;
+		if(getOthers()==1){
+			curEnergy=e.getEnergy();
+			lastEnergy=curEnergy;
+		}
+	}
+	public void onHitWall(HitWallEvent e){
+		dir*=-1;
+	}
+	public void onWin(WinEvent e){
+		setAhead(40*dir);
+		waitFor(new MoveCompleteCondition(this));		
+		endRound();
+		setAhead(0);
+		setTurnRightRadians(Double.POSITIVE_INFINITY);
+		setTurnGunLeftRadians(Math.PI*4);
+		setTurnRadarRightRadians(Utils.normalRelativeAngle(Math.atan2(target.location.getX()-getX(),target.location.getY()-getY())-getRadarHeadingRadians()));
+		waitFor(new GunTurnCompleteCondition(this));
+		setTurnGunRightRadians(Utils.normalRelativeAngle(Math.atan2(target.location.getX()-getX(),target.location.getY()-getY())-getGunHeadingRadians()));
+		if(myEnergy&gt;0.1){
+			waitFor(new GunTurnCompleteCondition(this));
+			setFire(Math.min(myEnergy-0.1,Math.max((((target.distance/30)-20)/-3),0.5)));
+		}
+		execute();
+	}
+	public void onDeath(DeathEvent e){
+		Vector v=getAllEvents();
+		Iterator i=v.iterator();
+		while(i.hasNext()){
+			Object obj=i.next();
+			if(obj instanceof HitByBulletEvent) onHitByBullet((HitByBulletEvent) obj);
+		}
+		endRound();
+	}
+	public void onCustomEvent(CustomEvent e){
+		if(e.getCondition().getName().equals("dodge") &amp;&amp; getOthers()&lt;=1){
+			double bheading=calcAngle((target.location==null) ? new Point2D.Double(myX,myY):target.location,new Point2D.Double(myX,myY));
+			Point2D.Double p1=projectPoint((target.location==null) ? new Point2D.Double(myX,myY):target.location,bheading-180,20-(3*(lastEnergy-curEnergy))*3);
+			Point2D.Double p2=projectPoint(p1,bheading,20-(3*(lastEnergy-curEnergy))*10);
+			Line2D.Double l=(target.location==null) ? new Line2D.Double():new Line2D.Double(p1,p2);
+			BulletLine bulletline=new BulletLine();
+			bulletline.line=l;
+			bulletline.time=getTime();
+			bulletline.power=lastEnergy-curEnergy;
+			blinuse=true;
+			bulletLines.add(bulletline);			
+			blinuse=false;
+		}else if(e.getCondition().getName().equals("tick")){
+			out.println("--------------------");
+			myEnergy=getEnergy();
+			myX=getX();
+			myY=getY();
+			myGunHeading=getGunHeadingRadians();
+			myRadarHeading=getRadarHeadingRadians();
+			myHeading=getHeadingRadians();
+			myGunHeat=getGunHeat();
+			time=getTime();	
+		}
+				
+	}
+	void initBattle(){
+		Condition dodge=new Condition("dodge"){
+			public boolean test(){
+				double delta=lastEnergy-curEnergy;
+				return (delta&gt;=0.1 &amp;&amp; delta&lt;=3);
+			}
+		};
+		Condition tick=new Condition("tick"){
+			public boolean test(){
+				return time != getTime();
+			}
+		};
+				
+		addCustomEvent(dodge);
+		addCustomEvent(tick);
+		
+		if (finishes == null){
+			finishes = new int[getOthers()+1];
+			enemies = new Hashtable();
+		}
+		setColors(Color.RED.darker(),Color.YELLOW,Color.BLUE);
+		setScanColor(Color.GRAY.brighter());
+		setBulletColor(Color.YELLOW.brighter());
+		setEventPriorities();
+		int direction=sign(Utils.normalRelativeAngle(calcAngle(new Point2D.Double(getX(),getY()),new Point2D.Double(getBattleFieldWidth()/2,getBattleFieldHeight()/2))-getRadarHeadingRadians()));
+		setTurnRadarRightRadians(direction * Double.POSITIVE_INFINITY);
+		radarDir=(double)direction;
+		field=new Rectangle2D.Double(36,36,getBattleFieldWidth()-72,getBattleFieldHeight()-72);
+		nextDestination=lastPosition=new Point2D.Double(getX(),getY());
+		target=closestEn=badEn=new Enemy();
+		gunCoolingRate=getGunCoolingRate();	
+		
+		setTurnRightRadians(0.5*direction);
+		setTurnGunRightRadians(1*direction);
+		waitFor(new GunTurnCompleteCondition(this));
+		setAdjustGunForRobotTurn(true);
+		setAdjustRadarForGunTurn(true);
+	}
+	void doMovement(){
+		if((nextDestination.distance(myX,myY)&lt;getWidth()*1.3 || extrapolate(closestEn).distance&lt;200) &amp;&amp; timeSinceLastScan&lt;=15 &amp;&amp; getTime()%5==0){
+			//if(getTime()%5==0){ out.print("Setting movement loc to:"); }
+			for(int i=0;i&lt;200;i++){
+				double ang=(2*Math.PI)*Math.random();
+				double dist=Math.min((closestEn==null ? 250:Math.max(extrapolate(closestEn).distance*0.85,getWidth()/2)),100+200*Math.random());
+				double testX=myX+Math.sin(ang)*dist;
+				double testY=myY+Math.cos(ang)*dist;
+				if(field.contains(testX,testY)){
+					if(evaluate(new Point2D.Double(testX,testY))&lt;evaluate(nextDestination)){
+						nextDestination.setLocation(testX,testY);
+					}
+				}
+			}
+			//if(getTime()%5==0){ out.println(nextDestination.toString()); }
+			//lastPosition.setLocation(myX,myY);							
+		}else if(timeSinceLastScan&gt;15 &amp;&amp; nextDestination.distance(myX,myY)&lt;getWidth()*1.3){
+				//nextDestination.setLocation(18+((getBattleFieldWidth()-54)*Math.random())+18,18+((getBattleFieldHeight()-54)*Math.random())+18);
+				//double ang=calcAngle(new Point2D.Double(myX,myY),extrapolate(closestEn).location);
+				double ang=(2*Math.PI)*Math.random();
+				double dist=200+300*Math.random();
+				double testX=myX+Math.sin(ang)*dist;
+				double testY=myY+Math.cos(ang)*dist;
+				if(field.contains(testX,testY)){
+					nextDestination.setLocation(testX,testY);
+				}
+		}else{
+			double dir=1;
+			double ang=calcAngle(new Point2D.Double(myX,myY),nextDestination)-myHeading;
+			double dist=nextDestination.distance(myX,myY);
+			if(Math.cos(ang)&lt;0){
+				dir=-1;
+				ang+=Math.PI;
+			}			
+			ang=Utils.normalRelativeAngle(ang);
+			setTurnRightRadians(ang);
+			setAhead(dist*dir);		
+			setMaxVelocity((Math.abs(ang)&gt;0.75 || sign(getVelocity())!=dir) ? 1 : 8);
+			//if(getTime()%5==0){ out.println("Going there: " + Math.toDegrees(ang)); }						
+		}
+	}
+	void doGunning(){
+		if(target.location != null){
+			double bulletPower=Math.min(Math.min(myEnergy/10, 1200/target.distance), target.energy/3.5);
+			if(target.energy&gt;15){
+				bulletPower*=Math.max(getOthers()/7.5,1);
+			}
+			if(getOthers()==1){
+				while(myEnergy-bulletPower&lt;target.energy/5){
+					bulletPower-=0.1;
+				}
+			}
+			bulletPower=Math.min(3,Math.max(0.1,bulletPower));
+			double absBearing=calcAngle(new Point2D.Double(myX,myY),target.location);
+			if(target.energy&gt;0){				
+				//if(Math.abs(getGunTurnRemainingRadians())&lt;0.05){
+					if(Math.abs(target.headDelta)&lt;0.0001){
+						setTurnGunRightRadians(Utils.normalRelativeAngle((absBearing-myGunHeading) - (target.velocity * Math.sin(absBearing-target.heading) / (20-3*bulletPower))));
+					}else{
+						//double a=Math.asin(target.velocity/(20-(3*bulletPower)));
+						//if(Math.random()&lt;0.5){
+						//	a*=-1;
+						//}
+						setTurnGunRightRadians(Utils.normalRelativeAngle(absBearing-myGunHeading//+(Math.random()*a)
+						));
+					}
+					/*PM
+					Point2D.Double predictedPos=target.gun.predict(new Point2D.Double(myX,myY),bulletPower,new EnemyRobot(target.lastLocation,target.location,time-(long)target.ctime));
+					absBearing=calcAngle(new Point2D.Double(myX,myY),predictedPos);
+					out.println(predictedPos.getX()-target.location.getX());
+					setTurnGunRightRadians(Utils.normalRelativeAngle(absBearing-myGunHeading));
+					*/
+				//}
+				if(myGunHeat==0 &amp;&amp; myEnergy&gt;1 &amp;&amp; target.live &amp;&amp; (getGunTurnRemainingRadians()&lt;0.25 || getOthers()&lt;=1)/*&amp;&amp; Math.abs(absBearing-myGunHeading)&lt;Math.atan(25/target.distance)*/ &amp;&amp; time-target.ctime&lt;25){				
+					double scanFactor=Math.min(7.5/(time-target.ctime),1);
+					setFire(bulletPower*scanFactor);
+				}
+			}else{
+				if(target.distance&lt;100 || getOthers()==1){
+					setMaxVelocity(8);
+					if(getOthers()==1){
+						waitFor(new MoveCompleteCondition(this));
+					}					
+					setTurnRightRadians(Utils.normalRelativeAngle(absBearing-myHeading));
+					waitFor(new TurnCompleteCondition(this));
+					setAhead(target.distance);
+					waitFor(new MoveCompleteCondition(this));
+				}else{
+					setTurnGunRightRadians(Utils.normalRelativeAngle(absBearing-myGunHeading));
+					setFire(0.1);
+				}
+			}
+		}
+	}
+
+	void doScanner(){
+		boolean assist=false;
+		boolean getDanger=false;
+		boolean update=false;		
+		if(target!=null){
+			assist=(myGunHeat/gunCoolingRate&lt;=5 || getOthers()==1) &amp;&amp; target.live;
+		}
+		if(closestEn!=null){
+			getDanger=(time-closestEn.ctime&gt;2 || myEnergy&lt;3 || extrapolate(closestEn).distance&lt;75 || myGunHeat/gunCoolingRate&gt;13) &amp;&amp; getOthers()&gt;1;
+		}
+		if(badEn!=null){
+			update=(timeSinceLastScan&gt;5 || time-badEn.ctime&gt;5 || enemies.size()&lt;getOthers() || myGunHeat/gunCoolingRate&gt;5) &amp;&amp; getOthers()&gt;1;
+		}		
+		out.println(assist + "," + getDanger + "," + update);
+		double radarAng=(sign(getRadarSweepRadians(assist,getDanger,update))==1) ? Math.max(getRadarSweepRadians(assist,getDanger,update),0.7):Math.min(getRadarSweepRadians(assist,getDanger,update),-0.7);
+		setTurnRadarRightRadians(radarAng);
+		out.println("RADARANG: " + Math.toDegrees(radarAng));	
+		out.println("TARGET:" + ((target==null) ? "null":target.name + " at " + target.location));
+	}
+	void doPM(){
+		Enumeration e=enemies.elements();
+		while(e.hasMoreElements()){
+			Enemy en=(Enemy)e.nextElement();			
+			if(en.live &amp;&amp; en.location!=null &amp;&amp; en.lastLocation!=null){
+				en.gun.add(new EnemyRobot(en.lastLocation,en.location,(int)en.ctime-time));
+			}
+		}
+	}
+	
+	double getRadarSweepRadians(boolean assist,boolean getDanger,boolean getBad){		
+		double ang=0;
+		double dangerAng=0;
+		double assistAng=0;
+		double badAng=0;
+		if(target!=null &amp;&amp; target.location!=null){			
+			assistAng=Utils.normalRelativeAngle(calcAngle(new Point2D.Double(myX,myY),target.location)-myRadarHeading);
+		}		
+		if(closestEn!=null &amp;&amp; closestEn.location!=null){
+			Enemy aDanger=extrapolate(closestEn);
+			dangerAng=Utils.normalRelativeAngle(calcAngle(new Point2D.Double(myX,myY),aDanger.location)-myRadarHeading);
+		}
+		if(badEn!=null &amp;&amp; badEn.location!=null){
+			Enemy aBad=extrapolate(badEn);
+			badAng=Utils.normalRelativeAngle(calcAngle(new Point2D.Double(myX,myY),aBad.location)-myRadarHeading);
+		}
+		if(assist){
+			if(getDanger){
+				if(getBad){
+					if(target!=null &amp;&amp; time-target.ctime&gt;0){
+						double d1=Math.abs(dangerAng-assistAng);
+						double d2=Math.abs(badAng-assistAng);
+						if(d1&lt;Math.PI/4 &amp;&amp; d2&lt;Math.PI/4){
+							ang=sign(badAng)*Double.POSITIVE_INFINITY;
+						}else{
+							if(d1&lt;Math.PI/4){
+								ang=sign(dangerAng)*Double.POSITIVE_INFINITY;
+							}else{
+								ang=sign(assistAng)*Double.POSITIVE_INFINITY;
+							}
+						}
+					}else{
+						ang=assistAng+(sign(assistAng)*(Math.PI/8));
+					}
+				}else{
+					if(target!=null &amp;&amp; time-target.ctime&gt;0){
+						double delta=Math.abs(dangerAng-assistAng);
+						if(delta&lt;Math.PI/4){
+							ang=sign(dangerAng)*Double.POSITIVE_INFINITY;
+						}else{
+							ang=sign(assistAng)*Double.POSITIVE_INFINITY;
+						}
+					}else{
+						ang=assistAng+(sign(assistAng)*(Math.PI/8));
+					}
+				}
+			}else{
+				if(getBad){
+					if(target!=null &amp;&amp; time-target.ctime&gt;0){
+						double delta=Math.abs(badAng-assistAng);
+						if(delta&lt;Math.PI/4){
+							ang=sign(badAng)*Double.POSITIVE_INFINITY;
+						}else{
+							ang=sign(assistAng)*Double.POSITIVE_INFINITY;							
+						}
+					}else{
+						ang=assistAng+(sign(assistAng)*(Math.PI/8));
+					}
+				}else{				
+					if(target!=null &amp;&amp; time-target.ctime&gt;0){
+						ang=sign(assistAng)*Double.POSITIVE_INFINITY;						
+					}else{
+						ang=assistAng+(sign(assistAng)*(Math.PI/8));
+					}
+				}
+			}
+		}else{
+			if(getDanger){
+				if(getBad){
+					double delta=Math.abs(badAng-dangerAng);
+					if(delta&lt;Math.PI/4){
+						ang=sign(badAng)*Double.POSITIVE_INFINITY;
+					}else{
+						ang=sign(dangerAng)*Double.POSITIVE_INFINITY;
+					}
+				}else{
+					ang=sign(dangerAng)*Double.POSITIVE_INFINITY;						
+				}
+			}else{
+				if(getBad){
+					ang=sign(badAng)*Double.POSITIVE_INFINITY;
+				}else{
+					ang=Double.POSITIVE_INFINITY*radarDir;
+				}
+			}
+		}
+		if(getTime()&lt;=3){
+			ang=Double.POSITIVE_INFINITY*radarDir;
+		}
+		if(timeSinceLastScan&gt;20){
+			ang=Double.POSITIVE_INFINITY;
+		}
+		return ang;		
+	}
+	
+	double getRadarSweep(boolean assist, boolean getDanger, boolean getBad){
+		return (getRadarSweepRadians(assist,getDanger,getBad)/Math.PI)*180;
+	}
+
+	double evaluate(Point2D.Double destination){
+		double risk=2/destination.distanceSq(myX,myY) + 1/destination.distanceSq(getBattleFieldWidth()/2,getBattleFieldHeight()/2) /*+ 1/destination.distanceSq(lastPosition)*/;
+		Enumeration e=enemies.elements();
+		while(e.hasMoreElements()){
+			Enemy nextEn=(Enemy)e.nextElement();
+			Enemy en=extrapolate(nextEn);
+			if(en.live &amp;&amp; en.location!=null){
+				double eratio=((en.energy+10)*Math.max(en.fearFactor,1))/myEnergy;
+				double perp=Math.abs(Math.cos(calcAngle(destination,new Point2D.Double(myX,myY))-calcAngle(destination,en.location)));
+				//double perp=Math.abs(en.distance-destination.distance(en.location));
+				int closeEnCount=0;
+				double eval=(eratio*Math.round(1+perp))/destination.distance(en.location);
+				Enumeration enEnemies=enemies.elements();
+				while(enEnemies.hasMoreElements()){
+					Enemy enEn=(Enemy)enEnemies.nextElement();
+					enEn=extrapolate(enEn);
+					if(enEn!=null &amp;&amp; (!enEn.name.equals(en.name)) &amp;&amp; enEn.location!=null &amp;&amp; enEn.live){
+						if(enEn.location.distanceSq(en.location)&lt;destination.distanceSq(en.location)*0.9){
+							closeEnCount++;
+						}
+					}
+				}
+				if(closeEnCount&lt;2 || myEnergy&lt;1){
+					eval*=3;							
+				}
+				if(new Line2D.Double(new Point2D.Double(myX,myY),destination).intersects(new Rectangle2D.Double(en.location.getX()-20,en.location.getY()-20,40,40))){
+					eval*=2;
+				}
+				risk+=eval;
+			}
+		}
+		if(closestEn!=null &amp;&amp; destination.distance(extrapolate(closestEn).location)&gt;1000){
+			risk*=0.1+destination.distance(extrapolate(closestEn).location)-1000;
+		}
+		if(!blinuse &amp;&amp; getOthers()&lt;=1){
+			blinuse=true;
+			Vector dbulletl=new Vector();
+			Iterator i=bulletLines.iterator();
+			while(i.hasNext()){
+				BulletLine bulletl=(BulletLine) i.next();
+				double heading=calcAngle((Point2D.Double)bulletl.line.getP1(),(Point2D.Double)bulletl.line.getP2());
+				Point2D.Double blP1=projectPoint((Point2D.Double)bulletl.line.getP1(),heading,bulletl.power);
+				Point2D.Double b1P2=projectPoint((Point2D.Double)bulletl.line.getP2(),heading,bulletl.power);
+				bulletl.line.setLine(blP1.getX(),blP1.getY(),b1P2.getX(),b1P2.getY());
+				if(!bulletl.line.intersects(field)){
+					dbulletl.add(bulletl);
+				}
+				if(bulletl.line.intersects(new Rectangle2D.Double(myX-20,myY-20,40,40))){
+					risk*=Math.max(10*bulletl.power,10);
+				}
+			}
+			i=dbulletl.iterator();
+			while(i.hasNext()){
+				BulletLine bulletl=(BulletLine) i.next();
+				bulletLines.remove(bulletl);
+			}
+			blinuse=false;			
+		}
+		return risk;
+	}
+	void setEventPriorities(){		
+		setEventPriority("BulletHitEvent",20);
+		setEventPriority("ScannedRobotEvent",20);
+		setEventPriority("HitRobotEvent",20);
+	}
+	void updateEn(){
+		double lastDistance=Double.POSITIVE_INFINITY;
+		double badTime=0;
+		Enumeration e=enemies.elements();
+		while(e.hasMoreElements()){
+			Enemy en=(Enemy)e.nextElement();
+			en=extrapolate(en);
+			if(en.live &amp;&amp; en.location!=null){
+				if(en.distance&lt;lastDistance){
+					closestEn=en;
+					lastDistance=en.distance;
+				}
+				if(time-en.ctime&gt;badTime){
+					badEn=en;
+					badTime=time-en.ctime;
+				}
+			}
+		}
+		out.println(badEn.name);
+	}
+	void endRound(){
+		finishes[getOthers()]++;
+		for(int i=0; i&lt;finishes.length; i++){
+			out.println(finishes[i] + " ");
+		}
+		if(getNumRounds()-getRoundNum()==1 || getNumRounds()%3==0){
+			out.println();
+			out.println("BATTLE STATISTICS");
+			out.println("-----------------");
+			Enumeration e=enemies.elements();
+			while(e.hasMoreElements()){
+				Enemy en=(Enemy)e.nextElement();
+				out.println(en.name + ":");
+				out.println("Badness - " + en.bad);
+				out.println("FearFactor - " + en.fearFactor);
+			}
+		}
+	}
+	double calcAngle(Point2D.Double s,Point2D.Double t){
+		return Math.atan2(t.getX()-s.getX(),t.getY()-s.getY());
+	}
+	public Enemy extrapolate(Enemy en){
+    	if (en==null || (!en.live) || en.location==null || time-en.ctime&gt;15){
+        	return en;
+		}else{
+    		double timeDelta=time-en.ctime;
+       		double x=en.location.getX() + (en.velocity*timeDelta*Math.sin(en.heading));
+       		double y=en.location.getY() + (en.velocity*timeDelta*Math.cos(en.heading));
+			
+			Line2D.Double diff=new Line2D.Double(en.location,new Point2D.Double(x,y));	
+			
+			
+			int TRACE_DEPTH = 16;
+			Point2D middle;
+			boolean containsFirst;
+		
+			if ((containsFirst = field.contains(diff.getP1())) == field.contains(diff.getP2())){
+			}
+		
+			for (int i = 0; i &lt; TRACE_DEPTH; i++) {
+				middle = new Point2D.Double((diff.getX1() + diff.getX2()) / 2, (diff.getY1() + diff.getY2()) / 2);
+
+				if (containsFirst != field.contains(middle)){
+					diff = new Line2D.Double(diff.getP1(), middle);
+				}else{
+					diff = new Line2D.Double(middle, diff.getP2());
+				}
+			}
+			x=(diff.getX1() + diff.getX2()) / 2;
+			y=(diff.getY1() + diff.getY2()) / 2;			
+			
+			
+			
+			if(Math.abs(x)&gt;1000){ out.println(en.name + " X WRONG: timeDelta=" + timeDelta + " velocity=" + en.velocity + " heading=" + en.heading + " orig x=" + en.location.getX()); }
+			if(Math.abs(y)&gt;1000){ out.println(en.name + " Y WRONG: timeDelta=" + timeDelta + " velocity=" + en.velocity + " heading=" + en.heading + " orig y=" + en.location.getY()); }
+			
+        	Enemy returnEn=en;
+			returnEn.location.setLocation(x,y);
+			returnEn.distance=returnEn.location.distance(myX,myY);
+			return returnEn;
+      	}
+    }
+	void avoidWall(Point2D.Double botLocation, double angle, int orientation) {
+		Rectangle2D.Double _fieldRect=new Rectangle2D.Double(18,18,getBattleFieldWidth()-36,getBattleFieldHeight()-36);
+        if(!_fieldRect.contains(projectPoint(botLocation, angle, 175))) {
+			dir*=-1;			
+        }
+    }
+	Point2D.Double projectPoint(Point2D.Double sourceLocation, double angle, double length) {
+        	return new Point2D.Double(sourceLocation.getX() + Math.sin(angle) * length,
+           	sourceLocation.getY() + Math.cos(angle) * length);
+   	}
+	int sign(double v){
+		return v &gt; 0 ? 1:-1;
+	}
+	class Enemy{
+		boolean live;
+		Point2D.Double lastLocation;
+		Point2D.Double location;
+		double energy;
+		double distance;
+		double velocity;
+		double heading;
+		double headDelta;
+		double fearFactor;
+		double ctime;
+		String name;		
+		int bad;
+		MeleePatternMatcher gun;
+	}
+	class BulletLine{
+		Line2D.Double line;
+		long time;
+		double power;
+	}
+}
+</pre>
+The code for Smash is above. I need help! (sorry the code is messy, i commented alot of things out because they don't work (yet) like the <a href="robowiki?MeleePatternMatcher" class=wikipagelink>MeleePatternMatcher</a>
+<p>
+Wait, that is not the code! Let me find the real code and then I'll change the code above --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Starrynte/Smash" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Starrynte/Smash">View other revisions</a><br>Last edited July 28, 2007 16:35 EST by <a href="robowiki?Starrynte" title="ID 10964 from cpe-75-84-83-181.socal.res.rr.com">Starrynte</a> <a href="robowiki?action=browse&diff=1&id=Starrynte/Smash">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

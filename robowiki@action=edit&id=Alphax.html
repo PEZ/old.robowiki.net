@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing Alphax - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Alphax'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing Alphax</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="Alphax"  />
+<input type="hidden" name="oldtime" value="1132492651"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="7"  />
+<input type="hidden" name="captchaArg2" value="1"  />
+<input type="hidden" name="captchaOp" value="*"  />
+<input type="hidden" name="captchaId" value="983187246209"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">To infinity and beyond! - Buzz Lightyear, Toy Story
+
+I&#39;m a newbie to Robocode, and my first problem is RobocodeGL. My next problem is making a bot that can beat SpinBot - not the easiest of tasks, but I&#39;m almost there.
+
+----
+
+Welcome to the wiki! You have my respect for trying to beat Spinbot your own way first instead of copy-pasting code from one of the pages here. :-) Be sure to let us know how you you do it. --[[David Alves]]
+
+Here is my results against SpinBot on a 800x600 field. Does this classify as beating it?
+
+|&#39;&#39;&#39;Name&#39;&#39;&#39;|&#39;&#39;&#39;Score&#39;&#39;&#39;|&#39;&#39;&#39;Survival&#39;&#39;&#39;|&#39;&#39;&#39;1sts&#39;&#39;&#39;|&#39;&#39;&#39;2nds&#39;&#39;&#39;
+|ABot|7498|4300|86|14
+|SpinBot|5494|700|14|86
+
+ABot was effectively built from MyFirstRobot, and ended up being a lot like Walls, but is not an AdvancedRobot, and sweeps back and forth instead of just pointing sideways. It dies very easily against pattern matchers, but tries to conserve energy by only firing when a &quot;reasonable&quot; chance to hit exists - the target must be either very slow or very close. It also uses variable firepower, again to conserve energy. 9/10 times it beats SpinBot by waiting for it to run out of energy. -- [[Alphax]]
+
+Congrats on defeating SpinBot.  You might want to read SelectingFirePower, since that seems to be your first advanced focus here.  What kind of targetting did you use?  Heads-on?  --[[Goofy]]
+
+Yes, HeadOnTargeting. If it sees it, and is close enough or slow enough, it shoots it. I&#39;m a bit confused about how to generate the probablity functions described in SelectingFirePower, because so far I am only using a Robot, not an AdvancedRobot. -- [[Alphax]]
+
+Congratulations ! Studying the samples and then trying to put your own ideas into them has worked for me to. When you get the grasp of it, I recommend you to start using AdvancedRobot. It is very handy (and nice to see) that your bot can do more than one thing at a time. -- [[GrubbmGait]]
+
+The only reason I can see to extend Robot instead of AdvancedRobot is if you don&#39;t want to loose any health when banging into a wall. As for SelectingFirePower; It&#39;s rather easy. Fire around power 1.9 at all distance ranges above 150 and when closer you should fire 3.0. It will optimize the damage reward you get from a hit in relation to the EscapeEnvelope you give the enemy. That&#39;s what that beautiful graph of mine on the SelectingFirePower page shows. And it has been proven to work by all my guns of lately. Besides, why do you think [[DT]] always fires with bullet power 1.86? [[Paul]] isn&#39;t the kind of robocoder that is sloppy with details. He figured this out long before me I think. But, of course, &#39;&#39;he&#39;&#39; kept it a secret. =) -- [[PEZ]]
+
+My previous power selection function was
+&lt;pre&gt;double power = 400 / e.getDistance();&lt;/pre&gt;
+My new scores are:
+
+|Name|Score|Survival|1sts|2nds
+|ABot|7714|4350|87|13
+|SpinBot|4994|650|13|87
+
+Of course, I could run 1000 tests on each:
+
+|Name|Score|Survival|Bullet Dmg|1sts|2nds
+|ABot (variable)|80277|45650|20850|916|85
+|SpinBot (vs. variable)|46223|4250|38412|88|913
+|ABot (fixed)|81259|45400|21854|909|92
+|SpinBot (vs. fixed)|47912|4600|39532|93|908
+
+Cool. For this particular test a column for bullet damage would fit I think. And SpinBot might not be the best bot to verify a bullet power scheme against. It&#39;s hardly maximizing it&#39;s EscapeEnvelope. But I&#39;m interested in the results anyway. -- [[PEZ]]
+
+Oh, if only I knew how to add images... I&#39;ll get the fixed power stuff up shortly. -- [[Alphax]]
+
+Adding images is simple. Just publish them somewhere on the web and link to them. -- [[PEZ]]
+
+@PEZ: Thanks for the tip. I&#39;ll try some other bulletpowers this evening. Currently 3.0 for &lt; 250, 0.99 for &lt; 500, 0.1 otherwise. (The latter one seems like trying to kill the other with peas). -- [[GrubbmGait]]
+
+Peas won&#39;t kill it unless you happen to hit it right in the eye. And even then you probably will just anger your enemy. =) Anyway, 1.9 for distances &gt; 150 and 3.0 are my defaults. Then there is some EnergyManagement too. Most of my bots try to not shoot themselves disabled (they stop firing if the remaining energy is below some threshold). And also when the enemy is low on energy I try to fire only as hard as would kill it, something like &lt;code&gt;Math.min(e.getEnergy() / 4, defaultBulletPower)&lt;/code&gt;. -- [[PEZ]]
+
+Well, I&#39;ve updated the table, but I&#39;ve changed the bot so much since then that I can&#39;t get it to work as well anymore, and &lt;s&gt;I don&#39;t have the old edits because I closed my editor to improve game speed! Grr.&lt;/s&gt; I found an old version! It works better than my latest one...
+
+Anyway, I&#39;m trying to get a retaliatory fire system working when it collides with another robot - I also put in some &quot;random&quot; movement, which also seems to have decreased its performance. Any suggestions?
+
+Oh, and killing things with peas is fun, especially when you do what I do and wait for the enemy to run out of energy :P -- [[Alphax]]
+
+Waiting out the enemy has always been my favorite strategy.  Most new RandomMovement systems stay about where they start.  At least, that&#39;s what mine always did at the beginning.  You might want to just watch your bot and see where he hangs out when he&#39;s running.  Also, this may be a bit advanced, but I just started it, so I&#39;ll sing its praises from the mountaintops...  try using CVS to keep track of your bot versions.  I&#39;m under the impression that every strong coder here uses some form of a CVS. --[[Goofy]]
+
+If I knew how to tie a CVS system into SciTE, I would. My RandomMovement consisted of:
+&lt;pre&gt;
+switch((int)(Math.random() * 2))
+{
+    case 0:
+        turnLeft(Math.random() * 60);
+        break;
+    case 1:
+        turnRight(Math.random() * 60);
+        break;
+}
+
+ahead(100 + Math.random() * 50);
+&lt;/pre&gt;
+Pretty, isn&#39;t it? My bot ends up on the walls and sometimes wanders across the center of the field. -- [[Alphax]]
+
+Congrats on beating SpinBot, took me much longer than that I think. Next thing to try might be making an AdvancedRobot so you can do move, aim, use your radar and fire all on the same turn. --[[David Alves]]
+
+Yes, pretty. But, as Goofy mentioned, RandomMovement isn&#39;t the best choice against [[HOT]] bots like SpinBot. Since it fires where you are when it sees you, you should try figure out a movement that takes your bot anywhere but where it was when the enemy might have fired at it. [[Walls]] movement is pretty good for this. But since it happily goes straight at or from the enemy should Walls and its enemy be along the same wall, it&#39;s far from perfect. Maybe if you tried modifying Walls movement so that it didn&#39;t move to steep against or from the enemy? I now just must propose a SpinBotChallenge. -- [[PEZ]]
+
+I&#39;m trying to get an effective collision strategy to work... should I run away and shoot it, run away, or just shoot it? -- [[Alphax]]
+
+You mean collision with the other bot? Just run away and let your default gunning scheme take care of the shooting. It&#39;s better to run away at some 45 degrees backwards than it is to run straight backwards since in the latter case you run along SpinBot&#39;s line of fire. -- [[PEZ]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 7 * 1 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that Alphax has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=Alphax">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>MultipleChoice - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Multiple, Choice'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=MultipleChoice">MultipleChoice</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>When your targeting algorithm finds more than one angle, point or in whatever shape it yields its results, you can use a <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a> algorithm to calculate the one optimal firing angle that will hit the most of those options.
+<p>
+I believe <a href="robowiki?Albert" class=wikipagelink>Albert</a> first used this term to discribe the system used in his <a href="robowiki?Aspid" class=wikipagelink>Aspid</a> gun. 
+<p>
+Bots that use <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a>:
+<p>
+<UL >
+<li><a href="robowiki?Aspid" class=wikipagelink>Aspid</a>
+<li><a href="robowiki?Tron" class=wikipagelink>Tron</a>
+<li><a href="robowiki?Fractal" class=wikipagelink>Fractal</a>
+<li><a href="robowiki?Vibora" class=wikipagelink>Vibora</a>
+<li><a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a>
+<li><a href="robowiki?Toorkild" class=wikipagelink>Toorkild</a>
+</UL>
+<p>
+(add more if you know more)
+<p>
+-- <a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+I'm curious. What algorithms are there for deciding this kind of thing? This topic hasn't been discussed much, and this is one area of Fractal's new gun that could be improved. Fractal's gun while learning can yield various simultaneous graphs of the enemy's movement profile (a 'graph' being a simple curve, what you would see in any graphing bot other than Fractal 0.32), and has to make a decision on which spike to use. Currently, to perform a <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a> on multiple graphs, the development version of Fractal first casts out graphs that do not have enough data to be reliably used, then simply divides the values on each graph by the total amount of data in each graph and then sums them up; that way the value of the spikes is independant of the amount of samples acquired. Then the highest spike on the summed graph is used. I've been thinking for the past couple weeks on the best way to sum this data; I'm trying to figure out a way that a hardcoded 'usefulness' factor of each graph as well as a reliability factor based on the amount of data acquired in each graph could be used to perform a better <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a> than the one Fractal currently uses. I've also been trying to devise a better way to improve the algorithm that casts out graphs; I'm trying to build an algorithm to find whether a graph as enough data as a function of the deviation of the highest spike. What are everyone else's thoughts? -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+<a href="robowiki?LauLectrik" class=wikipagelink>LauLectrik</a> also used a similar approach. It had several probability distributions (ie. graphs) and had to decide which one to use. I never found a good solution, because the more graphs you have, the more likely you are to choose a bad one with a big but irrelevant spike :-( 
+<p>
+Usually <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a> is easier, because you have only one probability distributuion (ie. graph) created from the different "observations". I'm using two different methods depending on the bot, but they all need to convert the points into bearings. 
+<p>
+<UL >
+<li> Just use a classical "data segmentation" approach, create buckets, classify your obsrvations, and pick the bucket with more observations.
+<li> Analyze each point, count the number of points that are at less than a given distance to this point, and select the point which has more neighbours. This one has the advantage that it will not sacrifice precission, and you can use it also to analyze multi-dimensional points. On the other hand, it is more intensive in calculus, and you will need to define a distance function and a max distance (and that can be tricky if you have multi-dimensional data).
+</UL>
+<p>
+-- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Let me see if I understand what this is about. If I have a classic, segmented, <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> gun and I permute the possible segment combinations for a given situation. Then I use some method to choose what combination to use for this shot. Would that be a kind of <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a>? If so, we can put up <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> in the list above, and also the next gen <a href="robowiki?GloomyDark" class=wikipagelink>GloomyDark</a>. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+That might deserve it's own name, like "Desegmentation" or something. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<hr noshade class=wikiline size=1>
+Ok, so if i have an array of positions that the enemy can be in, that i then convert to an array of bearing's, how do i choose which bearing i want to use. The most obvious way to me seems to be to round off the number to some precision, then create an associative array (probably from a hashtable) and increment according to the values in the array. Then pick the highest value. Is there an easier way?? --<a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+Probably it is (but I think there is no need to use the hash table). Aspid just uses an array with each position meaning a bearing range (ie. 0 from -0.9 to -0.8, 1 from -0.8 to -0.7, etc.) then it puts the bearings into the array using the classical bearingToIndex<a href="robowiki?action=edit&id=ToIndex" class=wikipageedit>?</a> function and then picks the index which has more bearings.
+<p>
+Another way (sued by Vibora) is to sort the bearings, then count, for each one, how many "close" bearings it has and choose the bearing with more "friends". The theorical advantage of this system is that it picks a real point, but I never found a real advantage using it.
+<p>
+<PRE >
+ Example: if you have {0.19, 0.20, 0.21, 0.23, 0.25} and you consider "friends" any bearing close by 0.1 
+          then you rate your  bearings like {1, 2, 1, 0, 0} so you will select 0.20 to fire at. 
+</PRE>
+<p>
+-- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+If you have an array of positions you can do it like I do in <a href="robowiki?TronsGun" class=wikipagelink>TronsGun</a>: for each of those positions compute the angle tolerance for a bullet to hit in each case, and then count as "friends" the other angles that fall inside that interval. It's kind of a distance factored dynamic bin size. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Adding <a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a> here, because it uses what I consider to be a form of this. In particular, it uses <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a> on the many "guess factor ranges" returned by the <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a> search (in my <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a>, I record the full (and ultra-precise) range of <a href="robowiki?GuessFactors" class=wikipagelink>GuessFactors</a> that could have possibly hit), and after applying "weighting" to account for it's confidence in each little range, finds the best point to aim at according the the <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a>. Also, since I'm big on the idea, I'm using a form of dynamically weighted <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a> to implement <a href="robowiki?CrowdTargeting" class=wikipagelink>CrowdTargeting</a> to further improve my results.  So far, I'm liking my dynamically weighted <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a>/<a href="robowiki?CrowdTargeting" class=wikipagelink>CrowdTargeting</a> far better than any <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> setups that are typically used to combine multiple guns... :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Hmmmm... was this the "secret sauce" that you said something about? =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Well... the real "secret sauce" will be when I add a <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a> <a href="robowiki?PatternMatching/SingleTick" class=wikipagelink>SingleTick</a> <a href="robowiki?PatternMatcher" class=wikipagelink>PatternMatcher</a> to the <a href="robowiki?CrowdTargeting" class=wikipagelink>CrowdTargeting</a>, instead of just the <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> I'm using right now to tune the <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a>/<a href="robowiki?CrowdTargeting" class=wikipagelink>CrowdTargeting</a> weighting scheme. I figure that if adding something as basic as a <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> to the crowd can improve my previously pure-DC gun, then surely I could do some neat stuff putting something stronger in my <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a>/<a href="robowiki?CrowdTargeting" class=wikipagelink>CrowdTargeting</a> scheme. My preliminary tests so far, show that adding the <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> in my scheme, improves my results slightly both against surfers and random movers, and also makes my hitrate against sample.Spinbot far less embarrassing :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=MultipleChoice" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=MultipleChoice">View other revisions</a><br>Last edited May 26, 2008 8:05 EST by <a href="robowiki?Rednaxela" title="ID 13292 from d198-53-128-24.abhsia.telus.net">Rednaxela</a> <a href="robowiki?action=browse&diff=1&id=MultipleChoice">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

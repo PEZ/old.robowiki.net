@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Segmentation/Smoothing - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Segmentation, Smoothing'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Smoothing">Segmentation/Smoothing</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><strong>Smoothing and Decay</strong>
+<p>
+A bit of a debated issue, smoothing is the act of weighting each value in your array based on the values surrounding it. This usually takes the shape of adding half of the values to either side, or to add a proportion of all the surrounding values that decays as it gets further away (v/n^2). There is also the concept of windowing, in which data is placed into adjoining bins if the bot width is greater than the size of the bin at that distance.  Decay involves weighting more recent data higher than older data, which helps adapt to changes in movement. Decay is typically performed using a type of rolling average.
+<p>
+Examples:
+One to Side Smoothing
+Pugilist - <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<pre>
+    double smoothedVisits(int index) {
+	double smoothed = 0;
+	int i = 0;
+	do {
+	    smoothed += (double)visits[i] / Math.sqrt((double)(Math.abs(index - i) + 1.0));
+	    i++;
+	} while (i &lt; Pugilist.FACTORS);
+	return smoothed / Math.pow(distanceToTarget() / bulletVelocity, 1.3);
+    }
+</pre>
+<p>
+PPP - <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<pre>
+double smoothedVisits(int index) {
+    double smoothed = 0;
+    if (index &gt; 0) {
+        smoothed += visits[index - 1] / 2;
+    }
+    if (index &lt; FACTORS - 1) {
+        smoothed += visits[index + 1] / 2;
+    }
+    smoothed += visits[index];
+    return smoothed;
+}
+</pre>
+<p>
+Full Range Smoothing
+(I have not yet seen an implementation of this, although it has been mentioned)
+<p>
+Rolling Average - <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<pre>
+static double rollingAvg(double value, double newEntry, double n, double weighting ) {
+    return (value * n + newEntry * weighting)/(n + weighting);
+} </pre>
+<p>
+Sample with Smoothing and Decay (aka <a href="robowiki?AndrewsCoolWay" class=wikipagelink>AndrewsCoolWay</a>) - <a href="robowiki?Frakir" class=wikipagelink>Frakir</a>
+<pre>
+    void registerVisitsAndrewsCoolWay(double[] buffer, int index) {
+	for (int i = 1; i &lt; FACTORS; i++) {
+	    buffer[i] *= 0.98;
+	}
+	buffer[index] += 0.01;
+	if (index + 1 &lt; FACTORS) {
+	    buffer[index + 1] += 0.006;
+	}
+	if (index - 1 &gt; 0) {
+	    buffer[index - 1] += 0.006;
+	}
+    }
+</pre>
+<p>
+The issue with one to side smoothing is that edge boxes will only get half the addition (lacking information on the other side). Probably the best way to deal with this issue is to count the side that is there twice, thus keeping things even.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+I personally support windowing, in which hits are registered to all <a href="robowiki?GuessFactors" class=wikipagelink>GuessFactors</a> that would have hit, no matter where the robot center is. For example, if the wave registers that the target's center was one unit away from the edge of the bin, it will count for both the bin the center is in and the bin next to it, for both bins would have hit.  Logically this would have a greater effect at closer distances. Beyond this basic style, I dont see the point to other smoothing methods, so if someone could explain the benefits of further smoothing, I would love to get a better idea of the advantages of the subject. -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+I suspect another reason for smoothing beyond windowing is learning speed - chances are that if the enemy ended up in one place, they could just as likely have ended up in nearby spots in similar conditions, given more time, so those spots are also relevant.  Say for instance, you had 2 hits in bin #20 and 2 hits in bin #22, then 3 hits in bin #15.  Should you fire at #15 or maybe at #21?  The discreteness of guess-factor targeting can be a weakness, particularly in the short term (although accurate recording is also important).  Having a continuous window for each hit in a segment and being able to find the largest real intersection would be optimal over time, and trying to guess where the rest of the statistical distribution is that you haven't seen yet would be optimal in the short term. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Actually, I remember on an old targeting page someone talked about how they kept a log of firing angles, and then randomly selected one of them.  The idea behind this would be that you have the same probability of firing at an angle as the opponent has at moving at that angle, thus in the situation you provided, more than half the time it would fire at 20/22.  The downside to this is that you lose the building probability of firing at a single bin.  If its random you have the same probability of hitting every time, no matter what, but if you select the highest bin you will hit them every time they go to that bin, thus making your probabilities increase with time. So I feel that a mild smoothing/windowing would be advantageous.  The reason I prefer windowing to general smoothing, is that if your bins encompas too much of an angle area, firing at 21 will miss both 20 and 22. -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+The disadvantage to just randomly picking a past angle is, of course, that your expected hit rate isn't the highest chance of hitting in any GF, but instead it's sum(p^2) for all probabilities at all angles. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Any kind of smoothing, windowed or not, only makes sense if it improves your bots performance I think. I say experiment with it and see if it is any better with or without it. If it doesn't improve your bot or if it doesn't seem to matter, remove or redo it. By the way, smoothing is not only for <a href="robowiki?Targeting" class=wikipagelink>Targeting</a> as you seem to assume here. It's also applicable to <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>. Actually, there it is very important to do it. I find non-windowed to work best. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Segmentation/Smoothing" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Segmentation/Smoothing">View other revisions</a><br>Last edited August 4, 2005 9:38 EST by <a href="robowiki?PEZ" title="ID 5178 from static-213-115-147-228.sme.bredbandsbolaget.se">PEZ</a> <a href="robowiki?action=browse&diff=1&id=Segmentation/Smoothing">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

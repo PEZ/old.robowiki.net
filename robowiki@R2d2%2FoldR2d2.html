@@ -1,0 +1,321 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>R2d2/oldR2d2 - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='R2d2/old, R2d2'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/oldR2d2">R2d2/oldR2d2</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?R2d2" class=wikipagelink>R2d2</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>R2d2 - thanks to everyone who helped me figure out movement / stat gun
+ 
+member of team Radnor
+ 
+
+Changed: 3,6c3
+v0.1
+&amp;0.2: use virtual bullets for a really bad statgun. same movement as nanobot 
+
+v0.3: added waves
+ 
+bots:
+ 
+
+Changed: 8,455c5,6
+v0.35: new movement
+-109 ahf.r2d2.R2d2 0.35 1652.38 details graph 1326 19-2-2004:22:42 in general
+-13/14 in micro
+
+v0.4: just released, lets see how it does. to bad i'm the only one running
+one on one on my comp w/ 256 mb ram
+.this turned out have the huge major bug of getting stuck on the top or right wall 
+whenever it went near them.
+.interesting to note that my ranking went from about 109 to 130 (i think) in general
+with this bot
+
+v0.5: this is a fixed version of .4 . but with some stuff. it's really hard to try to
+make your movement flat when you can't get graphers to work. o well.
+-it seems that i get hit a lot when i turn corners. i bet my gf is spiking here
+-general ranking seems to be around 99
+
+v0.6: plans to release on 2/22 if i (or more likely other people) get rid of my
+movement bug. if all goes according to plans it should be the first actual
+working version of r2d2.
+-well its up now. just waiting for results. i hope it's still micro...didn't get a
+chance to codesize it first. all i know from testing is that it has 6.35% in floodgrapher
+and beats that by a small margin. and it looses to alves.micro.duelist
+-general place: 92
+
+v.7: released 2/23/04. overall movement down to about 5.5% i think. i added another dimension to t
+the stat aray to make it five. 
+.general place: 73 ahf.r2d2.R2d2 0.7 1708.31 
+
+v.71 added musashi trick..probably not correctly though. took out setMaxVelocity?(1+Math.random()*13) whenever
+i switched directions. while this made my graph profile overall much smoother,it must have had really
+bad acceleration segmentations or somthing because it decreased by performance against a couple test bots.
+added some weird screwed up and segmented adaptive movement
+64 ahf.r2d2.R2d2 0.71 1727.41 details graph 208 27-2-2004:0:42 after 200 battles or so. take off premeturly because of bug
+
+v.72 i think i fixed a big bug from .71. not sure though. rank:68
+
+v.73 rank:67 and some number rating
+
+v.8 rank: around 60's. gun works
+
+v.81 i changed somthing like +(e.getDistance&lt;400:-4:0) to +(e.getDistance&lt;400:0:4) and it jumped 30 places
+
+pending versions delayed
+</pre>
+<p>
+- "but with some stuff." word man --Scoob
+<p>
+It isn't only hard to get a flat movement without graphing it, it's near impossible. I bet that even Paul couldn't do it. I strongly suggest u to put it working if u really wan't that job done. -- Axe
+<p>
+Which grapher is the easiest to get working? --andrew
+<p>
+One very easy to use is PEZ's <a href="robowiki?RoboGrapher" class=wikipagelink>RoboGrapher</a>, there is also one that i have not used yet, but seems very powerfull: Kawigi's <a href="robowiki?FloodGrapher" class=wikipagelink>FloodGrapher</a>. Try starting with <a href="robowiki?RoboGrapher" class=wikipagelink>RoboGrapher</a>, very easy to use, and then go to <a href="robowiki?FloodGrapher" class=wikipagelink>FloodGrapher</a>... -- Axe
+<p>
+I think <a href="robowiki?FloodGrapher" class=wikipagelink>FloodGrapher</a> 2 is the best choice. It's simple to use and very powerful. I'll write a <a href="robowiki?RoboGrapherBot" class=wikipagelink>RoboGrapherBot</a> plug-in for it some day soon. And it is fully possible to create a flat movement without using a grapher. Aristocles movement was developed that way. Yet graphing it now shows an amazingly flat profile. -- PEZ
+<p>
+I, of course, agree with PEZ. IM me or check the <a href="robowiki?FloodGrapher" class=wikipagelink>FloodGrapher</a> troubleshooting page if it doesn't seem to work. -- Kawigi
+<p>
+thanks,i got it to work. floodgrapher is really really cool. except that it now makes me spend hours twidling with numbers in my bot--andrew
+<p>
+Welcome in the club! =) -- PEZ
+<p>
+<p>
+alves.micro.duelist? :-p <a href="robowiki?DuelistMicro" class=wikipagelink>DuelistMicro</a>? --David Alves yeah.--andrew
+<p>
+does anyone know what that bot you can controll yourself is called? i want to see how my uber video game friend fares against some bots. i had the idea to make one that saved/read from a text file and had an applet to controll it. but that is a lot of work. --andrew
+<p>
+I believe that would be Christian Schnell's HCBot. There's a link to his webpage on the <a href="robowiki?RobocodeLittleLeague" class=wikipagelink>RobocodeLittleLeague</a> page where I talk about the codesize limits and stuff, since he also wrote the Codesize program. -- Kawigi
+<p>
+i'm getting suspicous that my gun isn't working at all. i guess i have to dl robo league--andrew
+<p>
+I don't think you'll find very much improvement fiddling with different fire powers. Firing power 3 only is about as good as any other mix. Unless you go the <a href="robowiki?BlestPain" class=wikipagelink>BlestPain</a> way and start analysing what bullet powers work best against a given enemy. Raiko seems to be successful firing power 2 only, woudn't you say? It might be better over all since many bots probably are tweaked against power 3 bullets. -- PEZ
+<p>
+does it work to fire different power bullets than your waves were fired with?--andrew
+<p>
+It is generally a very bad idea. :-) If the opponent doesn't react to your fire power then it's possible to fire waves of different bullet powers, see which gives you the best chance of hitting the opponent, and then choose that bullet power in future, which someone has tried before... could be nano in Unnamed? The catch is the 'if your opponent doesn't react to your bullet power' bit, since nowadays almost all good robots do. But in general I would say fire waves at the same power as your bullets, or else not at all. -- Jamougha
+<p>
+looks like r2d2.7 is around 75 w/ 100 some battles (a vast improovment if it stays). at what point would you say the results stabilize?--andrew
+<p>
+<p>
+Somewhat. But wait for 500 battles before deciding any redesigns. It can move quite a lot after 100 battles. Congrats on your constant improvements BTW! -- PEZ
+<p>
+You may want to record your bot's rating instead of its ranking. If 100 bots are released tomorrow that all beat you, your ranking will move down by 100 spots, but your rating should be much more stable. :-) --David Alves
+<p>
+69th after 560 battles. Congrats! -- Axe
+<p>
+when i watch it:
+1st: ahf.r2d2.R2d2 .35 3241 950 190 1829 267 4 0 19 16
+2nd: pez.micro.Aristocles 0.3.7 2590 800 160 1431 163 36 0 16 19
+when it's minimized:
+1st: pez.micro.Aristocles 0.3.7 3469 1200 240 1656 253 92 27 24 11
+2nd: ahf.r2d2.R2d2 .35 2484 550 110 1629 127 67 0 11 24
+<p>
+<p>
+(A space before a line puts it in monospace font, which is clearer) I think you need to run more battles, that was 35 rounds, yes? Those results are well within the margin for error with that many rounds. I doubt you watching it had any effect. -- Tango
+<p>
+I think it looks like this R2d2 is a quite strong bot against Aristocles. -- PEZ
+<p>
+not really. those results were apparently just one time luck stuff. i have to say, aristocles is confusing the hell out of me. i just can't understand (after looking at the code) how it does so well. after looking at the code, the two bots look a lot a like. except in performance. the only conclusion i have is that something is terribly wrong with my gun. or aristocles has some secret amazing numbers of amazingness. i don't like speaking in real sentances after 4 hours of essay tests today --andrew
+<p>
+Hmmm... you have an issue with your movement strategy I think, it's not a good idea to dive-bomb the enemy while curving with the walls - I learned that one the hard way :-) - also it looks like you have your gun defaulting to a very high or low guess factor when it has no samples, you could change that to something with a better chance of hitting the opponent. The gun doesn't appear buggy against sitting duck or walls, although it's very hard to tell whether a gun is really working or not. Overall you don't do badly against quite a few much higher ranked bots, so I'd say you have some good potential there once you've sorted out a few issues. Don't worry, it all becomes a *lot* easier once you get over the steep part of the learning curve. :-) -- Jamougha
+<p>
+Something I do in <a href="robowiki?FUSiON" class=wikipagelink>FUSiON</a> to avoid directly charging the enemy is using <a href="robowiki?MultiMode" class=wikipagelink>MultiMode</a> (or maybe it was <a href="robowiki?AdaptiveMovement" class=wikipagelink>AdaptiveMovement</a>) to switch into stronger close-up movements or movements that tend to push you away from enemies when you are close to one. I'm hinting at <a href="robowiki?AntiGravity" class=wikipagelink>AntiGravity</a>?. Many people say <a href="robowiki?AntiGravity" class=wikipagelink>AntiGravity</a>? is a weak 1-on-1 movement, but I think with the right dodging systems, it has great potential because it allows you to move away from whatever you want it to. -- Scoob
+<p>
+There is a very successful movement out there that uses something like what Scoob suggested. Or at least used it in the last open source versions - Lacrimas. -- PEZ
+<p>
+On the part of getting confused on Aristocles. It confuses me too a bit. =) Well, it's the result of 1.5 years of heavy Robocoding. You are trying to make that same trip in a few weeks. Of course things are a bit confusing. But you seem to catch up amazingly fast so no frets! Aristocles gun is something I worked with a lot. Testing, testing, looking at Jamougha's code, tweaking, testing, loooking some more at the Raikos, testing... And so on. -- PEZ
+<p>
+On a guessfactor gun with segmentation for acceleration, deaccelration, etc, do you have to make a wave for every vector? Because that seems really slow. --Mike
+<p>
+Haha. PSSA testing. Robocode is so much more important than that. Anyway, no you only need one wave. The wave itself keeps track of all the segments. -- Alcatraz
+<p>
+If you're segmenting on acceration / deceleration / constant speed, you still only fire one wave, but that wave should know if it was fired when the enemy was accelerating, decelerating, or moving at a constant speed. Then when the wave hits, you increment the visit counts only in the appropriate segment. -- Kawigi
+<p>
+my guess factor gun has 63% against shadow 2.41 and 80% against tron2.02.using robocode instead of league gives same results right?do the results mean the gun is probably working?--andrew
+<p>
+any ideas why segments wouldn't be working on a stat gun?--andrew
+<p>
+david alves is the man! all my previous versions of r2d2 w/ waves as custom events have just been overly complex methods of head on targeting. a new, and working version of r2d2 should be up after this chem. --andrew
+<p>
+question: version 0.8 of r2d2 has a huge specilization index. many bots that i didn't loose to before i have -20 or so on. and some bots i have positive of 35,getting 95% against some bots like alves.melee.somthing . what usually causes this?--andrew
+<p>
+<p>
+<PRE >
+ tobe.Relativity_3. zy.nano.Goo_1.20 sgs.[DogManSPE 1]<a href="robowiki?action=edit&id=DogManSPE_1" class=wikipageedit>?</a>.1 sgp.[ShiningBeetle 1]<a href="robowiki?action=edit&id=ShiningBeetle_1" class=wikipageedit>?</a>.1 ruc.nano.Zealot_0.2 ratosh.Nobo_0.21 ratosh.Debo_1.34 pez.mini.Gouldingi_1.5 pez.clean.Swiffer_0.2.9 pe.minimelee.[SandboxMiniMelee 1]<a href="robowiki?action=edit&id=SandboxMiniMelee_1" class=wikipageedit>?</a>.	 nic.[SnippetBot 1]<a href="robowiki?action=edit&id=SnippetBot_1" class=wikipageedit>?</a>.0 ndn.[DyslexicMonkey 1]<a href="robowiki?action=edit&id=DyslexicMonkey_1" class=wikipageedit>?</a>.1 mz.[NanoGod 1]<a href="robowiki?action=edit&id=NanoGod_1" class=wikipageedit>?</a>.91 myl.nano.[KomoriNinja 1]<a href="robowiki?action=edit&id=KomoriNinja_1" class=wikipageedit>?</a>.1 mld.Infinity_2.1 md.Pasta_1.1 krzysiek.robbo2.Robbo_1.0.0 kawigi.nano.[ThnikkaBot 0]<a href="robowiki?action=edit&id=ThnikkaBot_0" class=wikipageedit>?</a>.9 ethdsy.Malacka_2.4 csm.[NthGeneration 0]<a href="robowiki?action=edit&id=NthGeneration_0" class=wikipageedit>?</a>.04 bvh.hel.Hel_0.1 bvh.hdr.Hodur_0.3 Marcelo.Alpha.[DevilFISH 1]<a href="robowiki?action=edit&id=DevilFISH_1" class=wikipageedit>?</a>.3   bons.[NanoStalker 1]<a href="robowiki?action=edit&id=NanoStalker_1" class=wikipageedit>?</a>.2 cf.Silverfish_0.0 cf.<a href="robowiki?RiO" class=wikipagelink>RiO</a>.[RiOx 4]<a href="robowiki?action=edit&id=RiOx_4" class=wikipageedit>?</a>.2.1 davidalves.net.[DuelistMiniMelee 1]<a href="robowiki?action=edit&id=DuelistMiniMelee_1" class=wikipageedit>?</a>.2 davidalves.net.[DuelistMicroMelee 1]<a href="robowiki?action=edit&id=DuelistMicroMelee_1" class=wikipageedit>?</a>.4 jmcd.[BeoWulf 2]<a href="robowiki?action=edit&id=BeoWulf_2" class=wikipageedit>?</a>.8 jep.nano.Hotspur_0.1 kawigi.micro.Shiz_1.0 myl.micro.Troodon_1.10 sgp.nano.[FurryLeech 1]<a href="robowiki?action=edit&id=FurryLeech_1" class=wikipageedit>?</a>.0 timmit.nano.[TimCat 0]<a href="robowiki?action=edit&id=TimCat_0" class=wikipageedit>?</a>.13 tzu.[TheArtOfWar 1]<a href="robowiki?action=edit&id=TheArtOfWar_1" class=wikipageedit>?</a>.2 tobe.mini.Charon_0.9  
+</PRE>
+<p>
+<p>
+anyone have any ideas how the first set of bots differs from the second set of bots? i have a really good index against the second (positive 20 or so), and really bad (-20) index against the first set.--andrew
+<p>
+The second set are all head-on-targeters I think. Which indicates you are using the <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a> or something similar. The first set probably outgun or outmove you or both. -- PEZ
+<UL >
+<li> at least two bots in the first group use a PM gun (bvh.hel.Hel -21% and bvh.fnr.Fenrir -15% (not in your list b.t.w.)). Maybe your movement profile is flat, but predictable? --Loki
+</UL>
+<p>
+Nah, not all of them are head-on targeters. Maybe less accurate targeters, but not all head-on. <a href="robowiki?DuelistMiniMelee" class=wikipagelink>DuelistMiniMelee</a> uses random lead, I'd doubt that <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a> is a head-on targeter exclusively. Some of those problem bots are kind of funny (like Infinity and Gem) and suggest you have too much of a "typical" profile (positive spike close up and middle spike from a distance). Maybe you need to work on having a more consistent profile at different distances? -- Kawigi
+<p>
+Yeah, I was reading the list a bit too sloppily. But a half-decent GF gun will take care of <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a> good and maybe also <a href="robowiki?DuelistMiniMelee" class=wikipagelink>DuelistMiniMelee</a> which could explain why those are taken care of so easily. -- PEZ
+<p>
+<p>
+i do well against the SECOND group, and badly against the FIRST group.--andrew
+<p>
+Yes, has anyone suggested otherwise? -- PEZ
+<p>
+i guess not pez.
+hmm..right now i have a velocity segment,past velocity,distance, and near wall. any sugestions as to other segments that are effective? also, has anyone tried segmenting a virtual gun array of stats?--andrew
+<p>
+Can you can clarify what you mean by that? --David Alves
+<p>
+PEZ has done it, at least with Marshmallow, and maybe with Mako. Of course, Tityus has M's best gun basically, and does pretty well with it on its own. Hey, PEZ, did you ever try running Marshmallow through the TC? -- Kawigi
+<p>
+Congratulations, is always inspiring when fresh blood is approaching the top... Good improvement, keep it climbing! -- Axe
+<p>
+Yeah, congrats! If you have tuned the gun to perform around 89+ in the TC using those segments you mention you can try add a time-since-velocity-change segmentation. It seems to give my gun that extra edge. If you find some other good segmentation, please let me know. =)
+<p>
+Yeah. Marshmallow slices its VG stats the same way as data for its stat guns are sliced. This means that different guns could be used for different segments. However, M 1.9 and below does not have Tityus gun. In fact it doesn't have any GF gun at all. I think that a properly segmented GF gun achievs the same as what M's VG array is trying to achieve, and then some. No, I have never run M through the TC. This because M (1.9 and below) depends heavily on varying bullet power with different segments and also holds fire when VG stats are too low and lots of funny stuff like that that I once thought made the gun good... M shouldn't be used to evaluate VG performance. It's a crap implementation from the ground and up. A better comparison is probably to compare the TC performance of Raiko's single GF gun with DT's array of different GF guns. Does it seem like VGs pays off there? Hardly. I think like Kawigi that VG's should be used only with specialized guns in mind. -- PEZ
+<p>
+well my bot finaly showed some improvement. but i think it has a much higher rating waiting for it if i just change the strategy a little bit. here are bots that it has a -15 problem bot index or greater against:
+<PRE >
+ bndl.[LostLion 1]<a href="robowiki?action=edit&id=LostLion_1" class=wikipageedit>?</a>.2 fenix.[FenixTrack 1]<a href="robowiki?action=edit&id=FenixTrack_1" class=wikipageedit>?</a>.0 Marcelo.Alpha.[DevilFISH 1]<a href="robowiki?action=edit&id=DevilFISH_1" class=wikipageedit>?</a>.3 bvh.hdr.Hodur_0.3 bvh.hel.Hel_0.1 csm.[NthGeneration 0]<a href="robowiki?action=edit&id=NthGeneration_0" class=wikipageedit>?</a>.04 am.kmBot9_1.0 kawigi.nano.[ThnikkaBot 0]<a href="robowiki?action=edit&id=ThnikkaBot_0" class=wikipageedit>?</a>.9 krzysiek.robbo2.Robbo_1.0.0 ndn.[DyslexicMonkey 1]<a href="robowiki?action=edit&id=DyslexicMonkey_1" class=wikipageedit>?</a>.1 nic.Nicator_2.4 pez.clean.Swiffer_0.2.9 pe.minimelee.[SandboxMiniMelee 1]<a href="robowiki?action=edit&id=SandboxMiniMelee_1" class=wikipageedit>?</a>. sgs.[DogManSPE 1]<a href="robowiki?action=edit&id=DogManSPE_1" class=wikipageedit>?</a>.1 usa.nano.Nemo_2.0 wiki.nano.[RaikoNano 1]<a href="robowiki?action=edit&id=RaikoNano_1" class=wikipageedit>?</a>.0
+</PRE>
+<p>
+--andrew
+<p>
+You seem to have a problem against close range bots, some of the above like to fight close... -- Axe 
+<p>
+Certainly <a href="robowiki?DevilFISH" class=wikipagelink>DevilFISH</a>, <a href="robowiki?ThnikkaBot" class=wikipagelink>ThnikkaBot</a> and Nemo, anyways. And Swiffer is just hard to do well against with a guess factor gun without using rolling averages.--kawigi
+<p>
+thanks for the advice. i just wrote a whole par. and deleted it as I answered my own question,very well i might add--andrew
+<p>
+wait,i came up with a question my math deprived self cannot answer. when a wave hits, how do i go about getting the angle that the point of the wave hit at instead of getting the guess factor bin it hit at. my old version did somthing really screwy like 5.8*bin , but that's only for power 3 bullets. 
+<p>
+Math.atan2(deltaX,deltaY) returns the absolute angle restricted to -PI&lt;x&lt;=PI -- Scoob
+<p>
+thanks gu. i didn't hear you first time on aim.--andrew
+<p>
+[wave surfing]? code that doesn't work: 
+<p>
+create and modify the enemy wave:
+<p>
+<PRE >
+ if (deltaEnergy&gt;0.0&amp;&amp;deltaEnergy&lt;=3.0){ 			EWave eWave=new EWave(); 			eWave.timeFired=getTime(); 			eWave.eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>=new Point2D.Double(enemyX,enemyY); 			eWave.eBearing = absoluteBearing(eWave.eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>,robotLocation); 			bearingDirection = 1; 			if ((getVelocity()) != 0)  	   			if (getVelocity() * Math.sin(get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>() -(eWave.eBearing) )&lt; 0)  					bearingDirection = -1;  			 			eWave.eBearingDirection<a href="robowiki?action=edit&id=BearingDirection" class=wikipageedit>?</a> = bearingDirection * 0.8 / (double)MIDDLE_FACTOR; 			eWave.eAimFactors<a href="robowiki?action=edit&id=AimFactors" class=wikipageedit>?</a>=eAimFactors<a href="robowiki?action=edit&id=AimFactors" class=wikipageedit>?</a>/*[(int)Math.abs((getVelocity()/2))][distanceIndex]*/; 		//	out.println((int)Math.abs((getVelocity()/2))); 			eWave.bulletPower=deltaEnergy; 			add<a href="robowiki?CustomEvent" class=wikipagelink>CustomEvent</a>(eWave); 		}
+</PRE>
+<p>
+enemy wave custom event class:
+<p>
+<PRE >
+ public class EWave extends Condition{ 		long timeFired; 		private double eDistance;	 		double bulletPower; 		double eBearing; 		double eBearingDirection<a href="robowiki?action=edit&id=BearingDirection" class=wikipageedit>?</a>; 		Point2D eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>; 		int[] eAimFactors<a href="robowiki?action=edit&id=AimFactors" class=wikipageedit>?</a>; 		Point2D ahead; 		Point2D back; 		public void directionyes(){ 				ahead=project(robotLocation,get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>(),10); 				back=project(robotLocation,(get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>()-Math.PI),10); 				 				if (eAimFactors<a href="robowiki?action=edit&id=AimFactors" class=wikipageedit>?</a>[(int)Math.round(((Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(absoluteBearing(this.eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>, ahead) -this.eBearing))/this.eBearingDirection<a href="robowiki?action=edit&id=BearingDirection" class=wikipageedit>?</a>) + MIDDLE_FACTOR)]&lt; 					eAimFactors<a href="robowiki?action=edit&id=AimFactors" class=wikipageedit>?</a>[(int)Math.round(((Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(absoluteBearing(this.eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>, back) -this.eBearing))/this.eBearingDirection<a href="robowiki?action=edit&id=BearingDirection" class=wikipageedit>?</a>) + MIDDLE_FACTOR)]){ 					direction=-direction; 				} 		} 		 		public boolean test(){  			if ((this.eDistance+=(20-3*this.bulletPower))&gt;this.eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>.distance(robotLocation)-20){ 					this.directionyes(); 			} 		//		out.println("wave within 20 units"); 			 			 if ( this.eDistance &gt; this.eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>.distance(robotLocation)){ 			//	out.println(timeFired+" "+getTime()+" Enemy wave hit. "); 				//out.println((int)Math.round(((Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(absoluteBearing(this.eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>, robotLocation) -this.eBearing))/this.eBearingDirection<a href="robowiki?action=edit&id=BearingDirection" class=wikipageedit>?</a>) + MIDDLE_FACTOR)); 				try{eAimFactors<a href="robowiki?action=edit&id=AimFactors" class=wikipageedit>?</a>[(int)Math.round(((Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(absoluteBearing(this.eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>, robotLocation) -this.eBearing))/this.eBearingDirection<a href="robowiki?action=edit&id=BearingDirection" class=wikipageedit>?</a>) + MIDDLE_FACTOR)]++; 				}catch(Exception e){out.println("enemy wave error!");} 				remove<a href="robowiki?CustomEvent" class=wikipagelink>CustomEvent</a>(this); 		    } 			return false; 		} 	}     
+</PRE>
+<p>
+<p>
+--andrew
+<p>
+this error is going to kill me! i know i'm getting my bearingdirection or somthing like that wrong--andrew
+<p>
+countless hours of debuging have not fixed the problem. anyone know of some open source bots that use enemy waves like this?--andrew
+<p>
+I can't quite follow the code. But there is Pugilist which uses event based <a href="robowiki?EnemyWaves" class=wikipagelink>EnemyWaves</a>. Some versions of <a href="robowiki?GloomyDark" class=wikipagelink>GloomyDark</a> has done it as well, but since I don't remember the latest version it doesn't much matter I guess. =) Consider using <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a> for debugging. This is what Pugilist's <a href="robowiki?EnemyWaves" class=wikipagelink>EnemyWaves</a> look like when I let <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a> render them:
+<p>
+/robocode/uploads/pez/PugilistGL<a href="robowiki?action=edit&id=R2d2/PugilistGL" class=wikipageedit>?</a>.png
+<p>
+I draw bigger dots the more visits a guess factor has got. You can actually see on the screen shot that TGB fires (white dots) near Pugilist's self-graphed peaks. My only problem now is that Pugilist also tnds to move towards those peaks... Stupid bot!
+<p>
+-- PEZ
+<p>
+i haven't had much luck with robocode gl, it sounds really cool though. i can worry about that once this basic stuff works. right now, i am convinced my problem lies somewhere in the part where i assign the values to my enemy wave. somthing that i am doing wrong is giving me values of 27 and 28 when i only have 27 bins. i just looked at the pugilist code: why do you calculate bearing direction the way you do, with using the old value for it? 
+<p>
+this is in on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>? where i make the enemy wave
+<p>
+<PRE >
+ if (deltaEnergy&gt;0.0&amp;&amp;deltaEnergy&lt;=3.0){ 		EWave eWave=new EWave(); 		eWave.eBearingDirection<a href="robowiki?action=edit&id=BearingDirection" class=wikipageedit>?</a> = bearingDirection * 0.8 / (double)MIDDLE_FACTOR; 		eWave.timeFired=getTime(); 		eWave.eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>=new Point2D.Double(enemyX,enemyY); 		eWave.eBearing = absoluteBearing(eWave.eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>,robotLocation); 		bearingDirection = 1; 		if (getVelocity() != 0)     			 bearingDirection = sign(getVelocity() * Math.sin(get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>() - enemyAbsoluteBearing<a href="robowiki?action=edit&id=AbsoluteBearing" class=wikipageedit>?</a> + Math.PI)); 		eWave.eAimFactors<a href="robowiki?action=edit&id=AimFactors" class=wikipageedit>?</a>=eAimFactors<a href="robowiki?action=edit&id=AimFactors" class=wikipageedit>?</a>/*[(int)Math.abs((getVelocity()/2))][distanceIndex]*/; 		eWave.bulletPower=deltaEnergy; 		add<a href="robowiki?CustomEvent" class=wikipagelink>CustomEvent</a>(eWave); }  
+</PRE>
+<p>
+<p>
+--andrew
+<p>
+I used the old value by mistake only. It's fixed in the dev version. To get more exact <a href="robowiki?EnemyWaves" class=wikipagelink>EnemyWaves</a> you should use the enemy's last location and subtract 2 from getTime(). This is because the energy drop you read happened in the last tick (accounts for using last enemyLocation and subtraction 1 from getTime()) and Robocode advances the bullets fired 1 tick immediately upon fire (accounts for the second subtraction of 1 from getTime()). See if that fixes your problem.
+<p>
+In the above code you might wan to use eWave.eBearing instead of the calculation with enemy bearing + PI. It won't fix a bug, but it is clearer and might prevent a bug from happening. 
+<p>
+-- PEZ
+<p>
+see anything wrong with this?: 
+<p>
+<PRE >
+ ahead=project(robotLocation,get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>(),10); 				back=project(robotLocation,(get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>()-Math.PI),10); 				 				if (eAimFactors<a href="robowiki?action=edit&id=AimFactors" class=wikipageedit>?</a>[(int)Math.round(((Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(absoluteBearing(this.eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>, ahead) -this.eBearing))/this.eBearingDirection<a href="robowiki?action=edit&id=BearingDirection" class=wikipageedit>?</a>) + MIDDLE_FACTOR)]&lt; 					eAimFactors<a href="robowiki?action=edit&id=AimFactors" class=wikipageedit>?</a>[(int)Math.round(((Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(absoluteBearing(this.eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>, back) -this.eBearing))/this.eBearingDirection<a href="robowiki?action=edit&id=BearingDirection" class=wikipageedit>?</a>) + MIDDLE_FACTOR)]){ 					direction=-direction; 				} 
+</PRE>
+<p>
+this is the part where if the wave is 20 away from me, i check to see if ahead 20 or back 20 has a lower guess factor, and i got there.--andrew
+<p>
+It looks more like you check ahead/back 10. Is it when the wave is 20 pixels from you? That's pretty close. Better make it bulletVelocity * 15 or something. And then check ahead "15 * MAX_ROBOT_VELOCITY" and maybe back "5 * MAX_ROBOT_VELOCITY". 5 is a very rough approximation. It takes 12 ticks to reverse a full speed bot to go full speed again. 10 is some high average... -- PEZ
+<p>
+i kind of understand what you are saying PEZ. but even with somthing like that, i still get these damned array out of bounds errors. now it always wants to check guess factor 27. oh wait,,i just thought of somthing. could all the math be right, i am just putting in an angle that is to big? if i check 15*8(max velocity), that's a pretty big number which makes a pretty big angle which makes a guess factor over 27?--andrew
+<p>
+now i know i'm doing somthing wrong with the information i put into the wave. i took out the attempting wave surfing thing above and just updated the array of my guess factor stats from the enemy wave and caught the exceptions. i got a lot of errors , the numbers it tried were always 27,28 or 32 when the array is 27 big. 
+stuff changed around to :
+<p>
+<PRE >
+ double deltaEnergy=lastEnergy-e.getEnergy(); 		if (deltaEnergy&gt;0.0&amp;&amp;deltaEnergy&lt;=3.0){ 			EWave eWave=new EWave(); 			if (getVelocity() != 0)  	   			 bearingDirection = sign(getVelocity() * Math.sin(get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>() - enemyAbsoluteBearing<a href="robowiki?action=edit&id=AbsoluteBearing" class=wikipageedit>?</a> + Math.PI)); 			eWave.bulletPower=deltaEnergy; 			eWave.eBearingDirection<a href="robowiki?action=edit&id=BearingDirection" class=wikipageedit>?</a> = bearingDirection * maxEscapeAngle<a href="robowiki?action=edit&id=EscapeAngle" class=wikipageedit>?</a>(20-eWave.bulletPower*3) / (double)MIDDLE_FACTOR; 			eWave.timeFired=getTime(); 			eWave.eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>=new Point2D.Double(enemyX,enemyY); 			eWave.eBearing = absoluteBearing(eWave.eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>,robotLocation); 			bearingDirection = 1; 			eWave.eAimFactors<a href="robowiki?action=edit&id=AimFactors" class=wikipageedit>?</a>=eAimFactors<a href="robowiki?action=edit&id=AimFactors" class=wikipageedit>?</a>/*[(int)Math.abs((getVelocity()/2))][distanceIndex]*/; 		//	out.println((int)Math.abs((getVelocity()/2))); 			add<a href="robowiki?CustomEvent" class=wikipagelink>CustomEvent</a>(eWave); 		} 		add<a href="robowiki?CustomEvent" class=wikipagelink>CustomEvent</a>(wave); 
+</PRE>
+<p>
+--andrew
+<p>
+You still need to use the enemyLocation from the last scan (maybe you do that, doesn't show from the snippet) and subtract 2 from getTime() when assigning to eWave.timeFired. -- PEZ
+<p>
+so should i use the old enemyLocation to calculate the bearing between me and the enemy?
+<p>
+apparently i have normal wave exceptions also, this shouldn't be happening right?
+<p>
+here is the line of code causing the problems i guess:
+<p>
+wAimFactors<a href="robowiki?action=edit&id=AimFactors" class=wikipageedit>?</a>[(int)Math.round(((Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(absoluteBearing(this.wGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>, enemyLocation) -this.wBearing))/this.wBearingDirection<a href="robowiki?action=edit&id=BearingDirection" class=wikipageedit>?</a>) + MIDDLE_FACTOR)]++
+where middle factor is 13 and my guessfactor array is 27 big-
+<p>
+-andrew
+<p>
+Yeah, you should calculate the bearing from the old enemyLocation. I also get out of range readings now and then. You can see something like this in most of my bots:
+<PRE >
+ class Pugilist extends <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> { ...     static double minMax(double v, double min, double max) { 	return Math.max(min, Math.min(max, v));     } ... }  class Wave { ...     int visitingIndex(Point2D target) { 	return (int)Pugilist.minMax( 	    Math.round(((Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(gunBearing(target) - startBearing)) / bearingDirection) + Pugilist.MIDDLE_FACTOR), 0 , Pugilist.FACTORS - 1);     } ... } 
+</PRE>
+<p>
+But it's good to first make sure those out of bounds readings are rare. Because they should be. For my Waves they happen about once every 20th round or some such. -- PEZ
+<p>
+does the out of bounds error happen when the wave has passed slightly farther than the target? gu told me i should just use max and min to limit the numbers so that i don't get any errors.--andrew
+<p>
+You get the out of bounds error for a couple reasons - mostly because of collecting data slightly inaccurately, and sometimes because they can go a little further before you register a hit because of the tick-based physics. Try doing a test - print out what the index would be every time it's out of range, and see if they are just one or two segments beyond where they should be or if they're way off. The former means you can just bound it and ignore it, the latter means you probably have a bug popping up at least occasionally, or that you skipped some scans or something. -- Kawigi
+<p>
+math question: how do i find the distance i can travel before a wave hits me given my velocity and the wave speed?--andrew
+<p>
+distance = rate * time. boom -- Scoob
+<p>
+alves already answered. and that's not what i'm looking for scoob--andrew
+<p>
+heres the code i'm working on right now for a weird adaptive movement thing:
+if ((this.eDistance+=(20-3*this.bulletPower))&gt;this.eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>.distance(robotLocation)-40){ 			 ahead=project(robotLocation,get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>(),8*(this.eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>.distance(robotLocation))/(20-3*this.bulletPower)); 				back=project(robotLocation,(get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>()-Math.PI),8*(this.eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>.distance(robotLocation))/(20-3*this.bulletPower)); 				 				if (eAimFactors<a href="robowiki?action=edit&id=AimFactors" class=wikipageedit>?</a>[Math.min(26,(Math.max(0,(int)Math.round(((Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(absoluteBearing(this.eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>, ahead) -this.eBearing))/this.eBearingDirection<a href="robowiki?action=edit&id=BearingDirection" class=wikipageedit>?</a>) + MIDDLE_FACTOR))))]&gt; 					eAimFactors<a href="robowiki?action=edit&id=AimFactors" class=wikipageedit>?</a>[Math.min(26,(Math.max(0,(int)Math.round(((Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(absoluteBearing(this.eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>, back) -this.eBearing))/this.eBearingDirection<a href="robowiki?action=edit&id=BearingDirection" class=wikipageedit>?</a>) + MIDDLE_FACTOR))))]){ 					direction=-direction; 				} 		}	 
+--andrew
+<p>
+well what are ya lookin for? it said "how do i find distance...". What's the answer? -- Scoob
+<p>
+What if you don't have time, and time is dependent on a different distance? -- Kawigi
+<p>
+The non-math way is to iterate. Either you iterate your position forward time-to-wave-impact ticks or you itarate both the wave and your position until time-to-wave-impact is zero. Look at FururePosition<a href="robowiki?action=edit&id=FururePosition" class=wikipageedit>?</a>? for an exact method for this. Then there's walls of course... Pugilist tries to use the same <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> function for projection as it uses for real movement. Not with too much success so far though. -- PEZ
+<p>
+since i have so much trouble predicting my movement the right way, would it be viable to add up all of the positive guess factors of my self and the negative guess factors. then if i check which one is higher,and go to the lower one,shouldn't that work? the other option is bin smoothing i guess, but i don't really get that.--andrew
+<p>
+That might work. Give it a try. Bin smoothing works for Jamougha, but when I use it I get strange effects. And it's not really an option to use instead of future projection anyway. -- PEZ
+<p>
+<PRE >
+  if ((this.eDistance+=(20-3*this.bulletPower))&gt;this.eGunLocation<a href="robowiki?action=edit&id=GunLocation" class=wikipageedit>?</a>.distance(robotLocation)-20-3*this.bulletPower+2){				 				int average1=0; 				int average2=0; 				tested=true; 				for (int i=0;i&lt;MIDDLE_FACTOR;i++) 					average1+=eAimFactors<a href="robowiki?action=edit&id=AimFactors" class=wikipageedit>?</a>[i]; 				for (int i=MIDDLE_FACTOR;i&lt;27;i++) 					average2+=eAimFactors<a href="robowiki?action=edit&id=AimFactors" class=wikipageedit>?</a>[i]; 				average1/=MIDDLE_FACTOR; 				average2/=MIDDLE_FACTOR; 				if (average1&lt;average2/*&amp;&amp;this.tested==false*/){ 					direction=-direction; 				} 				if (average1==average2) 					if (Math.random()&lt;.04) 						direction=-direction;							 } 
+</PRE>
+<p>
+<p>
+i changed my movement flatening thing to this..this is a test inside of the custom event wave. but this is really bad because the lowest % i get is 8.29 w/ floodgrapher and without it i had much much lower. right now, there is a huge gf 1 spike and it almost never goes negative. my solution to the problem was to only test an incoming wave once for : if i should go forward or backwards. if i ever get this simple part working, i will try to change this from adaptive movement to wave surfing,that is, keep track of when their bullets hit and make stats for that.
+<p>
+--andrew 
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?R2d2" class=wikipagelink>R2d2</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=R2d2/oldR2d2" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=R2d2/oldR2d2">View other revisions</a><br>Last edited March 12, 2004 17:25 EST by 147.31.4.xxx <a href="robowiki?action=browse&diff=1&id=R2d2/oldR2d2">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

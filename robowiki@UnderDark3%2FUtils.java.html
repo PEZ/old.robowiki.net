@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>UnderDark3/Utils.java - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Under, Dark3/Utils.java'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Utils.java">UnderDark3/Utils.java</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?UnderDark3" class=wikipagelink>UnderDark3</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><h1>Utils.java</h1>
+<hr width=75%><pre>
+package matt;
+
+import java.awt.geom.Point2D;
+import java.lang.String;
+
+public class Utils {
+
+    //Not Mine  
+    public static double normalizeBearing(double angle) {
+        while (angle &gt;  180)
+            angle -= 360;
+	while (angle &lt; -180)
+            angle += 360;
+	return angle;
+    }
+
+    //Not Mine   
+    public static double absoluteBearing(double x1, double y1, double x2, double y2) {
+        double xo = x2-x1;
+	double yo = y2-y1;
+	double hyp = Point2D.distance(x1, y1, x2, y2);
+	double arcSin = Math.toDegrees(Math.asin(xo / hyp));
+	double bearing = 0;
+
+	if (xo &gt; 0 &amp;&amp; yo &gt; 0) {
+            bearing = arcSin;
+	} else if (xo &lt; 0 &amp;&amp; yo &gt; 0) {
+            bearing = 360 + arcSin;
+	} else if (xo &gt; 0 &amp;&amp; yo &lt; 0) {
+            bearing = 180 - arcSin;
+	} else if (xo &lt; 0 &amp;&amp; yo &lt; 0) { 
+            bearing = 180 - arcSin;
+	}
+
+	return bearing;
+    }
+    
+    //Not Mine
+    public static double rollingAvg(double value, double newEntry, double n, double weighting ) {
+        return (value * n + newEntry * weighting)/(n + weighting);
+    }
+    
+    public static boolean strContains(String base, String target){
+        base = base.toUpperCase();
+        target = target.toUpperCase();
+
+        for(int l = 0; l &lt; base.length(); l++){
+            if(target.length()&gt;(base.length()-l)){
+                return false;
+            }
+            if(base.substring(l,l+1).equalsIgnoreCase(target.substring(0,0+1))){
+                int s = 0;
+                boolean ok = true;
+                while(ok){
+                    if(s&gt;=target.length()){
+                        return true;
+                    }
+                    if(!(base.substring(l+s,l+s+1).equalsIgnoreCase(target.substring(s,s+1)))){
+                        ok=false;
+                    }
+                    s++;
+                }
+            }
+        }
+        return false;
+    }
+}
+</pre><hr width=75% align=left>
+<b>Questions, Comments, or anything else</b>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?UnderDark3" class=wikipagelink>UnderDark3</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=UnderDark3/Utils.java" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=UnderDark3/Utils.java">View other revisions</a><br>Last edited July 11, 2005 23:38 EST by <a href="robowiki?UnderDark" title="ID 4723 from d149-67-30-72.try.wideopenwest.com">UnderDark</a> <a href="robowiki?action=browse&diff=1&id=UnderDark3/Utils.java">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RandomMovementBot - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Random, Movement, Bot'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=RandomMovementBot">RandomMovementBot</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?RandomMovementBot" class=wikipagelink>RandomMovementBot</a> by <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>.
+<p>
+Demonstrating a simple and extensible way to do <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> <a href="robowiki?RandomMovement" class=wikipagelink>RandomMovement</a>. This movement is smooth along the walls and tweaked it can make a duel bot quite powerful.
+<H4>Download it from</H4>
+
+<p>
+<a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=1933">http://www.robocoderepository.com/BotDetail.jsp?id=1933</a>
+<p>
+<H4>Bots using this movement</H4>
+
+<OL >
+<li> <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> 0.6.* and 0.70
+<li> <a href="robowiki?Aristocles" class=wikipagelink>Aristocles</a>
+<li> <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a>
+<li> <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a>
+<li> <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> (all of them including <a href="robowiki?RaikoNano" class=wikipagelink>RaikoNano</a>, <a href="robowiki?RaikoMicro" class=wikipagelink>RaikoMicro</a> and <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a>).
+<li> <a href="robowiki?Ali" class=wikipagelink>Ali</a>
+</OL>
+<p>
+<H4>Why is it any good?</H4>
+
+The movement's best property is its simplicity. This makes it quite easy to extend. <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> extends it with some wall bouncing. Coming bots of mine will surely add <a href="robowiki?AdaptiveMovement" class=wikipagelink>AdaptiveMovement</a> to it. The movement code has no special cases. There's no code there checking if the bot is cornered or close to a wall or anything like that. It only makes sure it's destination is with in the battle field with some margin and rounded corners. It's the first movement of mine with good non-voodoo <a href="robowiki?CornerAvoidance" class=wikipagelink>CornerAvoidance</a>.
+<hr noshade class=wikiline size=1>
+<H4>The code</H4>
+
+<pre>
+// $Id: RandomMovementBot.java,v 1.2 2004/01/04 18:52:08 peter Exp $
+package wiki.etc;
+import robocode.*;
+import robocode.util.Utils;
+import java.awt.geom.*;
+
+// This code is released under the RoboWiki Public Code Licence (RWPCL), datailed on:
+// http://robowiki.net/?RWPCL
+//
+// RandomMovementBot, by PEZ. Demonstrating a simple, extensible way to go about random 1v1 movement.
+// Code and discussions about this bot available on: http://robowiki.net/?RandomMovementBot
+
+public class RandomMovementBot extends AdvancedRobot {
+    static final double MAX_VELOCITY = 8;
+    static final double WALL_MARGIN = 25;
+    Point2D robotLocation;
+    Point2D enemyLocation;
+    double enemyDistance;
+    double enemyAbsoluteBearing;
+    double movementLateralAngle = 0.2;
+
+    public void run() {
+        setAdjustRadarForGunTurn(true);
+
+        do {
+            turnRadarRightRadians(Double.POSITIVE_INFINITY); 
+        } while (true);
+    }
+
+    public void onScannedRobot(ScannedRobotEvent e) {
+        robotLocation = new Point2D.Double(getX(), getY());
+        enemyAbsoluteBearing = getHeadingRadians() + e.getBearingRadians();
+        enemyDistance = e.getDistance();
+        enemyLocation = vectorToLocation(enemyAbsoluteBearing, enemyDistance, robotLocation);
+
+	move();
+
+        setTurnRadarRightRadians(Utils.normalRelativeAngle(enemyAbsoluteBearing - getRadarHeadingRadians()) * 2);
+    }
+
+    // Always try to move a bit further away from the enemy.
+    // Only when a wall forces us we will close in on the enemy. We never bounce off walls.
+    void move() {
+	considerChangingDirection();
+	Point2D robotDestination = null;
+	double tries = 0;
+	do {
+	    robotDestination = vectorToLocation(absoluteBearing(enemyLocation, robotLocation) + movementLateralAngle,
+		    enemyDistance * (1.1 - tries / 100.0), enemyLocation);
+	    tries++;
+	} while (tries &lt; 100 &amp;&amp; !fieldRectangle(WALL_MARGIN).contains(robotDestination));
+	goTo(robotDestination);
+    }
+
+    void considerChangingDirection() {
+	// Change lateral direction at random
+	// Tweak this to go for flat movement
+	double flattenerFactor = 0.05;
+	if (Math.random() &lt; flattenerFactor) {
+	    movementLateralAngle *= -1;
+	}
+    }
+
+    RoundRectangle2D fieldRectangle(double margin) {
+        return new RoundRectangle2D.Double(margin, margin,
+	    getBattleFieldWidth() - margin * 2, getBattleFieldHeight() - margin * 2, 75, 75);
+    }
+
+    void goTo(Point2D destination) {
+        double angle = Utils.normalRelativeAngle(absoluteBearing(robotLocation, destination) - getHeadingRadians());
+	double turnAngle = Math.atan(Math.tan(angle));
+        setTurnRightRadians(turnAngle);
+        setAhead(robotLocation.distance(destination) * (angle == turnAngle ? 1 : -1));
+	// Hit the brake pedal hard if we need to turn sharply
+	setMaxVelocity(Math.abs(getTurnRemaining()) &gt; 33 ? 0 : MAX_VELOCITY);
+    }
+
+    static Point2D vectorToLocation(double angle, double length, Point2D sourceLocation) {
+	return vectorToLocation(angle, length, sourceLocation, new Point2D.Double());
+    }
+
+    static Point2D vectorToLocation(double angle, double length, Point2D sourceLocation, Point2D targetLocation) {
+        targetLocation.setLocation(sourceLocation.getX() + Math.sin(angle) * length,
+            sourceLocation.getY() + Math.cos(angle) * length);
+	return targetLocation;
+    }
+
+    static double absoluteBearing(Point2D source, Point2D target) {
+        return Math.atan2(target.getX() - source.getX(), target.getY() - source.getY());
+    }
+}
+</pre>
+<hr noshade class=wikiline size=1>
+<H4>Questions and comments welcome</H4>
+
+<p>
+Great wall/corners smoothing indeed. One of the next <a href="robowiki?Musashi" class=wikipagelink>Musashi</a>'s improvement is going to be in that direction, by now it just bumps at the walls. By the way, what does means "tweaking"? I'm assuming that is something like "copy by observation", if that is correct, my intend is to tweak this feature, if u don't mind... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+I don't know what you mean with "copy by observation". =) "Tweaking" means here to "adjust for a given purpose". The example code above doesn't create a very flat profile at different distances and against different bullet powers. To do that you need to tweak the behaviour. Look at the code of <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> and <a href="robowiki?Aristocles" class=wikipagelink>Aristocles</a> to get some examples on what to use in these calculations.
+<p>
+When it comes to wall smoothing... The example code above implements a "no fear of the walls" strategy. It's what <a href="robowiki?Aristocles" class=wikipagelink>Aristocles</a> does too, and what Tityus 0.70 also tried to do. I would expect that this would be better than bouncing off of the walls, but at least I can't tweak this strategy as good as I can with T's current wall bouncing strategy. Though T tries to go past the walls to some extent before giving up and reversing.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Thnx for the explanation about "tweak", my translation was very wrong. What i meant by "copy by observation" is more like being inspired by watching the move, and then try to reproduce the same kind of behaviour. This without using your code (I really like to do it the hard way). Of course the credits for the idea will be given.<br>
+<p>
+The feature that inspired me is that wall smoothing (the "no fear from the walls" - great name!). As i said, <a href="robowiki?Musashi" class=wikipagelink>Musashi</a> bounces when he is about to hit a wall. This, of course, makes it more predictable near walls. I am thinking about something like: "sometimes bouncing, and sometimes following the wall", depending in certain parameters. That probably will lead to a more unpredictable moving (and flatter too). -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Indeed. You are welcome to use my code and ideas for inspiration. I think wall smoothing might be as simple as "shrink the distance a bit at the time until you get a destination inside the field" for many movements. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<UL >
+<li>Nods* the trouble with always following the walls is that you end up ramming the opponent or passing right next to them.  On the one hand if you bounce you normally either get a big spike at GF 0 or at some negative GF.
+</UL>
+Raikio uses :-
+<p>
+<pre>
+		Point2D.Double newDestination;
+		
+		double distDelta = 0.02 + Math.PI/2 + (e.getDistance() &gt; BEST_DISTANCE ? -2.5 : 2.5)*(Math.abs(e.getDistance() - BEST_DISTANCE) &gt; 100 ? .15 : .1);
+		
+		while (getDistanceToWalls((newDestination = projectMotion(robotLocation, enemyAbsoluteBearing + circleDir*(distDelta-=.2), 170))) &lt; 18);
+		
+		theta = 1.18*modifiers[Math.min((int)(e.getDistance() / (800 / 5)), 4)]/e.getDistance();
+		if ( Math.random() &gt; Math.pow(theta, theta) || distDelta &lt; Math.PI/4 )
+			circleDir *= -1;
+
+		theta = Utils.normalRelativeAngle(absoluteBearing(robotLocation, newDestination) - getHeadingRadians());
+		setAhead(Math.cos(theta)*100);
+		setTurnRightRadians(Math.tan(theta));
+</pre>
+<p>
+which bounces if you turn into the opponent strongly and otherwise follows walls.  This keeps the movement profile very similar whether or not you are approaching a wall.
+Trouble is it ends up bringing you quite close to the opponent and my movement is bad close up.  I might make it bounce based on distance, too. -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Indeed. When i was saying "sometimes bouncing, and sometimes following the wall, depending in certain parameters" i was thinking exactly about this. The "parameters" i was thinking was the bearing angle to the enemy, for example. Something like: if (bearing &lt; 30degrees) then bounces else follow-wall. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+I doubt it really is a problem always following a wall as such. I think it's just me not finding the right flattener parameters close up. Bouncing off the wall under certain conditions introduces a predictable element. Even if I think it might be a bit better than "plain" wall bouncing. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I agree partially. Bouncing off the wall depending on an enemy bearing parameter will surelly be predictable, but only if the enemy gun is segmented based on that bearing (or with a PM gun using this kind of parameter). And even if that is truth, it wouldn't be <b>more</b> predictable that always bouncing or allways follow-wall.<br>
+I can't keep off of my mind that folowing the wall in an acute bearing angle towards the enemy it sounds like a kamikaze strategy... And even if u are moving in an acute angle backwards, it will probably reflect in a spike near GF 0.0. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a> 
+<p>
+Always following the wall is no more predictable than your regular movement - the idea is that you'll change direction when you're good and ready. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I'm not sure I fully understand what Kawigi said, but it could be the same as I am saying. With "always follow the wall" I rather mean "don't leave the wall unless your flattener tells you to". If your enemy sees that you will leave the wall if following it gets you closer to it, you are being predictable. On the other hand if you can't do the "pure" movement flat enough it might be worse than leaving the wall. That's what the <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> versions 0.70 and 0.6.3 shows I think. You can rest assured that I will again try the purer movement scheme. And again. And again. Until I get it right. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RandomMovementBot" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RandomMovementBot">View other revisions</a><br>Last edited April 23, 2006 21:32 EST by <a href="robowiki?Voidious" title="ID 6343 from resnet216-83.resnet.buffalo.edu">Voidious</a> <a href="robowiki?action=browse&diff=1&id=RandomMovementBot">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

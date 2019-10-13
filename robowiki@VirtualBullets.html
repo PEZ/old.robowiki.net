@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>VirtualBullets - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Virtual, Bullets'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=VirtualBullets">VirtualBullets</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'><img src="http://davidalves.net/robocode/images/virtual_bullets_sample.png"> </td><td colspan="0.5">Screenshot of <a href="robowiki?VirtualBullets/VirtualBulletsSampleBot" class=wikipagelink>/VirtualBulletsSampleBot</a> on Robocode 1.1.3, showing virtual bullets for the three included <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> in flight, and # of hits for each Gun. Note that "Really Bad Gun" is initialized with 1 hit, but the robot quickly learns to use better methods. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a></td></TR>
+</TABLE>
+<p>
+For a simple implementation with debugging graphics, take a look at <a href="robowiki?VirtualBullets/VirtualBulletsSampleBot" class=wikipagelink>/VirtualBulletsSampleBot</a>, by <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+For an implementation using Robocode custom events check <a href="robowiki?VirtualBullets/VirtualBulletsBot" class=wikipagelink>/VirtualBulletsBot</a>, by <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+The concept behind virtual bullets is simple. Since the enemy can't tell what angle our gun is pointing when we fire, their reaction is not based on our gun angle. Therefore we can create a "virtual bullet" for each gun offset that we could have had at the time we fired, and keep track of these virtual bullets to see if they would have hit our enemy if we had actually fired at that angle. We can now track the success rate of each firing angle and see how well it is working.
+<p>
+if (bullet hit)
+<PRE >
+  raise success rate for aim method used to fire this bullet
+</PRE>
+else if (bullet missed)
+<PRE >
+  lower success rate for aim method used to fire this bullet
+</PRE>
+<p>
+<p>
+For example:
+<a href="robowiki?DuelistMicro" class=wikipagelink>DuelistMicro</a> chooses the angle to fire at from -2/3 to +2/3 radians, where 0 is pointing directly at the target, negative is behind them (relative to the last direction they moved if they are stopped) and positive is in front of them. You could also use virtual bullets to track how successful linear, circular, and direct firing are vs. the current opponent. The beauty of virtual bullets is that you'll learn at the same rate no matter how many different aiming algorithms you use - just fire more virtual bullets. :-)
+<p>
+Virtual bullets are used by the following bots:
+<UL >
+<li> <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a>
+<li> <a href="robowiki?DuelistMini" class=wikipagelink>DuelistMini</a>
+<li> <a href="robowiki?Dalek" class=wikipagelink>Dalek</a>
+<li> <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a>
+<li> <a href="robowiki?DuelistMicro" class=wikipagelink>DuelistMicro</a>
+<li> <a href="robowiki?Duelist" class=wikipagelink>Duelist</a>
+<li> <a href="robowiki?SandboxMini" class=wikipagelink>SandboxMini</a>
+<li> <a href="robowiki?PrairieWolf" class=wikipagelink>PrairieWolf</a>
+<li> DogmanSPE<a href="robowiki?action=edit&id=DogmanSPE" class=wikipageedit>?</a>
+<li> <a href="robowiki?Andrew" class=wikipagelink>R2d2</a>
+<li> <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a>
+</UL>
+<p>
+and many others.
+<p>
+Virtual bullets were invented independently by Paul Evans and Rod Hyde.
+<p>
+--<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Here is Paul Evans' definitive write-up: <s><a rel="nofollow" href="http://www.sandbox.dial.pipex.com/robocode/guessfactor.shtml">[Virtual Bullets]</a></s>
+<p>
+I don't think Paul Evans or Rod Hyde are the first ones to use <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>, though. Some older bots like LoneDragon<a href="robowiki?action=edit&id=LoneDragon" class=wikipageedit>?</a> use virtual bullets as well (see LoneDragon<a href="robowiki?action=edit&id=LoneDragon" class=wikipageedit>?</a> 's bot-description <a rel="nofollow" href="http://robocoderepository.com/BotDetail.jsp?id=330">http://robocoderepository.com/BotDetail.jsp?id=330</a> ). I do believe it was Paul Evans' idea to fire multiple <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> at the same time.  -- <a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<p>
+Robocoders were using BulletTracker<a href="robowiki?action=edit&id=BulletTracker" class=wikipageedit>?</a> classes long before Paul and Rod came up with <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> (See <a rel="nofollow" href="http://www.geocities.com/evilsimon/RayBot/RayBot_Description.html">[RayBot]</a>, <a rel="nofollow" href="http://members.rogers.com/theartofwar/#fire">[TheArtOfWar - How does it fire, How does it dodge bullets]</a>, <a rel="nofollow" href="http://www-106.ibm.com/developerworks/library/j-tipbullet.html">[Secrets of the Robocode Masters: Tracking Bullets]</a>).  Same principle: plot the bullet path, see if it hits, and use the resulting data to improve aiming.  Paul's <a rel="nofollow" href="http://www.sandbox.dial.pipex.com/robocode/guessfactor.shtml">[breakthrough]</a> was realizing that he didn't have to actually have to fire a real bullet in order to plot its path and he could fire several of these <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> at one time. -- <a href="robowiki?Ray_Vermette" class=wikipagelink>Ray Vermette</a>
+<p>
+Paul's breakthrough was also in getting the damn things to work! FiringBD<a href="robowiki?action=edit&id=FiringBD" class=wikipageedit>?</a> in its various incarnations used what I called "magic" bullets, but my implementation was much less successful. I had lots of different aiming types, most of which were variants of linear and circular firing which used a number of types of moving averages based on heading, velocity, etc. --<a href="robowiki?Rod_Hyde" class=wikipagelink>Rod Hyde</a>
+<p>
+<hr noshade class=wikiline size=1>
+Isn't that some robots use <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> for enemy bullets as well? I think I've seen it used with <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a>. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yes. Fermat 1.6, which won the Robocode Rumble in the intermediate category, used this <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a> with predicted enemy bullets as gravity points. That's why you'll never hit it if you fire using linear, circular, or direct targeting. :-) Fermat has since then been updated to version 2.0, which uses virtual bullets for its own targeting as well as using them for dodging. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Both <a href="robowiki?Neptune" class=wikipagelink>Neptune</a> and <a href="robowiki?Pluto" class=wikipagelink>Pluto</a> use <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> for bullet dodging, I call it <a href="robowiki?ShrapnelDodging" class=wikipagelink>ShrapnelDodging</a>. They also use something similar to <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> for aiming, which I call <a href="robowiki?LaserTargeting" class=wikipagelink>LaserTargeting</a>. --<a href="robowiki?Tobe" class=wikipagelink>tobe</a>
+<p>
+I have a <strong>very</strong> hard time hitting <a href="robowiki?Fermat" class=wikipagelink>Fermat</a> with <a href="robowiki?PatternTargeting" class=wikipagelink>PatternTargeting</a> as well. But <a href="robowiki?Fermat" class=wikipagelink>Fermat</a> 2.0 does not have the same problems hitting <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a>. <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> might not be such a bad idea. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Don't underestimate Pattern matching - look how well Cigaret is doing... :-) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<hr noshade class=wikiline size=1>
+<a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> uses <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> inside its <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a>. There's no opposite relation between <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> and <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>. Marshmallow uses both. Some people think of <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> as being <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>, but they are not the same. Marshmallow will be using <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> as well soon. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+<p>
+Hmph... I must be the only person online who doesn't like the idea of virtual bullets.
+<p>
+I'm not saying they won't work or they aren't succesfull; Paul and others have obviously proven quite the opposite. It's just that the concept always seemed so limiting and slow (BLARG I can't find my words tonight!). The idea behind virtual bullets is that you fire a virtual bullet at every x angle. The main problem seemed to me that this is such a low-resolution approach: for each x angle, you only get a collision on the closest multiple of the x angle. The problem with speed is you need to calculate a collision for each of those bullets once you've decided that at least one of them has collided.
+<p>
+A more analog approach always seemed more attractive to me; just remember your position, the direct angle to the enemy, and the power of your bullet whenever you fire a bullet. Calculate when the bullet has collided in the same way as <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> (using the current distance from the enemy to your position when the bullet was fired). When this happens, just find the angle between the logged angle to enemy at the time of firing and the current angle from your logged position to the enemy.
+<p>
+This algorithm would seem to accomplish the exact same task as <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>, but would be MUCH faster to calculate and with infinite resolution.
+<p>
+The whole '<a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>' craze always seemed to remind me of all my math and physics and chemistry classes throughout highschool; everybody always seemed so eager to attack a solution by trial and error, or by writing possibilities or cases, or by doing each problem individually. Why? The power of taking a simple derivative or applying the quadratic formula was always unmatched, giving me a general solution beforehand of solving Question 4 a) through q) for example without even having to know the numbers. Solving each set of numbers for a question was simply a matter of punching the numbers into the calculator at the right places in the formula to simply jot the answer on the page. The power of simplifying with algebra to give me a general, algebraic, fully analog solution beforehand has always outweighed doing a) through q) individually, or solving whatever problem by trial and error, or using a bunch of cases and finding the closest one; such is the case in <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>. Why not just find the solution in real numbers?
+<p>
+-- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+Well, the way you describe it is exactly how I do <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> in all my bots. I know some people fire lots of <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>, but I think most such solutions are being replaced by <a href="robowiki?Wave" class=wikipagelink>Wave</a>s. Which, by the way, are also used by my bots.
+<p>
+Call what you do what you want, to me it sounds like <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Since DT 1.71 I have removed virtual bullets in favor of waves primarily for performance reasons (an other reasons not relevent for this discussion) - it makes little difference to the published guess factor statistical approch - once the wave 'hits' the opponent I have to calculate the minimum and maximum guess factor that would have succeeded in hitting the enemy and from there I need to update the stats on all the guess factors from -1.0 to 1.0.  (DT1.71 has 32 distinct guess factor 'bins' and more than one method of calculating guess factor - much more than previous DT's which is why I needed to loose virtual bullets in favor of waves.)
+<p>
+The statistical guess factor approch requires discreate bins of data (I looked in some prety deep math/stat resources to overcome this with no success).  It does not matter to the approch whether you separate the hit/miss data with virtual bullets or later with the results from the wave.
+<p>
+At the time of writing my virtual bullet code I was aware I could do it with a more efficient wave method (not that it had been invented then) but with less than 24 hours to go before IBM's Robocode Rumble deadline I went for the easy to debug/check virtual bullet method.
+<p>
+Either method is good as the other for the statistical approch (but waves are more efficient), however, if you want a single accurate hit angle to the center of the enemy (as pattern matchers prefer) then waves does the job better.
+<p>
+-- <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<p>
+<p>
+Ah, cool. I had not heard of waves before this; turns out waves are exactly what I had described. Bah.
+<p>
+Are you sure there's not some mathematical way to build an actual curve with the data rather than a statistical array? I'm trying to think of a way to regress the data into a curve without losing resolution; the problem is that the data is additive, in that two points near eachother add together rather than emphasize the curve at that point. I wonder if analysizing the data and iterating through it would allow you to find the inflection points in the curve and use them as spline nodes to build a real curve from; this would theoretically generate a curve for you where the data is algebraic and you can pull any point off the spline in real numbers. The problem seems to be the slight additional processor power required, but a curve recalculation can be made to occur only at every few hundred ticks or at the end of every round for example. Finding inflection points would give you direct highs and lows for gun accuracy in real numbers, rather than high and low 'bins' in iterated multiples.
+<p>
+This seems like something I'd like to try; I've been rolling around a new gunning concept in my brain lately, and inflection points is a step forward in an early calculation that would need to have been done anyway for my new gun, so as soon as classes are over I'll see about building this.
+<p>
+-- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+I'm not 100% sure, but I'm fairly sure (but don't let me put you off).  One of the problems is that it is not possible to know how many inflection points there are on a graph in advance, you can't therefore do a regression analysis because you don't know the 'polynomial order' of what you are looking for.  Some graphs have 5 or 6 max/mins.  I looked at using regression analysis as a 'compression' method for data storage, but in the end I developed a lossy system (like JPEG but without the discrete cosine stuff which I don't understand in sufficient detail to test/debug and which is optimised for visual requirments and not robocode requirements).
+<p>
+When I had fewer bins I experimented with calculating a parabolic maximum from the maximum bin and the two bins either side - it did not add much value and in the end I ditched the code in favor of more bins and better compression of the data.
+<p>
+To give you a start on your resarch the problem we have in a statistical gun is that we have many (or somtimes only a few) discrete points into which we want to convert into a smooth 'density' line/surface/blob...  The statistitions often have this problem with data and they utilise a 'Density Estimator' method - look it up via Google and see what you think.  (If there was "some mathematical way to build an actual curve with the data" I think the statistitions would have found it - and I would have found it on the web).  In the end I used some of the concepts of Density Estimators in my post 1.71 Gun's.
+<p>
+Good luck --<a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<p>
+Phew. I always knew you were a rocket scientist and brain surgeon in one person Paul. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Of course, even if what you're storing is discrete, the comment about efficiency (basically that it's more efficient to fire one wave bullet than 30 or 40 discrete virtual bullets) still holds - in fact you started doing that as well in 1.71, too, I believe (and probably used it for that Density Estimators stuff).  -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+<p>
+Yes - when I said Post 1.71 I ment Post &amp; including 1.71. -- <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<p>
+<p>
+Hmm; you're probably right. What angle multiple does <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> use for its bin frequency? I figure using say a bin every 1 degree would allow for lots of room to work with, and would allow the bot to find the inflections it needs without needing an actual spline curve. The data can be compressed by finding the inflections and handles from the bins themselves and writing those rather than writing actual bin values, so compressing this much data should not be much of a problem. I've started building my new bot, and will begin with a bin system in one of it's pattern analysers as soon as I program it to shoot :). I will probably also begin building an applet alongside the bot to graph and verify the curves it finds, much like liley's <a href="robowiki?SmogPainter" class=wikipagelink>SmogPainter</a>, but integrated into it's webpage button. Anyway, back to my bot... :)
+<p>
+-- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+I use 32 bins (and 13 distance ranges) each bin has an angle dependent on the bullet speed and guess factor calculator.  For a simple absolute angle guess factor calculator the bin angle would be 2.9 degrees with 3.0 bullets (2*asin(8/11)/32), 1.5 degrees for 0.1 bullets (2*asin(8/19.7)/32).  at a distance of 500 - 2.9 degrees is eqivalent to 0.32 of the width of a bot - more than accurate enough.  Also most good bots have fairly smooth curves one point is almost as good as it's neighbour, bots with sharp points aren't a problem. 
+<p>
+-- <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<p>
+Ha!  <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a> also came up with asin(8/bulletv)!  (We've had discussions over what the maximum offset can be before).  -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Hey, one thing - how does this density estimator stuff perform against robots with a highly irregular curve?  (i.e. - if they somehow had a really high negative spike and a high positive spike) -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+As with standard guess factor guns there is no problem - to get a sensible curve you have to tune somthing I think was called a "kernal wavelength" based on the number of data points you have and the distribution of those points - (this appears where alot of work goes into density estimators - too small a wavelenth and you get a graph with too many spikes, too large and you 'blend' out important information/peaks.  Unfortunatly it appears that there is no easy way to calculate the optimum kernal wavelength (and also I did not see anything on the web as to how to add new data to existing desity estimates).  But note my earlier comments - I only used some of the concepts of density estimators, they are computationally too intensive for robocode. -- <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<p>
+Back when I was trying to build a Bayesian statistical gun I also experimented with the idea of kernel density estimators based on gaussian curves.  Unfortunately, after running many sets of data with DT through an industrial-grade data mining ap they turned out to be basically useless, in addition to horrendously slow.  (Nor did any other standard data mining technique work, btw.  Since coming to robocode I am beginning to think that virtually everything ever written on the subject is bunk. :-\) - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+I was thinking that if you wanted to represent a curve by an arbitrary amount of points, wouldn't that be a perfect application for a self organizing map (SOM) neural net?  Something like the "Growing Neural Gas" at <a rel="nofollow" href="http://www.sund.de/netze/applets/gng/full/GNG-U_0.html">http://www.sund.de/netze/applets/gng/full/GNG-U_0.html</a>  <a href="robowiki?JHH" class=wikipagelink>JHH</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=VirtualBullets" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=VirtualBullets">View other revisions</a><br>Last edited September 20, 2006 19:24 EST by sjs-130-65-104-217.sjsu.edu <a href="robowiki?action=browse&diff=1&id=VirtualBullets">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

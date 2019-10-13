@@ -1,0 +1,268 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Nfwu/Painter - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Nfwu, Painter'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Painter">Nfwu/Painter</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Nfwu" class=wikipagelink>Nfwu</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Something new I wrote to help with my debugging.
+Feel free to use, with or without giving credit.
+<p>
+<pre>package nfwu;
+
+import robocode.*;
+import java.util.Vector;
+import java.util.Iterator;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+
+// Credit goes to David Alves for basic structure from DrawingBot.
+// Added multiple layers for drawing on.
+//Event Handlers to call from bot...
+
+/*
+	public void run(){
+		//I want 2 layers
+		Painter.init(2);
+		//Register first layer to key '1'
+		Painter.setupLayer(0, "Enemy Position", java.awt.event.KeyEvent.VK_1); 
+		//Register second layer to key 'w'
+		Painter.setupLayer(1, "Waves", java.awt.event.KeyEvent.VK_W);
+	//other stuff
+	}
+
+	public void onKeyPressed(java.awt.event.KeyEvent e){
+		if (Painter.onKeyPressed(e)) return;
+		// other stuff
+	}
+
+	public void onKeyReleased(java.awt.event.KeyEvent e){
+		if (Painter.onKeyReleased(e)) return;
+		// other stuff
+	}
+
+	public void onPaint(java.awt.Graphics2D g){ Painter.onPaint(g); }
+
+*/
+
+// Interactive Display Controls:
+//   Holding "key" displays the relevant layer until the key is released.
+//   Typing Shift+"key" toggles permanent display of a layer.
+//   Holding "H" shows a list of layer names and their keycodes.
+
+public class Painter {
+	public final static int HELP_KEY = KeyEvent.VK_H; //The 'h' key.
+	public final static float MAGIC_FONT_HEIGHT_VALUE = 12.0f;
+	static boolean isDisplayingHelpMessage = true;
+	static boolean isDisplayingLayersList = false;
+	static boolean isShiftPressed = false;
+
+//Setup stuff
+	public static void init(int numberOfLayers){//Call before every round
+		System.out.println("This bot has debugging graphics.");
+		System.out.println("Hold the '"+KeyEvent.getKeyText(HELP_KEY)+"' key with Paint enabled for help.");
+		overlays = new DebugOverlay[numberOfLayers];
+		isDisplayingLayersList = false;
+		isShiftPressed = false;
+	}
+
+	public static void setupLayer(int oid, String name, int key, boolean defaultDisp){ //key must be a valid VK_ code!!!
+		overlays[oid] = new DebugOverlay(name, key, defaultDisp);
+	}
+
+	public static void setupLayer(int oid, String name, int key){
+		setupLayer(oid, name, key, false);
+	}
+
+//Draw Stuff (oid = the layer id)
+	public static void drawObject(int oid, Renderable r){
+		overlays[oid].renderables.add(r);
+	}
+
+	public static void drawLineRect(int oid, Color color, double x1, double y1, double x2, double y2){ //Rectangular Coords as input
+		drawObject(oid, new Line(x1, y1, x2, y2, color)); 
+	}
+
+	public static void drawLinePol(int oid, Color color, double x1, double y1, double len, double ang){ //Relative polar Coords as input
+		double x2 = x1 + Math.sin(ang) * len; //NOTE: Robocode Angles... www
+		double y2 = y1 + Math.cos(ang) * len; 
+		drawObject(oid, new Line(x1, y1, x2, y2, color));
+	}	
+
+	public static void drawCircle(int oid, Color color, double x, double y, double radius){
+		drawObject(oid, new Circle(x, y, radius, color));
+	}
+
+	public static void drawPoint(int oid, Color color, double x, double y){
+		drawObject(oid, new Dot(x, y, color));
+	}
+
+	public static void drawText(int oid, Color color, double x, double y, String text){
+		drawObject(oid, new Text(text, x, y, color));
+	}
+
+
+//Handler Stuff
+	public static boolean onKeyPressed(KeyEvent e) {
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_SHIFT:
+			isShiftPressed = true;
+			return true;
+		case HELP_KEY:
+			if (isShiftPressed) isDisplayingHelpMessage = false;
+			else isDisplayingLayersList = true;
+			return true;
+		}
+
+		if (isShiftPressed) return false;
+		for (int i=0;i&lt;overlays.length;++i){
+			if (overlays[i].key == e.getKeyCode()){
+				overlays[i].displayed = true;
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
+
+	public static boolean onKeyReleased(KeyEvent e) {
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_SHIFT:
+			isShiftPressed = false;
+			return true;
+		case HELP_KEY:
+			if (isShiftPressed) isDisplayingHelpMessage = false;
+			else isDisplayingLayersList = false;
+			return true;
+		}
+
+		//Toggle whether or not shift is pressed
+		for (int i=0;i&lt;overlays.length;++i){
+			if (overlays[i].key == e.getKeyCode()){
+				overlays[i].displayed = !overlays[i].displayed;
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
+
+	public static void onPaint(Graphics2D g){
+		g.setColor(Color.WHITE);
+		if (isDisplayingHelpMessage) g.drawString("Hold the '"+KeyEvent.getKeyText(HELP_KEY)+"' key for help.", 0.0f, 0.0f);
+		else if (isDisplayingLayersList) g.drawString("List of avaliable debug graphics layers:", 0.0f, 0.0f);
+
+		for (int j=0;j&lt;overlays.length;++j){
+			if (isDisplayingLayersList){
+				g.setColor(Color.WHITE);
+				g.drawString((overlays[j].displayed?"*":"  ")+"["+KeyEvent.getKeyText(overlays[j].key)+"]: "+overlays[j].name, 0.0f, (j+1)*MAGIC_FONT_HEIGHT_VALUE);
+			}
+
+			if (!overlays[j].displayed) continue;
+			Iterator i = overlays[j].renderables.iterator();
+			while(i.hasNext()){
+				Renderable r = (Renderable) i.next();
+				r.render(g);
+			}
+			overlays[j].renderables.clear();
+		}
+
+		if (isDisplayingLayersList){
+			g.setColor(Color.WHITE);
+			g.drawString("Holding the key in brackets displays the layer", 0.0f, (overlays.length+1)*MAGIC_FONT_HEIGHT_VALUE);
+			g.drawString("Typing Shift+key toggles permanent display of a layer", 0.0f, (overlays.length+2)*MAGIC_FONT_HEIGHT_VALUE);
+		}
+	}
+
+
+
+//Implementation
+
+	static DebugOverlay[] overlays;
+	private static class DebugOverlay {
+		DebugOverlay(String name, int key, boolean defaultDisp){
+			this.name = name;
+			this.key = key;
+			this.displayed = defaultDisp;
+		}
+		Vector renderables = new Vector();
+		boolean displayed;
+		int key; //Keycode to toggle display mode
+		String name;
+	}
+
+
+
+	public static abstract class Renderable {
+		public abstract void render(Graphics2D g);
+	}
+
+	
+
+	private static class Circle extends Renderable {
+		double x, y, radius;
+		Color color;
+		public Circle(double x, double y, double radius, Color color){
+			this.x = x; this.y = y; this.radius = radius;
+			this.color = color;
+		}
+		public void render(Graphics2D g) {
+			g.setColor(color);
+			g.drawOval((int)Math.round(x - radius), (int)Math.round(y - radius),
+				   (int)Math.round(2 * radius), (int)Math.round(2 * radius));
+		}
+	}
+
+	
+
+	private static class Dot extends Circle {
+		public Dot(double x, double y, Color color){
+			super(x, y, 2, color); //super(x, y, 2, colour);
+		}
+	}
+
+	
+
+	private static class Line extends Renderable {
+		double x1, y1, x2, y2;
+		Color color;
+		public Line(double x1, double y1, double x2, double y2, Color color){
+			this.x1 = x1; this.y1 = y1; this.x2 = x2; this.y2 = y2;
+			this.color = color;
+		}
+		public void render(Graphics2D g) {
+			g.setColor(color);
+			g.drawLine((int)Math.round(x1), (int)Math.round(y1), (int)Math.round(x2), (int)Math.round(y2));
+		}
+	}
+
+	
+
+	private static class Text extends Renderable {
+		String text;
+		double x, y;
+		Color color;
+		public Text(String text, double x, double y, Color color){
+			this.text = text;
+			this.x = x; this.y = y;
+			this.color = color;
+		}
+
+		public void render(Graphics2D g) {
+			g.setColor(color);
+			g.drawString(text, (float)x, (float)y);
+
+		}
+	}
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Nfwu" class=wikipagelink>Nfwu</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Nfwu/Painter" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Nfwu/Painter">View other revisions</a><br>Last edited September 5, 2008 23:37 EST by <a href="robowiki?Nfwu" title="ID 12997 from 220.255.7.177">Nfwu</a> <a href="robowiki?action=browse&diff=1&id=Nfwu/Painter">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

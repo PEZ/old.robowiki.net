@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing BasicSurfer - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Basic, Surfer'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing BasicSurfer</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="BasicSurfer"  />
+<input type="hidden" name="oldtime" value="1186066364"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="2"  />
+<input type="hidden" name="captchaArg2" value="9"  />
+<input type="hidden" name="captchaOp" value="+"  />
+<input type="hidden" name="captchaId" value="814786139250"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">The bot created in the [[WaveSurfing/Tutorial|WaveSurfing Tutorial]]. 
+
+* [[/Code|Complete source code]]
+
+----
+
+Hey [[Skilgannon]], I&#39;m pretty sure it&#39;s right how it was. If you&#39;re going solely on the evidence of graphical debugging, be warned that it doesn&#39;t always line up with reality. Been a while since dealing with nitty gritty surf details, so I&#39;ll double check later, but pretty sure it&#39;s right as is. -- [[Voidious]]
+
+IIRC, -1 is correct. Because you can only detect energy drop 1 round after it has happened. And -2 for the data cause thats the data the enemy used to aim, as it fires the turn after it is stated. Then again my memory is shotty, maybe Voidious can clear that up some. --[[Chase-san]]
+
+* Yeah, that&#39;s how it is - to the best of my recollection, anyway. =) -- [[Voidious]]
+
+Using debug graphics I couldn&#39;t get it to line up with bullets on the waves. My score went up about 10% against DevilFISH (to 92%, with segmentation) after changing it to -2. Here&#39;s the debug code I used:
+&lt;pre&gt;
+   public void onPaint(java.awt.Graphics2D g) {
+         g.setColor(Color.red);
+         for(int i = 0; i &lt; _enemyWaves.size(); i++){
+            EnemyWave w = (EnemyWave)(_enemyWaves.get(i));
+            int radius = (int)w.distanceTraveled;
+            Point2D.Double center = w.fireLocation;
+            if(radius - 40 &lt; center.distance(_myLocation))
+               g.drawOval((int)(center.x - radius ), (int)(center.y - radius), radius*2, radius*2);
+         }
+      }
+&lt;/pre&gt;
+It may have to do with the doSurfing() being in the onScannedRobot() instead of the run(), and the order of event execution, I&#39;m not sure. -- [[Skilgannon]]
+
+Just reviewed some things, I&#39;m as sure as I could be that it&#39;s right with T-1. There&#39;s discussion about it on the [[RobocodeSG]], [[EnemyWaves]], and [[EnergyDrop]] pages. According to [[GamePhysics]] page, the battlefield draws between onScannedRobot and run - so in terms of robot performance, it doesn&#39;t matter in which you put your code, but it might for debugging graphics. &#39;&#39;Edit: Umm, duh, it still shouldn&#39;t matter as the timer doesn&#39;t advance anywhere in there.&#39;&#39; -- [[Voidious]]
+
+Yeah, that would do it. The debug gets called before the &#39;advance waves&#39;, so prints with the old data. I&#39;m still not sure why my score leapt up, though. Maybe I&#39;ll try to fix mine to call from the run() using getAllEvents(), though I don&#39;t really mind PerformanceEnhancingBugs  =) -- [[Skilgannon]]
+
+Finally found the bug that was causing my score to do better with the T-2, it had to do with my distancing. I&#39;m now getting 97.5% vs. DevilFISH, without firing, over 500 rounds. This is with T-1. I&#39;ve changed my debug code:
+&lt;pre&gt;
+   public void onPaint(java.awt.Graphics2D g) {
+         g.setColor(Color.red);
+         for(int i = 0; i &lt; _enemyWaves.size(); i++){
+            EnemyWave w = (EnemyWave)(_enemyWaves.get(i));
+
+            int radius = (int)(w.distanceTraveled + w.bulletVelocity);
+            //hack to make waves line up visually, due to execution sequence in robocode engine
+            //use only if you advance waves in the event handlers (eg. in onScannedRobot())
+
+            Point2D.Double center = w.fireLocation;
+            if(radius - 40 &lt; center.distance(_myLocation))
+               g.drawOval((int)(center.x - radius ), (int)(center.y - radius), radius*2, radius*2);
+         }
+      }
+&lt;/pre&gt;
+Thanks for catching that, guys. Maybe it would be a good idea to add this code to BasicSurfer? -- [[Skilgannon]]
+
+* Oops, sorry, I forgot to comment that I think that&#39;s a good idea. Too late. =) -- [[Voidious]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 2 + 9 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that BasicSurfer has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=BasicSurfer">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

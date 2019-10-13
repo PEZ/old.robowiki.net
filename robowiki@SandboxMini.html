@@ -1,0 +1,422 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>SandboxMini - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Sandbox, Mini'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=SandboxMini">SandboxMini</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>A bot for which I have published the source
+<p>
+A example of a bot that:
+<UL >
+<li>Uses guess factor targeting
+<li>Saves data between battles
+<li>Has comments (unusually for my code)
+</UL>
+<p>
+Code sample below
+<pre>
+package pe.mini;
+import robocode.*;
+import java.awt.Color;
+import java.util.*;
+import java.io.*;
+import java.util.zip.*;
+
+/**
+ * SandboxMini - a robot by Paul Evans
+ * Please acknowledge any code/ideas used.
+ * for more information visit www.sandbox.dial.pipex.com/robocode
+ */
+public class SandboxMini extends AdvancedRobot
+{
+
+	//***********************        Declarations      ***********************//
+	
+		//statics us less space - I don't know why - initilise key variables in do_init() to prevent values from the last battle being used.
+		static double targetBearingAbs = 10;//Heading of the target (+/- PI) (=10.0 if target not scanned during last execute())
+		static double targetDistance;		//distance target is away from us
+		static double targetEnergy;			//energy level of the target
+		static double targetX;				//coordinates of the target
+		static double targetY;
+		static double targetDirection;		//direction target is moving (or if stationary, was moving). 1.0 clockwise, -1.0 AntiClockwise
+		static double LinearShootAngle;		//gun offset if target was to continue in a straight line at it's present velocity with a power 3 bullet (+ve clockwise, -ve anticlockwise)
+
+		static double direction;			//direction we are heading...0 = forward, 1 = backwards
+		static double nextTurn;				//the time we will select another co-ordinate to move to
+		static double nextX;				//co-ordinates of where we are moving to at the moment
+		static double nextY;
+		
+		static Guess[][] stats;				//each guess holds the liklyhood of hitting the opponent at a given guessFactor and distanceIndex - make static to keep values for next battle
+		static int guessIndex;				//the present best guessIndex at the present distance of the target
+		static int distIndex;				//the index representing the distance of the target.
+		
+		ArrayList vBullets = new ArrayList(1000);	//a collection of virtual bullets (not static therefor cleared each battle)
+		static HashMap opponents;			// a mapping between an opponent name and it's stats array - saved to file				
+		
+	//***********************          run            ***********************//		
+	public void run() {
+		do_init();					//initialise variables, construct objects etc
+		while(true) {
+			if (targetBearingAbs == 10) {
+				setTurnRadarRightRadians(Double.POSITIVE_INFINITY);		//no target - spin the radar
+				execute();
+		 	} else {		
+				do_stats();				//study our virtual bullets and update the guess stats if they have hit or missed
+				do_GuessFactor();		//work out the best guess factor
+				do_movement();			//move our robot
+				do_radar();				//point the radar at the enemy
+				do_gun();				//point the gun in the same direction as the enemy and adjust for guess factor
+				do_shoot();				//shoot bullets and virtual bullets if the gun is not hot
+				targetBearingAbs = 10.0;  	//if we scan the enemy during the execute it will be set again
+				execute();
+			}
+		}
+	}
+
+	//***********************       Initilise          ***********************//
+	void do_init() {
+		setColors(Color.pink,Color.pink,Color.white);
+		setAdjustGunForRobotTurn(true);
+		setAdjustRadarForGunTurn(true);
+		nextTurn = 0;
+		if (opponents == null) opponents = (HashMap) PEReadObject("Opponents");		// in round 1 read in the file Opponents.zobj
+		if (opponents == null) opponents = new HashMap();		//if the file is not there/corrupt/or was not completely written last time because of quota restrictions create a new, empty map file
+		PEWriteObject(opponents, "Opponents");		//at the beginning of every round write the map to opponents.zobj - stats from the last round won't be recorded (saves having to use onWin() and onDeath());
+//		Use this commented out section to create the file 'New atats array.zobj' - it is used to place reasonable values in the guess array when a new opponent is found (used in onScannedRobot)
+/*		
+		if (stats==null) {					
+			stats = new Guess[5][42];		//five distance indexes and 42 guess factors per guess stat (even guess stats: absolute angle, odd guess stats: linear angle) - index 0 and 1 guess factor -1.0, 40,41 guess factor 1.0 
+			for (int i=0; i&lt;42; i++){
+				stats[0][i]= new Guess ();
+				stats[0][i].index = i;
+				stats[0][i].value = (float) (0.28  - 0.001*Math.abs(i-21));
+				
+				stats[1][i]= new Guess ();
+				stats[1][i].index = i;
+				stats[1][i].value = (float) (0.23  - 0.001*Math.abs(i-21));
+
+				stats[2][i]= new Guess ();
+				stats[2][i].index = i;
+				stats[2][i].value = (float) (0.21  - 0.001*Math.abs(i-21));
+
+				stats[3][i]= new Guess ();
+				stats[3][i].index = i;
+				stats[3][i].value = (float) (0.19  - 0.001*Math.abs(i-21));
+				
+				stats[4][i]= new Guess ();
+				stats[4][i].index = i;
+				stats[4][i].value = (float) (0.18  - 0.001*Math.abs(i-21));
+							}
+			PEWriteObject(stats,"New stats array"); 
+			
+		}
+*/
+//		end of section creating 'New stats array.zobj' file 
+	}
+	
+	//***********************       Stats           ***********************//
+	void do_stats() {
+		long now = getTime();
+		//out.println(vBullets.size());
+		for (Iterator m = vBullets.iterator() ; m.hasNext() ; ) {  //check each virtual bullet to see if it has hit or missed
+			VBullet vBullet = (VBullet) m.next();
+			if (vBullet.targetWasHit(targetX,targetY,now)) {		//vBullet Hit
+				stats[vBullet.distanceIndex][vBullet.guessIndex].rollingAvg(1.0);		//add 1 to the rolling average
+				m.remove();																//and remove the v bullet
+			}
+			else if (vBullet.outOfRange(targetX, targetY,now)) {			//vBulletMissed
+				stats[vBullet.distanceIndex][vBullet.guessIndex].rollingAvg(0.0);		//add 0 to the rolling average
+				m.remove();																//and removethe v bullet
+			}
+		}																				//if the bullet neither hit or missed it is checked next tick
+						
+	}
+	
+	//***********************       GuessFactor           ***********************//
+	void do_GuessFactor() {
+		
+		distIndex = (int) maxMin(4, 0, (targetDistance-100)/100);  // 5 distance indexes:  0 is &lt;200,  1 is &lt;300,  2 is &lt;400,  3 is &lt;500  and   4 is &gt;500
+		
+		Guess maxStat = (Guess) Collections.max(Arrays.asList(stats[distIndex]));
+		
+		guessIndex = maxStat.index;	
+				
+	}
+	
+	//***********************      Movement         ***********************//
+	void do_movement() {
+
+		if(getTime()&gt;=nextTurn) {	//has the time come to set new nextX and nextY co-ordinates
+			nextTurn = getTime() + targetDistance/16.5;		//bullets travel at between 11 and 19.7 units per tick - set new nextX,Y co-ordinates a little before a 3.0 bullet would reach us
+			double distFactor = Math.random();				//distance factor is roughly how far to travel until nextTurn (1.0 a long way, 0.0 nowhere)
+			double adjustInOut = -(targetDistance-300)/200.0*Math.PI/4;  //negative -get nearer the opponent, +ve further away
+			double angleAwayFromTarget = (Math.PI/2.0 + adjustInOut) * (Math.rint(Math.random())*2.0 - 1.0);		//basically move at 90 degrees to the opponent, adjust if we are too far or too near the opponent - and choose either clockwise or anticlockwise at random.
+			nextX=getX() + Math.sin(targetBearingAbs+angleAwayFromTarget) * targetDistance*0.88*distFactor;		//in the time allocated we could travel a maximum of around 0.8 times the distance to the enemy
+			nextY=getY() + Math.cos(targetBearingAbs+angleAwayFromTarget) * targetDistance*0.88*distFactor;
+			nextX=maxMin(getBattleFieldWidth()-50,50,nextX)*2.0 - nextX;	//we don't want to crash into walls so if our co-ordinates cross a 50 unit margin inside the walls - reflect the co-ordinate about the margin line
+			nextY=maxMin(getBattleFieldHeight()-50, 50,nextY)*2.0 - nextY;
+		}
+		
+		double reqOffset = normaliseBearing(absBearing(getX(),getY(),nextX,nextY)+direction*Math.PI - getHeadingRadians());  //calculate the change of angle required to get to the target co-ordianates
+		if (Math.abs(reqOffset) &gt; Math.PI/2) {  //if it is more than 180 degrees
+			reqOffset += Math.PI;				//add 180 degrees to the offset
+			if (direction == 1) direction=0; else direction=1;  //and change the direction.
+		}
+		setTurnRightRadians(normaliseBearing(reqOffset));
+		double distToGo=getRange(getX(),getY(),nextX,nextY);	//calculate how far to out target point
+		setAhead((-2.0*direction+1.0)*distToGo);				//tell the engine the distance (it will do all the speed calcs to stop on the point)
+		if(Math.abs(getTurnRemaining()) &gt; 65) setAhead(0);  	// if we need to turn sharply slow down/stop for a faster, tighter turn (note using degrees here)
+		
+		if (Math.abs(distToGo) &lt; 5.0) {		//to ensure we do not wobble and spin over the target point - be stationary if within 5 units of the point
+			setAhead(0.0);
+			setTurnRightRadians(0.0);
+		}
+	}
+	
+	//***********************       Radar            ***********************//
+	void do_radar() {
+		double offset = normaliseBearing(targetBearingAbs - getRadarHeadingRadians());		//the new offset is basically the difference between the direction of the target now and the where the radar is pointing (where the enemy was) 
+		setTurnRadarRightRadians(offset + sign(offset)*0.4);  ////overshoot by approx 1/16th of a circle
+	}
+	
+	//***********************         Gun            ***********************//
+	void do_gun() {
+		setTurnGunRightRadians(normaliseBearing(targetBearingAbs - getGunHeadingRadians() + gunOffset(guessIndex)));	// point the gun in the same direction as the enemy with an offset dicatated by the present best guess factor
+	}
+	
+//	//***********************        Shoot            ***********************//
+	void do_shoot() {
+		if(getEnergy()&gt;3.1 &amp;&amp; getGunHeat()==0) {		//if we won't disable us and the gun is ready
+			setFire(3.0);								//Fire our real bullet and send out virtual bullets for all the other directions we could have fired
+			for (int i=0; i&lt;42; i++) {
+				vBullets.add(new VBullet(i,distIndex,getX(),getY(),targetBearingAbs + gunOffset(i), getTime()));  //fire 42 virtual bullets - one for each guess factor - 21 for absolute targeting, 21 for linear targeting
+			}
+		}
+	}
+	
+	//***********************    onScannedRobot        ***********************//
+	public void onScannedRobot(ScannedRobotEvent e) {
+		
+		stats = (Guess[][]) opponents.get(e.getName());		//get the stats array from the opponents map into stats.
+		if (stats == null) {								// if there wasn't one in there create a new stats array (from file) and put it in the map
+			stats = (Guess[][]) PEReadObject("New stats array");
+			opponents.put(e.getName(),stats);
+		}
+
+		targetBearingAbs = e.getBearingRadians()+getHeadingRadians();   //standard trig stuff to work out where the opponent is and where its going.
+		targetDistance = e.getDistance();
+		targetEnergy = e.getEnergy();
+		targetX = getX()+Math.sin(targetBearingAbs)*targetDistance;
+		targetY = getY()+Math.cos(targetBearingAbs)*targetDistance;
+		LinearShootAngle = Math.asin(e.getVelocity()/11.0 * Math.sin(e.getHeadingRadians()-targetBearingAbs));  //use sine rule to work out the gun offset angle - the two lengths are proportional to our bullet velocity (11.0) and the enemy velocity - the sign of the result gives us opponent moving clockwise +ve
+		if(e.getVelocity() != 0.0) targetDirection = sign(LinearShootAngle);
+	}
+			
+	//***********************        Helpers        ***********************//
+	double normaliseBearing(double ang) {		//returns an angle between -PI/2 ans PI/2
+		while (ang &gt; Math.PI) ang -= 2*Math.PI;
+		while (ang &lt;= -Math.PI) ang += 2*Math.PI;
+		return ang;
+	}
+
+	double absBearing( double x1,double y1, double x2,double y2 ) {		//returns the bearing of point 2 from point 1 (+/- PI/2)
+		return Math.atan2(x2-x1,y2-y1);
+	}
+    
+	double getRange( double x1,double y1, double x2,double y2 ) {		//returns the distance between two points
+		double xo = x2-x1;
+		double yo = y2-y1;
+		return Math.sqrt( ( (xo)*(xo) ) + ( (yo)*(yo) ) );
+	}
+	
+	double sign(double value) {		//returns -1 if the value is negative, +1 if the value is positive, 0.0 if the value is zero 
+		return (value == 0.0) ? 0.0 : value/Math.abs(value);
+	}
+	
+	double maxMin(double maxval, double minval, double  value) {		//value returned is limited to the the max and min specified values 
+		return Math.min(maxval, Math.max(minval, value));
+	}
+		
+	double gunOffset(int guessIndex) {		// returns a gun offset (+ve clockwise releative to the heading of the target) for a given guess factor
+											// used by do_gun() for my gun direction and do_shoot() for the virtual bullets.
+		if (targetEnergy == 0.0) return 0.0;
+		double guessFactor=((guessIndex/2)-10.0)/10.0;
+		if (guessIndex % 2 == 0) {
+			return guessFactor*0.8143399*targetDirection;  //asin(8/11)=0.814399 radians (approx 46 degrees) - 46 degrees is the maximum angle an opponent can move if fired at with a 3.0 bullet - absolue targeting
+		} else {
+			return guessFactor*LinearShootAngle;  // linear targeting (odd guess factors)
+		}
+	}
+	
+		
+	Object PEReadObject(String fileName) {		//returns an object read from file (could be an array, collection, anything other than a primative) from the specified file
+		try {
+			ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(new FileInputStream(getDataFile(fileName))));
+			Object o = ois.readObject();
+			ois.close();
+			return o;
+		} catch (IOException e) {
+		} catch (ClassNotFoundException e) {
+		}
+		return null;
+	}
+	
+	
+	void PEWriteObject(Object o, String fileName) { 
+		try {
+			ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(new RobocodeFileOutputStream(getDataFile(fileName))));
+			oos.writeObject(o);
+			oos.close();
+		} catch (IOException e) {
+		}
+	}
+	
+}
+
+	//***********************     CLASS   VBullet        ***********************//
+	class VBullet {
+	int guessIndex;			//the guessIndex used for this bullet
+	int distanceIndex;		//the distanceIndex used for this bullet
+	double originX;			//the point from which the bullet was fired
+	double originY;
+	double absBearing;		//the heading of the bullet
+	long time;				//when the bullet was fired
+	
+	VBullet (int guessIndex, int distanceIndex, double originX, double originY, double absBearing, long time) {		//constuctor
+		this.guessIndex = guessIndex;
+		this.distanceIndex = distanceIndex;
+		this.originX = originX;
+		this.originY = originY;
+		this.absBearing = absBearing;
+		this.time = time;
+		}
+		
+	double distance(double now) {  //double because targetWasHit uses double - returns how far the vbullet has traveled at time now
+		return (now - time) * 11.0;
+	}
+	
+	double getX(double now) {		//returns the x component of where the bullet is at time now
+		return originX + Math.sin(absBearing)*distance(now);
+	}				
+
+	double getY(double now) {		//returns the y componet
+		return originY + Math.cos(absBearing)*distance(now);
+	}
+	
+	boolean targetWasHit(double targetX, double targetY, long now) {		//given a target position a time returns true if the bullet came within 30 units of the target center over the last tick				
+		
+		for (double fraction = 0.0; fraction&lt;1.05; fraction+=0.1) {
+			if (range(targetX,targetY,now-fraction) &lt; 30.0) return true;
+		}
+		return false;
+	}
+	
+	boolean outOfRange(double targetX, double targetY, long now) {		//returns true if the bullet is beyond the target - the bullet can be considered usless now
+		double targetFromOrigin = Math.sqrt((targetX-originX)*(targetX-originX)+(targetY-originY)*(targetY-originY));
+		if (range(originX, originY, now) &gt; targetFromOrigin+30.0) return true; else return false;  //if our bullet is 30 units further away than our target (from where the bullet eas fired from) it will never hit the target
+	}
+	
+	double range( double targetX, double targetY, double now) {  //returns the distance between the target and where the bullet was fired from.
+		double xo = targetX-this.getX(now);
+		double yo = targetY-this.getY(now);
+		return Math.sqrt( ( (xo)*(xo) ) + ( (yo)*(yo) ) );
+	}
+
+
+}
+
+
+	//***********************     CLASS   Guess        ***********************//
+	class Guess implements Comparable, Serializable{
+		int index;		//the guess index (we use this to return the index of the object returned by the max method of the Collections class
+		float value;	//the estimate of the probability of a hit
+
+//		Guess (int index, double value) {
+//			this.index = index;
+//			this.value = (float) (value - 0.001*Math.abs(index-21));   //subtract a maximum of approx 0.02 at indexes 0 and 41 - to give preferece to index 20
+//		}
+
+        void rollingAvg(double newValue)
+        {
+				value = (float) ((value*40.0 + newValue)/(41.0));	// a rolling average of 40
+        }
+
+		public int compareTo(Object o) {	//allows us to use Collections.max (note 'implements comparable' above)
+			//Guess second = (Guess) o;
+			//if (this.value &lt; ((Guess)o).value) return -1;
+			//if (this.value &gt; ((Guess)o).value) return  1;
+			return new Float(this.value).compareTo(new Float(((Guess)o).value));  // 0;  saves 6 bytes on the above code
+		}
+}
+</pre>
+<p>
+<p>
+if you want to init the class variables (static ones) use the static{ }. It will only init when class is referenced e.g.
+<pre>
+public class SandboxMini extends AdvancedRobot {
+  static Guess[][] stats = null;
+  static{
+    stats = new Guess[5][42];
+    for (int i=0; i&lt;42; i++){
+	stats[0][i]= new Guess ();
+	stats[0][i].index = i;
+	stats[0][i].value = (float) (0.28  - 0.001*Math.abs(i-21));
+				
+	stats[1][i]= new Guess ();
+	stats[1][i].index = i;
+	stats[1][i].value = (float) (0.23  - 0.001*Math.abs(i-21));
+
+	stats[2][i]= new Guess ();
+	stats[2][i].index = i;
+	stats[2][i].value = (float) (0.21  - 0.001*Math.abs(i-21));
+
+	stats[3][i]= new Guess ();
+	stats[3][i].index = i;
+	stats[3][i].value = (float) (0.19  - 0.001*Math.abs(i-21));
+				
+	stats[4][i]= new Guess ();
+	stats[4][i].index = i;
+	stats[4][i].value = (float) (0.18  - 0.001*Math.abs(i-21));	
+     }
+  }
+
+  public void onScannedRobot(ScannedRobotEvent e) {
+    // just to demostrate its not efficent to check like this in every scan.
+    // the stats it self is inilised when the class is constructed so not null 
+    //and will not be initilised in the next round!
+    stats = (opponents.get(e.getName() ==null)? stats:(Guess[][])opponents.get(e.getName());
+  }
+....
+}
+
+</pre>
+<p>
+--SSO<a href="robowiki?action=edit&id=SSO" class=wikipageedit>?</a>
+<p>
+I don't understand, I don't think I use or need any static class variables - the Guess initial settings are commented out and are included to be able to re-make a new stats array file.  when the bot fights a new opponent a new guess object is created from this file and added to the opponents HashMap<a href="robowiki?action=edit&id=HashMap" class=wikipageedit>?</a> (and associaed with the opponents name).  The Guess fields must not be static, I require different values for each opponent.  --  Paul Evans
+<p>
+Yes you don't need any additinal static variables. You can put the commented part under static see the example above. You dont need to save and load the initial values. Thats what I say.
+--SSO<a href="robowiki?action=edit&id=SSO" class=wikipageedit>?</a>
+<p>
+Loading from file (and commenting out the initialisation code) results in a much smaller code size than having the initialisation code live.  I needed to be able to load from file anyway for the opponent stats - I just used this routine to create initialised copies of the Guess[][] array in a few bytes.  But I will look at the use of the static keyword in this context to understand it (I wish Java would not keep using the same word for different jobs!)  --  Paul Evans.
+<p>
+Learing new things are always good. In the contex of saving to a file in order to save bytes is good idea. you can also put your VBullet class to a file and saved. SSO.
+<p>
+I'm not sure you can, the thing is the code required initialise a new Guess[][] array was substansial and constant for all opponents - this is not true for <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>. --  Paul
+<p>
+I'm sure there are about a hundred other ways to shave bytes off of <a href="robowiki?SandboxMini" class=wikipagelink>SandboxMini</a>, too.  Speaking of which, were you going to enter it into the <a href="robowiki?RobocodeLittleLeague" class=wikipagelink>RobocodeLittleLeague</a>?-- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+nah - it's not a serious bot -- Paul.
+<p>
+<p>
+<hr noshade class=wikiline size=2>
+<p>
+Releated to Mini guess factor. Is it necessry to scale the guess factor for every bullet speed for VBullets or just need to use the max bullet power. -- SSO
+<p>
+It had been my intention to use lower power bullets at longer ranges, but I never got round to it (it doesn't make much difference to the score, just the number of wins).  However the virtual bullet code already supportet variable bullet power senarios when I ported it from my mega bot of the time.
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=SandboxMini" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=SandboxMini">View other revisions</a><br>Last edited September 10, 2003 16:43 EST by <a href="robowiki?Paul_Evans" title="ID 1312 from 81-86-158-131.dsl.pipex.com">Paul Evans</a> <a href="robowiki?action=browse&diff=1&id=SandboxMini">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

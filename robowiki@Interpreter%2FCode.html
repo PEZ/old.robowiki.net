@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Interpreter/Code - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Interpreter, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Code">Interpreter/Code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Interpreter" class=wikipagelink>Interpreter</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package strider;
+
+import robocode.*;
+
+/**
+ * This code is released under the RoboWiki Public Code Licence (RWPCL),
+ * datailed on: http://robowiki.net/?RWPCL
+ *
+ * This is a microbot with an interpreter that executes strings.
+ * It's a silly way to try to cheat codesize.jar and have more code.
+ *
+ * Feel free to use the inperpreter in your own bots, the only thing you'll
+ * need to change is the 'static final' variables at the top.
+ *
+ * For more info see: http://robowiki.net/?Interpreter
+ *
+ * @author Strider
+ * @version 0.1.0
+ */
+public class Interpreter extends AdvancedRobot {
+
+    private static final int STACK_SIZE = 16;
+    private static final int HEAP_SIZE = 16;
+    
+    private static final int ON_SCANNED_ROBOT = 0;
+    private static final int NORMALIZE_RELATIVE = 1;
+    private static final int FUNCS = 2;
+
+    // The example code below implements oscillation and head-on targeting.
+    // Heap usage:
+    // 0 : dir (1 forward, 0 backward)
+    
+    private static final String code[] = {
+	// Radar lock
+	"t.getRadarTurnRemainingRadians;t,setTurnRadarLeftRadians;" +
+	// Calculate heading towards enemy
+	"t.getHeadingRadians;#0;e.getBearingRadians;--" +
+	// Calculate amount to turn gun
+	"t.getGunHeadingRadians;-#1;(" +
+	// Turn gun and fire
+	"t,setTurnGunRightRadians;#2.1;t,setFire;" +
+	// Turn perpendicular
+	"e.getBearingRadians;#-1.57;-#1;(t,setTurnRightRadians;" +
+	// Invert dir if done driving
+	"t.getDistanceRemaining;#12;?#1;#0;]-#0;[" +
+	"#27;?#0;]#300;*#150;-t,setAhead;~" +
+	// Done!
+	"!",
+
+	// Subroutine #1: Normalize relative angle
+	"^$#3.14;-&lt;#14;?~#6.28;-#-28;@~" +
+	"$#-3.14;^-&lt;#15;?~#-6.28;-#-31;@~^)"
+    };
+    
+    private static double heap[] = new double[HEAP_SIZE];
+    
+    public void run() {
+	turnRadarRightRadians(Double.POSITIVE_INFINITY);
+    }
+
+    public void onScannedRobot(ScannedRobotEvent e) {
+	execute(ON_SCANNED_ROBOT, e);
+    }
+
+    ///////  Instructions //////
+    //
+    // In the action descriptions the things to the left of the arrow "-&gt;"
+    // is the state of the stack before execution and the things to the right
+    // is the state of the stack afterwards. Side effects are described inside
+    // braces "{}". The special tag &lt;data&gt; is used to denote everything
+    // between the current opcode and the next semicolon ";".
+    // The program counter "pc" is always increased before the action is taken.
+    //
+    // Char	Mnemonic	Action
+    // !	Halt		-&gt; { stop and return from execute }
+    // ;	Nop		-&gt; 
+    // $	Dup		x -&gt; x x
+    // ~	Drop		y -&gt;
+    // ^	Swap		x y -&gt; y x
+    // {	Put		a ... v d -&gt; v ...  // d &gt;= 1 is the depth of a
+    // }	Pick		v ... d -&gt; v ... v  // d &gt;= 1 is the depth of v
+    // [	Store		v a -&gt; { heap[a] = v }
+    // ]	Load		a -&gt; heap[a]
+    // #	PushImmediate	-&gt; &lt;data&gt;
+    // -	Sub		x y -&gt; (x-y)
+    // *	Mult		x y -&gt; (x*y)
+    // &lt;	IsNegative	x -&gt; (x&lt;0 ? 1 : 0)
+    // ?	JumpNotZero	x o -&gt; x { if x!=0 then pc += o }
+    // @	Jump		o -&gt; { pc += o }
+    // (	Call		f -&gt; (pc*FUNCS+func) { func = f, pc = 0 }
+    // )	Return		r -&gt; { func = r%FUNCS, pc = r/FUNCS }
+    // .	CallGetter	-&gt; obj.&lt;data&gt;()
+    // ,	CallSetter	x -&gt; { obj.&lt;data&gt;(x) }
+    // t	This		-&gt; { obj = this }
+    // e	Event		-&gt; { obj = e }
+    //
+    ////////////////////////////
+    
+    private void execute(int func, Object e) {
+	try {
+	    double tmp;
+	    double stack[] = new double[STACK_SIZE];
+	    Object obj = this;
+	    int pc, sp;
+	    pc = sp = 0;
+	    do {
+		String c = code[func];
+		switch(c.charAt(pc++)) {
+		case '!': return;
+//		case ';': break;	// Nop
+		case '$': stack[sp++] = stack[sp-2]; break;
+		case '~': --sp; break;
+		case '^':
+		    tmp = stack[sp-1];
+		    stack[sp-1] = stack[sp-2];
+		    stack[sp-2] = tmp;
+		    break;
+		case '{':
+		    tmp = stack[--sp];
+		    stack[--sp-(int)tmp] = stack[sp];
+		    break;
+		case '}':
+		    tmp = stack[sp-1];
+		    stack[sp-1] = stack[sp-1-(int)tmp];
+		    break;
+		case '[': heap[(int)stack[--sp]] = stack[--sp]; break;
+		case ']': stack[sp-1] = heap[(int)stack[sp-1]]; break;
+		case '#':
+		    stack[sp++] = Double.parseDouble(c.substring(pc, pc = c.indexOf(';', pc)));
+		    break;
+		case '-': stack[sp-2] = stack[sp-2] - stack[--sp]; break;
+		case '*': stack[sp-2] = stack[sp-2] * stack[--sp]; break;
+		case '&lt;': stack[sp-1] = stack[sp-1] &lt; 0 ? 1 : 0; break;
+		case '?': if (stack[sp-2] == 0) { sp--; break; }
+		    /* fall through */
+		case '@': pc += (int)stack[--sp]; break;
+		case '(':
+		    tmp = stack[sp-1];
+		    stack[sp-1] = pc*FUNCS + func;
+		    func = (int)tmp;
+		    pc = 0;
+		    break;
+		case ')':
+		    func = (pc = (int)stack[--sp]) % FUNCS;
+		    pc /= FUNCS;
+		    break;
+		case '.':
+		    stack[sp++] = ((Number)obj.getClass().getMethod(c.substring(pc, pc = c.indexOf(';', pc)), null).invoke(obj, null)).doubleValue();
+		    break;
+		case ',':
+		    obj.getClass().getMethod(c.substring(pc, pc = c.indexOf(';', pc)), new Class[]{double.class}).invoke(obj, new Object[]{new Double(stack[--sp])});
+		    break;
+		case 't': obj = this; break;
+		case 'e': obj = e; break;
+		}
+	    } while (true);
+	} catch(robocode.exception.RobotException ex) {
+	    throw ex;
+	} catch(Exception ex) {
+	    //ex.printStackTrace();
+	}
+    }
+    
+}
+</pre>
+<p>
+<hr noshade class=wikiline size=1>
+Man! This is so cool I'll have to take my jacket on! It'll take me a while to understand the first bit about it, but I'll give it a try! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I've been thinking of something similar but easier, dynamically load a delegated robot class :) After a rename of the file (.class). But that is cheating I would say of course. -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+I first tried dumping a .class-file into a string and loading it with a custom class loader. Sadly, the SecurityManager<a href="robowiki?action=edit&id=SecurityManager" class=wikipageedit>?</a> in robocode won't allow you to use a custom class loader and that was when I got this interpreter idea. -- <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+<p>
+Don't need  a custom class loader I think? I mean just a real class file but renamed file suffix so the codesize is fooled. Then Class.forName().newInstance() and delegate to that instance. --<a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+But Class.forName("Foo") will look for a file named Foo.class, so that won't work unless you include code to rename the file first. -- <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+<p>
+Exactly hence the "a rename of the file" ;-) -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+But the Robocode Security Manager won't allow you to do that. Would it? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Would it be possible to reach the class methods of the <a href="robowiki?JavaAPI" class=wikipagelink>JavaAPI</a> (or any API) somehow? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I don't think I fully understand how this language works... Why is there a need for the Nop instuction for instance? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Short answer: Codesaving in the interpreter.
+Long answer: When the interpreter executes an instruction with data, ('#', '.' &amp; ',') it looks for the next ';' in the code to extract the data with substring() at the same time it advances pc but only to point at the semicolon. It would cost several extra bytes to skip past it. Implementing ';' to be a NOP instruction costs nothing, as you can see the code for it is commented out as it is just a break anyway (in fact any unknown character is interpreted as NOP).
+<p>
+The interpreter is made to be small (but it's not that optimized) and therefore the interpreted code is a bit strage. For example there is no addition, you must use subtraction, A + B = A - (0 - B), and since it is stack based everything is in reverse polish notation (HP-calculator users should know it). So the code will be more like A 0 B - - (see the code for "Calculate heading towards enemy").
+<p>
+I must say that I haven't looked any more at this robot myself since I first wrote it. It was more of a test and never ment to be anything usefull and it is way to difficult to write code to make anything more advanced with it.
+-- <a href="robowiki?Strider" class=wikipagelink>Strider</a>
+<p>
+I think it's way cool. Just having a hard time grasping the language. Maybe I just must try doing something with it myself and then it'll get clearer. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Interpreter" class=wikipagelink>Interpreter</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Interpreter/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Interpreter/Code">View other revisions</a><br>Last edited October 16, 2004 20:32 EST by <a href="robowiki?PEZ" title="ID 3512 from as5-1-7.dre.s.bonet.se">PEZ</a> <a href="robowiki?action=browse&diff=1&id=Interpreter/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

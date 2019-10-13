@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Starrynte/MeleeEvaluater - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Starrynte, Melee, Evaluater'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/MeleeEvaluater">Starrynte/MeleeEvaluater</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><strong>Instructions for Use</strong>
+<UL >
+<li> 1. Copy the code at <a href="robowiki?Starrynte/MeleeEvaluaterCode" class=wikipagelink>Melee Evaluater Code</a>
+<li> 2. Paste it into a new class called MeleeEvaluate<a href="robowiki?action=edit&id=MeleeEvaluate" class=wikipageedit>?</a>
+<li> 3. Change the package name to the package that you'll use the evaluater in
+<li> 4. Compile MeleeEvaluate<a href="robowiki?action=edit&id=MeleeEvaluate" class=wikipageedit>?</a>
+<li> 5. Copy and paste this line of code into the bot, before run() (with the variables):
+</UL>
+<pre>
+static MeleeEvaluate me;
+</pre>
+<UL >
+<li> 6. Then, inside run(), but outside the infinite loop (right after <code>public void run()</code> ), copy and paste this code:
+</UL>
+<pre>
+		if(me==null){
+			me=new MeleeEvaluate(this);
+		}
+		Condition go=new Condition("go"){
+				public boolean test(){
+					return true;
+				}
+			};
+		go.setPriority(100);
+		addCustomEvent(go);
+</pre>
+If your bot uses blocking calls, make sure this code goes before the blocking calls in run()
+<UL >
+<li> 7. Finally, copy and paste this code right outside run() (as an event):
+</UL>
+<pre>
+	public void onCustomEvent(CustomEvent e){
+		me.execute();
+	}
+</pre>
+<UL >
+<li> 8. Compile your bot, run it in battles, and watch the console!
+</UL>
+<p>
+<strong>Release info</strong><br>
+"Beta" release
+<UL >
+<li> Please report any problems.
+<UL >
+<li> The melee evaluater currently only works with an even number bot battle (i.e. 10 bots (the usual), 6 bots).
+<li> The melee evaluater currently only works with AdvancedRobots<a href="robowiki?action=edit&id=AdvancedRobots" class=wikipageedit>?</a>.
+</UL>
+<li> Please tell me any suggestions. The code can be freely copied or altered for use.
+</UL>
+<p>
+<strong>Comments, questions, suggestions</strong><br>
+I've started on a "Melee Evaluater"...
+First, a quick question: IS IT POSSIBLE to HAVE a, say on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>, from ANOTHER CLASS that HAS an ADVANCEDROBOT which is the <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> I'm trying to get the on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> from?
+In other words, when an event occurs in a robot, can another class that has an instance (if my Java terminology is correct :) ) of the robot "catch" the event?
+If not, then the bot will have to have "meleeeval.onHitRobot<a href="robowiki?action=edit&id=HitRobot" class=wikipageedit>?</a>(e)", "meleeeval.onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a>(e)", etc. which will make implementing the evaluater into bots harder...
+--<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Yes, you can do bot.getAllEvents<a href="robowiki?action=edit&id=AllEvents" class=wikipageedit>?</a>();. However, this has to be called after the execute() and some events will be ignored, eg. those with a priority of 100. You have to create an event that has a priority of 99 and put the event distribution code in there. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<UL >
+<li> Why would the events with 100 priority be ignored? and by after the execute(), do you mean to have a custom event that always returns true, set the customevent to priority 99, and then, in the customevent, tell the other class to do bot.getAllEvents<a href="robowiki?action=edit&id=AllEvents" class=wikipageedit>?</a>()? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<li> POST EDITED: It does work, except the win event, where I did a check to see if there were robots left to determine if the bot won :) i'll release the melee evaluater soon. (also added another stat) --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<li> The reason it wouldn't work for the WinEvent<a href="robowiki?action=edit&id=WinEvent" class=wikipageedit>?</a> is because its priority is higher than you can set a custom event to, so it gets called before you can get it in getAllEvents<a href="robowiki?action=edit&id=AllEvents" class=wikipageedit>?</a>(). When it gets called it gets removed from the events que, so getAllEvents<a href="robowiki?action=edit&id=AllEvents" class=wikipageedit>?</a> doesn't include it. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Starrynte/MeleeEvaluater" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Starrynte/MeleeEvaluater">View other revisions</a><br>Last edited February 18, 2008 22:10 EST by <a href="robowiki?Starrynte" title="ID 12409 from cpe-75-84-83-181.socal.res.rr.com">Starrynte</a> <a href="robowiki?action=browse&diff=1&id=Starrynte/MeleeEvaluater">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Movement/GoToBot - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Movement, Go, To, Bot'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/GoToBot">Movement/GoToBot</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Movement" class=wikipagelink>Movement</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H4>A complete bot that moves between destinations (selected at random) on the battle field and shoots on sight of an enemy.</H4>
+
+If you're to lazy to copy-paste the source; Download the bot at <a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=1456">http://www.robocoderepository.com/BotDetail.jsp?id=1456</a>
+<pre>
+package wiki;
+import robocode.*;
+import java.awt.geom.Point2D;
+
+// GoToBot, demonstrates using a goTo() function to move around
+// $Id: GoToBot.java,v 1.2 2003/05/15 14:30:46 peter Exp $
+
+public class GoToBot extends AdvancedRobot {
+    private Point2D[] destinations = {
+        new Point2D.Double(90, 90),
+        new Point2D.Double(790, 790),
+        new Point2D.Double(400, 400),
+        new Point2D.Double(90, 540),
+        new Point2D.Double(740, 90),
+        new Point2D.Double(500, 200),
+        new Point2D.Double(200, 500)
+    };
+
+    public void run() {
+        turnGunRightRadians(Double.POSITIVE_INFINITY); 
+    }
+
+    public void onScannedRobot(ScannedRobotEvent e) {
+        setFire(3);
+        setTurnGunRightRadians(0 - getGunTurnRemainingRadians());
+        if (Math.abs(getDistanceRemaining()) &lt; 5) {
+            goTo(destinations[(int)(Math.random() * destinations.length)]);
+        }
+    }
+
+    private void goTo(Point2D destination) {
+        Point2D location = new Point2D.Double(getX(), getY());
+        double distance = location.distance(destination);
+        double angle = normalRelativeAngle(absoluteBearing(location, destination) - getHeading());
+        if (Math.abs(angle) &gt; 90) {
+            distance *= -1;
+            if (angle &gt; 0) {
+                angle -= 180;
+            }
+            else {
+                angle += 180;
+            }
+        }
+        setTurnRight(angle);
+        setAhead(distance);
+    }
+
+    private double absoluteBearing(Point2D source, Point2D target) {
+        return Math.toDegrees(Math.atan2(target.getX() - source.getX(), target.getY() - source.getY()));
+    }
+
+    private double normalRelativeAngle(double angle) {
+        angle = Math.toRadians(angle);
+        return Math.toDegrees(Math.atan2(Math.sin(angle), Math.cos(angle))); 
+    }
+}
+</pre>
+Note that it uses the fancier goTo() function from <a href="robowiki?Movement/CodeSnippetGoTo" class=wikipagelink>/CodeSnippetGoTo</a>. And I just had to make it shoot as well. =)  -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+What the... HEY!  You stole <a href="robowiki?CircleBot" class=wikipagelink>CircleBot</a>'s radar/aiming algorithm!  (Except that he does it in a slightly different way...)  j/k  -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Ok, so something i have been desperately trying to work out and failing is what the difference is between fire(), and setFire(). I know that setFire() only works when execute() is called, but i dont see why you'd use it on a simple bot like this. I can see it's use on larger bots where you make it fire only after the gun has moved, but in this example the gun is constantly moving. Is it because if you call setFire() it doesnt interefere with any other actions as it is put in it's own thread??? -- <a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+I use setFire() out of habit. Sometimes when I started out with Robocode putting fire() in the wrong place made my bot stop to work completely. I have no clue as to why though. And as you mention it I don't know why the above works without a call to execute() either. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I changed the radar/aiming "algorithm" slightly so that it now doesn't look exactly like <a href="robowiki?CircleBot" class=wikipagelink>CircleBot</a>'s. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Ah - a "nano-gun-lock" - I should add that into <a href="robowiki?CircleBot" class=wikipagelink>CircleBot</a> :-p -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+It should function entirely without the while(true) there. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Aha! If you're sure about it please feel free to remove that line. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I've removed the while(true) {} line, I tested it locally first and it worked fine. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Please check <a href="robowiki?HaikuGoTo" class=wikipagelink>HaikuGoTo</a> and see if it does what it's meant to.  Other than firing, it should replace this bot (although not very efficently). -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Movement" class=wikipagelink>Movement</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Movement/GoToBot" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Movement/GoToBot">View other revisions</a><br>Last edited August 30, 2003 23:16 EST by <a href="robowiki?Tango" title="ID 1197 from webcacheH09b.cache.pol.co.uk">Tango</a> <a href="robowiki?action=browse&diff=1&id=Movement/GoToBot">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

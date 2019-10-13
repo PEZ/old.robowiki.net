@@ -1,0 +1,412 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>HelpRequests - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Help, Requests'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=HelpRequests">HelpRequests</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I have this method inside my <a href="robowiki?Wave" class=wikipagelink>Wave</a> class:
+<pre>
+    double deltaBearing(double distance) {
+	return Math.atan2(distance, shootingDistance());
+    }
+</pre>
+It's supposed to help me figure out the gunners deltabearing for an object traveling "distance" length in a right angle from a point at the shootingDistance(). I use it for several things, one is to extend the blind-mans-stick from my robot to smooth walls. But sometimes my robot behaves funny. It seems it is on closer ranges. Then it rams its opponent. I suspect the function above. Anyone have a clue?
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Check your shootingDistance function maybe? This part looks ok to me. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Thanks! That was the problem. shootingDistance() was just that. I want to use the current enemy distance of course. Removed both those function from my Wave class and now things work much better. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+sorry PEZ, not here to help (as if i could). question of my own:
+<p>
+how do you get the onBulletHit<a href="robowiki?action=edit&id=BulletHit" class=wikipageedit>?</a> event to coincide with an enemy wave hitting? right now, when an enemy wave is 20-3*ewave.bulletPower away from me, i make it the passingWave. then when a bullethitevent shows up, i use passingWave to calculate the guess factor of the hit bullet. But i seem to be having some errors with this method. Any suggestions? 
+--<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+Are you setting the centre of the wave as the enemies position the tick before you detected the <a href="robowiki?EnergyDrop" class=wikipagelink>EnergyDrop</a>, and the time of firing 2 ticks before when you detected it? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Use <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a> to line them up properly. You'll need to offset the wave to account for the fact that 1) you didn't detect the energy drop until 1 turn after the enemy fired and 2) the enemy's bullet started moving the turn before that. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Andrew, i strongly suggest you to start graphing your waves with RoboCodeGL<a href="robowiki?action=edit&id=RoboCodeGL" class=wikipageedit>?</a>. I was a newbie with GL stuff till i start developing my <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>, and now looking back, i see that it would be at least 3 times harder to do and debug all without the graphing aid. The instalation and configuration is a little confuse, but i can assure you that it will pay back your efforts. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+robocode gl sounds so imensly complicated to install though.--<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+Yeah I agree. I only started with RCGL some few days ago when I tired of not "seeing" what was going on in my code. I got RCGL running in a jiffy and it only took me some hour or so to start graphing my waves.
+<p>
+I suggest you don't use the event mechanism for <a href="robowiki?EnemyWaves" class=wikipagelink>EnemyWaves</a>. Even though potentially more precise the whole business of keeping track on execution order gets tricky. It has bitten me lots of times. Instead put the <a href="robowiki?EnemyWaves" class=wikipagelink>EnemyWaves</a> in a List and iterate over that list to advance them and check status. And when you get hit iterate over the list and find a wave that has passing over you by checking if it is withing -18 to +18 from the distance your bot from the gunning location. Also check that the fire power matches the e.getPower() value. But don't use == for this beacause some rounding issues or whatever makes that fail. Instead check if the bullet power of the wave and the bullet that hit you are within a margin of, say +/- 0.1.
+<p>
+PS. <a href="robowiki?Nano" class=wikipagelink>Nano</a> made the install of RCGL <em>'much</em> simpler. Check it out on the <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a> page.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I just added <a href="robowiki?EnemyWaves" class=wikipagelink>EnemyWaves</a> to my dev bot (took about 10 mins), and they lined up perfectly.  I like my strategy of just letting everyone else work out how to do it, and then copying.  Makes life much easier!  Tomorrow I will actually do something with the waves, they currently feed into a dummy array, and I'm not even using onBulletHit<a href="robowiki?action=edit&id=BulletHit" class=wikipageedit>?</a> (I know they line up because of the GL, and I'm assuming they will still line up when I collect the events). -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+just to clarify, when i detect that the enemies energy level drops w/in range of bullet, and i create an enemy wave for that ; should i put the starting distance at 2*20-3*deltaenergy? i used to put it at 0.--[<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+Correct.  And thats 2*bulletspeed from the centre of the enemy *last* tick. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+This should be one of the things you can read about on the <a href="robowiki?EnemyWave" class=wikipagelink>EnemyWave</a> page. Maybe that page needs a summary... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<p>
+Yes, that's what you should do.  Never worked for me, though... -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Well, and you probably don't have the waves lined up all that precisely either. But you do use the last ticks enemy location and that's what is important if you just use strategy for determining which bullet hit you that doesn't assume perfectly lined up waves. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<hr noshade class=wikiline size=1>
+On the changes site there sometimes appears a bold text with a short description of what was changed. How is this done ??? --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+When you edit a page, there's a box at the bottom that says Summary. Just enter the description in there. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<hr noshade class=wikiline size=1>
+anyone know why this wall smoothing works sometimes, and other times it doesn't?
+<p>
+<pre>
+	double goalDirection =enemyAbsoluteBearing-(Math.PI/2+(e.getDistance()&gt;=600?-0:0.4  ))*direction;
+		while (!fieldRectangle.contains(getX()+Math.sin(goalDirection)*120,getY()+Math.cos(goalDirection)*120)){
+			goalDirection += direction*.1;	
+		}
+		goalDirection = robocode.util.Utils.normalRelativeAngle(goalDirection-getHeadingRadians());
+		setAhead(100*direction);
+		setTurnRightRadians(Math.tan(goalDirection));
+</pre>
+<p>
+--<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+Does fieldRectangle include a buffer?  If not, it will need one.  The other problem I can think of is how much time you are giving for the bot to turn, they don't have much of a turning circle. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+fieldRecangle is this: 
+<pre>static final RoundRectangle2D fieldRectangle= new RoundRectangle2D.Double(19.0,19.0,762.0,562.0,114.59,114.59);</pre>
+<p>
+what exactly do you mean by too much time to turn? i think somthing is wrong in the actual code, because i used to have somthing else with the same numbers, and that worked. 
+<p>
+--<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+That buffer should work, but you should really use the getBattleFieldHeight<a href="robowiki?action=edit&id=BattleFieldHeight" class=wikipageedit>?</a>() and getBattleFieldWidth<a href="robowiki?action=edit&id=BattleFieldWidth" class=wikipageedit>?</a>() methods, so it works on any battlefield.  What I meant about turning is this:  Imagine the bot is heading straight at a wall, at full speed.  You code will tell it to turn to avoid crashing, and as it works sometimes, I would guess the code does that correctly, however if the bot is too close to the wall when the code tells it to start turning, it may not have turned enough to avoid the collision.  The turning rate is something like 0.75*velocity degrees a tick, IIRC. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+the reason i have it as a final is because this is for a nano bot (<a href="robowiki?Acero" class=wikipagelink>Acero</a>). i understand what you're saying now. should i change it to predict farther than 120 ahead to fix it? my old wall smoothing used the same numbers and didn't have this problem. any suggestions? --<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+Having it as final shouldn't make any difference, as the battlefield doesn't change during a battle.  Make it predict further might help, I don't know.  The only way to tell is to try it.  Good luck! -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Are you using this code in your on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> method?  And if so, are you constantly scanning?  If not, you might not be starting the wall-smoothing early enough (remember that you can move forward 64 pixels between scans quite easily, and then you're turning too late). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+that's not the problem. i'm pretty sure it has somthing to do w/ i'm doing setahead(-100) sometimes instead of setback
+<p>
+my working code was like this:
+<p>
+<pre>
+/*if (Math.abs(turn) &gt; Math.PI/2){//
+			turn = robocode.util.Utils.normalRelativeAngle(turn + Math.PI);//
+				setTurnRightRadians(turn);//
+	         	setBack(100);//
+		}
+		else{//
+			    setTurnRightRadians(turn);//
+		    	setAhead(100);//
+		}	*/
+</pre>
+<p>
+The problem could be that the turn in `Math.abs(turn) &gt; Math.PI/2` isn`t normalized. Normalize it or use `Math.cos(turn) &lt; 0` instead. -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+<p>
+that code is the working code. it works. i am trying to find a way to make this working code smaller in codesize for a nanobot. --<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+Ah ok, my fault. You could try the <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> version, if your code is called every tick and you don't need to turn so accurately:
+<pre>
+setAhead(100 * Math.cos(turn));
+setTurnRightRadians(Math.tan(turn));
+</pre>
+an exact version of your code would be:
+<pre>
+int dir=1;
+if(Math.cos(turn) &lt; 0){
+	turn += Math.PI;
+	dir = -1;
+}
+setAhead(dir*100);
+setTurnRightRadians(robocode.util.Utils.normalRelativeAngle(turn));
+</pre>
+-- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+<p>
+i'll try that. i got it down to : (and it works fine now)
+<pre>
+while (!new Rectangle2D.Double(19.0,19.0,762.0,562.0).contains(getX()+Math.sin(goalDirection)*120,getY()+Math.cos(goalDirection)*120)){
+			goalDirection = goalDirection+direction*.1;	
+			}
+		goalDirection = robocode.util.Utils.normalRelativeAngle(goalDirection-getHeadingRadians());
+		setTurnRightRadians(Math.tan(goalDirection));
+	    setAhead(100*(Math.abs(goalDirection) &gt; Math.PI/2 ?-1:1));
+</pre>
+if anyone knows how to make it smaller,please tell me. 
+--<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+how about this:
+<pre>
+while (!new Rectangle2D.Double(19.0,19.0,762.0,562.0).contains(getX() + Math.sin(goalDirection += direction*.1)*120, getY() + Math.cos(goalDirection)*120))
+setTurnRightRadians(Math.tan(goalDirection -= getHeadingRadians()));
+setAhead(100*(Math.cos(goalDirection) &lt; 0 ? -1 : 1));  // or setAhead(100*Math.cos(goalDirection));
+</pre>
+<p>
+thanks,i'll try that out after i see how acero does in rumble
+<p>
+<hr noshade class=wikiline size=1>
+I got this via e-mail today. I don't have the time to answer right now. Maybe someone else can?
+<pre>
+Hey PEZ
+ 
+I was wondering if you could give me some help ? If you have the time could you help me understand this bit of code ?
+maybe break it up into smaller bits ?? And if you could tell me what each bit is doing.......
+Hope you can help, I'm just geting into robocode, I've made a few bots but now I'm looking into better targeting
+
+"(Math.toDegrees( Math.asin(e.getVelocity() / 14 * Math.sin(e.getHeadingRadians() - enemyBearing) ) +
+ enemyBearing ) - getGunHeading()) % 360)"
+</pre>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I am not that good at trigonometry but lets try:
+<PRE >
+ e.get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>()  the direction the enemy is moving (0 is straight up)
+ enemyBearing           (probably) the angle at which the enemy is currently, seen from your point (0 is straight up)
+ getGunHeading<a href="robowiki?action=edit&id=GunHeading" class=wikipageedit>?</a>()        the direction your gun is pointing at the moment
+ e.getVelocity()        the current speed of the enemy
+ 14                     bulletspeed with bulletpower = 2.0 (replace it with (20 - 3 * bulletpower) )
+</PRE>
+<p>
+<p>
+<PRE >
+ A = (e.get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>() - enemyBearing)  the direction the enemy is moving with regard to your position
+ Math.sin(A)                                 the movement part perpendicular (at 90 degrees) to you
+ B = e.getVelocity() / 14  * Math.sin(A)     the relative speed of the enenemy perpendicular to you in respect to your bulletspeed (in this case 14) 
+ Math.asin(B)                                the relative angle the enemy will travel
+ C = Math.asin(B) + enemyBearing             the absolute angle the enemy will be when the bullet should hit
+</PRE>
+<p>
+<p>
+<PRE >
+ Math.toDegrees(C) - getGunHeading<a href="robowiki?action=edit&id=GunHeading" class=wikipageedit>?</a>()         the angle your gun has to turn to hopefully intercept the enemy
+</PRE>
+<p>
+I think the %360 can be replaced by enclosing the whole lot in a Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>( ... )
+<p>
+Hopefully the explanation above is good enough. Short said it is sort of a linear gun which expects the enemy to orbit your position while staying at a fixed distance. Hey, I can use this gun myself !  --<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Bloody great stuff man! You are a true robowiki community member. There's a lot of honour in that. To stay competetive minded and still sharing isn't for all. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Thanks --<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a> your explanation really help.
+<PRE >
+  Irish
+</PRE>
+<p>
+<hr noshade class=wikiline size=1>
+Can someone explain how execute() works?  In particular:
+<OL >
+<li> What causes execute() to be called implicitly (calling active methods in event callback mathods like on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>() seems to do this).
+<li> In what order are the setXX calls for turn, radar, gun, etc executed?
+<li> Does the order of the setXX calls which are queued for execution matter?
+<li> Can I queue several setXX calls to the same bot component?  Specifically, I want to:
+</OL><UL>
+<li> Keep the radar locked onto a selected enemy, so the center of the scan is the enemy
+<li> Scan as widely as possible
+<li> Trigger (but not execute) the radar adjustments from within on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>() 
+</UL>
+As far as I can see so far, this means I want to stack up to three calls to setTurnRadarXxx<a href="robowiki?action=edit&id=TurnRadarXxx" class=wikipageedit>?</a>() methods:
+<UL >
+<li> One to make sure the radar is centered exactly on the  enemy, which may have moved a little
+<li> One to turn the radar the appropriate L or R angle (this will alternate) 
+<li> One to bring it back to the enemy
+</UL>
+I realize this may not be the best way to use the radar, but it's what I'd like to do right now :-)
+Thanks
+ycn228   
+<p>
+Elsewhere on this site you can find examples on how to use the <a href="robowiki?Radar" class=wikipagelink>Radar</a>. -- <a href="robowiki?StefW" class=wikipagelink>StefW</a>   
+<p>
+[Edit conflict]Most of your questions are answered on the <a href="robowiki?GamePhysics" class=wikipagelink>GamePhysics</a> page (re-arranged your question Wiki-style).
+<OL >
+<li> I think every direct call (fire(), turnRight(), Ahead() etc) do an implicit call to execute() and end your turn!!
+<li> setFire, (setTurnXXX<a href="robowiki?action=edit&id=TurnXXX" class=wikipageedit>?</a>,setTurnGunXXX<a href="robowiki?action=edit&id=TurnGunXXX" class=wikipageedit>?</a>, setTurnRadarXXX<a href="robowiki?action=edit&id=TurnRadarXXX" class=wikipageedit>?</a>), setAhead/Back<a href="robowiki?action=edit&id=HelpRequests/Back" class=wikipageedit>?</a>
+<li> it does not matter, they are always executed in the order on the previous line
+<li> No, a second call to setTurnRadarXXX<a href="robowiki?action=edit&id=TurnRadarXXX" class=wikipageedit>?</a> overwrites the previous one and thus will be the only one executed.
+</OL>
+Check out the <a href="robowiki?Radar" class=wikipagelink>Radar</a> page for various types of radarlock
+-- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Thanks for the info!  
+<p>
+I'd like to discuss the "implicit execute()" some more though.  The <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> API follows the normal pattern for an "event queue" design (normal for a live GUI), so I was very surprised the first time something ran without my calling execute().  It seems like a bug to me.  It's hard to get upset about it if it's happening as a side effect of the event handlers though - running application logic in an event handler is always a bit sensitive to secondary effects.  OTOH I think it would be a big problem if execute() is called for me when I use a state machine design (only set state variables in the event handlers, run all action commands in the mainline).
+Does anyone have any experience with bots using lightweight event handlers which also exhibit this "implicit execute()" behavior? --
+<a href="robowiki?Ycn228" class=wikipagelink>ycn228</a>
+<p>
+Are you sure you are not using any of the non setXXX calls that causes an execute? turnRadar, turnGun, ahead etc? I've had that happen to me by accident, they are so similar, Last time it was the radar I think :-). Yes I always just record stuff in the event handlers and execute any actions from the main run loop (delegating to different managers). It has the additional benefit of separating the logic from the data collection of course. I'll publish a small framework for it later on, something like the snippet bot tutorial shows but a lot separated and extensible. --<a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+Thanks Pulsar - that was the problem. The bot I originally used as a template does use a "non-set" call in its main action loop. It does: 
+<PRE >
+    turnRadarRightRadians<a href="robowiki?action=edit&id=RadarRightRadians" class=wikipageedit>?</a>(Double.POSITIVE_INFINITY); 
+</PRE>
+then some setXXX calls are triggered from on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>().  I haven't had time to test this out yet, but I guess my new theory is that the "implied execute()" problem is an illusion :-)  I'm really looking forward to your lightweight framework.  I looked for something like that (perhaps in all the wrong places) but finished up with nanobot-style bots - very cleverly coded but not ideal as a learning platform. -- <a href="robowiki?Ycn228" class=wikipagelink>ycn228</a>
+<hr noshade class=wikiline size=1>
+Is there a simple way to get the memory used by a bot? -- <a href="robowiki?Florent" class=wikipagelink>Florent</a>
+<p>
+If your running winXP, just open task Manager (ctrl+alt+del) and switch to the performance tab.  Look at the "Physical Memory (K)"  The difference in "Available" will be the ammount for memory your bot uses before and after being loaded.  I fyour running Linux, open a terminal and run "top" --<a href="robowiki?UnderDark" class=wikipagelink>UnderDark</a>
+<p>
+Thank you, but I will try that. But I was thinking more of a java functionality if there was any. -- <a href="robowiki?Florent" class=wikipagelink>Florent</a>
+<p>
+You may be able to piece together the memory picture from methods in java.lang.Runtime. e.g. <font face="Tahoma" size=-1">Runtime.getRuntime().freeMemory()</font> -- Martin
+<p>
+<p>
+Thanks I'll have a look at the javadoc for Runtime. -- <a href="robowiki?Florent" class=wikipagelink>Florent</a>
+<hr noshade class=wikiline size=1>
+return (10&lt;&lt;getX()&lt;&lt;(getBattleFieldWidth<a href="robowiki?action=edit&id=BattleFieldWidth" class=wikipageedit>?</a>?()-10));
+<p>
+<PRE >
+                + Semantic Error: The type of this expression, "double", is not an integral type
+</PRE>
+i tried to make an event so that it would turn around if it got within 10 of a wall.  when i debugged it i got this error message for getX() and for (getBattleFieldWidth<a href="robowiki?action=edit&id=BattleFieldWidth" class=wikipageedit>?</a>?()-10)
+<p>
+I suggest a common routine for this such as <b>public static boolean inRange( double min, double val, double min ) { return (( min &lt;= val ) &amp;&amp; ( val &lt;= max )); }</b> which in your example you could call as <b>inRange( 10.0, getX(), getBattleFieldWidth<a href="robowiki?action=edit&id=BattleFieldWidth" class=wikipageedit>?</a>() - 10.0 )</b> -- Martin
+<p>
+thanks
+<p>
+package js;
+import robocode.*;
+//import java.awt.Color;
+<p>
+/**
+<PRE >
+ * Firstgood - a robot by (your name here)
+ */
+</PRE>
+public class Firstgood extends <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>
+{
+<PRE >
+	/**
+	 * run: Firstgood's default behavior
+	 */
+	public void run() {
+		// After trying out your robot, try uncommenting the import at the top,
+		// and the next line:
+		//setColors(Color.red,Color.blue,Color.green);		
+			// Replace the next 4 lines with any behavior you would like
+				int tracking = 0;
+				set<a href="robowiki?TurnRadarLeft" class=wikipagelink>TurnRadarLeft</a>(Double.POSITIVE_INFINITY);
+			}
+</PRE>
+<p>
+<PRE >
+	/**
+	 * on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>: What to do when you see another robot
+	 */
+	public void on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {
+		turnGunRight<a href="robowiki?action=edit&id=GunRight" class=wikipageedit>?</a>(getRadarHeading<a href="robowiki?action=edit&id=RadarHeading" class=wikipageedit>?</a>()-getGunHeading<a href="robowiki?action=edit&id=GunHeading" class=wikipageedit>?</a>());
+		fire(1);
+		set<a href="robowiki?TurnRadarLeft" class=wikipagelink>TurnRadarLeft</a>(getRadarTurnRemaining<a href="robowiki?action=edit&id=RadarTurnRemaining" class=wikipageedit>?</a>());
+			if(e.getBearing() &lt; 180) {
+				turnRight(e.getBearing()-90);
+				}
+					else {
+						turnRight(e.getBearing()+90);
+						}
+	}
+</PRE>
+<p>
+<PRE >
+	/**
+	 * onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a>: What to do when you're hit by a bullet
+	 */
+	public void onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a>(HitByBulletEvent<a href="robowiki?action=edit&id=HitByBulletEvent" class=wikipageedit>?</a> e) {
+		turnLeft(90 - e.getBearing());
+	}
+	public void onHitRobot<a href="robowiki?action=edit&id=HitRobot" class=wikipageedit>?</a>(HitRobotEvent<a href="robowiki?action=edit&id=HitRobotEvent" class=wikipageedit>?</a> e) {
+		turnRight(180);
+		setAhead(100000);
+		setTurnGunLeft<a href="robowiki?action=edit&id=TurnGunLeft" class=wikipageedit>?</a>(100000);
+	}
+		public void onHitWall<a href="robowiki?action=edit&id=HitWall" class=wikipageedit>?</a>(HitWallEvent<a href="robowiki?action=edit&id=HitWallEvent" class=wikipageedit>?</a> e) {
+		turnRight(180);
+		setAhead(Double.POSITIVE_INFINITY);
+		setTurnGunLeft<a href="robowiki?action=edit&id=TurnGunLeft" class=wikipageedit>?</a>(Double.POSITIVE_INFINITY);
+	}
+</PRE>
+<p>
+<PRE >
+		public boolean inRange( double min, double val, double max ) {
+			return (( min &lt;= val ) &amp;&amp; ( val &lt;= max ));
+			}
+</PRE>
+}
+<p>
+if you test it, after a while it stops scanning robots. is there any way to stop that?
+<p>
+I suspect it is a reault of calling 'set<a href="robowiki?TurnRadarRight" class=wikipagelink>TurnRadarRight</a>' instead of 'turnRadarRight<a href="robowiki?action=edit&id=RadarRight" class=wikipageedit>?</a>', since the latter is a blocking call and won't return control to the run() method until it is done (which shouldn't happen).  If run() exits, your robot is done.  I suggest sticking with all non-blocking calls, and calling execute() to commit all of them at once.  I don't feel like getting into the argument of where to place your code right now, so I'll leave that to the philosophers. -- Martin
+<p>
+i accidentally removed the code to make it go forward while i was testing to see what was wrong.  in this form it wont stop scanning them. when it hits into the walls several times though in its normal form, it stops.  would that explain anything?
+<p>
+It generally is a bad idea to use blocking calls (turnxxx, ahead etc) in an <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> mixed with non-blocking calls (setxxx). All events have a certain priority. A hitwall-event has a high priority, meaning that if you stay in that event (by calling a turnRight) all other events are not handled until the commands are completed. Put in some 'out.println("I am here and do this");' stuff and watch the output of the console. The console can be opened during or after a battle by clicking on the name of the bot in the upper right corner. An other remark: it is better that your run-routine contains a loop, it will end automatically when your robot wins or dies.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<UL >
+<li> Another remark: the only usable blocking call I know of, is to use a turnRadarRight<a href="robowiki?action=edit&id=RadarRight" class=wikipageedit>?</a>(Double.POSITIVE_INFINITY) within that loop. If for some reason your radar stops turning, it will start again due to this statement!  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</UL>
+<p>
+my radar continues turning and so does the body but the gun will not turn towards a scanned robot
+<p>
+about the wall avoidance event, should it be inside "run" or outside?
+<p>
+Most people put almost all the logic in the on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>. However, it is possible to just collect data in the on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> event and do all the robot movement and firing in the run loop. I would say to put the wall avoidance event with the movement, so if you move in the run loop, put it there. -- <a href="robowiki?Kinsen" class=wikipagelink>Kinsen</a>
+<p>
+This has been bothering me for abit now, does anyone know how i might refer to a derived class from an abtract super class like so
+<p>
+<PRE >
+ abtract class A {
+    public abstract B get();
+ }
+</PRE>
+<p>
+<PRE >
+ class B {
+    public B get() {
+       return this;
+    }
+ }
+</PRE>
+<p>
+thanks -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+<p>
+You dont. Especially as there is no need to, you can just return an object of type A and cast it back to type B, if you need it. -- <a href="robowiki?Ebo" class=wikipagelink>Ebo</a>
+<p>
+Doing it that way would bring up all whole bunch of unchecked casts warning, isn't there any way of doing this with generics -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+<p>
+Ah ha it took little bit of hair becuase of the container class this is used in but its sloved with
+<p>
+<PRE >
+ abstract classA&lt;Type extend A&gt; {
+    public abstract Type get();
+ }
+</PRE>
+<p>
+<PRE >
+ class B extends A&lt;B&gt; {
+    public B get() {
+       return this;
+    }
+ }
+</PRE>
+<p>
+all in a days works -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+<p>
+I was hoping one of you clever guys could help me with getting a random number.
+I was hoping to get a random number between 0 and PI, that is expodentially more likely to be zero than PI.
+I believe I could use the formula : Math.pow(random()* math.squareRoot(PI),2));  //
+<p>
+My dilemna is being able to change the square root to match the exponent ..eg: if the 2 was changed to 1.4
+-Justin
+thx guys
+<p>
+You could do it with the formula Math.pow(random() * Math.pow(PI, 1 / n), n)) where n is the exponent you want to use. Raising a number to the 1/n power is the same as taking the nth root of that number. -- <a href="robowiki?Kev" class=wikipagelink>Kev</a>
+<p>
+Thx Kev :) that's exactley what I was looking for!! Thanks Kev
+- Justin
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=HelpRequests" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=HelpRequests">View other revisions</a><br>Last edited March 18, 2008 23:36 EST by bas7-toronto12-1168018394.dsl.bell.ca <a href="robowiki?action=browse&diff=1&id=HelpRequests">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

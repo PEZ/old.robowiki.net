@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>MRMovementChallenge - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='MRMovement, Challenge'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=MRMovementChallenge">MRMovementChallenge</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><b>Difference (from prior major revision)</b>
+(<a href="robowiki?action=browse&diff=2&id=MRMovementChallenge">minor diff</a>)<br> <br><strong>Changed: 12c12</strong><br><table width="95%" bgcolor=#ffffaf class=wikidiffold><tr><td>
+ | <a href="robowiki?Logic" class=wikipagelink>Logic</a> 1.03                               | <a href="robowiki?Kev" class=wikipagelink>Kev</a>                 | 1687         | 2006/07/26 |<br></td></tr></table><table width="95%" bgcolor=#cfffcf class=wikidiffnew><tr><td>
+ | <a href="robowiki?Logic" class=wikipagelink>Logic</a> 1.1                                | <a href="robowiki?Kev" class=wikipagelink>Kev</a>                 | 1687         | 2006/07/26 |<br></td></tr></table>
+ <br><strong>Changed: 17,21c17,19</strong><br><table width="95%" bgcolor=#ffffaf class=wikidiffold><tr><td>
+ The code for <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a>'s bullet power selection/shooting is<br> <pre>if(getGunTurnRemaining() == 0 &amp;&amp; myEnergy &gt; 1) {<br>         setFire(Math.min(Math.min(myEnergy/6, 1300/distanceToTarget), target.energy/3));<br> }</pre><br> The gun turn is standard <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a>: <pre>setTurnGunRightRadians(Utils.normalRelativeAngle(absoluteBearing(target.position, myPosition) - getGunHeadingRadians()));</pre><br></td></tr></table><table width="95%" bgcolor=#cfffcf class=wikidiffnew><tr><td>
+ The code for <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a>'s bullet power selection is.<br> <pre>setFire(Math.min(Math.min(myEnergy/6, 1300/distanceToTarget), target.energy/3));</pre><br> The gun turn is standard <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a> (shooting towards the last position you've scanned the enemy at): <pre>setTurnGunRightRadians(Utils.normalRelativeAngle(absoluteBearing(target.position, myPosition) - getGunHeadingRadians()));</pre><br></td></tr></table>
+ <br><strong>Added: 51a50,52</strong><br><table width="95%" bgcolor=#cfffcf class=wikidiffnew><tr><td>
+ <br> I think the radar shouldn't have much effect on the score, and some movements rely on a radar lock to dected <a href="robowiki?EnergyDrop" class=wikipagelink>EnergyDrop</a> for bullet dodging. For now, I'm leaving the radar non-standardized. I've also removed some of the sample code because it's confusing and doesn't behave the way it should in some cases. The gun doesn't have to be word for word from <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a> as long as it's pure <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a> (although the energy management must stay same). -- <a href="robowiki?Kev" class=wikipagelink>Kev</a><br> <br></td></tr></table>
+<hr class=wikilinediff>
+<div class=wikitext>Compare your melee movement with the top bots in the rumble!  
+<p>
+With a common gun should be able to determine which movement performs best in <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> melee battles. 
+<p>
+Rules:
+<p>
+<UL >
+<li> Stick <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a>'s gun on your movement and enter it into the melee rumble.
+<li> Post your results here after your robot has at least 1500 battles, ordered by Rating, descending.
+</UL>
+<p>
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td align="center" colspan='0.5'>   <strong>Name</strong>                             </td><td align="center" colspan="0.5"><strong>Movement author</strong></td><td colspan="0.5"> <strong>Rating</strong> </td><td colspan="0.5"> <strong>Date</strong> </td><td colspan="0.5"> <strong>Remarks</strong></td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> <a href="robowiki?Logic" class=wikipagelink>Logic</a> 1.1                              </td><td align="left" colspan="0.5"> <a href="robowiki?Kev" class=wikipagelink>Kev</a>               </td><td align="left" colspan="0.5"> 1687       </td><td colspan="0.5"> 2006/07/26 </td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> <a href="robowiki?Griezel" class=wikipagelink>Griezel</a> 0.4a                           </td><td align="left" colspan="0.5"> <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>        </td><td align="left" colspan="0.5"> 1670       </td><td colspan="0.5"> 2006/07/29 </td><td colspan="0.5"> HOF + 0</td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a>                             </td><td align="left" colspan="0.5"> <a href="robowiki?Rozu" class=wikipagelink>rozu</a>              </td><td align="left" colspan="0.5"> 1668       </td><td colspan="0.5"> 2006/07/23 </td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td align="left" colspan='0.5'> <a href="robowiki?Freya" class=wikipagelink>Freya</a> 0.82MRMC                         </td><td align="left" colspan="0.5"> <a href="robowiki?Loki" class=wikipagelink>Loki</a>              </td><td align="left" colspan="0.5"> 1662       </td><td colspan="0.5"> 2006/07/29 </td><td colspan="0.5"></td></TR>
+</TABLE>
+<p>
+The code for <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a>'s bullet power selection is.
+<pre>setFire(Math.min(Math.min(myEnergy/6, 1300/distanceToTarget), target.energy/3));</pre>
+The gun turn is standard <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a> (shooting towards the last position you've scanned the enemy at): <pre>setTurnGunRightRadians(Utils.normalRelativeAngle(absoluteBearing(target.position, myPosition) - getGunHeadingRadians()));</pre>
+<p>
+<hr noshade class=wikiline size=1>
+chat: 
+<p>
+The challenge is currently new and open to modification. As of now, I'm leaving radar and target selection non standardized becuase they often have an effect on the movement. It may be better to switch to a stronger gun because a few movements may rely on their gun to attack other robot's in one-on-one style duels. However, it would mean adding a radar lock and more complex code, so it will be HOT for now (I don't have any open-source melee bots that would work well anyway). If anyone thinks we need a more structured setting, we could easily switch to <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a>'s gun, radar, and target selection. -- <a href="robowiki?Kev" class=wikipagelink>Kev</a>
+<p>
+Can't add <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a> for the same reason that you can't add Komarious to your gun challenge... the rules state that it must be a megabot =P --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Again, "rules" really confuse me. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+does this rule concerning botsize matter at all for melee battles? I thought that the scores against bots from the same category are just picked out of the normal battles including also bots from different categories. -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+<p>
+Anyway, nice that some of my bots are still around... ;) -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+<p>
+Even in melee botsize dependent battles are fought, there are just not many new smallsized bots so it is hard to notice. As for your bots still around . . . as long as your bots are one of the two best in every weightclass, they are allowed to hang around. Although there are a lot of new faces from rank 7 till 20, the first 6 bots (with 2 of you) have not really been threatened in the last two(!!) years.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+The increased number of botsize dependent battles shouldn't have any affect in the general rumble because a micro bot will eventually fight every opponent and get a rating in the same way as a mega bot. However, this isn't always true in the melee rumble. My reasoning is that a micro bot in the melee rumble that does well a in a primarily micro bot battle will do better than a mega bot that does well against micro bots because the micro will fight more of the robots it's good against. On reflection, it seems like this shouldn't make much of a difference and we might as well not include micro bots in the general rumble if we are this picky about score, so I think I'll change the rule. -- <a href="robowiki?Kev" class=wikipagelink>Kev</a>
+<p>
+Could we agree on a minimum number of battles of 1500? At that point the ranking should be as stable as it can get in melee.   -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<UL >
+<li> good idea, a higher number of battles will give more reliable results. But the results in this challenge will never be as exact as in the 1-vs-1 challenges as a drift of pm 4 points with increasing number of battles is not uncommon in the melee rumble. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+</UL>
+<p>
+Sounds like a good idea to me also. I'll add a 1500 battle minimum to the rules. Even if it only gives a general rating, the challenge is still useful; I had no idea <a href="robowiki?Logic" class=wikipagelink>Logic</a>'s movement was so good (and its gun was so bad). -- <a href="robowiki?Kev" class=wikipagelink>Kev</a>
+<p>
+Ouch, I knew that my gun is OK for melee, but i expected that my movement was better than this. There is also s sunny side: if I can get my movement to the level of <a href="robowiki?Logic" class=wikipagelink>Logic</a>, I would be #4 !!!  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+I've changed my initial contribution to wait until my gun is cool before I fire. <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a> uses a spinning radar and fires blind (in the mainloop), while Griezel uses a meleeradar (lock, fire, spin etc) while in the scannedrobotevent. Maybe it is a good idea to also include the radar from <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a>, but only if it has not to much influence on the movement.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<UL >
+<li> so you have even improved on your gun by wating until its cool! --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<UL >
+<li> with Griezel (and Gruwel) I have done that from the beginning, for this challenge I tried to take the gun from <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a> 'as is' but that influenced the performance considerately (I could hardly hit <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a> :-p). GriezelMRMC<a href="robowiki?action=edit&id=GriezelMRMC" class=wikipageedit>?</a> still fires HOT and uses the bulletpower of <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a>, I think that is enough to qualify for this challenge.  --<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</UL>
+</UL>
+<p>
+For Freya the conclusion is similar: it's the gun that contributes more to the ranking than the movement. I have always known that, but i find improving movement much harder than improving the gun. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<p>
+I think the radar shouldn't have much effect on the score, and some movements rely on a radar lock to dected <a href="robowiki?EnergyDrop" class=wikipagelink>EnergyDrop</a> for bullet dodging. For now, I'm leaving the radar non-standardized. I've also removed some of the sample code because it's confusing and doesn't behave the way it should in some cases. The gun doesn't have to be word for word from <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a> as long as it's pure <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a> (although the energy management must stay same). -- <a href="robowiki?Kev" class=wikipagelink>Kev</a>
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=MRMovementChallenge" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=MRMovementChallenge">View other revisions</a><br>Last edited July 30, 2006 17:51 EST by <a href="robowiki?Kev" title="ID 5989 from c-24-19-160-72.hsd1.wa.comcast.net">Kev</a> <a href="robowiki?action=browse&diff=1&id=MRMovementChallenge">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

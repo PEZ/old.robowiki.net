@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>TheoryOfEverything - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Theory, Of, Everything'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=TheoryOfEverything">TheoryOfEverything</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Successor to <a href="robowiki?QuantumChromodynamics" class=wikipagelink>QuantumChromodynamics</a>.
+<p>
+<H3>Bot Name</H3>
+
+<a href="robowiki?TheoryOfEverything" class=wikipagelink>TheoryOfEverything</a>
+<p>
+<H4>Author</H4>
+
+<a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<p>
+<H4>Extends</H4>
+
+<a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>
+<p>
+<H4>Version History</H4>
+
+<UL >
+<li> 1.0.0: Public release
+<li> 1.1.0: Changed bullet strength pattern to hurt wavesurfers more
+<li> 1.2.0: Removed:
+<UL >
+<li> Energy management, which worked against some bots but made it worse against others.
+<li> <a href="robowiki?VelocityTrick" class=wikipagelink>VelocityTrick</a>, which I found lying around in the movement code even though it had been deleted from <a href="robowiki?QuantumChromodynamics" class=wikipagelink>QuantumChromodynamics</a>.
+<li> Use of calculations in degrees.
+<li> Radar from <a href="robowiki?WaveSurfing/Tutorial" class=wikipagelink>the wave-surfing sample bot</a>, which stopped working on this bot in Robocode 1.3 for unknown reasons.
+</UL>
+</UL>
+<p>
+<H4>What's special about it?</H4>
+
+It uses the movement from <a href="robowiki?QuantumChromodynamics" class=wikipagelink>QuantumChromodynamics</a> but also incorporates:
+<p>
+<UL >
+<li> Segmented <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullet</a>-based targeting, currently supporting four different guns:
+<UL >
+<li> <a href="robowiki?HOT" class=wikipagelink>HOT</a>
+<li> <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a>
+<li> <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a>
+<li> "Anti-oscillator targeting", a merge of circular targeting and head-on targeting
+</UL>
+<li> Improved radar
+</UL>
+<p>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=3221">http://www.robocoderepository.com/BotDetail.jsp?id=3221</a>
+<p>
+<H4>How competitive is it?</H4>
+
+It's <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> ranking seems to be stabilizing at between 260-270. It is very good against a few
+particular robots... it has a specialization index of 144.7, and, for some reason, it gets a significantly
+higher ranking against <a href="robowiki?Tron" class=wikipagelink>Tron</a> than my previous bots did.
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+It tries to move into a pseudo-circle around the enemy, between 250-500 points
+away. It switches to a bullet-dodging <a href="robowiki?PerpendicularMovement" class=wikipagelink>PerpendicularMovement</a> when the enemy
+starts firing.
+<p>
+<H4>How does it fire?</H4>
+
+It uses a (not very) segmented <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> array. The original code was based on
+<a href="robowiki?VirtualBullets/VirtualBulletsBot" class=wikipagelink>VirtualBullets/VirtualBulletsBot</a> and <a href="robowiki?VirtualBullets/VirtualBulletsSampleBot" class=wikipagelink>VirtualBullets/VirtualBulletsSampleBot</a>, since this is my first
+bot using the technique.
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+Unlike <a href="robowiki?QuantumChromodynamics" class=wikipagelink>QuantumChromodynamics</a>, <a href="robowiki?TheoryOfEverything" class=wikipagelink>TheoryOfEverything</a> is not a melee bot. It will probably malfunction in melee.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+It saves the virtual guns array between rounds, but it does not save anything between matches.
+<p>
+<H4>Where did you get the name?</H4>
+
+I guess it just sounds cool.
+<p>
+<H4>Can I use your code?</H4>
+
+Why not?
+<p>
+<H4>What's next for your robot?</H4>
+
+Add more guns to the <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> array.
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+<p>
+By the way, there is not yet a stable <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> client that is updated with the Rules class, so I can't run battles for <a href="robowiki?TheoryOfEverything" class=wikipagelink>TheoryOfEverything</a>. The next Robocode 1.3 (in beta) will have the RR client integrated, but until now the only Robocode versions that have the Rules class <em>and</em> work with RR@Home are buggy and give tainted ratings. I think <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a> is successfully running 1.3 Beta with <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>, but I'm still running the last stable one (1.1.3), so you'd have more clients that can process your battles if you don't use the Rules class for now... Anyway, best of luck. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Thanks, I'll change it back to using my custom Util class. --<a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<p>
+I just realized why <a href="robowiki?TheoryOfEverything" class=wikipagelink>TheoryOfEverything</a> is by far the most bot to download on the Robocode Repository - its JAR is corrupt! Every time a <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>@Home client tries to download it, it gets an error, gives up, and tries again the next time it is run, which amounts to thousands of (attempted) downloads listed on the Repository.
+<p>
+There seems to be some kind of curse on my bots related to <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>@Home - first it wouldn't accept <a href="robowiki?QuantumChromodynamics" class=wikipagelink>QuantumChromodynamics</a> because it was compiled in Java 1.6, then the fixed version of the bot wouldn't run because of the underscore in the version name, and now the JAR file of <a href="robowiki?TheoryOfEverything" class=wikipagelink>TheoryOfEverything</a> is corrupt for no apparent reason... --<a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=TheoryOfEverything" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=TheoryOfEverything">View other revisions</a><br>Last edited June 30, 2007 6:08 EST by <a href="robowiki?AaronR" title="ID 9168 from 218.162.202.68.cfl.res.rr.com">AaronR</a> <a href="robowiki?action=browse&diff=1&id=TheoryOfEverything">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

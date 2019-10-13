@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing ABC/TemporaryRRServer - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='ABC/Temporary, RRServer'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing ABC/TemporaryRRServer</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="ABC/TemporaryRRServer"  />
+<input type="hidden" name="oldtime" value="1223801525"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="5"  />
+<input type="hidden" name="captchaArg2" value="11"  />
+<input type="hidden" name="captchaOp" value="*"  />
+<input type="hidden" name="captchaId" value="215940472044"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">I&#39;m closing down this server as of tomorrow (2008/11/12), we now have a better rumble server solution developed by [[Darkcanuck]]. Please configure your clients: http://testwiki.roborumble.org/w/index.php?title=Darkcanuck/RRServer.
+
+I had a lot of fun. I experimented with Albert&#39;s code and made some small improvements, I even have a working version that uses mySQL instead of text files. Unfortunately I don&#39;t currently have the time for further developments, and Darkcanuck is doing a great job with his server.
+
+-- [[ABC]]
+
+Thanks for your work! Any plan to release the code behind some of your changes/improvements? I think some of those would be nice to have merged into [[Darkcanuck]]&#39;s work, like the nicer table formatting and your really neat LRP implementation. :) -- [[Rednaxela]]
+
+Thanks for putting up this server and mobilizing the community to contribute so many battles!  In fact, I&#39;m still importing battle data from your server -- can you keep the files online even after you shut the servlets down?  You&#39;re welcome to help out and/or steer the direction for the new server.  Also, if you&#39;re willing to pass on the LRP js code, I&#39;d love to add it to the website.  It looks it just needs a URL that provides the battle details table in JSON format? -- [[Darkcanuck]]
+
+I&#39;ll leave it online for a few days, I&#39;ll just disable the results uploading, feel free to take anything you need. The LRP and comparing javascript just needs the details data in this format:
+http://abchome.aclsi.pt:8080/rumble/RatingDetailsJson?game=roborumble&amp;name=jk.mega.DrussGT 1.3.0 . The previous versions comparison is still a bit rough, it expects an URL /GetOlderVersionsJson that lists the previous versions of a bot in json format... I&#39;ll see if I can still improve it in the next few days. -- [[ABC]]
+----
+
+Ok, I can&#39;t take it anymore, life without a working RR server is too boring... :)
+
+I&#39;ve installed a rumble server on my home computer and have been running battles for the last couple of days. I also did a few experiments with the code, to better understand how it works. You can check the current rankings here:
+
+http://abchome.aclsi.pt:8080/
+
+Looks quite good even with only around 20 battles per bot. If you want to contribute just change you client&#39;s configuration accordingly, let&#39;s see how long it takes to get a truly stable ELO ranking.
+
+I&#39;m planning on adding an APS ranking next weekend, and then maybe put it on dedicated hardware.
+
+-- [[ABC]]
+
+Awesome, you&#39;re the man!! -- [[Voidious]]
+
+Nice! Any plans to put melee or maybe team up there (though team is still working fine on Pulsar&#39;s server for now I think)? Hmm, I wonder how temporary this will be considering how thing were last time someone talked of a &quot;temporary&quot; RR server... :) (Also, I just noticed RougeDC got an extremely unusual result against step.nanoPri_1.0 though I&#39;m not sure if it&#39;s a bad client problem, something eating lots of the client&#39;s CPU, or if RougeDC somehow went and crashed really bad) -- [[Rednaxela]]
+
+Good catch, very strange result. So far I&#39;m the only one submitting results, and both my clients are 1.5.4, so no &quot;bad&quot; client. Let&#39;s wait and see if it is an isolated case, I can always delete that result and recompute de the ranking. I made a small utility that re-submits all the battles in the log, but it&#39;s only feasible while the number of battles is relatively small. I haven&#39;t come up with an easy way of undoing a bad result, the iterative nature of the rumble makes it hard. The only way I see is having periodical backups to revert to and re-submitting the good results since then... -- [[ABC]]
+
+Ah great work man! I think I&#39;ll update DrussGT, and leave a client running =) -- [[Skilgannon]]
+
+Finally!  You truly are the man!  You know, an APS ranking wouldn&#39;t have the same trouble with deleting bad results ... ;)  -- [[Simonton]]
+* Was just thinking that myself about APS ranking... ;) -- [[Rednaxela]]
+* I don&#39;t see how APS would be different, the problem is the rolling average used for the scoring. How do you &quot;unroll&quot; a bad result without checking every single previous battle or knowing the previous score before the bad result? Looking for all the battles between 2 specific bots can become hard when the battles log file becomes too large. -- [[ABC]]
+* The APS score I&#39;m thinking of would not be a rolling average.  Keep &quot;total points&quot; and &quot;num battles&quot; for each pairing, then to remove a bad one subtract its score and 1, respectively.  Calculate the change in the average for that pairing and apply 1/num-pairings-th of it to the overall average. -- [[Simonton]]
+* Ok, that&#39;s a solution for the ELO too, the next few battles would put the affected bot in its proper place again, or I could force a rating recalc with an increased constant. The only difference to the current setup is that data saving bots would lose the small advantage of the rumble &quot;forgetting&quot; old results, I&#39;d be ok with that. -- [[ABC]]
+
+This may take a while to get a workable field, with this many bots. For each bot to have a battle against every other, it is &lt;code&gt;n + (n-1) + (n-2) +... + 1 = n/2*(n+1)&lt;/code&gt; battles, which makes 205761 battles. For each bot to have 2000 battles it is (2000/641)X more battles, 642000 battles. Each battle produces the results for 2 bots, therefore 321000 run battles. Assuming the average battle takes 1 minute, we have 5350 client-hours of work. 223 client-days. If we&#39;re running (best case) 4 clients 24/7  it will take 55 days. If we just want 1 battle per enemy it will still take ~18 days, but realistically more than that because some battles will happen twice. I suggest we lower the battles-per-bot constant to ~650 in the roborumble client so that it will fill in the PL gaps earlier, rather than running duplicates while PL slots are still missing. -- [[Skilgannon]]
+
+I&#39;ve used a battles-per-bot setting of 10, then increased it to 20, and will will now set it to 50. I&#39;m hoping it will prevent a lot duplicates that way. 18 days for full pairing would be great! But I believe the (ELO) ranking will be &quot;stable&quot; before that, like with 100-200 battles per bot. -- [[ABC]]
+
+Sorry - I missed changing one of the URLs in my properties files.  My clients are the culprits of giving over 200 battles to those handful of bots.  I wish it was a harmless mistake, but now those bots&#39; rankings may not stabilize until everyone else catches up and they start running again unless someone (ABC) intervenes by re-calculating their scores after the other bots have settled into a more stable state.  -- [[Simonton]]
+
+No problem, until everyone has full pairings the probability of anyone fighting is the same, I think.
+I&#39;m more concerned about the bad results still happening. I just found two more: stelo.UnfoolableNano against Dookious and DrussGT. Both battles submitted by [[Nfwu]]. Could there be other problematic Robocode versions? -- [[ABC]]
+
+Version 1.6.1.1. Stopped client for now. Should I switch to 1.5.4? --[[Nfwu]]
+
+Yep, I believe 1.5.4 and 1.6.0 are the only safe versions. But first I need to find an easy way to revert the bad results, please use a different name for submitting battles for now, I will probably have to delete all battles with your user name (nfwu). -- [[ABC]]
+
+UnfoolableNano vs. Ascendant, not Dookious, I think? How about just removing these pairings from the results files of these bots? -- [[Skilgannon]]
+
+Yes, and yes. But I want to make it at least semi-automatic. I&#39;m also considering refusing results with &gt;50 PBIs. -- [[ABC]]
+
+Looking for all the bad results to remove the pairings was too much work. I had to reset the rankings, remove all of Nfwu&#39;s battles from the log and resubmit all the battles (multiple times, it&#39;s fun seeing the ranking stabilise even with a small number battles :)). I also did a backup of the ranking and details files and cleaned the battle logs. Maybe I&#39;ll set an automatic periodical backup up so that I can revert it back a few days in the case of corruption. -- [[ABC]]
+
+How &quot;temporary&quot; do you intend this server to be?  For a long-term solution, I would recommend storing all results in a database rather than a log, so that queries can find all kinds of fun things much easier than looking through the log manually, or writing a new script to extract data you want (from bad results to new scoring schemes ... maybe a simulated bracket tourney if you like). I plan to have the RoboResearch server keep all the results that pass through it, including those bound for the rumble, so maybe that database could be a good place to turn in the future. I figured I&#39;d let you know, so you can plan the best use of your time. -- [[Simonton]]
+
+Excellent question! With my second child coming at the end of this month I don&#39;t think I&#39;ll have a lot of time in the next few months(years?) :). I just thought I would have some fun with java application servers instead of tweaking Shadow without a rumble to test it on. Anyway, if you are developing a battle results database, that&#39;s where the future rumble must come from, not from my (very) modest java servlet skills. I&#39;ll just keep this one running until someone comes up with a better solution. And in the meantime I&#39;ll try adding some simple tweaks of my own, the priority being always that it stays functional and online for people to use. -- [[ABC]]
+
+I&#39;ve been toying with the idea of creating a database-backed rumble server to address some of the recent problems.  It wouldn&#39;t be difficult to extend the client to send additional info (e.g. client version, match type) to add more error checking too.  But this all relies on free time...
+
+Thanks for getting this temporary server up -- now that I&#39;ve fixed my rumble machine, I&#39;ll start helping out with the crunching and remove Gaff 1.28a from the list.  -- [[Darkcanuck]]
+
+I just found one of my clients stuck: it would run 30 battles of Okami vs other bots, then try uploading the same 30ish results from some previous run, hit an exception, and repeat.  So some battles got submitted many many times.  I deleted all the files in &quot;files/&quot; and &quot;temp/&quot;, and now it seems to be working again.  Not sure if you&#39;ll want to roll back results?  I&#39;m using version 1.6.0.  -- [[Simonton]]
+
+As long as the results are valid I see no need to revert them. I&#39;m really liking the look of the ranking, btw, even with under 100 battles per bot the numbers and positions are very close to what I remember from when the old server was 100%. I&#39;ll add an APS sorted ranking table later today. -- [[ABC]]
+*This happens when you have a low number for battles_per_bot (e.g. 100). When all bots have that number, the priority battles shift to filling up the missing pairings, and then it frequently happens that the server decides to fill it up for one bot first. Normally you wont notice it, as with 2000 battles only 15 or so pairings are missing. Now around 500 pairings are missing :D. Just set your battles_per_bot to 750, and the battles will be distributed evenly again.  -- [[GrubbmGait]]
+* It would happen in that situation, but that was not the case.  And neither is it the case now, but yet my rumble client is only running pairings against Evader.  I have battles per bot set at 300, which more than 1/2 the bots in the rumble are under.  Evader has over 900 (at least in part because my client is stuck running him).  Erasing temp files again ... -- [[Simonton]]
+
+As everybody seems to run battles here at the moment, those &#39;corrupted file&#39; bots could be added again to the participants I think.  -- [[GrubbmGait]]
+
+Or maybe we could make an alternative participants page to include them. APS ranking: add &amp;type=APS to the rankings URL.
+
+Looking at the latest Robocode version changelog I think it would be safe to use for rumble. All those &#39;funny&#39; results could definitely have been from a &#39;swapping&#39; of scores of the 2 bots. Opinions? -- [[Skilgannon]]
+
+Yes, the sooner we test it the better. Please use a different user name for submitting results. GrubbmGait is currently submitting results as GrubbmGait_160, a very nice way to differentiate client versions. -- [[ABC]]
+
+Great idea -- done!
+I&#39;ve been working on my database-backed server idea the past few days, uploading is working and just need to put together some polished ranking pages.  No ELO yet though.  The concept is to keep the originally submitted data so that it&#39;s fairly easy to remove bad results and rebuild the rankings.  The current rumble client doesn&#39;t send its version number (just &quot;1&quot;) but future clients could send the actual version and we could put new releases on probation.  I&#39;ll put up a page about it when the server goes live. Questions/suggestions welcome!  -- [[Darkcanuck]]
+
+My [[Darkcanuck/RRServer|experimental server]] is now live.  But keep your clients pointed to ABC&#39;s server unless you really, really like hunting bugs.  --[[Darkcanuck]]
+
+Nice work, good luck with the bug hunting. Meanwhile I added a cool javascript LRP generator to my server, check it out if you have a decent (non-IE) browser. :) -- [[ABC]]
+* Very snazzy looking LRP stuff! One issue though is DrussGT at least seems to give &quot;Error loading JSON document&quot; for it. -- [[Rednaxela]]
+* I get that for all the bots... Firefox 3.0.1 Ubuntu Hardy Heron. -- [[Skilgannon]]
+* Sorry about that, had a 1s timeout on the ajax query. Should be ok now, even for bots with a lot of data. -- [[ABC]]
+* Snazzy is right!  That&#39;s one of the fanciest things I&#39;ve ever seen!!  This is AJAX, eh?  Did you write it by hand?  I have wanted to check out [http://code.google.com/webtoolkit/ GWT] for a long time ... -- [[Simonton]]
+* The snazzy part is [http://jquery.com jQuery] + [http://code.google.com/p/flot/ flot]. Jquery is an amazing javascript library that makes working with client side scripting a joy. Flot is a plotting jquery extension that makes any graph look good. AJAX is just a way of making http requests from javascript, together with a library like jQuery you can do some seriously cool cross-browser stuff. -- [[ABC]]
+
+Progress report: The LRP graph now works on Microsoft browsers, but it takes a _long_ time to render the graph. I made a few changes to the general layout, and the generated HTML is now more correct. I&#39;ve also added a few missing flags (our king has a flag, finally :)). Next comes the details comparison page, it wasn&#39;t included in the source files I got so I&#39;ll have to add a few things of my own, mainly another nice graph to replace the excel file I use to compare Shadow&#39;s versions. :) -- [[ABC]]
+
+It&#39;s nice to see rankings pages that are easy on the eyes...  Can I get a Canadian flag while you&#39;re at it?  -- [[Darkcanuck]]
+
+Ok, my server is now relaying results to ABC&#39;s.  Now my 4 clients are involved in both efforts.  :)  -- [[Darkcanuck]]
+
+Cool, this is going to be even faster than I thought :). Lots of server processing power needed, though, and the file locking mechanism is definitely not good enough for this amount of incoming data. I see lots of file access exceptions in the server log at peak times. -- [[ABC]]
+
+Neat server I just spied it, I love your LRP implimentation, I was originally attempting to do something like the popup right next to the circle that your hovering over but IE didn&#39;t cooperate so I compromized, glad to see you got it working. I am also happy to see rating drift hasn&#39;t reared its ugly head yet and my robots are rating up where they once did. --[[Chase]]
+* Thanks.
+
+100k battles done in a week! Full pairings, here we come. :) -- [[ABC]]
+----
+Sorry to say this, but it seems that SilverSurfer (maybe more bots?) has had some problematic battles. I don&#39;t know if this bot is extra sensitive for skipped turns or that the 1.6.0 version of the client is not so robust as we thought. I will stop my client as long as I do other things on my PC, and will start it again when I go to sleep.  -- [[GrubbmGait]]
+
+I&#39;ve checked most of those battles in the log, it seems that they all come from 1.6.0 clients, different uploaders. I don&#39;t have 1.6.0 installed here to verify, but it looks to me like it could be SilverSurfer is throwing exceptions in 1.6.0. -- [[ABC]]
+*Yep, throwing an security exception. -- [[GrubbmGait]]
+**Switching back to 1.5.4 and starting client again.  -- [[GrubbmGait]]
+
+Ugh... RougeDC is still getting lots of bad battles too... see step.nanoPri, mz.NanoDeath, gh.micro.GrubbmThree and a fair number of other ones, some battles being as recent as today... I haven&#39;t checked what versions/uploaders are giving those yet. It is looking like some of those basically have the score reversed possibly (which I thought was a bug in 1.6.1 that was fixed recently) -- [[Rednaxela]]
+*Are you sure? It seems that all bots RougeDC is performing very bad against are rambots. Now I have checked it (with 1.6.0) against GrubbmThree, and RougeDC hits on distance, but misses at point blank. I think you have to do some bughunting in your gun while at very close ranges ;-)  -- [[GrubbmGait]]
+* Huh... seems you&#39;re right, and confirmed on the old RR server too... That&#39;s certainly strange, and also amusingly ironic considering RougeDC in most versions has arguably some of the very best performance against rambots of anyone... guess something is certainly being quite weird in the gun at close range... Well, I&#39;ll probably swap RougeDC Gamma7a for Gamma2, because I don&#39;t plan any further RougeDC development (I&#39;m working on new things) and Gamma2 was the best I think. -- [[Rednaxela]]
+
+Well this is strange.... RougeDC has a score of 0.0 against Loki [http://abchome.aclsi.pt:8080/rumble/RatingDetails?game=roborumble&amp;name=ags.rougedc.RougeDC%20Gamma2 here] (update: same with SandboxLump too) with a massive problembot index of over 90. Doesn&#39;t the server reject all 0.0 scores? It&#39;s looking like someone&#39;s client is having strange exceptions on RougeDC and the server is for some reason accepting bad 0.0 results. -- [[Rednaxela]]
+* RougeDC scored 5 to 6192 against Loki. Maybe RougeDC has a problem with 1.6.0 client ??  -- [[GrubbmGait]]
+* Score against DT is 4. Both results submitted by a 1.6.0 client (Simonton&#39;s). -- [[ABC]]
+* The problem isn&#39;t the 1.6.0 client I think, because I&#39;m using that same version myself. -- [[Rednaxela]]
+* The problem isn&#39;t the server, because those are not 0 results. So it must be RougeDC? -- [[ABC]]
+* Yeah, since hearing that those 0.0s were not exact 0s I wouldn&#39;t expect there to be any server problems. Well, I&#39;ve done over 100 battles for RR with RougeDC and none from here have been like that, therefore I think the problem pretty surely is either to do with Simonton&#39;s client specifically, or RougeDC has some very rare bug going on that I haven&#39;t seen by pure chance (in which case it would be a real big pain to debug...).  -- [[Rednaxela]]
+* I&#39;ll run some tests when I get home (around 7:30 EST). -- [[Simonton]]
+* Is there any chance that RougeDC has problems with skipped turns? Like the waves get mis-aligned and the GF exceeds 1, or something? -- [[Skilgannon]]
+* RougeDC is somewhat sensitive to skipped turns, and I think Gamma2 uses more cpu than some other versions, however even if skipped turns are happening on some clients, I&#39;m highly doubtful it would cause anything even remotely close to crazy results like 5 to 6192 against Loki (particularly considering Loki isn&#39;t a particularly strong bot) -- [[Rednaxela]]
+* Did Simonton first started Robocode before using his installation as client? I don&#39;t know if the CPU-constant is set when using the client without starting Robocode itself once.  -- [[GrubbmGait]]
+* I had some minutes to spare between work and racquetball, and it was quite easy to spot the problem with RogueDC.  I&#39;m running on Java 5, and your bot uses LinkedList.pollFirst(), which was introduced in Java 6.  Did everyone agree to move to Java 6 in the past year while I was gone?  -- [[Simonton]]
+** I hope not. I don&#39;t have Java 6. =( -- [[Voidious]]
+* Ahh... that explains it. I only have Java 6 installed, and while I do set it to compile with a Java 5 target, it&#39;s not easy for me to check that all the APIs are actually in Java 5. I guess I should either install true Java 5 for compiling bots, or set the target to Java 6 to prevent my bots from running on Java 5. If only java&#39;s version targets could check the APIs used as well... Bleeeh, Java 5 seems so ancient to me... -- [[Rednaxela]]
+
+I am always surprised how close Seraphim got to the 2000 Club. According to this server its at 1998.65, oh well maybe I should finish the updated version. --[[Chase]]
+
+It&#39;s looking like 1.6.1.3 may be a good version for rumble once it&#39;s released. After 1.6.1.3 is released, think it will be fine to try uploading here (after brief testing with upload disabled)? :) -- [[Rednaxela]]
+* As long as you identify the uploads with the client version, the sooner we test it the better. -- [[ABC]]
+
+Is somebody using a bad participants URL? Because the old jk.mega.DrussGT 1.2.7 keeps being uploaded by someone despite the newer 1.3.0 being the one in the participants list. Could whoever this is fix their client please? :) -- [[Rednaxela]]
+
+It was me, one of my clients had DOWNLOAD=NOT in its properties. Fixed. -- [[ABC]]
+
+Woah there, looks like a 4/5ths of the bots just disappeared from the ranking table there! Was that a misconfigured client with too short of a participants list? Or was it something on the server&#39;s end? Strange... -- [[Rednaxela]]
+&lt;br&gt;Update: And now the server went down :( -- [[Rednaxela]]
+
+My net connection was down for the last hour or so, and for around 4 hours yesterday. But that doesn&#39;t explain the disappearing of the ranking. It&#39;s something that used to happen sometimes in Pulsar&#39;s server, probably some small design flaw in the client. -- [[ABC]] 
+
+Ahh I see. I only seem to recall it happening on Pulsar&#39;s server at times with other things (disk space or corrupted results) were being wonky too, or maybe it was just coincidence and I don&#39;t remember correctly. In any case, thanks again for hosting this :) -- [[Rednaxela]]
+
+Ohh, when refreshing the rankings here, I realized that the browser must not be caching results at all and the server is forced to fully regenerate it each time. I don&#39;t know how easy it is to do with the java web pages, but I think it would be nice if you could add a code snippet to add &quot;Cache-Control: must-revalidate&quot; and &quot;Last-Modified:&quot; headers, where &quot;Last-Modified&quot; is set to the time of the most recent battle on the server, and then send the browser a &quot;HTTP/1.1 304 Not Modified&quot; if the browser sent the server a &quot;If-Modified-Since&quot; header not older than the last modified time. A quick function in PHP to do that is [http://www.htaccesselite.com/cache-friendly-php-vt164.html here]. That would make refreshes both less taxing on clients and the server, then again... with Darkcanuck&#39;s new server code, it might just be worth leaving the old server code as-is and just eventually implementing this in Darkcanuck&#39;s server. Probably not a bit deal, but throwing out one idea of how to make it run just a tiny bit smoother. Feel free to ignore my incessant blather :) -- [[Rednaxela]]
+
+Thanks, those are some good advices. Even with a highly dynamic page like the ranking, it is probable that some eager mind (like my own, sometimes :)) refreshes the page faster than the clients sumbmit battles. It should be easy enough to set the http headers in the ranking servlet code, and the file has the last update time in its first line. I&#39;ll look into it. -- [[ABC]]
+
+I think that the pairings are complete :D  My client was running non-mega-battles exclusivly and every bot had at least 690 battles, so I increased the BATTLESPERBOT from 650 to 1000.  -- [[GrubbmGait]]
+
+Unfortunately I believe pairings are drawn randomly.  Bots with less battles than BATTLESPERBOT will be randomly paired with another bot out of the 600, regardless of how many times it has or has not already faced that bot. -- [[Simonton]]
+*When every bot has at least BATTLESPERBOT battles, prioritybattles are run to fill up the pairings. At least, that is the intention of the prioritybattles. I think I stop removing that prioritybattles file, and see what will happen.  -- [[GrubbmGait]]
+* A couple quick look at the details pages shows DrussGT has 641 pairings at 1956 battles (3 short of full pairings), Dookious has 436 @ 719, and Phoenix has 539 @ 1003.  If I remember correctly, when all bots have reached BATTLESPERBOT, it then tries to fill in that many for the mini league, then micro, then nano, then just runs completely random pairings.  It&#39;s been quite a while since I looked at that code, though.  At any rate, I can assure you the client has no concept of &quot;pairings&quot;, only of total battles.  (And also that the client is actually the one that picks battles, even though one of the options is called &quot;SERVER&quot;).  -- [[Simonton]]
+* The server prints out missing pairings to the client if it receives battles from a bot that has more than 500 battles. If the client is using the SERVER option, it will run those battles after all bots have reached BATTLESPERBOT. At least that&#39;s how I think it works, I&#39;m not very familiar with the client code. -- [[ABC]]
+* My understanding is similar to ABC&#39;s (based on reverse-engineering the protocol).  I didn&#39;t know about the 500 battle limit, so my server spits out that list for all uploads and limits the missing pairings to 50 to keep things short &amp; sweet.  I have no idea how well the client uses that list -- from what I can tell, it may get replaced on every upload? -- [[Darkcanuck]]
+* It all makes so much more sense now!!  I never understood what on earth that priority battles file was for, apparently because I didn&#39;t understand the code before.  Cool!  It DOES actually run battles specified by the server!  I guess I never was observing it at a time before when the server was actually sending such a list - I guess because there were always bots with less than 500 battles when I was watching things in the before.  -- [[Simonton]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 5 * 11 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that ABC/TemporaryRRServer has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=ABC/TemporaryRRServer">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?ABC" class=wikipagelink>ABC</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

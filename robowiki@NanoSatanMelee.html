@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>NanoSatanMelee - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Nano, Satan, Melee'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=NanoSatanMelee">NanoSatanMelee</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>To be filled in shortly.
+<hr noshade class=wikiline size=1>
+This is a fluke, but such a cool looking one:
+<pre>
+=========================
+Round 43 of 100
+=========================
+SYSTEM: Bonus for killing sample.Target: 15
+SYSTEM: Bonus for killing sample.RamFire: 5
+SYSTEM: Bonus for killing sample.Corners: 18
+SYSTEM: Bonus for killing sample.SittingDuck: 3
+SYSTEM: Ram bonus for killing sample.MyFirstRobot: 19
+SYSTEM: Bonus for killing sample.Crazy: 10
+SYSTEM: Bonus for killing sample.TrackFire: 0
+SYSTEM: Bonus for killing sample.SpinBot: 19
+SYSTEM: Bonus for killing sample.Walls: 6
+SYSTEM: arthord.NanoSatanMelee wins the round.
+</pre>
+<hr noshade class=wikiline size=1>
+I smell bug in Aristocles:
+Here's an excerpt from <a href="robowiki?NanoSatanMelee" class=wikipagelink>NanoSatanMelee</a>'s details, he uses a direct gun:
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Opponent</td><td colspan="0.5">% of Score</td><td colspan="0.5">Num Battles</td><td colspan="0.5">Last Battle</td><td colspan="0.5">Expected %</td><td colspan="0.5">PBI</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>pez.micro.Aristocles_0.3.7</td><td colspan="0.5">39.4</td><td colspan="0.5">5</td><td colspan="0.5">11-3-2004:7:31</td><td colspan="0.5">20.9</td><td colspan="0.5">18.5 </td></TR>
+</TABLE>
+<p>
+Have I accidentally made a direct gun that bypasses <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a>(somehow), I doubt it, so is this a bug?
+<p>
+-- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+You know how I always say I don't use the <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a>. =) But I know what you mean with the term so this is interesting. Very interesting. I must run a few battles and see what is going on. It's not like it is the first time the little satan of yours bugs my bots! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Aha! It's <strong>because</strong> I don't use the <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a> that this happens! You have created a gun/movement combo that fools Aristocles to believe it's never hit at GF1. <a href="robowiki?Jim" class=wikipagelink>Jim</a> has experimented some with this. Your melee movement keeps you close to walls right? Aristocles thinks that as long as it is running in the same orbit direction all the time any hit it takes is at GF1. UNLESS it is wall smoothing more than just a little. NSM hugs the same wall as Aristocles is running along to pass it. Forcing Aristocles to wall smooth hard. Now it takes hit after hit from NSM without realizing those hits could be avoided. On the other hand the only way A would know how to avoid them is to abandon GF1 movement and then your head-on gun would be effective anyway. Should I have had room for the <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a> in my bot I could bounce of walls instead, safe in that the trick would know if a hit isn't at GF1. See why I make such a big thing about what is and what is not the <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a>? Anyway. I think I could solve this particular situation. Shouldn't cost too many bytes. I just have to find them. A doesn't have any spare ones... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+What if you just limited the angle with which you wall-smoothed (i.e.- no fear of the walls unless you should be afraid)? -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I left for class right after writing that and suspected something like this might be the case on my way out the door, but didn't have time to post it. Nice to hear actual testing agreed with my suspicion (for a change ;). I guess you'll be glad to hear I will probably abandon this movement in the next version (other than killing a handful of highly ranked bots it SUCKS) ;) It's also kind of nice to be the thorn in the side again, even if only for a little while :)
+<p>
+(edit) There seems to be quite a bit of variance in the score, though. First test I ran gave this...
+<PRE >
+ 1st: arthord.<a href="robowiki?NanoSatanMelee" class=wikipagelink>NanoSatanMelee</a> Alpha	5413	1450	290	2642	428	457	146	31	5	0
+ 2nd: pez.micro.Aristocles 0.3.7	2403	250	50	1460	81	561	0	6	29	0
+</PRE>
+<p>
+Aristocles also tossed...
+<p>
+<PRE >
+ pez.micro.Aristocles 0.3.7: Exception: java.lang.ArrayIndexOutOfBoundsException<a href="robowiki?action=edit&id=ArrayIndexOutOfBoundsException" class=wikipageedit>?</a>: 5
+ java.lang.ArrayIndexOutOfBoundsException<a href="robowiki?action=edit&id=ArrayIndexOutOfBoundsException" class=wikipageedit>?</a>: 5
+     at pez.micro.Aristocles.on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(Aristocles.java:94)
+     at robocode.peer.robot.EventManager<a href="robowiki?action=edit&id=EventManager" class=wikipageedit>?</a>.on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(EventManager<a href="robowiki?action=edit&id=EventManager" class=wikipageedit>?</a>.java:607)
+     at robocode.peer.robot.EventManager<a href="robowiki?action=edit&id=EventManager" class=wikipageedit>?</a>.processEvents(EventManager<a href="robowiki?action=edit&id=EventManager" class=wikipageedit>?</a>.java:738)
+     at robocode.peer.RobotPeer<a href="robowiki?action=edit&id=RobotPeer" class=wikipageedit>?</a>.tick(RobotPeer<a href="robowiki?action=edit&id=RobotPeer" class=wikipageedit>?</a>.java:1024)
+     at robocode.peer.RobotPeer<a href="robowiki?action=edit&id=RobotPeer" class=wikipageedit>?</a>.turnRadar(RobotPeer<a href="robowiki?action=edit&id=RobotPeer" class=wikipageedit>?</a>.java:1086)
+     at robocode._AdvancedRadiansRobot<a href="robowiki?action=edit&id=AdvancedRadiansRobot" class=wikipageedit>?</a>.turnRadarRightRadians<a href="robowiki?action=edit&id=RadarRightRadians" class=wikipageedit>?</a>(_AdvancedRadiansRobot<a href="robowiki?action=edit&id=AdvancedRadiansRobot" class=wikipageedit>?</a>.java:271)
+     at pez.micro.Aristocles.run(Aristocles.java:47)
+     at robocode.peer.RobotPeer<a href="robowiki?action=edit&id=RobotPeer" class=wikipageedit>?</a>.run(RobotPeer<a href="robowiki?action=edit&id=RobotPeer" class=wikipageedit>?</a>.java:616)
+     at java.lang.Thread.run(Thread.java:536)
+</PRE>
+<p>
+7 times in that match.
+<p>
+(edit2)Argh.. Disregard that.. I left the battlefield at 1000x1000... Going to sleep..
+-- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=NanoSatanMelee" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=NanoSatanMelee">View other revisions</a><br>Last edited May 18, 2006 20:22 EST by <a href="robowiki?GrubbmGait" title="ID 6861 from ip195-142-172-82.dyndsl.versatel.nl">GrubbmGait</a> <a href="robowiki?action=browse&diff=1&id=NanoSatanMelee">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

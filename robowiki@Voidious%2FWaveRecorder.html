@@ -1,0 +1,303 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Voidious/WaveRecorder - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Voidious, Wave, Recorder'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/WaveRecorder">Voidious/WaveRecorder</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Voidious" class=wikipagelink>Voidious</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>A bot that records raw wave data while firing with <a href="robowiki?RandomTargeting" class=wikipagelink>RandomTargeting</a> in a TC mode. Part of my recent <a href="robowiki?Voidious/SegmentationResearch" class=wikipagelink>Segmentation Research</a>, and meant to be analyzed with <a href="robowiki?Voidious/WaveReader" class=wikipagelink>WaveReader</a>. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<pre>
+package voidious.test;
+
+import robocode.*;
+import robocode.util.Utils;
+import java.awt.geom.*;
+import robocode.RobocodeFileWriter;
+import java.util.ArrayList;
+
+/** 
+ * WaveRecorder.java
+ * 
+ * Some GuessFactorTargeting analysis by Voidious.
+ *
+ * This code is open source, released under the RoboWiki Public Code License:
+ * http://robowiki.net/cgi-bin/robowiki?RWPCL
+ */
+
+public class WaveRecorder extends AdvancedRobot {
+    public static Point2D.Double _myLocation;
+    public static Point2D.Double _enemyLocation;
+    
+    private static double _enemyAbsoluteBearing;
+    private static int _lastGunOrientation;
+    private static double _lastDistance;
+    private long _timeSinceVChange = 0;
+    private long _timeSinceZeroVelocity = 0;
+    private long _timeSinceMaxVelocity = 0;
+    private static int _enemyVelocity;
+    private static String _enemyName = "";
+    private Wave _lastWave = null;
+    private ArrayList _enemyPositions = new ArrayList();
+    
+    private static java.awt.geom.Rectangle2D.Double _fieldRect
+    	= new java.awt.geom.Rectangle2D.Double(18, 18, 764, 564);
+
+    private static String _waveLog = "";
+    private static String _roundWaveLog = "";
+    
+    public void run() {
+    	_roundWaveLog = "";
+        setAdjustGunForRobotTurn(true);
+        setAdjustRadarForGunTurn(true);
+
+        do {
+            turnRadarRightRadians(Double.POSITIVE_INFINITY);
+        } while (true);
+
+    }
+
+    public void onScannedRobot(ScannedRobotEvent e) {
+    	_enemyName = e.getName();
+        setTurnRadarRightRadians(Utils.normalRelativeAngle((_enemyAbsoluteBearing = getHeadingRadians() + e.getBearingRadians()) - getRadarHeadingRadians()) * 2);
+
+        ////////////////////////////////////////////////////////
+        // CREDIT: Jamougha and PEZ for event based waves.
+        ////////////////////////////////////////////////////////
+
+        Wave w;
+        addCustomEvent(w = new Wave());
+        
+        _enemyLocation =
+            project((_myLocation = new Point2D.Double(getX(), getY())),
+            _enemyAbsoluteBearing, _lastDistance = e.getDistance());
+
+        _enemyPositions.add(_enemyLocation);
+        double distanceLastEightTicks = _enemyLocation.distance(
+        	((Point2D.Double)_enemyPositions.get(
+        		Math.max(0, _enemyPositions.size() - 9))));
+        double distanceLastFifteenTicks = _enemyLocation.distance(
+            	((Point2D.Double)_enemyPositions.get(
+            		Math.max(0, _enemyPositions.size() - 16))));
+        double distanceLastTwentyFiveTicks = _enemyLocation.distance(
+            	((Point2D.Double)_enemyPositions.get(
+            		Math.max(0, _enemyPositions.size() - 26))));        
+
+        double power = 3;
+        w.distanceTraveled = 0;
+
+        double enemyLatVel;
+        _lastGunOrientation = sign(enemyLatVel = (e.getVelocity())*Math.sin(e.getHeadingRadians() - _enemyAbsoluteBearing));
+        
+        _timeSinceVChange++;
+        _timeSinceZeroVelocity++;
+        _timeSinceMaxVelocity++;
+        
+        int newVelocity, accel;
+        accel = 1;
+        if (_enemyVelocity != (newVelocity = (int)(Math.abs(enemyLatVel)))) {
+            _timeSinceVChange = 0;
+            accel = 2;
+            if (_enemyVelocity &gt; newVelocity) {
+            	accel = 0;
+            }            
+        }
+        
+        if (Math.abs(e.getVelocity()) &lt;= 1) {
+        	_timeSinceZeroVelocity = 0;
+        }
+        
+        if (Math.abs(e.getVelocity()) &gt; 7) {
+        	_timeSinceMaxVelocity = 0;
+        }
+        
+        _enemyVelocity = newVelocity;
+
+        double maxEscapeAngle = Math.asin(8D/(20 - (3 * power)));
+
+        double wallDistance = 3;
+        for (double d = 0; d &lt; 3; d += 0.01) {
+        	if (!gunWallDistance(d * maxEscapeAngle)) {
+        		wallDistance = d;
+        		break;
+        	}
+        }
+
+        double reverseWallDistance = 3;
+        for (double d = 0; d &lt; 3; d += 0.01) {
+        	if (!gunWallDistance(-d * maxEscapeAngle)) {
+        		reverseWallDistance = d;
+        		break;
+        	}
+        }
+
+        w.bulletVelocity = (20 - (3 * power));
+        w.orientation = _lastGunOrientation;
+        w.velocity = Math.abs(e.getVelocity());
+        w.relativeHeading = Utils.normalAbsoluteAngle(e.getHeadingRadians() + (e.getVelocity() &lt; 0?Math.PI:0) - _enemyAbsoluteBearing);
+        if (w.relativeHeading &gt; Math.PI) {
+        	w.relativeHeading = ((2 * Math.PI) - w.relativeHeading);
+        }
+        w.latVel = Math.abs(enemyLatVel);
+        w.distance = _lastDistance;
+        w.timeSinceVChange = _timeSinceVChange;
+        w.timeSinceZeroVelocity = _timeSinceZeroVelocity;
+        w.timeSinceMaxVelocity = _timeSinceMaxVelocity;
+        
+        w.wallDistance = wallDistance;
+        w.reverseWallDistance = reverseWallDistance;
+        w.accel = accel;
+        w.distanceLastEightTicks = distanceLastEightTicks;
+        w.distanceLastFifteenTicks = distanceLastFifteenTicks;
+        w.distanceLastTwentyFiveTicks = distanceLastTwentyFiveTicks;
+        w.fireTime = getTime() + 1;
+                
+        w.sourceLocation = _myLocation;
+        w.directAngle = _enemyAbsoluteBearing;
+
+        setTurnGunRightRadians(Utils.normalRelativeAngle(_enemyAbsoluteBearing - getGunHeadingRadians() + ((_lastGunOrientation*maxEscapeAngle)*((Math.random() * 2) - 1)) ));
+
+        if (setFireBullet(3) != null) {
+        	if (_lastWave != null) {
+                _lastWave.firing = true;        		
+        	}
+        }
+        
+        _lastWave = w;
+    }
+
+    public void onCustomEvent(CustomEvent e) {
+    	removeCustomEvent(e.getCondition());
+    }
+    
+    private static double getGuessFactor(Wave w, Point2D.Double botLocation) {
+        return (Utils.normalRelativeAngle(
+            w.absoluteBearing(botLocation)
+            - w.directAngle) * w.orientation)
+            / Math.asin(8D/w.bulletVelocity);
+    }
+
+    public static void logHit(Wave w, Point2D.Double targetLocation, 
+    	int roundNum) { 	
+    	String output = "";
+    	
+    	output += roundNum + " : ";
+    	output += (w.firing?1:0) + " : ";
+    	output += w.orientation + " : ";
+    	output += round(getGuessFactor(w, targetLocation), 5) + " : ";
+    	output += round(w.velocity, 2) + " : ";
+    	output += round(w.latVel, 2) + " : ";
+    	output += w.accel + " : ";
+    	output += w.timeSinceVChange + " : ";
+    	output += w.timeSinceZeroVelocity + " : ";
+    	output += w.timeSinceMaxVelocity + " : ";
+    	output += round(w.distance, 1) + " : ";
+    	output += round(w.wallDistance, 3) + " : ";
+    	output += round(w.reverseWallDistance, 3) + " : ";
+    	output += round(w.relativeHeading, 4) + " : ";
+    	output += round(w.distanceLastEightTicks, 1) + " : ";
+    	output += round(w.distanceLastFifteenTicks, 1) + " : ";
+    	output += round(w.distanceLastTwentyFiveTicks, 1) + "\n";
+    	
+    	_roundWaveLog += output;
+    }
+    
+    public void onWin(WinEvent e) {
+    	roundOver();
+    }
+    
+    public void onDeath(DeathEvent e) {
+    	roundOver();
+    }
+    
+    public void roundOver() {
+    	_waveLog += _roundWaveLog;
+    	if (getRoundNum() == getNumRounds() - 1) {
+    		try {
+    			int x = 0;
+    			while (x &lt; 1000 &amp;&amp; getDataFile(_enemyName + "." + x + ".w2.txt").exists()) {
+    				x++;
+    			}
+    			RobocodeFileWriter writer = new RobocodeFileWriter(
+    				getDataFile(_enemyName + "." + x + ".w2.txt"));
+    			writer.write(_waveLog);
+    			writer.close();
+    		} catch (Exception e) { }
+    	}
+    }
+
+/*
+    private static double limit(double min, double value, double max) {
+        return Math.max(min, Math.min(value, max));
+    }
+*/
+    
+    // CREDIT: ganked from CassiusClay, by PEZ
+    // http://robowiki.net?CassiusClay
+    private static Point2D.Double project(Point2D.Double sourceLocation, double angle, double length) {
+        return new Point2D.Double(sourceLocation.x + Math.sin(angle) * length,
+            sourceLocation.y + Math.cos(angle) * length);
+    }
+
+    private static int sign(double d) {
+    	if (d &lt; 0) { return -1; }
+    	return 1;
+    }
+    
+    private static double round(double d, int i) {
+    	long powerTen = 1;
+    	
+    	for (int x = 0; x &lt; i; x++) {
+    		powerTen *= 10;
+    	}
+    	
+    	return ((double)Math.round(d * powerTen)) / powerTen;
+    }
+    	
+    private static boolean gunWallDistance(double wallDistance) {
+    	return _fieldRect.contains(project(_myLocation, _enemyAbsoluteBearing + (_lastGunOrientation*wallDistance), _lastDistance));
+    }
+
+    
+    class Wave extends Condition {
+        Point2D.Double sourceLocation;
+        double bulletVelocity, directAngle, distanceTraveled;
+        int orientation, weight, roundNum;
+
+        long timeSinceVChange, timeSinceZeroVelocity, timeSinceMaxVelocity,
+        	fireTime;
+        int accel;
+        double velocity, distance, latVel, wallDistance, reverseWallDistance,
+        	relativeHeading;
+        double distanceLastEightTicks, distanceLastFifteenTicks,
+        	distanceLastTwentyFiveTicks;
+        boolean firing = false;
+        
+        public double distanceToPoint(Point2D.Double p) {
+        	return sourceLocation.distance(p);
+        }
+        
+        public double absoluteBearing(Point2D.Double target) {
+            return Math.atan2(target.x - sourceLocation.x, target.y - sourceLocation.y);
+        }
+
+        public boolean test() {
+            if (distanceToPoint(WaveRecorder._enemyLocation)
+                &lt;= (getTime() - fireTime + 1.5) * bulletVelocity) {
+                WaveRecorder.logHit(this, WaveRecorder._enemyLocation, 
+                	getRoundNum());
+
+            	return true;
+            }
+            return false;
+        }
+    }
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Voidious" class=wikipagelink>Voidious</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Voidious/WaveRecorder" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Voidious/WaveRecorder">View other revisions</a><br>Last edited October 24, 2006 13:01 EST by <a href="robowiki?Voidious" title="ID 7423 from pool-71-126-8-207.bflony.east.verizon.net">Voidious</a> <a href="robowiki?action=browse&diff=1&id=Voidious/WaveRecorder">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

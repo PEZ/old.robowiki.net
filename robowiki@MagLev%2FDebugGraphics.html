@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>MagLev/DebugGraphics - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Mag, Lev, Debug, Graphics'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/DebugGraphics">MagLev/DebugGraphics</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?MagLev" class=wikipagelink>MagLev</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H3><i>Sorry for the notification, mis-clicked :) </i></H3>
+
+<p>
+<a rel="nofollow" href="http://www.flickr.com/photos/synapse/2809833155/"><img src="http://farm4.static.flickr.com/3193/2809833155_130c8671b6_o.png"></a>
+<p>
+Code for these debug graphics:
+<pre>
+/*
+* g - Graphics2D object provided in onPaint(Graphics2D) (or from bot.getGraphics() in 1.6.1 +)
+* bot - reference to my instance of AdvancedRobot
+* w - wave.
+*  w.ctime - when the wave was fired
+*/
+if (bot.getOthers() == 1) {
+    g.setColor(new Color(0f, 0.5f, 0f));
+    g.draw(new Ellipse2D.Double(goal.x - 10, goal.y - 10, 20, 20));
+    double radius, arcSegment, segmentHeading;
+    double time = bot.getTime();
+    for (Wave w : waves) {
+	radius = (time - w.ctime) * w.speed;
+	arcSegment = w.extent / NUM_WAVEBUCKETS;
+	segmentHeading = 0;
+	for (int i = 0; i &lt; NUM_WAVEBUCKETS; i++) {
+	    g.setColor(Color.getHSBColor(
+                (w.reachableBucket == i ? 0f : 1/3f),             // green, or red if it's the target bucket
+                1f,                                               // full saturation of course
+                (float)(0.25 + 0.75 * waveBuckets[i] / bucketMax) // brighter as the bucket is fuller
+            ));
+	    //g.setStroke(new BasicStroke((float)(4 * waveBuckets[i] / bucketMax))); // disabled due to CPU expense
+
+	    //draw a line for each bucket along the arc of the wave
+	    segmentHeading = w.heading - w.clockwise * (w.extent / 2 - arcSegment * (i - 0.5));
+	    g.draw(new Line2D.Double(
+		w.origin.x + radius * Math.sin(segmentHeading),
+		w.origin.y + radius * Math.cos(segmentHeading),
+		w.origin.x + radius * Math.sin(segmentHeading + arcSegment),
+		w.origin.y + radius * Math.cos(segmentHeading + arcSegment)
+	    ));
+	}
+    }
+}</pre>
+<p>
+This code is free, do whatever you like with it.
+<p>
+<hr noshade class=wikiline size=1> 
+<strong>Comments</strong>
+<p>
+You used a similar method to what I've now got for painting waves in <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a>, using the many small sections of line to make up the continuous arc. The main difference is that I change the color from blue -&gt; yellow -&gt; orange -&gt; red depending on the danger, and it's in several increments, not in a continuous function. I didn't even know about the Color.getHSBColor method - looks very nice! I might just steal that idea - I take it this code is under the <a href="robowiki?RWPCL" class=wikipagelink>RWPCL</a>?  -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Not <a href="robowiki?RWPCL" class=wikipagelink>RWPCL</a>, just free. Do what you like with it. --<a href="robowiki?Synapse" class=wikipagelink>Synapse</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?MagLev" class=wikipagelink>MagLev</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=MagLev/DebugGraphics" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=MagLev/DebugGraphics">View other revisions</a><br>Last edited August 30, 2008 11:09 EST by <a href="robowiki?Synapse" title="ID 15453 from pool-72-66-187-148.ronkva.btas.verizon.net">Synapse</a> <a href="robowiki?action=browse&diff=1&id=MagLev/DebugGraphics">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

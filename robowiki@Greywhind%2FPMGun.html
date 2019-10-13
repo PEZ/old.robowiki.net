@@ -1,0 +1,202 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Greywhind/PMGun - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Greywhind, PMGun'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/PMGun">Greywhind/PMGun</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Greywhind" class=wikipagelink>Greywhind</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>This code is based on the PM gun that Moebius uses, although only a couple of lines of code are actually from Moebius. Feel free to use this code - it's not all that accurate anyway, but it's good to learn <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a>.
+<p>
+<pre>
+package whind;
+import robocode.*;
+import java.util.Hashtable;
+import robocode.util.Utils.*;
+ import java.util.Vector;
+import java.awt.Color;
+import java.awt.geom.*;
+
+/**
+ * PMGunBot - a robot by Greywhind
+ */
+public class PMGunBot extends AdvancedRobot
+{
+	static StringBuffer fullPattern = new StringBuffer();
+	Vector lastFew = new Vector();
+	static int MAX_SEARCHES = 16;
+	static Vector arcLength = new Vector();
+	static int historyIndex = 0;
+	static int MAX_BUFFER_SIZE = 2000;
+	double prednow;
+	double eDist;
+	
+	/**
+	 * run: PMGunBot's default behavior
+	 */
+	public void run() {
+		setColors(Color.red,Color.blue,Color.green);
+		if (getRoundNum() == 0) {
+			for (int i = 0; i &lt;= MAX_BUFFER_SIZE; i++) {
+				arcLength.add(new Double(0));
+			}
+		}
+		while(true) {
+			turnRadarRightRadians(Double.POSITIVE_INFINITY);
+			execute();
+		}
+	}
+
+	/**
+	 * onScannedRobot: What to do when you see another robot
+	 */
+	public void onScannedRobot(ScannedRobotEvent e) {
+		setTurnLeft(90 - e.getBearing());
+		setAhead((getTime() % 50 - 25) * 2);
+		setTurnRadarLeftRadians(getRadarTurnRemaining());
+		double absBearing = getHeadingRadians() + e.getBearingRadians();
+		double enemyX = getX() + e.getDistance() * Math.sin(absBearing);
+        double enemyY = getY() + e.getDistance() * Math.cos(absBearing);
+		eDist = e.getDistance();
+
+		// pattern matcher - idea (and a little bit of the code) from Moebius.
+		Double relVel = new Double(e.getVelocity() * Math.sin(e.getHeadingRadians() + absBearing));
+		lastFew.insertElementAt(relVel, 0);
+		double reldblVel = relVel.doubleValue();
+		Double temp = (Double)arcLength.get(historyIndex++);
+		double prevArcLength = temp.doubleValue();
+		arcLength.add(historyIndex, new Double(prevArcLength + reldblVel));
+		if (lastFew.size() &gt; MAX_SEARCHES) {
+			lastFew.setSize(MAX_SEARCHES);
+		}
+		
+		int index = -1;
+		
+		if (lastFew.size() &lt; MAX_SEARCHES) {
+		} else {
+			int tries = 0;
+			StringBuffer search = new StringBuffer();
+			
+			if(fullPattern.length() &gt; 0) {
+				while(index == -1) {
+					if (tries &lt; MAX_SEARCHES) {
+						search.setLength(0);
+						for (int i = 0; i &lt; MAX_SEARCHES - tries; i++) {
+							Double currentVal = (Double)lastFew.get(i);
+							double doubVal = currentVal.doubleValue();
+							search.append((char)doubVal);
+						}
+						index = fullPattern.lastIndexOf(search.toString());
+					} else {
+						break;
+					}
+					tries += 2;
+				}
+			}
+			if (index != -1) {
+				index += MAX_SEARCHES - (tries - 1);
+				int timeToHit = (int)Math.abs(e.getDistance()/(20 - 3 * Math.min(3.0, e.getEnergy()/4)));
+				//timeToHit += 2;
+				if (index + timeToHit &gt;= arcLength.size()) {
+					index += arcLength.size() - index - timeToHit - 1;
+				}
+				Double convert = (Double)arcLength.get(index + timeToHit);
+				double paramOne = convert.doubleValue();
+				convert = (Double)arcLength.get(index);
+				double paramTwo = convert.doubleValue();
+				setTurnGunRightRadians(Math.asin(Math.sin((paramOne - paramTwo) / e.getDistance() + absBearing - getGunHeadingRadians())));
+				
+				if (getY() &lt; enemyY) {
+					prednow = Math.asin(Math.sin((paramOne - paramTwo) / e.getDistance() + absBearing));
+				} else {
+					if (getX() &gt; enemyX) {
+						prednow = Math.acos(Math.cos((paramOne - paramTwo) / e.getDistance() + absBearing)) * -1;
+					} else {
+						prednow = Math.acos(Math.cos((paramOne - paramTwo) / e.getDistance() + absBearing));
+					}
+				}
+
+				if (Math.abs(Math.toDegrees(prednow) - Math.toDegrees(robocode.util.Utils.normalRelativeAngle(absBearing))) &gt; Math.toDegrees(Math.asin(8 / (20 - 3 * Math.min(3.0, e.getEnergy()/4))))) {
+					fireLinear(e, absBearing, enemyX, enemyY);
+					//out.println(Math.toDegrees(prednow) +  " and " + Math.toDegrees(robocode.util.Utils.normalRelativeAngle(absBearing)));
+					//out.println("Error - angle dif:" + (Math.abs(Math.toDegrees(prednow) - Math.toDegrees(robocode.util.Utils.normalRelativeAngle(absBearing)))) + " &gt; " + (Math.toDegrees(Math.asin(8 / (20 - 3 * Math.min(3.0, e.getEnergy()/4))))));
+				} else {
+					//out.println("Fired normally.");
+				}
+			}
+			//out.println(index + " with " + (tries - 1) + " searches.");
+		}
+		//out.println(reldblVel);
+		fullPattern.append((char)reldblVel);
+		
+		// clean up if too large
+		if (historyIndex == MAX_BUFFER_SIZE - 1) {
+			fullPattern.delete(0, 1);
+			arcLength.removeElementAt(0);
+			historyIndex = MAX_BUFFER_SIZE - 2;
+		} else {
+			arcLength.removeElementAt(arcLength.size() - 1);
+		}
+		//out.println(lastFew.toString());
+		
+		setFire(Math.min(3.0, e.getEnergy()/4));
+	}
+
+	public void onPaint(java.awt.Graphics2D g) {
+			g.setColor(Color.green);
+			g.drawOval((int)(getX() + eDist * Math.sin(prednow)) +22, 600- (int)(getY() + eDist * Math.cos(prednow)) +22, 10,10);
+	}
+	
+	public void fireLinear(ScannedRobotEvent e, double absBearing, double enemyX, double enemyY) {
+				double bulletPower = Math.min(3.0,getEnergy());
+                double myX = getX();
+                double myY = getY();
+                double enemyHeading = e.getHeadingRadians();
+                double enemyVelocity = e.getVelocity();
+                
+                
+                double deltaTime = 0;
+                double battleFieldHeight = getBattleFieldHeight(), battleFieldWidth = getBattleFieldWidth();
+                double predictedX = enemyX, predictedY = enemyY;
+                while((++deltaTime) * (20.0 - 3.0 * bulletPower) &lt; Point2D.Double.distance(myX, myY, predictedX, predictedY)){          
+                        predictedX += Math.sin(enemyHeading) * enemyVelocity;   
+                        predictedY += Math.cos(enemyHeading) * enemyVelocity;
+                        if(     predictedX &lt; 18.0 
+                                || predictedY &lt; 18.0
+                                || predictedX &gt; battleFieldWidth - 18.0
+                                || predictedY &gt; battleFieldHeight - 18.0){
+                                predictedX = Math.min(Math.max(18.0, predictedX), battleFieldWidth - 18.0);     
+                                predictedY = Math.min(Math.max(18.0, predictedY), battleFieldHeight - 18.0);
+                                break;
+                        }
+                }
+                double theta = robocode.util.Utils.normalAbsoluteAngle(Math.atan2(predictedX - getX(), predictedY - getY()));
+                setTurnGunRightRadians(robocode.util.Utils.normalRelativeAngle(theta - getGunHeadingRadians()));
+	}
+}
+</pre>
+<hr noshade class=wikiline size=1>
+<H4>Please respond here.</H4>
+
+<p>
+Ok, I just tested this, and what I wrote here before seems to be wrong. I did not encounter any time outs in my tests though. --<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a>
+<p>
+Thanks for testing - perhaps it's just my machine, but what worries me is that it seems to time out more as time goes on. That indicates to me that something is wrong. -- <a href="robowiki?Greywhind" class=wikipagelink>Greywhind</a>
+<p>
+I wasn't able to figure out what might be causing your problems, and it didn't time out at all over a 100-round match on my machine. How many rounds before it times out on yours? Also, it seems like you could at least isolate the part of the code that's timing out with some simple debug statements. I'll run a longer match now and let you know what happens... I was also wondering, and I'm sorry to nitpick, but why would you ever do "(++historyIndex - 1)"? I'd think "(historyIndex++)" is a much cleaner way to code it :) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Good point, Voidious :P. My fault - now fixed in the above code. It starts timing out (at the settings above) at about 80 rounds on my machine. I'm running on a 450 mhz Mac running OS X 10.3 with 448 mb ram. -- <a href="robowiki?Greywhind" class=wikipagelink>Greywhind</a>
+<p>
+Well, it timed out once here around 320 matches, and in the rounds 400+ it is running a *lot* slower than it was after 10, so something is definitely going on. I'm on a 1.6 GHz Athlon w/768 RAM. I'll take a look at it later on in more depth if you haven't figured it out by then. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+That definitely confirms my suspicions - thanks for taking a look. I will search later if I have the stamina... If anyone else finds the problem, please note it here. -- <a href="robowiki?Greywhind" class=wikipagelink>Greywhind</a>
+<p>
+Hey man, I think I figured out what's going on. Your "arcLength" vector is growing uncontrollably. You initialize it in run(), but you probably only want to do that in Round 1 if it is a static object. Also, when you add to it, you probably want to also delete one thing from it to keep it the same size. When I changed it to only initialize in round one, it was size=3998 at the beginning of each round; that would be 2000 less if you removed each time you added to it, as well. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Well, that makes perfect sense to me... I only checked the size of the fullPattern because I thought I understood how to keep the Vector the correct size, but I clearly missed two problems with it! Thanks for the help. Now I just have to make it an accurate PM gun :P Note: When I fix the problem I'll change the above code to the corrected version. -- <a href="robowiki?Greywhind" class=wikipagelink>Greywhind</a>
+<p>
+The updated code, with no memory problems, is above. Anyone who wants to help me refine it to hit more accurately, please feel free to give suggestions. Also, when it sees a clear targeting error, it uses linear targeting until it thinks it's fixed. -- <a href="robowiki?Greywhind" class=wikipagelink>Greywhind</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Greywhind" class=wikipagelink>Greywhind</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Greywhind/PMGun" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Greywhind/PMGun">View other revisions</a><br>Last edited December 19, 2005 16:44 EST by <a href="robowiki?Greywhind" title="ID 5970 from user-0cdvnen.cable.mindspring.com">Greywhind</a> <a href="robowiki?action=browse&diff=1&id=Greywhind/PMGun">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

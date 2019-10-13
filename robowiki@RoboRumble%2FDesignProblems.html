@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RoboRumble/DesignProblems - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Robo, Rumble, Design, Problems'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/DesignProblems">RoboRumble/DesignProblems</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H3>Saved data</H3>
+
+Bots that save data about their opponents will have very unstable results in the current design. For example, if <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> fights <a href="robowiki?DuelistMicro" class=wikipagelink>DuelistMicro</a> (which doesn't save data) on Albert's computer for 100 rounds, it will do much better vs. <a href="robowiki?DuelistMicro" class=wikipagelink>DuelistMicro</a> in the next match they fight if it happens to be on Albert's computer again, whereas it won't do as well if it run on another person's computer. The fact that running the same pairing on different computers can produce different results is a serious design flaw. 
+<p>
+Some suggested solutions:
+<OL >
+<li> Assign pairings to computers. If it is guaranteed that a given pairing will only be run on a certain computer, the problem doesn't occur.
+<li> Have a server that is reponsible for keeping the master copy of a bot's data directory. Any time a computer is assigned matches involving that bot, give it an exclusive lock on that bot until the results and the updated contents of the data directory are returned. The problem is that this could greatly hamper the overall speed (if too many bots are locked) and could use up a lot of bandwidth transfering the updated data directories.
+<li> Disable saved data.
+</OL>
+--<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+This has been discussed elsewhere. It was decided that we'll live with this shortcoming until a good solution hits us in the head. As Roboleague resets the data directory when it starts I think that ER has a similar problem. It's the same conditions for all bots and this will level out the impact on the rankings I think. Your first suggestions there will work in the wrong direction from the goals of the projects and will add a level of complexity that costs more than it tastes I think. The third alternative is boring. =) I say we keep living with it. Though solution two might be feasable if we add a timeout for the locks. But it would still be a bit too complicated to my taste. Let's deal with this problem when we have stabilized the current version and when we do not think we have more important/fun things to add. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+In all likelihood the vast majority of matches will be run by clients that are frequently in use, with a small minority being one or two time clients run by people curious to see how our system works. That said, these people are probably also running testing on their computers, so it seems most likely that the bots will all have extensive data directories of their own built up within a few days (if they don't already) on the clients that have the greatest effect on their stats. So maybe this won't be a big issue. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I like idea 2, but it isn't needed yet.  Maybe when we get as far as releasing a real version (rather than alpha's and betas) we can think about it. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+<p>
+@Kuuran: Unless they're like me, and have different robocode installations for 1-v-1 testing, melee testing, minibots, microbots, 
+nanobots, robocodeGL, robocodeGL development version, robocode 3d, robocodeGL 3d version, etc... :-P
+<p>
+You could always copy your megabot 1-v-1 testing dir into your new roborumble data dir to solve most of the issues :P I also use multiple installs, but only for different versions of robocode (GL, 3D, classic, soccer, etc). I think for the most part the data dirs will populate themselves enough just from the roborumble runs that the problem will solve itself before we could implement a sane solution. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<hr noshade class=wikiline size=1>
+<p>
+<b>Displaying results</b>
+<p>
+I think we might have a coming problem with the result files for each bot getting really huge. We must roll them in some way or it will take forever to process the files and I guess they will consume unproportionally much bandwidth and hard disk space too. It already takes almost a second for my blastingly fast web browser (Safari) to load the details page of Marshmallow. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Could you summerise the data for old battles?  Keep all the rankings etc. the same, but only store detailed results for the last 50 battles or something.  To summerise you could try username, opponent and total scores.  That would only mean the problem would occur later, but it would buy time.  1 second isn't bad.  Once it starts getting over a minute we need to do something. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+When it takes a minute to load a details page I will have shut down the servlets long ago. This need to be addressed now. Summarizing data for old battles sounds like the right way to go. We can save detailed data on the last 100 battles or so. Why would that become a problem later? It would set a max size of the files quite effectively. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+To reduce the size of the results pages:
+<OL >
+<li> Use a single table for all results instead of individual ones
+<li> No need to list both competitors, if it's on the DT page we already know one of them is DT.
+<li> Have each battle as a table row, perhaps with the following cells: opponent, myscore, opponent score, rating change (only list it once since it's the same for both bots)
+</OL>
+<p>
+For what it's worth, I Agree with PEZ. -- <a href="robowiki?FnH" class=wikipagelink>FnH</a>
+<p>
+If we break it down by user it could again start to become an issue given enough users, but I suspect that's just wishful thinking :) -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I'm working on it. You will be able to specify the number of battles you want to display (we can set it to the last 100 battles). Also, I'm adding some sumarization functions. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+@PEZ: I just uploaded the modified server classes. It displays the battles in groups of 25, and automatically creates a link to display the next 25, and so on. Also, it includes the first of the sumarization functions which shows your bots <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a> (and for who you are a <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>). The details page also includes an automatic link to this page. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Cool! I already knew Frankie was a <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a> of Marshmallow though. =) This takes care of some of the processing problems and all of the bandwidth problem. Though I still don't like that the data files themselves grow infinitly. I think we must solve this in the upload servlet somehow. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+OK, I'w change it so it stores only a number of battles, and deletes the old ones. Which number do you think is correct? -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+As long as there's a stop somewhere I'll be calm. =) How about 150? That way it would be six pages with the current settings. Anyone wants more than that? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+150 sounds good.  As this project is supposed to be about sharing the work, could we share the data files?  ie. pages of 25 after the first 150 could be made into static HTML files, and transfered to other peoples servers where they can be linked to by the wiki page. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Are you really going to use all that data? sounds like you've got <a href="robowiki?OceansOfSpareTime" class=wikipagelink>OceansOfSpareTime</a> :) -- <a href="robowiki?FnH" class=wikipagelink>FnH</a>
+<p>
+I don't like the idea of getting rid of data at all if it can be helped.  You never know when you might need it.  I think the <a href="robowiki?WhiteWhales" class=wikipagelink>WhiteWhales</a> should be set to only show if the rating change is more than a certain value.  You are rarely going to perform exactly as expected.  What about +/- 5 for now?  It can increase once the ratings stabalise. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Perhaps the server could have 'listeners' that get all the data the server gets as well (also through posts for example), so that other people (like <a href="robowiki?Tango" class=wikipagelink>Tango</a>) with more HD-space and/or other interests in the data can use it? Problem would probably be the server the user would need to provide to receive the data ... -- <a href="robowiki?FnH" class=wikipagelink>FnH</a>
+<p>
+I still prefer static HTML pages of the results being stored on random servers. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+<a href="robowiki?WhiteWhales" class=wikipagelink>WhiteWhales</a> only appear if the "smoothed change" has an absolute value greater than 1.5. The "smoothed change" is calculated using an exponential smooth with alfa = 0.2 (ie. lastchange * 0.2 + smoothedchange * 0.8). If it's not working like that, then just let me know, because there is some problem :-) -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Just thinking... Each battle takes about 150 characters to store (it could be reduced to 100). PEZ, what limit do you think is good for a bot? Then we can calculate the number of matches. Note but, that if you want some history "per enemy" you will need quite a big amount of data, since the average history available will be battles/participants. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+It is working like that, i think.  I just think the 1.5 should be higher. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Another option is to go like the ER and just sum up all results between two bots. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Yeah, that would work.  Then you would just have to store one battles worth of data for each enemy. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+You must be able to handle separation Tango. =) I'm more worried about what Marshmallow is still doing there down on rank #42! How about sorting the <a href="robowiki?WhiteWhales" class=wikipagelink>WhiteWhales</a> lists? I would rather decide on a number of battle details to save based on usefulness rather than on space consumed. 150 would satisfy my need for details for sure. And we could also save the sum of all fights against each enemy bot. That can be a quite entertaining list to read. 
+<p>
+I must be able to what? :-/  I don't understand.  For a start, what was that a reply to? Sorting the <a href="robowiki?WhiteWhales" class=wikipagelink>WhiteWhales</a> is a good idea.  150 battles and then per enemy summeries would be fine by me.  The only information lost is stuff that is purely random anyway, so of little help. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Sorry, bad joke maybe. It was in reply to: "I don't like the idea of getting rid of data at all if it can be helped." -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+<b>Screwing up results </b>
+<p>
+I think whe should add some check to prevent what is happening right now with DT and Sedan. Posting the same match once and again artificially inflates the rating of the winner bot and deflates the rating of the looser. Because they don't compete against other bots, the difference just increases and increases... something like that could make the second worst bot become first by just fighting aganinst the worst bot.
+<p>
+I have no idea on how to prevent it (suggestions are welcome), but for now, when all matches are posted, I'w make a manual entry to adjust the results of DT and Sedan to the same rating of the 3rd bot. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+There is no need to change anything.  It is still stabalising results.  It will even out as more battles are played.  The ELO system stops things like that really mucking up results.  Just winning doesn't increase your ranking.  If you do as expected (as they will have done after a while) your ranking doesn't change. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I say that, but there is the matter that for some reason they were run as 50 round battles.  Get the server to ignore all non-35 round battles, and get it to recalculate the rankings, and it will fix itself. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+It can't recalculate ratings. They are done on-line when results are uploaded :-( 
+<p>
+Can't you run the whole database through the system again?  Is the database not stored in the same format as a results1v1.txt file?  Doing that would also get rid of all the 10 round battles from before the default was changed. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+What's wrong with 50-round battles? Gives those bots that don't save data more of a fair chance, since the initial 10 rounds or so of adapting to their enemy don't affect their final rating as much. 
+<p>
+I'd say that when we have got this thing stable we can wipe the entire data directory and make the clients start over from scratch when we go live for real. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yeah, I agree with PEZ. We are in testing period, aren't we? -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Wiping everything before we go live sounds like a very good idea. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Except that we'll have to wait for stable rankings again, but I suppose that will come.  And the second-worse robot couldn't get to first by beating the worst several times, unless it beat the worst robot by a gigantic margin, or a larger margin than the best bot would be expected to beat the worst bot.  But the fact remains that <a href="robowiki?Sedan" class=wikipagelink>Sedan</a> would probably look a few places better right now if DT had played more rounds against the people between DT and <a href="robowiki?Sedan" class=wikipagelink>Sedan</a> :-p -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I disagree, I don't think Sedan would be in a better position. Sedan has been between 1725 and 1735 every time I've checked for the whole duration of the beta. Right now it's at 1729. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Fact remains that your DT vs Sedan session caused Sedan to be pushed down the list and DT to climb more rapid than it would otherwise have done. I think we will see Sedan among the top-3 when the ratings have settled. Right now DT is unbeatable and then comes <a href="robowiki?BlestPain" class=wikipagelink>BlestPain</a> and Sedan who lose against no other bots than eachother and DT. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I agree. Please, stick to the designed process, or we will not be able to test it. If we feel robot ratings change to slow, then lets recognize it and change how the rankings evolve (that's why we are testing). All bots have the same right to get its fair rating, no matter if they are good or bad, and artificially speeding up a bot rating creates only suspicion (the most perjudicated bot right now is DT, because it's not clear it should be there, even if it would have arrived for sure). -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<hr noshade class=wikiline size=1>
+<a href="robowiki?RoboRumble/RankingSystem" class=wikipagelink>/RankingSystem</a>
+<hr noshade class=wikiline size=1>
+Yet another scalability problem might arrive. As more and more matches are uploaded to the server I have noticed that I get slow response times from it when working from the prompt. This is usually a sign of high load on a Unix system. It's not a very strong machine of course but still ... it has always been super responsive on me. I would like to see if we can see any changes we might do to the client/server scheme to make the system scalable to lots and lots of clients. As I understand Paul on the <a href="robowiki?RoboRumble/RankingSystem" class=wikipagelink>/RankingSystem</a> page we only need so many matches and rounds to get a stable and fair ranking (even without continously refeeding old results). This maybe means that the only scalability we really need would be related to the number of bots in the rumble and to how often they are updated. Therefore I suggest something around the lines of:
+<UL >
+<li> The settings on how many matches and rounds per match is decided on the server side. The server does this based on:
+<UL >
+<li> How many matches it thinks each bot lacks.
+<li> The recent (the last hours) throughput of matches it has got (maybe some average ratio "rounds / minute")
+</UL>
+<li> The clients loads this settings from the server.
+<UL >
+<li> If the client can't or doesn't want to connect to get these settings it uses the last settings it has got from the server. Then when uploading it pulls the current settings and (maybe) if it has got too much data in relation to the current settings it only uploads the requested subset.
+</UL>
+<li> The client first  decides what matches it wants to run and only then downloads any missing bots in this set. (This would make it nicer against the repository.)
+</UL>
+We can of course let the clients upload a bit more data than is actually needed just to keep the clients busy, but limit it so that a large number of clients won't mean we need a cluster of servers or some such.
+What do you say? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Is the slow down caused by the number of connections, or is it caused by the big datafiles for each bot?. Note that now, every time a battle is uploaded it opens and loads a big data file, and that can be time consuming? Would reducing the size of datafiles help to improve performance? If so, I propose to first change the rating system to a model using accumulated (or rolling) scores, then check how performance is affected, and then, if problems persist, change to a centralized model. Note that developing the proposed model can take some time (now the netengine has 313 lines - excluding external libraries, and the battles engine has 355 lines, for a total of 668 lines, and that makes maintenance easy :-) Also, I noted that my browser takes a long time to download all the flags included in the rankings. How it relates to server performance? May be we could store the flags in a different server so they are read from there? -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Let's see where the smaller files takes us. Though I still think it will be something to be dealt with when the number of clients increases. I appreciate your need for maintainability of the code and agree we can take it in steps and only take a certain step if the need really arises. The flags shouldn't be a problem. There are only about 20 flags and it is very small files (200-300 bytes each). Your browser should cache them anyway. I guess the slowliness you experience might have to do with it being a quite large table and I have no "width" and "height" attributes in the html code there, which means your browser might take a little while to figure out how to render the table including all those files. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+All of the broken link ones are reloaded on every visit, though, since no valid cache for them exists. It would be useful (and cut down on alot of http requests) if there was a default. Those of us who display changes at the top of all pages are also dying when we load up the results page, I noticed a few times in the results the changes were suppressed for some reason, but most times they weren't, is there anything that can be done about this? Custom settings for that page to not display changes, or something on our end even? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+OK, I just skip the image when there's no flag linked to a "main" package name. Hope that helps. About the changes on top of all pages... I don't understand what you mean. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Enable 'show differences on all pages' in preferences and you'll see what I mean. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Cheez! I guess the diff feature wasn't added with tables in mind... The wiki code is a bit cryptic to say the least. I guess I could try make an exception for that page. ... But I can't even see where it makes the exception for the "Changes" page. I'll dig some more and maybe it can be fixed. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Cool. If it doesn't work out then I'll live, but hopefully you can do something about it. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I hardcoded it so that diffs-on-all-pages doesn't include pages maching "RoboRumble/Rankings". Ugly as hell, but I almost never look at that code anyway so it could as well be ugly. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Cool, much appreciated! :) -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<hr noshade class=wikiline size=1>
+Does the RR@H client check for new participants when it gets a new battle list?  - should it? --  <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<p>
+It did before, but from the new release, it checks the participants list only at the begining of the sesion (I did it to reduce trafic). We can reverse the change if we feel it was better before. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+If it is possible for a new participant to be in a battle list, but not yet downloaded by the client causing a crash then the client should check if there are new participant each time it gets a battle list - otherwise no problem - or check every 4 hours.  -- <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<p>
+It is not possible to have a bot in the battles list which is not in the participants list, since the battles list is built from participants list. Also, it checks for the necessary .jar files before creating the battles list, so if you have it in the participants list, but you don't have it (ie. problems in the <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a>) downloaded, then it will not appear in the battles list. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a> 
+<p>
+Sorry, I assumed the server issued the battles list --  <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<p>
+Do the clients make any attempt at running battles between robots of similar ranking?  It appeared as if Sedan hasn't actually battled DT yet (which I thought was curious) -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+At the moment the server doesn't send any info to the client.  The only download is the participents list from the wiki page, and the bots from the repository.  The server really should set the battles list in a later version. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RoboRumble/DesignProblems" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RoboRumble/DesignProblems">View other revisions</a><br>Last edited September 16, 2003 6:32 EST by <a href="robowiki?PEZ" title="ID 1052 from 192.168.0.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=RoboRumble/DesignProblems">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Woodchip/Code - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Woodchip, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Code">Woodchip/Code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Woodchip" class=wikipagelink>Woodchip</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Doubt it's that interesting (<a href="robowiki?Falcon" class=wikipagelink>Falcon</a> and <a href="robowiki?RaikoNano" class=wikipagelink>RaikoNano</a> are far more interesting), but since it's small...
+<p>
+<pre>
+package ags.woodchip;
+
+import robocode.*;
+import static robocode.util.Utils.normalRelativeAngle;
+import static robocode.util.Utils.normalAbsoluteAngle;
+import java.awt.geom.Point2D;
+import java.util.LinkedList;
+
+/**
+ * Woodchip 0.1
+ * 
+ * A micro just-for-fun bot. Based on RaikoNano and Falcon
+ */
+public final class Woodchip extends AdvancedRobot {
+    static final double BULLET_POWER = 2.5;
+    static final double BULLET_VELOCITY = 20 - 3 * BULLET_POWER;
+    static final LinkedList&lt;Double&gt; GFNUMBERS = new LinkedList&lt;Double&gt;();
+    
+    static double enemyX;
+    static double enemyY;
+    static double lateralDirection=1;
+    
+    public void run()
+    {
+        setAdjustGunForRobotTurn(true);
+        setAdjustRadarForRobotTurn(true);
+        setAdjustRadarForGunTurn(true);
+        while(true) {
+            turnRadarRight(Double.POSITIVE_INFINITY);
+        }
+    }
+    
+        public void onScannedRobot(ScannedRobotEvent e)
+        {
+                final Wave wave = new Wave();
+                double enemyAbsoluteBearing = normalAbsoluteAngle(getHeadingRadians() + e.getBearingRadians());
+                enemyX = (wave.wGunX = getX()) + Math.sin(enemyAbsoluteBearing) * e.getDistance();
+                enemyY = (wave.wGunY = getY()) + Math.cos(enemyAbsoluteBearing) * e.getDistance();
+                wave.wBearing = enemyAbsoluteBearing;
+                final double lv = (e.getVelocity() * Math.sin(e.getHeadingRadians() - enemyAbsoluteBearing));
+                if (lv != 0)
+                    lateralDirection = Math.signum(lv);
+                wave.wBearingDirection = lateralDirection;
+                
+                double gf=0;
+                if (GFNUMBERS.size() &gt; 0)
+                    gf = GFNUMBERS.get((int)(Math.pow(Math.random(),4) * GFNUMBERS.size()));
+                
+                setTurnGunRightRadians(normalRelativeAngle(enemyAbsoluteBearing - getGunHeadingRadians()) + gf*lateralDirection);
+                
+                if (setFireBullet(BULLET_POWER) != null)
+                    ;
+                addCustomEvent(wave);
+                    
+                final double rturn = normalRelativeAngle(enemyAbsoluteBearing - getRadarHeadingRadians());
+                if (rturn &gt; 0)
+                    setTurnRadarRightRadians(rturn+Math.PI/20);
+                else
+                    setTurnRadarRightRadians(rturn-Math.PI/20);
+                
+                raikoNanoMove(e);
+    }
+    
+    static double direction=1, bulletVelocity;
+    public void raikoNanoMove(ScannedRobotEvent e) {
+        double v1, v2, offset = 2;
+        
+        v1 = getHeadingRadians() + e.getBearingRadians();
+        
+        while(!new java.awt.geom.Rectangle2D.Double(18,18,764,564).
+                contains(getX() + 160 * Math.sin(v2 = v1 + direction * (offset -= .02)), getY() + 160 * Math.cos(v2)));
+        
+        v1 = e.getDistance();
+        if(Math.random() &gt; Math.pow(v1 = 0.5952 * bulletVelocity / v1, v1) || offset &lt; 0.7) {
+                direction = -direction;
+        }
+        
+        setAhead(1000 * Math.cos(v2 -= getHeadingRadians()));
+        setTurnRightRadians(Math.tan(v2));
+    }
+    public void onHitByBullet(HitByBulletEvent e) {
+        bulletVelocity = e.getVelocity();
+    }
+    
+    static class Wave extends Condition {
+        double wGunX;
+        double wGunY;
+        double wBearing;
+        double wBearingDirection=1;
+        double wDistance;
+
+        public boolean test() {
+            if (Math.abs((wDistance += BULLET_VELOCITY) - Point2D.distance(wGunX, wGunY, enemyX, enemyY)) &lt;= BULLET_VELOCITY / 2) {
+                GFNUMBERS.addFirst((normalRelativeAngle(Math.atan2(enemyX - wGunX, enemyY - wGunY) - wBearing)));
+            }
+            return false;
+        }
+    }
+}
+</pre>
+<p>
+<hr noshade class=wikiline size=1>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Woodchip" class=wikipagelink>Woodchip</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Woodchip/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Woodchip/Code">View other revisions</a><br>Last edited May 30, 2008 20:38 EST by <a href="robowiki?Rednaxela" title="ID 13292 from d198-53-128-24.abhsia.telus.net">Rednaxela</a> <a href="robowiki?action=browse&diff=1&id=Woodchip/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

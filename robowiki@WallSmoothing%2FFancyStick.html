@@ -1,0 +1,741 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>WallSmoothing/FancyStick - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Wall, Smoothing, Fancy, Stick'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/FancyStick">WallSmoothing/FancyStick</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>There are a few other wall smoothing algorithms out there, but this one is a little different so I thought I'd share it.  It does not use a standard "walking stick" (a theoretical "stick" that, when it hits a wall, tells your bot to turn more inward toward your orbiting point).  That type of algorithm keeps your bot unnecessarily far from the walls around the corners (which is not necessarily a bad thing, but it's true).  This algorithm uses a more sophisticated stick, that will let your bot stay much closer to the walls (almost as close as possible when running full speed).
+<p>
+To understand this new type of walking stick, consider the picture below.  You are orbiting <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a> there, where the blue circle is the orbit.  Obviously, following the orbit would crash you into the wall, so you need to do some wall smoothing.  The green line is the closest you can get to the wall without crashing (&lt;tt&gt;getBattlefieldWidth() - 18.0&lt;/tt&gt;), and the white circle represents your smallest turning radius at top speed (<tt>r = 114.5450131316624</tt>, ask me if you want to know how to come up with that number).  The two red lines are your walking stick.  The walking stick always extends to the center of the tightest circle you can turn,  then straight to the wall.  
+<p>
+<img src="http:/images/wall_smoothing.gif">
+<p>
+Let's call the new kind of walking stick your "feeler".  To find the position of you feeler relative to the wall (to see if you need to turn sharply), consider the x position of the green line as <tt>0</tt>, and your x position as simply <tt>x</tt> (where <tt>x &lt;= 0</tt>).  Then when you are traveling at an angle <tt>a</tt> (where <tt>0.0 &lt; a &amp;&amp; a &lt; 180.0</tt>), the x position of your feeler's hinge is
+<p>
+<pre>
+    x + r * sin(a + 90) =
+    x + r * cos(a)
+</pre>
+<p>
+and the x position of the end of your feeler is
+<p>
+<pre>
+    x + r * cos(a) + r =
+    x + r * (cos(a) + 1.0)
+</pre>
+<p>
+With this information we can write a method to determine if we need to do some smoothing.  We project where you will be next tick if you follow the normal path, calculate where the feeler will be, and see if it went past the green line.  If it did and you continue on the normal path for one more tick, you will not be able to turn sharp enough to miss the wall! Note that <tt>a</tt> must be in radians, and <tt>s</tt> is the speed at which you will be traveling to get to the <b>next</b> tick (just using 8.0 will turn you just a little too sharp, but works fine).
+<p>
+<pre>
+    import static java.lang.Math.*;
+    
+    double r = 114.5450131316624;
+    double d = 2 * r; // turning diameter
+    
+    private boolean shouldSmooth(double a, double x, double s) {
+        double nextX = x + s * sin(a);
+        if (nextX &lt; -d) { // shortcut, unnecessary code
+            return false;
+        }
+        if (0.0 &lt;= nextX) { // shortcut, unnecessary code
+            return true;
+        }
+        return 0.0 &lt; nextX + r * (cos(a) + 1.0);
+    }
+</pre>
+<p>
+Now it remains to calculate how sharply you need to turn the wheel when <tt>shouldSmooth</tt> says you should.  For this, we set your feeler's position equal to zero and solve for a:
+<p>
+<pre>
+    x + r * (cos(a) + 1.0) = 0.0
+        r * (cos(a) + 1.0) = -x
+              cos(a) + 1.0 = -x / r
+                    cos(a) = -x / r - 1.0
+                         a = acos(-x / r - 1.0)
+</pre>
+<p>
+Note here that we are only trying to find the smoothing angle when you are orbiting clockwise and checking against the rightmost wall - otherwise we might have to add <tt>PI</tt> to the result, or something similar.  So, in a java method:
+<p>
+<pre>
+    private double smooth(double a, double x, double s) {
+        double nextX = x + s * Math.sin(a);
+        if (0.0 &lt;= nextX) { // NOT a shortcut, necessary code
+            return Math.PI;
+        }
+        return Math.acos(-nextX / TURNING_RADIUS - 1.0);
+    }
+</pre>
+<p>
+The <tt>if</tt> statement protects us from giving the <tt>acos</tt> method illegal values, and therefore from returning <tt><a href="robowiki?NaN" class=wikipagelink>NaN</a></tt>.  Also notice that we are using the <b>normal</b> <tt>a</tt> value to project the next point, instead of the smoothed angle.  This means you will actually turn slightly sharper than necessary (very slightly).  If anyone can solve the equation <tt>x + s * sin(a) + r * (cos(a) + 1) = 0.0</tt> for a, please do tell!!
+<p>
+As we just mentioned, this is only good for smoothing when traveling clockwise toward the rightmost wall (and then only if it's at <tt>x = 0</tt>!).  So, to use the methods, you must first translate your bot's situation into this "normal" situation, and translate its answer back.  Without further ado, here is how (explanation following):
+<p>
+<pre>
+        double TOP = getBattlefieldHeight() - 18.0;
+        double RIGHT = getBattlefieldWidth() - 18.0;
+        double BOTTOM = 18.0;
+        double LEFT = 18.0;
+        
+        double N = 2.0 * Math.PI;
+        double E = Math.PI / 2.0;
+        double S = Math.PI;
+        double W = 3.0 * Math.PI / 2.0;
+        
+        double s = 8.0;
+        double x = getX();
+        double y = getY();
+        double a = ...; // whatever angle you wish to travel, we can smooth it!
+        boolean clockwise = ...; // your choice!
+        
+        if (clockwise) {
+            if (S &lt; a) { // left wall
+                if (shouldSmooth(a - S, LEFT - x, s)) {
+                    a = smooth(a - S, LEFT - x, s) + S;
+                }
+            } else if (a &lt; S) { // right wall
+                if (shouldSmooth(a, x - RIGHT, s)) {
+                    a = smooth(a, x - RIGHT, s);
+                }
+            }
+            if (W &lt; a || a &lt; E) { // top wall
+                if (shouldSmooth(a + E, y - TOP, s)) {
+                    a = smooth(a + E, y - TOP, s) - E;
+                }
+            } else if (E &lt; a &amp;&amp; a &lt; W) { // bottom wall
+                if (shouldSmooth(a - E, BOTTOM - y, s)) {
+                    a = smooth(a - E, BOTTOM - y, s) + E;
+                }
+            }
+        } else {
+            if (S &lt; a) { // left wall
+                if (shouldSmooth(N - a, LEFT - x, s)) {
+                    a = N - smooth(N - a, LEFT - x, s);
+                }
+            } else if (a &lt; S) { // right wall
+                if (shouldSmooth(S - a, x - RIGHT, s)) {
+                    a = S - smooth(S - a, x - RIGHT, s);
+                }
+            }
+            if (W &lt; a || a &lt; E) { // top wall
+                if (shouldSmooth(E - a, y - TOP, s)) {
+                    a = E - smooth(E - a, y - TOP, s);
+                }
+            } else if (E &lt; a &amp;&amp; a &lt; W) { // bottom wall
+                if (shouldSmooth(W - a, BOTTOM - y, s)) {
+                    a = W - smooth(W - a, BOTTOM - y, s);
+                }
+            }
+        }
+</pre>
+<p>
+If you want to understand the translations above, this is going to be a "hands-on" process.  First visualize what's happening in the smoothing function: hold your left hand in front of you, elbow up, palm facing left, and fingers pointing at 5 o'clock. If your bot is moving clockwise in this direction and it needs to smooth, the algorithm should push your hand toward 6 o'clock.  Now consider the first case in the code, where your bot is approaching the left wall.  Angle your right hand palm facing left, pointing at about 11 o-clock.  If your bot is moving in this direction and needs to smooth, the "wall" will push your hand toward 12 o'clock.  Now put your wrists together and do both hands together :).  You can see that to translate to or from your bot's current situation to the smoothing method's, you must add or subtract 180 degrees (PI radians).  Try it with the other 3 clockwise cases :).
+<p>
+A little trickier is the counter-clockwise cases.  Consider the first of these, where your bot is again approaching the left wall.  This time hold out your right hand, elbow up, palm right, 7 o'clock.  The algorithm should push your hand toward 6 o-clock.  Doing both this and the normal smoothing case at the same time, besides looking and feeling really funny, shows you that you need to mirror the angles over 6 o-clock to make the translation, which you accomplish by subtracting either angle from 360 degrees (2 * PI).
+<p>
+If you're still reading this and interested, I'll assume you can handle translating your x or y position without my help :).  If you'd like an explanation, leave a note and I'll fill it in :).
+<p>
+Also note that this method handles corners well, e.g. if you are approaching the top left corner going clockwise, and first case does not turn you sharp enough to miss the top wall, the third case will still catch that and turn the additional amount necessary.
+<p>
+<H4>Comments, questions, feedback:</H4>
+
+<p>
+Interesting, and nice write-up. With a more traditional WallStick<a href="robowiki?action=edit&id=WallStick" class=wikipageedit>?</a> method, you do end up turning a lot more often than you need to, which may decrease your max escape angle in general. However, waiting until the last minute before turning may (I'm not quite sure) give you a more predictable movement profile near walls, which is a key component of <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>, and a <a href="robowiki?Segmentation" class=wikipagelink>segment</a> that is very important to top aiming methods. In any case, I would like to give this a try, or at least see some benchmarks using this and traditional <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> against a good GF gun. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+<p>
+I would be interested to see results of those kinds of tests, too.  I'm not so sure it will give you better escape angles, though.  If the wave crosses you before you get very far into the turn, then yes, but for waves that hit you on the wall, the greatest escape angle would be to meet the wall just as the <a href="robowiki?Wave" class=wikipagelink>Wave</a> hits (the shortest distance between where you are and where the wave hits is a straight line), so turning earlier would be better.  At any rate, this algorithm should give you more freedom to do it either way :). -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Very nice method and nice write-up. I actually tried to do this sort of optimal wall smoothing thing a while ago but it was a miserable failure... my code got huge and unreadable and I crashed into walls like crazy. Your idea of translating everything to the right hand wall is brilliant. =) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+<strong>Dave's Scary Math Section</strong>
+<blockquote>
+<i>If anyone can solve the equation x + s * sin(a) + r * (cos(a) + 1) = 0.0 for a, please do tell!!</i> No promises, but I'll give it a shot. How does this look? --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+<PRE >
+ x + s * sin(a) + r * (cos(a) + 1) = 0.0
+ x + s * sin(a) + r * cos(a) + r = 0.0
+ s * sin(a) + r * cos(a) = - x - r
+ s * sin(a) + r * cos(a) = - x - r
+</PRE>
+<p>
+sin² a = 1 - cos² a (This is the pythagorean theorem)
+since a is between 0 and 180, sin(a) &gt; 0
+therefore sin a = sqrt(1 - cos² a)
+<p>
+<PRE >
+ s * sqrt(1 - cos² a) + r * cos(a) = - x - r
+ let j be cos(a) (makes it a little more readable)
+ s * sqrt(1 - j²) + rj = - x - r
+ sqrt(1 - j²) = ((- x - r) - rj) / s
+ sqrt(1 - j²) = (-1)(x + r + rj) / s
+ 1 - j² = (x + r + rj)² / s²
+ 1 - j² = (x² + xr + xrj + rx + r² + r²j + xrj + r²j + r²j²) / s²
+ s² - s²j² = r²j² + (2xr + 2r²)j + (x² + 2xr + r²)
+ 0 = (r² + s²)j² + (2xr + 2r²)j + (x² + 2xr + r² - s²)
+</PRE>
+<p>
+So, we can use the quadratic formula, which is ax² + bx + c = 0  =&gt;  x = (-b +/- sqrt(b² - 4ac) / 2a
+In this case, a = r² + s², b = 2xr + 2r², and c = x² + 2xr + r² - s²
+The quadratic formula gives us:
+<p>
+<PRE >
+ j = (-(2xr + 2r²) +/- sqrt((2xr + 2r²)² - 4(r² + s²)(x² + 2xr + r² - s²)))/(2r² + 2s²)
+ cos(a) = (-(2xr + 2r²) +/- sqrt((2xr + 2r²)² - 4(r² + s²)(x² + 2xr + r² - s²)))/(2r² + 2s²)
+ a = acos((-(2xr + 2r²) +/- sqrt((2xr + 2r²)² - 4(r² + s²)(x² + 2xr + r² - s²)))/(2r² + 2s²))
+ ... someone else can simplify that... =)
+</PRE>
+<p>
+</blockquote>
+<p>
+Derive gets the following monster:
+<p>
+<pre>
+a = - &#59330;·SIGN(r)/2 - ASIN((x + r)/&#8730;(r^2 + s^2)) + ATAN(s/r) &#8744; a = - &#59330;·SIGN(r)/2 + ASIN((x + r)/&#8730;(r^2 + s^2)) + ATAN(s/r) - &#59330; &#8744; a = - &#59330;·SIGN(r)/2 + ASIN((x + r)/&#8730;(r^2 + s^2)) + ATAN(s/r) + &#59330;
+</pre>
+<p>
+As a Image:
+<img src="http://designnj.de/robocode/equation.gif">
+<p>
+I dont know if it helps :) --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+Fixed my algebra now. That stuff Derive gets is terrible, it's doable with only one acos, no need for tons of asins and atans. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+I know that Mathematica can simplify equations. I can do it at school if no one else does. -- <a href="robowiki?Kinsen" class=wikipagelink>Kinsen</a>
+<p>
+<p>
+Rather than simplify that crap, just use this function:
+<pre>
+public void solveQuadratic(double a, double b, double c, boolean positiveSolution){
+   double root = Math.sqrt(b * b - 4 * a * c);
+   return (-b + (positiveSolution?1:-1) * root) / (2 * a);
+}
+</pre>
+<p>
+Call it with a = r² + s², b = 2xr + 2r², and c = x² + 2xr + r² - s² and you should be good to go. Oddly enough, both the negative and positive solutions yield valid values. The negative solution is pi at x = 0, whereas the positive solution is 3.002. However the positive solution is zero at x = -2r, while the negative solution is .139... so I'm not sure which one you should use. =P --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+NICE!  I'm impressed.  And that's a very nice solution simply programming in a quadradic equation solver :).  I'll give it a try sometime soon (not enough time now).  <a href="robowiki?WallSmoothing/Optimal" class=wikipagelink>Now let's get REALLY close to the wall</a>.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+I simplified the equation by hand and it doesn't look <i>that</i> ugly: 
+<pre>acos[(-2r(x + r) +/- sqrt(-4s²(x² + 2xr - s²))) / 2(r² + s²)]</pre>
+Using the simplified equation might be a little faster, but I'm not too sure. There should be no smoothing at x = -2r (I think), so the positive root sounds correct to me. And nice job with the math David! I would never have though of using the pythagorean identity that way. -- <a href="robowiki?Kev" class=wikipagelink>Kev</a> 
+<p>
+Alright <a href="robowiki?Kev" class=wikipagelink>Kev</a>!  Simplifing that a little further, we get
+<pre>
+    acos[(-2r(x + r) +/- sqrt(-4s²(x² + 2xr - s²))) / 2(r² + s²)]
+    acos[(-2r(x + r) +/- 2s * sqrt(-x² - 2xr + s²)) / 2(r² + s²)]
+    acos[(-rx - r² +/- s * sqrt(s² - x² - 2rx)) / (r² + s²)]
+    acos[-(rx + r² +/- s * sqrt(s² - x² - 2rx)) / (r² + s²)]
+</pre>
+Experimentally determined, we add the sqrt.  Throw that into the smooth method and it works like a charm!  It also looks easily as fast as the more naive method above, depending on the speed of <tt>Math.sin</tt> compared with <tt>Math.sqrt</tt>.
+<pre>
+	double r = 114.5450131316624;
+	double rr = r * r;
+	double s = 8.0;
+	double ss = s * s;
+	double ss_rr = rr + ss;
+	double smoothAngle(double x) {
+		double rx = r * x;
+		double xx = x * x;
+		return Math.acos(-(rx + rr + s * Math.sqrt(ss - xx - 2.0 * rx)) / ss_rr);
+	}
+</pre>
+Congratulations, all! -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Phoenix 0.8 and 0.801 both used this type of smoothing. However, it seems to have lowered Phoenix's rating by around 10 points. It's possible that it would work better with some tuning, but for now I'm going to go back to the old way of doing things. Compare them here: <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetailsComparison?game=roborumble&amp;name1=davidalves.Phoenix%200.802&amp;name2=davidalves.Phoenix%200.801">http://rumble.fervir.com/rumble/RatingDetailsComparison?game=roborumble&amp;name1=davidalves.Phoenix%200.802&amp;name2=davidalves.Phoenix%200.801</a> --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Turns out we need to add a simple check to that new smoothAngle method (2 comments above) because <tt>double</tt> values are not exact.  The modified method looks something like:
+<pre>
+	double smoothAngle(double x) {
+		if (x &gt; -0.01) {
+			return Math.PI;
+		}
+		double rx = r * x;
+		double xx = x * x;
+		return Math.acos(-(rx + rr + s * Math.sqrt(ss - xx - 2.0 * rx)) / ss_rr);
+	}
+</pre>
+-- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+I tried to implement this <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>, but i failed. Could anybody (David Alves or Simonton :D) post his complete implementation so that i could check my one, thanks <a href="robowiki?Krabb" class=wikipagelink>Krabb</a>.
+<p>
+Sure Krabb. Here's the complete implementation from Phoenix. I think it's pretty clear what my utility functions do by their names (e.g. <code>Utils.normalAbsoluteAngle</code>) but let me know if there's anything that isn't clear. Note that there's a problem with this method in corners, it doesn't always select the correct wall to smooth against. My solution was to calculate smoothing for both top / bottom as well as left / right. It then checks which angle is farther from the desired angle and returns that angle. I should mention that I used different tweaks of this method of <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> for a few Phoenix versions starting with .8, but I always seemed to rate about 5-10 points lower than normal, so I've switched back to my old way of doing smoothing. You should try another method and see if this technique makes your bot stronger or weaker than the other method. Good luck! --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+<pre>
+package davidalves.net.movement.wallsmoother;
+
+import java.awt.Color;
+
+import davidalves.Phoenix;
+import davidalves.net.Constants;
+import davidalves.net.movement.WallSmoother;
+import davidalves.net.util.MotionState;
+import davidalves.net.util.Point;
+import davidalves.net.util.Utils;
+
+public class PreciseWallSmoother extends WallSmoother{
+	
+	static final double r = 114.5450131316624; //radius
+	static final double d = 2 * r; // turning diameter
+	static final double rr = r * r;
+	static final double s = 8.0;
+	static final double ss = s * s;
+	static final double ss_rr = ss +rr;
+	
+	double fieldHeight, fieldWidth;
+	
+	public PreciseWallSmoother(double battleFieldWidth, double battleFieldHeight) {
+		fieldHeight = battleFieldHeight;
+		fieldWidth = battleFieldWidth;
+	}
+	
+	public Point getSmoothedDestination(MotionState position, MotionState orbitCenter, double direction) {
+//		double desiredAngle = Utils.normalAbsoluteAngle(position.absoluteAngleTo(orbitCenter) - 1.1 * direction * Math.PI / 2.0);
+//		Use whatever you want for desiredAngle, this code retreats a bit.
+		
+		double margin = 30;
+		double TOP = fieldHeight - margin;
+		double RIGHT = fieldWidth - margin;
+		double BOTTOM = margin;
+		double LEFT = margin;
+		
+		double N = 2.0 * Math.PI;
+		double E = Math.PI / 2.0;
+		double S = Math.PI;
+		double W = 3.0 * Math.PI / 2.0;
+		
+		double s = 8.0;
+		double x = position.x;
+		double y = position.y;
+		double a = desiredAngle; // whatever angle you wish to travel, we can smooth it!
+		double solutionTB = a;
+		double solutionLR = a;
+		boolean clockwise = direction &gt; 0; // your choice!
+		//Phoenix.info("direction: " + (clockwise?"CW":"CCW") + " desiredAngle: " + a);
+		if (clockwise) {
+			if (a &lt; S) { // right wall
+				if (shouldSmooth(a, x - RIGHT, s)) {
+					solutionLR = smooth(a, x - RIGHT, s);
+				}
+			}
+			
+			if (W &lt; a || a &lt; E) { // top wall
+				if (shouldSmooth(a + E, y - TOP, s)) {
+					solutionTB = smooth(a + E, y - TOP, s) - E;
+				}
+			}
+			
+			if (S &lt; a) { // left wall
+				if (shouldSmooth(a - S, LEFT - x, s)) {
+					solutionLR = smooth(a - S, LEFT - x, s) + S;
+				}
+			}
+
+			if (E &lt; a &amp;&amp; a &lt; W) { // bottom wall
+				if (shouldSmooth(a - E, BOTTOM - y, s)) {
+					solutionTB = smooth(a - E, BOTTOM - y, s) + E;
+				}
+			}
+		} else {
+			if (S &lt; a) { // left wall
+				if (shouldSmooth(N - a, LEFT - x, s)) {
+					solutionLR = N - smooth(N - a, LEFT - x, s);
+				}
+			}
+			if (W &lt; a || a &lt; E) { // top wall
+				if (shouldSmooth(E - a, y - TOP, s)) {
+					solutionTB = E - smooth(E - a, y - TOP, s);
+				}
+			}
+			if (a &lt; S) { // right wall
+				if (shouldSmooth(S - a, x - RIGHT, s)) {
+					solutionLR = S - smooth(S - a, x - RIGHT, s);
+				}
+			}
+			if (E &lt; a &amp;&amp; a &lt; W) { // bottom wall
+				if (shouldSmooth(W - a, BOTTOM - y, s)) {
+					solutionTB = W - smooth(W - a, BOTTOM - y, s);
+				}
+			}
+		}
+		//if(Math.abs(robocode.util.Utils.normalRelativeAngle(a-desiredAngle)) &lt;.75)
+		double solution = solutionTB;
+		if(Math.abs(Utils.normalRelativeAngle(solutionLR - a)) &gt; Math.abs(Utils.normalRelativeAngle(solutionTB - a)))
+			solution = solutionLR;
+		Point solutionPoint = position.project(solution, 50);
+		return solutionPoint;
+	}
+	
+	private double smooth(double a, double x, double s){
+		double nextX = x + s * Math.sin(a);
+		if (0.0 &lt;= nextX) { // NOT a shortcut, necessary code
+			return Math.PI;
+		}
+		//return Math.acos(-nextX / r - 1.0);
+		return smoothAngle(x);
+	}
+	
+	private boolean shouldSmooth(double a, double x, double s) {
+		double nextX = x + s * Math.sin(a);
+		if (nextX &lt; -d) { // shortcut, unnecessary code
+			return false;
+		}
+		if (0.0 &lt;= nextX) { // shortcut, unnecessary code
+			return true;
+		}
+		return 0.0 &lt; nextX + r * (Math.cos(a) + 1.0);
+	}
+	
+	double smoothAngle(double x) {
+		if(-0.1 &lt;= x)
+			return Math.PI;
+		double rx = r * x;
+		double xx = x * x;
+		double result = Math.acos(-(rx + rr + s * Math.sqrt(ss - xx - 2.0 * rx)) / ss_rr);
+		if(Double.isNaN(result)){
+			Phoenix.info("invalid smooth angle");
+		}
+		return result;
+	}
+}
+</pre>
+<p>
+The names are clear, but why do you set margin to 30? I thought this <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> funktion is highly accurate, so that i am able to move next to the wall?! <br>
+EDIT: For some reason your code doesn't work for me as well. The debug grafics look like my previous ones, my art teacher would be proud of them :/ I´ll first try the "normal" solution and maybe switch back to this one later, but thanks for your help! --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+The wall margin is set to 30 because I keep hitting walls with this method. Setting it to 30 greatly reduced the problem, but I still hit walls somewhat. I dunno. I gave up on this method. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Hmm - I thought I responded to this earlier today ...  Anyway - sorry for not noticing this conversation until this morning.  I'll try to remember to bring in some full source for you.  I was running into walls for a while until I realized that if I'm travelling the *opposite* direction I want to be (i.e. just after I flip directions), I need to smooth that *opposite* direction.  --<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> If you have a good working implementation I would definitely try to use this approach again! --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+</UL>
+<p>
+You know, you could just determine your distance and angle to the wall in the direction your going and adjust by the correct amount. I plan to deveop such a system to use in my BFS (built from scratch) surfer. -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+@Chase-san Isn't that exactly what this technique does? @Simonton The version I posted above doesn't have that issue, but it does run into walls. You're welcome to check it out and see if you can figure out why. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Yah, but its complex, i'm sure there is a much simpler way to do it using a complex polynomial equation. But then again maybe not, but i'm still going to try. :P -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+I haven't tried it yet, and its probably needs some refining (and alot of other stuff aswell.), but here is my idea for the wallSmoothing. 
+<pre>
+//// smoother
+// w = battlefield width
+// h = battlefield height
+double smooth(Point2D.Double location, double direction, double angle) {
+    aF = 0.1; //Angle to change per amount beyond margin
+    m = 10; //just to be safe.
+    return ((m-(h-location.y))*direction*aF)+((m-location.x)*direction*aF)+
+        ((m-location.y)*direction*aF)+((m-(w-location.x))*direction*aF) - angle;
+}
+</pre>
+I give this a 99.99999% chance of not working as I haven't had time to refine how I will handle the angle correction and the aF amount. But its a start. I may end up having to define it by section and wall facing. But it should work in the end with much less code. -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Here is the (mostly) full source, as promised.  Sorry for the delay.  Notice that this works in degrees, not radians.  Also, I changed the code from what was in my bot because it depended on other classes that I wrote, so this hasn't actually been compiled.  Hopefully I didn't make any dumb mistakes!
+<pre>
+	private double N;
+	private double S;
+	private double E;
+	private double W;
+
+	private double r = 114.5450131316624;
+	private double rr = r * r;
+	private double s = 8.0;
+	private double ss = s * s;
+	private double ss_rr = rr + ss;
+
+	// derees toward the enemy to drive (manipulate as desired)
+	protected double attack;
+
+	// negate as desired to drive counter/clockwise
+	protected double clockwiseSpeed = Double.MAX_VALUE;
+
+	// this can go at the beginning of your run method
+	{
+		// I don't know if I tried making this
+		// zero after working out all the bugs ...
+		double buffer = 0.01; 
+
+		N = getBattleFieldHeight() - 18 - buffer;
+		S = 18 + buffer;
+		E = getBattleFieldWidth() - 18 - buffer;
+		W = 18 + buffer;
+	}
+
+	// whereever you want to put your driving code ...
+	{
+
+		// find the tangent angle to our enemy
+		double clockAngle = e.getBearing() - 90.0;
+
+		// figure where we're coming from, where we're going
+		boolean clockwise = 0 &lt;= clockwiseSpeed;
+		boolean reversing = false;
+		double s = getVelocity();
+		if (s != 0) {
+			double direciton = getHeading();
+			if (s &lt; 0) {
+				direction = cannonize(direction + 180);
+			}
+			boolean wasClockwise = 
+				abs(normalize(clockAngle - direction)) &lt;= 90;
+			reversing = wasClockwise != clockwise;
+			clockwise = wasClockwise != (reversing &amp;&amp; abs(s) &lt; 2.0);
+		}
+		if (reversing) {
+			s = abs(abs(s) - 2.0);
+		} else {
+			s = min(abs(s) + 1.0, 8.0);
+		}
+
+		// turn in a little to follow a proper circle (totally unnecessary)
+		double distance = distance to orbit point ...;
+		double discreteAdjust = toDegrees(atan(s / 2 / distance));
+
+		// adjust for user's requested "attack" angle (negative for retreat)
+		// and for wall smoothing
+		double x = getX();
+		double y = getY();
+		if (clockwise) {
+			clockAngle = cannonize(clockAngle + discreteAdjust + attack);
+		} else {
+			clockAngle = cannonize(clockAngle - discreteAdjust - attack);
+		}
+		clockAngle = smooth(clockAngle, clockwise, s, x, y);
+		
+		// drive backward if that is closer to the desired angle
+		double speed = clockwiseSpeed;
+		double toTurn = normalize(clockAngle - getHeading());
+		if (toTurn &lt; -90.0 || toTurn &gt; 90.0) {
+			toTurn = normalize(toTurn + 180.0);
+			speed = -speed;
+		}
+
+		// done!
+		setTurnRight(toTurn);
+		setAhead(speed);
+	}
+
+
+	double normalize(double angle) {
+		return Math.toDegrees(Utils.normalRelativeAngle(Math.toRadians(angle)));
+	}
+
+	double cannonize(double angle) {
+		return Math.toDegrees(Utils.normalAbsoluteAngle(Math.toRadians(angle)));
+	}
+
+	double smooth(double a, boolean clockwise, double s, double x, double y) {
+		if (clockwise) {
+			if (180.0 &lt; a) { // left
+				if (shouldSmooth(a - 180.0, W - x, s)) {
+					a = smoothAngle(W - x) + 180.0;
+				}
+			} else if (0.0 &lt; a &amp; a &lt; 180.0) { // right
+				if (shouldSmooth(a, x - E, s)) {
+					a = smoothAngle(x - E);
+				}
+			}
+			if (270.0 &lt; a | a &lt; 90.0) { // top
+				if (shouldSmooth(a + 90.0, y - N, s)) {
+					a = smoothAngle(y - N) - 90.0;
+				}
+			} else if (90.0 &lt; a &amp; a &lt; 270.0) { // bottom
+				if (shouldSmooth(a - 90.0, S - y, s)) {
+					a = smoothAngle(S - y) + 90.0;
+				}
+			}
+		} else {
+			if (180.0 &lt; a) { // RIGHT
+				if (shouldSmooth(360.0 - a, x - E, s)) {
+					a = 360.0 - smoothAngle(x - E);
+				}
+			} else if (0.0 &lt; a &amp; a &lt; 180.0) { // LEFT
+				if (shouldSmooth(180.0 - a, W - x, s)) {
+					a = 180.0 - smoothAngle(W - x);
+				}
+			}
+			if (270.0 &lt; a | a &lt; 90.0) { // BOTTOM
+				if (shouldSmooth(90.0 - a, S - y, s)) {
+					a = 90.0 - smoothAngle(S - y);
+				}
+			} else if (90.0 &lt; a &amp; a &lt; 270.0) { // TOP
+				if (shouldSmooth(270.0 - a, y - N, s)) {
+					a = 270.0 - smoothAngle(y - N);
+				}
+			}
+		}
+		return a;
+	}
+
+	boolean shouldSmooth(double angle, double x, double nextSpeed) {
+		double a = Math.toRadians(angle);
+		double nextX = x + nextSpeed * Math.sin(a);
+		if (0.0 &lt; nextX) {
+			return true;
+		}
+		double feeler = nextX + r * (Math.cos(a) + 1.0);
+		return 0.0 &lt; feeler;
+	}
+
+	// smooths clockwise against a right wall at x=0
+	double smoothAngle(double x) {
+		// [x + 8*sin(a) + r*sin(a+90) + r = 0] solved for a
+		if (-0.0001 &lt; x) {
+			return 180.0;
+		}
+		double rx = r * x;
+		double inner = ss - (x * x) - 2.0 * rx;
+		double a = Math.toDegrees(Math.acos(-(rx + rr + s * Math.sqrt(inner)) / ss_rr));
+		return a;
+	}
+</pre>
+--<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Nice, the code works! I fixed some minor things (changed your posted code too, if you dont mind) like "getBattle<b>F</b>ieldHeight", "<b>Math.</b>toRadians(angle)" and added "r", "rr", "s", "ss", and "ss_rr" but the rest is fine, thanks! --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+I have to revice the last comment, the clockwise direction works fine but the anti-clockwise didn't ;( I made the following changes (<b>bold</b>):
+<p>
+<PRE >
+        // removed the anti clockwise part
+	double smooth(double a, boolean clockwise, double speed, double x, double y) 
+        {
+		if (180.0 &lt; a) { // left
+			if (shouldSmooth(a - 180.0, W - x, s, clockwise)) {
+				a = smoothAngle(W - x, clockwise) + 180.0;
+			}
+		} else if (0.0 &lt; a &amp; a &lt; 180.0) { // right
+			if (shouldSmooth(a, x - E, s, clockwise)) {
+				a = smoothAngle(x - E, clockwise);
+			}
+		}
+		if (270.0 &lt; a | a &lt; 90.0) { // top
+			if (shouldSmooth(a + 90.0, y - N, s, clockwise)) {
+				a = smoothAngle(y - N, clockwise) - 90.0;
+			}
+		} else if (90.0 &lt; a &amp; a &lt; 270.0) { // bottom
+			if (shouldSmooth(a - 90.0, S - y, s, clockwise)) {
+				a = smoothAngle(S - y, clockwise) + 90.0;
+			}
+		}
+		a=Math.toRadians(a);
+		return a;
+	}
+</PRE>
+<p>
+<PRE >
+	boolean shouldSmooth(double angle, double x, double nextSpeed, boolean clockwise) 
+        {
+		double a = Math.toRadians(angle);
+		double nextX = x + nextSpeed * Math.sin(a);
+		if (0.0 &lt; nextX) {
+			return true;
+		}
+		double feeler = nextX + r * (Math.cos(a <b>- (!clockwise ? Math.PI : 0)</b>) + 1.0);
+		return 0.0 &lt; feeler;
+	}
+</PRE>
+<p>
+<PRE >
+	double smoothAngle(double x, boolean clockwise) 
+        {
+		// [x + 8*sin(a) + r*sin(a+90) + r = 0] solved for a
+		if (-0.0001 &lt; x) {
+			return <b>(clockwise? 180 : 0)</b>;
+		}
+		double rx = r * x;
+		double inner = ss - (x * x) - 2.0 * rx;
+		double a = Math.toDegrees(Math.acos(-(rx + rr + s * Math.sqrt(inner)) / ss_rr));
+		return <b>(clockwise? a : 180-a)</b>;
+        }
+</PRE>
+<p>
+I dont know why your code doesn't work for me :/ The above changes should handle the anti-clockwise direction accurately and with less code! --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+<p>
+I came up with these equations for finding a way to smooth. However I cannot get them to work correctly, I seem to lack some logic that will make it all work as it should. If anyone can, please tell me.
+<pre>
+
+double nextX = current.x;
+double nextY = current.y;
+double MinX = battlefield.getMinX();
+double MaxX = battlefield.getMaxX();
+double MinY = battlefield.getMinY();
+double MaxY = battlefield.getMaxY();
+//r is the stick
+double r = 140d;
+
+//These are just the equation of a circle solved for thier x and y's then plugged in.
+//Left
+new Point2D.Double(MinX, nextY-sqrt(-pow(MinX,2)+2*nextX*MinX+pow(r,2)-pow(nextX,2)));
+new Point2D.Double(MinX, nextY+sqrt(-pow(MinX,2)+2*nextX*MinX+pow(r,2)-pow(nextX,2)));
+
+//Right
+new Point2D.Double(MaxX, nextY-sqrt(-pow(MaxX,2)+2*nextX*MaxX+pow(r,2)-pow(nextX,2)));
+new Point2D.Double(MaxX, nextY+sqrt(-pow(MaxX,2)+2*nextX*MaxX+pow(r,2)-pow(nextX,2)));
+
+//Top
+new Point2D.Double(nextX-sqrt(-pow(MaxY,2)+2*nextY*MaxY+pow(r,2)-pow(nextY,2)), MaxY);
+new Point2D.Double(nextX+sqrt(-pow(MaxY,2)+2*nextY*MaxY+pow(r,2)-pow(nextY,2)), MaxY);
+
+//Bottom
+new Point2D.Double(nextX-sqrt(-pow(MinY,2)+2*nextY*MinY+pow(r,2)-pow(nextY,2)), MinY);
+new Point2D.Double(nextX+sqrt(-pow(MinY,2)+2*nextY*MinY+pow(r,2)-pow(nextY,2)), MinY);
+</pre>
+--<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Does any one have a working implementation of the fancy stick, and can they post it -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+<p>
+Wouldn't it be easier to simply project two points perpendicular to your bot's heading, in each direction, a distance of 114.5450131316624, see which one is closer to the enemy, and then find that point's wall-distance. If the wall distance is less than 114.5450131316624 (or maybe add 8 as a buffer), then you have to turn 100% towards the enemy, otherwise don't turn? You wouldn't even need to do any weird translations =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<UL >
+<li> Hmm ... not sure.  Not ready to think about it very hard right now :).  My <a href="robowiki?WallDistance" class=wikipagelink>WallDistance</a> fuction, however, does do wierd translations :).  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> I'm thinking a simple min(min(point.x - 18, 800 - 18 - point.x),min(point.y - 18,600 - 18 - point.y)); Just simple distance to the nearest wall. Maybe you would also have to throw in a regular wallsmoothing stick, so that you don't smooth if you're traveling away from the wall. I'll work on it tomorrow, right now I'm meant to be studying Additional Mathematics (the stuff that makes this look easy, lol) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> Oh, gotcha.  Yeah, maybe you would have to do something to avoid launching yourself off the wall instead of exiting smoothly ... but a regular stick will always smooth before a fancy stick, so that's not it.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+I can't test right now, tell me if it works =)
+<pre>
+/*Fancy stick smoothing - a simple implementation by Skilgannon
+* Inspired by Simonton's FancyStick method
+*/
+
+static Rectangle2D.Double fieldRect = new Rectangle2D.Double(18,18,800 - 18*2, 600 - 18*2);
+static Rectangle2D.Double fancyRect = new Rectangle2D.Double(115 + 18,115 + 18,800 - (115 + 18)*2, 600 - (115 + 18)*2);
+
+boolean shouldSmooth(Point2D.Double location, double angle){
+    //do you need this first line? I'm not sure - it's whether you need
+    //to smooth *next* tick, versus this one
+    location = project(location, angle, direction*8);
+
+    Point2D.Double point1 = project(location,angle + Math.PI/2,115);
+    Point2D.Double point2 = project(location,angle - Math.PI/2,115);
+    double point1DistSq = _enemyLocation.distanceSq(point1);
+    double point2DistSq = _enemyLocation.distanceSq(point2);
+    Point2D.Double closePoint;
+    if(point1DistSq &lt; point2DistSq)
+        closePoint = point1;
+    else 
+        closePoint = point2;
+    Point2D.Double normalStick = project(location, angle, 160);
+    //this normal stick is to stop smoothing when traveling away from the wall
+    return !fancyRect.contains(closePoint) &amp;&amp; !fieldRect.contains(normalStick);
+}
+
+
+double smoothAngle(Point2D.Double location, double angle, double direction){
+    if(shouldSmooth(location,angle)){
+        /* The 'maxturn' algorithm in your surfing should take care 
+        ** of the huge turn if we need to smooth, because it starts
+        ** smoothing later than usual
+        */ 
+        return wallSmoothing(location,angle,direction);
+    }
+    return angle;
+}
+</pre>
+-- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Hmm... I've been thinking about smoothing for a while now, and I think I just had a thought that could make "FancyStick"-like smoothing far simpler. Imagine a circle like in the diagram near the top of this page. Now imagine one on each side of the bot, and then essentially represent the path of the bot when moving at top speed and turning as much as possible in a direction. If the circles are both far from any walls, nothing need be done, if a circle is very near to a wall, it means the bot must turn if it is to keep going towards the wall. If a circle intersects the field boundry however, it means the bot cannot keep going in that direction without either hitting the wall or slowing down. My thought is, why bother "smoothing" an angle? The location of the circles relative to the wall, effectively can just have 3 meanings for each "quadrent" around the bot. Instead of smoothing a goal angle, one could set either "can't go that way", "Can move freely that way", or "Must turn sharply if going that way", for each of the corners (forward left, forward right, back left, back right). All that could be lost with that approach I believe, is a very small amount of precision, but does that really matter? It would still wall-hug far tighter than traditional <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>. Maybe I'm just making a fool of myself though and am missing some point. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=WallSmoothing/FancyStick" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=WallSmoothing/FancyStick">View other revisions</a><br>Last edited August 21, 2008 20:32 EST by <a href="robowiki?Rednaxela" title="ID 15324 from pc109.oia.ucalgary.ca">Rednaxela</a> <a href="robowiki?action=browse&diff=1&id=WallSmoothing/FancyStick">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Squirrel/Gun - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Squirrel, Gun'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Gun">Squirrel/Gun</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Squirrel" class=wikipagelink>Squirrel</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package bayen;
+import robocode.*;
+import java.util.*;
+import java.awt.geom.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+
+/**
+ * AcornSlingshot - Squirrel's gun
+ */
+public class AcornSlingshot
+{
+	AdvancedRobot Squirrel;
+	ScannedRobotEvent lastScan;
+	static final double BULLET_POWER = 3.0;
+	RobotState me, target; // these aren't static,
+	                       //so they will be reset every round
+	static Vector guns; // this Vector (and all its
+	                    //contents) will persist from round to round
+	static Vector virtualBullets = new Vector();
+	Rectangle2D.Double battlefield;
+	
+	public AcornSlingshot(AdvancedRobot robot) {
+		Squirrel = robot;
+	}
+	
+	public void run() {
+		battlefield = new Rectangle2D.Double(0,0,
+		Squirrel.getBattleFieldWidth(), 
+		Squirrel.getBattleFieldHeight());
+		
+		if(guns == null){
+			guns = new Vector();
+			
+			Gun defaultGun = new ReallyBadGun();
+			defaultGun.hits = 1;
+			guns.add(defaultGun);
+			guns.add(new HeadOnGun());
+			guns.add(new RandomGun());
+		}
+		
+		virtualBullets.clear();
+	}
+	
+	public void onScannedRobot(ScannedRobotEvent e) {
+		if(Squirrel.getTime()&lt;30)
+		lastScan = e;
+		// Create a new RobotState object to represent the enemy's current state
+		target = new RobotState();
+		target.setLocation(me.project(e.getBearingRadians() + Squirrel.getHeadingRadians(), e.getDistance()));
+		target.heading = e.getHeadingRadians();
+		target.velocity = e.getVelocity();
+		target.name = e.getName();
+		me = new RobotState();
+			me.name = Squirrel.getName();
+			me.velocity = Squirrel.getVelocity();
+			me.heading = Squirrel.getHeadingRadians();
+			me.x = Squirrel.getX();
+			me.y = Squirrel.getY();
+			
+			//Turn our radar
+			/*
+			if(target == null)
+				setTurnRadarRightRadians(Math.toRadians(45));
+			else {
+				double radarTurnAngle = normalizeRelativeAngle(me.absoluteAngleTo(target) - getRadarHeadingRadians());
+				if(radarTurnAngle &gt; 0)
+					radarTurnAngle += .4;
+				else
+					radarTurnAngle -= .4;
+				setTurnRadarRightRadians(radarTurnAngle);
+			}*/
+			
+			//Move each virtual bullet forward one tick. After moving, check if they are off the field or near the target.
+			Iterator i = virtualBullets.iterator();
+			while(i.hasNext()){
+				VirtualBullet virtualBullet = (VirtualBullet) i.next();
+				virtualBullet.setLocation(virtualBullet.project(virtualBullet.heading, virtualBullet.velocity));
+				
+				if(virtualBullet.distance(target) &lt; 25){ //check if the virtual bullet "hit" the enemy
+					
+					virtualBullet.gunUsed.hits += 1;
+					i.remove();
+				} else if(!battlefield.contains(virtualBullet)){ //check if the virtual bullet is off the field
+					i.remove();
+				}
+			}
+			
+			if(target != null) gun();
+		/*
+		double lastEnemyHeading = lastScan.getHeadingRadians();
+		double w=e.getHeadingRadians()-lastEnemyHeading;
+		double absbearing=e.getBearingRadians()+
+		Squirrel.getHeadingRadians();
+		double eX=e.getDistance()*Math.sin(absbearing);
+		double eY=e.getDistance()*Math.cos(absbearing);
+		double db=0;
+		double ww=lastEnemyHeading;
+		double battleFieldHeight = Squirrel.getBattleFieldHeight();
+		double battleFieldWidth = Squirrel.getBattleFieldWidth();
+		do{
+			db+=11;
+			double dx=e.getVelocity()*Math.sin(ww);
+			double dy=e.getVelocity()*Math.cos(ww);
+			ww+=w;
+			eX+=dx;
+			eY+=dy;
+		}while (db&lt; Point2D.distance(0,0,eX,eY));
+		Squirrel.setTurnGunRight(Math.toDegrees(Math.asin
+		(Math.sin(Math.atan2(eX, eY)
+		- Squirrel.getGunHeadingRadians()))));
+		if(!(Squirrel.getEnergy()&lt;5))
+		Squirrel.setFire(Math.min(3,
+		                          Math.min((Squirrel.getEnergy()-5),
+		                          e.getEnergy())));
+		else if(e.getEnergy() == 0 &amp;&amp; Squirrel.getOthers()==1)
+		Squirrel.setFire(0.1);*/
+		lastScan = e;
+	}
+	public void onDeath(DeathEvent e){
+		endRound();
+	}
+	
+	public void onWin(WinEvent e){
+		endRound();
+	}
+	
+	public void endRound(){
+		Iterator i = guns.iterator();
+		Squirrel.out.println();
+		Squirrel.out.println("Virtual bullet hit table");
+		Squirrel.out.println("------------------------");
+		while(i.hasNext()){
+			Gun gun = (Gun) i.next();
+			Squirrel.out.println(gun.getName() + ": " + gun.hits);
+		}
+		Squirrel.out.println();
+		
+		//So we don't keep firing
+		target = null;
+	}
+	public void gun(){
+		
+		//Select the best gun
+		long bestScore = -1;
+		Gun bestGun = null;
+		Iterator i = guns.iterator();
+		while(i.hasNext()){
+			Gun gun = (Gun) i.next();
+			if(gun.hits &gt; bestScore){
+				bestScore = gun.hits;
+				bestGun = gun;
+			}
+		}
+		
+		
+		//Aim with the best gun
+		Squirrel.setTurnGunRightRadians(
+		normalizeRelativeAngle(bestGun.getFiringAngle(
+		me, target, BULLET_POWER) - 
+		Squirrel.getGunHeadingRadians()));
+		
+		
+		// create new virtual bullets only if we actually
+		// fired this turn
+		Bullet b = Squirrel.setFireBullet(BULLET_POWER);
+		if(b != null){
+			i = guns.iterator();
+			while(i.hasNext()){
+				Gun gun = (Gun) i.next();
+				VirtualBullet newVirtualBullet = new VirtualBullet();
+				newVirtualBullet.setLocation(me);
+				newVirtualBullet.heading = gun.getFiringAngle(me, target, BULLET_POWER);
+				newVirtualBullet.velocity = 20.0 - 3.0 * BULLET_POWER;
+				newVirtualBullet.gunUsed = gun;
+				virtualBullets.add(newVirtualBullet);
+			}
+		}
+	}
+	//Draw the virtual bullets on screen - this will
+	// only work with a recent version of robocode
+	// and "Paint" turned on in the robot's console
+	public void onPaint(Graphics2D g){
+		
+		Iterator i = virtualBullets.iterator();
+		while(i.hasNext()){
+			VirtualBullet virtualBullet = (VirtualBullet) i.next();
+			g.setColor(virtualBullet.gunUsed.getColor());
+			g.fillOval((int)virtualBullet.x - 3, (int)virtualBullet.y
+			-3, 6, 6);
+		}
+		
+		int numberOfGuns = guns.size();
+		for(int j = 0; j &lt; numberOfGuns; j++){
+			Gun gun = (Gun) guns.elementAt(j);
+			g.setColor(Color.WHITE);
+			g.drawString(gun.getName() + ": " + gun.hits, 20, 5 + j*15);
+			g.setColor(gun.getColor());
+			g.fillOval(5, 5 + j * 15, 10, 10);
+		}
+	}
+	
+	//This method ensures that angles are between -180 and 180 degrees, for turning radar / gun 
+	public static double normalizeRelativeAngle(double angle){
+		while(angle &lt;= -Math.PI){
+			angle += 2.0 * Math.PI;
+		}
+		while(angle &gt; Math.PI){
+			angle -= 2.0 * Math.PI;
+		}
+		return angle;
+	}
+	private double normalRelativeAngle(double angle) {
+        angle = Math.toRadians(angle);
+        return Math.toDegrees(Math.atan2(
+               Math.sin(angle), Math.cos(angle))); 
+    }
+}
+
+class ReallyBadGun extends Gun{
+	public String getName(){return "Really bad gun - fires away from the enemy";}
+	public Color getColor(){return Color.RED;}
+	
+	public double getFiringAngle(RobotState shooter, RobotState target, double bulletPower) {
+		return target.absoluteAngleTo(shooter);
+	}
+}
+class RandomGun extends Gun {
+	public String getName(){return "Simple linear gun";}
+	public Color getColor(){return Color.BLUE;}
+	
+	public double getFiringAngle(RobotState shooter, RobotState target, double bulletPower) {
+		//double maxAngle = Math.asin(8.0 / (20.0 - 3.0 * bulletPower));
+		double directAngle = shooter.absoluteAngleTo(target);
+		return directAngle - target.velocity * Math.sin(directAngle - target.heading) / (20.0 - 3.0 * bulletPower);
+	}
+}
+
+class HeadOnGun extends Gun {
+	public String getName(){return "Head on";}
+	public Color getColor(){return Color.GREEN;}
+	
+	public double getFiringAngle(RobotState shooter, RobotState target, double bulletPower) {
+		return shooter.absoluteAngleTo(target);
+	}
+}
+
+abstract class Gun {
+	public long hits;
+	public abstract Color getColor();
+	public abstract String getName();
+	public abstract double getFiringAngle(RobotState shooter, RobotState target, double bulletPower);
+}
+
+class FieldPoint extends Point2D.Double{
+	public FieldPoint(){}
+	public FieldPoint(double x, double y){
+		super(x,y);
+	}
+	
+	public double absoluteAngleTo(FieldPoint p){
+		double angle = Math.atan2(p.x - x, p.y - y);
+		while(angle &lt; 0.0){
+		 	angle += 2.0 * Math.PI;
+		}
+		while(angle &gt;= 2.0 * Math.PI){
+		 	angle -= 2.0 * Math.PI;
+		}
+		return angle;
+	}
+	
+	public FieldPoint project(double angle, double distance) {
+		return new FieldPoint(x + Math.sin(angle) * distance, y + Math.cos(angle) * distance);
+	}
+} 
+
+class MotionState extends FieldPoint{
+	public double velocity, heading;
+}
+
+class VirtualBullet extends MotionState{
+	public Gun gunUsed;
+}
+
+class RobotState extends MotionState{
+	public String name;
+}
+
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Squirrel" class=wikipagelink>Squirrel</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Squirrel/Gun" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Squirrel/Gun">View other revisions</a><br>Last edited September 21, 2006 20:21 EST by <a href="robowiki?Bayen" title="ID 8008 from pool-71-162-231-158.phlapa.fios.verizon.net">Bayen</a> <a href="robowiki?action=browse&diff=1&id=Squirrel/Gun">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

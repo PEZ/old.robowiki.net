@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Nihil - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Nihil'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Nihil">Nihil</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Nihil. My bot. (i am <a href="robowiki?HoD" class=wikipagelink>HoD</a>)
+<p>
+At first, it was just a Head-on-firing Antigravity-bot.
+<p>
+The next Version, 1.0, you can find it at the repository, used a set of 5 aiming methods, depending on situation and hit-ratio. was very bad. shame on me.
+<p>
+The newest Version, 1.2 (i skipped the 1.1), still not available anywhere, uses 9 different movementstyles, and 24 virtual bullets, storing information for every virtual gun AND every movement-style for 20 different distancelevels.
+the movement style is chosen by the dodging-ratio, the gun by the hit-ratio.
+<p>
+already kills vapour, ares, fragbot, floodmini^^, some others....
+<p>
+i'll give you a description of the targeting and movement-methods later (it's a lot to write)
+the weak point of my bot is that it misses a lot of chances to kill of bots by sacrificing some energy, because it's movementmanager always tries to choose the best dodger-style.
+<p>
+i'm working on a solution for this problem...as soon as i'm done, i'll release 1.4 (1.3 is skipped because the solution is very complex...)
+<p>
+and this will be the version that kicks sandboxDT1.81's ass :D *har har* <a href="robowiki?HoD" class=wikipagelink>HoD</a>
+<hr noshade class=wikiline size=1>
+You should probably incorporate a factor for the amount of damage likely done to the enemy to the movementmanager, rather than just looking at minimizing the amount you take. That usually solves this sort of issue simply. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<hr noshade class=wikiline size=1>
+I just spend 2 days fixing bugs...it's a miracle nihil was able to beat fragbot...just using head-on-aiming....well, now it works fine.
+@ Kuuran : the problem with your suggestion is that it would not work^^. my movement does not have a direct effect on the damage that is done, because the aimingmanager operates completely independent.  therefore, i created a combomovemanager, that measures the damage done and recieved, and saves : the movementstrat used, the aimingstrat used, and the distance to the enemy. if the ratio is bad (done &lt; received), it tries another combo, otherwise, it makes nihil win.
+a second reason for this is that i am now able to use real combomoves like : drive to the enemy, use antigrav for bullet dodging while approching, then start circlestrafe and use a special circle strafe aiming etc.
+using this technique, it's really easy to upgrade my bot...just add a new strategy to its strategy-array and it will do the rest :) it's fun to watch it learn...
+btw. i'm using a thing i call a <a href="robowiki?Vectorizer" class=wikipagelink>vectorizer</a>, i'll explain what it is as soon as i have some time...it's a really interesting aiming technique against stop-and-go-bots
+<a href="robowiki?HoD" class=wikipagelink>HoD</a>
+<p>
+You're forgeting something very important - your movement does affect your ability to aim regardless of class dependencies. If your movement brings you out to further distances, you will have a harder time aiming, if it brings you in closer you have an easier time aiming. This is what I meant you should be factoring in, damage taken/doled out at the given distance. Sounds like that's basically what you ended up doing anyway.. in a rather more abstract way, though. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+<hr noshade class=wikiline size=1>
+<UL >
+<UL >
+<UL >
+<li>Newsletter***
+</UL>
+</UL>
+</UL>
+<a href="robowiki?Nihil" class=wikipagelink>Nihil</a> is now able to beat Fragbot 200:50, after ~300 rounds of learning. (at the beginning, fragbot wins 70:30) i would have tested it against the newest sandboxDT, but i was too afraid^^.
+well, i think i'll change the way of improving my bot...with every stragegy i add, he is able to kill one or 2 bots more, and the learning time rises and rises...300 rounds per good bot is more than enough. my plan is to add some sort of learning algorithm, which will use the first 300 rounds for gathering information, and then use it. in theory, this will highly improve the effectiveness of the guns and movement-strats i already implemented, because their usage is no longer dependend on hit-ratio &amp; distance, but also on the situation the both robots are in (nihil is 1v1 only).
+this means, if nihil remebers a specific situation, he will use a specific gun and a specific movement, if there is one that worked often. if there is none, the standard behaviour will be used.
+<a href="robowiki?HoD" class=wikipagelink>HoD</a>
+<p>
+---
+Try to look at Art-of-war and jolly ninja, they also use multi strategies. They use sort of goodness function for each strategy. May be you can adapt some ideas.
+SSO<a href="robowiki?action=edit&id=SSO" class=wikipageedit>?</a>
+<p>
+<a href="robowiki?Princess" class=wikipagelink>Princess</a> also uses several strategies and rates them. Your problem with high granularity and slow learning rate is shared with many bots. In <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> I have tried, only with some success, to aggregate to a lower resolution while I have too few rounds under my belt. Try and see if you can get <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a> to reveal something about how he has managed to use succh a high graniularity while maintaining such impressive learning speed. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+Looks like my new learing-algorithm increases the overall-hit-ratio about 30%. not bad. on some bots, that react the same way on same events like "i was hit" every time (best example : wasp 1.0. changes the direction every time it is hit), the new hit-ratio is incredible -&gt; i get about 80% hits, instead of 50% when i just use the most effective gun that is just predicting wasp's path and getting confused by the direction-change.
+(after some learning time, of course).
+on pure random moving bots, nothing changes.
+SandBoxDT<a href="robowiki?action=edit&id=SandBoxDT" class=wikipageedit>?</a>, prepare yourself...
+@pez : i think, paul found a way (by testing and testing for ages) that just worked. i don't want to do it either that way, nor ask how he did this, because someday, there will be a sandbox 1.91, beating the old sandbox, and my bot, because mine would be based on sbdt1.81. and, how could i be proud of my little baby if it wasn't really mine...
+<p>
+why not do millions of tests, like paul ? thats why : i played starcraft,broodwar,warcraft III,counterstrike, quake3, and so on...there are people out there beating me up like nothing. why ? "you need to practice more, you need more experience". i hate that. these people find out ways that work in 95% of all cases. then, the one using one of these ways in a most efficient way, will win. these people are the cause for me that i don't want to play against them anymore. not because i loose, but because every cool strategy simply doesn't work anymore. they develop strategies that work against just everything. then, it's just the goal to tweak this strat more and more, instead of develop cool ones, which is, at least for me, a lot more fun.
+so, i will not try a strategy that works against everything and in every case, my goal is to find out these 5%, and use them to win. that is why i'm putting that much strategies in my bot. find the enemys weakness. no matter how much strategies won't work, there is at least one that does.
+<a href="robowiki?HoD" class=wikipagelink>HoD</a>
+<p>
+Of course you want the bot to be all yours. I'm like that too. But Paul has figured things out that few other people have. He has not got it to be both fast learning and able to take advantage of lots of data by testing. He's a very good robot designer. And also he has been into robocoding for quiet a while. He's also rather secretive, but asking the right question in the right way can lure some of his secrets out of him. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+I've given up making Nihil better. The newest version will be online tonight. But don't fear, i have not given up making a good robot. I stumbled over a very promising (and i think, never used before) technique while coding Nihil, which has good chances to beat everything out there *happy*, due to a VERY high flexibilty. I've taken it out of Nihil, now tweaking some last numbers, before releasing it. 
+I don't know how long it will take until my next-generation bot is ready (may take a long while), but when it comes, it comes ^^ 
+edit : oh, and by next-generation, i mean it's a really learning bot.
+its name will be :
+<UL >
+<li>silence please*
+</UL>
+<a href="robowiki?Gaia" class=wikipagelink>Gaia</a>
+<p>
+<p>
+newest version of nihil available now <a rel="nofollow" href="http://www.robocoderepository.com/Controller.jsp?submitAction=downloadClass&amp;id=1539">http://www.robocoderepository.com/Controller.jsp?submitAction=downloadClass&amp;id=1539</a>
+<a href="robowiki?HoD" class=wikipagelink>HoD</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Nihil" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Nihil">View other revisions</a><br>Last edited May 4, 2006 21:36 EST by <a href="robowiki?GrubbmGait" title="ID 6861 from ip219-32-173-82.dyndsl.versatel.nl">GrubbmGait</a> <a href="robowiki?action=browse&diff=1&id=Nihil">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

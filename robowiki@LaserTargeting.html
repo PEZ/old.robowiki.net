@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>LaserTargeting - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Laser, Targeting'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=LaserTargeting">LaserTargeting</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>The name or this method of <a href="robowiki?Targeting" class=wikipagelink>Targeting</a> is based on the idea that you point a laser sight at the enemy. To hit with the bullet you need to adjust the sight for the enemy's expected movement.
+<p>
+It is very similar to using <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> but less memory-consuming. Basically, you store where you are and where the enemy is at a certain time, then you mark a desired time in the future for an observation of the enemy, usually the time it would take for a bullet to reach the enemy. What you get is an observation of the enemy's actual change in position relative to the straight aim.
+<p>
+Usually I have used this in a way similar to <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>, select one of the observations at random and interpolate/extrapolate it to get a guess factor. Random selection among the observations should be as good as using the "most usual" observation and in addition, it solves the problem of what to do when several observations are equally usual. See also <a href="robowiki?RandomTargeting" class=wikipagelink>RandomTargeting</a>.
+<p>
+<a href="robowiki?LaserTargeting" class=wikipagelink>LaserTargeting</a> evolved from keeping a log of everything every turn and is well-suited to melee combat because you do not need to scan the enemy every turn.
+<p>
+Bots I built with <a href="robowiki?LaserTargeting" class=wikipagelink>LaserTargeting</a> include <a href="robowiki?Neptune" class=wikipagelink>Neptune</a>, <a href="robowiki?Pluto" class=wikipagelink>Pluto</a> and the <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a> <a href="robowiki?CherryBlossom" class=wikipagelink>CherryBlossom</a>.
+<p>
+In a way, <a href="robowiki?LaserTargeting" class=wikipagelink>LaserTargeting</a> was partly responsible for starting off the [MiniBot Challenge]<a href="robowiki?action=edit&id=MiniBot_Challenge" class=wikipageedit>?</a> because I realized that the ugly code I originally wrote for <a href="robowiki?Neptune" class=wikipagelink>Neptune</a> could be written much more compactly and beautifully.
+<p>
+--<a href="robowiki?Tobe" class=wikipagelink>tobe</a>
+<p>
+How would you randomly select among the most usual obesrvations? I've been struggling with that for quite a while now and I can't think up an algorithm apart from just selectin one of the, say, three most common observations. But I would want it to work more like Random.nextGaussian(). Not a normal distribution of course but a distribution based on the size of each observation segment. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+A way to select a random point based on the observed distribution is to create a kind of histogram, count the total number of observations, select a random number in the range and advance trought the histogram till you reach it. Another way is to put then in an array and select just one (because the most common repeat more frequently, the selection would be OK). -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Ah, yes, if you keep the histogram at a reasonable resolution that would work well. I will try that. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+BTW. <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> uses <a href="robowiki?LaserTargeting" class=wikipagelink>LaserTargeting</a> for its statistical gun (though it's called "sector aim" in the code).  The difference is that it checks every tick after a bullet is fired if it has either hit (see <a href="robowiki?Marshmallow/CodeSnippets" class=wikipagelink>Marshmallow/CodeSnippets</a> for that code) or missed and only then checks the "laser beams". This makes it more accurate since few enemy bots allow you to estimate a very accurate <a href="robowiki?BulletTravelTime" class=wikipagelink>BulletTravelTime</a>. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Good idea. I guess you could also easily convert it to get a <a href="robowiki?Wave" class=wikipagelink>Wave</a>-like system. -- <a href="robowiki?Tobe" class=wikipagelink>tobe</a>
+<p>
+Well, I think it is very like <a href="robowiki?Wave" class=wikipagelink>Wave</a> (as far as I have understood that concept). -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+What's the difference between this and pattern matching? :-/ -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Do you mean the difference between <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> and <a href="robowiki?LaserTargeting" class=wikipagelink>LaserTargeting</a>? If so the difference lies in that
+<UL >
+<li> <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> looks for a movement pattern in the past that looks like the most recent one and from there it replays the movement of the bot to figure out its destination.
+<li> While <a href="robowiki?LaserTargeting" class=wikipagelink>LaserTargeting</a> simply records how many times each lateral angle sector is used and then uses this information to aim (fireing at often used sectors more often than others). <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> divides the angle space between -40 and +40 degrees into 11 sectors.
+</UL>
+Another way to look at the difference is that <a href="robowiki?LaserTargeting" class=wikipagelink>LaserTargeting</a> makes an advanced bot as <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a> an easy target since it's <a href="robowiki?ShrapnelDodging" class=wikipagelink>ShrapnelDodging</a> system very often brings it to the sectors around -16 and +16 degrees from its original location. While <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> (at least <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a>s simple implementation) doesn't work very well since the same dodging system creates a too wide spectre of movement patterns. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Ok, it seems i misread something somewhere... :-/ -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Well, [[?iley]] seems to be able to combine these two systems so the question is very relevant. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a> (my work in progress) is currently attempting to use this for pattern analysis as well, which is a good idea, assuming your opponent is moving primarily relative to you (i.e. - excellent against my <a href="robowiki?CircleBot" class=wikipagelink>CircleBot</a>, not as useful against <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a>) -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Ok, I havent really understood the basis of this, it seems to be a combination of <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> and some angular stuff.  Is this just one of the descriptions of the early GF, or is it more? -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+Or is it less?  I think it would be better to describe it as a stepping-stone to waves, but the idea of what should be done with them is distinct from <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Is it? I would say <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> had the exact same idea as <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> about what to do with them. It's definately less that GF targeting though. Technically both <a href="robowiki?LaserTargeting" class=wikipagelink>LaserTargeting</a> and GF targeting could be implemented using <a href="robowiki?Waves" class=wikipagelink>Waves</a>, <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>, a simple estimate of <a href="robowiki?BulletTravelTime" class=wikipagelink>BulletTravelTime</a> or some other thing.(Marshmallow used waves, that's clear to me now). Conceptually <a href="robowiki?LaserTargeting" class=wikipagelink>LaserTargeting</a> is GF targeting without the brilliant insight that you should regard the <strong>relative</strong> (to current situation) angular/lateral movement of your enemy rather than the raw angle difference. This
+<OL >
+<li> doubles (and then some, see point 3 below) the amount of data you need
+<li> doubles the learning time
+<li> and if you don't segment on lateral direction you get a <strong>significant</strong> decrease in accuracy (GF targeting doesn't need segmenting on lateral direction)
+</OL>
+Or using alternative wording; Using <a href="robowiki?LaserTargeting" class=wikipagelink>LaserTargeting</a> over <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> is <strong>stupid</strong> if you understand both concepts.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=LaserTargeting" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=LaserTargeting">View other revisions</a><br>Last edited May 18, 2006 21:33 EST by <a href="robowiki?Florent" title="ID 6624 from 148.187.103-84.rev.gaoland.net">Florent</a> <a href="robowiki?action=browse&diff=1&id=LaserTargeting">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

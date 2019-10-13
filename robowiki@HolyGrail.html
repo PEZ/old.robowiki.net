@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>HolyGrail - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Holy, Grail'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=HolyGrail">HolyGrail</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>The ultimate goal, which, if achieved, would change everything.
+Add your personal <a href="robowiki?HolyGrail" class=wikipagelink>HolyGrail</a> ideas.
+<p>
+<strong>Targeting</strong>
+<UL >
+<li> A targeting system that could reconstruct the commands required to cause your opponents movement. -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+</UL>
+<p>
+<strong>Movement</strong> 
+<UL >
+<li> A movement that gives the enemy a 0.000% accuracy during a 800x600x1000 battle --<a href="robowiki?UnderDark" class=wikipagelink>UnderDark</a>
+</UL>
+<p>
+<strong>Wall Avoidance</strong>
+<UL >
+<li> A wall avoidance system that would prevent the robot from ever hitting a wall while still moving.  maybe found yet? :-) jeremybub<a href="robowiki?action=edit&id=Jeremybub" class=wikipageedit>?</a>
+</UL>
+<p>
+<strong><a href="robowiki?BulletShielding" class=wikipagelink>BulletShielding</a></strong>
+<UL >
+<li> A way to shoot down enemy bullets with 100.000% accuracy. -<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+</UL>
+<p>
+I have seen a few mentions of things that would be the <a href="robowiki?HolyGrail" class=wikipagelink>HolyGrail</a> of this or that which are being implemented today.  It could be interesting to see where we are on these in the future.
+<p>
+Unrealistic sort-of-cheating idea: You figure out the class name of your enemy. Then you start a simulation of the current game 'inside' your bot and you overload all of the robocode api calls and load that class file of your opponent into this simulation. Now you try to bring your simulation in sync with the real game and feed that data to your sandboxed version of the enemy code which will then happily answer with calls to set<a href="robowiki?TurnGunRight" class=wikipagelink>TurnGunRight</a>() etc. If you really achieve to have this both versions of the game in sync the reactions of your enemy should be the same as the ones in your simulation, provided the enemy doesn't use Math.random() or such. So you know where he is going and where all of his bullets are: the holy grail :-)
+Ok, just a weird idea I though I'd share. This is obviously cheating if you could get it to work, which would be extremly difficult (maybe even impossible?) because as the chaos theory shows us, even small differences can result in a completely different outcome (and to start with, you don't know the heading of your enemy right from the begin of a new round). Besides, reimplementing the robocode api is quite a lot of work. :-) --jav
+<p>
+That would be one hell of a <a href="robowiki?MegaBot" class=wikipagelink>MegaBot</a> if it had the classes of all the good <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> tanks ;) If you're willing to do something like this, you'd probably be better off just using <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> as a base and tweaking it to your liking. Funny idea, though, and I bet there are at least a few good tanks that don't use Math.random(). -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+You would quickly run into a recursion problem if you pitted two bots like that against one another.  Bot A would have to have a copy of bot B in it's package.  Bot B has a copy of bot A in its package, which has an earlier version of bot B within its package.  And so on.  Fortunately bots do not have access to files outside their own sandbox.<br>
+I do something similar, though not as extreme, in some of my targeting, specifically oscillation and mirroring.  I give the enemy a movement system (which I had to design) and plot out how he will react to my anticipated movement, the fire a virtual bullet at his future position.  If I would have hit him consistently enough (and moreso than with other targeting paradigms) then I assume he is moving in that fashion, or close enough to it for my needs.<br>
+I am sure other bots do something similar to determine the targeting techniques of the enemy, though I do not. -- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin</a>
+<p>
+Well, I was thinking more of open-source tanks that you would compile into your own package and bot, so the security wouldn't be an issue. Still, the issue of any Math.random()'s, minor miscalculations, and keeping up-to-date versions of every open source tank just makes it far from worthwhile. Digressing... Early on, I had a bunch of "enemy aimers" and tried to figure out what aiming algorithm the enemy was using, and then dodging it, but it never really worked too well. It turns out <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> is a lot more efficient and effective, though only useful in 1-on-1. (And, at its base, is really just a more refined version of said idea.) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+My class in Uni had to make a robot which could survuve against a spin shooter more than 60% of the time. While I opted to make a team (anticipating that I would have to face a team of SpinBots<a href="robowiki?action=edit&id=SpinBots" class=wikipageedit>?</a>, which it could do sucessfully), several people opted to collect three positions for the spinBot from the Radar and use them to calculate the position of the circle which the spinbot traces. They then could simply calculate the position of the SpinBOt<a href="robowiki?action=edit&id=SpinBOt" class=wikipageedit>?</a> and know exactly where to fire to hit it. I finstead of assuming the motion was a circle, statistical fitting code was applied, then the x and y positions could be found with respect to t, and you would ahve a reasonably accurate idea of where htey will be. HTe only problem would be doing it fast enough.
+<p>
+<UL >
+<li> Sounds a bit like <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a>, no? There are other powerful statistical models for targeting, too, such as <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> or <a href="robowiki?DynamicClustering" class=wikipagelink>DynamicClustering</a>. There is even a successful <a href="robowiki?NeuralTargeting" class=wikipagelink>NeuralTargeting</a> bot called <a href="robowiki?Engineer" class=wikipagelink>Engineer</a>. Welcome to the wiki, by the way, feel free to make a page for yourself if you're gonna stick around a while. =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=HolyGrail" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=HolyGrail">View other revisions</a><br>Last edited August 1, 2007 21:20 EST by <a href="robowiki?Voidious" title="ID 10697 from bi-02pt1.bluebird.ibm.com">Voidious</a> <a href="robowiki?action=browse&diff=1&id=HolyGrail">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>OpenSourceRobocode/Contributions - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Open, Source, Robocode, Contributions'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Contributions">OpenSourceRobocode/Contributions</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?OpenSourceRobocode" class=wikipagelink>OpenSourceRobocode</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Share any robocode features, improvements, or fixes you've contributed or you're working on!
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>:
+<p>
+I'm working on some UI and editor cleanup/improvements around Robocode.  So far:
+<p>
+<UL >
+<li> I've added hotkeys to basically every button, menu, and menu option in robocode (so keyboard navigation is almost realistic now!  One exception may be the New Battle dialog, which puts your focus on the "Start Battle" button after you add each robot, which makes setting up a battle using only your keyboard a little tedious).  This consists of adding a couple lines here and there to about half the files in robocode\dialog and robocode\editor.
+<li> I've really been going medieval on the editor.  I added an Edit menu (next to the File menu) that has all the edit options you would expect a text editor to have (or most):
+<UL >
+<li> Undo (ctrl+z)
+<li> Redo (ctrl+y)
+<li> Cut (ctrl+x)
+<li> Copy (ctrl+c)
+<li> Paste (ctrl+v)
+<li> Delete (Delete)
+<li> Find... (ctrl+f)
+<li> Find next (F3)
+<li> Replace... (ctrl+h - you don't know how much effort it takes to make ctrl+h do what you want in a java text component...)
+<li> Select All (ctrl+a)
+</UL>
+<li> If you didn't notice before, that means the editor has an undo/redo stack now!  Every mistaken keystroke is no longer your doom!
+<li> Making Find and Replace is a work of its own.  Since Robocode's current version basically requires Java 1.4, I went ahead and used Java 1.4's Pattern libraries to implement this.  It's currently functional with the following options:
+<UL >
+<li> Case sensitive
+<li> match the whole word (i.e. - on word boundaries)
+<li> Three "search string" modes - literal, wildcards, and regular expressions
+<li> Replace on regexes also allows backreferences
+<li> Replace All feature
+<li> You can go back and forth between the Find and Replace dialog (which are the same dialog, the replace controls just get hidden).
+</UL>
+<li> Line Numbers!  You can tell which line you're looking at without clicking on it and looking at the status bar now.  And if you click on a line number, it highlights that row of text (or you can click and drag to select multiple lines).  This work is primarily ported from a different editor I made.
+<li> New Window menu on the editor:
+<UL >
+<li> Close and Close All options (to close the current or all open code windows)
+<li> An entry for each open window (up to 9)
+<li> A dialog for all the windows (so you can get to them if there are more than 9)
+</UL>
+</UL>
+<p>
+Contrived picture of my version of the editor:
+<p>
+<img src="http://robocode.yajags.com/RobocodeEditor.png">
+<p>
+Ok, I just uploaded my changes to my lovely bit of Robocode web space (a.k.a. the <a href="robowiki?RobocodeLittleLeague" class=wikipagelink>RobocodeLittleLeague</a> site).  This is my UI improvements, the enhanced editor, and my fix for the <a href="robowiki?HyperThreading" class=wikipagelink>HyperThreading</a> hang bug.  Please post here if you've tested any of these new features and also any thoughts about it if you have any (I'm trying to track how well tested these changes are so that if it happens to all work, I can say it's been used by some number of active Robocoders for their normal Robocode activities).  I've also tested it a good amount and everything seems to be good.  One thing that's still maybe undertested by me is Find / Replace.
+<p>
+<DL >
+<dt><dd> My version of robocode.jar is at <a rel="nofollow" href="http://robocode.yajags.com/newrobocode.jar">http://robocode.yajags.com/newrobocode.jar</a> (I just put it in my robocode directory and make robocode.bat or robocode.sh point to that jar instead of robocode.jar).  Source isn't included in this jar.
+</DL>
+<p>
+<DL >
+<dt><dd> My source changes to the robocode project (for anyone who wants to build it with other changes they've made) are at <a rel="nofollow" href="http://robocode.yajags.com/robocodeChanges.jar">http://robocode.yajags.com/robocodeChanges.jar</a> .  This is just a jar of the changed files that you can just extract into your robocode cvs root as long as you don't have changes in any of the same files I do (you can run jar -tf robocodeChanges.jar to see what files are in there).  This isn't a diff patch, so if you do have changes in one of the same files I have changes in, you will need to merge them manually.  No binaries in this jar.
+</DL>
+<p>
+-- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I've just started what should be a great test box (4 Xeon 2.8 GHz, each of which hyperthread) running <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>@Home with your new robocode.jar. Will let you know how I fare. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+~3 hours and ~400 battles down, still running smoothly. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Outstanding.  Are you running melee battles perchance?  With 8 hardware threads, maybe you should ;-) -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I really like the new editor. A note though, windows still remain present in the window menu even after they have been closed. -- <a href="robowiki?Alcatraz" class=wikipagelink>Alcatraz</a>
+<p>
+It does look very neat and the extra options are very handy. Two remarks though, one about the editor and one about the hypertreading bug. First, the buttons in the 'Find' and 'Replace' menu's do not have the same size, which looks ugly, at least on <a href="robowiki?WinME" class=wikipagelink>WinME</a>. Second, the 10 second redraw of the debugscreen still appears, I hoped that you had removed that on the fly. -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+It stopped on the 647th battle, but I think that's just because my ssh session timed out and I forgot to screen the thing. Trying again with melee, as suggested. I'm also a bit curious as to why the log of this says I ran 546 battles of Shadow 3.56.5, is that version even IN <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Ok, attempt number 2 is again with <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a>. Can anyone tell me why <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> on my machine can't retrieve a melee ratings file (that's really all RR tells me, so it's all I have to go on)? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+<a href="robowiki?Alcatraz" class=wikipagelink>Alcatraz</a> - Dang it, I thought I fixed that.  Are you using my robocode.jar, or did you compile it from the source? <strong>Edit</strong>: It didn't happen on mine, so I re-uploaded newrobocode.jar to make sure it was the same one I was using.
+<p>
+<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a> - Maybe I can make up a way to use tricky layout managers to make those all even.  Unfortunately, the console refresh bug wasn't fixed by this, but I think it might have been caused by Mat trying to do something to see if it helped.
+<p>
+<a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a> - Don't know why, I've been running over 12 hours (with the right version of <a href="robowiki?Shadow" class=wikipagelink>Shadow</a>) with the meleerumble.txt I posted on the <a href="robowiki?RoboRumble/ReportedProblems" class=wikipagelink>RoboRumble/ReportedProblems</a> page.
+-- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+@<a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a> - Have you tried renaming the roborumble\temp directory? -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+One thing is that I cant find the robocode API anywhere.  The help in this doesnt link to it, none of the links I find have it.  There used to be one on google when I searched, right at the top, but now theres nothing even 8 pages in. Anyone have a working link, or maybe a copy stored? -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a> 
+<p>
+I thought running robocode-setup.jar put it on your computer.  If you change browser.bat in your robocode install directory to use %1 instead of $1 (bug) and just open robocode and do Help-&gt;Robocode API (or just open it from robocode\javadoc).  If you don't have it at all, that's probably a mistake, too :-p (which I wouldn't have seen since I just installed Robocode 1.0.7 on top of Robocode 1.0.6). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+If you do still see hangs, by the way, note which bots were fighting at the time. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Found another instance of a hang bug, thanks to the <a href="robowiki?ImplementsDroidCompetition" class=wikipagelink>ImplementsDroidCompetition</a> - I think it has to do with the battle thread updating the battlefield and a robot thread checking for collisions at the same time, probably when there is a collision :-).  It'll be hard to verify this fix, since it's a little more obscure, but I'll be checking that it doesn't do anything catastrophic. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Keep the good work up Kawigi, will be great to have these hang bugs solved! -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+I've seen some strange behaviour that I did not notice in 1.0.6. In melee two bots are left and the timeout counter is running out disabling one of the two bots. Instead of standard win, sometimes suddenly all bots appear again with full strength but they do not do anything. The roundnumber stays the same. If this is the case, the bot who whould have won can still move (and fire) most of the time. No strange messages appear in the console-window.  The editor is a pleasure to work with and the 10-second redraw of the console-window is still annoying ;-)  --<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Could I suggest that you have a go to feature? It gets sort of hard to locate a buggy line once you start having huge robots. -- <a href="robowiki?Kinsen" class=wikipagelink>Kinsen</a>
+<p>
+Also, the window list is buggy. I tried to open a few of my robots' sources, then closed all of them but there were still a few left in the list. It could be when one robot's source is opened twice without closing the first one. -- <a href="robowiki?Kinsen" class=wikipagelink>Kinsen</a>
+<p>
+Goto was in the original design, but I got lazy and didn't implement it.  As for the windows menu... I thought I fixed that and uploaded a new one.  Maybe not.  I'll verify that it works for me and that we're all looking at the same thing.  And, while I'm at it, I'll make sure <a href="robowiki?RobocodeNG/Archive" class=wikipagelink>[RobocodeNG]</a> has it working right ;-) -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+What is the status of this Kawigi? Do we feel comfortable in making all this the "official" robocode release to use for the RR@Home etc? I'll put together a binary download site/page to make it easy for newcomers etc to get started (and not sort through various pages here) with robocode and RR@Home-- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+Kawigi, great job! I am definitely using your version instead of the standard - the lack of editing features was a constant annoyance! Keep up the good work. -- <a href="robowiki?Greywhind" class=wikipagelink>Greywhind</a>
+<p>
+I'm haveing 2 problems still though. Easily reproducible.
+<p>
+First one is if I press pause something is still running, I will for example still execute my main loop.
+<p>
+Secondly the output window obviously has  thread bug somewhere.
+I haven't looked at the code myself but if anything is copying the old text, adding the new one and inserting it back in there are obviosuly at least two threads trying to do this and sometimes get duplicated output. Otherwise it might just be a event dispatcher thread and normal thread issue. Example output with problem: <a href="robowiki?OpenSourceRobocode/OutputProblem" class=wikipagelink>/OutputProblem</a>
+Any ideas? I think this is related to being unable to debug robocde correctly with a debugger as some threads states are not controlled correctly somewhere. --<a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+The second problem is introduced by Mat Nelson with the introduction of v1.0.7, see <a rel="nofollow" href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1150818&amp;group_id=37202&amp;atid=419486">http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1150818&amp;group_id=37202&amp;atid=419486</a>   When you can find the right wait(10000)'s and alter them back to synchronized wait(), I think the output window problems will be solved. If it will be compatible with Kawigi's update I do not know. --<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Is the actual source code available for Robocode 1.0.7?  I have checked SourceForge<a href="robowiki?action=edit&id=SourceForge" class=wikipageedit>?</a> and even Kawigi's jar and all I am seeing is class files.  And Java files available?  I figgured that was the purpose of open source, so maybe I am just not seeing it.  -- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin Alan Pedersen</a>
+<p>
+Evidently you need to set up a CVS tool and SSH connection to grab a copy of the source, or you can use the web based tool to get them one file at a time (from SourceForge<a href="robowiki?action=edit&id=SourceForge" class=wikipageedit>?</a>).  Ah well.. guess this is gonna take a while .. -- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin Alan Pedersen</a>
+<p>
+I already sent the result of my boredom to Fnl. If he integrates it then he integrates it, if not then he doesn't. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?OpenSourceRobocode" class=wikipagelink>OpenSourceRobocode</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=OpenSourceRobocode/Contributions" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=OpenSourceRobocode/Contributions">View other revisions</a><br>Last edited January 11, 2007 18:14 EST by webmail.wolverine.k12.mi.us <a href="robowiki?action=browse&diff=1&id=OpenSourceRobocode/Contributions">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

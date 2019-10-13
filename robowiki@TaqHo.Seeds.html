@@ -1,0 +1,337 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>TaqHo.Seeds - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Taq, Ho.Seeds'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=TaqHo.Seeds">TaqHo.Seeds</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>package taqho;
+<p>
+import robocode.*;
+<p>
+import java.awt.Color;
+<p>
+<p>
+/**
+<PRE >
+ * Seed - My first robot
+ *   
+ * Step 1: Focus on learning to move around.
+ *  There seem to be wall huggers and corner huggers, but the in thing seems to be anti-grav 
+ *  robots which move randomly but avoiding walls. 
+ *  This version will stick to basics. Corners to start with.
+ *
+ * Things to learn later:
+ *  - avoiding walls
+ *  - avoiding other robots (is this necessary)
+ *  - When locating a target, track them if they move
+ *  - when locating a target, track them when I move
+ *  - when locating a target, track them when we both move
+ *  - what to do when I get hit by a robot
+ *  - what to do when I get hit by a bullet
+ *  - can I optimise usage of heat to shot as soon as possible thereafter
+ *  - scanning quickly
+ *  - strobing an enemy in target to avoid bullets from it
+ *  - float close to the wall 
+ **/
+</PRE>
+<p>
+public class Seed extends Robot {
+<p>
+<PRE >
+	// General class variables
+	final double wallMargin = 35;
+</PRE>
+<p>
+<PRE >
+	final int STATE_GOTOCORNER = 1;
+	final int STATE_INCORNER = 2;
+	int state = STATE_GOTOCORNER;
+</PRE>
+<p>
+<PRE >
+	// Corner variables
+	double cornerX;
+	double cornerY;
+	int currentCorner = 0;
+	int newCorner = 0;
+</PRE>
+<p>
+<PRE >
+	// Scanning variables
+	final int SCAN_RIGHT = 1;
+	final int SCAN_LEFT = 2;
+	double scanStart;
+	double scanEnd;
+	int    scanDirection = SCAN_RIGHT;
+	int    scanSweeps = 10;
+	int    scanStep = 5;
+</PRE>
+<p>
+<p>
+<PRE >
+	// Movement variables
+	final boolean MOVE_FORWARD = true;
+	final boolean MOVE_BACKWARD = false;
+	boolean moveDirection;	
+	boolean damaged = false;
+</PRE>
+<p>
+<PRE >
+	public void run() {	
+		setColors(Color.green, Color.black, Color.yellow);
+</PRE>
+<p>
+<PRE >
+		double distance;
+</PRE>
+<p>
+<PRE >
+		while (true) {
+			distance = 50;
+			// Check distance in case I get waylaid or blocked
+			while (distance &gt; 40) {
+				choseCorner();
+				gotoXY(cornerX, cornerY);
+				distance = distanceToXY<a href="robowiki?action=edit&id=ToXY" class=wikipageedit>?</a>(cornerX, cornerY);
+			}
+			state = STATE_INCORNER;
+			currentCorner = newCorner;
+			scanArenaFromCorner<a href="robowiki?action=edit&id=ArenaFromCorner" class=wikipageedit>?</a>();
+			state = STATE_GOTOCORNER;
+		}
+	}
+</PRE>
+<p>
+<PRE >
+	public void choseCorner() {
+		while (newCorner == currentCorner) {
+			newCorner = (int)(Math.random()*4+1);
+		}		
+		switch (newCorner) {
+			case 1:
+				cornerX = wallMargin;
+				cornerY = wallMargin;
+				scanStart = -5;
+				scanEnd = 95;
+				break;
+			case 2:
+				cornerX = wallMargin;
+				cornerY = getBattleFieldHeight<a href="robowiki?action=edit&id=BattleFieldHeight" class=wikipageedit>?</a>() - wallMargin;
+				scanStart = 85;
+				scanEnd = 185;
+				break;
+			case 3:
+				cornerX = getBattleFieldWidth<a href="robowiki?action=edit&id=BattleFieldWidth" class=wikipageedit>?</a>() - wallMargin;
+				cornerY = getBattleFieldHeight<a href="robowiki?action=edit&id=BattleFieldHeight" class=wikipageedit>?</a>() - wallMargin;
+				scanStart = 175;
+				scanEnd = 275;
+				break;
+			case 4:
+				cornerX = getBattleFieldWidth<a href="robowiki?action=edit&id=BattleFieldWidth" class=wikipageedit>?</a>() - wallMargin;
+				cornerY = wallMargin;
+				scanStart = 265;
+				scanEnd = 365;
+				break;
+		}
+</PRE>
+<p>
+<PRE >
+	}
+</PRE>
+<p>
+<PRE >
+	public double distanceToXY<a href="robowiki?action=edit&id=ToXY" class=wikipageedit>?</a>(double x, double y) {
+		double xDiff = Math.abs(x - getX());
+		double yDiff = Math.abs(y - getY());
+		return Math.sqrt(xDiff*xDiff + yDiff+yDiff);		
+	}
+</PRE>
+<p>
+<PRE >
+	public void scanArenaFromCorner<a href="robowiki?action=edit&id=ArenaFromCorner" class=wikipageedit>?</a>() {
+		// Start aiming
+		double needToTurn<a href="robowiki?action=edit&id=ToTurn" class=wikipageedit>?</a> = scanStart - getGunHeading<a href="robowiki?action=edit&id=GunHeading" class=wikipageedit>?</a>();
+		out.println("needToTurn<a href="robowiki?action=edit&id=ToTurn" class=wikipageedit>?</a>=" + needToTurn<a href="robowiki?action=edit&id=ToTurn" class=wikipageedit>?</a> + " = " + scanStart + " - " + getGunHeading<a href="robowiki?action=edit&id=GunHeading" class=wikipageedit>?</a>());
+		turnGunRight<a href="robowiki?action=edit&id=GunRight" class=wikipageedit>?</a>(needToTurn<a href="robowiki?action=edit&id=ToTurn" class=wikipageedit>?</a>);
+		scanDirection = SCAN_RIGHT;
+		int sweeps = 0;
+</PRE>
+<p>
+<PRE >
+		// Determine duration of scanning from here
+		if (getOthers() &gt; 2) {
+			scanSweeps = 5;
+		} else { // Fewer robots, move more...
+			scanSweeps = 1;
+		}
+</PRE>
+<p>
+<PRE >
+		damaged = false;												
+</PRE>
+<p>
+<PRE >
+		while (sweeps &lt; scanSweeps &amp;&amp; !damaged) {
+			if (scanDirection == SCAN_RIGHT) {
+				turnGunRight<a href="robowiki?action=edit&id=GunRight" class=wikipageedit>?</a>(scanStep);
+				if (getGunHeading<a href="robowiki?action=edit&id=GunHeading" class=wikipageedit>?</a>() &gt; scanEnd) {
+					scanDirection = SCAN_LEFT;
+					sweeps += 1;
+				}
+			} else {
+				turnGunLeft<a href="robowiki?action=edit&id=GunLeft" class=wikipageedit>?</a>(scanStep);
+				if (getGunHeading<a href="robowiki?action=edit&id=GunHeading" class=wikipageedit>?</a>() &lt; scanStart) {
+					scanDirection = SCAN_RIGHT;
+					sweeps += 1;
+				}
+			}
+</PRE>
+<p>
+<PRE >
+		}
+	}
+</PRE>
+<p>
+<PRE >
+	public void gotoXY(double toX, double toY) {
+</PRE>
+<p>
+<PRE >
+		if (getX() + toX &lt; getWidth()) toX += (getWidth()/2);
+		else if (getX() + toX &gt; (getBattleFieldWidth<a href="robowiki?action=edit&id=BattleFieldWidth" class=wikipageedit>?</a>() - getWidth())) toX -= (getWidth()/2);
+</PRE>
+<p>
+<PRE >
+		if (getY() + toY &lt; getWidth()) toY += (getWidth()/2);
+		else if (getY() + toY &gt; (getBattleFieldHeight<a href="robowiki?action=edit&id=BattleFieldHeight" class=wikipageedit>?</a>() - getWidth())) toY -= (getWidth()/2);
+</PRE>
+<p>
+<PRE >
+		double relativeToX<a href="robowiki?action=edit&id=ToX" class=wikipageedit>?</a> = toX - getX();
+		double relativeToY<a href="robowiki?action=edit&id=ToY" class=wikipageedit>?</a> = toY - getY();
+		double headingToXY<a href="robowiki?action=edit&id=ToXY" class=wikipageedit>?</a> = radToDeg<a href="robowiki?action=edit&id=ToDeg" class=wikipageedit>?</a>(this.arctan(relativeToX<a href="robowiki?action=edit&id=ToX" class=wikipageedit>?</a>, relativeToY<a href="robowiki?action=edit&id=ToY" class=wikipageedit>?</a>));		
+		double tankTurn = headingToXY<a href="robowiki?action=edit&id=ToXY" class=wikipageedit>?</a> - getHeading();		
+		double distance = Math.sqrt(relativeToX<a href="robowiki?action=edit&id=ToX" class=wikipageedit>?</a>*relativeToX<a href="robowiki?action=edit&id=ToX" class=wikipageedit>?</a> + relativeToY<a href="robowiki?action=edit&id=ToY" class=wikipageedit>?</a>*relativeToY<a href="robowiki?action=edit&id=ToY" class=wikipageedit>?</a>);
+</PRE>
+<p>
+<PRE >
+		tankTurn = normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(tankTurn);
+</PRE>
+<p>
+<PRE >
+		if (tankTurn &gt; 90 || tankTurn &lt; -90) {
+			moveDirection = MOVE_BACKWARD;
+		} else {
+			moveDirection = MOVE_FORWARD;
+		}
+</PRE>
+<p>
+<PRE >
+		if (moveDirection) {
+			turnRight(tankTurn);
+			ahead(distance);
+		} else {
+			turnRight(normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(tankTurn-180));
+			back(distance);
+		}
+	}
+</PRE>
+<p>
+<p>
+<PRE >
+	/**
+	 * on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>:  Fire!
+	 */	
+	public void on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {
+		if (e.getDistance() &lt; 50 &amp;&amp; getEnergy() &gt; 50)
+			fire(3);
+		else
+			fire(1);
+		if (!damaged) scan();
+	}
+</PRE>
+<p>
+<PRE >
+	/**
+	 * onHitRobot<a href="robowiki?action=edit&id=HitRobot" class=wikipageedit>?</a>:  Aim at it.  Fire Hard!
+	 */	
+	public void onHitRobot<a href="robowiki?action=edit&id=HitRobot" class=wikipageedit>?</a>(HitRobotEvent<a href="robowiki?action=edit&id=HitRobotEvent" class=wikipageedit>?</a> e) {
+		double turnGunAmt<a href="robowiki?action=edit&id=GunAmt" class=wikipageedit>?</a> = normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(e.getBearing() + getHeading() - getGunHeading<a href="robowiki?action=edit&id=GunHeading" class=wikipageedit>?</a>());
+		turnGunRight<a href="robowiki?action=edit&id=GunRight" class=wikipageedit>?</a>(turnGunAmt<a href="robowiki?action=edit&id=GunAmt" class=wikipageedit>?</a>);
+		fire(3);
+	}	
+</PRE>
+<p>
+<PRE >
+	/**
+	 * onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a>: What to do when you're hit by a bullet
+	 */
+	public void onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a>(HitByBulletEvent<a href="robowiki?action=edit&id=HitByBulletEvent" class=wikipageedit>?</a> e) {
+			damaged = true;		
+			double turnGunAmt<a href="robowiki?action=edit&id=GunAmt" class=wikipageedit>?</a> = normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(e.getBearing() + getHeading() - getGunHeading<a href="robowiki?action=edit&id=GunHeading" class=wikipageedit>?</a>());
+			turnGunRight<a href="robowiki?action=edit&id=GunRight" class=wikipageedit>?</a>(turnGunAmt<a href="robowiki?action=edit&id=GunAmt" class=wikipageedit>?</a>);
+			fire(3);
+	}
+</PRE>
+<p>
+<PRE >
+	/**
+	 * normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>:  returns angle such that -180&lt;angle&lt;=180
+	 */
+	public double normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(double angle) {
+		if (angle &gt; -180 &amp;&amp; angle &lt;= 180)
+			return angle;
+		double fixedAngle = angle;
+		while (fixedAngle &lt;= -180)
+			fixedAngle += 360;
+		while (fixedAngle &gt; 180)
+			fixedAngle -= 360;
+		return fixedAngle;
+	}	
+</PRE>
+<p>
+<PRE >
+	private double normalizeAngle(double r)
+		{
+		while(r&gt;Math.PI) r-=2*Math.PI;
+		while(r&lt;-Math.PI) r+=2*Math.PI;
+		return r;
+		}
+</PRE>
+<p>
+<PRE >
+	public double radToDeg<a href="robowiki?action=edit&id=ToDeg" class=wikipageedit>?</a>(double rad) {
+		return rad * 180.0 / Math.PI;
+	}
+</PRE>
+<p>
+<PRE >
+	public double degToRad<a href="robowiki?action=edit&id=ToRad" class=wikipageedit>?</a>(double deg) {
+		return deg * Math.PI / 180.0;
+	}
+</PRE>
+<p>
+<PRE >
+	public double arctan( double dy, double dx) {
+		if (dx == 0.0) {
+			if (dy &gt; 0.0) return Math.PI*0.5;
+			else return Math.PI*1.5;
+		} else {
+			if ((dx &gt; 0.0) &amp;&amp; (dy &gt; 0.0)) return normalizeAngle(Math.atan(dy/dx));
+			else if ((dx &lt; 0.0) &amp;&amp; (dy &gt; 0.0)) return normalizeAngle(Math.PI - Math.atan(dy/Math<a href="robowiki?action=edit&id=TaqHo.Seeds/Math" class=wikipageedit>?</a>.abs(dx)));
+			else if ((dx &lt; 0.0) &amp;&amp; (dy &lt; 0.0)) return normalizeAngle(Math.PI + Math.atan(dy/dx));
+			else return normalizeAngle(Math.PI*2 - Math.atan(Math.abs(dy)/dx));
+		}
+	}
+</PRE>
+<p>
+<p>
+}																
+<p>
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=TaqHo.Seeds" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=TaqHo.Seeds">View other revisions</a><br>Last edited January 19, 2003 23:35 EST by as4-3-7.asp.s.bonet.se <a href="robowiki?action=browse&diff=1&id=TaqHo.Seeds">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

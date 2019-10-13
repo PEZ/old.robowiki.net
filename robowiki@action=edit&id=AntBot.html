@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing AntBot - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Ant, Bot'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing AntBot</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="AntBot"  />
+<input type="hidden" name="oldtime" value="1227635011"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="9"  />
+<input type="hidden" name="captchaArg2" value="7"  />
+<input type="hidden" name="captchaOp" value="*"  />
+<input type="hidden" name="captchaId" value="673014096290"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">=== Bot Name ===
+Ant
+
+Actually two versions of it are discussed here.
+
+zyx.nano.Ant
+
+zyx.micro.Ant
+
+==== Author ====
+[[zyx]]
+
+==== Extends ====
+[[AdvancedRobot]]
+
+==== What&#39;s special about it? ====
+Nothing, just a small [[NanoBot|nano]] and [[MicroBot|micro]] bot.
+
+==== Great, I want to try it. Where can I download it? ====
+nano: http://www.robocoderepository.com/BotDetail.jsp?id=3480
+
+micro: http://www.robocoderepository.com/BotDetail.jsp?id=3481
+
+==== How competitive is it? ====
+Just started in the rumble, I will expand this later.
+
+But I think the nano version will be fairly good in the [[Melee]] nano rumble.
+
+And the micro version should be somewhat competitive in the micro [[OneOnOne]] rumble.
+
+==== How does it [[Movement|move]]? ====
+[[StopAndGo]], I don&#39;t really know who invented it, or who made it common, but thanks to them anyway. I read a little bit about it on the wiki, and then made it myself.
+
+The nano version switches to a circular movement sometimes.
+
+==== How does it fire? ====
+nano: Assumes circular movement around him, so fires at factor 1 always.
+
+micro: [[GuessFactorTargeting]] with little segmentation on distance, only considers close and far. Inverse exponential [[BinSmoothing]], like the one found in the [[WaveSurfing/Turotial|WaveSurfing Tutorial]].
+
+==== How does it [[DodgingBullets|dodge bullets]]? ====
+[[StopAndGo]]
+
+==== How does the [[Melee|melee]] strategy differ from [[OneOnOne|one-on-one]]  strategy? ====
+The nano version switches to [[CircularMovement]] sometimes on [[OneOnOne|one-on-one]]. But in [[Melee|melee]] it alwasys uses [[CircularMovement]] since it is really hard to know a bullet was fired in a nano melee bot.
+
+==== How does it select a target to attack/avoid in [[Melee|melee]]? ====
+Both Lock their radars on the first bot they scan.
+
+The nano version spins it&#39;s radar every time a robot dies, this makes him search for new robots if his target dies, and hardly makes him lose it if the robot that died is a different one because it locks again at sight.
+
+The micro version can handle this in the run method, so no fancy trick here.
+
+==== What does it save between rounds and matches? ===
+The micro version uses static data for the [[GuessFactor]]s.
+
+Neither saves anything between matches.
+
+==== Where did you get the name? ====
+Since the nano version was the first one, I just thought of something that was little but could do some harm. And an ant bit me last weekend, and it was kind of hurting me.
+
+==== Can I use your code? ====
+Both jar files have the code inside, use it but give appropriate credits if something gets your attention.
+
+==== What&#39;s next for your robot? ====
+Not sure yet, I&#39;ll wait for them to have a more stable place in the rumble before.
+
+==== Does it have any [[WhiteWhale]]s? ====
+I&#39;m pretty sure they do.
+
+==== What other robot(s) is it based on? ====
+The micro version is based on the nano version.
+
+----
+==== Comments, questions, feedback: ====
+
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 9 * 7 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that AntBot has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=AntBot">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

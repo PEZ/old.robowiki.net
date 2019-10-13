@@ -1,0 +1,258 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RobocodeSG - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Robocode, SG'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=RobocodeSG">RobocodeSG</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a> (Swing Graphics) is a simple extension of Robocode that allows you to draw on the screen using standard Swing graphics.
+<p>
+<strong> <em><a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a> functionality is built into newer versions of Robocode, so you don't need to downloading anything separate.</em> </strong>
+<p>
+<a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a> works with Robocode version 1.0.7. 
+<p>
+<img src="http://uk.geocities.com/westenstefan/robocodesg.png">
+<p>
+<a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a> adds an onPaint method to the <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> class. This onPaint method gets called once per frame.
+<p>
+Here is the source for the SGSample robot:
+<p>
+<pre>
+package stefw;
+import robocode.*;
+import java.awt.*;
+import java.awt.geom.*;
+
+public class SGSample extends AdvancedRobot
+{
+	public void run() {
+		while(true) {
+			ahead(100);
+			turnGunRight(360);
+			back(100);
+			turnGunRight(360);
+		}
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e) {
+		fire(1);
+	}
+
+	public void onHitByBullet(HitByBulletEvent e) {
+		turnLeft(90 - e.getBearing());
+	}
+	public void onPaint(java.awt.Graphics2D g) {
+		g.setColor(Color.red);
+		g.drawOval((int)(getX()-50),(int)(600-getY()-50),
+			100,100);
+        }
+}
+
+</pre>
+<p>
+Don't forget to add the extra import statements for the swing classes, otherwise it will not work.
+<p>
+<H2>Installation</H2>
+
+<p>
+<p>
+Download <a rel="nofollow" href="http://uk.geocities.com/westenstefan/robocodesg.zip">http://uk.geocities.com/westenstefan/robocodesg.zip</a> and unzip it in the robocode directory. You can start <a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a> by clicking on the <b>robocodesg.bat</b> file or typing <b>robocodesg.bat</b>.
+<p>
+If you are not using Windows, type the following on the command prompt to start <a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a> (in the robocode directory):
+<p>
+<pre>
+java -Xmx256M -cp robocodesg.jar;robocode.jar robocode.Robocode
+</pre>
+<p>
+The <b>robocodesg.jar</b> file contains some class files that override class files in the <b>robocode.jar</b> file because they come first in the class path. You can still run normal Robocode by using <b>robocode.bat</b>.
+<p>
+A nice feature is that robots that use <a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a> will still work in normal Robocode because onPaint will just be ignored.
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments</H4>
+
+<p>
+This sounds too cool to be real, finaly I would be able to do visual debugging... --<a href="robowiki?LRem" class=wikipagelink>lRem</a>
+<p>
+Two questions: Is it usable with <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>'s version of 1.0.7 (see <a href="robowiki?OpenSourceRobocode/Contributions" class=wikipagelink>OpenSourceRobocode/Contributions</a>) and what priority does the onPaint event have. I was always afraid to try using <a href="robowiki?RobocodeGL" class=wikipagelink>RobocodeGL</a>, but this seems very easy usable and to use. --<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+I have just tested it with <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>'s version of 1.0.7, just type the following (or change the batch file):
+<p>
+<pre>
+java -Xmx256M -cp robocodesg.jar;newrobocode.jar robocode.Robocode
+</pre>
+<p>
+-- <a href="robowiki?StefW" class=wikipagelink>StefW</a>
+<p>
+I don't think it uses Robocode events, but just calls onPaint when the battlefield is drawn, which is during execute() if you didn't skip the turn. <em>Edit: why were you afraid to use <a href="robowiki?RobocodeGL" class=wikipagelink>RobocodeGL</a>?</em> -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+<p>
+<p>
+You're right, it just calls onPaint when the battlefield is drawn. -- <a href="robowiki?StefW" class=wikipagelink>StefW</a>
+<p>
+<p>
+My main system is not the most stable one (4.5 year old <a href="robowiki?WinME" class=wikipagelink>WinME</a> installation without backups (shame on me)) and it seemed that it takes quite some effort to get <a href="robowiki?RobocodeGL" class=wikipagelink>RobocodeGL</a> up and running. Therefor I did not even bother trying it. --<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+<a href="robowiki?RobocodeGL" class=wikipagelink>RobocodeGL</a> is not hard to get up and running, if you know what you need to do. IIRC:
+<OL >
+<li> Get and install gl4java
+<li> Extract robocode.jar
+<li> Add <a href="robowiki?RobocodeGL" class=wikipagelink>RobocodeGL</a> files, replacing old files where needed
+<li> Put them back in the jar or change the compiler classpath of the ingame editor (necessary if you use it)
+<li> Works for me without modifying the VM classpath
+</OL>
+-- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+Personally I think it is nice to have a choice between Swing and GL, I think many experienced Java programmers will be more familiar with Swing than with GL (like me), that's the reason I wrote <a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a>. -- <a href="robowiki?StefW" class=wikipagelink>StefW</a>
+<p>
+Actually you can't use GL without hacking RobocodeClassLoader<a href="robowiki?action=edit&id=RobocodeClassLoader" class=wikipageedit>?</a> (probably), so you are limited to the included RenderElements<a href="robowiki?action=edit&id=RenderElements" class=wikipageedit>?</a>. :-( And yes, choice is a good thing. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+Nice work, and just in time :) My <a href="robowiki?RobocodeGL" class=wikipagelink>RobocodeGL</a> stopped working a few weeks ago :( --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+Although I havn't tried this with <a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a>, but I imagine if you enable the hardware accelerated rendering (if you are running Java 1.5 only) then it should speed up <a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a> no end. To do this, add -Dsun.java2d.opengl=True to the command line when running robocode. Let me know if anyone has any results with this. I know it speeds up my own version of Java2d debug rendering! --<a href="robowiki?Wolfman" class=wikipagelink>wolfman</a>
+<p>
+I had issues getting <a href="robowiki?RobocodeGL" class=wikipagelink>RobocodeGL</a> running .. well, one issue .. the gl4java file was no longer available.  I'll have to give this a whirl.  Just been drawing a lot of circles and triangles and looking at text debug output. -- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin Alan Pedersen</a>
+<p>
+I remember doing a lot of digging to get <a href="robowiki?RobocodeGL" class=wikipagelink>RobocodeGL</a> working, but I did get it working and found all the gl4java stuff I needed... if you can tell me what specifically you need, Martin, I could probably dig it up. I uploaded the one file that jumped out immediately in my Downloads dir...
+<p>
+<a rel="nofollow" href="http://www.dijitari.com/void/robocode/gl4java2.8.0.8-jar.zip">http://www.dijitari.com/void/robocode/gl4java2.8.0.8-jar.zip</a>
+<p>
+Swing might be easier to work with anyway if you're used to Java GUI coding. In any case, I've found the graphical output to be extremely valuable in development... -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+If you run Ugluk v0.7.6 under SG you'll see him tracking outbound and inbound waves very consistently, with some minor glitches when an opponent hits a wall or gets disabled (which is an odd one).  You'll also see him tracking anticipated trajectories of head on, linear, and circular targeting (as he would predict it).  The odd thing is that the incomming bullet often is not following an incomming trajectory exactly even when I know the targeting mechanism is limited to one of those three.  I've yet to find out what is going on in those cases, but I haven't really explored it much yet. -- Martin / <a href="robowiki?Ugluk" class=wikipagelink>Ugluk</a>
+<p>
+The first thing that comes to mind is that your calculations could be off a tick. There's some good info on the <a href="robowiki?EnemyWaves" class=wikipagelink>EnemyWaves</a> page outlining when the enemy decides where to fire with relation to when they are detected as having fired. It could also be slight variations on the implementation of <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a>, of course, like averaging the last two scans instead of just using the data from one. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+One of the things I am happy with is the tick synchronization.  If you watch it in action, you'll see an expanding ring and somewhere on that ring is the real bullet (painted by the Robocode client).  That is true for both inbound and outbound waves.  No issues there.  The trajectory problem is a matter of angles.  I draw a line from the firing position (center of the wave) to the expected bullet position, but the bullet is a few pixels away (on the wave arc).  They are being calculated with the same targeting (mine) while testing against my own guns, and they are still off.  It probably comes down to a bad synchronization of firing positions and target positions.  I'm calculating the bearing between the two positions, and one or both of the positions are stale or too current. -- Martin
+<p>
+Hmm... but isn't it possible that they are synchronized as to when the bullets are fired, but not synchronized with regards to when it is decided where the bullet should go? Actually, you should be able to print out the positions involved in the calculation from both bots, and then see if they match up. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+This is way cool. I'll try write an SG-version of <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a>. I guess that'll be some work since CC uses GL today and it works a bit differently. Anyway, is there a way to tell if the Robocode application is minimized or not? I don't want to spend time drawing when noone is watching if I can avoid it. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+The <a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a> client allows you to draw by calling a <font face="Tahoma">public void onPaint( Graphics2D console )</font> method on your robot, which isn't called when the client is minimized, hence no performance hit.  Really though I only run SG when I explicitly want to do debugging, and I run it at under 10 frames per second (usually 2-3).  Otherwise the lines it draws detracts from watching the battles, and at high frame rates the painted lines get choppy.  I have a screenshot at home, but I think I'll make one today at work and link it as an example.  -- Martin
+<p>
+<img src="http://home.comcast.net/~kokyunage/robocode/sginaction.jpg">
+<p>
+I retire waves once they have passed their intended target, so you can see two bullets with no waves.  Ugluk has three bullets headed for the DeadOnGun<a href="robowiki?action=edit&id=DeadOnGun" class=wikipageedit>?</a>, which has 2 in flight in return.  I only see two trajectories on the outer one which leads me to believe Ugluk's heading hadn't changed at the time the shot was taken, making linear and circular the same. -- Martin
+<p>
+I've fixed the issue with inbound bullet projection.  My enemy's information about my position was too current.  I tweaked it so he could calculate based on the previous 'scan'. -- Martin
+<p>
+I finally started using <a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a> tonight, only to see that my waves (and virtualbullets) are perfectly aligned with the real bullets. The only issue I had to solve was that the check if my vbullets hit the target was one tick too late. That makes that the 'killhit' was not seen as hit, because the target was not present anymore. The change only affects the vgun statistics and therefor gunchoice, not enough to make a new version. <a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a> really is an ease to use, I wish I had done it earlier so I had not spent somuch time comparing bulletpositions with virtual bulletpositions manually.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+<p>
+<p>
+<hr noshade class=wikiline size=2>
+<p>
+Is there a code sniplet available with waves? --SSO 
+<p>
+This is my implementation (x*600 Battlefield):
+<p>
+<pre>
+class HisWave
+{
+	static int nbullet=0;	//Number of bullets
+	public int n;			//Bullet Number
+	public Vector2D p;		//Position
+	public double t;		//time
+	public double pow;		//Power
+	public double v; 		//Velocity
+	public double d;		//Distance
+	public Vector2D mv;		//mate Velocity
+	public Vector2D mp;		//mate position
+	
+	public boolean hit=false;
+	public boolean moved=false;
+	
+	public HisWave(AdvancedRobot r, EnemyStats e, double pow)
+	{
+		n=nbullet;
+		nbullet++;
+		p=e.p;
+		t=r.getTime()-1;
+		this.pow=pow;
+		d=e.d;
+		v=20-3*pow;
+		mp = new Vector2D(new Point2D.Double(r.getX(),r.getY()));
+		mv =  new Vector2D(r.getHeadingRadians(),r.getVelocity());
+	}
+	
+	public void onPaint(java.awt.Graphics2D g,AdvancedRobot r)
+	{
+		g.setColor(Color.red);
+		int radius=(int)(v*(r.getTime()-t));
+		g.drawOval((int)(p.getX()-radius),(int)(600-p.getY()-radius),2*radius,2*radius);
+	}
+}
+</pre>
+<p>
+--<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+<img src="http://home.comcast.net/~kokyunage/robocode/sg_eg2.jpg">
+<p>
+Here's my latest representation of waves and firing angles in SG, included in the three targeting drones I made available.  It is a lot easier on the eyes than my first attempts (which look remarkably similar to <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a>'s!) I expect someone will find them useful if only for verifying they are tracking inbound waves correctly. -- Martin
+<UL >
+<li> nice graphics! I haven't looked at <a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a> yet (i used to use <a href="robowiki?RobocodeGL" class=wikipagelink>RobocodeGL</a>. So i always needed a special version of the bot to do the drawing). I noticed you don't need a special version of the bot with <a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a> as the paint-method is just ignored. So i think i will switch to this way of drawing the graphics.--<a href="robowiki?Loki" class=wikipagelink>Loki</a> 
+<UL >
+<li> I am not concerned with code size so I provide onPaint methods for specific classes to draw themselves (similar to most of my classes having a debug() method).  You'll probably want to put all of the painting routines in a seperate class decoupled from your bot so that you can comment out the inclusion when building your release. -- Martin
+</UL>
+</UL>
+<p>
+<p>
+Any chance of an updated version of <a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a> for the newer versions of robocode (such as the newest 1.1.3), or perhaps built in robocode support (i'm looking at you Fnl ;) ) --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+It's already built in to the new versions of Robocode, <a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a> is outdated now. You can draw onto the screen by using adding the method <code>onPaint(Graphics2D g)</code> to your robot. Start the battle, go into your robot's console, and click the button labeled "Paint". For an example of a bot that uses this, take a look at <a href="robowiki?Phoenix" class=wikipagelink>Phoenix</a> or <a href="robowiki?VirtualBullets/VirtualBulletsSampleBot" class=wikipagelink>VirtualBullets/VirtualBulletsSampleBot</a>. They both draw to the screen when you click the "Paint" button. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+err, well, thats good to know (after making complete fool of myself) --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Not at all, it brings attention to the fact that this page should have that noted at the top... -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+--
+<p>
+I've heard a little about a "one off wave bug" in which drawn waves look aligned to the bullets on the screen, but are really one tick off.  I think SG graphics are drawn before the other events happen (like the bullet moving). Is this right? Does this mean drawn <a href="robowiki?Waves" class=wikipagelink>Waves</a> should appear one bullet speed before the bullet's position? -- <a href="robowiki?Kev" class=wikipagelink>Kev</a>
+<p>
+I'm not sure, but I can tell you this much: a bullet's "start time" is the tick in which set<a href="robowiki?FireBullet" class=wikipagelink>FireBullet</a> was called. So the tick after that, it has traveled (1*bulletVelocity). The tick in which you detect an <a href="robowiki?EnergyDrop" class=wikipagelink>EnergyDrop</a>, that bullet has already traveled (1*bulletVelocity). You should be able to tell us then if the graphics line up correctly =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Hmmm... further testing shows that the paint event happens after everything else is updated, so waves should align with bullets. I was confused because one version of <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> has the comment "Fixed 'start time' of <a href="robowiki?EnemyWaves" class=wikipagelink>EnemyWaves</a>. (They lined up visually in <a href="robowiki?RobocodeGL" class=wikipagelink>RobocodeGL</a>, but were, in fact, still off by 1 tick)." I thought <a href="robowiki?Waves" class=wikipagelink>Waves</a> were created each tick with a radius already at 1 bulletVelocity. The next tick the wave expands and you detect the <a href="robowiki?EnergyDrop" class=wikipagelink>EnergyDrop</a>, so the radius is actually 2 bulletVelocities. But now I am hearing is should be 1 bulletVelocity. Am I misssing something here? -- <a href="robowiki?Kev" class=wikipagelink>Kev</a>
+<UL >
+<li> I like to divide rounds into parts A and B.  Let's say we are in round 30.  In part A, the host (Robocode) processes all instructions from 29B and crunches the numbers, etc.  Once it is done, it's time for 30 part B.  It wakens your bot's thread (or sends it on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> events) and your bot calls getXXX methods for its own and its opponents positions, headings, etc.  At the end of round 30B, it gives instructions, including telling it to fire a bullet.  Then control returns to the host and it starts round 31A.  One of the first things it does is to process bullet firings and movement.  Later it moves the bots themselves.  At the end of round 31A, both your bot and your bullet have moved.  The painted screen shows both in their new positions.  Hopefully, the onPaint() method is called at this time, before beginning round 31 part B.  Maybe even before processing radar movement (triggering on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> events).  In any case, the round after your bot has fired, the bullet has only moved one length.  But -- it's going to move another length before your opponents can move, so it's a moot distinction.  If you want your painted waves to line up with bullets though, it has moved one length. -- Martin
+</UL>
+<p>
+<p>
+Well, about the graphics... I was using <a href="robowiki?RobocodeGL" class=wikipagelink>RobocodeGL</a>, not <a href="robowiki?RobocodeSG" class=wikipagelink>RobocodeSG</a>, so it could be different in each, right? I'm pretty sure that they have traveled 1*bulletVelocity on the tick after you call set<a href="robowiki?FireBullet" class=wikipagelink>FireBullet</a>, and have traveled 1 tick's worth when you detect the <a href="robowiki?EnergyDrop" class=wikipagelink>EnergyDrop</a>. That's definitely how <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> thinks it is... But I was confused back and forth about this many times, so hopefully somebody else can confirm this for me. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Thanks for the help guys, the theory now makes some sense to me. I was going by what I saw on the <a href="robowiki?EnemyWave" class=wikipagelink>EnemyWave</a> page, which turns out to be incorrect. But when I switch my surfing to what I see as the correct way (creating <a href="robowiki?Waves" class=wikipagelink>Waves</a> with a radius of 1 bulletVelocity at the shooter's last location), drawn <a href="robowiki?Waves" class=wikipagelink>Waves</a> don't align with bullets and my <a href="robowiki?WaveSurfingChallenge" class=wikipagelink>WaveSurfingChallenge</a> scores go  down. This may be a mistake in my implementation or maybe my surfing has just evolved to work well with one off waves. Whatever the case, I'll stick with what works for now. -- <a href="robowiki?Kev" class=wikipagelink>Kev</a>
+<p>
+Do you perform your main logic in the on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> event?  If so, that (I think) occurs before the waves are painted, so it would likely throw your drawing off by one tick (i.e. your waves would be drawn one tick further out than they actually are) compared to your logic being in the run(). -- Martin
+<p>
+(Edit Conflict) Well, I think what <a href="robowiki?ABC" class=wikipagelink>ABC</a> says on that page is all correct. When you detect <a href="robowiki?EnergyDrop" class=wikipagelink>EnergyDrop</a>, the wave is from their location last tick with radius of bulletVelocity, but you should segment the data from 2 ticks ago, because that's the last data they were able to use to aim before calling set<a href="robowiki?FireBullet" class=wikipagelink>FireBullet</a>. Anyway, definitely stick with what you find to work, of course! -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+@<a href="robowiki?Voidious" class=wikipagelink>Voidious</a> - I was more refering to <a href="robowiki?Jim" class=wikipagelink>jim</a>'s explanation of <a href="robowiki?Wave" class=wikipagelink>Wave</a> location being advanced two bulletVelocities on the <a href="robowiki?EnergyDrop" class=wikipagelink>EnergyDrop</a>. @Martin - Yes the logic is done through the on<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a>. So my <a href="robowiki?Waves" class=wikipagelink>Waves</a> probably are one tick ahead. Until the results start improving though, I'm keeping things the way the are. -- <a href="robowiki?Kev" class=wikipagelink>Kev</a>
+<p>
+Just a couple final thoughts... First, what Martin said about collision detection is important, and while I do use the set<a href="robowiki?FireBullet" class=wikipagelink>FireBullet</a> tick as the "start time", I also advance the bullet one extra tick's worth when checking when it hits, because it advances one last time before collision detection. What I ended up doing when I doubted the debug graphics was just create a couple of test tanks, which move to specific positions, one fires at the other, and they print the ticks that the bullet was fired and when it hit. I then compared that to when I thought the bullet should hit, and corrected from there. A pain in the butt, for sure, but it left less doubt for me than the debug graphics. Anyway, best of luck. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I've done my own set of tests, and it turns out the onPaint and onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a> events occur before the on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> event. Wave's radii in <a href="robowiki?WaveSerpent" class=wikipagelink>WaveSerpent</a> were dependant on the variable gameTime, which was set to getTime() on the scanned robot event. On the paint event, the variable hadn't been updated so the waves were drawn one tick back, causing them to align graphically when they were really one tick ahead. I can now say with confidence that waves are created with a radius of 1 when you detected the energy drop (so I've been doing it worng all this time :P). -- <a href="robowiki?Kev" class=wikipagelink>Kev</a>
+<p>
+You receive onHitByBullet events before onScannedRobot events because onScannedRobot has a lower priority setting (by default).  This became a problem for me when trying to match bullet hits to waves when fighting rambots.  I'd be told of the hit before I saw the energy drop.  I solved it at the same time I was addressing that onPaint appears to be called before any events, so when I was painting stuff it was based on data processed the turn before.  I redid my event handling to process all events as soon as any event is received, and it is called by onPaint before going any further.  Basically whenever painting is enabled I process my turn in the onPaint method and ignore that turn in the run() loop.  -- Martin
+<p>
+You could use the setEventPriority<a href="robowiki?action=edit&id=EventPriority" class=wikipageedit>?</a> to change the Priority of the events. This is taken from the API.
+<pre>
+The default priorities are, from lowest to highest: 
+        ScannedRobotEvent:              10
+        HitRobotEvent:                  20
+        HitWallEvent:                   30
+        HitByBulletEvent:               40
+        BulletHitEvent:                 50
+        BulletHitBulletEvent:           50
+        BulletMissedEvent:              60
+        RobotDeathEvent:                70
+        CustomEvent:                    80
+        SkippedTurnEvent:               100
+        WinEvent:                       100
+        DeathEvent:                     100
+</pre>
+A note of mention, <a href="robowiki?CustomEvent" class=wikipagelink>CustomEvent</a> refers to a true return from the test value of the Condition, the actual testing of the Conditions happens I think after onPaint. -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RobocodeSG" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RobocodeSG">View other revisions</a><br>Last edited July 10, 2008 12:54 EST by 85-114-13-9.obit.ru <a href="robowiki?action=browse&diff=1&id=RobocodeSG">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

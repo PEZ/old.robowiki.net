@@ -1,0 +1,299 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RaikoMX - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Raiko, MX'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=RaikoMX">RaikoMX</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><UL >
+<li> 0.31 - special 'school's out forever' version. ;)  Cleaned up some of the code and tweaked the criterea for selecting a direction.
+<UL >
+<li> Withdrawn - quite a spectacular failure given how well it tested.  Must test against pattern matchers more...
+</UL>
+</UL>
+<p>
+<UL >
+<li> 0.29 released.  I know I said no more releases, but I was turning the code over in my head today and realized that 0.21-&gt;0.28 are all completely broken.  My movement simulation is effectively returning random numbers.  0.29 is a bugfix + minor tweak.
+</UL>
+<p>
+<UL >
+<li> 0.28.  Tweaked the avoidance for simple guns, and implemented a little strategy for opening/closing game.
+</UL>
+<p>
+<UL >
+<li> 0.27 released.  Reasonable jump in performance in testing so it'll probably end up down 20 points. ;-)  Implemented <a href="robowiki?ABC" class=wikipagelink>ABC</a>'s suggestion to weight bullets by their distance (I used bullet flight time, though), added crib sheets so I'm now back to saving targeting data (and I can fit full offensive and defensive data on every bot in the rumble!) and made some small tweaks.
+</UL>
+<p>
+<UL >
+<li> 0.24 released.  Slightly more accurate movement prediction.  Now knows it can go backwards.  Dodges a dead enemy's bullets and waits until it can't be hit to save data to avoid disablement.  Smart wall smoothing.
+</UL>
+<p>
+<UL >
+<li> 0.21 released. Cleaned up/rationalized some of the code, implemented rolling averages and data-saving for the enemy hit statistics, hopefully improved it against the weaker bots without affecting it's score against the strong, and tweaked the learning speed of my own gun.  
+</UL>
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+It orbits where the opponent was, when they fired the bullet, which might hit it next.  Um.
+<H4>How does it fire?</H4>
+
+<a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>, done just as in <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>.
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+It looks at the nearest approaching enemy bullet, tries to guess where it's going, and tries to be somewhere other than that.  Currently it's a bit better at guessing where the opponent is going to fire than at guessing where it's going to move to, but I'll fix that eventually.
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+The mind boggles.
+<H4>What does it save between rounds and matches?</H4>
+
+It saves the details of where it was hit by the enemy.
+<H4>Where did you get the name?</H4>
+
+Raiko Megabot eXperimental.  It's meant to be a development platform for things I might be able to stuff into <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> someday.
+<H4>Can I use your code?</H4>
+
+Sure. It's included in the jar and released under the terms of the <a href="robowiki?RWPCL" class=wikipagelink>RWPCL</a>.
+<H4>What's next for your robot?</H4>
+
+To improve the movement.  A lot.
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+I'm taking a real dislike to Aleph...
+<H4>What other robot(s) is it based on?</H4>
+
+<a href="robowiki?Raiko" class=wikipagelink>Raiko</a>.  It uses the codebase of <a href="robowiki?Narcissus" class=wikipagelink>Narcissus</a> as well.
+<hr noshade class=wikiline size=1>
+<a href="robowiki?RaikoMX/OldDiscussion" class=wikipagelink>/OldDiscussion</a>
+Comment / Suggestions?
+<p>
+And the 4th member enters the 1950+ club, congratulations! I'll check your code now to see how much (if) your flattening method differs from mine... :) -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Thanks. :-)  I think you might have done it a little better than this!  I still can't believe this actually worked even half-way decently.  I guess you can make some wildly big approximations and still expect the processor to clean up after you. -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Do you know, that <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a> has an incredible potential getting higher in the rankings. As far that I can see <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a> stops moving if it has killed his target. This can be corrected pretty easy. I mean there could still be some bullets around. <a href="robowiki?Aleph" class=wikipagelink>Aleph</a> doesn't demonstrate his victory dance in this case ;). -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+<p>
+I guess that this (staying still when you killed your enemy) would be a problem only against head-on-targeters. But those bots <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a> has wiped the floor with already so it probably isn't going to get killed by the stray bullets. And then it will still collect the last survival bonus and the enemy won't get any points for its hits and not the kill bonus either (since it doesn't kill <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a>). -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yup, there's still an incredible amount to be done.  You and <a href="robowiki?ABC" class=wikipagelink>ABC</a> jumped around 80 points each at your first attempts, with non-AM movements which were very similar in quality to mine.  I jumped 45.  And you'll see that my rankings against head-on targeters are most less than 90% - I actually seem to do better against some GF guns. :-\  Unfortunately I have a lot to do as it's coming into my last week of college, but I'll try to  make some time. :-) -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+PEZ, It doesn't depend on the targeting. In this case <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a> isn't a problem because you mostly will be at around GF 0.5-1 and when the other bot dies you will still be somewhere there. against fixed-GF-gun-bots <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a> wins 100% of the rounds without problem so the only thing he has to worry about is what the bulletDamage of the other bot will be. -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+<p>
+Well, let's assume a fixed GF gun then instead. I still don't think bullet damage points are delivered to a dead bot. I haven't tested it though. But that's what <a href="robowiki?Paul" class=wikipagelink>Paul</a> told me once. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I think they are, at least the killing bonus is for sure, the "bonus for killing..." message is displayed in the console even if you are dead. Shadow also does the "dead bot bullet dodging". The more I hear Rozu talking about Aleph the more I'm convinced he is walking the same path I did. :) -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Yes, look at my posts above. The bonus is delivered, but I don't think the damage points are. Regardless, I doubt there is very many rating points to collect here. On the other hand, should damage points be delivered one could collect whatever points lives in dodging dead bots bullets anyway. At least in a <a href="robowiki?MegaBot" class=wikipagelink>MegaBot</a>. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Wow. Your movement profile looks really funny! A HUGE spike at GF1, yet you eat my bots for lunch. Interesting. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+A spike at GF1?  I must admit I haven't graphed this one, so I don't know.  Two possibilities; one is that it's only there when you look at it on wave-per-turn basis, and I'm not really there much when bullets hit, or else your grapher isn't firing at GF1 much - you said you had a bug in your targeting? :-) -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Well, not in my grapher bot I think. It brings GF1 movements down good! But <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a> is doing some illusionist trick. I'm not talking about a small peak at GF1 here... It's 9.7% at the peak where Raiko is 5.4%. The rest of the graph is flatter than earth was before Galileo Galilei. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Interesting indeed - I just graphed it from FloodMin<a href="robowiki?action=edit&id=FloodMin" class=wikipageedit>?</a> and there's a small peak at GF0, but nothing much GF1.  Well, with these movements I think you just kind of have to have faith that it's doing something sensible... (and I wouldn't say it eats your bots for lunch.  IIRC <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a> and <a href="robowiki?Aristocles" class=wikipagelink>Aristocles</a> are two of my problem bots - wasn't 0.2 loosing to <a href="robowiki?Aristocles" class=wikipagelink>Aristocles</a> in the rumble?) -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Hmm. It eats my grapher bot for lunch anyway. The bot that sees that huge spike. I can send you the bot if you want to analyze some. Maybe it's a key to something... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Good idea, and thanks - you know my e-mail, moughanj at tcd dot ie.  -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Well, I don't know if my e-mails reach you. Maybe you can check if I get filtered away or something? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I have noticed a difference between PEZ's and Kawigi's graphers too, usually a GF1 spike in PEZ's. My theory is that there is a small difference in the way you register the enemy's state, namely the movement direction, that makes you sometimes register a positive GF where Kawigi sees a negative one. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Could be it. My grapher bot uses a "sticky" bearing direction (that is "same as last scan" if the enemy is stationary). I don't remember how <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> deals with that. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> does the same.  If you're missing the GF1 spike, it may be possible that you're using something different in storing than you are for shooting?-- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+As does <a href="robowiki?Narcissus" class=wikipagelink>Narcissus</a>, so it can't be that.  I've looked at the code for TGrapher and can't find any bugs, but it sure looks like the profile I get against head-on guns. -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Speaking of which, I was thinking about adding another option to the <a href="robowiki?FloodGrapher" class=wikipagelink>FloodGrapher</a> robot in the next version to only have it fire in a certain range of guess-factors. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+2014.28, momentum +53.1 after 50 battles. Wow. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Holeee craaap.  Could you elaborate on "strategy for open/closing game" and "smart wall smoothing" and "tweaked avoidance for simple guns"?  Jeez.  This looks like it people. : / -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+It will settle out; it got a really nice bunch of opening battles, Coriantumr, Sedan, etc.  <a href="robowiki?Rozu" class=wikipagelink>rozu</a>'s been here before. :-)  Bad results against DT and <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>, I may even have broken something here... hmmm...
+<p>
+'strategy for opening and closing game' means that if the opponent hasn't fired yet then I pick a direction which doesn't make me wall smooth into them, and if they have less than 5 energy I do the opposite.  Tweaked avoidance against simple guns means that I'm more aware of when I really expect to get hit - still room for improvement here, though.  smart wall smoothing got thrown out completely; I now only reverse when my flattener tells me to.  Real no-fear-the-walls.  -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+going up again! 2010 after 120 battles. Congratulations! Looks like another milestone reached! --<a href="robowiki?Loki" class=wikipagelink>Loki</a> 
+<p>
+Reached? He left that milestone in the dust miles behind him. Congrats Jam! :-) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Thanks... it may just stick, but it's not real until 500... :-)  I find it too hard to credit right now, it was a couple of very minor tweaks.  -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Exciting! I'll start my RR@H client to help get the answer faster. Really cool that you have got <strong>real</strong> <a href="robowiki?NoFearTheWalls" class=wikipagelink>NoFearTheWalls</a> to work! I have long thought this just must be the way to go. Good work man! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Thanks <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>!  My nerves can sure use all the clients running, before I smoke myself to death. :-D  Half-way and still looking good, I'm starting to feel optimistic... -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+418 battles as I write and 2012 points. I say you can quit smoking now. You're the King of Kings. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Long live <a href="robowiki?Jamougha" class=wikipagelink>the King</a> --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+2015 with 499 battles... OK, that's good enough for me. :-D  Thanks guys!  <a href="robowiki?The2000Club" class=wikipagelink>The2000Club</a> is open for business. ;-) -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Hail to the king! Congratulations, your highness. What about the festivities in Ireland? Crowded streets and fireworks for sure... Long live the 2King! -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Graphing RMX with TGB / TGrapher i get very, very, very envious. I hate you. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+How are you supposed to hit this?
+<p>
+<img src="http:/robocode/uploads/pez/RaikoMX.png">
+<p>
+It's not fair. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Seems that it looses for 3 bots: Raiko, DT &amp; Shadow... but looking at the result against a <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a> bot:
+<pre>rz.HawkOnFire_0.1 99.6</pre> Almost 100%. Beautifull. A perfect AM should perform like that! Congratulations again, Irish surfer! -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+BTW: It's the first <a href="robowiki?OpenSource" class=wikipagelink>OpenSource</a> King (at least for the time i'm on wiki)... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Wow, whats next? A Nano bot to complete your series of first places in <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a>,  will you enter the <a href="robowiki?Melee" class=wikipagelink>Melee</a> competition or are you going further towards 2100 ? ;) -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+<p>
+<a href="robowiki?OpenSource" class=wikipagelink>OpenSource</a> rules! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Hehe, nice graph. :-)  I think how you hit it is with a PM gun - some of the old-fashioned PMs have scary hit-rates on RMX.  Solving that will have to go on the todo list.
+<p>
+I think what's next is a bit of a break while I try to pass my finals. :p  I've left a lot of stuff way too late, so until I'm dethroned (which will probably not be long) no more updates from me. -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Some WallPaper<a href="robowiki?action=edit&id=WallPaper" class=wikipageedit>?</a> for you man: <a rel="nofollow" href="http://robowiki.net/perl/robowiki?RoboRumble/Rankings_roborumble_20040310">http://robowiki.net/perl/robowiki?RoboRumble/Rankings_roborumble_20040310</a> -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+What a bugfix can do.  Jeez.  I think you have this Robocode thing nailed, man. -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+Looking fairly good at least. :-)  There are quite a few of my problem bots in there already too, so there might be a bit more headroom yet... -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+All I can say as I watch its battles count up is holy cow. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Wow! Approaching 2050 with 300 battles... well done! -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Holy cow doesn't cover it! Can I have your old bugs please? I think they could do wonders in Pugilist. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<a href="robowiki?CurveFlatteningChallenge" class=wikipagelink>CurveFlatteningChallenge</a>!  I want to see it! :) -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+Hehe, you see I wasn't kidding when I said completely broken. :-)  Some of the time it didn't know whether it was going forward or back.
+<p>
+I'm running a CFC now - the results might be surprising.  Looks like it will not top <a href="robowiki?Aleph" class=wikipagelink>Aleph</a>. -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Try a CFC with the latest DT instead. Chances are that Aleph exploits the long-range flaw in DT 1.91. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Wow, 2050 points, I'm speechless... -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+<hr noshade class=wikiline size=1>
+May 29th 2004
+<p>
+Hey. When I set out to make a bot to dethrown RMX I didn't mean to <em>scare</em> it down. =) Cleaning up code seems dangerous. <a href="robowiki?Axe" class=wikipagelink>Axe</a> has tried that too. Well, and I too with sometimes disastrous results. But my code is particularly sensitive of course since I still use the event system to iterate my waves and need to rely on my <strong>limited</strong> skills in state management. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I'm still puzzling over just what went wrong with that one - it performs better or even against every bot I've tested against, even finally beats <a href="robowiki?Shadow" class=wikipagelink>Shadow</a> :-\ and scored around 65% against 0.29.  Looks like it was getting nailed by symobolic PMs; I'll have to add some to my test set. -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+I have the same puzzle with Pugilist. When I make it strong against a testbed of mostly strong bots it drops in the ratings. Maybe you can try what I do in some versions of <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a>. I replaced segmentation on velocity and velocity-change to instead segment on time-since-deccel and time-since-accel. It's a test of my voodoo-theory that it is in the time-dimension that many PM's find patterns to nail my surfing down. Even if PM's are still problem bots for those versions of CC I think it is not as pronounced as it is with the pure velocity-based segmentation. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I'll give it a go, thanks for the ideas!  There's got to be some way to fool those old-school PMs.  First I think I'll roll back the binary movement search and check that all the other new stuff works - after some sleep. :) -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+I think you shouldn't withdraw a version with 70+ pairings left to fight, at least not if you want a correct measure of the "failure". How many rounds did you test against Shadow/RMX0.29? -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+I would say it has 200+ battles to fight. Maybe that's what you mean with 70 pairings? Anyway, it seems rating can change quite a lot from 500 battles fought until 650 something. But it had 2000 points sharp at 440 battles. No way it would have gone all the way up to 2060 or whatever Jam expected from it. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I mean 72 pairings, it fought 207 of 279 opponents in 440 battles. I also never saw a bot go from 2000 to 2060 in 200 battles, but the final ranking is far from decided at 440 battles... -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+The rating wasn't decided, but it was pretty much decided that it wasn't going to be good. :)  I could see enough to tell where some of the problems were coming from at least.  My main tests were over 1000 rounds - I generally start with 250 and jump to 1000 for fine-tuning. e.g.
+<p>
+<pre>
+1st: jam.RaikoMX 0.31	90957	36900	7380	40123	6552	1	0	746	255	0
+2nd: jam.RaikoMX 0.29	44886	12750	2550	27413	2161	2	9	264	738	0
+
+1st: jam.RaikoMX 0.31	79913	27750	5550	41107	5499	6	0	555	445	0
+2nd: abc.tron3.Shadow 3.04	64938	22250	4450	34223	3987	27	0	448	555	0
+</pre>
+<p>
+-- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Wow. Just Wow. Is there any gun tweaks involved or is it movement only boosts? I must say "Wow" again... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Those are some amazing test results, I'm impressed. I never managed to fool my gun without losing points to RMX and other good GF guns. I'm also very curious, was that movement only? -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Just movement, unless the refactoring accidently fixed something. :)  It helps against simple guns, too - quite often in my tests it went 40 or 50 rounds before being hit by a head on targeter.  Unfortunately it seems there's some sort of problem in the middle of the spectrum.  Especially those damned nano-PM's, heh. -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+There's a slight possibility that you have a bug in your gun. My brain doesn't work today I think, but I can't see that your wall segmentation gives you 3 indexes like you obviously intend it to do. But I might be wrong. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+My brain's fried right now too, but it looks right - it checks ahead along a circle by one BFT; if it doesn't find a wall intersection then it gives index zero.  Otherwise, it checks for half a BFT, giving index one/two.  -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<UL >
+<li> BFT is? -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<UL >
+<li>Bullet Flight Time - more accurately I should have said 'escape angle' -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+</UL>
+</UL>
+<p>
+Hmmm. Yes. Then I think I must check my wall indexing again. I obviously have a problem wrapping my mind around this simple little thingy. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I think I too have got it right. I just start from the other end. Bummer! I started hoping I had an easy point-collecting bugfix to do. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Just tested RMX 0.31 against Shadow, amazing. I'm considering removing my previous versions from my testbed, it looks like i'll have to lose against my own gun to improve my ranking... ;) -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Yes, first time I tested against <a href="robowiki?Shadow" class=wikipagelink>Shadow</a>, that won't be happening again. ;-)  Let's see if I can remove the vulnerability now, I think I know what's causing it... -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Glad to see you active again, btw. Maybe you can figure out how to improve a bot's ranking above 2000. It seems that we are not fighting other bots up there, but a rumble "ghost" of some kind that always manages to elude rational thought... :) -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<UL >
+<li>Working on it! Just need more time to spend on robocode hopefully! Still have so many things to add. Haven't even started working on more than my current fairly basic targeting. -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+</UL>
+<p>
+Well, I have at least understood that the "ghost" is not <a href="robowiki?Shadow" class=wikipagelink>Shadow</a>. Something you two seems to have learnt only just today. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+If the ghost was Shadow, DT would be #1. What I learnt today is that my gun is not as close to the old-school PMs as I thought. That's good news, I like being different. :) -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Hey, i´ve been a bit busy at work, just having time now to rc again (not much time actually, but some time). First of all: I´m very very glad that Jam is whith us again! And i have to say also that i´m not comfortable with <a href="robowiki?SilverFist" class=wikipagelink>SilverFist</a> beeing in the first position (think that we all here agree with that)... I have a proposal: that should be permited to ONLY THE KING to have two versions running at the rumble. RMX have the right to be upgraded, without loosing the crown. The crown is with Jam, and there is no reason to take it unless we defeat him. What do u all think? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Not necessary I think. We all know RMX exists in a version that leads the pack. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yes, but the lead is a reference, and i think that it´s very important to know and see it there. It is a reference afterall... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+You can holler at me anytime you forget. I'll holler back "2050 something!". =) Anyway Jam, probably can't stand not occupying that spot very long so chances are he'll replace any "failed" version with good 'ol 0.29 until he gets it right. Which will be when he stops chasing <a href="robowiki?Shadow" class=wikipagelink>Shadow</a>s I guess. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li> Indeed, i have stopped to chase <a href="robowiki?Shadow" class=wikipagelink>Shadow</a>s and <a href="robowiki?DT" class=wikipagelink>DT</a>s a long time ago... Much easier (and profitable) is to chase HeadOns<a href="robowiki?action=edit&id=HeadOns" class=wikipageedit>?</a> ;) -- <a href="robowiki?Axe" class=wikipagelink>Axe</a> 
+</UL>
+<p>
+Imagine if someone (Like Shadow or CC) reach 2050... Will he be the king? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a> 
+<p>
+Maybe childish, i know, but THE KING is a millstone for me (i can never spell it right, hope that know it is). And the King have some prerogatives... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Funny, to me it has been more like a grindstone. =) Anyway you see milestones everywhere. You convinced ABC there should be two Tron's in the ranking table too. And if I recall correctly I think you wanted some version of DT hanging around also, didn't you? Maybe if you suggested a pez.* bot I would agree. =) If someone lands a bot at 2050 it'll be a question about checking up RMX's details sheet and see what it says. It won't be me this weekend anyway. I'm going away with my family and am not allowed to bring my bots with me. Don't feel too sorry for me. I have a wonderful family. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li> Ha! Yes, i never understood that miles conversion, if they call it kilometerstones :)... And i also have a property where we have grind stones as decoration in the yard, that really confused me (i´m a surfer, remember). And yes, i like those milestones, maybe is that child in me... Anyway, it was just an idea...-- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+</UL>
+<p>
+Found the problem - turns out to be a gun bug, which caused those versions to fire at a good GF, but not the best... obviously resulting in excessive performance against some of the <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> implementations. :-\  Ah well, something to have in my bag of tricks. -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Interesting. Sound a bit like the reverse of <a href="robowiki?Jim" class=wikipagelink>Jim</a>'s PoisonMovement<a href="robowiki?action=edit&id=PoisonMovement" class=wikipageedit>?</a> idea. 
+<p>
+<a href="robowiki?Axe" class=wikipagelink>Axe</a>, maybe you could start a MileStone<a href="robowiki?action=edit&id=MileStone" class=wikipageedit>?</a> bots page? I know too little about early Robocoding, but in the later years I have a few suggestions: <a href="robowiki?DT" class=wikipagelink>DT</a> 1.61. <a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a> 1.31. <a href="robowiki?RaikoMicro" class=wikipagelink>RaikoMicro</a>. <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> and <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a> 0.29. <a href="robowiki?Apollon" class=wikipagelink>Apollon</a>. <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a>. The version of <a href="robowiki?DT" class=wikipagelink>DT</a> who was so unreachable before <a href="robowiki?ABC" class=wikipagelink>ABC</a> released the first surfing SHadow<a href="robowiki?action=edit&id=SHadow" class=wikipageedit>?</a>. That <a href="robowiki?Shadow" class=wikipagelink>Shadow</a> (or at least the version who was king a while before RMX started surfing). <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> 1.4. The list is probably longer. This is just from the top of my head. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Me? Sure i like milestones, but i am much more newbie tahn a lot others here (including u)... If i can sugest names for that list: <a href="robowiki?Wolverine" class=wikipagelink>Wolverine</a> and <a href="robowiki?TAOW" class=wikipagelink>TAOW</a> r great milestones too... Another page that we should have is a <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> Crown Chronicle, listing all the Kings and the dates they keep the crown (is possible to retrieve that info?)... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+0.32. Trying to sneak it out on us? =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Just too fried to remember just what I did. ;-)  It's a combo of refactoring and odd experimental tweaks; nothin' major, anyway. -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+I know that feeling. If you do any major refactoring I can recommend releasing a version with just the refactorings and no behavioural changes (intended anyway). That can save you from doing rollbacks of refactorings you really need. Speaking from experience here. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+We should open up an hall of fame for the 'best broken versions' of robots :D --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+"Nothing major" gained you 10+ points. The bar is raised I would say. Good work! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Thanks :-) I'll have to improve that PL performance next I think; Cassius gives RMX quite a thrashing over 250 rounds! -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+I'm pleased with that. But I would trade for the opposite any day! =) I think that in the long term going for a strong PL bot should also pay back in rating. But first one needs to figure out what it is that makes a bot strong against the strong. I thought I had at least a clue. But my latest experiments seems to tell me I'm still clueless... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I think it's going to have to come down to gunnery... there's no way you can afford to adapt your movement to deal with the most sophisticated guns at the expense of the weak, and it's going to be tough telling them apart; plus the degree of improvement just isn't there when you're only getting hit 10-11% of the time even by a great gun.  OTOH I suspect that telling an adaptive movement from a non-adaptive one is going to be pretty easy, and 0.31 gives me a good idea how to deal with AM effectively. ;-) -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Tell me about it. I have tried a few releases now with simply using the enemy's hit ratio at ranges above 275. Doesn't seem to work, does it? =) I've too come to the conclusion that it is about gunnery now. Funny synchro you and I seem to have. Then again, I'm pretty sure my movement isn't up to your class yet, so I'll keep experimenting with that too probably. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+But not experimenting with both at the same time, of course... -- <a href="robowiki?Alcatraz" class=wikipagelink>Alcatraz</a>
+<p>
+Hey <a href="robowiki?Jam" class=wikipagelink>Jam</a>, what advice do you have on the issue of avoiding head-on perfectly? I've run RMX against <a href="robowiki?Barracuda" class=wikipagelink>Barracuda</a> a lot now, and you move quite differently against that bot compared to how CC moves. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Good question. :)  It's mainly the same voodoo as with random movements - tweak, test, repeat.  The two factors are how you select your weighting according to distance from gf 0, and how you maintain distance.  I'm special-casing head-on, which makes it considerably easier to tweak without ruining the rest of my movement; I'm not sure if you're doing this in Cassius. -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+No, I have very, very few special cases in CC. But I have experimented some with this particular case without success. But now I have some clues and might strike luckier. Thanks! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RaikoMX" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RaikoMX">View other revisions</a><br>Last edited June 7, 2004 4:15 EST by <a href="robowiki?PEZ" title="ID 2163 from 192.168.0.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=RaikoMX">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

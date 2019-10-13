@@ -1,0 +1,187 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Nemo/Source - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Nemo, Source'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Source">Nemo/Source</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Nemo" class=wikipagelink>Nemo</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>package usa.nano;
+
+/*
+nano and David Alves present:
+                                                                            _,           _, 
+                                                                         .' (        .-'./ 
+ _______                                ______       ______            _/..._'.    .'.-'/  
+ \      \    ____    _____    ____     /___   \     /   _  \      .-'`      ` '-./.'_.'   
+ /   |   \ _/ __ \  /     \  /  _ \        \   |    \  \ \  \   ( o)   ))      ;= &lt;_     
+/    |    \\  ___/ |  Y Y  \(  &lt;_&gt; )     /    /_     \  \_\  \    '-.,\\__ __.-;`\'. '. 
+\____|__  / \___  &gt;|__|_|  / \____/     |_______| /\  \_______|        \) |`\ \)  '.'-.\`
+        \/      \/       \/                       \/                      \_/       '-._\'
+                                                                                         ` 
+
+
+Nemo is the first bot to fit GuessFactor targeting into a nanobot! 
+Codesize is 249 bytes with no colors. Co-written by nano and 
+David Alves. Released under package usa since we're both from 
+the USA and it just might end up competing in the robocode olympics.
+*/
+
+import robocode.*;
+import robocode.util.*;
+
+public class Nemo extends AdvancedRobot {
+	static final int BULLET_POWER = 3;
+	static final int BULLET_SPEED = 20 - 3 * BULLET_POWER;
+	static final int NUM_FACTORS = 33;
+	static final int SEGMENTS_VEL = 3;
+	static final int SEGMENTS_DIST = 13;
+	
+	static int enemyVelocityAtShot;
+	static double totalLatMovementSinceShot;
+	static int[][][] theStats = new int[SEGMENTS_DIST][SEGMENTS_VEL][NUM_FACTORS];
+
+	public void run() {
+		// n: This is the same as the following (both are 3 bytes):
+		//    turnRadarLeftRadians(Double.POSITIVE_INFINITY);
+		do {
+			turnRadarLeftRadians(1);
+		} while (true);
+	}
+
+	public void onScannedRobot(ScannedRobotEvent event) {
+		// n: In general, it is a bad idea to initialize variables, but
+		//    highestIndex must be initialized.
+		//    Initializing to 0 saves 1 byte.
+		int highestIndex = 0;
+		double absbearing;
+		double direction;
+		int velocity;
+		
+		// n: It's not as accurate as saving the enemy's distance at the time
+		//    of the wave shot, but distance changes slowly, so it works.
+		int[][] stats = theStats[(int)(event.getDistance() / 100)];
+		
+		// n: Math.cos!  I never would have thought of it, but it saves a byte
+		//    instead of doing + Math.PI/2.  Kawigi says he thinks PEZ or
+		//    Jamougha came up with it.  Thanks to whoever it was, and thanks
+		//    to kawigi for the tip. ;)
+		setTurnRightRadians(Math.cos(absbearing = event.getBearingRadians()));
+		absbearing += getHeadingRadians();
+		
+		totalLatMovementSinceShot += (direction =
+			(event.getVelocity() * Math.sin(event.getHeadingRadians() - absbearing) + 0.001));
+		
+		// n: Nano mirror movement!  I had a different version of this in
+		//    Nemo 1.2, but this new version is thanks to kawigi and ThnikkaBot.
+		setAhead(direction * 4);
+		
+		// n: The simplest radar tracking there is.  Slips often.
+		setTurnRadarLeftRadians(getRadarTurnRemaining());
+
+		// n: The smallest way I've found to get the highest index
+		int i = NUM_FACTORS - 1;
+		do {
+			if (stats[velocity = (int)(Math.abs(direction) / 3)][i] &gt; stats[velocity][highestIndex])
+				highestIndex = i;
+		} while (--i &gt; 0);
+		
+		setTurnGunRightRadians(
+			Utils.normalRelativeAngle(
+				absbearing
+					+ (direction / Math.abs(direction))
+					* (highestIndex / (double)NUM_FACTORS)
+					- getGunHeadingRadians()));
+		
+		// n: Check the last wave and fire a new one.
+		//    This is a bit less accurate but much smaller than firing a
+		//    wave only when we fire a bullet.  David says the modulus on
+		//    getTime() is too inaccurate, but my tests show otherwise, and it's
+		//    quite a bit smaller than using a counter :)
+		// n: absbearing = distance??? I know, it's ugly.  It's always the last
+		//    byte that's toughest.
+		if (getTime() % ((int)(absbearing = event.getDistance()) / BULLET_SPEED) == 0) {
+			try {
+				// n: Positive guess-factors only so we don't have to save
+				//    the direction at time of shot.  The reasoning here is that
+				//    almost all bots spike in the positive anyway. :P
+				stats[enemyVelocityAtShot][(int)(NUM_FACTORS
+					* Math.abs(totalLatMovementSinceShot / absbearing))]++;
+			} catch (Exception e) {
+				// D: It saves codesize to catch exceptions rather than check for them.
+			}
+			
+			enemyVelocityAtShot = velocity;
+			totalLatMovementSinceShot = 0;
+		}
+		
+		setFire(BULLET_POWER);
+	}
+}
+</pre>
+<p>
+<hr noshade class=wikiline size=1>
+I had no idea that using "1" instead of POSITIVE_INFINITY in the while loop made costs 2 bytes less. That's great. Because in my experience the two radar initializations are <strong>not</strong> equivalent. Without the protecting wile loop the radar can slip in certain situations and then it stops and it wont start working until the enemy drives into the beam again. This can be a killer against some simple movements (like Walls and <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a>) and it can cost some points against other movements too. It wont affect your TC index of course, but in real battle I am pretty sure you should use the while loop. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Alright, I'm changing it.  I trust you. :)  I haven't seen problems with it yet, but that doesn't mean they aren't there.  Thanks for the tip. -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+I haven't found a really good way to ensure the radar is to trust. But one way it to write out the time-since-last-scan everytime it is greater than, say 2. Write it to file to run more unattended tests. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<p>
+@PEZ: Once your robot's run method exits, you enter a loop that looks like this:
+<PRE >
+ while(true){ execute();}
+</PRE>
+So there's no danger of the radar stopping. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Yes, I didn't take into account that your radar lock is different from mine. The call to execute() doesn't really have anything to do with it, does it? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+You either need a call to execute() in the while loop, or the radar turn (which includes an execute()) in it.  Both work just as well, as far as i can tell, but with no while loop at all, you can have problems (robocode is meant to do it for you, but doesn't always seem to) -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+The infinite radar lock is always spinning an infinite amount in a given direction and locks by flipping direction. The radar you use, PEZ, does not, it spins a definite amount past the bot and stops, assuming it'll be told to spin the other way when the scan goes off. If the infinite lock misses it just keeps on spinning til it sees the opponent again, whereas the one used by your bots (as well as mine) will just sit unmoving, so it makes a difference for us, but not for the infinite lock. (the tradeoff is that the infinite lock slips alot). -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Yes, that was what I meant, but with fewer words. =) And the invisible while loop with execute() in it has nothing to do with it, right? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It has everything to do with it in the infinite radar lock.  It doesn't matter how much you *set* the radar to turn if you don't call execute. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Now we're getting somewhere. I have long wondered why my bots that never call execute() or do a blocking call still work. So, doing fire() instead of setFire() in the code above would remove the dependency of that hidden/secret while loop? Still, the fact that both variants of the code inside run() above costs equally many bytes saves <strong>me</strong> 2 bytes since I am fond of my non-infinit <a href="robowiki?NanoSatan" class=wikipagelink>NanoSatan</a> based radar. =) It might come in handy in my first nano ever - <a href="robowiki?LittleEvilBrother" class=wikipagelink>LittleEvilBrother</a>. (Not counting the <a href="robowiki?Poets" class=wikipagelink>Poets</a>s). -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+The call to setFire() is in the event handler, so if your radar slips, it won't be called, whether it's setFire or fire().  There needs to be a while loop in the run() method with a blocking call, or an execute() in it to be absolutely sure of nothing going wrong. (at least that's how I understand it. I almost always have a large portion of my code in a while loop (I prefer that to doing everything in event handlers, and I don't do minibots, so it doesn't matter)). -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I think you are fogetting that the InfiniteRadar<a href="robowiki?action=edit&id=InfiniteRadar" class=wikipageedit>?</a> <strong>never</strong> slips, ever. (Unless the battle goes on forever.) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+By InfiniteRadar<a href="robowiki?action=edit&id=InfiniteRadar" class=wikipageedit>?</a> you mean going POSITIVE_INFINITY one way, and then when you scan, going the other way?  That slips quite often, which is why it is usually only used in size restricted bots. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Yeah, wrong description from me. What I really meant is that it never stops spinning even if it slips. There's no need to do anything to make this absolutely sure. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>. It was J who thougth up using Math.cos instead of adding Math.PI / 2. It's rather obious when you see it used, but I would certainly never have thought about it myself! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Actually <a href="robowiki?NanoSatan" class=wikipagelink>NanoSatan</a> has been using this since long before <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a> was in robocode. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Cool. Then I use two <a href="robowiki?NanoSatan" class=wikipagelink>NanoSatan</a> thingy's in my bots. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<a href="robowiki?NanoSatan" class=wikipagelink>NanoSatan</a> uses Math.cos to adjust the heading, like in the code above.  I use it to do <a href="robowiki?BackAsFront" class=wikipagelink>BackAsFront</a>.  Different usages of the same property of cos, useful function that it is. :-) -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Indeed. I used to use tan to implement left as right, and cos handles about everything else ;) -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<hr noshade class=wikiline size=1>
+<tt>(int)(NUM_FACTORS * Math.abs(totalLatMovementSinceShot<a href="robowiki?action=edit&id=LatMovementSinceShot" class=wikipageedit>?</a> / absbearing))</tt> err.. mind explaining this to a confused passerby? At first using absbearing for distance threw me, but even after I got that I'm somewhat confused. You're multiplying the angular velocity by the number of guess factors to get the bin? What's the reasoning there (other than codesize)? (edit) Nevermind, I get it now, you're not even bothering with guess factors in the gun anymore, you just have a value that you can easily reconstruct to the angle, but GF +1 is well before the last bin in the array... -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Basically, yes.  At first I was doing something like this (at least, in practice): <tt>(int)(NUM_FACTORS * Math.abs(Math.asin(8/BULLET_SPEED) * (totalLatMovementSinceShot<a href="robowiki?action=edit&id=LatMovementSinceShot" class=wikipageedit>?</a> / (8 * event.getDistance() / BULLET_SPEED)))</tt>.  If you approximate <tt>Math.asin(8/BULLET_SPEED)</tt> to just <tt>(8/BULLET_SPEED)</tt> though, then those factors cancel out, and you just get the total lateral movement divided by the distance.  It would really not be worth it to make the highest bin actually equal to GF1, as it would require conversion in two places, and it would not benefit my accuracy.  This should all probably be in the comments. :/  I would definitely still say that the gun uses guess factors, they just don't correlate exactly to 0 through 1. -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+This is true for <a href="robowiki?Aristocles" class=wikipagelink>Aristocles</a> and <a href="robowiki?RaikoMicro" class=wikipagelink>RaikoMicro</a> too. The only thing that's important is to have reversable functions for going to and fro guess factors and lateral movement. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yes, it's true for <a href="robowiki?Muffin" class=wikipagelink>Muffin</a> as well, though to a greater degree (that's why I always called it GF-like). Nano, would you mind if I used this same function for calculating GFs in a closed-source bot? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I can't even wholy claim it as mine, since kawigi made me realize that I could eliminate my constants and get the same accuracy.  Go ahead and use it -- it's one of those things that you can't really patent since it's so general. :) -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+Alright, thanks :) I thought the same way, but I still feel inclined to ask since it's kind of grey-ish ;). -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I think we could probably credit either Albert or Mike Dorgan for that, too, since Moebius and <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a> used this to find their shot bearings from their patterns.  I suppose in a way, the way the shot bearing is seperated from the pattern in <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a>, it's similar to using a "wave" pattern matcher, in the sense that I'm using the same thing as waves in <a href="robowiki?ThnikkaBot" class=wikipagelink>ThnikkaBot</a>. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+This is a somewhat different implementation of the same idea, though. It's interesting to note that (I think) using 8/11 instead of asin(8/11) is more accurate, not an approximation. Since lateral velocity is the component of velocity perpendicular to you at all times, the only way to keep it at 8 for every tick would be to circle you, that's where GF 1 is in this case. It also makes me think about GFs registered with positive and negative <a href="robowiki?AdvancingVelocity" class=wikipagelink>AdvancingVelocity</a>, shouldn't they correspond to different angles in this case? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I had no idea that <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a> or any other bot used this method to find bearings.  I came up with it on my own as I was trying to find a smaller way to compute angles than the usual GF calculations.  However, it must be noted, as Kuuran alludes to, that it is not accurate unless the enemy is orbiting.  For instance, if a bot moves perpendicular to your bullet instead of perpendicular to YOU (and thus gets to the maximum angle of Math.asin(8/11)) this method will actually register an angle less than 1, as his lateral velocity will have been less than 8 every tick.  Overall the method is an approximation that assumes orbital movement, but it is a very handy approximation, for nanos. -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Nemo" class=wikipagelink>Nemo</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Nemo/Source" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Nemo/Source">View other revisions</a><br>Last edited March 8, 2004 8:03 EST by <a href="robowiki?Nano" title="ID 1958 from adsl-64-163-139-180.dsl.snfc21.pacbell.net">Nano</a> <a href="robowiki?action=browse&diff=1&id=Nemo/Source">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

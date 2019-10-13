@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Plains/Code - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Plains, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Code">Plains/Code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Plains" class=wikipagelink>Plains</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package ntc;
+import robocode.*;
+import java.awt.geom.*;
+import java.awt.Color;
+
+public class Plains extends AdvancedRobot
+{	
+	static private final double HALF_PI = Math.PI / 2;
+	static private double lastEnergy,curEnergy,favDistance,tryAmt,myPrevEnergy,dist;
+        static private final Rectangle2D.Double _fieldRect = new Rectangle2D.Double(18, 18, 724, 564);
+	static private double[] energygain=new double[2];
+	static private boolean tryingBack;
+	static private int timeSinceLastChanged;
+//	double tempX,tempY;
+	
+	public void run(){
+		tryAmt=144d;
+		timeSinceLastChanged=50;
+		energygain=new double[2];
+		tryingBack=false;
+		setAdjustRadarForGunTurn(true);
+		setAdjustGunForRobotTurn(true);
+		setTurnRadarRight(Double.POSITIVE_INFINITY);
+		while(true){			
+			double delta=lastEnergy-curEnergy;
+			
+			if(delta&lt;=3.01 &amp;&amp; delta&gt;=0.09){										
+				move(0);
+			}
+			if(--timeSinceLastChanged&lt;=0){
+				if(!tryingBack){
+					favDistance=Math.min(favDistance+=tryAmt*2d,575d);
+					tryingBack=true;
+//					out.println("Trying distance " + favDistance);
+				}else{
+					favDistance=Math.max(favDistance-=tryAmt*2.5,200d);
+//					backTried=true;
+//					out.println("Trying distance " + favDistance);
+//					out.print("Best distance is ");
+					if(energygain[1]&gt;=energygain[0]){
+						favDistance+=tryAmt*2d;
+					}
+//						out.println(favDistance + " since energygain[0] (" + ((int)energygain[0]) + ") &gt; energygain[1] (" + ((int)energygain[1]) + ")");
+//					else{
+//						out.println(favDistance + " since energygain[1] (" + ((int)energygain[1]) + ") &gt; energygain[0] (" + ((int)energygain[0]) + ")");
+//					}
+					energygain[0]=energygain[1]=0;
+					tryAmt/=2;
+					tryingBack=false;
+					timeSinceLastChanged=120;
+				}
+				timeSinceLastChanged=Math.max(100,(int)tryAmt*2);
+			}
+			if(Math.abs(dist-favDistance)&lt;=tryAmt/2){
+				energygain[(tryingBack)?1:0]+=getEnergy()-myPrevEnergy+delta;
+			}
+			myPrevEnergy=getEnergy();			
+			execute();
+		}
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e){
+		dist=e.getDistance();
+		if(favDistance==0d){ favDistance=dist; }
+		double absBearing=e.getBearingRadians()+getHeadingRadians(),vel=Math.signum(getVelocity()),turnAngle;
+		setTurnRadarLeft(getRadarTurnRemaining());
+		lastEnergy=curEnergy;
+		curEnergy=e.getEnergy();
+		double diff=favDistance-dist;
+		turnAngle=robocode.util.Utils.normalAbsoluteAngle(
+							absBearing
+							+HALF_PI
+							*((
+								(Math.abs(diff)&gt;tryAmt/2) ? 
+								1d+
+								Math.random()*
+								Math.signum(diff)*
+								vel
+								:
+								1d)))
+							;
+//		tempX=x+Math.sin(absBearing)*dist;
+//		tempY=y+Math.cos(absBearing)*dist;
+		double stick=200d*vel;
+		for(int i=1;!_fieldRect.
+		contains(
+				getX() + stick*Math.sin(turnAngle+=Math.signum(vel*Math.sin(e.getBearingRadians()))*i/500d),
+				getY() + stick*Math.cos(turnAngle)
+				) &amp;&amp; i&lt;500 &amp;&amp; (((Math.abs(absBearing-turnAngle)&lt;0.4 || i==499) ? move((int)(-getVelocity())):true)); i++);							
+		setTurnRightRadians(robocode.util.Utils.normalRelativeAngle(turnAngle-getHeadingRadians()));//out.println("Line 106");
+							
+		setTurnGunRightRadians(
+								robocode.util.Utils.normalRelativeAngle(
+								absBearing-getGunHeadingRadians()
+								));
+		setFire(Math.min(e.getEnergy()/4,getEnergy()/10));
+	}
+	public void onHitRobot(HitRobotEvent e){
+		move(0);
+	}
+	public boolean move(int dir){
+		double newVel=(Math.random()*41d) - 21d;
+		setMaxVelocity(Math.abs(newVel)+1d);
+		setAhead(((dir==0) ? newVel:dir)*Double.POSITIVE_INFINITY);
+		return false;
+	}
+
+/*	public void onPaint(java.awt.Graphics2D g){
+		double distance=Point2D.Double.distance(tempX,tempY,getX(),getY());
+		g.drawOval((int)(tempX-distance),(int)(tempY-distance),(int)(distance*2),(int)(distance*2));
+		g.setColor(Color.GREEN);
+		g.drawOval((int)(tempX-favDistance),(int)(tempY-favDistance),(int)(favDistance*2),(int)(favDistance*2));
+		g.setColor(new Color(0,150,0));
+		g.drawOval((int)(tempX-favDistance-(tryAmt/2)),(int)(tempY-favDistance-(tryAmt/2)),(int)((tryAmt/2+favDistance)*2),(int)((tryAmt/2+favDistance)*2));
+		g.drawOval((int)(tempX-favDistance+(tryAmt/2)),(int)(tempY-favDistance+(tryAmt/2)),(int)((favDistance-(tryAmt/2))*2),(int)((favDistance-(tryAmt/2))*2));
+	}
+*/	
+
+}
+
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Plains" class=wikipagelink>Plains</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Plains/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Plains/Code">View other revisions</a><br>Last edited May 24, 2008 20:39 EST by <a href="robowiki?Starrynte" title="ID 12409 from cpe-75-84-83-181.socal.res.rr.com">Starrynte</a> <a href="robowiki?action=browse&diff=1&id=Plains/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

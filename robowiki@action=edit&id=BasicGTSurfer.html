@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing BasicGTSurfer - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Basic, GTSurfer'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing BasicGTSurfer</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="BasicGTSurfer"  />
+<input type="hidden" name="oldtime" value="1236539855"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="7"  />
+<input type="hidden" name="captchaArg2" value="6"  />
+<input type="hidden" name="captchaOp" value="-"  />
+<input type="hidden" name="captchaId" value="168797682578"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">[[/Code|This code]] is based largely on BasicSurfer, but with a few tricks that make it surf GoTo style. I&#39;ve seen several people say they want to try GoTo surfing, and I seem to have made a strong (ie bug free) implementation, so I&#39;ll give back some of what I&#39;ve learned =).
+
+OK, an explanation of the changes (and additions) I made to BasicSurfer to get BasicGTSurfer:
+
+The most important were changing the precise prediction, the checkDanger, adding a getBestPoint method, and (obviously) adding a goTo method.
+
+For the precise prediction, I modified it so that, instead of returning a single point, it returns an ArrayList of all the predicted points that the bot covered. Another important part is removing the last point of the prediction, because we have to remember that we need to be stopped by the time the wave hits us. If we left the last point, the bot would decelerate as it approached the point, and we wouldn&#39;t get there in time. Thus, the last point has to go.
+
+Then next change is quite simple. We change the checkDanger method to take a point as a parameter, instead of a direction. This actually simplifies the checkDanger method, because it now has nothing to do with the PrecisePrediction.
+
+Adding the getBestPoint method is probably the most complicated. It takes an EnemyWave as an argument. Let me explain what this method does (though I think the source code is fairly clear): First we check if we have already generated points to go to. If not, we call the precise prediction, in each direction, and store the points. We go though each point and find which has the lowest danger. We then know that you need to go in the direction of that point, so we discard the points from the other direction. We also discard the points that are further than this &#39;safe point&#39;. (As an implementation decision, I stored this ArrayList of points in the EnemyWave, but you could easily store it as a class object.) We then need to decide which point to return to feed the &#39;goTo&#39; method. If the point is less than 20 pixels away from our current position, we won&#39;t reach top speed (8 + 6 + 4 + 2 = 20). So we loop through the ArrayList of points, and find the closest one that is more than 20 pixels away, which we return. If there isn&#39;t a point 20 pixels away, we return the last point, which is the safe point we decided on earlier. And that is the most complicated piece of code that I added!
+
+The goTo method is completely standard, but be careful about using the ones that decrease your speed as you go around corners. Our precise prediction doesn&#39;t do this, so neither should our goTo method.
+
+Other small changes were: 
+
+* Putting some distancing in the precise prediction. Because it is so simple to add this to goTo surfing, I decided to put it in.
+* Dividing the danger at a point by the distance from the fire location. This helps take the bot-width into account.
+
+Things which should still be implemented in a competitive goTo surfer:
+
+* Segmentation. The most important segments are (definitely) lateral velocity and distance. Acceleration helps, but not much. Also time-since-direction change, but that only helps against top GF guns and pattern matchers.
+* Taking into account the bot-width when calculating the danger.
+* Rolling averages in the surfing stats.
+* Accurately simulating the deceleration at the end point in the precise prediction (Helps a lot, but what helps more is predicting what would happen if you don&#39;t decelerate)
+
+-- [[Skilgannon]]
+
+&#39;&#39;&#39;Comments&#39;&#39;&#39;
+
+Very nice.  It looks like there&#39;s still &#39;&#39;lots&#39;&#39; of room for improvements, which is impressive given DrussGT&#39;s strength in the rumble.  I do plan to try my hand at this somewhere along the way, thank you for the jump start! -- [[Simonton]]
+* Yeah, I really should clean some of those things up (accurately predicting the deceleration springs to mind, as does my &#39;20 pixels ahead&#39; goto). They started out as hacks just to get the thing working, and ended up working so well that I kept them. I wonder what DrussGT would get with those things added in =). -- [[Skilgannon]]
+
+Hey Skilgannon, what is the difference between go-to direct to that position and go-to for every 20px? --[[Nat]] 
+
+The &#39;direct&#39; method feeds the final point into the &#39;goto&#39; method, ie. the point that we used to evaluate danger. The &#39;20 pixels ahead&#39; method feeds the nearest point at least 20 pixels away that was traveled by the precise prediction (20 pixels is the least that will make you move at full speed). In this *very* early GT surfer, I didn&#39;t predict going straight to each, but instead just used the points traveled by regular precise prediction as points I could go to, and assumed I would arrive there before the wave would. However the regular precise prediction travels in arcs around the enemy, so unless I used points along the way as goto points (sort of a &#39;path&#39; to follow), my bot would cut across the chord, and not follow the predicted motion. Before I started predicting going straight to each point I got better results by following the arc, however now that I have implemented going straight to each point predicted by the regular prediction, I can reach slightly higher/lower GFs than other surfers due to not moving in an arc but in straight lines. -- [[Skilgannon]]
+
+Can you clear that? Does current DrussGT move in arc or cross the arc? What is better? Now. some more, how can I &quot;Accurately simulating the deceleration at the end point in the precise prediction&quot;? --[[Nat]]
+
+The current DrussGT moves across the chord, ie. doesn&#39;t follow the arc. As for how to simulate the deceleration: read up on the GamePhysics, specifically the movement. The key part is deciding when your bot needs to start slowing down (make sure its with the same decision robocode uses), and then simulating it according to the same rules as the robocode engine. Max acceleration/deceleration and max turn per tick are both very important. -- [[Skilgannon]]
+
+I don&#39;t really understand. My precise predictor (BasicSurfer) calculated the new point based on the old point. How can I simulated the slowdown to each point? Because it will effect all other points. I think it time to read DrussGT code instead of BasicGTSurfer code =) --[[Nat]]
+
+OK, I read DrussGT code, do you use double prediction? --[[Nat]]
+
+Yes, the first prediction is only used to generate a &#39;possible&#39; set of points to go to. The actual prediction values (speed, heading etc) for those points are ignored, instead they are fed to the next precise prediction algorithm which checks where I would end up after x ticks if I use that point as a goto point. The first precise-prediction code isn&#39;t really necessary, it is just a useful way of making possible points to go to. -- [[Skilgannon]]
+
+This makes me curious, you say the first precise-prediction isn&#39;t really necessary, but I wonder, wouldn&#39;t it work to only have the *first* precise-prediction, and use some simple but accurate acceleration rules to determine how long it actually takes to get to points that are so close that acceleration will carry you through them when using a goto? -- [[Rednaxela]]
+
+Well, that&#39;s sort of what I do. I break the problem down into a linear one, with offset angle, and distance to destination. After x ticks of predicting the offset angle and the distance decreasing (you actually have to use the cosine rule, due to the fact the the offset also changes as you move forward), I translate it back into the real 2D problem. I do have some simple rules that I check first to eliminate points that won&#39;t add any escape angle over ones that have already been tested, but my second prediction algorithm is actually the one that runs many hundreds of times per turn, and has been optimised to the best of my ability.
+
+It would be much simpler if I didn&#39;t have to deal with the offset angle, coupled with the acceleration/deceleration. Each on its own might be workable into an integral that you just stick numbers into, but together they complicate things a bit. I guess a double integral might work.... but it&#39;s going to get messy because of the dependency of turn on velocity, and velocity is modified by acceleration. -- [[Skilgannon]]
+
+That solution is probably the best, but since I&#39;m never been that good at handling simulations with integrals what I did in YersiniaPestis surfing was that, I orbit one tick and check what happens if I start stopping, and only when the I was fully stopped or the the wave was hitting me while moving I&#39;d check for danger. But I&#39;m true surfing, not GoTo. -- [[zyx]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 7 - 6 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that BasicGTSurfer has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=BasicGTSurfer">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

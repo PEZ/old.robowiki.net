@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Polylunar - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Polylunar'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Polylunar">Polylunar</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?Polylunar/VersionHistory" class=wikipagelink>/VersionHistory</a>
+<p>
+<center><img src="http://homepages.ucalgary.ca/~agschult/images/Polylunar.png"></center>
+<p>
+<H3>Team Name</H3>
+
+<a href="robowiki?Polylunar" class=wikipagelink>Polylunar</a>
+<p>
+<H3>Bot Names</H3>
+
+Luna, Phobos, Io, Europa, and Charon. All of them are the same except color however.
+<p>
+<H4>Author</H4>
+
+<a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+<H4>What's special about it?</H4>
+
+<p>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<a rel="nofollow" href="http://homepages.ucalgary.ca/~agschult/ags.polylunar.Polylunar_1.6.jar">[here]</a>
+<p>
+<H4>How competitive is it?</H4>
+
+It's getting there... ;-)
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+The team members team up into tag-teams to gang up on enemies like <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a>. Unpaired team members move with a very simple <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a> with no randomization or bullet dodging (yet).
+<p>
+<H4>How does it fire?</H4>
+
+Well, slightly fancy <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a>. I plan to add some better solo guns as well though.
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+Well, it doesn't at all. :-)
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+Well, it doesn't really.  Well, except that unpaired team members don't fire unless they're the only one left or are in very close range (which they try not to be in).
+<p>
+<H4>How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a>?</H4>
+
+Whichever configuration that allows the optimal creation of tag teams (shortest total distance necessary for team members to travel). :-)
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+Nothing at all!
+<p>
+<H4>Where did you get the name?</H4>
+
+For the team name:
+<br>Well, it's tactics are derived from <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a>, and it works for things besides 2v2 with no limit on the numbers so... Polylunar.
+<p>
+For the various bot names:
+<br>I thought it would be cute to name them after various moons ;-)
+<p>
+<H4>Can I use your code?</H4>
+
+Like <a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a>, I'm releasing it under the RWPCL, but I strongly advise that the best way to really fully understand algorithms is to implement them yourself... ;-)
+<p>
+<H4>What's next for your robot?</H4>
+
+Plenty of things!
+<UL >
+<li> Better solo-targeting
+<li> Better solo-behaviors
+<li> Make chasing slightly predictive (instead of chasing a 2-tick-old 'shadow' which is delayed one tick by scan delay and a second tick by team communication)
+<li> &lt;strike&gt;Bulletpower selection (just does 3.0 right now)&lt;strike&gt; <i>Done.</i>
+<li> And whatever else comes to mind
+</UL>
+<p>
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+Well, as of 1.2, the only teams it doesn't seem to beat in the long run, are <a href="robowiki?Phoenix" class=wikipagelink>PhoenixTeam</a> and <a href="robowiki?X2" class=wikipagelink>Xmen</a>. As of 1.3, they seem somewhat fixed, but wins against <a href="robowiki?KID" class=wikipagelink>kid.team.OmegaSquad</a>, <a href="robowiki?Phoenix" class=wikipagelink>PhoenixTeam</a>, <a href="robowiki?X2" class=wikipagelink>Xmen</a>, and <a href="robowiki?Garm" class=wikipagelink>GarmTeam</a> are more frail than I'd like.
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+The larger part of it is from scratch, but in concept is a descendant of <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a>. Also a little bit of event handling code from <a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a>.
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+ :-)
+<p>
+Well then... it isn't faring quite so well on the field and I think I know why. In my earlier tests, I was using the default 800x600 field when the team RR uses a 1200x1200 field. It seems like the larger field causes Polylunar some very serious problems. The main issues seem to be:
+<br>  --- Larger distances to travel mean that Polylunar is in a vulnerable situation for significantly longer and that chasing based on an enemy's current location becomes increasingly inefficient.
+<br>  --- The <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a> that's currently in use for unpaired robots often tends to cause the bot to end up moving along right against the walls. In the large field this means that it takes far too long to get into the action if it becomes required for a pairing.
+<br>  --- At these larger distances, linear targeting with nothing preventing firing out of bounds is far less effective.
+<br>  --- In the larger fields, the other bots tend not to be cornered so much
+<br>  --- Only firing 3.0 power bullets is probably more of a problem on the larger field size.
+<br> This is a little disappointing. Hopefully I'll manage to get these problems solved...
+<br> -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Well, despite the setback due to the larger field, Polylunar is not dead in the water. I've been using <a href="robowiki?Valkiries" class=wikipagelink>Valkiries</a> as a <a href="robowiki?TestBed" class=wikipagelink>TestBed</a> and have made some notable improvements that I think would hold true against most if not all bots. Here's a pretty graph of the incremental improvements I've been making:
+<br><img src="http://homepages.ucalgary.ca/~agschult/Polylunar1.png">
+<br>I'm too tired to write about what changes I made in each increment right now, but in each revision, I did make an improvement which is uplifting (as opposed to changes in <a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a> more often than not degrading performance). Between the first (red) and last (orange) the difference is certainly notable. I think I'll make a 1.1 release soon based on the improvements, but first I want to get the missing battles in the rumble filled in. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Oooh... version 1.3 is sitting at the top of the <a rel="nofollow" href="http://rumble.fervir.com/rumble/PremierLeague?game=teamrumble">[PremierLeague]</a>... ;-) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Congratulations! I'm also working in a new team. <a rel="nofollow" href="http://testwiki.roborumble.org/w/index.php?title=Enjambre">[Enjambre]</a> is only a proof of concept but the new one is intended to be another <a href="robowiki?ProblemBot" class=wikipagelink>ProblemBot</a> for the TeamRumble<a href="robowiki?action=edit&id=TeamRumble" class=wikipageedit>?</a> :P -- Jab<a href="robowiki?action=edit&id=Jab" class=wikipageedit>?</a>
+<p>
+Thanks! It seems that position was somewhat frail though, because after further battles, Polylunar seems to be beaten by kid.team.OmegaSquad. So my next goals? Not fail so much against OmegaSquad, and make how much I beat <a href="robowiki?Phoenix" class=wikipagelink>PhoenixTeam</a> and <a href="robowiki?X2" class=wikipagelink>Xmen</a> by a bit more robust. After that I might being my first <a href="robowiki?Melee" class=wikipagelink>MeleeBot</a>, partially with the intention of brining what I learn back to the team scene to improve Polylunar. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Well... released 1.4 now, which after just a small change beats <a href="robowiki?Phoenix" class=wikipagelink>PhoenixTeam</a> with considerably more robustness (average score of 57.5 instead of 52.5 in my 150 trial tests). We'll see how this goes... :-) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Well then... version 1.4 is sure doing quite well... <a href="robowiki?X2" class=wikipagelink>Xmen</a> appears to be the only thing I don't get better than 55 against and I've put some rather ugly looking <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetails?game=teamrumble&amp;name=rz.AlephTeam%200.34">[red]</a> <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetails?game=teamrumble&amp;name=abc.ShadowTeam%203.66">[marks]</a> in the details pages of the only teams with over 1900 points. :-) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Well, I made a logo for Polylunar to celebrate seeming to have the team PL crown with reasonable stability. Hope it isn't grinning too much :-) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+The logo is indescribable. :P But this comment is about another thing,it seems that I have to have the robocode security disabled to test my underdevelopment team against Polylunar! Access control Exception. -- Jab<a href="robowiki?action=edit&id=Jab" class=wikipageedit>?</a>
+<p>
+Hmm, that is very strange. What version of Robocode are you using? I'm not having any issues like that here and I've tested it on a few different installations of Robocode 1.6.0 none of with with security disabled. Are there any other details to the error? -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+If you are able to reproduce the problem, then tell me what version of Robocode you are using, the setting (if you changed them), and also how exactly to reproduce the problem. Then file a bugreport on SF (<a rel="nofollow" href="http://sourceforge.net/tracker/?group_id=37202&amp;atid=419486">http://sourceforge.net/tracker/?group_id=37202&amp;atid=419486</a>). Then I'll make sure that the issue is solved. :-) --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+It happens to Polylunar against any team.
+Robocode version: 1.4.9 Settings: java -Xmx512M -Dsun.io.use<a href="robowiki?CanonCaches" class=wikipagelink>CanonCaches</a>=false -cp libs/robocode.jar;libs/codesize.jar robocode.Robocode
+<p>
+<PRE >
+  ags.polylunar.Luna [1.4]: Exception: java.security.AccessControlException<a href="robowiki?action=edit&id=AccessControlException" class=wikipageedit>?</a>: Preventing ags.polylunar.Luna [1.4] from access:     (java.io.FilePermission<a href="robowiki?action=edit&id=FilePermission" class=wikipageedit>?</a> G:\robocode\robots\.robotcache\ags.polylunar.Polylunar_1.4.jar_\robocode\StatusEvent<a href="robowiki?action=edit&id=StatusEvent" class=wikipageedit>?</a>.class read): You may only read files in your own root package directory. 
+  java.security.AccessControlException<a href="robowiki?action=edit&id=AccessControlException" class=wikipageedit>?</a>: Preventing ags.polylunar.Luna [1.4] from access: (java.io.FilePermission<a href="robowiki?action=edit&id=FilePermission" class=wikipageedit>?</a>   G:\robocode\robots\.robotcache\ags.polylunar.Polylunar_1.4.jar_\robocode\StatusEvent<a href="robowiki?action=edit&id=StatusEvent" class=wikipageedit>?</a>.class read): You may only read files in your own root package directory. 
+    at robocode.security.RobocodeSecurityManager<a href="robowiki?action=edit&id=RobocodeSecurityManager" class=wikipageedit>?</a>.checkPermission(Unknown Source)
+    at java.lang.SecurityManager<a href="robowiki?action=edit&id=SecurityManager" class=wikipageedit>?</a>.checkRead(Unknown Source)
+    at java.io.File.length(Unknown Source)
+    at robocode.security.RobocodeClassLoader<a href="robowiki?action=edit&id=RobocodeClassLoader" class=wikipageedit>?</a>.loadRobotClass<a href="robowiki?action=edit&id=RobotClass" class=wikipageedit>?</a>(Unknown Source)
+    at robocode.security.RobocodeClassLoader<a href="robowiki?action=edit&id=RobocodeClassLoader" class=wikipageedit>?</a>.loadClass(Unknown Source)
+    at java.lang.ClassLoader<a href="robowiki?action=edit&id=ClassLoader" class=wikipageedit>?</a>.loadClass(Unknown Source)
+    at java.lang.ClassLoader<a href="robowiki?action=edit&id=ClassLoader" class=wikipageedit>?</a>.loadClassInternal<a href="robowiki?action=edit&id=ClassInternal" class=wikipageedit>?</a>(Unknown Source)
+    at ags.polylunar.robotdata.AllyData<a href="robowiki?action=edit&id=AllyData" class=wikipageedit>?</a>.updateTick(AllyData<a href="robowiki?action=edit&id=AllyData" class=wikipageedit>?</a>.java:57)
+    at ags.polylunar.core.Moon.updateStatus(Moon.java:58)
+    at ags.polylunar.core.Moon.runTick(Moon.java:39)
+    at ags.polylunar.base.BotBase<a href="robowiki?action=edit&id=BotBase" class=wikipageedit>?</a>.run(BotBase<a href="robowiki?action=edit&id=BotBase" class=wikipageedit>?</a>.java:153)
+    at robocode.peer.RobotPeer<a href="robowiki?action=edit&id=RobotPeer" class=wikipageedit>?</a>.run(Unknown Source)
+    at java.lang.Thread.run(Unknown Source)
+</PRE>
+-- Jab<a href="robowiki?action=edit&id=Jab" class=wikipageedit>?</a>
+<p>
+It looks like Polylunar is dependant on the StatusEvent<a href="robowiki?action=edit&id=StatusEvent" class=wikipageedit>?</a>, which isn't available in the earlier versions of Robocode. If you use a later version there shouldn't be a problem. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Ahh yes, it does use StatusEvent<a href="robowiki?action=edit&id=StatusEvent" class=wikipageedit>?</a> (like I tend to do in just about any of my bots that are not very tight on codesize limits). So yes, use 1.5.4 or 1.6.0 and you'll be fine, besides, 1.5.4 is to my understanding supposed to be considered the "minimum" version that should be run with <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> anyways. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Ok, I didn't know that the API was extended in new versions. Is this legal? ;). I will check these new classes and functions :P. For contributing battles I always use another robocode installation which version is 1.5.4. -- Jab<a href="robowiki?action=edit&id=Jab" class=wikipageedit>?</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Hmm... I'm nearly regretting putting some of my very very well tested and fine turned code from <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> into <a href="robowiki?Polylunar" class=wikipagelink>Polylunar</a>... It's hard to improve on the previously low-hanging-fruit of bullet power selection and stuff that I've already tuned in <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a>! ;-) Of course... still lots to improve, like unpaired/solo-movement/targeting, and seeing if I can find something better than <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a> at close range chasing. It's actually really hard to find anything better than <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a> for close range chasing! -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Polylunar" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Polylunar">View other revisions</a><br>Last edited August 26, 2008 13:41 EST by <a href="robowiki?Rednaxela" title="ID 15253 from d75-156-142-151.abhsia.telus.net">Rednaxela</a> <a href="robowiki?action=browse&diff=1&id=Polylunar">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

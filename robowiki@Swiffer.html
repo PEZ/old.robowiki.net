@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Swiffer - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Swiffer'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Swiffer">Swiffer</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Swiffer the cleaning bot by <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+This is like a mega <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> with new segmentation for the guns and 3 different movement schemes.
+<p>
+0.2.0 is out. Actually doesn't deserve a new minor version number. It's only a slight code clean-up, an experiment with a different segmentation and a bug-fix in the survivalist code. I forgot to fix the enemy name bug mentioned by <a href="robowiki?Jim" class=wikipagelink>Jim</a> below. I'll try to remember next time. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Hey! It's fun working with a new bot again. =) I just released 0.2.2. It fixes the bug with enemy name lacking version. I also added a movement mode and adjusted the survivalist strategy some. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Fixed some bugs and added a movement manager. Still doesn't save data. Version 0.2.4 is unleached. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<UL >
+<li> I wish <a href="robowiki?Jekyl" class=wikipagelink>Jekyl</a> could be "unleached" =^&gt; -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<li> I keep doing that!!! Unleashed it should be of course. It still has the leach movement mode left... Man, I'm thick. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<li> I only thought it ironic as I have been trying to beat <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> over the past couple of days (and would like very much to be through with him). I promise you one thing: Your English is much better than my {French, Sweedish, German} (Sweede's seem to speak all three on average =^&gt;). -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<li> Many Swedes do, yes. But I only speak Swedish and English. Some words in both languages give me big spelling challanges. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</UL>
+</UL>
+<p>
+Version 0.2.8 Uses a <a href="robowiki?CribSheet" class=wikipagelink>CribSheet</a> of ratings for how well each movement mode works and then tries to use the movements that works best the most. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Version 0.2.9 Fixes the bug with restoring the <a href="robowiki?Targeting" class=wikipagelink>Targeting</a> <a href="robowiki?CribSheet" class=wikipagelink>CribSheet</a>. Now it should be able to compensate somewhat for the slow learning of it's gun. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+<H4>Comments</H4>
+
+Not necessarily a bug but certainly an inconvienience. I suspect that you are searching for a period "." character in the name of your enemy for some sort of stats savings purposes. When I attempted to run Swiffer vs. Jekyl dev version (which has no version number) it throws an error. Error is below:
+<p>
+<pre>
+pez.clean.Swiffer 0.1.1: Exception: java.lang.StringIndexOutOfBoundsException: String index out of range: -1
+java.lang.StringIndexOutOfBoundsException: String index out of range: -1
+    at java.lang.String.substring(Unknown Source)
+    at pez.clean.Bot.onScannedRobot(Swiffer.java:85)
+    at robocode.peer.robot.EventManager.onScannedRobot(EventManager.java:607)
+    at robocode.peer.robot.EventManager.processEvents(EventManager.java:738)
+    at robocode.peer.RobotPeer.tick(RobotPeer.java:1024)
+    at robocode.peer.RobotPeer.turnRadar(RobotPeer.java:1086)
+    at robocode._AdvancedRadiansRobot.turnRadarRightRadians(_AdvancedRadiansRobot.java:271)
+    at pez.clean.Bot.run(Swiffer.java:78)
+    at robocode.peer.RobotPeer.run(RobotPeer.java:616)
+    at java.lang.Thread.run(Unknown Source)
+</pre>
+<p>
+Seems to work otherwise. -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+Maybe <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> is trying to prevent people from testing against his bot, sort of like Chameleon a couple of versions ago.  And he'd find a period in your name if you're in a package, if he wants a version, he would probably look for a space. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Thanks for letting me know. I'm not doing it on purpose. Even if it is an idea. =) I am looking for a space character. (The source is bundled in the jar file by the way.) Swiffer is just something I threw together in a couple of hours in disgust over not getting anywhere with <a href="robowiki?GloomyDark" class=wikipagelink>GloomyDark</a>. The data saving is switched off actually. It lowers Swiffers performance! I think something is offset wrongly in the <a href="robowiki?CribSheet" class=wikipagelink>CribSheet</a> save  / restore procedure. Swiffer tries to save only the index of the most visited factor for each segment situation. It brings the file down to 46 bytes without zip encoding. Please have a look if you're curious. If you can help me nail the bug I will be eternally grateful. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I see Swiffer beat DT in RR,cool done PEZ,Lacrimas is the 1st in PREMIER LEAGUE now,happy~;],I know Lacrimas cannot beat DT in a large rounds battle now,so maybe next battle Lacrimas will lose,how will Swiffer do against DT in large rounds battles?  -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+<p>
+Way cool! I hadn't noticed. Though it's only one battle. However, version 0.2.4 beat DT two 35-round battles in a row in my tests. Which was why I released it. =) I haven't done any extensive tests though so it was probably just luck. Noone seems to be running the RR@H client though. Last battle was 24 hours ago, or am I reading something wrong? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I see pez.clean.Swiffer_0.2.2 beat DT in RR once,but 0.2.4 lost to DT twice.  -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+<p>
+Yeah, but it seems it is giving DT a better fight than any of my bots have done for very long. 45% is sweet. The trageting of Swiffer is rather weak (only about 85% in the fast learning <a href="robowiki?TargetingChallenge" class=wikipagelink>TargetingChallenge</a>). I think I might be able to push Swiffer into the top-10 if I could just find out how to make a good gun. But <a href="robowiki?Lacrimas" class=wikipagelink>Lacrimas</a> will still be king of <a href="robowiki?RoboRumble/PremierLeague" class=wikipagelink>RoboRumble/PremierLeague</a>. Lacrimas only loses to one bot, <a href="robowiki?Quest" class=wikipagelink>Quest</a>. In my book that makes Lacrimas <a href="robowiki?TheBestBot" class=wikipagelink>TheBestBot</a>. Truly good work! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+~;],I just saw that Swiffer_0.2.2 beat DT once again,but 0.2.4 still lost to it,maybe there is some keys between 0.2.2 and 0.2.4 that can give DT a fight!Did you tested 0.2.2 much rounds against DT?I want to have a look at 0.2.2's performance but i only have 0.2.4 on my disk. ~;[  -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+<p>
+I never testes 0.2.2 at all against any bot except <a href="robowiki?Jekyl" class=wikipagelink>Jekyl</a>. The moment it was winning against Jekyl, I packaged it and uploaded. =) I think 0.2.2 just had a lucky round there but if you want to test it, be my guest: <a rel="nofollow" href="http:/robocode/uploads/pez/pez.clean.Swiffer_0.2.2.jar">http:/robocode/uploads/pez/pez.clean.Swiffer_0.2.2.jar</a> The window for Swiffer to give <a href="robowiki?DT" class=wikipagelink>DT</a> is closing I think. An AM gun in DT will invalidate one of Swiffer's movement modes. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I tested Swiffer 0.2.4,about 500 rounds,only lost to DT a little margin.good~  --<a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+<p>
+Did I upload 0.2.4 for you? I must have been tired! Any way I have tweaked some with the movement now, with some consulting from <a href="robowiki?Jim" class=wikipagelink>Jim</a>. Here's the dev versions result after 1000 rounds:
+<p>
+<img src="http:/robocode/uploads/pez/Swiffer0.2.6vsDT2.31.png">
+<p>
+Sweeet! I bet DT 2.41 fixes whatever make Swiffer's gun hit DT more than DT hits it though. My usual timing. =)
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It was the link that was wrong. I did upload 0.2.2 =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Cool~~But,hehe~~new DT is released,much stronger than 2.41 i think.  -- <a href="robowiki?Iiley" class=wikipagelink>iiley</a>
+<p>
+For now I will have to do with enjoying the feeling of being able to beat 2.31. It would be surprising to me if I suddenly could keep <a href="robowiki?Paul" class=wikipagelink>Paul</a>'s pace. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Swiffer" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Swiffer">View other revisions</a><br>Last edited May 5, 2006 0:32 EST by <a href="robowiki?Voidious" title="ID 6343 from resnet216-83.resnet.buffalo.edu">Voidious</a> <a href="robowiki?action=browse&diff=1&id=Swiffer">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Andrew/BrokenR2D2 - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Andrew, Broken, R2D2'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/BrokenR2D2">Andrew/BrokenR2D2</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Andrew" class=wikipagelink>Andrew</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><b>No diff available--this is the first major revision.</b>
+(no other diffs)<hr class=wikilinediff>
+<div class=wikitext><pre>
+package ahf;
+import robocode.*;
+import java.awt.geom.*;
+import java.util.ArrayList;
+import java.awt.Color;
+
+/*andrew's first attempt at a statistical gun*/
+/*has no movement and a really junky radar until gun works*/
+
+public class R2d2 extends AdvancedRobot
+{
+	int [] bins=new int[17];
+	ArrayList vBullets=new ArrayList();
+	Enemy target=new Enemy();
+	
+	public void run() {
+		for (int i=0;i&lt;17;i++){
+			bins[i]=0;		
+		}
+		setColors(Color.yellow,Color.black,Color.pink);
+		setAdjustGunForRobotTurn(true);
+		setAdjustRadarForGunTurn(true);
+		turnRadarRight(Double.POSITIVE_INFINITY);
+		while (true){
+			updateVirtualBullets();
+		}
+	}
+	public void onScannedRobot(ScannedRobotEvent e){
+		target.updateEnemy(e.getName(),e.getHeadingRadians(),e.getBearingRadians(),e.getDistance(),e.getVelocity(),getX(),getY(),getHeadingRadians(),getTime(),e.getEnergy());
+		gunManager(e);	
+		setTurnRadarLeft(getRadarTurnRemaining());
+		clearAllEvents();
+	}
+	public void onRobotDeath(RobotDeathEvent event){
+		setTurnRadarRight(Double.POSITIVE_INFINITY);
+	}
+	public void gunManager(ScannedRobotEvent e){
+		fireVirtualBullets();
+		double angle=e.getBearingRadians()+getHeadingRadians()-getGunHeadingRadians();
+		int highestbin=0;
+		for (int i=1;i&lt;17;i++){
+			if (bins[i]&gt;bins[highestbin])
+				highestbin=i;
+		}
+		for (int i=0;i&lt;17;i++){//debug code
+			out.println("bin"+(i-8)+" "+bins[i]);
+		}
+		out.println(highestbin-8);
+		double offset=Math.toRadians((highestbin-8)*5.4*(target.lastVelocity&lt;0?-1:1));
+		setTurnGunRightRadians(robocode.util.Utils.normalRelativeAngle(angle+offset));
+	    if (getGunHeat()==0)
+			setFire(3);
+	}
+	public void fireVirtualBullets(){
+		for (int i=-8;i&lt;8;i++){ /*Shoot the virtual bullets*/
+			VBullet tempbullet=new VBullet(getX(),getY(),robocode.util.Utils.normalRelativeAngle(target.enemyBearing+getHeadingRadians())+Math.toRadians(i*5.4),getTime(),3,i);
+			vBullets.add(tempbullet);
+		}
+	}
+	public void updateVirtualBullets(){ /*Manages the virtual bullets*/ 
+		/*Check to see if virtual bullets hit*/
+		for (int i=0;i&lt;vBullets.size();i++){
+			VBullet tempbullet=(VBullet)vBullets.get(i);
+			tempbullet.updateBullet(getTime());
+			if (tempbullet.targetWasHit(target.xPos,target.yPos,getTime())){
+				/*put in bin*/
+				bins[tempbullet.index+8]++;
+				vBullets.remove(i);	
+			}
+		}
+		/*Delete the virtual bullets when they get out of range*/
+		for (int i=0;i&lt;vBullets.size();i++){ 
+			VBullet tempbullet=tempbullet=(VBullet)vBullets.get(i);
+			tempbullet.updateBullet(getTime());
+			if (tempbullet.outOfRange(target.xPos,target.yPos,getTime())){
+				vBullets.remove(i);
+			}	
+		}
+		
+	}
+
+public class VBullet
+{
+	private double spawnX;
+	private double spawnY;
+	private long spawnTime;
+	private double heading; //in radians
+	private double liveDistance;
+	public double distanceTraveled;
+	private double velocity;
+	private double power;
+	private double targetX;
+	private double targetY;
+	public int index;
+	
+	public VBullet (double spawnX,double spawnY,double absHeading,long time,double normalizedPower,int _index){
+		spawnX=spawnX;
+		spawnY=spawnY;
+		heading=absHeading;
+		spawnTime=time;
+		power=normalizedPower;
+		velocity=20-3*normalizedPower;
+		distanceTraveled=0;
+		index=_index;
+	}
+	public VBullet (){
+	}
+	public void updateBullet (double time){ /*updates the distance the bullet travels*/
+		distanceTraveled = (time-spawnTime)*velocity;
+	}
+	public double getX(double now){ /*Get x coordinate of virtual bullet*/
+		updateBullet(now);
+		return spawnX+Math.sin(heading)*distanceTraveled;
+	}
+	public double getY(double now){ /*Get y coordinate of virtual bullet*/
+		updateBullet(now);
+		return spawnY+Math.cos(heading)*distanceTraveled;
+	}
+	/*Next 3 functions lifted from SandboxMini by Paul Evens*/
+	public boolean targetWasHit(double targetX, double targetY, long now) {		//for this target, at this time does the bullet come within 30 units of the target over the last tick			
+		
+		if (range(targetX,targetY,now) &gt; 50.0) return false;  // if we are no where near return immediatly
+		for (double fraction = 0.0; fraction&lt;1.05; fraction+=0.1) {  //if we are close check 10 positions of the bullet to make sure it does not hop over the target
+			if (range(targetX,targetY,now-fraction) &lt; 30.0) return true;
+		}
+		return false;  //close but not close enough over the last tick
+	}
+	public boolean outOfRange(double targetX, double targetY, long now) {		//has the bullet traveled beyond the range of the enemy
+		double targetFromOrigin = Math.sqrt((targetX-spawnX)*(targetX-spawnX)+(targetY-spawnY)*(targetY-spawnY));
+		if (range(spawnX, spawnY, now) &gt; targetFromOrigin+30.0) return true; else return false;  //if our bullet is 30 units further away than our target (from where the bullet was fired from) it will never hit the target
+	}
+	double range( double targetX, double targetY, double now) {  //returns the distance between the target and where the bullet was fired from.
+		double xo = targetX-this.getX(now);
+		double yo = targetY-this.getY(now);
+		return Math.sqrt( ( (xo)*(xo) ) + ( (yo)*(yo) ) );
+	}
+
+		
+
+
+}
+public class Enemy //the one from FUSiOn 
+{
+	public String enemyName;	
+	public double enemyHeading;
+	public double deltaHeading;
+	public double enemyBearing;
+	public double absoluteBearing;
+	public double lastVelocity;
+	public long lastScanTime;
+	public double lastAcceleration;
+	public double enemyEnergy;
+	public double deltaEnergy;
+	public double enemyDistance;
+	public double xPos;
+	public double yPos;
+	public boolean alive;
+	
+	
+	public void updateEnemy(String name, double heading, double bearing, double distance, double velocity, double myX, double myY, double myHeading, long scantime, double energy)
+	{
+		enemyName = name;
+		
+		deltaHeading = robocode.util.Utils.normalRelativeAngle(-enemyHeading + (enemyHeading = heading));
+		absoluteBearing = robocode.util.Utils.normalRelativeAngle((enemyBearing = bearing) + myHeading);
+		
+		lastAcceleration = (-lastVelocity + (lastVelocity = velocity))/(-lastScanTime + (lastScanTime = scantime));
+
+		deltaEnergy = -enemyEnergy + (enemyEnergy = energy);
+	
+		xPos = myX + (enemyDistance = distance) * Math.sin(absoluteBearing);
+		yPos = myY + enemyDistance * Math.cos(absoluteBearing);
+	}			
+}
+}
+
+--[[andrew]]
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Andrew" class=wikipagelink>Andrew</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Andrew/BrokenR2D2" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Andrew/BrokenR2D2">View other revisions</a><br>Last edited February 14, 2004 3:53 EST by <a href="robowiki?David_Alves" title="ID 2138 from c-67-161-11-94.client.comcast.net">David Alves</a> <a href="robowiki?action=browse&diff=1&id=Andrew/BrokenR2D2">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>GuessFactorTargeting/Tutorial - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Guess, Factor, Targeting, Tutorial'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Tutorial">GuessFactorTargeting/Tutorial</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><div align=right><em>See also: <a href="robowiki?GFTargetingBot" class=wikipagelink>GFTargetingBot</a> (good if you don't want to figure this all out before you get your hands dirty).</em></div>
+<H2>The Guess Factor Targeting Tutorial by <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a></H2>
+
+<p>
+<a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> is a simple idea and is also one of the most effective and practical targeting algorithms used in Robocode.  This tutorial will go over how to make a simple <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> gun, based loosely on code from <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>, who sports one of the most effective versions of the algorithm to date.
+<p>
+This tutorial is meant for people who already have an understanding of the Robocode API and know how to use non-blocking (setXXX) calls effectively.
+<p>
+<H4>How it works</H4>
+
+<p>
+Many people already know what <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> is all about, and they can probably skip this part.  It was thought up by <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a> and first implemented in his fine robot, <a href="robowiki?SandboxLump" class=wikipagelink>SandboxLump</a>.  He explains the algorithm <a rel="nofollow" href="http://dialspace.dial.pipex.com/town/pipexdsl/q/aqre94/robocode/guessfactor.shtml">[here]</a>.  However, some features of the original implementation were overly complex and possibly even less effective for one-on-one in today's competitive environment.
+<p>
+The philosophy and assumption we make for <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> is that our enemy is moving randomly in some way or another (in <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a>, we wouldn't be assuming that).  The direction we need to shoot is the sum of several random decisions made by our enemy.  One nice thing about sums of random values is that they tend to show statistical trends.  The trick to <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> is to find out which direction we should shoot each time we fire, and in the future, we fire in the direction that was correct the most often.  
+<p>
+<H4>Guess Factor Targeting Terminology</H4>
+
+<p>
+<strong><a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a></strong> - a direction that may be fired in.  Usually people talk about <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a>s normalized over the maximum escape angle, where shooting directly where we see our target is GF 0.0, shooting as far ahead of our target as they could possibly get by the time our bullet would reach them is GF 1.0, and firing just as far behind them is GF -1.0.  Note that to find this, we need to know what the maximum angle is as well as whether they are moving around us to the right (clockwise) or to the left (counter-clockwise).
+<p>
+<strong><a href="robowiki?MovementProfile" class=wikipagelink>MovementProfile</a></strong> - The combination of directions we could fire and the frequency that each direction is correct is what people refer to as the bot's "profile".  Using tools like <a href="robowiki?FloodGrapher" class=wikipagelink>FloodGrapher</a>, <a href="robowiki?RoboGrapher" class=wikipagelink>RoboGrapher</a> and <a href="robowiki?SmogPainter" class=wikipagelink>SmogPainter</a>, you can actually view the profile of a give bot from saved data of other robots.
+<p>
+<strong><a href="robowiki?RollingAverage" class=wikipagelink>RollingAverage</a>s</strong> - Also called moving averages and some other things.  Basically a way of favoring newer data over older data.  A guess-factor gun can be awful against a robot that changes its movement unless it uses rolling averages, however, for simplicity, I probably won't implement them in this tutorial.
+<p>
+<strong><a href="robowiki?SegmentedData" class=wikipagelink>Segmentation</a></strong> - Sometimes we can get more relevant data by splitting it up on some parameters, rather than just looking at the general profile.
+<p>
+<strong><a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a></strong> - An object that tracks where a bullet would be if it were fired along a certain trajectory and finds out if it would hit at that trajectory or not.  These were used in all of the earliest guess factor guns to analyze the bot's <a href="robowiki?MovementProfile" class=wikipagelink>MovementProfile</a>.
+<p>
+<strong><a href="robowiki?Wave" class=wikipagelink>Wave</a>s</strong> - Most current robots that use <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> use <a href="robowiki?Wave" class=wikipagelink>Wave</a>s to find the bearing that they should have shot at, as an alternative to using several <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>.  These are a little more efficient in general, and can also be modified slightly to give the exact same results as <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> (tracking ALL angles that would have hit, rather than just the median).  This tutorial will use a <a href="robowiki?Wave" class=wikipagelink>Wave</a> implementation.
+<p>
+<H4>Getting started</H4>
+
+<p>
+First of all, I'm going to assume you already have a robot with some kind of <a href="robowiki?Movement" class=wikipagelink>Movement</a> and <a href="robowiki?Radar" class=wikipagelink>Radar</a> where the radar scans your enemy at least most of the time.  Check other parts of the wiki for more information on that before continuing if you don't understand it.  Let's start by implementing the wave bullet, since finding out what direction we should have used at any time is at the core of this algorithm.
+<p>
+The data we need to do our work is basically these:
+<UL >
+<li> the location we are firing from
+<li> the time we fired
+<li> what clock direction our opponent is moving in relative to us (1 for clockwise, -1 for counterclockwise)
+<li> where <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> 0 is (i.e. - the direction to our target at firetime)
+<li> the power (really the speed) of the bullet
+<li> where to return the "answer" to.
+</UL>
+<p>
+<pre>
+import java.awt.geom.*;
+import robocode.util.Utils;
+
+public class WaveBullet
+{
+	private double startx, starty, startBearing, power;
+	private long fireTime;
+	private int direction;
+	private int[] returnSegment;
+	
+	public WaveBullet(double x, double y, double bearing, double power, int direction, long time, int[] segment)
+	{
+		startx = x;
+		starty = y;
+		startBearing = bearing;
+		this.power = power;
+		this.direction = direction;
+		fireTime = time;
+		returnSegment = segment;
+	}
+</pre>
+<p>
+Now let's add a few useful utility functions that will come in useful:
+<p>
+<pre>
+	public double getBulletSpeed()
+	{
+		return 20-power*3;
+	}
+	
+	public double maxEscapeAngle()
+	{
+		return Math.asin(8/getBulletSpeed());
+	}
+</pre>
+<p>
+It may not be obvious why the max escape angle is asin(8/bulletspeed) regardless of distance or any other considerations, but that is the furthest angle our enemy can theoretically be relative to where they were when we fired.  More discussion on why this is the case is elsewhere on the wiki.  If you ever get more than that, it is usually due to the discrete tick-based physics of robocode (i.e. - you can't hit someone with a bullet at time 7.5, so it will hit them at 8 and they will have gone just a little bit further), and due to imperfect data (especially missed scans).
+<p>
+Now let's get into the most significant part of our code - this method will check if the wave has hit the enemy.  If it hasn't, it will simply return false.  If it has, it will figure out what <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> the enemy is at, find the appropriate index into the <tt>returnSegment</tt> and increment it.  Then it will return true if it hit.  Return true signifies that the wave should no longer be tracked.
+<p>
+<pre>
+	public boolean checkHit(double enemyX, double enemyY, long currentTime)
+	{
+		//if the distance from the wave origin to our enemy has passed the distance the bullet would have traveled...
+		if (Point2D.distance(startx, starty, enemyX, enemyY) &lt;= (currentTime-fireTime)*getBulletSpeed())
+		{
+			double desiredDirection = Math.atan2(enemyX-startx, enemyY-starty);
+			double angleOffset = Utils.normalRelativeAngle(desiredDirection-startBearing);
+			double guessFactor = Math.max(-1, Math.min(1, angleOffset/maxEscapeAngle()))*direction;
+			int index = (int)Math.round((returnSegment.length-1)/2*(guessFactor+1));
+			returnSegment[index]++;
+			return true;
+		}
+		return false;
+	}
+}
+</pre>
+<p>
+...and that's the end of our <tt>WaveBullet<a href="robowiki?action=edit&id=WaveBullet" class=wikipageedit>?</a></tt> class.  Now we need to use it in our robot.  First we need to create some sort of structure to store them in.  I think an <tt><a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a></tt> or <tt>Vector</tt> is most appropriate.  To make <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> happier, I'll declare it as a generic <tt>List</tt> and then initialize it as an <tt><a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a></tt>.  Note that if you have multiple threads that may want to access the list, you'll want to use a <tt>Vector</tt> instead, because <tt><a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a></tt>s aren't thread-safe.  So this goes somewhere in your global variable declarations:
+<p>
+<pre>
+	List waves = new ArrayList();
+</pre>
+<p>
+Note that it's not static, because I don't want to update artifact waves in the next round if I can avoid it.  And some other things we will need for this:
+<p>
+<pre>
+	static int[] stats = new int[31];	//31 is the number of unique guessfactors we're using
+	int direction = 1;
+</pre>
+<p>
+Now the fun work goes into creating and updating these waves in our <tt>on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a></tt> method.
+<p>
+<pre>
+	public void onScannedRobot(ScannedRobotEvent e)
+	{
+		...
+		(other onScannedRobot code)
+		...
+		double absBearing = getHeadingRadians() + e.getBearingRadians();
+		//find our enemy's location:
+		double ex = getX() + Math.sin(absBearing)*e.getDistance();
+		double ey = getY() + Math.cos(absBearing)*e.getDistance();
+		
+		//let's process the waves now:
+		for (int i=0; i&lt;waves.size(); i++)
+		{
+			WaveBullet currentWave = (WaveBullet)waves.get(i);
+			if (currentWave.checkHit(ex, ey, getTime())
+			{
+				waves.remove(currentWave);
+				i--;
+			}
+		}
+		
+		double power = Math.min(3, Math.max(.1, /* some function */));
+		//don't try to figure out the direction they're moving if they're not moving, just use the direction we had before
+		if (e.getVelocity() != 0)
+			if (Math.sin(e.getHeadingRadians()-absBearing)*e.getVelocity() &lt; 0)
+				direction = -1;
+			else
+				direction = 1;
+		int[] currentStats = stats;	//This seems silly, but I'm using it to show something else later
+		WaveBullet newWave = new WaveBullet(getX(), getY(), absBearing, power, direction, getTime(), currentStats);
+</pre>
+<p>
+Now we've processed our waves and created a new one for the current scan.  Now it would be useful to use our data to actually aim.  Note that this is exceptionally fast and we can get away with doing it every scan without a major performance hit:
+<p>
+<pre>
+		int bestindex = 15;	//initialize it to be in the middle, guessfactor 0.
+		for (int i=0; i&lt;31; i++)
+			if (currentStats[bestindex] &lt; currentStats[i])
+				bestindex = i;
+		
+		//this should do the opposite of the math in the WaveBullet:
+		guessfactor = (double)(bestindex-(stats.length-1)/2)/((stats.length-1)/2);
+		double angleOffset = direction*guessfactor*newWave.maxEscapeAngle();
+		setTurnGunRightRadians(robocode.util.Utils.normalRelativeAngle(absBearing-getGunHeadingRadians()+angleOffset));
+</pre>
+<p>
+Now we want to fire.  If the firing actually happens, we add the new wave bullet to our <tt><a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a></tt>.
+<p>
+<pre>
+		if (setFireBullet() != null)
+			waves.add(newWave);
+	}
+</pre>
+<p>
+And that pretty much concludes the <tt>on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a></tt> method, as well as the code of a basic unsegmented guessfactor gun.  Of course, this gun won't be overly effective against most opponents.  In order to make it more effective, it is best to "segment" this data depending on the situation, rather than using just a single 1-dimensional array of ints.  For instance, it's fairly normal to segment on either distance or projected bullet flight time (distance / bulletSpeed).  If you want to segment on distance every 100 pixels, you could change your declaration for the stat buffer to this:
+<p>
+<pre>
+	int[][] stats = new int[13][31];
+</pre>
+<p>
+... then you need to change one line in your <tt>on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a></tt> method, where you declare the array <tt>currentStats</tt>:
+<p>
+<pre>
+		int[] currentStats = stats[(int)(e.getDistance()/100)];
+</pre>
+<p>
+Now stats from different distances will no longer be stored together.  Experiment with different segmentation axes to see what works well.  For a little discussion on effective segmentation schemes, look at the discussion on <a href="robowiki?SegmentedData/Segments" class=wikipagelink>SegmentedData/Segments</a>.
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Questions and Comments:</H4>
+
+<p>
+very heplful . still processing... --<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+Question on Math.atan2(): Does this method do the same thing as atan, except for the restriction of -PI&lt;x&lt;=PI ?  It seems like it could simplify some of my code if it does. --<a href="robowiki?Scoob" class=wikipagelink>Scoob</a>
+<p>
+It probably could simplify your code if you don't know about it :-)  Math.atan2(y, x) == Math.atan2(y/x) except that the atan2 will correctly return values from -PI to +PI instead of -PI/2 to +PI/2. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+hey kawigi, feel like taking a look at my first attempt at guessfactor targeting? it's at <a href="robowiki?Andrew" class=wikipagelink>andrew</a> --<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+My first GF implementation used waves as well, just intuitively.  Some people think one way, some think another. :)  I guess it depends on how you phrase the problem.  "What angle should I have fired at?" vs. "What guess factor indices would have hit?" -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+!!! Yes, that's exactly it. Thanks for putting words on it! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+OK, I've finally (after months of trying) found the bug in my GF gun.  Just before I fire, I calculate the offset from headon required using this code:
+<p>
+<PRE >
+ double offset=((BestGuess<a href="robowiki?action=edit&id=BestGuess" class=wikipageedit>?</a>-25)/25*Math.asin(8/(20-3*power))*(clockwise?1:-1));
+</PRE>
+<p>
+BestGuess<a href="robowiki?action=edit&id=BestGuess" class=wikipageedit>?</a> is the index of the peak I'm firing at, power is the power of the bullet, and clockwise is a boolean which is true when the enemy is going clockwise, and false when it's going anticlockwise.  When I work this out by hand, I get an answer which I think is about right, when I put a println(offset) after it, however, it ALWAYS prints 0.0 (or -0.0), meaning it always fires headon.  What am I doing wrong????? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Are you sure there is no integer math in there some where. That always seems to bite me. Whenever I get a 0.0 result when I should have got a float or a double thats where I start looking. Sometimes it is not too intuitive either. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+THANK YOU! THANK YOU! THANK YOU!!!!!!! That one thing has stopped this bot working for MONTHS.  GRRRRR.... all I had to do was cast BestGuess<a href="robowiki?action=edit&id=BestGuess" class=wikipageedit>?</a> into a double and it all worked.... Now I have to put the gun into a complete bot, and I'll enter it in the RR@H.  Thanks again! -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<UL >
+<li> After all the help I have received around here, I am just happy to return the favor. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+</UL>
+<p>
+I can't count how many times that <strong>int</strong> monster have bitten me! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+to see this code copy/pasted into a bot check out <a href="robowiki?Andrew" class=wikipagelink>andrew</a>. while you're there please figure out what's wrong with it. waves are so confusing compared to vbullets --<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+Are there any bots out there that dynamically segment the data?  From my understanding of segmentation, it is used because accuracy and enemy robot behavior might change over distance.  Is that correct?  --<a href="robowiki?Scoob" class=wikipagelink>Scoob</a>
+<p>
+That sound like plain <a href="robowiki?DataSegmentation" class=wikipagelink>DataSegmentation</a>. But there are some brave coders that have explored DynamicSegmentation<a href="robowiki?action=edit&id=DynamicSegmentation" class=wikipageedit>?</a> too. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+To avoid the int problems just bear in mind that if you're working with small numbers where the decimal is relevant anywhere in a bot, you'll probably run into it if you do that math on values which are still ints. The easiest way to avoid them still being ints is to go into the innermost bracket and cast the first variable to be worked on there to double. Voila, guaranteed double precision throughout (all math that involves a double will be done with double precision). Example: <tt>(((double)bestBin - BINS) / BINS) * eDirection * Math.asin(8d/11)</tt>. Since the best bin is a double the (likely int) value of number of bins gets promoted to double and all the work in there is done at double precision. This is also a good example to point out that there may be a few places which are evaluated first before seeing each other, as is the case inside the function <tt>asin</tt>, so the 8 there is made a double using the shortcut for constants and voila, all the work there will be done at double precision. Yeah, yeah, I'm insulting your intelligence, but it's a handy little rule of thumb. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+You certainly didn't insult my intelligence. I have thirsted for a rule to follow. Thanks! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+That's what I did, but I didn't really have any logic behind it, so thanks!! -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Ok, i've drawn a blank.  Does anyone have any idea why a GF would produce the correct movement profile against most bots, but get it completely wrong against one?  The one in question is <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a>.  I get a 95% spike at GF 0.04, where other bots get it at more like GF 0.4.  Other than that, it works... Any ideas? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I've watched some more battles, and I've noticed something.  When you are disabled TAOW stops moving.  In the TC, it doesn't fire, so you are left for a long time with a stationary enemy, which artificially increases the head-on visit count.  If you are lucky in the first round, and kill it, you get some good data, and can go on to do well, if you are unlucky and get disabled, you end up firing at head on in the next round, so get disabled again, and never get back to firing at the right place.  If this is true, the solution would be to stop firing waves when you are disabled... I guess I'll try that... -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+In fact, it's not when you are disabled, it's when you are not firing, so the even easier solution is to only fire a wave when the bullet actually fired (something I know a lot of people do, which is probably why they never had this problem) -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Well, that slows your learning against the majority of bots. Better ways to protect your stat bins exists. Like <a href="robowiki?Aristocles" class=wikipagelink>Aristocles</a> or <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> do it for instance. They don't fire waves when their fire power drops below the default power due to energy management. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It can't slow your learning much, as most bots do it.  The tutorial on this page even says to do it.  I'm rerunning the TC with the fix, it takes a while on my PC, but I'll let you know what happens. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+(Edit conflict - damn i wish i would have clicked save earlier) Or an even better way is to stop firing waves when you stop firing bullets (ie become disabled or fall below an energy threshold), this means you get the fast learning time and not the stat smearing. Also, it is a good idea to make sure you're not checking your waves once teh enemy is dead. I know in my implementation i was checking the waves outside of the scanned robot event, and was just assuming the position had been updated each time i checked the waves, and as they were dead their stored position was staying the same. This would also create a spike at 0. --<a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+Yes, i just realised that.  I do continue to fire after they are dead.  I'll make that the next fix, but it would effect everything, not just TAOW, so it can't be the current problem (one problem at a time is all i can cope with). -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I take it back.  I continue firing, but I don't check the waves, because that is done in the on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> method, which isn't called after they die.  It must be too late at night for my brain... -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+That seemed to work, i jumped 7% on the TC.  I'll probably release a fixed version to the RR@H tomorrow. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I'm too tired here. Someone understands what Tango fixed? Could it apply to <a href="robowiki?Falcon" class=wikipagelink>Falcon</a>? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Don't fire waves if you are disabled sounds like the gist of it. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Which <a href="robowiki?Falcon" class=wikipagelink>Falcon</a> probably doesn't do since it fires the waves from the scanned event, right? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It can still see when it's disabled, can't it? -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I don't know, but Tango said it's not called... ahhh. Could that matter, the waves that are on their way when I die? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+They aren't so much the waves that are on their way when you die, it's the waves that hit before you die. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I somehow read in something more important into what <a href="robowiki?Tango" class=wikipagelink>Tango</a> wrote. But let's wait for him to wake up. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I'm awake!  Basically I just made it only fire waves when it fires bullets (rather than when it tries to fire bullets).  The logic was, when you are disabled, you are still trying to fire bullets, so are still firing waves, and because TAOW doesn't move unless it detects energy drops, all those waves increment GF0 (or for some strange reason GF0.04...).  Most bots don't fire waves if the bullet didn't fire, so don't have this problem, I just missed out that line of code, so had to put it in. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+GF .04 means your guess factor zero isn't aligned properly, and you'll never shoot head-on against a bot.  If you're using an odd number of guess factors then most likely you have a similar bug to <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> 0.22 and down, where you're not converting to and from guess factors consistently.  -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Normally it gets head-on right.  It even gets it right against TAOW most time, it was just the one time I graphed it that went strange.  I have 51 bins, so 25 is headon, and 26 is GF0.04, which is where the spike was.  It doesn't normally happen, so I think i'll just let it go for now.  I'll run some tests against <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a> once the current battle is finished, just to be sure. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+What do you mean by most bots doesn't fire waves when the bullet doesn't fire? I disagree. I think most top GF bots, fire waves every tick (or scan, depending on design). DT is an exception to this. But few bots besides <a href="robowiki?Falcon" class=wikipagelink>Falcon</a> fires waves when they are disabled. I'm pretty sure this isn't the nature of Falcon's problem. The symptoms are to weird. But I'll try tonight to make sure. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Of course if they are firing every tick, they fire every tick, I meant the ones that fire when they fire a bullet usually check that the bullet actually fired. In the above code, the relevent bit is:
+<p>
+<pre>
+		if (setFireBullet() != null)
+			waves.add(newWave);
+	}
+</pre>
+<p>
+-- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Q: Why do you need to find the direction the enemy is moving in? If the direction to the enemy is greater when the wave passes than when the wave is fired, the enemy must be going clockwise. -- <a href="robowiki?Kev" class=wikipagelink>Kev</a>
+<p>
+A: First of all you need to know that no matter how many <a href="robowiki?GuessFactors" class=wikipagelink>GuessFactors</a> you use, there is a +1 factor which is in the direction of motion and equal to Math.asin(8/bulletVelocity), a middle or <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a>, and a -1 factor in direction opposite of motion. You need to know the direction of the enemy motions at shot time so you know where to place +1 at. As I implemented it, if velocity is 0 at shot time I seem to recall placing +1 in the opposite clock direction from that last observed on the assumption that the target had just stopped and was reversing. Hope this makes sense. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+Kaiwigi's code finds the guess factor by using angleOffset/maxEscapeAngle<a href="robowiki?action=edit&id=EscapeAngle" class=wikipageedit>?</a>*direction. I was wondering why *direction was necessary when the offset can determine the target's direction. -- <a href="robowiki?Kev" class=wikipagelink>Kev</a>
+<p>
+The 'offset' defines the difference between: the angle directly to the enemy at the time the wave was fired, and the angle from the source of the wave to the enemy at time of impact. The direction is actually which direction (clock-wise or counter-clockwise) that the enemy was moving at the time the wave was fired. An offset of, say, 30 degrees to the right (clockwise) would be a positive factor if they were moving clockwise when the shot was fired, but it would be a negative factor if they had been moving the other way and reversed direction. Hope that makes sense, as I'm doing some holiday celebrating at the moment... ;) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+@<a href="robowiki?Kev" class=wikipagelink>Kev</a>: It's not the direction at wave impact that matters most. It's the direction at wave shot that does. Like I said: you need +1 to be in a know position at shot time consistently for the stats to work. Consider a bot that moves at max velocity, always counter-clockwise (in Robocode that is the "positive" direction). If your wave is laid down such that +1 is in the positive direction, your Wave will strike the target at or near +1 and all will work as you wish. But now suppose we change the direction of the target bot to move clockwise (negative in RC math). Without accounting for the direction of motion in your wave laydown, your wave will hit the target somewhere between <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> 0 and -1. Now, even though the target is moving constantly at max velocity (+1 movement), you will never hit it because your Wave is reporting the best factor is somewhere past the clockwise direction of 0, or behind your target. If you account for the direction of motion at shot time, then you will flip your statbuckets to place +1 in the right place (in the direction of motion) and record accurate data. At shot time, you again multiply the offset by the direction of motion to make sure you are shooting in the correct location. As with all things Robocode though: try it with and without it. See if your way works. It may be better. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+I see. Basically, I was thinking of <a href="robowiki?GuessFactor" class=wikipagelink>guess factors</a> as clockwise and counterclockwise relative to head on instead of forward and backward. With segments on velocity though, not using the direction should work fine. --<a href="robowiki?Kev" class=wikipagelink>Kev</a>
+<p>
+If by "segments on velocity" you mean from 8 to -8 (in some fashion) then I think it would work. You will have doubled your buckets though which will slow your learning which might have a negative impact. It might just work better than others. As far as I know it has never been tried it or considered. Let us know how it turns out. My compliments on trying something new. Not enough of that anymore with all the open source bot that are out there these days. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+<a href="robowiki?Stampede2" class=wikipagelink>Stampede2</a>'s GF gun segments on lateral velocity from -8 to 8; it seems to work fairly well. --<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a>
+<p>
+<a href="robowiki?Ugluk" class=wikipagelink>Ugluk</a> also segments on lateral velocity, as well as two other factors.  I'm considering other segments as well but my movement is killing me more than a lack of firepower. -- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin</a>
+<p>
+I'm trying to make an array list using:
+<pre>
+List waves = new ArrayList();
+</pre>
+Is there a special import or class I should have to use this? --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+Yep, you need to import java.util.<a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a>, or just use the whole path when declaring it:
+<pre>
+import java.util.ArrayList;
+ArrayList waves = new ArrayList();
+// or...
+java.util.ArrayList waves = new java.util.ArrayList();
+</pre>
+And just in case you don't have the link, the <a rel="nofollow"  HREF="http://java.sun.com/j2se/1.4.2/docs/api/">Java API Docs</a>
+are a good thing to have bookmarked. :) Good luck! -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Hmm... Shouldn't the "newWave" variable be initialized with getX() and getY(), instead of ex and ey? I can't imagine that this gun would work at all if it's recording the enemy X/Y instead of its own as the starting coordinates of a wave. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Depends on which way the wave is being fored of course ;^). Surfers fire waves at themselves from the enemies position to see themselves as their enemy sees them. But if the wave is intended to feed the stats for your outbound shots then yes, the waves origin should be your own location at shot time. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+Right, right... And isn't this a tutorial on <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> *Targeting*? :) I'm going to go ahead and change it.-- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I think the code snippets above come from <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>. In that code, <a href="robowiki?Kawigi" class=wikipagelink>kawigi</a> may have re-used some variables for space savings concerns. Your observation us of course correct. Sorry if you took offense to my initial response. :^P -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+Not at all! :-O -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Rant: I do not care <b>HOW</b> it works.. I just want it <b> TO </b> work for me!  I hate <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> and everything associated with it! It drives me (bleep)in crazy!!! Sorry for the rudeness. -- <a href="robowiki?Xero" class=wikipagelink>Xero</a>
+<p>
+Heh. It'll be a bit hard to get it to work without understanding how. But I suggest you start out as simple as possible. Unsegmented. Maybe I should make a really simple GF targeting bot for you. One that you can later expand on as you gain understanding and courage in this field. Watch this space. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+OK Xero, check <a href="robowiki?GFTargetingBot" class=wikipagelink>GFTargetingBot</a> out and start experimenting some with it. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Okay. I think I've finally gotten this. Just one problem remains...the moment my bot hits a wall, it just freezes up. No error in the console, no smoke coming out of my tower, it just locks up. Has this happened to anyone else? --<a href="robowiki?Flare" class=wikipagelink>Flare</a>
+<p>
+Does Robocode slow to a crawl, or hang, or does the match just go on normally and your tank stops moving? Also, what are you using for movement? Nothing comes to mind right away how your GF gun could cause your bot stop moving, unless it's actually slowing / crashing your tank or Robocode. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I don't know if this applies or not, but are you using an iterative <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> algorithm in your movement? I have noticed simlar behavior before resulting from <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>. --<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a> 
+<p>
+Heh. I'm using the code on this page copy-pasted, since I figured I'd better figure out wtf is going on here before trying something on my own. In any case, the bot is A) saved on the school compies so I can't post source, B) just Valkyrie's movement with this stuff c/ped in, and C) freezing without Robocode or the tank crashing. The match goes on, and the other bot creams me. --<a href="robowiki?Flare" class=wikipagelink>Flare</a>
+<p>
+Are you willing to post all of your code? Shared source can misbehave depending on its environment. Your source code would allow us to find the root of the problem. Thanks. --<a href="robowiki?Corbos" class=wikipagelink>Corbos</a>
+<p>
+Yeah. As soon as I get back to the CompSci<a href="robowiki?action=edit&id=CompSci" class=wikipageedit>?</a> lab at school tomorrow. --<a href="robowiki?Flare" class=wikipagelink>Flare</a>
+<p>
+What does your radar do, if it is just pinpointing in a wrong direction, your bot receives no new data and therefor possible just does nothing. And I second <a href="robowiki?Wcsv" class=wikipagelink>wcsv</a> as an iterative <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> with faulty parameters can end up as an endless loop.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+hey guys, there is an awesome tutorial for a different tutorial of guess factor targeting on <a rel="nofollow" href="http://p.nfshost.com/GFTTutorial.shtml">http://p.nfshost.com/GFTTutorial.shtml</a>
+Credit goes to patrick of course, and anyone else affiliated with the tutorial, i just found it and it helped me out a bunch!!!!!!!!!!!!!!1
+<p>
+--<a href="robowiki?Pakistan" class=wikipagelink>pakistan</a>
+<p>
+The code in that tutorial looks really familiar. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=GuessFactorTargeting/Tutorial" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=GuessFactorTargeting/Tutorial">View other revisions</a><br>Last edited March 17, 2009 6:11 EST by <a href="robowiki?PEZ" title="ID 17956 from c-ec22e055.138-3-64736c13.cust.bredbandsbolaget.se">PEZ</a> <a href="robowiki?action=browse&diff=1&id=GuessFactorTargeting/Tutorial">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

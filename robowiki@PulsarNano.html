@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>PulsarNano - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Pulsar, Nano'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=PulsarNano">PulsarNano</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Tell, tell! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Well just something I started while waiting for results on <a href="robowiki?PulsarMax" class=wikipagelink>PulsarMax</a> really, first it was to test some of my very fundemental movement things in <a href="robowiki?PulsarMax" class=wikipagelink>PulsarMax</a>, but I couldn't resist to add guns etc. Let me tell you, 250 codesize is restricting!! Had to scratch most of my ideas at once! My hope now is to learn something more about the basics of Robocode and fighting simple bots. So no real contender, though I might make a melee version too with a few simple changes -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+This Nano-bot thing was addicting and a very good distraction when waiting for <a href="robowiki?PulsarMax" class=wikipagelink>PulsarMax</a> TC runs etc to complete, so due to <a href="robowiki?PulsarMax" class=wikipagelink>PulsarMax</a> being a slow bot this bot came to be :). Version 0.1.5 looks very promising I must say. -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+Wow, nanos are a lot of fun, so quick to test too :) This has actually slightly delayed some improvements for <a href="robowiki?PulsarMax" class=wikipagelink>PulsarMax</a> at times now. -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+<hr noshade class=wikiline size=1>
+The source (from an early but still rather successful version). Some inspiration from <a href="robowiki?RaikoNano" class=wikipagelink>RaikoNano</a> in here.
+<p>
+<pre>
+package pulsar;
+
+import robocode.AdvancedRobot;
+import robocode.HitByBulletEvent;
+import robocode.HitWallEvent;
+import robocode.ScannedRobotEvent;
+import robocode.util.Utils;
+
+/**
+ *
+ * @author Mattias Bergander (Pulsar)
+ */
+public class PulsarNano extends AdvancedRobot {
+    static double distance, bulletVelocity;
+    static int direction = 1;
+    static int moveTimer, movingForwardHits;
+    static long lastDirectionChange;
+
+    public void run() {
+
+        turnRadarRight(Double.POSITIVE_INFINITY);
+    }
+
+    public void onHitWall(HitWallEvent e) {
+        direction = -direction;
+        lastDirectionChange = getTime();
+    }
+
+    // --- Events ---
+    public void onScannedRobot(ScannedRobotEvent e) {
+        double v1,v2;//,x,y;//,v3;
+        //(v2 = (v1=getHeadingRadians()) + e.getBearingRadians());
+
+        //Gun
+        //head on
+        //v3=v2 - getGunHeadingRadians();
+
+
+        //if (((int)v1)%2 == 0) {
+        //linear
+        //    v3 += /*Math.random() * */e.getVelocity()/13 * Math.sin(e.getHeadingRadians() - v2);
+        //}
+        setTurnGunRightRadians(Utils.normalRelativeAngle((v2 = (v1=getHeadingRadians()) + e.getBearingRadians())-getGunHeadingRadians())+e.getVelocity()/13 * Math.sin(e.getHeadingRadians() - v2));
+
+
+        setFire(600/(distance=e.getDistance()));
+        //setFire(1.5);
+        //Movement
+        //getEnergy();
+
+        if (movingForwardHits &gt; 1 &amp;&amp; --moveTimer &lt; 0){
+
+            lastDirectionChange = getTime();
+            moveTimer = (int)(distance*0.8/bulletVelocity);
+            //moveTimer = 10+(int)(Math.random()*20);
+            //depend on bullet velocity
+            direction = -direction;
+        }
+
+        //v2 = direction*(Point2D.distance(x=getX(), y=getY(), 500, 500) &gt; 420 ? 0.393 : -0.393); //Math.PI/8
+
+        v2 = robocode.util.Utils.normalRelativeAngle(v2-1.4*direction-v1); //turn compared to heading
+        //v2 += robocode.util.Utils.normalRelativeAngle(Math.atan2(500-x, 500-y)-v1-1.57*direction); //Math.PI/2
+        //v2 = robocode.util.Utils.normalRelativeAngle(Math.atan2(400-getX(), 300-getY())-v1-1.57*direction); //Math.PI/2
+
+        v1 = Double.POSITIVE_INFINITY;
+        if (Math.abs(v2) &gt; 1.57) { // Math.PI/2
+            v2 = robocode.util.Utils.normalRelativeAngle(v2 + Math.PI);
+            v1 = -v1;
+        }
+
+        setAhead(v1);//Double.POSITIVE_INFINITY*direction);
+
+        setTurnRightRadians(v2);//robocode.util.Utils.normalRelativeAngle(v2-Math.PI/2*direction-v1));
+
+        //Radar
+        setTurnRadarLeft(getRadarTurnRemainingRadians());
+        //execute();
+    }
+
+    public void onHitByBullet(HitByBulletEvent e) {
+        //bulletVelocity=e.getVelocity();
+        if (getTime()-lastDirectionChange &gt; distance/(bulletVelocity=e.getVelocity())) {
+            movingForwardHits++;
+        }
+    }
+}
+
+</pre>
+<p>
+<hr noshade class=wikiline size=1>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=PulsarNano" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=PulsarNano">View other revisions</a><br>Last edited August 23, 2004 17:33 EST by <a href="robowiki?Pulsar" title="ID 3320 from c-715672d5.016-41-67626721.cust.bredbandsbolaget.se">Pulsar</a> <a href="robowiki?action=browse&diff=1&id=PulsarNano">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

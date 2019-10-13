@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing AngularVelocity - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Angular, Velocity'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing AngularVelocity</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="AngularVelocity"  />
+<input type="hidden" name="oldtime" value="1083014740"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="9"  />
+<input type="hidden" name="captchaArg2" value="7"  />
+<input type="hidden" name="captchaOp" value="-"  />
+<input type="hidden" name="captchaId" value="184676430261"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">How many radians the opponent is moving relative to you per tick.
+
+Equal to the enemy&#39;s lateral velocity divided by their distance from you.
+
+Examples:
+
+An enemy 100 units away is driving forwards perpendicular to you at 8 units / tick. They are going counterclockwise around you.  Their LateralVelocity is -8 since they are going counterclockwise. Their AngularVelocity is -.08.
+*Velocity: 8.0
+*LateralVelocity: -8.0
+*AngularVelocity: -.08
+
+
+An enemy 200 units away is driving backwards towards you at 8 units / tick. They are going clockwise around you. They are 30 degrees off from going straight at you. Their velocity is -8 since they are moving backwards.  Their LateralVelocity is +4, positive because they are moving clockwise and 4 because they are 30 degrees off from approaching you directly, and the sine of 30 degrees is .5. Their AngularVelocity is .02.
+*Velocity: -8.0
+*LateralVelocity: 4.0
+*AngularVelocity: .02
+
+How to calculate:
+
+ Velocity: scannedRobotEvent.getVelocity()
+ LateralVelocity: velocity * Math.sin(scannedRobotEvent.getHeadingRadians() - scannedRobotEvent.getBearingRadians() + getHeadingRadians())
+ AngularVelocity: lateralVelocity / scannedRobotEvent.getDistance()
+
+&lt;p&gt;
+----
+==== Questions ====
+If you are segmenting on lateral velocity and distance already this isn&#39;t providng any more information, right? Well depending on the exact buckets I guess. But it could help reduce those two into one segementation (but not fully)? -- [[Pulsar]]
+
+I don&#39;t really understand the question asked here. I doubt using angular velocity would really allow you to reduce segmentation though. If you don&#39;t have the distance segmentation there&#39;s instead the risk that you get quite polluted data buckets I think. -- [[PEZ]]
+
+Well I wasn&#39;t very clear I guess. I&#39;m trying to concentrate on writing a bot but just end up reading more and more, testing and watching. Trying roborumble etc etc Then it&#39;s time for sleep and work :) Let me rephrase the question/statement evne though it&#39;s late and I might make it worse! Let&#39;s say you have your data segmented into distance and lateral velocity. If you would add a segment of let&#39;s say x=distance*latervelocity that would be meaningless as that is what you are already doing but even more segmented. Division should amount to the same thing, sort of. Am I making any sense? -- [[Pulsar]]
+
+Yes, I totally agree. I tend to segment on primitive data and let the more sophisticated segmentations sort them self out in this matrix. Like I segment on velocity and last_tick_velocity instead of segmenting on acceleration. -- [[PEZ]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 9 - 7 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that AngularVelocity has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=AngularVelocity">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

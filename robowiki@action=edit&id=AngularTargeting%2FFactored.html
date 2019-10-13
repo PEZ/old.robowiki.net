@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing AngularTargeting/Factored - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Angular, Targeting, Factored'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing AngularTargeting/Factored</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="AngularTargeting/Factored"  />
+<input type="hidden" name="oldtime" value="1146792890"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="7"  />
+<input type="hidden" name="captchaArg2" value="6"  />
+<input type="hidden" name="captchaOp" value="+"  />
+<input type="hidden" name="captchaId" value="667885664923"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">==== What it is ====
+A truly simple [[Targeting]] method which in [[Gouldingi]] is implemented like this:
+* Multiply the bearing delta (&#39;&#39;bd&#39;&#39;) between two consecutive scans by a factor (&#39;&#39;F&#39;&#39;)
+* Fire a bullet and registrer an event which keeps information about:
+** old enemy location (&#39;&#39;oel&#39;&#39;)
+** old robot location (&#39;&#39;orl&#39;&#39;)
+** time of fire (&#39;&#39;tof&#39;&#39;)
+** bullet speed (&#39;&#39;bs&#39;&#39;)
+** &#39;&#39;F&#39;&#39;
+** &#39;&#39;bd&#39;&#39;
+* In the test() method of this event check for when the distance &#39;&#39;bullet&#39;&#39; -&gt; &#39;&#39;orl&#39;&#39; (using &#39;&#39;bs&#39;&#39;, getTime() and &#39;&#39;tof&#39;&#39;) is greater than or equal to the distance &#39;&#39;current enemy location&#39;&#39; -&gt; &#39;&#39;orl&#39;&#39;. When it is:
+** Take the difference in bearing between &#39;&#39;orl&#39;&#39; -&gt; &#39;&#39;oel&#39;&#39; and &#39;&#39;orl&#39;&#39; -&gt; &#39;&#39;current enemy location&#39;&#39;. Let&#39;s call this bearing delta &#39;&#39;BD&#39;&#39;
+** Calculate the factor (&#39;&#39;f&#39;&#39;) that would have been needed to hit the enemy using &#39;&#39;bd&#39;&#39; (this is as simple as &#39;&#39;BD&#39;&#39;/&#39;&#39;bd&#39;&#39;).
+** Update &#39;&#39;F&#39;&#39; so that &#39;&#39;f&#39;&#39; becomes &quot;part&quot; of it. (I use [[Paul Evans]]&#39; function rollingAvg() for this. Read about it on http://www.sandbox.dial.pipex.com/robocode/guessfactor.shtml)
+** Deregister the event
+
+Check [[MakoHT/Code]] for a full implementation of this. Though it is somewhat obscured there by a second aiming method and VirtualGuns code. It is about ten times as simple as it looks in [[MakoHT]].
+
+-- [[PEZ]]
+==== Strengths and weaknesses ====
+The result of using this technique is that you keep firing at some average distance from the enemy relative to its current moving direction. This works surprisingly well against many surpringly advanced bots. But it can easily be fooled. Try pitching [[Gouldingi]] 1.0 against [[Ares]] and you&#39;ll see that &#39;&#39;anything&#39;&#39; multiplied by &#39;&#39;zero&#39;&#39; is always &#39;&#39;zero&#39;&#39; =). You&#39;ll need to substitute some &#39;&#39;bd&#39;&#39; average when shooting against [[Ares]] type movement styles. Later versions of [[Gouldingi]] handles this by using an even simpler targeting method (AveragedBearingOffsetTargeting) when the enemy is stationary. -- [[PEZ]]
+==== Bots using this technique ====
+* [[Gouldingi]]
+* [[Mako]]
+* [[MakoHT]]
+* [[GouldingiHT]]
+==== Related techniques ====
+* AngularTargeting (of course)
+* AveragedBearingOffsetTargeting
+* StatisticalTargeting
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 7 + 6 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that AngularTargeting/Factored has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=AngularTargeting/Factored">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?AngularTargeting" class=wikipagelink>AngularTargeting</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>WaveSnake - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Wave, Snake'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=WaveSnake">WaveSnake</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Here's my attempt at a nano "surfer," although the movement is too crude to really deserve the term. It uses a simple random gun. -- <a href="robowiki?Kev" class=wikipagelink>Kev</a>
+<p>
+<pre>
+package kc.nano;
+import robocode.util.Utils;
+import robocode.AdvancedRobot;
+import robocode.ScannedRobotEvent;
+import robocode.HitWallEvent;
+import robocode.HitByBulletEvent;
+import robocode.BulletHitEvent;
+
+public class WaveSnake extends AdvancedRobot {
+	static double moveFactor = 20;
+	static double enemyEnergy;
+	static int vel;
+	static int lastVel;
+	static int[][] hitData = new int[16][4];
+		
+	public void run() {
+		turnRadarRightRadians(Double.POSITIVE_INFINITY);
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e) {
+		setTurnRightRadians(Math.cos(e.getBearingRadians()) - ((e.getDistance() - 150) * moveFactor / 30000));
+		setTurnRadarLeft(getRadarTurnRemaining());
+
+                setTurnGunRightRadians(Utils.normalRelativeAngle((1.3 * (Math.random() - 0.5)) + e.getBearingRadians() + getHeadingRadians() - getGunHeadingRadians()));
+                setFire(2.4);
+		
+		
+		if(enemyEnergy &gt; (enemyEnergy = e.getEnergy())) {
+			lastVel = vel + (4 * (int)(e.getDistance() / 267));
+			int testVel = 3;
+			do {
+				if(hitData[lastVel][testVel] &lt; hitData[lastVel][vel]) {
+					vel = testVel;
+				}
+			} while(testVel-- &gt; 0);
+			if(vel &lt; 2) {
+				onHitWall(null);
+			} 
+		}
+		setMaxVelocity(8 * (vel - 1.5));
+		setAhead(moveFactor);
+	}
+
+	public void onBulletHit(BulletHitEvent e) {
+		enemyEnergy -= 11.4;
+	}
+	
+	public void onHitByBullet(HitByBulletEvent e) {
+		hitData[lastVel][vel]++;
+	}
+	
+	public void onHitWall(HitWallEvent e) {
+		moveFactor = -moveFactor;
+	}
+}
+</pre>
+<p>
+<hr noshade class=wikiline size=1>
+Cool! In a strict sense, this bot surfs velocity not wave! LOL. I call it a VelocitySurfer<a href="robowiki?action=edit&id=VelocitySurfer" class=wikipageedit>?</a>. -- <a href="robowiki?Stelokim" class=wikipagelink>Stelokim</a>
+<p>
+Drat, I had dibs. Mine was gonna be absolute bearing based though. :P --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=WaveSnake" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=WaveSnake">View other revisions</a><br>Last edited February 26, 2007 4:11 EST by <a href="robowiki?Chase-san" title="ID 9432 from ppp66.tc-3.kal-ch.mi.localnet.com">Chase-san</a> <a href="robowiki?action=browse&diff=1&id=WaveSnake">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

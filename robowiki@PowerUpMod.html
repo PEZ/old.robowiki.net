@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>PowerUpMod - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Power, Up, Mod'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=PowerUpMod">PowerUpMod</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>This is a new mod for adding powerups to robocode.  The powerups are robots which extend PowerUp<a href="robowiki?action=edit&id=PowerUp" class=wikipageedit>?</a>.
+<p>
+You can get all the files here: <a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=1832">http://www.robocoderepository.com/BotDetail.jsp?id=1832</a>
+<p>
+It will work without any changes to the normal bots, but it is advisable to make them extend PowerUpRobot<a href="robowiki?action=edit&id=PowerUpRobot" class=wikipageedit>?</a> so you don't get PowerUps<a href="robowiki?action=edit&id=PowerUps" class=wikipageedit>?</a> in the on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>() method, and can use onScannedPowerUp<a href="robowiki?action=edit&id=ScannedPowerUp" class=wikipageedit>?</a>(ScannedPowerUpEvent<a href="robowiki?action=edit&id=ScannedPowerUpEvent" class=wikipageedit>?</a> e) to find out where they are.  You can also use getScannedPowerUpEvents<a href="robowiki?action=edit&id=ScannedPowerUpEvents" class=wikipageedit>?</a>().  To get a powerup you simply ram them.
+<p>
+There are a few power ups in the zip file, that either give energy, take energy, or take all your energy (so you become disabled).  When a powerup is used it jumps to a different (random) position. (i'm not sure what happens if it lands on top of another bot, i should probably test it...)
+<p>
+To make your own powerup simply make a robot that extends PowerUp<a href="robowiki?action=edit&id=PowerUp" class=wikipageedit>?</a>.  The robot must have "XXX" somewhere in its name (make sure no non-powerup bots have XXX in their names, or other bots will think they are powerups).  The first thing in your run() method must be init() (if it isn't the bot will crash).  You then need to have a method called doPowerUp<a href="robowiki?action=edit&id=PowerUp" class=wikipageedit>?</a>(HitRobotEvent<a href="robowiki?action=edit&id=HitRobotEvent" class=wikipageedit>?</a> e).  The only thing powerups can do at the moment is change energy with the increaseEnergy() method.  It take 2 parameters, the first is the amount of energy to add (to take energy just make it negative), and the second is the HitRobotEvent<a href="robowiki?action=edit&id=HitRobotEvent" class=wikipageedit>?</a>, eg. increaseEnergy(20, e);
+<p>
+ToDo<a href="robowiki?action=edit&id=ToDo" class=wikipageedit>?</a>:
+<OL >
+<li> Add interesting colours so viewers can easilly pick out the powerups.
+<li> Make a better method of recognising powerups than the XXX thing.
+<li> Allow powerups to do more than just fiddle with energy. <strong>X</strong>
+<li> Make powerup versions of the rest of the events (eg. onBulletHitPowerUp<a href="robowiki?action=edit&id=BulletHitPowerUp" class=wikipageedit>?</a>())
+<li> Make a onGetPowerUp<a href="robowiki?action=edit&id=GetPowerUp" class=wikipageedit>?</a>() method (basically a onHitRobot<a href="robowiki?action=edit&id=HitRobot" class=wikipageedit>?</a>() method for powerups);
+<li> Make the getPowerUps<a href="robowiki?action=edit&id=PowerUps" class=wikipageedit>?</a>() method do more than just return a null vector. (at the moment there are no non-instantaneous powerups, so it isn't needed, but it will be by the next release)
+<li> Stop bots losing energy when ramming powerups. <strong>X</strong>
+<li> Stop bots gaining energy when shooting powerups. <strong>X</strong>
+<li> Do number 6 quickly now there is a non-instantaneous powerup.
+<li> Make own version of EnergySetter<a href="robowiki?action=edit&id=EnergySetter" class=wikipageedit>?</a>. <strong>X</strong>
+</OL>
+<p>
+I recommend all future mods and future versions of existing mods extend PowerUpRobot<a href="robowiki?action=edit&id=PowerUpRobot" class=wikipageedit>?</a>, rather than <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> or <a href="robowiki?TeamRobot" class=wikipagelink>TeamRobot</a> (PowerUpRobot<a href="robowiki?action=edit&id=PowerUpRobot" class=wikipageedit>?</a> extends <a href="robowiki?TeamRobot" class=wikipagelink>TeamRobot</a>), and have the extra events added to the event handling code, so power ups can be used with them. (no other changes are required)
+<p>
+I've just added another powerup to the zip file, XXXRapidFire<a href="robowiki?action=edit&id=XXXRapidFire" class=wikipageedit>?</a>, it doubles your fire speed every time you hit it.  I had to modify to PowerUp<a href="robowiki?action=edit&id=PowerUp" class=wikipageedit>?</a> class, and the EnergySetter<a href="robowiki?action=edit&id=EnergySetter" class=wikipageedit>?</a> class.  I will make my own version of the EnergySetter<a href="robowiki?action=edit&id=EnergySetter" class=wikipageedit>?</a> class for the next release so i don't have to modify someone elses work. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+<H4>Comments and Questions</H4>
+
+<p>
+Has anyone had a go at this yet?  I'd like some feedback if anyone has time to test it. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+This weekend I'll be rebuilding Cake to allow it to use both the <a href="robowiki?DeathMatch" class=wikipagelink>DeathMatch</a> mod and the <a href="robowiki?PowerUpMod" class=wikipagelink>PowerUpMod</a>; I'll then see about adding some behaviour to get powerups :). I've been wanting to try this mod since it's been up, but I've been busy lately with midterms and Fractal's new gun. I should some free time soon :D -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+You don't need to change anything about cake to allow it to use PowerUps<a href="robowiki?action=edit&id=PowerUps" class=wikipageedit>?</a>, the changes just allow you to detect them.  Are you going to make DeathMatchRobot<a href="robowiki?action=edit&id=DeathMatchRobot" class=wikipageedit>?</a> extend PowerUpRobot<a href="robowiki?action=edit&id=PowerUpRobot" class=wikipageedit>?</a> or do you have some other cunning plan? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I think I'll make an interface called CakeI<a href="robowiki?action=edit&id=CakeI" class=wikipageedit>?</a> that contains every method that the rest of my classes need, then make a robot Cake that extends <a href="robowiki?CoopRobot" class=wikipagelink>CoopRobot</a>, one CakePW<a href="robowiki?action=edit&id=CakePW" class=wikipageedit>?</a> that extends PowerUpRobot<a href="robowiki?action=edit&id=PowerUpRobot" class=wikipageedit>?</a>, and one CakeDM<a href="robowiki?action=edit&id=CakeDM" class=wikipageedit>?</a> that extends DeathMatchRobot<a href="robowiki?action=edit&id=DeathMatchRobot" class=wikipageedit>?</a>, all of them implementing CakeI<a href="robowiki?action=edit&id=CakeI" class=wikipageedit>?</a>. This will allow me to keep the same code and add ifs when I want to handle the game options (using a getGameMode<a href="robowiki?action=edit&id=GameMode" class=wikipageedit>?</a>() method in CakeI<a href="robowiki?action=edit&id=CakeI" class=wikipageedit>?</a>) for all modes of Cake. I'll likely implement the same thing in Fractal soon before it gets too complicated so that I can do this easily with Fractal once it becomes melee. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+Sounds very complicated, but it seems like a good idea.  You should be able to merge DMR and PUR quite easily.  There is very little in PUR, all the complicated bits are in PowerUp<a href="robowiki?action=edit&id=PowerUp" class=wikipageedit>?</a>. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=PowerUpMod" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=PowerUpMod">View other revisions</a><br>Last edited November 12, 2003 18:07 EST by <a href="robowiki?Tango" title="ID 1197 from webcacheH03a.cache.pol.co.uk">Tango</a> <a href="robowiki?action=browse&diff=1&id=PowerUpMod">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

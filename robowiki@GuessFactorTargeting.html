@@ -1,0 +1,477 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>GuessFactorTargeting - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Guess, Factor, Targeting'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=GuessFactorTargeting">GuessFactorTargeting</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H4><a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> - <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> - <a href="robowiki?Wave" class=wikipagelink>Wave</a> - <a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a> - <a href="robowiki?GuessFactorTargeting/Tutorial" class=wikipagelink>/Tutorial</a> - <a href="robowiki?GFTargetingBot" class=wikipagelink>GFTargetingBot</a> - <a href="robowiki?Falcon" class=wikipagelink>Falcon</a></H4>
+
+<hr noshade class=wikiline size=1>
+<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> says about this method of <a href="robowiki?Targeting" class=wikipagelink>Targeting</a>:
+<p>
+My targetting is similar to the <a href="robowiki?SandboxLump" class=wikipagelink>SandboxLump</a> / <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> method. Here's how
+it works.
+<UL >
+<li> Calculate how far forward the other bot could go if it suddenly went top speed forwards for as long as it would take my bullet to reach the other bot. Call this Point A.
+<li> Calculate how far backward the other bot could go if it suddenly went top speed backwards for as long as it would take my bullet to reach the other bot. Call this Point B.
+</UL>
+<p>
+Now take a guess between -1 and 1 at where the bot is going to be. -1 would
+mean going straight back and ending up at B, 1 means going straight forward
+and ending up at A. 0 means sitting still. I just keep track of how well
+different numbers work and fire with the best one. You can find a better
+description (with code!) at <strike><a rel="nofollow" href="http://www.sandbox.dial.pipex.com/robocode/">http://www.sandbox.dial.pipex.com/robocode/</a></strike> 
+<a rel="nofollow" href="http://www.aqre94.dsl.pipex.com/robocode/guessfactor.shtml">http://www.aqre94.dsl.pipex.com/robocode/guessfactor.shtml</a> (I think that's the page? -Voidious).
+However notice that the algorithm that Lump uses (the bit where he says he
+uses the bot's current accelleration) is a bad idea, because it won't hit
+bots that sit still for a long time and then suddenly hit the gas. He fixed
+this when he came out with DT. (And I fixed it in Duelist! :-D) However,
+pretty much any targeting method will work well enough as long as it isn't
+simple linear or circular targeting, because some bots (like Fermat) will
+guess where you would fire if you used circular and dodge accordingly.
+Good bots for testing targeting are:
+<p>
+<UL >
+<li> Wolverine: A superb dodger, though it's very old.
+<li> <a href="robowiki?JollyNinja" class=wikipagelink>JollyNinja</a>: Open source! Stays as far from you as possible most of the time.
+</UL>
+<p>
+Also try the nano bots - they're almost all open source and have some cool
+ideas.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<a href="robowiki?DuelistMicro" class=wikipagelink>DuelistMicro</a> uses this to great effect and is open source. Duelist's source has also been released if you want to see the code I was talking about when I wrote this email, but <a href="robowiki?DuelistMicro" class=wikipagelink>DuelistMicro</a>'s is better and smaller. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+<hr noshade class=wikiline size=1>
+<em>"Calculate how far forward the other bot could go if it suddenly went top speed forwards for as long as it would take my bullet to reach the other bot. Call this Point A."</em>
+<p>
+do you calculate this point with the current enemies heading ? -- <a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+Yes. Though I don't do it exactly this way in my bots. I calculate the maximum lateral bearing change using the current enemy lateral bearing direction and call this maxBearing. Then I slice the spectra from -maxBearing to +maxBearing in guessfactors from -1.0 to 1.0. <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> uses 17 slices (since it stays so close to the enemy and <a href="robowiki?GloomyDark" class=wikipagelink>GloomyDark</a> uses 23 slices, -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+And my calculation of maxBearing looks like this:<pre>    static double maxBearing(double power) {
+        return Math.abs(Math.asin(MAX_VELOCITY / (bulletVelocity(power))));
+    }</pre> -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+But if you calculate it that way you DONT use the current enemies heading but a relative angle of 90° i think , dont you?  --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+Right.  If we use the enemy's current heading and velocity, they could turn or speed up and <em>all</em> of our guesses could be wrong.  What you DO want to do is multiply that by something to account for your enemy moving to the left relative to you or to the right. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+what it MAX_VELOCITY ? Is it the maximum speed our enemy can travel with?If so wouldn't it be better if you would calculate the maximumBearing depending on the distance to this bot?
+<p>
+MAX_VELOCITY for a bot is 8. That bearing (Math.abs(Math.asin(MAX_VELOCITY / bulletVelocity(power))) will calculate the max possible angle without knowledge of distance. Bot distance == velocity * bullet flight time and the bullet distance == bullet velocity * bullet flight. This allows us to cancle out bullet flight time leaving Math.asin(8/bulletV). The common misconception (at least the one I had when I started) is that this is a right trianlge and try to use that math. It is not though. I believe this is the Law of Sines in use here. One shortfall is that there is no accounting for accleration. It is assumed that a bot can "suddenly" take off at MAX_VELOCITY and this is not the case. It has proved to be close enough in practice though. -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+Actually, it is a right triangle, with the right angle at the enemy bot.  The law of sines is relevant, though, but the calculation would be a little different here if we were actually using it.  We would use something like
+<p>
+<UL >
+<li>Math.asin(Math.sin(e.getHeadingRadians() - e.getBearingRadians() - getHeadingRadians()) * MAX_VELOCITY / bulletVelocity(power)))
+</UL>
+<p>
+You would have seen this code in <a href="robowiki?SandboxMini" class=wikipagelink>SandboxMini</a> (I remember you asking about it, Jim).  The problem is that sometimes our opponent can turn and end up outside the range.  It turns out that to make this angle the largest it can possibly be, the thing we're taking the sine of (which is the angle between a line from us to them, and the line they're moving on) is 90 degrees, basically meaning that our enemy is going to move in a straight line exactly perpendicular to our position when we fire. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+From the <a href="robowiki?RoboRumble/RankingChat" class=wikipagelink>RoboRumble/RankingChat</a> discussion:
+<p>
+As for weighting the bins in a GF gun... When I was first building my GF gun, I tried coming up with a good concept of picking the angle to shoot at. (This isn't really the same as what you were mentioning, but it kindof applies.) Anyway, at the time, just shooting at the highest bin seemed a little too simple to me to actually work properly (the KISS principle usually hates me (that sounds wrong on multiple levels... lol)). Anyway, so I figured, how about I pick, say, the top 3 peaks in the graph, then do a weighted random selection of the 3. Of course, this is of no real use. Say you have 5 angle bins (I know it's more like 30, but bear with me). 3 of these are empty, bin 'a' has 20 hits, and bin 'b' has 10 hits. Thus 2/3 of the time, the enemy is found at 'a', and 1/3 of the time the enemy is found at 'b'. With a weighted randomization, 2/3 of the time it chooses the 'a' bin, and 1/3 of the time it chooses the 'b' bin. Mathematically, this adds up to 1/2 (or 5/9, I forget) chance of hitting. But just shooting at the highest bin gives you a 2/3 chance of hitting! After more work I ended up just assuming that, provided the distribution of angles is consistent, your probability of hitting the enemy cannot exceed the probability of hitting by always firing at the highest bin. There's my obvious conjecture about GF guns : ). I'm sure there's a mathematical proof for it, but I'm really quite sick of math for a while. There's my blurb on GF guns. I'm going to bed : ) -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+Shooting at the highest bin might work very well. But I think there are situations where it can be wiser to shoot at the densest part of the curve rather than at the peak. This is what <a href="robowiki?VisitCountStats/Dynamic" class=wikipagelink>VisitCountStats/Dynamic</a> is about. I have yet to prove that it works though since I have this bug in <a href="robowiki?GloomyDark" class=wikipagelink>GloomyDark</a>... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<a href="robowiki?Jekyl" class=wikipagelink>Jekyl</a> use's a simplified kernel density estimator to find the "densest" part of the curve. My implementation of the estimator (called a nieve estimator) buckets a guess factor with some number of neighboring bins that surround it (left and right). I then count all occurances that happen with that range and compare this with all other such "windows" to arrive at the window with the highest probability of occurance. I have implemented it in such a way that I can dynamically adjust the window size on the fly. Currently I use a large window for close range (where it is possible for guess factors to overlap) and a smaller window at longer ranges (where they are less likely to overlap). One un-intended side effect of this is that you need to come up with some algorithm for handling the edges and near edges (-1, +1) as they have no||few left||right neighbors. This tends to concentrate your fire more toward the center. Now that I type this I wonder if this was the reason for <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> 1.91 and lower to default firing at +1/-1 when a target was beyond some set distance. <a href="robowiki?Paul" class=wikipagelink>Paul</a>, care to share? A yes or no answer (addressing the +1/-1 statement) is enough for me. -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+I believe DT fired at +1.0 when the distance array was out of bounds - in normal battles this never happened because I measure distance as bullet flight time, and over long distances I used fast bullets or no bullets at all.  Then the movement challenges came requiring DT to fire 3.0 bullets, and the bug was discovered. --  <a href="robowiki?Paul" class=wikipagelink>Paul</a>
+<p>
+Can I suggest you change the window size basd on the number of sampled points you have rather than the distance - with more sample points you have a better chance to find small and thin peaks and reduce the effect of the edges.  However I would not reduce the window size to smaller than the apparent width of the bot (you will need to convert your data into guess factor ranges for this.  --  <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a> 
+<p>
+Thats one method that I had not thought to try. I will have to give this a shot (no pun intended) soon. -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+Interesting. Now I'm tempted to move <a href="robowiki?Fractal" class=wikipagelink>Fractal</a>'s smoothing functions to make it gather all data normally and smooth on the fly instead of smoothing as it puts it in the bins. However I'm not sure if it will make much difference. I had originally thought of setting the gaussian smooth's deviation factor as a function of distance (i.e. smoothing across the angles that make up the width of the bot), but I guess I never got around to doing it. This does sound like a good idea though. Maybe I'll try that too sometime when I find some time to burn on <a href="robowiki?Fractal" class=wikipagelink>Fractal</a>. Let me know how varying the window size works for you <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a> :) and good luck with it! -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+There are 2 things which need to work together. First is updating all bins where hits for a wave can happen, maybe with different factors varying by how big is the part of bot in that bin. For this part of collecting data one should use fixed bots size of 36 in each direction. You may also try to keep your wave flying for a few ticks after the hit, just to update all possibly successful bins. Then there is another thing when selecting best shooting offset. Here you should adjust for actual bots size as visible by bullet form its angle. I think that is what Paul mean by 'apparent width'. I am doing this, but only for distances less then 300 (I have 30 bins). For larger distances it somehow don't work here. -- <a href="robowiki?Frakir" class=wikipagelink>Frakir</a>
+<p>
+<a href="robowiki?Vuen" class=wikipagelink>Vuen</a> FYI DT does it's smoothing whilst it is putting data in the bins.  Doing it on the fly would make it very slow indeed.  --  <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>
+<p>
+<a href="robowiki?Frakir" class=wikipagelink>Frakir</a> you are a genious! I wish I had a bugfree gun that I could test that idea with keeping the wave updating all possible bins. Right now I am registering the "hit" when the wave is some 20 pixels from reaching the enemy. I would really need some pseudo code for the part with "factors varying by how big is the part of bot in that bin" though. I somehow have trouble wrappingmy mind around the problem. (Maybe that is because I am up really, really early today...) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I've tried doing this a couple different ways - one is just incrementing buckets every tick a wave would hit an enemy (might make it a circle enemy to make it easier), and not removing it until it has passed all the way through.  The other option is to keep an array of booleans and set the ones that hit at any point in time to true (then increment the true buckets after the wave has already passed through).  The latter is what I suspect DT does, or did when it first started using waves, because Paul said it was functionally equivalent to the original VB system, and that would basically be the way to do that (treating each wave as an array of VB's, so to speak). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Ah, thanks Paul. I'll change its smoothing now to set the standard deviation to the width of the tank, and test it out; I may also switch to just using a boolean array finding everywhere it hits, like Frakir suggests, and compare it to the other way. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+---
+<p>
+Erm, there seems to be a bug in my code, in <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>...
+Guess Factors are not supposed to be greater than 1 or less than -1, right? How am i getting more than 1, sometimes 175 as a guess factor? 
+Right now my basic guess factor formula is:
+<pre>
+double guessFactorLength=e.linearAim-e.centralAim;
+double radiansOff=normalize(e.bearing()-e.centralAim);
+double guessFactor=(radiansOff/guessFactorLength);
+System.out.println((int)guessFactor +" , "+ radiansOff + " , " +guessFactorLength);
+</pre>
+<p>
+<UL >
+<li> added pre-tags for a better readability --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+</UL>
+<p>
+I assume in the linear aim that the speed of the enemy robot is 8 just for the custom event. Central Aim is the aim i would take without any aid of targeting. 
+I cast to int so i can easily see when my code is producing guess factors above 1. Thanks in advance!
+<PRE >
+ -- <a href="robowiki?DragonTamer" class=wikipagelink>DragonTamer</a>
+</PRE>
+<p>
+With linear Guess Factors it is more than possible to get Guess factors more than 1.0  and less than -1.0 - this can happen for example if a slow moving bot speeds up after a bullet at been fired.  It is therefor possible for a bot to 'trick' this form of guess factor targeting - but it does save having to segment on speed.  <a href="robowiki?SandboxMini" class=wikipagelink>SandboxMini</a> uses both linear Guess Factors as well as Absolute Guess Factors to avoid this problem.  --  <a href="robowiki?Paul" class=wikipagelink>Paul</a>
+<p>
+If you're assuming a velocity of 8 (as you say) than that isn't linear GFs, although you may be calculating based on the enemy's heading, which would confuse matters.  For absolute GFs (like most bots use, i belive) you need to assume it is going full speed, and assume it is going perfectly perpendicular to you. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+What different algos do use to calculate the maximal bearing change? --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+Recent versions of <a href="robowiki?Iiley" class=wikipagelink>iiley</a>'s bots use at least two different functions. <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> used something I termed an <a href="robowiki?EscapeArea" class=wikipagelink>EscapeArea</a>. Some bots consider the current velocity of the target, some only max speed and some use a rolling average of the enemy velocity. You could also hook up all these different ways in a <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> array and use the gun with the best virtual hit rate. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+For those interested I may have found the cause of the escape area problem. Tell me what you think:
+<p>
+First, we'll make a hypothetical situation involving two bots, (a) and (b), centering the coordinate axis around bot (b), the target bot.
+<pre>
++----------------------------+
+|             |              |
+|             |              |
+|             |              |
+|             |              |
+|             |              |
+|-------------b-------a------|
+|             |              |
+|             |              |
+|             |              |
+|             |              |
++-------------|--------------+
+</pre>
+We'll arbitrarily call the distance between (a) and (b) 10. Bot (a) is stationary and bot (b) is moving flat-out upwards at maximum velocity (beginning as soon as (a) fires his wave). This creates a right triangle.
+<pre>
++---------+
+| b       |
+| |\      |
+| | \     |
+| |  \    |
+| |   \   |
+| |    \  |
+| +-----a |
++---------+
+</pre>
+Since robocode is a discrete system, we don't need to use anything fancy here, just a table of values will do. We'll assume the wave travelled at velocity 11, like a power 3 bullet.
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'> time </td><td colspan="0.5"> wave travel </td><td colspan="0.5"> (b) travel </td><td colspan="0.5"> (a) to (b) dist </td></TR>
+<TR VALIGN='CENTER' ><td align="center" colspan='0.5'> 0</td><td align="center" colspan="0.5">    0    </td><td align="center" colspan="0.5">    0   </td><td align="right" colspan="0.5">      10       </td></TR>
+<TR VALIGN='CENTER' ><td align="center" colspan='0.5'> 1</td><td align="center" colspan="0.5">   11    </td><td align="center" colspan="0.5">    8   </td><td align="right" colspan="0.5">    12.8       </td></TR>
+<TR VALIGN='CENTER' ><td align="center" colspan='0.5'> 2</td><td align="center" colspan="0.5">   22    </td><td align="center" colspan="0.5">   16   </td><td align="right" colspan="0.5">    18.9       </td></TR>
+</TABLE>
+<p>
+We stop here. Looks like the distance is now exceeded by the wave travel, meaning we've hit our target. Funny thing, though, we haven't hit our target exactly at 22 like we've assumed we would, instead we've hit our target at 18.9. Let's compare the two right triangles.
+<pre>
++--------------------------------+
+|  b                     b       |
+|  |\                    |\      |
+|  | \                   | \     |
+|16|  \ 18.9     and   16|  \ 22 |
+|  |   \                 |   \   |
+|  |    \                |    \  |
+|  +-----a               +-----a |
+|    10                    10    |
++--------------------------------+
+(as Loki has pointed out, the second right triangle is impossible to begin with)
+</pre>
+Using the definition of sin in a right triangle as opposite/hypotenuse we can calculate the sin of the angle in (a)'s corner in each case.
+<pre>
+asin(16/18.9) = appr. 57.84 degrees
+asin(16/22)   = appr. 46.66 degrees
+</pre>
+16/22 is the same as 8/11, our ideal theoretical proportionality. In making this proportionality we discard, however, that the impact when the bullet has travelled 22 units will take place not at 22 but at <pre>11 &lt; d &lt;= 22</pre> As the distance increases the affect on the angle of varying this number will decrease, because the variance is only one tick of travel in a typically 20+ tick travel time, a small percentage. For this reason we're able to "fudge" our ideal range up by 115 or 120 percent and avoid crashes. Comments? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+what is the Escape Area Problem to which you refer at the top of the section? I agree that most of the time a hit will occur before the bullet reaches the center of the bot, but somtimes it can occur after passing bot center. --  <a href="robowiki?Paul" class=wikipagelink>Paul</a>
+<p>
+i think the first figure gives you the correct angle, but at an incorrect time (time is a bit smaller than 2). Figure 2 can't give you the correct angle as you don't have a right triangle. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<p>
+<p>
+I think the referred problem is that the common axiom for calculating max escape angle (around the lines of the maxBearing function above) sometimes gives a too small figure. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+PEZ is correct it refers to the use of asin(8/11) for maximum angle of escape. As for your comment Loki, that's true, but most bots will call it one and calculate based on that, check the logic of any open-source stat targeter. Paul, that's not really what I was on about, it's not about where the hit takes place but about why people who have started using waves are ending up with guess factors of 1.2 or 1.3. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Bot will not necessary move at maximum angle if it moves at straight line. I think it will reach maximum if it moves a litle towards the opponent. However, approximation is probably unavoidable. The simplest calculation I know: assume that bot moves round the circle. Then max escape angle is botSpeed/bulletSpeed (radians, of course). -- <a href="robowiki?Asm" class=wikipagelink>asm</a>
+<p>
+Yeah, the asin() seems almost unecessary here. Save me a few bytes, thanks! Please update your wiki Preferences with your wiki name. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Without the asin() you assume an opponent moving a circle around you as the maximum escape angle. The straight tangent line (asin(8/11)) is in fact the largest, however, there's a proof to that effect somewhere on the wiki. The only problem with it is that this angle doesn't neccesarily refer to the center of the bot but merely where some part of the opponent bot intersects the wave, so finding the angle to the center can result in larger than this angles due to forcing impossible values onto a right triangle. See above. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I do like <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a> anyway and multiply with 1.2. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+When segmenting guess factors, does anyone use segments based on the current movement modes they are using? If I was in antigravity mode(not moving much, avoiding bullets) and I switched into random movement mode(all over the place, a few rams) the enemy might react by altering it's movement, giving vastly different hit ratios. -- <a href="robowiki?RobocoderDan" class=wikipagelink>RobocoderDan</a>
+<p>
+I have done this in the past. Bots which control their distance will move relative to how you do. Try it and see how it works. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+First off, who wrote that? Sign your posts! :-) Many bots keep different data for melee vs. 1-v-1 (I'm assuming you're talking about using <a href="robowiki?AntiGravity" class=wikipagelink>AntiGravity</a> in melee and <a href="robowiki?RandomMovement" class=wikipagelink>RandomMovement</a> in 1-v-1), but I don't know of any that segment on different things. Sounds like a good area to explore. Melee is much less explored than 1-v-1 at this point. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+I'm talking about mode changes in melee affecting enemy movement. I have not yet started coding a bot, need to learn some Java first, so I can't try out ideas when I think of them. -- <a href="robowiki?RobocoderDan" class=wikipagelink>RobocoderDan</a> (...Soon)
+<p>
+Well in most melee bots they dont particularly care about an individual bots movement unless they are shooting at it. Usually enemy movement is most effected by how close you are to it rather than how you get there, and so if one of your modes aims to be much closer to the bot (eg a ramming mode) then it may be useful to see how the bot reacts (possibly moving directly away from you and being easier to hit). The problem with much more detail is that it would require more frequent scans, which isnt always tangible in melee. -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+My GF gun is having problems (like it can't hit Sitting duck at all), but I don't know what they are.  Could someone REALLY GOOD with Java figure out my error?  I'm still trying to de-bug it, but any help would be great.  See at at <a href="robowiki?UbaGfSource" class=wikipagelink>UbaGfSource</a> please.  --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+<pre>	double bearingrange = Math.abs((maxbearing-getRadarHeadingRadians()) * 2);</pre>
+IIRC, you get your scan event at the end of the turn, so your radar has already swept passed <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a>. Thus, getRadarHeadingRadians<a href="robowiki?action=edit&id=RadarHeadingRadians" class=wikipageedit>?</a>() is not a good very good measure of opponent's absolute bearing, unless you have a very narrow radar arc. Try
+<pre>	double bearingrange = Math.abs((Utils.normalRelativeAngle(maxbearing - absoluteBearing)) * 2);</pre>
+instead. This should be more accurate. -- <a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Say you know that your bullet missed your target, and you have your bullet stored, how would you determine the guessfactor that the enemy is now on?
+<pre>
+
+double maxAngle;   //Stored from the last fire.
+for(int i=0;i &lt; bullets.size();i++)
+{
+	b = (Bullet) bullets.elementAt(i);
+
+	//Okay our bullet missed our target, but what factor is the bot at then?
+	if(Utils.dist(getX(),getY(),b.getX(),b.getY()) &gt;= e.getDistance())
+	{
+		factor = //What do I put here to determine the guessfactor
+	}
+}
+</pre>
+-- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Well, the first thing you need to know is the maximum escape angle. That is to say, what is the maximum angle they could reach, before your bullet hit them. On a field with no walls, this is <code>Math.asin(8/bulletSpeed)</code>. So, let's create s utility function that gives this value.
+<pre>
+public double getMaxEscapeAngle(double bulletPower){
+   double bulletSpeed = 20.0 - 3.0 * bulletPower;
+   return Math.asin(8.0 / bulletSpeed);
+}
+</pre>
+<p>
+You'll also need a function for finding the angle from one point to another.
+<pre>
+public double absoluteAngle(Point2D.Double origin, Point2D.Double destination){
+   return Math.atan2(destination.x - origin.x, destination.y - origin.y);
+}
+</pre>
+<p>
+So let's say you're shooting at someone. If the current angle from you to them is <code>x</code> and they are moving clockwise around you, then GF1 is <code>x + getMaxEscapeAngle(yourBulletPower)</code> and GF-1 is <code>x - getMaxEscapeAngle(yourBulletPower)</code>. If they are traveling counterclockwise around you, those values are reversed. (We define GF1 as as "The maximum angle that they could reach if they keep traveling in the same direction", so the direction that they are traveling affects which way GF1 goes)  So the easiest way to track this is with what's called a <a href="robowiki?Wave" class=wikipagelink>Wave</a>, which is just an object that records the position of the shooter and the bullet power. Each turn, you update the distance that this wave has traveled by adding the bullet velocity. When the distance traveled by the wave is greater than the distance from the wave's origin (the shooter's position) to the target's current position, the wave has "hit". Now you need to record the <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> that the wave hit at. So, you take the current angle from the shooter to target (use the absoluteAngle function I gave if you don't already have one) and subtract the head-on angle 'at the time the wave was fired'. This gives you the angular difference. Now you divide that value by the maximum angle possible (get<a href="robowiki?MaxEscapeAngle" class=wikipagelink>MaxEscapeAngle</a>) to get the <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> that he was at, between 1 and -1. Now you would usually put this value into "bins", so using 31 bins as an example (from 0 = GF-1 to 30 = GF1) you'd do something like <code>int bin = Math.round(guessFactor * 15 + 15)</code>
+<p>
+So, here's what the whole thing looks like when you put it all together. This code is from <a href="robowiki?YinYang" class=wikipagelink>YinYang</a>, so it's a little hard to read.
+<pre>
+   
+if ((distanceTraveled += speed) &gt; shootersPositionAtFireTime.distance(targetsCurrentPosition)) {
+   int solutionBin = (int)((Utils.normalRelativeAngle(absoluteAngle(origin, target) - headonAngleAtFireTime)) / (targetDirection * getMaxEscapeAngle(bulletPowerForThisWave) / MIDDLE_GUESSFACTOR)) + MIDDLE_GUESSFACTOR;
+   //... wave has hit, so update our stats here...
+}
+</pre>
+Apologies in advance if there is a problem with any of the functions I've typed in, I didn't have time to compile them, but they look right. =) Let me know if you have any questions.
+--<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+(Edit Conflict, but David's response is probably better :P) Knowing whether or not your bullet missed your target is more of a <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> matter. Anyway, if you record the "direct angle to enemy" on your wave, then once your wave has passed the enemy, the <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> to record for that wave would be: <em>(absoluteBearing(myLocation, enemyLocation) - direct_angle_at_wave_fire_wime / maxEscapeAngleForThisWave<a href="robowiki?action=edit&id=EscapeAngleForThisWave" class=wikipageedit>?</a>) * direction of enemy at fire time</em>. If they were moving at a right angle to you at fire time at full speed, and continued moving in that direction, that would be GF = 1; if they instantly reversed direction and moved at full speed the other way, that would be -1. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+<p>
+Erm, okay just a tad more confused now. I understand the mathmatics involved now, however not how to impliment. Such as I store the absoluteBearing in the wave when my bot fires then once that wave reaches the enemy(and hits?) I take the current absolute absoluteBearing and subtract the waves absoluteBearing then divide those by the maxEscapeAngle<a href="robowiki?action=edit&id=EscapeAngle" class=wikipageedit>?</a>? <code>gfactor = (absBearing - w.absBearing) / w.maxAngle;</code> Okay I get all that (I think), but what are these bins and exactly how are they used? e.g. how do I put into them and how to I get stuff from them to use in the <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>?
+<p>
+I'm trying to understand exactly how this is suppose to work, but its not going so hot.
+--<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+<p>
+Wow i'm dense, the anwser to the whole bin thing came to me while I was starting to doze off in my chair after working at hte problem for a few hours. A simple array, 31 slots, with 0 being -1 and 31 being 1. each one of them refers to a section of the GF inbetween, e.g. the more you ahve the more precise it is but the less likely the values will add up correctly and get a relable GF. So you just pile the ones that hit in their respective part of the array then you fire at that GF. If it misses you add the GF that the bot was at when you missed to the bin and pile it on from there. In a one on one match this data will add up and make a very reliable blasting pattern. So am I right? -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Indeed. In fact your summary is better than most. We should use it. -- ~~~~
+<p>
+Nah, its just what everyone else said all globbed togeather --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Okay, I have been testing a few different methods of storing and retrieving data to and from the bins in a traditional gf gun. I have noticed a difference between many different styles amoung the bots. Mostly it has to do with having or not having the Maximum Escape Angle.
+<pre>
+Slightly paraphrased versions of those used in the respective bots.
+GF_ZERO = bin at which gf zero occurs
+GF_ONE = bin at which gf one occurs
+bearingOffset = difference in bearing when wave reaches enemy
+
+Cyanide uses a escapeless method:
+int index = (int)Math.round((1+bearingOffset/Direction)*GF_ZERO);
+
+Where as GresSuffurd uses a MaxEscape method:
+guessFactor = Math.max(-1, Math.min(1, bearingOffset / maxEscapeAngle)) * direction;
+index = (int)Math.round( GF_ZERO * ( guessFactor + 1.0));
+
+I myself also use a MaxEscape method, as follows:
+guessFactor = bearingOffset / maxEscapeAngle * direction;
+index = (int)limit(0, (getFactor(targetLocation) * GF_ZERO) + GF_ZERO, GF_ONE-1);
+</pre>
+<p>
+So all i'm asking, is what is the fundamental and targeting differences between these implimentations? Both as viable as thier are bots using both methods rather high up on the charts. -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Actually, <a href="robowiki?Cyanide" class=wikipagelink>Cyanide</a> uses a max escape angle, it's just a little obfuscated.
+<pre>
+        enemyDirection = binaryDirection * Math.asin(8/bulletSpeed);	
+</pre>
+He then sets the wave's .escapeEnvelope to that variable and it's used when determining the GF. It's just a coding style preference here - you really can't do <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> without a max escape angle.
+<p>
+-- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I think this is the right place to ask: I'm currently developing a <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> Gun. I works quite simple: take a guess, shoot, if that bullet hits save that guess in an array and so on. So that guessing should be based on that recorded data - sure. My problem is to find a way to select the <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a>. I don't like that approach most of you use wich is to pick the highest spike( please correct me if I'm wrong ). I would like to use something that regards all data.
+E.g. I have a gaussian ditribution then about 85% of the shots should be in the sigma-area. Selecting the highest spiek I would only shoot in one direction, although my target probably is an Oscillator.
+So does anyone know how to do that?
+<p>
+-- <a href="robowiki?Gez" class=wikipagelink>gez</a>
+<p>
+Well, I think that shooting at the highest spike is guaranteed to give you the most hits as a result, at least compared to shooting at the smaller spikes. You could do some heavy <a href="robowiki?BinSmoothing" class=wikipagelink>BinSmoothing</a>, which could make a cluster of small spikes look more appealing than one big spike. I would also look into <a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a>. Segmenting on something like time-since-direction-change would work very well against <a href="robowiki?Oscillators" class=wikipagelink>Oscillators</a>; for instance, the highest spike when the enemy just changed directions would then be different than if they hadn't changed direction for 10 ticks. Does that help? -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Thanks, these are interesting topics to look at but it doesn't solve my problem for it is that i think it is too naive to shoot at the highest spike. I will give an better example. Imagine your enemy moves either left or right everytime you're shooting. After a lot of fights there should be a curve for your successful hits wich looks like a bowl oder an 'M'. So it has two spikes. I want to select one of them by random but weighted depending on their size.
+I have thought about this and in conclusion I'm shooting at the highest spike, but I'm now adding a hit to my database in case of a successful shot *and* removing one for every failed shot. When I've figured it out to work I will report about it. -- <a href="robowiki?Gez" class=wikipagelink>gez</a>
+<p>
+I did something like this in my first Bot Krabby for his virtual guns. I used a random number between 0 and 100 (double) and checked if the hitrate(in percent) of the first gun is above this number. If this condition is true aim with that gun, if it isn't add the hitrate of the next gun to the previous hitrate and do the same check. Continue till you get a match. I had to do some scaling in order to get a accumulated hitrate of 100%. But the accumulated hitrate should automatically be 100% if you use this methode with bins. Does this help? :) --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+I don't exactly know :P I thought about that way to handle this but dismissed it because the first bins are rather selected than later ones, because if the first one passes the others are disregarded. But it could be that I'm too much perfectionist. Can you recognize an influence by this?
+I will try it ... I guess it works pretty well. :D -- <a href="robowiki?Gez" class=wikipagelink>gez</a>
+<p>
+<UL >
+<li> Hmm, you should have no bias if you have a perfect random number generator! Mind to calculate the random number only once per aim, not for every bin and make sure your accumulated hitrate of all bins is 100% (especially when you do some wightning of peaks)... --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<li> Ok, I think I got you wrong. Do you mean something like this?
+<li> Not exactly, i fixed it:
+<li> I got the principle, but can't get the theory behind it. I'll try it. Thanks for your help.
+</UL>
+<p>
+The Theory: Every bin represents a specific hitrate. Your want to select a bin with a hitrate of 50% about every second shot and a bin with 25% hitrate every fourth. We first add the hitrates of all bins (think of a stack of hitrates):
+<p>
+Stack of 3 bins:
+<pre>
+     bin 0 = 50%       bin1=25%   bin2=25%
+|XXXXXXXXXXXXXXXXXXXX|XXXXXXXXXX|XXXXXXXXXXX|   = accumulated hitrate = 100 %
+</pre>
+now we generate a random number from 0 to accumulatedhitrate. The number "hits" a specific stack segment:
+<p>
+For example: random numer a = 5, b = 15, c = 25, accumulatedhitrate = 40:
+<pre>
+|XXXXaXXXXXXXXXXXXXXX|XXXXXXXXXX|XXXXXXXXXXX| a hits bin1
+|XXXXXXXXXXXXXXbXXXXX|XXXXXXXXXX|XXXXXXXXXXX| b hits bin1
+|XXXXXXXXXXXXXXXXXXXX|XXXXcXXXXX|XXXXXXXXXXX| c hits bin2
+   .
+   .
+   .
+</pre>
+<p>
+Its like a dartboard, you mostly hit the big segments. --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+<pre>
+int selectBin() {
+    double seed = Math.random(), hitrate = 0, accumulatedhitrate = 0;
+
+    //optional, if your accumulatedhitrate isn't 1
+    for(int i=0; i&lt;bin.length; i++)
+       accumulatedhitrate += bin[i];
+    seed *= accumulatedhitrate;
+
+    //get random bin
+    for( int i = 0; i &lt; bin.length; i++ ) {
+        if( (hitrate+=bin[i]) &gt;= seed ) {
+            return i;
+        }
+    }
+}
+</pre>
+<p>
+<em>(edit conflict)</em> Just about every bot author has tried at one point or another to make a bot that chooses a <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> other than the highest spike. As far as I know, every one of them has come to the conclusion that, in general, picking the highest spike is the best algorithm. It is an elegant application of the <a href="robowiki?KISS" class=wikipagelink>KISS</a> principle, and other systems tend to be buggy, hard to understand, and ineffective. Still, play around; you never know what you might come up with! -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<p>
+<UL >
+<li> Just to give my 2 cents, I agree that it is virtually proven that aiming at the highest spike gives the highest hit rate. It is probably even provable mathematically. But many good things in Robocode have come out of questioning the established truths, so it's definitely worth exploring for yourself.  -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+<p>
+Lies! All of it lies! Well okay.. no, its not. But I generally find the 'best' to be finding the best within a range of 3. I think voidious knows what I mean. If not here's a graph. This assumes your spike test would only normally do &gt; and not &gt;=
+<p>
+<pre>
+|                 Best spike
+|                     |
+|  Biggest Spike     \|/
+| ___     /          ___
+|[464]   /          [565]
+|  *   |/_            * 
+|  *                 ***
+| ***               ***** 
+| ***             *********
+| ***           *************
+|*****        ***************** 
++-------------------------------
+ 1             0               1
+ -                             +
+</pre>
+<p>
+See, a useful little ansi-art graph displaying what I mean. :)
+<p>
+--<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+<UL >
+<li> Huh, I'll have to try that. I note that you say "within a range of 3" without regard to the number of bins. If you have 101 bins, you are obviously going to need a wider "window" than if you have 31 bins. What ratio do you actually mean? -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+</UL>
+<p>
+Ehh, I don't really think its linear really, might be let me think, say 1 for 21 and under, 3 for 31, 5 for 71 and over, at the very most. I have seen it gets a tad unreiable if you go up to high. I might be tempted to say never go over 5, but you can try 7 or 9 *shudder*, if you have enough bins (like a few thousand).
+<p>
+Here is some sample code for it
+<pre>
+///////////////////////////////
+// Find the best factor
+///////////////////////////////
+int bestIndex = gunFactorCenter;
+int bestValue = 0;
+for(int i=0; i&lt;gunFactorIndexes; i++) {
+    int value = 0;
+    
+    //-1 is simpler, KISS
+    for(int j=-1; j &lt;= 1; j++) {
+
+        // Now this took me awhile, this goes
+        // back over the edge, to smooth it out.
+        if(i+j &lt; 0 || i+j &gt;= gunFactorIndexes) {
+	    value += gfbin[i-j];
+        } else {
+            value += gfbin[i+j];
+        }
+    }
+	
+    // Guess what this does
+    if(value &gt; bestValue) {
+        bestValue = value;
+        bestIndex = i;
+    }
+}
+</pre>
+<p>
+--<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Oops, too late. I already released <a href="robowiki?Horizon" class=wikipagelink>Horizon</a> 1.02 with this code:
+<p>
+<pre>
+int bestAngleIndex = StatBufferUtil.MIDDLE_BIN;
+double bestAngle = 0.0;
+for (int i = 1; i &lt; StatBufferUtil.BINS - 1; i++) {
+	double angleValue = segment[i - 1] + segment[i] + segment[i + 1];
+	if (angleValue &gt; bestAngle) {
+		bestAngleIndex = i;
+		bestAngle = angleValue;
+	}
+}
+</pre>
+<p>
+As you can see, it basically just ignores the first and last bins.
+<p>
+-- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<p>
+Well, this reminds me of two things. First, instead of adding the neighboring bins whenever you read data, why not just use <a href="robowiki?BinSmoothing" class=wikipagelink>BinSmoothing</a> when recording the data? But really, I've never seen hard evidence that <a href="robowiki?BinSmoothing" class=wikipagelink>BinSmoothing</a> in a gun makes any difference (a point that <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> has argued many times). Second, I think it makes sense to record a hit in all the bins covered by the bot width, but I still don't think it matters much unless you have a ridiculous number of bins. <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> logs hits across any bin within the bot width (using a really really heavy smoothing), then ignores bot width when reading data. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+How many dimensions of array should i use to make my GFGun ?Dose anyone know?Is it recommended that 7-8 dimensions should be used on account of the search time of arrays?  -- SeasonLee<a href="robowiki?action=edit&id=SeasonLee" class=wikipageedit>?</a>
+<p>
+There's no "right" answer, but here's my suggestion. First, I'd start with unsegmented until you get the rest working right. In general, I wouldn't go higher than 6 dimensions, or maybe 7 if the others are small enough, because you'll simply run out of memory. And in general, I think 3 or 4 are the most crucial: <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a>, distance, accel (0 = deccelerating, 1 = same speed, 2 = accelerating), and time since velocity change or <a href="robowiki?WallDistance" class=wikipagelink>WallDistance</a>. The more segments / slices you add, the more you're trading learning speed for long-term accuracy. Play around and see what works! =) Also, welcome to the wiki! Please feel free to make a page for yourself and your bots. Cheers, -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=GuessFactorTargeting" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=GuessFactorTargeting">View other revisions</a><br>Last edited April 22, 2008 13:24 EST by cpe-204-210-154-119.hvc.res.rr.com <a href="robowiki?action=browse&diff=1&id=GuessFactorTargeting">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

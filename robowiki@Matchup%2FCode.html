@@ -1,0 +1,736 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Matchup/Code - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Matchup, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Code">Matchup/Code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Matchup" class=wikipagelink>Matchup</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+// Matchup by Stelokim
+//
+// History
+// version 1.3: forward/reverse pattern-matcher
+// version 1.4: statistical pattern-matcher
+//
+// Credit: ABC for the idea
+package stelo;
+
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+
+import robocode.*;
+import robocode.util.Utils;
+
+public class Matchup extends AdvancedRobot {
+	private static final int NUM_LOGS = 2; // [0]: velocity, [1]: angleChange, [2]: distance, [3]: bearingChange, [4]: ticksSinceMyFire
+	private static final int PATTERN_LENGTH = 9000;
+	private static int searchLength = 20; // increasing this will slow down the game
+	private static int pattern_size = 0;
+	private static int bulletTravelTime = 0;
+
+	private static double[][] theLog = new double[PATTERN_LENGTH][NUM_LOGS];
+	private static int cursor = 0;
+	private double movementLateralAngle = 0.2;
+	private Point2D enemyLocation;
+	private Point2D robotLocation;
+	private double enemyDistance;
+	private double enemyAbsoluteBearing;
+//	private static double maxVelocity = 8;
+	private static final double WALL_MARGIN = 25;
+	
+	private static double lastEnemyHeading = 0;
+	private static double lastEnemyVelocity = 0;
+	private static double lastEnemyBearing = 0;
+	private static double lastEnemyEnergy;
+	
+//	private static int ticksSinceMyFire = 0;
+//	private static double smallestDiff;
+//	private static double smallestDiffReverse;
+//	private static double matchedSign = 1.0;
+	
+	private static double enemyBulletPower = 0.1;
+	private static double energyDrop = 0;
+//	private static int ticksSinceDirection = 0;
+	
+	private static int CLOSEST_SIZE = 50;
+	private static double MAX_ESCAPE_ANGLE = 0.9; 
+			
+//	private static int hitRobotCount = 0;
+
+	public void run() {
+		setAdjustGunForRobotTurn(true);
+		setAdjustRadarForGunTurn(true);
+
+		do {
+			turnRadarRightRadians(Double.POSITIVE_INFINITY);
+		} while (true);
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e) {
+		double absbearing = e.getBearingRadians() + getHeadingRadians();
+		setTurnRadarRightRadians(Utils.normalRelativeAngle(absbearing
+				- getRadarHeadingRadians()) * 2); // 2 original
+
+		robotLocation = new Point2D.Double(getX(), getY());
+		enemyAbsoluteBearing = absbearing;
+		enemyDistance = e.getDistance();
+		enemyLocation = vectorToLocation(enemyAbsoluteBearing, enemyDistance,
+				robotLocation);
+
+		double bulletPower;
+		energyDrop = lastEnemyEnergy - e.getEnergy();
+		if (energyDrop &gt;= 0.1 &amp;&amp; energyDrop &lt;= 3) 
+			enemyBulletPower = energyDrop;
+		bulletPower = enemyBulletPower;
+			
+		//bulletPower = limit(0.1, bulletPower, (enemyDistance &lt; 100 || getOthers() &gt; 5 || smallestDiff &lt; 1) ? 3.0 : 2.0);
+		bulletPower = Math.min(bulletPower, e.getEnergy() / 5.0 );
+		bulletPower = limit(0.1, bulletPower, 3.0);
+				
+		if (getEnergy() &gt; bulletPower &amp;&amp; getGunHeat() / getGunCoolingRate() &lt; 3 &amp;&amp; getGunTurnRemainingRadians() == 0) {			
+//		if (getEnergy() &gt; bulletPower &amp;&amp; getGunHeat() / getGunCoolingRate() &lt; 3) {			
+			double eX = e.getDistance() * Math.sin(absbearing);
+			double eY = e.getDistance() * Math.cos(absbearing);
+			
+//			if (e.getEnergy() == 0.0) {
+//				maxVelocity = 8.0;
+//				goTo(new Point2D.Double(getX() + eX, getY() + eY));
+//				return;
+//			}
+			
+//			if (getGunHeat() == 0) {
+				//out.println("matched index: " + index + "\tdiff: " + smallestDiff + "\tsearchLength: " + searchLength);
+//				ticksSinceMyFire = 0;
+//			}
+	
+			double bearingOffset = bestBearing(theLog, e, bulletPower, absbearing);
+			if (Math.abs(bearingOffset) &lt; MAX_ESCAPE_ANGLE) {
+				setTurnGunRightRadians(Utils.normalRelativeAngle(absbearing + bearingOffset - getGunHeadingRadians()));
+				setFire(bulletPower);
+			}
+		}
+//		else {
+//			setTurnGunRightRadians(Utils.normalRelativeAngle( absbearing - getGunHeadingRadians() ) );
+//		}
+//		ticksSinceMyFire++;
+		
+		if (Math.abs(e.getVelocity()) &gt; 0 &amp;&amp; getOthers() &lt;= 1 &amp;&amp; enemyDistance &gt;= 200 &amp;&amp; Math.abs(getEnergy() - e.getEnergy()) &lt; 20) {
+//			setMaxVelocity(maxVelocity = 8);
+			mirrorMove();
+		}
+		else {
+			randomMove();
+		}
+		//out.println("cursor: " + cursor);
+		{
+			/*
+			//velocityChange[cursor] = e.getVelocity() - lastEnemyVelocity;
+			velocityChange[cursor] = e.getVelocity();
+			angleChange[cursor] = e.getHeadingRadians() - lastEnemyHeading;
+			//angleChange[cursor] = (int) ((e.getHeadingRadians() - lastEnemyHeading) * 10000) / 10000.0;
+			logDistance[cursor] = e.getDistance() / 1000;
+			logEnergy[cursor] = e.getEnergy() / 1000;
+			*/
+			theLog[cursor][0] = e.getVelocity();
+			theLog[cursor][1] = e.getHeadingRadians() - lastEnemyHeading;
+			//theLog[cursor][1] = e.getHeadingRadians();
+			//theLog[cursor][2] = e.getDistance() / 10000;
+			//theLog[cursor][3] = (absbearing - lastEnemyBearing) / 100;
+			//theLog[cursor][4] = ticksSinceMyFire / 100;
+			
+			cursor = (cursor + 1) % PATTERN_LENGTH;
+//			out.println(cursor);
+			if (pattern_size &lt; PATTERN_LENGTH)
+				pattern_size++;
+		}
+		lastEnemyHeading = e.getHeadingRadians();
+		lastEnemyVelocity = e.getVelocity();
+		lastEnemyBearing = absbearing;
+		lastEnemyEnergy = e.getEnergy();
+	}
+
+//	public void onHitRobot(HitRobotEvent e) {
+//		hitRobotCount++;
+//	}
+
+//    public void onHitByBullet(HitByBulletEvent e) {
+//		if (getOthers() &lt;= 1)
+//			turnRadarRightRadians(Utils.normalRelativeAngle(e.getBearingRadians() + getHeadingRadians() - getRadarHeadingRadians()));
+//	}
+
+	public void onSkippedTurn(SkippedTurnEvent e) {
+		out.println("SkippedTurn at: " + e.getTime());
+	}
+
+	// statistical pattern-matcher
+	private double bestBearing(double[][] series, ScannedRobotEvent e, double bulletPower, double absbearing) {
+		int[] closestIndexes = new int[CLOSEST_SIZE];
+		double[] closestDiffs = new double[CLOSEST_SIZE];
+		double[] angles = new double[CLOSEST_SIZE];
+		int count = 0, i, c;
+		
+		for (c = 0 ; c &lt; CLOSEST_SIZE; c++) {
+			closestDiffs[c] = Double.POSITIVE_INFINITY;
+		}
+			
+		i = (PATTERN_LENGTH + cursor - 1) % PATTERN_LENGTH;
+		while (count &lt; PATTERN_LENGTH) {
+			double diff = 0;
+			
+			for (int j = 0; j &lt; searchLength; j++) {
+				int k = (i + j) % PATTERN_LENGTH;
+				int searchIndex = (PATTERN_LENGTH + cursor - searchLength + j) % PATTERN_LENGTH;
+				if (k == searchIndex) {
+					diff = Double.POSITIVE_INFINITY;
+					break;
+				}
+				diff += Math.abs(series[searchIndex][0] - series[k][0]) / 8.0; // velocity
+				diff += Math.abs(series[searchIndex][1] - series[k][1]) / 0.17453292519943295769236907684886; // maximum turning, angleChange
+			}
+			for (c = 0 ; c &lt; CLOSEST_SIZE; c++) {
+				if (diff &lt; closestDiffs[c] &amp;&amp; Math.abs((i + searchLength) % PATTERN_LENGTH - cursor) &gt; bulletTravelTime) {
+					closestDiffs[c] = diff;
+					closestIndexes[c] = (i + searchLength) % PATTERN_LENGTH;
+					break;
+				}		
+			}
+			count++;
+			i = (PATTERN_LENGTH + i - 1) % PATTERN_LENGTH;
+		}
+	
+		// reconstruct enemy movement
+		for (c = 0 ; c &lt; CLOSEST_SIZE; c++) {
+			double eX = e.getDistance() * Math.sin(absbearing);
+			double eY = e.getDistance() * Math.cos(absbearing);
+			double ww = e.getHeadingRadians();
+			double v = e.getVelocity();
+			double db = 0;
+			int index = closestIndexes[c];
+	
+			bulletTravelTime = 0;
+			do {
+				db += (20.0 - 3.0 * bulletPower);
+
+				eX += v * Math.sin(ww);
+				eY += v * Math.cos(ww);
+
+				ww += theLog[index][1];
+				v = theLog[index][0];
+				
+				if (index + 1 != cursor) {
+					index = (index + 1) % PATTERN_LENGTH;
+				}
+				bulletTravelTime++;
+			} while (db &lt; Point2D.distance(0, 0, eX, eY)); 
+			angles[c] = Utils.normalRelativeAngle(Math.atan2(eX, eY) - absbearing);
+		}
+	
+		// find the most popular angle
+		double angleThreshold = 36.0 / e.getDistance();
+		int binSize = (int) (MAX_ESCAPE_ANGLE * 2.0 / angleThreshold) + 1;
+		int[] statBin = new int[binSize];
+		double[] metaAngle = new double[binSize];
+		
+		for (c = 0 ; c &lt; CLOSEST_SIZE; c++) {
+			int binIndex = (int) ((angles[c] + MAX_ESCAPE_ANGLE) / angleThreshold);
+			metaAngle[binIndex] = angles[c];
+			statBin[binIndex]++;
+		}
+		int maxIndex = 0;
+		for (c = 0 ; c &lt; binSize; c++) {
+			if (statBin[c] &gt; statBin[maxIndex]) {
+				maxIndex = c;
+			}
+//			out.print(statBin[c] + " ");
+		}
+//		out.println();
+		
+		return metaAngle[maxIndex];
+	}							
+	
+	private void mirrorMove() {
+		goTo(new Point2D.Double(getBattleFieldWidth() - enemyLocation.getX(), getBattleFieldHeight() - enemyLocation.getY()));
+	}
+	
+	// Always try to move a bit further away from the enemy.
+	// Only when the walls forces us we will close in on the enemy. We never
+	// bounce of walls.
+	private void randomMove() {
+//		if (energyDrop &gt;= 0.1 &amp;&amp; energyDrop &lt;= 3) {
+//			maxVelocity = Math.min(6.0, Math.random() * 20.0) + 2.0;
+//		}
+		
+		considerChangingDirection();
+		Point2D robotDestination;
+		double tries = 0;
+		double awayFactor = (getOthers() &gt; 1) ? 2.0 : 1.0;
+//		if (enemyDistance &lt; 200) awayFactor = 5;
+
+		do {
+			// robotDestination =
+			// vectorToLocation(absoluteBearing(enemyLocation, robotLocation) +
+			// movementLateralAngle,
+			// enemyDistance * (1.1 - tries / 100.0), enemyLocation);
+			robotDestination = vectorToLocation(absoluteBearing(enemyLocation,
+					robotLocation)
+					+ movementLateralAngle, enemyDistance * awayFactor * (1.1 - tries / 100.0), enemyLocation);
+
+			tries++;
+		} while (tries &lt; 100
+				&amp;&amp; !fieldRectangle(WALL_MARGIN).contains(robotDestination));
+
+		// } while (tries &lt; 100 &amp;&amp;
+		// !fieldRectangle(WALL_MARGIN).contains(robotDestination));
+
+		goTo(robotDestination);
+	}
+
+	private void considerChangingDirection() {
+		// Change lateral direction at random
+		// Tweak this to go for flat movement
+		//if (Math.random() &lt; 0.05 || ticksSinceDirection &gt; 35) {
+		//if (Math.random() &lt; 0.08 &amp;&amp; ticksSinceDirection &gt; (enemyDistance - 36) / (20 - 3 * enemyBulletPower) ) {
+		if (Math.random() &lt; 0.05) {	
+			movementLateralAngle = -movementLateralAngle;
+			//maxVelocity = Math.min(6.0, Math.random() * 20.0) + 2.0;
+			//maxVelocity = 8;
+			//ticksSinceDirection = 0;
+		}
+		
+	//	ticksSinceDirection++;
+	}
+
+	/*
+	 * RoundRectangle2D fieldRectangle(double margin) { return new
+	 * RoundRectangle2D.Double(margin, margin, getBattleFieldWidth() - margin *
+	 * 2, getBattleFieldHeight() - margin * 2, 75, 75); // 75 }
+	 */
+
+	private Rectangle2D fieldRectangle(double margin) {
+		return new Rectangle2D.Double(margin, margin, getBattleFieldWidth()
+				- margin * 2, getBattleFieldHeight() - margin * 2);
+	}
+
+	private void goTo(Point2D destination) {
+		destination.setLocation(limit(35, destination.getX(),
+				getBattleFieldWidth() - 35), limit(35, destination.getY(),
+				getBattleFieldHeight() - 35));
+
+		double angle = Utils.normalRelativeAngle(absoluteBearing(robotLocation,
+				destination)
+				- getHeadingRadians());
+		double turnAngle = Math.atan(Math.tan(angle));
+		setTurnRightRadians(turnAngle);
+		setAhead(robotLocation.distance(destination)
+				* (angle == turnAngle ? 1 : -1));
+		// Hit the brake pedal hard if we need to turn sharply
+		setMaxVelocity(Math.abs(getTurnRemaining()) &gt; 30 ? 0 : 8);
+
+		// vibrate
+		//if (Math.abs(getTurnRemaining()) &lt; 1) {
+		//	setTurnRight(Math.random() &lt; 0.5 ? 10 : -10);
+		//}
+	}
+
+	private static Point2D vectorToLocation(double angle, double length,
+			Point2D sourceLocation) {
+		return vectorToLocation(angle, length, sourceLocation,
+				new Point2D.Double());
+	}
+
+	private static Point2D vectorToLocation(double angle, double length,
+			Point2D sourceLocation, Point2D targetLocation) {
+		targetLocation.setLocation(sourceLocation.getX() + Math.sin(angle)
+				* length, sourceLocation.getY() + Math.cos(angle) * length);
+		return targetLocation;
+	}
+
+	private static double absoluteBearing(Point2D source, Point2D target) {
+		return Math.atan2(target.getX() - source.getX(), target.getY()
+				- source.getY());
+	}
+
+	public static double limit(double min, double value, double max) {
+		return Math.max(min, Math.min(value, max));
+	}
+}
+
+</pre>
+<p>
+<hr>
+<pre>
+// Matchup by Stelokim
+//
+// History
+// version 1.3: forward/reverse pattern-matcher
+// version 1.4: statistical pattern-matcher
+// version 1.5: optimization
+// version 1.6: random movement only (better), targeting bounded in battle field
+//
+// Credit: ABC for the idea
+package stelo;
+
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+
+import robocode.*;
+import robocode.util.Utils;
+
+public class Matchup extends AdvancedRobot {
+	private static final int NUM_LOGS = 2; // [0]: velocity, [1]: angleChange, [2]: distance, [3]: bearingChange, [4]: ticksSinceMyFire
+	private static final int PATTERN_LENGTH = 9000;
+	private static int searchLength = 20; // increasing this will slow down the game. 20
+	private static int pattern_size = 0;
+
+	private static double[][] theLog = new double[PATTERN_LENGTH][NUM_LOGS];
+	private static int cursor = 0;
+	private double movementLateralAngle = 0.4;
+	private Point2D enemyLocation;
+	private Point2D robotLocation;
+	private double enemyDistance;
+	private double enemyAbsoluteBearing;
+//	private static double maxVelocity = 8;
+	private static final double WALL_MARGIN = 25;
+	
+	private static double lastEnemyHeading = 0;
+	private static double lastEnemyVelocity = 0;
+	private static double lastEnemyBearing = 0;
+	private static double lastEnemyEnergy;
+	
+//	private static int ticksSinceMyFire = 0;
+//	private static double smallestDiff;
+//	private static double smallestDiffReverse;
+//	private static double matchedSign = 1.0;
+	
+	private static double enemyBulletPower = 0.1;
+	private static double energyDrop = 0;
+//	private static int ticksSinceDirection = 0;
+	
+	private static int CLOSEST_SIZE = 50;
+	private static double MAX_ESCAPE_ANGLE = 0.9;
+
+	private static double maxX, maxY;
+			
+//	private static int hitRobotCount = 0;
+
+	public void run() {
+		setAdjustGunForRobotTurn(true);
+		setAdjustRadarForGunTurn(true);
+		
+		maxX = getBattleFieldWidth() - 18;
+		maxY = getBattleFieldHeight() - 18;
+
+		do {
+			turnRadarRightRadians(Double.POSITIVE_INFINITY);
+		} while (true);
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e) {
+		double absbearing = e.getBearingRadians() + getHeadingRadians();
+		setTurnRadarRightRadians(Utils.normalRelativeAngle(absbearing
+				- getRadarHeadingRadians()) * 2); // 2 original
+
+		robotLocation = new Point2D.Double(getX(), getY());
+		enemyAbsoluteBearing = absbearing;
+		enemyDistance = e.getDistance();
+		enemyLocation = vectorToLocation(enemyAbsoluteBearing, enemyDistance,
+				robotLocation);
+				
+		double bulletPower;
+		energyDrop = lastEnemyEnergy - e.getEnergy();
+		if (energyDrop &gt;= 0.1 &amp;&amp; energyDrop &lt;= 3) 
+			enemyBulletPower = energyDrop;
+		bulletPower = enemyBulletPower;
+			
+		//bulletPower = limit(0.1, bulletPower, (enemyDistance &lt; 100 || getOthers() &gt; 5 || smallestDiff &lt; 1) ? 3.0 : 2.0);
+		bulletPower = Math.min(bulletPower, e.getEnergy() / 5.0 );
+		bulletPower = limit(0.1, bulletPower, 3.0);
+				
+		if (getEnergy() &gt; bulletPower &amp;&amp; getGunHeat() / getGunCoolingRate() &lt; 3 &amp;&amp; getGunTurnRemainingRadians() == 0) {			
+//		if (getEnergy() &gt; bulletPower &amp;&amp; getGunHeat() / getGunCoolingRate() &lt; 3) {			
+			double eX = e.getDistance() * Math.sin(absbearing);
+			double eY = e.getDistance() * Math.cos(absbearing);
+			
+//			if (e.getEnergy() == 0.0) {
+//				maxVelocity = 8.0;
+//				goTo(new Point2D.Double(getX() + eX, getY() + eY));
+//				return;
+//			}
+			
+//			if (getGunHeat() == 0) {
+				//out.println("matched index: " + index + "\tdiff: " + smallestDiff + "\tsearchLength: " + searchLength);
+//				ticksSinceMyFire = 0;
+//			}
+	
+			double bearingOffset = bestBearing(theLog, e, bulletPower, absbearing);
+//			if (Math.abs(bearingOffset) &lt; MAX_ESCAPE_ANGLE) {
+				setTurnGunRightRadians(Utils.normalRelativeAngle(absbearing + bearingOffset - getGunHeadingRadians()));
+				setFire(bulletPower);
+//			}
+		}
+//		else {
+//			setTurnGunRightRadians(Utils.normalRelativeAngle( absbearing - getGunHeadingRadians() ) );
+//		}
+//		ticksSinceMyFire++;
+		
+//		if (Math.abs(e.getVelocity()) &gt; 0 &amp;&amp; getOthers() &lt;= 1 &amp;&amp; enemyDistance &gt;= 200 &amp;&amp; Math.abs(getEnergy() - e.getEnergy()) &lt; 20) {
+//			setMaxVelocity(maxVelocity = 8);
+//			mirrorMove();
+//		}
+//		else {
+			randomMove();
+//		}
+//		if (getTime() % 60 &lt; 30)
+//			mirrorMove();
+//		else
+//			randomMove();
+
+		//out.println("cursor: " + cursor);
+		{
+			/*
+			//velocityChange[cursor] = e.getVelocity() - lastEnemyVelocity;
+			velocityChange[cursor] = e.getVelocity();
+			angleChange[cursor] = e.getHeadingRadians() - lastEnemyHeading;
+			//angleChange[cursor] = (int) ((e.getHeadingRadians() - lastEnemyHeading) * 10000) / 10000.0;
+			logDistance[cursor] = e.getDistance() / 1000;
+			logEnergy[cursor] = e.getEnergy() / 1000;
+			*/
+			theLog[cursor][0] = e.getVelocity();
+			theLog[cursor][1] = e.getHeadingRadians() - lastEnemyHeading;
+//			theLog[cursor][2] = e.getDistance() / 10000;
+			//theLog[cursor][3] = (absbearing - lastEnemyBearing) / 100;
+			//theLog[cursor][4] = ticksSinceMyFire / 100;
+			
+			cursor = (cursor + 1) % PATTERN_LENGTH;
+//			out.println(cursor);
+			if (pattern_size &lt; PATTERN_LENGTH)
+				pattern_size++;
+		}
+		lastEnemyHeading = e.getHeadingRadians();
+		lastEnemyVelocity = e.getVelocity();
+		lastEnemyBearing = absbearing;
+		lastEnemyEnergy = e.getEnergy();
+	}
+
+//	public void onHitRobot(HitRobotEvent e) {
+//		hitRobotCount++;
+//	}
+
+//    public void onHitByBullet(HitByBulletEvent e) {
+//		if (getOthers() &lt;= 1)
+//			turnRadarRightRadians(Utils.normalRelativeAngle(e.getBearingRadians() + getHeadingRadians() - getRadarHeadingRadians()));
+//	}
+
+	public void onSkippedTurn(SkippedTurnEvent e) {
+		out.println("SkippedTurn at: " + e.getTime());
+	}
+
+	// statistical pattern-matcher
+	private double bestBearing(double[][] series, ScannedRobotEvent e, double bulletPower, double absbearing) {
+		int[] closestIndexes = new int[CLOSEST_SIZE];
+		double[] closestDiffs = new double[CLOSEST_SIZE];
+		double[] angles = new double[CLOSEST_SIZE];
+		int count = 0, i, c;
+		final double bulletSpeed = (20.0 - 3.0 * bulletPower);
+		final double bulletTravelTime = enemyDistance / bulletSpeed;
+		
+		for (c = 0 ; c &lt; CLOSEST_SIZE; c++) {
+			closestDiffs[c] = Double.POSITIVE_INFINITY;
+		}
+			
+		i = (PATTERN_LENGTH + cursor - 1) % PATTERN_LENGTH;
+		while (count &lt; PATTERN_LENGTH) {
+			double diff = 0;
+			
+			for (int j = 0; j &lt; searchLength; j++) {
+				int k = (i + j) % PATTERN_LENGTH;
+				int searchIndex = (PATTERN_LENGTH + cursor - searchLength + j) % PATTERN_LENGTH;
+				if (k == searchIndex) {
+					diff = Double.POSITIVE_INFINITY;
+					break;
+				}
+				diff += Math.abs(series[searchIndex][0] - series[k][0]) / 8.0; // velocity
+				diff += Math.abs(series[searchIndex][1] - series[k][1]) / 0.17453292519943295769236907684886; // maximum turning, angleChange
+				//diff += Math.abs(series[searchIndex][2] - series[k][2]); // distance
+			}
+		
+			// find maximum difference index
+			int maxDiffIndex = 0;
+			for (c = 0; c &lt; CLOSEST_SIZE; c++) {
+				if (closestDiffs[c] &gt; closestDiffs[maxDiffIndex])
+					maxDiffIndex = c;
+			}
+		
+			// insert into the maximum difference index
+			if (diff &lt; closestDiffs[maxDiffIndex] &amp;&amp; Math.abs((i + searchLength) % PATTERN_LENGTH - cursor) &gt; bulletTravelTime) {
+				closestDiffs[maxDiffIndex] = diff;
+				closestIndexes[maxDiffIndex] = (i + searchLength) % PATTERN_LENGTH;
+			}		
+			count++;
+			i = (PATTERN_LENGTH + i - 1) % PATTERN_LENGTH;
+		}
+	
+		double initialEX = enemyDistance * Math.sin(absbearing);
+		double initialEY = enemyDistance * Math.cos(absbearing);
+		double eV = e.getVelocity();
+	
+		// reconstruct enemy movement
+		for (c = 0 ; c &lt; CLOSEST_SIZE; c++) {
+			double eX = initialEX;
+			double eY = initialEY;
+			double ww = e.getHeadingRadians();
+			double v = eV;
+			double db = 0;
+			int index = closestIndexes[c];
+	
+			do {
+				db += bulletSpeed;
+
+				eX += v * Math.sin(ww);
+				eY += v * Math.cos(ww);
+
+				ww += theLog[index][1];
+				v = theLog[index][0];
+				
+//				if (index + 1 != cursor) {
+					index = (index + 1) % PATTERN_LENGTH;
+//				}
+			} while (db &lt; Point2D.distance(0, 0, eX, eY));
+
+			double absoluteEX = limit(18, eX + robotLocation.getX(), maxX);
+			double absoluteEY = limit(18, eY + robotLocation.getY(), maxY);
+			//angles[c] = Utils.normalRelativeAngle(Math.atan2(eX, eY) - absbearing);
+			angles[c] = Utils.normalRelativeAngle(Math.atan2(absoluteEX - robotLocation.getX(), absoluteEY - robotLocation.getY()) - absbearing);
+			
+		}
+	
+		// find the most popular angle
+		double angleThreshold = 36.0 / e.getDistance();
+		int binSize = (int) (MAX_ESCAPE_ANGLE * 2.0 / angleThreshold) + 1;
+		int[] statBin = new int[binSize];
+		//double[] statBin = new double[binSize];
+		
+		double[] metaAngle = new double[binSize];
+		
+		for (c = 0 ; c &lt; CLOSEST_SIZE; c++) {
+			int binIndex = (int) ((angles[c] + MAX_ESCAPE_ANGLE) / angleThreshold);
+			metaAngle[binIndex] = angles[c];
+			statBin[binIndex]++;
+			//statBin[binIndex] += 1.0 / closestDiffs[c]; // weighted
+		}
+		int maxIndex = 0;
+		for (c = 0 ; c &lt; binSize; c++) {
+			if (statBin[c] &gt; statBin[maxIndex]) {
+				maxIndex = c;
+			}
+//			out.print(statBin[c] + " ");
+		}
+//		out.println();
+		
+		return metaAngle[maxIndex];
+	}							
+	
+//	private void mirrorMove() {
+//		goTo(new Point2D.Double(getBattleFieldWidth() - enemyLocation.getX(), getBattleFieldHeight() - enemyLocation.getY()));
+//	}
+	
+	private static final double REVERSE_TUNER = 0.421075;
+	private static final double WALL_BOUNCE_TUNER = 0.699484;	
+	private void randomMove() {
+//		if (energyDrop &gt;= 0.1 &amp;&amp; energyDrop &lt;= 3) {
+//			maxVelocity = Math.min(6.0, Math.random() * 20.0) + 2.0;
+//		}
+		
+			
+		Point2D robotDestination;
+		double tries = 0;
+		double awayFactor = (getOthers() &gt; 1) ? 2.0 : 1.0;
+		// if (enemyDistance &lt; 200) awayFactor = 4.0;
+
+		do {
+			// robotDestination =
+			// vectorToLocation(absoluteBearing(enemyLocation, robotLocation) +
+			// movementLateralAngle,
+			// enemyDistance * (1.1 - tries / 100.0), enemyLocation);
+			robotDestination = vectorToLocation(absoluteBearing(enemyLocation,
+					robotLocation)
+					+ movementLateralAngle, enemyDistance * awayFactor * (1.2 - tries / 100.0), enemyLocation); // 1.1
+					
+			tries++;
+		} while (tries &lt; 125
+				&amp;&amp; !fieldRectangle(WALL_MARGIN).contains(robotDestination));
+				
+		double bv = 20.0 - 3.0 * enemyBulletPower;
+		if ((Math.random() &lt; (bv / REVERSE_TUNER) / enemyDistance ||
+				tries &gt; (enemyDistance / bv / WALL_BOUNCE_TUNER))) {
+			movementLateralAngle = -movementLateralAngle;	
+		}									
+
+		// } while (tries &lt; 100 &amp;&amp;
+		// !fieldRectangle(WALL_MARGIN).contains(robotDestination));
+
+		goTo(robotDestination);
+	}					
+
+	/*
+	 * RoundRectangle2D fieldRectangle(double margin) { return new
+	 * RoundRectangle2D.Double(margin, margin, getBattleFieldWidth() - margin *
+	 * 2, getBattleFieldHeight() - margin * 2, 75, 75); // 75 }
+	 */
+
+	private Rectangle2D fieldRectangle(double margin) {
+		return new Rectangle2D.Double(margin, margin, getBattleFieldWidth()
+				- margin * 2, getBattleFieldHeight() - margin * 2);
+	}
+
+	private void goTo(Point2D destination) {
+//		destination.setLocation(limit(35, destination.getX(),
+//				getBattleFieldWidth() - 35), limit(35, destination.getY(),
+//				getBattleFieldHeight() - 35));
+
+		double angle = Utils.normalRelativeAngle(absoluteBearing(robotLocation,
+				destination)
+				- getHeadingRadians());
+		double turnAngle = Math.atan(Math.tan(angle));
+		
+		setTurnRightRadians(turnAngle);
+		setAhead(robotLocation.distance(destination)
+				* (angle == turnAngle ? 1 : -1));
+		// Hit the brake pedal hard if we need to turn sharply
+		setMaxVelocity(Math.abs(getTurnRemaining()) &gt; 30 ? 0 : 8);
+
+		// vibrate
+		//if (Math.abs(getTurnRemaining()) &lt; 1) {
+		//	setTurnRight(Math.random() &lt; 0.5 ? 10 : -10);
+		//}
+	}
+
+	private static Point2D vectorToLocation(double angle, double length,
+			Point2D sourceLocation) {
+		return vectorToLocation(angle, length, sourceLocation,
+				new Point2D.Double());
+	}
+
+	private static Point2D vectorToLocation(double angle, double length,
+			Point2D sourceLocation, Point2D targetLocation) {
+		targetLocation.setLocation(sourceLocation.getX() + Math.sin(angle)
+				* length, sourceLocation.getY() + Math.cos(angle) * length);
+		return targetLocation;
+	}
+
+	private static double absoluteBearing(Point2D source, Point2D target) {
+		return Math.atan2(target.getX() - source.getX(), target.getY()
+				- source.getY());
+	}
+
+	public static double limit(double min, double value, double max) {
+		return Math.max(min, Math.min(value, max));
+	}
+}
+
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Matchup" class=wikipagelink>Matchup</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Matchup/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Matchup/Code">View other revisions</a><br>Last edited October 12, 2007 7:40 EST by <a href="robowiki?Stelokim" title="ID 9056 from 121.133.34.190">Stelokim</a> <a href="robowiki?action=browse&diff=1&id=Matchup/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

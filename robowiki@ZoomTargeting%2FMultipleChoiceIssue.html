@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>ZoomTargeting/MultipleChoiceIssue - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Zoom, Targeting, Multiple, Choice, Issue'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/MultipleChoiceIssue">ZoomTargeting/MultipleChoiceIssue</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?ZoomTargeting" class=wikipagelink>ZoomTargeting</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Suppose I have a segment with data and I want to calculate the best angle that would have the most chance of hitting the enemy. 
+<p>
+some ascii art:
+<p>
+<pre>
+         -47_______*_**__**_____________________0________*_______________*_*____*_*______+47 degrees
+</pre>
+<p>
+The * means a previously observed succesful targeting angle.
+I can clearly see that i should not take the average angle (<a href="robowiki?AveragedBearingOffsetTargeting" class=wikipagelink>AveragedBearingOffsetTargeting</a>)
+This data shows me that there are two spikes, one at -30 and one at +30 degrees. The -30 angle has the most occurences and has a narrower spike, so this is the angle to choose.
+<p>
+I could of course calculate the angle range for that specific distance, loop from -47 to +47 and determine at what angle the most occurences fall within the angle range. But that would mean a loop within a loop (times number of zoom levels) so the performance would be not so good.
+<p>
+I could also calculate the angle range for that distance and iterate over the occurences, determining which occurence picks the most neighbouring occurences. Again a loop within a loop, but this time both loops are limited in size. And the result may not be optimal in some specific situations....
+<p>
+So, what would be the most elegant way to calculate this angle? Is there an algo with only one loop?
+<p>
+-- <a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+<UL >
+<li> I've just thought of an algorithm with 1 loop, although I'm not sure if you're around to hear it =). Basically, you calculate the bin width for the distance. Then you iterate across, adding the value of the bin on the right and subtracting the value of the bin on the left. You store the value and index of the best position, and if the current value exceeds the best value, you set bestValue = currentValue; and bestIndex = currentIndex;. I like FastBots<a href="robowiki?action=edit&id=FastBots" class=wikipageedit>?</a>. =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+Well, I've thought about this some, as I also do statistics with waves, and it seems like it would be more accurate to use those old-school virtual bullets, because *every* bucket that hits is recorded (and as you observe, you want the mode, not the mean).  There are two ways I've thought of to tune this - the first would be to collect data the same way and then figure out how wide of a margin of error you are allowed.  The eventual calculation does take a loop inside of the loop, but the inside loop would be trivial.  The second way would be to have your wave bullet tell you every bucket in your array that would have hit.  In this case there is much more to do toward the end of the wave's life, but calculating the angle is as simple as finding the index of the max. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I have just the same problem with a new pattern matcher I'm developing. At the end, I get N bearings distributed in a line and I have to choose the best place to fire. None of the approaches I have testes satisfy me: Sometimes granularity is to big, sometimes to low... Now I'm using an approach of segmenting it it lets say 6 overlaped parts, search for the one with the higher density, zoom into the segment, do it again, and so on. But I'm thinking seriously in using a NN to learn the best bearing from the distribution. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+It seems to me that a binary tree structure would be <i>perfect</i> for this.  The top node will have the total number of hits, then its children node will have the total number of hits on the left, and the total number of hits on the right side, and their children will be split up left and right as well, and so on.  Then you can choose which level to shoot at based on the hit percentage for the best node at each level among all sibling nodes (nodes which have the same parent).  For instance, at the second level you have full left and full right.  Let's say after you have 100 measurements, you have 60 on the left, and 40 on the right.  Then on the next level you have 40 20 10 30, from left to right.  Then you will shoot at the third level, because 40 / 60 is a better percentage than 60 / 100.  Of course, margin of error should play a part in this calculation as well.  You could choose based on the highest <i>minimum</i> percentage after margin of error, or the highest percentage (probably a bad idea), or you could randomly choose based on the amount of overlap among all of the choices (that's how I do my dynamic distancing).
+<p>
+For instance, in this case, the margin of error for the 40/60 measurement at 95% confidence is 1.96 * sqrt(0.66 * 0.33 / 60) = 11.9%.  Thus, the minimum hit percentage is 66.6% - 11.9% = 54.7%.  For the 60 / 100 measurement, we get 60% - 9.6% = 50.4%.  Therefore, we will choose the third level of segmentation (which is a particularly good term for this structure), and we will fire full left.
+<p>
+As for using a NN to learn the best bearing...how will you train it?  It seems to me that it is a statistical problem no matter how you look at it -- though I suppose a kind of fuzzy logic would apply here.  I don't know anything about that though.  Have you done any research on using fuzzy networks to do statistical analysis?
+<p>
+-- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+Well, I have a cloud of points (always a fixed number of N points) and I know the right bearing to hit for all my historical data. So I just have to train the NN with input vector (PredBearing1<a href="robowiki?action=edit&id=PredBearing1" class=wikipageedit>?</a>, ... , PredBearingN<a href="robowiki?action=edit&id=PredBearingN" class=wikipageedit>?</a>) and output value the right bearing to hit. What I want it the NN to decide which way is better to "average" the bearings. I think it should work, but I haven't tried it yet. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+<a href="robowiki?Nano" class=wikipagelink>nano</a>'s idea of dividing it up and going in the direction where there are more is what I did with my first stat gun (although it didn't work at all) in <a href="robowiki?SpareParts" class=wikipagelink>SpareParts</a>. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Here is an old idea I had but never got around to: how about using Java2D rectangles to represent the enemy in the hit positions, then take intersections of these until you find the point with most intersections? -- <a href="robowiki?Tobe" class=wikipagelink>tobe</a>
+<p>
+Sounds pretty CPU-intensive for thousands of rectangles, but I'm sure it could be optimized somehow.  -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+If you found thousands of matches in the pattern-analyzer, that would be a big hit :-p  Of course, on the statistical side, that's still a problem. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Thanks folks, there a some nifty solutions mentioned here.. however most of them seem not appropriate for my situation. My use of <a href="robowiki?MicroSegments" class=wikipagelink>MicroSegments</a> means that I have A HUGE NUMBER of them. That means I must minimize my use of memory. I think I'll try my own second option (which is basically the same as Kawigi's first option). That way I'm sure to minimize the amount of memory taken up (only the actual angle values, nothing more). Performance should be ok, and I'm only losing a slight bit of accuracy, but I actually think that this is discardable. -- <a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Once again I haven't read this page fully yet, but here's my solution: Do a one-pass loop of all your data. Initialize an array of 95 ints (they represent -47 to 47). Set a variable (let's call it x) to 0 at start. Each pass of the loop look at your next n degrees. n is your first tuning factor. For each hit you have in the next n degrees, increment x by one. Dump that value in the element of your int array corresponding to the pass if the loop you are on. At the end of the pass, decrement x by some value. One is a tempting value here, but it's obvious that it will quickly become unable to lower x 'fast' enough, so I'd suggest this decrement value be a function of your total waves fired (total waves / 95, for example). This function is your second tuning factor. Scan through your array and the highest value should be your best guess angle. There is an issue that this might bias it towards the +47 side. I'd recommend the solution to this be you do this loop twice, once counting up and once counting down, then add up the corresponding elements in each array into a third array, then scan this third array. This will eliminate that bias if you find it becomes an issue. This should also be very fast, it's essentially a one-pass algorithm. Whether it works reliably or not is another story, I just thought most of this up while typing. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+No comments? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Ooops... Must have missed your entry when this discussion was going on. Sorry. Anyway, I solved my problem using Kawigi's idea. Basically it's just converting the bunch to a guess factor array. In my case I also take bot width into account. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?ZoomTargeting" class=wikipagelink>ZoomTargeting</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=ZoomTargeting/MultipleChoiceIssue" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=ZoomTargeting/MultipleChoiceIssue">View other revisions</a><br>Last edited September 16, 2007 16:50 EST by <a href="robowiki?Skilgannon" title="ID 11213 from ctb-cache4-vif0.saix.net">Skilgannon</a> <a href="robowiki?action=browse&diff=1&id=ZoomTargeting/MultipleChoiceIssue">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Ant - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Ant'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Ant">Ant</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><b>Difference (from prior major revision)</b>
+(<a href="robowiki?action=browse&diff=2&id=Ant">minor diff</a>)<br> <br><strong>Changed: 17c17,19</strong><br><table width="95%" bgcolor=#ffffaf class=wikidiffold><tr><td>
+ <a href="robowiki?Ant/SampleBuildFile" class=wikipagelink>/SampleBuildFile</a><br></td></tr></table><table width="95%" bgcolor=#cfffcf class=wikidiffnew><tr><td>
+ <a href="robowiki?Ant/SampleBuildFile" class=wikipagelink>/SampleBuildFile</a> (<a href="robowiki?Hexkid" class=wikipagelink>Hexkid</a>)<br> <br> <a href="robowiki?Ant/SampleBuildFile2" class=wikipagelink>/SampleBuildFile2</a> (<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>)<br></td></tr></table>
+<hr class=wikilinediff>
+<div class=wikitext><H4>Apache Ant</H4>
+
+Apache Ant is a Java-based build tool, similar to the DOS-based MAKE file.  It allows you to automate the procedure of compiling and packaging your Java code.  It is an open source tool and is available at <a rel="nofollow" href="http://ant.apache.org">[Ant Home Page]</a> and is produced by <a rel="nofollow" href="http://www.apache.org">[Apache Software Foundation]</a> who develop a whole collection of top-class open-source projects.
+<p>
+<p>I use Ant for all of my commercial Java developments and have just started to use it within the development of by Bots.  (It may be a bit of an overkill as the Robocode projects don't tend to be that big but it is a useful skill/tool to have on your CV)
+<p>
+I have an Ant "Build" file that performs the following tasks for me during the development of my Bots:
+<ol>
+<PRE >
+   <li>Create the output directories (if they don't already exist)
+   <li>Compile my Bots
+   <li>Perform Unit Tests against the bots to ensure that everything still works as expected.
+   <li>Create the JAR file containing the Bot
+   <li>(TODO) Automatically deploy the new JAR file to the <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a>.
+</PRE>
+</ol>
+<p>
+-- <a href="robowiki?Hexkid" class=wikipagelink>Hexkid</a>
+<p>
+<a href="robowiki?Ant/SampleBuildFile" class=wikipagelink>/SampleBuildFile</a> (<a href="robowiki?Hexkid" class=wikipagelink>Hexkid</a>)
+<p>
+<a href="robowiki?Ant/SampleBuildFile2" class=wikipagelink>/SampleBuildFile2</a> (<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>)
+<hr noshade class=wikiline size=1>
+<p>
+<strong>Packing a minimal JAR</strong>
+<p>
+<a href="robowiki?Ant/MinimalJarSample" class=wikipagelink>/MinimalJarSample</a>
+<p>
+My codesize would be a lot smaller if I could figure out how to have Ant automatically include only required files, but right now it's just including *.class. Does anyone know how to tell Ant to only include files needed by YALT.class? --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Not really, but maybe you can check how the Robocode packager does it? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Built-in Robocode packager includes only needed classes. --<a href="robowiki?Ph" class=wikipagelink>Ph</a>
+<p>
+@Ph, I know, but is there a way I can get Ant to do it? I want to automate everything. :-) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+<p>
+I think there is no simple way to tell Ant compile only classes needed by some class. AFAIK in each .class file there are references to other classes needed by this class, so you can scan each .class file for these references. But it is complicated, because you have to know how a class file is built, and find some way to plug-in that into Ant. I am not an expert and do not use Ant very often, so maybe someone can find better solution. --<a href="robowiki?Ph" class=wikipagelink>Ph</a>
+<p>
+Maybe Ant has some way to reach the reflection API? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Years later, I answered my own question: <a rel="nofollow" href="http://sadun-util.sourceforge.net/pack.html">[these people]</a> have made an Ant task that packages only the minimal set of files. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<strong>Escape Characters in robot.description files</strong>
+<p>
+I have been using Ant build-files for some time now, but still have one (simple?) problem. I want to enter a description for the robot-properties file like:
+<pre>&lt;entry key="robot.description" value="text 1\n text 2\n text 3"/&gt;</pre>
+so i get three lines of text in my description. But when i select my bot in the "new battle"-popup, instead i get one line in the description field that is too long to show completely. Any ideas how to get multiple lines? Thanks --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<p>
+Well i didnt try, but maybe using \\n instead of \n in your ant-file could help. --<a href="robowiki?Mue" class=wikipagelink>Mue</a>
+<p>
+If you do that, <a href="robowiki?Mue" class=wikipagelink>Mue</a>, you get \n instead of a line break. Looking at existent .properties files \n should work. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+sorry folks, i should have described the results of the properties file as well; i get a \\n in the description field, like:
+<pre>robot.description=text 1\\n text 2\\n text 3</pre>
+Every "\" in the description is escaped... --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<p>
+Ant files are XML, so try &amp;#72; That's the UTF-8 character code for a slash. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+I have Googled a solution: include the following &lt;replaceregexp&gt; Ant-task after the definition of the properties-file, like:
+<pre>
+   &lt;propertyfile file="${ROBOTNAME}.properties"&gt;
+      &lt;entry key="robot.description" value="this line is to long to show in the description field,\n so i need a newline character."/&gt;
+      &lt;entry key="robot.java.source.included" value="true"/&gt;
+      &lt;entry key="robocode.version" value="1.0.6"/&gt;
+      &lt;entry key="robot.version" value="0.1"/&gt;
+      &lt;entry key="robot.author.name" value=""/&gt;
+      &lt;entry key="robot.classname" value="${package}.${ROBOTNAME}"/&gt;
+   &lt;/propertyfile&gt;
+
+   &lt;replaceregexp file="${ROBOTNAME}.properties"
+                         match="\\n+"
+                         replace="\n"
+                         flags="g"
+                         byline="false"/&gt;
+</pre>
+The &lt;replaceregexp&gt; task is a "directory based task for replacing the occurrence of a given regular expression with a substitution pattern in a selected file or set of files."<br>
+Doesn't look like the simplest solution, but it does the trick.<br>
+B.t.w. David's suggestion results in an Ant build error '";" expected'. Thanks all for your suggestions. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<p>
+Loki: Did you include the semicolon? It works for me. Entities in XML need to be terminated with a semicolon, like so: <font size=+1>&amp;#72<b>;</b></font> --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+sorry, i misunderstood the ";" as a "." as your next sentence started with a capital letter. I added the semicolon. This results in a capital "H"... 
+--<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<p>
+You probably have some other encoding than David has? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Loki, I think your solution is beautiful. It must obviously be a bug in Ant that it writes an escaped backslash for you without you asking for it. Then you go in and correct the effects of the bug. Clean and clear. Why David's solution works I don't know. The backslash character itself or it's entity reference should be equal in XML. But a bug is a bug I guess. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+thanks PEZ. Regular expressions are powerful, once you get to know he syntax. But i do prefer 'first time right'. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<p>
+Reggexps are truly powerfil. Though in this case regular expressions aren't showing their power. The task could just as well had been solved with a simple, non-regexp, search-and-replace. Had there been such a task builtin of course. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Ah oops, you're right, should be &amp;#92<b>;</b> not &amp;#72<b>;</b>. This is ISO 8859-1, not UTF-8. Although you could force it to be UTF-8 by using
+<PRE >
+ &lt;?xml version="1.0" encoding="utf-8" ?&gt;
+</PRE>
+--<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Ok, checked both &amp;#72; with UTF-8 encoding and &amp;#92 without the encoding specification (which default to ISO 8859-1): on my (Windows) machine only the latter works. So the result of this session is that we have two working solutions. Thanks all! --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<p>
+BTW. I think your regexp breaks if you have a string like "dada, dada, dada\\nnana, nana". Remove that + in the match expression and it should be safer. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Ant" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Ant">View other revisions</a><br>Last edited October 18, 2007 14:25 EST by <a href="robowiki?David_Alves" title="ID 12048 from adsl-71-146-14-176.dsl.pltn13.sbcglobal.net">David Alves</a> <a href="robowiki?action=browse&diff=1&id=Ant">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

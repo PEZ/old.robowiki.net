@@ -1,0 +1,505 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>WaveSurfing/Tutorial - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Wave, Surfing, Tutorial'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Tutorial">WaveSurfing/Tutorial</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H2><a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> Tutorial</H2>
+
+-- by <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+This tutorial is inspired by <a href="robowiki?GuessFactorTargeting/Tutorial" class=wikipagelink>Kawigi's GuessFactorTargeting Tutorial</a>, which provides a very clear and concise description of how a basic <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> gun works. All of the authors of existing <a href="robowiki?WaveSurfers" class=wikipagelink>WaveSurfers</a> have, to varying degrees, gone through a lot of <a href="robowiki?WaveSuffering" class=wikipagelink>WaveSuffering</a> to iron out many of these details, and I am sure they are all wiser for it. However, I think it would be helpful to many current and future bot authors to have some of these details more explicitly outlined for them. Without the pain of ironing out the myriad bugs, building a basic, functioning <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> movement is not that hard!
+<p>
+First, you should have a basic understanding of <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>. The mainstream implementation of <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> (read: not <a href="robowiki?Shadow" class=wikipagelink>Shadow</a> or <a href="robowiki?Chalk" class=wikipagelink>Chalk</a>) is very much the exact inverse of <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>; the key difference is that there are a lot more minor details that need to be accounted for on the movement end of things.
+<p>
+Credits should go to:
+<UL >
+<li> <a href="robowiki?ABC" class=wikipagelink>ABC</a>, the inventor of <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>.
+<li> <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, whose <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> style of <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> is used here, both in terms of the algorithm and the style of code.
+<li> <a href="robowiki?Rozu" class=wikipagelink>rozu</a>, the source of the mini-sized <a href="robowiki?WaveSurfing/PrecisePrediction" class=wikipagelink>PrecisePrediction</a> method used here.
+<li> <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, <a href="robowiki?Rozu" class=wikipagelink>rozu</a>, and <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a> as the sources of most of the utility methods.
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+First, let's define a few utility classes and methods that we will need. These generally go at the end of my code, but for the sake of understanding, I'll post them at the top first:
+<p>
+<pre>
+    class EnemyWave {
+        Point2D.Double fireLocation;
+        long fireTime;
+        double bulletVelocity, directAngle, distanceTraveled;
+        int direction;
+
+        public EnemyWave() { }
+    }
+
+    public double wallSmoothing(Point2D.Double botLocation, double angle, int orientation) {
+        while (!_fieldRect.contains(project(botLocation, angle, WALL_STICK))) {
+            angle += orientation*0.05;
+        }
+        return angle;
+    }
+
+    public static Point2D.Double project(Point2D.Double sourceLocation, 
+        double angle, double length) {
+        return new Point2D.Double(sourceLocation.x + Math.sin(angle) * length,
+            sourceLocation.y + Math.cos(angle) * length);
+    }
+
+    public static double absoluteBearing(Point2D.Double source, Point2D.Double target) {
+        return Math.atan2(target.x - source.x, target.y - source.y);
+    }
+
+    public static double limit(double min, double value, double max) {
+        return Math.max(min, Math.min(value, max));
+    }
+
+    public static double bulletVelocity(double power) {
+        return (20.0 - (3.0*power));
+    }
+
+    public static double maxEscapeAngle(double velocity) {
+        return Math.asin(8.0/velocity);
+    }
+
+    public static void setBackAsFront(AdvancedRobot robot, double goAngle) {
+        double angle =
+            Utils.normalRelativeAngle(goAngle - robot.getHeadingRadians());
+        if (Math.abs(angle) &gt; (Math.PI/2)) {
+            if (angle &lt; 0) {
+                robot.setTurnRightRadians(Math.PI + angle);
+            } else {
+                robot.setTurnLeftRadians(Math.PI - angle);
+            }
+            robot.setBack(100);
+        } else {
+            if (angle &lt; 0) {
+                robot.setTurnLeftRadians(-1*angle);
+           } else {
+                robot.setTurnRightRadians(angle);
+           }
+            robot.setAhead(100);
+        }
+    }
+</pre>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+That's all pretty straightforward, so let's just move right on to the start of our new bot, <a href="robowiki?BasicSurfer" class=wikipagelink>BasicSurfer</a>.
+<p>
+<pre>
+package wiki;
+
+import robocode.*;
+import robocode.util.Utils;
+import java.awt.geom.*;     // for Point2D's
+import java.lang.*;         // for Double and Integer objects
+import java.util.ArrayList; // for collection of waves
+
+public class BasicSurfer extends AdvancedRobot {
+    public static int BINS = 47;
+    public static double _surfStats[] = new double[BINS];
+    public Point2D.Double _myLocation;     // our bot's location
+    public Point2D.Double _enemyLocation;  // enemy bot's location
+
+    public ArrayList _enemyWaves;
+    public ArrayList _surfDirections;
+    public ArrayList _surfAbsBearings;
+
+    public static double _oppEnergy = 100.0;
+
+   /** This is a rectangle that represents an 800x600 battle field,
+    * used for a simple, iterative WallSmoothing method (by PEZ).
+    * If you're not familiar with WallSmoothing, the wall stick indicates
+    * the amount of space we try to always have on either end of the tank
+    * (extending straight out the front or back) before touching a wall.
+    */
+    public static Rectangle2D.Double _fieldRect
+        = new java.awt.geom.Rectangle2D.Double(18, 18, 764, 564);
+    public static double WALL_STICK = 160;
+
+    public void run() {
+        _enemyWaves = new ArrayList();
+        _surfDirections = new ArrayList();
+        _surfAbsBearings = new ArrayList();
+
+        setAdjustGunForRobotTurn(true);
+        setAdjustRadarForGunTurn(true);
+
+        do {
+            turnRadarRightRadians(Double.POSITIVE_INFINITY);
+        } while (true);
+    }
+</pre>
+<p>
+Here, we just get all of our basic variables and objects setup, and part of the radar code. In order to wave surf, we need to keep track of:
+<UL >
+<li> Our location and the enemy location (of course).
+<li> The enemy's last known energy level (for detecting <a href="robowiki?EnergyDrop" class=wikipagelink>EnergyDrop</a>).
+<li> A collection of waves, to surf and gather stats on. In <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>, a <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a>'s visit count is increased with every wave that passes the enemy; in <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>, when we are hit by a bullet, we increase the visit count for that <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a>, and try to avoid it in the future.
+<li> A collection of our direction in relation to the enemy in past ticks, 1 for clock-wise, -1 for counter-clockwise. The last direction they could have used for aiming is from 2 ticks ago.
+<li> A collection of past absolute bearings to enemy. The one used in an <a href="robowiki?EnemyWave" class=wikipagelink>EnemyWave</a> we detect is also from 2 ticks ago, as that's the last one they saw before their last gun turn.
+<li> Some info about the battle field for <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>.
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<pre>
+    public void onScannedRobot(ScannedRobotEvent e) {
+        _myLocation = new Point2D.Double(getX(), getY());
+
+        double lateralVelocity = getVelocity()*Math.sin(e.getBearingRadians());
+        double absBearing = e.getBearingRadians() + getHeadingRadians();
+
+        setTurnRadarRightRadians(Utils.normalRelativeAngle(absBearing 
+            - getRadarHeadingRadians()) * 2);
+
+        _surfDirections.add(0,
+            new Integer((lateralVelocity &gt;= 0) ? 1 : -1));
+        _surfAbsBearings.add(0, new Double(absBearing + Math.PI));
+
+
+        double bulletPower = _oppEnergy - e.getEnergy();
+        if (bulletPower &lt; 3.01 &amp;&amp; bulletPower &gt; 0.09
+            &amp;&amp; _surfDirections.size() &gt; 2) {
+            EnemyWave ew = new EnemyWave();
+            ew.fireTime = getTime() - 1;
+            ew.bulletVelocity = bulletVelocity(bulletPower);
+            ew.distanceTraveled = bulletVelocity(bulletPower);
+            ew.direction = ((Integer)_surfDirections.get(2)).intValue();
+            ew.directAngle = ((Double)_surfAbsBearings.get(2)).doubleValue();
+            ew.fireLocation = (Point2D.Double)_enemyLocation.clone(); // last tick
+
+            _enemyWaves.add(ew);
+        }
+
+        _oppEnergy = e.getEnergy();
+
+        // update after EnemyWave detection, because that needs the previous
+        // enemy location as the source of the wave
+        _enemyLocation = project(_myLocation, absBearing, e.getDistance());
+
+        updateWaves();
+        doSurfing();
+
+        // gun code would go here...
+    }
+</pre>
+<p>
+We are still only collecting data, but getting this stuff right is a crucial aspect of getting perfect (or nearly perfect) surfing. Assuming no skipped turns, you detect a bullet on the tick after it is fired. Its source is from the enemy's location on the previous tick; it has already advanced by its velocity from that location; and the last data the enemy saw before turning his gun for this bullet is from two ticks ago. We aren't using any additional <a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a> here, but that his last scan was from 2 ticks ago before his last gun turn is also important in segmenting your surf stats.
+<p>
+For now, we will abstract the actual movement as the call to "doSurfing()", since there are some other issues to cover before getting into the main <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> algorithm.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<pre>
+    public void updateWaves() {
+        for (int x = 0; x &lt; _enemyWaves.size(); x++) {
+            EnemyWave ew = (EnemyWave)_enemyWaves.get(x);
+
+            ew.distanceTraveled = (getTime() - ew.fireTime) * ew.bulletVelocity;
+            if (ew.distanceTraveled &gt;
+                _myLocation.distance(ew.fireLocation) + 50) {
+                _enemyWaves.remove(x);
+                x--;
+            }
+        }
+    }
+</pre>
+<p>
+Each tick, we should update the distance that this wave has traveled from its source, and delete any waves that have clearly passed us. The reason for adding that extra 50 is just to give some extra space to track the onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a> event; if we removed it when it passed 0, we could still run into a bullet and get hit near our rear edge, and we would have already deleted the appropriate wave to link it to.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<pre>
+    public EnemyWave getClosestSurfableWave() {
+        double closestDistance = 50000; // I juse use some very big number here
+        EnemyWave surfWave = null;
+
+        for (int x = 0; x &lt; _enemyWaves.size(); x++) {
+            EnemyWave ew = (EnemyWave)_enemyWaves.get(x);
+            double distance = _myLocation.distance(ew.fireLocation)
+                - ew.distanceTraveled;
+
+            if (distance &gt; ew.bulletVelocity &amp;&amp; distance &lt; closestDistance) {
+                surfWave = ew;
+                closestDistance = distance;
+            }
+        }
+
+        return surfWave;
+    }
+</pre>
+<p>
+There is room for debate here, I feel, and you may prefer to tweak the "distance &gt; bullet velocity" condition that I use. Since a bullet will advance by its velocity once more before checking for collisions (see <a href="robowiki?GamePhysics" class=wikipagelink>GamePhysics</a>), this is, in effect, like surfing waves until they pass the center of your bot. Of course, depending on a bullet's velocity and your exact angle, a bullet could still hit you even past your center; but I believe (and have found) that there is more to gain by starting to surf the next wave than by continuing to surf the current one. If you are <a href="robowiki?BinSmoothing" class=wikipagelink>BinSmoothing</a> and using correct surfing, you should already be quite safe without an extra tick or two of surfing this wave.
+<p>
+Other than that, this method just finds the closest wave that hasn't passed us already, and returns it to the movement algorithm.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<pre>
+    // Given the EnemyWave that the bullet was on, and the point where we
+    // were hit, calculate the index into our stat array for that factor.
+    public static int getFactorIndex(EnemyWave ew, Point2D.Double targetLocation) {
+        double offsetAngle = (absoluteBearing(ew.fireLocation, targetLocation)
+            - ew.directAngle);
+        double factor = Utils.normalRelativeAngle(offsetAngle)
+            / maxEscapeAngle(ew.bulletVelocity) * ew.direction;
+
+        return (int)limit(0,
+            (factor * ((BINS - 1) / 2)) + ((BINS - 1) / 2),
+            BINS - 1);
+    }
+</pre>
+<p>
+I know this might look like a bit of Voodoo at first, but let's walk through it. The offset angle is the relative angle that they aimed at to hit us, and is quite simply the current angle from us to the wave source minus the original angle from us to the wave source (at fire time). The <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> is this offset angle divided by the maximum escape angle, and we need to reverse the sign of this factor if we were traveling counter-clockwise at fire time. (You should know this from <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>, but GF1 = a clockwise angle if we were traveling clockwise, while GF1 = a counter-clockwise angle if we were traveling counter-clockwise, at fire time.)
+<p>
+The conversion of this factor to an index in our array might not be so intuitive. With 47 bins, the middle bin (index 23) is GF 0, and we have 23 more bins on each side. So if you multiply the <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> by 23, you will get a number from -23 to 23. Since we want a number from 0 to 46 to put in our array, we add another 23.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<pre>
+    // Given the EnemyWave that the bullet was on, and the point where we
+    // were hit, update our stat array to reflect the danger in that area.
+    public void logHit(EnemyWave ew, Point2D.Double targetLocation) {
+        int index = getFactorIndex(ew, targetLocation);
+
+        for (int x = 0; x &lt; BINS; x++) {
+            // for the spot bin that we were hit on, add 1;
+            // for the bins next to it, add 1 / 2;
+            // the next one, add 1 / 5; and so on...
+            _surfStats[x] += 1.0 / (Math.pow(index - x, 2) + 1);
+        }
+    }
+</pre>
+<p>
+We haven't yet figured out which wave hit us, but once we have, we can pass it here along with the location of the bullet that hit us to update our stats. Just get the array index for this hit location on this wave (already coded in getFactorIndex<a href="robowiki?action=edit&id=FactorIndex" class=wikipageedit>?</a>), and update our stat array using a simple <a href="robowiki?BinSmoothing" class=wikipagelink>BinSmoothing</a>.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<pre>
+    public void onHitByBullet(HitByBulletEvent e) {
+        // If the _enemyWaves collection is empty, we must have missed the
+        // detection of this wave somehow.
+        if (!_enemyWaves.isEmpty()) {
+            Point2D.Double hitBulletLocation = new Point2D.Double(
+                e.getBullet().getX(), e.getBullet().getY());
+            EnemyWave hitWave = null;
+
+            // look through the EnemyWaves, and find one that could've hit us.
+            for (int x = 0; x &lt; _enemyWaves.size(); x++) {
+                EnemyWave ew = (EnemyWave)_enemyWaves.get(x);
+
+                if (Math.abs(ew.distanceTraveled -
+                    _myLocation.distance(ew.fireLocation)) &lt; 50
+                    &amp;&amp; Math.round(bulletVelocity(e.getBullet().getPower()) * 10)
+                       == Math.round(ew.bulletVelocity * 10)) {
+                    hitWave = ew;
+                    break;
+                }
+            }
+
+            if (hitWave != null) {
+                logHit(hitWave, hitBulletLocation);
+
+                // We can remove this wave now, of course.
+                _enemyWaves.remove(_enemyWaves.lastIndexOf(hitWave));
+            }
+        }
+    }
+</pre>
+<p>
+When we're hit by a bullet, the first thing we need to do is figure out which wave we were hit by. For each wave, we check if the distance it has traveled is within 50 units of our current distance from its source, and we also check that its velocity is the same (to one decimal place) as the bullet we were hit by. I <em>believe</em> this should be 100% effective if no turns were skipped, and there was no wall damage on the same tick as the bullet was fired (which is fairly rare, anyway).
+<p>
+Once we've found the wave that hit us, we can just call logHit(...) to update our surf stats, and then remove that wave.
+<p>
+At this point, our data collection is complete. We can move on to a basic surfing algorithm.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+This next method may be a little overwhelming =), but it's not as bad as it looks at first. This is a precise prediction method based on the one provided by <a href="robowiki?Rozu" class=wikipagelink>rozu</a> that he uses in <a href="robowiki?Apollon" class=wikipagelink>Apollon</a>. I also use it in <a href="robowiki?Komarious" class=wikipagelink>Komarious</a>; they are both <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a> <a href="robowiki?WaveSurfers" class=wikipagelink>WaveSurfers</a>. Given the rules of <a href="robowiki?GamePhysics" class=wikipagelink>Robocode Physics</a>, the wave we are surfing, and the orbiting direction we are predicting (1 = clockwise, -1 = counter-clockwise), predict where we would be when the wave intercepts us.
+<p>
+Another method for doing this is provided by <a href="robowiki?Albert" class=wikipagelink>Albert</a> in his <a href="robowiki?FuturePosition" class=wikipagelink>FuturePosition</a> classes.
+<p>
+Doing this correctly is one of <strong>the most crucial aspects</strong> of a <a href="robowiki?WaveSurfer" class=wikipagelink>WaveSurfer</a>.
+<p>
+<pre>
+    public Point2D.Double predictPosition(EnemyWave surfWave, int direction) {
+        Point2D.Double predictedPosition = (Point2D.Double)_myLocation.clone();
+        double predictedVelocity = getVelocity();
+        double predictedHeading = getHeadingRadians();
+        double maxTurning, moveAngle, moveDir;
+
+        int counter = 0; // number of ticks in the future
+        boolean intercepted = false;
+
+        do {    // the rest of these code comments are rozu's
+            moveAngle =
+                wallSmoothing(predictedPosition, absoluteBearing(surfWave.fireLocation,
+                predictedPosition) + (direction * (Math.PI/2)), direction)
+                - predictedHeading;
+            moveDir = 1;
+
+            if(Math.cos(moveAngle) &lt; 0) {
+                moveAngle += Math.PI;
+                moveDir = -1;
+            }
+
+            moveAngle = Utils.normalRelativeAngle(moveAngle);
+
+            // maxTurning is built in like this, you can't turn more then this in one tick
+            maxTurning = Math.PI/720d*(40d - 3d*Math.abs(predictedVelocity));
+            predictedHeading = Utils.normalRelativeAngle(predictedHeading
+                + limit(-maxTurning, moveAngle, maxTurning));
+
+            // this one is nice ;). if predictedVelocity and moveDir have
+            // different signs you want to breack down
+            // otherwise you want to accelerate (look at the factor "2")
+            predictedVelocity += 
+                (predictedVelocity * moveDir &lt; 0 ? 2*moveDir : moveDir);
+            predictedVelocity = limit(-8, predictedVelocity, 8);
+
+            // calculate the new predicted position
+            predictedPosition = project(predictedPosition, predictedHeading, 
+                predictedVelocity);
+
+            counter++;
+
+            if (predictedPosition.distance(surfWave.fireLocation) &lt;
+                surfWave.distanceTraveled + (counter * surfWave.bulletVelocity)
+                + surfWave.bulletVelocity) {
+                intercepted = true;
+            }
+        } while(!intercepted &amp;&amp; counter &lt; 500);
+
+        return predictedPosition;
+    }
+</pre>
+<p>
+The key aspects of this are:
+<UL >
+<li> Each tick, predict the absolute angle at which we're trying to move. This is simple orbiting - we are staying perpendicular to the absolute angle to the wave source. Once we have that angle, just pass it to the <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> method to get the angle to move with. (The prediction method takes care of the <a href="robowiki?BackAsFront" class=wikipagelink>BackAsFront</a> stuff, too.)
+<li> Accounting for maximum acceleration (1.0) and deceleration (2.0).
+<li> Accounting for maximum turn rate.
+<li> How a tank moves from tick to tick - see <a href="robowiki?GamePhysics" class=wikipagelink>GamePhysics</a>.
+</UL>
+<p>
+Fortunately, people like <a href="robowiki?Albert" class=wikipagelink>Albert</a> and <a href="robowiki?Rozu" class=wikipagelink>rozu</a> have already dealt with these nitty gritty details, so you don't need to!
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+The rest is like a walk in the park, so now you can relax =) Each tick, we just check which direction would be the safest to orbit in.
+<p>
+<pre>
+    public double checkDanger(EnemyWave surfWave, int direction) {
+        int index = getFactorIndex(surfWave,
+            predictPosition(surfWave, direction));
+
+        return _surfStats[index];
+    }
+
+    public void doSurfing() {
+        EnemyWave surfWave = getClosestSurfableWave();
+
+        if (surfWave == null) { return; }
+
+        double dangerLeft = checkDanger(surfWave, -1);
+        double dangerRight = checkDanger(surfWave, 1);
+
+        double goAngle = absoluteBearing(surfWave.fireLocation, _myLocation);
+        if (dangerLeft &lt; dangerRight) {
+            goAngle = wallSmoothing(_myLocation, goAngle - (Math.PI/2), -1);
+        } else {
+            goAngle = wallSmoothing(_myLocation, goAngle + (Math.PI/2), 1);
+        }
+
+        setBackAsFront(this, goAngle);
+    }
+</pre>
+<p>
+This is really simple:
+<UL >
+<li> Predict our position when the wave intercepts us for each orbit direction.
+<li> Get the score from our stat array for the <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> of that position.
+<li> Choose the orbit direction that is the safest.
+<li> WallSmooth<a href="robowiki?action=edit&id=WallSmooth" class=wikipageedit>?</a> and use <a href="robowiki?BackAsFront" class=wikipagelink>BackAsFront</a> to orbit in that direction.
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+And with that, we are done creating a basic <a href="robowiki?WaveSurfer" class=wikipagelink>WaveSurfer</a> with <a href="robowiki?WaveSurfing/PrecisePrediction" class=wikipagelink>PrecisePrediction</a>. There are still a ton of improvements that can (and should) be made to this tank before it is a formidable opponent for anything more than <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a>. But some of the hardest parts are already taken care of in the above code, and I hope that these explanations will make it easier to correctly add those other features.
+<p>
+This bot, as presented above, will score about 90% vs <a href="robowiki?WaveSurfingChallengeBotA" class=wikipagelink>WaveSurfingChallengeBotA</a> and 60% vs <a href="robowiki?WaveSurfingChallengeBotB" class=wikipagelink>WaveSurfingChallengeBotB</a>. Distancing, segmentation, and taking multiple waves into account would probably be the first things to implement to improve upon those scores.
+<p>
+Feel free to hit me (<a href="robowiki?Voidious" class=wikipagelink>Voidious</a>) up with comments, questions, or possible improvements to this tutorial. See the <a href="robowiki?BasicSurfer/Code" class=wikipagelink>complete source code</a> to save yourself some copy/paste trouble, if you'd like.
+<p>
+<em>(PS - However you arrange the above code, note that you will need a closing brace at the end that isn't anywhere above.)</em>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<H4>Possible improvements to try</H4>
+
+<p>
+<UL >
+<li> <strong>Keep your distance.</strong> The above code will never adjust its distance to the enemy. This makes prediction much easier, but it will make a world of difference to try to stay at a safer distance. In <a href="robowiki?Komarious" class=wikipagelink>Komarious</a> (see <a href="robowiki?Komarious/Code" class=wikipagelink>Komarious/Code</a>), I made it as simple as multiplying by a little less than (PI/2) when calculating the orbiting angle for each direction. In <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>, it's a bit more complex, but still nothing like brain surgery. Remember to update your prediction if you make a complicated distancing algorithm.
+<li> <strong>More accurate enemy energy tracking.</strong> Keeping track of energy gains from hitting us with bullets, energy losses from our bullets hitting them, and energy losses from hitting walls (this last one can only be approximated) can all increase the accuracy of our <a href="robowiki?EnemyWave" class=wikipagelink>EnemyWave</a> detection.
+<li> <strong>Zero shouldn't be 1 or -1.</strong> When your velocity is 0, or very close to it, we could use our last calculated direction instead of our currently calculated direction.
+<li> <strong><a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a></strong> is crucial to dodging anything more than <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a>.
+<li> <strong>Use <a href="robowiki?RollingAverage" class=wikipagelink>RollingAverage</a>s in your surf statistics.</strong> If your stats are well segmented, you can use a very low rolling depth without losing much performance (if any) to simpler targeters, but your performance against learning guns will improve dramatically.
+<li> <strong>Do the same thing in onBulletHitBullet<a href="robowiki?action=edit&id=BulletHitBullet" class=wikipageedit>?</a></strong> that you do in onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a> - that data is just as valid for figuring out where the enemy is aiming.
+<li> <strong>In choosing the wave to surf, adjust it to surf the one that will hit you first,</strong> instead of the closest one.
+<li> <strong>Add evaluation for a stop position</strong> - you keep moving in the same orbit direction, but hit the brakes (setMaxVelocity<a href="robowiki?action=edit&id=MaxVelocity" class=wikipageedit>?</a>(0)).
+<li> Note that the codesize for this could be dramatically decreased. This is actually a simpler form of the surfing used in <a href="robowiki?Komarious" class=wikipagelink>Komarious</a>, although it's also more correct in some of the more minor details. The codesize for the above is 1376 with Jikes; <a href="robowiki?Komarious" class=wikipagelink>Komarious</a>'s surfing is just under 1100, last I checked.
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<H4>Comments, questions, feedback:</H4>
+
+<p>
+Nice tutorial. I'm feeling inspired to go through <a href="robowiki?Cyanide" class=wikipagelink>Cyanide</a> to make sure all of its small details (and potential bugs) match this. One thing though, I thought that the iterative wall smoothing came from Jam. At least I first saw it in one of the Raikos. Slightly OT and maybe not for this page, but what's your take on keeping track of enemy waves fired every tick, as opposed to just the actual bullets. -- <a href="robowiki?Alcatraz" class=wikipagelink>Alcatraz</a>
+<p>
+I'll look into the source of the iterative <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>, thanks for pointing that out. <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> does keep track of <a href="robowiki?EnemyWaves" class=wikipagelink>EnemyWaves</a> from every tick, but non-firing waves are tracked in separate stat buffers and only on visits (like with a gun) and never with onHitByBullets<a href="robowiki?action=edit&id=HitByBullets" class=wikipageedit>?</a>. Those stat arrays are used as a flattener when the enemy's hit % is high enough, and (in rare circumstances) he'll surf those waves if there are no others in the air. Frankly, though, I've found that doing any kind of flattening is really dangerous for the majority of RR opponents - even against really good guns, Dookious sometimes does better to just surf normally. (I do <a href="robowiki?RollingAverage" class=wikipagelink>roll</a> all surf stats pretty quickly, though.) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Voidious, thanks, great reading! 
+<p>
+As you said, maybe <a href="robowiki?WaveSuffering" class=wikipagelink>WaveSuffering</a> makes you a wiser man, but with the limited time on my hand this maybe is the help i needed to get my <a href="robowiki?WaveSuffering" class=wikipagelink>WaveSuffering</a> bot Wolwa above the current 60% score against bot B of the <a href="robowiki?WaveSurfingChallenge" class=wikipagelink>WaveSurfingChallenge</a> (it scores 87% against bot A). I will certainly look at this bot with new energy. 
+--<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<UL >
+<li> yesterday evening i finished reading this tutorial and came up to the text "This bot, as presented above, will score about 90% vs <a href="robowiki?WaveSurfingChallengeBotA" class=wikipagelink>WaveSurfingChallengeBotA</a> and 60% vs <a href="robowiki?WaveSurfingChallengeBotB" class=wikipagelink>WaveSurfingChallengeBotB</a>". So i was a bit dissapointed as those numbers look very familiar. The possitive side is that my first wavesurfer isn't that bad (i always compared it to al those &gt;95% scoring bots). Another possitive point is that i have found some details to improve and there a quite a number of suggestions in this tutorial to try out. Hopefully this will soon result in my first wavesurfing entry. to be continued. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<UL >
+<li> The lack of any kind of distancing or dive protection is very relevant against BotA<a href="robowiki?action=edit&id=BotA" class=wikipageedit>?</a>, and the lack of any segmentation is very relevent against BotB<a href="robowiki?action=edit&id=BotB" class=wikipageedit>?</a>. <a href="robowiki?Komarious" class=wikipagelink>Komarious</a> uses a more polished form of this mini-surfing, and you can see her <a href="robowiki?MovementChallenge2K6/Results" class=wikipagelink>MC2K6 scores</a> are much better than that.
+<li> Also, the prediction checks the danger of the point you would be at when the <a href="robowiki?EnemyWave" class=wikipagelink>EnemyWave</a> intercepts you, but it might help a lot to subtract another bot_half_width, and maybe another bullet_velocity, (from the left side) to be checking the last point you could get to right before even possibly being hit. (<a href="robowiki?Dookious" class=wikipagelink>Dookious</a> does that.) Maybe I should actually change the tutorial to use that as the calculation, but I wanted to keep it simple... -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<li> a question: i don't understand the factor "2" in the below code. Can anyone give some additional explanation? thanks --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+</UL>
+<pre>
+            // this one is nice ;). if predictedVelocity and moveDir have
+            // different signs you want to breack down
+            // otherwise you want to accelerate (look at the factor "2")
+            predictedVelocity += 
+                (predictedVelocity * moveDir &lt; 0 ? 2*moveDir : moveDir);
+</pre>
+<UL >
+<UL >
+<li> acceleration: speed + 1, deceleration: speed - <strong>2</strong>  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<li> thanks, i was convinced deceleration was at the same rate as acceleration. I must remember to regularly read the <a href="robowiki?GamePhysics" class=wikipagelink>GamePhysics</a> page to refresh my memory. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+</UL>
+</UL>
+<p>
+@<a href="robowiki?Loki" class=wikipagelink>Loki</a>: Glad to hear it, best of luck! =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<hr noshade class=wikiline size=1>
+All the calculations are done under on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> method. Is there any diffrence to put it under run().? --sso
+<p>
+It shouldn't make any difference - the order that things are executed is given precisely on the <a href="robowiki?GamePhysics" class=wikipagelink>GamePhysics</a> page, and the only thing that happens between on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>() and run() is that the battle field draws. It's just a matter of preference. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Why do you use the two arraylists, does it add to the front of the array when you add it, if not I don't see how that could work. (i'm gussing since you did it that way that it does, but couldn't you be more exact then just from two rounds ago?) -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+The two <a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a>'s that start wtih _surf just store the direction and absolute bearings from every tick, because you need those from 2 ticks ago when you detect an <a href="robowiki?EnergyDrop" class=wikipagelink>EnergyDrop</a>. Yes, it adds to the front of them - the first argument is the position in the <a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a> if you do it like that. What do you mean "two rounds ago"? Do you mean two frames ago? The data from two frames ago is the last data that the enemy saw before firing the shot, so that's why you use it. It's all about figuring where he's aiming based on what he is seeing. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=WaveSurfing/Tutorial" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=WaveSurfing/Tutorial">View other revisions</a><br>Last edited November 2, 2006 23:55 EST by <a href="robowiki?Voidious" title="ID 7423 from pool-71-126-24-191.bflony.east.verizon.net">Voidious</a> <a href="robowiki?action=browse&diff=1&id=WaveSurfing/Tutorial">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

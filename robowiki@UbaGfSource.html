@@ -1,0 +1,250 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>UbaGfSource - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Uba, Gf, Source'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=UbaGfSource">UbaGfSource</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Here is the code.  could comeone tell me what is wrong and why it just shoots in random directions?
+<p>
+<H4>Advice</H4>
+
+<p>
+please put advice here --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<p>
+<H4>The Code</H4>
+
+<p>
+<pre>
+package bayen;
+import robocode.*;
+import java.awt.Color;
+import java.awt.geom.Point2D;
+import robocode.util.Utils;
+
+/**
+ * Uba - a robot by Bayen
+ */
+public class UbaGF extends AdvancedRobot
+{
+	static double FORWARD = 1;//choose forward or backward
+	static double rand = 185;//a random number that changes
+	int k = 0;
+	static int[] factor = new int[11];
+	static int best = 5;
+	static VBullet[][] vb = new VBullet[11][1000];
+	/**
+	 * CrazyTracker2's run method
+	 */
+	public void run() {
+		setColors(Color.yellow,Color.blue,Color.yellow);
+		setAdjustGunForRobotTurn(true);//allow gun and radar
+		setAdjustRadarForGunTurn(true);//free movement
+		int j = 0;
+		int m = 0;
+			while(j &lt; 11){
+				
+				j++;
+			}
+		while (true)
+		{
+			turnRadarRight(360);//scan for enemies
+		}
+	}
+	/**
+	 * onScannedRobot:  We have a target.  Go get it.
+	 */
+	public void onScannedRobot(ScannedRobotEvent e) {
+//here I use an oscillating movement pattern, but
+//I use a constant "rand" that I change randomly
+//so that Patternmatchers can't lock onto me
+if (getDistanceRemaining() == 0) { FORWARD =
+	-FORWARD; setAhead(rand * FORWARD);}
+setTurnRightRadians(e.getBearingRadians()
++Math.PI/2-0.5236*FORWARD
+*(e.getDistance()&gt;200?1:-1));
+//here I get my enemy's statistics so that I can use
+//linear targeting
+		double bulletPower = Math.min(3.0,getEnergy());
+		double myX = getX();
+		double myY = getY();
+		double absoluteBearing =
+		 getHeadingRadians() + e.getBearingRadians();
+		double enemyX = getX() 
+		+ e.getDistance() * Math.sin(absoluteBearing);
+		double enemyY = getY() 
+		+ e.getDistance() * Math.cos(absoluteBearing);
+		double enemyHeading = e.getHeadingRadians();
+		double enemyVelocity = 8;
+		double deltaTime = 0;
+double battleFieldHeight=
+getBattleFieldHeight(),battleFieldWidth=
+getBattleFieldWidth();
+		double predictedX = enemyX, predictedY = enemyY;
+while((++deltaTime)*(20.0
+- 3.0*bulletPower)
+&lt;Point2D.Double.distance(myX, myY, predictedX, predictedY)){
+		predictedX += Math.sin(enemyHeading) 
+		* enemyVelocity;	
+		predictedY += Math.cos(enemyHeading) 
+		* enemyVelocity;
+			if(	predictedX &lt; 18.0 
+				|| predictedY &lt; 18.0
+				|| predictedX &gt; battleFieldWidth - 18.0
+				|| predictedY &gt; battleFieldHeight - 18.0){
+predictedX = 
+Math.min(Math.max(18.0, predictedX), battleFieldWidth 
+- 18.0);	
+predictedY = 
+Math.min(Math.max(18.0, predictedY), battleFieldHeight
+- 18.0);
+				break;}}
+double theta =
+Utils.normalAbsoluteAngle(Math.atan2(predictedX
+- getX(), predictedY - getY()));
+double maxbearing = Math.abs(theta);
+double bearingrange = Math.abs((maxbearing-getRadarHeadingRadians()) * 2);
+double slice = bearingrange / 11;
+k++;
+if(k == 1000)
+k=0;
+				int i = 1;
+		int dI = 4;
+		if(e.getDistance() &lt; 100)
+		dI = 1;
+		else if(e.getDistance()&lt; 200)
+		dI = 2;
+		else if(e.getDistance() &lt; 300)
+		dI = 3;
+		int j = 0;
+		double deltaslice = slice;
+		while(j &lt;= 10){
+			deltaslice = i*slice;
+			double ebearing;
+ebearing=maxbearing - deltaslice;
+vb[j][k] = 
+new VBullet(e.getName(), i, dI, getX(), getY(),
+ebearing, getTime(), bulletPower);
+i++;
+j++;
+}
+j = 0;
+boolean[][] targetWasHit = new boolean[11][1000];
+boolean[][] outOfRange = new boolean[11][1000];
+int m = 0;
+while(m &lt; 1000){
+	while(j &lt; 11){
+	if(vb[j][m]!=null){
+	if(vb[j][m].targetWasHit(enemyX, enemyY, getTime())){
+		factor[j] += 1;
+}
+}
+	j++;
+}
+	m++;
+	j=0;
+}
+i = 0;
+j = 0;
+while(i &lt; 11){
+	if(factor[i] &gt; factor[j])
+	j = i;
+	i++;
+}
+best = j;
+out.println("Best: "+(best + 1));
+out.println("With: "+factor[best]);
+double predictedAbsBearing;
+predictedAbsBearing=maxbearing - best*slice;
+
+setTurnRadarRightRadians
+(Utils.normalRelativeAngle(absoluteBearing 
+- getRadarHeadingRadians()));
+setTurnGunRightRadians(Utils.normalRelativeAngle(predictedAbsBearing
+- getGunHeadingRadians()));
+//...and fire!
+		fire(3);
+	}
+	/**
+	 * onHitByBullet: Randomize my movement
+	 */
+	public void onHitByBullet(HitByBulletEvent e) {
+		//change my movement to throw off patternmatchers
+		rand += Math.random()*50*FORWARD;
+}
+
+}
+</pre>
+<p>
+<p>
+And here is the Virtual BulletClass<a href="robowiki?action=edit&id=BulletClass" class=wikipageedit>?</a>
+<p>
+<p>
+<pre>
+package bayen;
+
+class VBullet {
+	String targetName;
+	int guessIndex;				//represents the Guess Factor used
+	int distanceIndex;			//represents the distance range
+	double originX;				//the location where the VBullet was fired from
+	double originY;
+	double absBearing;			//and on which heading (0.0 up, +ve clockwise)
+	long time;					//and at which time
+	double power;				//and at what power
+	
+	VBullet (String targetName, int guessIndex, int distanceIndex,
+		double originX, double originY, double absBearing, long time, double power) {
+		this.targetName = targetName;
+		this.guessIndex = guessIndex;
+		this.distanceIndex = distanceIndex;
+		this.originX = originX;
+		this.originY = originY;
+		this.absBearing = absBearing;
+		this.time = time;
+		this.power = Math.max(0.1,Math.min(3.0,power));
+		}
+	
+	public String toString() {		//useful for debugging
+		return ("targetName= "+targetName+"   guessIndex= "+guessIndex+"   distanceIndex= "+distanceIndex+"   originX = "+originX+"   originY = "+originY+"   absBearing = "+absBearing+"   time = "+time+"   power = "+power);
+	}
+	
+	public double distance(double now) {  //double because targetWasHit uses double
+		return (now - time) * (20.0 - 3.0*power);		//return the distance the bullet is away from the origin at the specified time
+	}
+	
+	public double getX(double now) {		//returns the x position of the bullet at a particular time
+		return originX + Math.sin(absBearing)*distance(now);
+	}				
+
+	public double getY(double now) {		//returns the y position of the bullet at a particular time
+		return originY + Math.cos(absBearing)*distance(now);
+	}
+	
+	public boolean targetWasHit(double targetX, double targetY, long now) {		//for this target, at this time does the bullet come within 30 units of the target over the last tick			
+		
+		if (range(targetX,targetY,now) &gt; 50.0) return false;  // if we are no where near return immediatly
+		for (double fraction = 0.0; fraction&lt;1.05; fraction+=0.1) {  //if we are close check 10 positions of the bullet to make sure it does not hop over the target
+			if (range(targetX,targetY,now-fraction) &lt; 30.0) return true;
+		}
+		return false;  //close but not close enough over the last tick
+	}
+	
+	public boolean outOfRange(double targetX, double targetY, long now) {		//has the bullet traveled beyond the range of the enemy
+		double targetFromOrigin = Math.sqrt((targetX-originX)*(targetX-originX)+(targetY-originY)*(targetY-originY));
+		if (range(originX, originY, now) &gt; targetFromOrigin+30.0) return true; else return false;  //if our bullet is 30 units further away than our target (from where the bullet eas fired from) it will never hit the target
+	}
+	
+	public double range( double targetX, double targetY, double now) {		//the distance between the bullet and the target at the specified time.
+		double xo = targetX-this.getX(now);
+		double yo = targetY-this.getY(now);
+		return Math.sqrt( ( (xo)*(xo) ) + ( (yo)*(yo) ) );
+	}
+
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=UbaGfSource" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=UbaGfSource">View other revisions</a><br>Last edited December 30, 2005 17:20 EST by <a href="robowiki?Bayen" title="ID 5955 from pool-71-246-31-64.phlapa.fios.verizon.net">Bayen</a> <a href="robowiki?action=browse&diff=1&id=UbaGfSource">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

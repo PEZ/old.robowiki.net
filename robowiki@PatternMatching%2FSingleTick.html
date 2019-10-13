@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>PatternMatching/SingleTick - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Pattern, Matching, Single, Tick'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/SingleTick">PatternMatching/SingleTick</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>What I am now calling "Single Tick" <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> is an idea I came up with in the fall.  I gave up this game for a while, so it never saw a competition bot, but now the addiction resumed.  Using the same idea (with a HashMap<a href="robowiki?action=edit&id=HashMap" class=wikipageedit>?</a> implementation) this gun fits in a micro, and <a href="robowiki?WeeklongObsession" class=wikipagelink>WeeklongObsession</a> proves it is competitive.  Add a few tweaks and some good <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>, and <a href="robowiki?WeeksOnEnd" class=wikipagelink>WeeksOnEnd</a> shows it can still compete at the mini level.  So far it has not been tried in the general rumble.
+<p>
+The basic idea is to predict the enemy's movement one tick into the future at a time.  Look at his last n ticks, find the next step he most frequently has taken after that sequence, and project his movement forward according to that step.  Now from there do it again and again until your bullet intercepts him!  That is the brief summary.  Below is the write up I wrote back in the fall, moved from my page to here.  Enjoy!
+<p>
+For a fully functional (if bare-bones), open source implementation using a HashMap<a href="robowiki?action=edit&id=HashMap" class=wikipageedit>?</a>, check out <a href="robowiki?SingleTick" class=wikipagelink>SingleTick</a> the robot.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+The first step is to keep a list of the last <tt>n</tt> steps the enemy bot took.  I use a circular buffer.  By experimentation I've discovered that good values for <tt>n</tt>, if recording every step they take (as in a duel), are between 20-70, depending on the bot.
+<p>
+We are going to record the list in a pattern tree every time we add a step to it.  We are going to keep track of as many of these lists as possible &amp; use them to project probable future movement.  The tree will allow us to find the most frequent step taken after any <tt>n-1</tt> steps.  To do the projection, we feed the tree the last <tt>n-1</tt> steps, then project the bot according to the most frequent next step.  Then we add that step to our history, feed it back into the pattern tree, and project the bot again according that most frequent next step.  Lather, rinse and repeat until your bullet can reach the projected position!  The tricky part is recording the information in the tree so that accessing it is fast enough.  Here is some pseudo code:
+<p>
+<pre>
+    Step mostRecent = last step in the recent history
+    Node cur = the head of the tree
+    for (Step s : recent history, going backward) {
+        increment the number of times we've visited "s" in cur
+        cur = cur's child corresponding to "s"
+              (if it doesn't exist yet, create it)
+    }
+</pre>
+<p>
+Now to project the next most probable step:
+<p>
+<pre>
+    Node cur = the head of the tree
+    for (Step s: projected history, going backward) {
+        cur = cur's child corresponding to "s"
+        if cur is null, break
+    }
+    return the step most visited in cur
+</pre>
+<p>
+Wow, that makes it look really simple!  My implementation starts skipping a few times every round after I increase <tt>n</tt> past about 50.  Note that if the given sequence of <tt>n-1</tt> steps has never been recorded before, it will traverse down the tree as far at it ever *has* seen before &amp; give you the most probable step at that point.
+<p>
+This technique can do some neat things.  One of my favorites is predicting collisions.  As you are projecting future steps, if it returns one that would crash the bot into a wall, replace it with a step like Robocode itself would generate.  Then the pattern tree automatically starts giving you back the bot's most probable steps after hitting a wall!  It was very rewarding watching this *perfectly* predict <a href="robowiki?Walls" class=wikipagelink>Walls</a>' movement after watching him for 2-3 corners (and collisions with myself after seeing it once).  It handles <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> when he hits the walls quite well, too.  With a pattern depth of 68 or more, it predicts Crazy's movement with some pretty nice accuracy, too.  For whatever predicting sample bots is worth :).
+<p>
+It is not, however, simple.  One of the big problems is that, unchecked, this will consume all of your available memory in a matter of a few rounds.  I overcome this obstacle by keeping a heap of all the nodes in the tree according to when they were last accessed, then booting out the LRU nodes of the tree once there are too many.  I optimized my structure for memory usage &amp; I can hold about 5,000 nodes per MB of memory I'm willing to consume.  My poor laptop has been very abused.
+<p>
+So, there is a rough sketch of it all.  This outperforms the other pattern matchers in the <a href="robowiki?TargetingChallenge2K6" class=wikipagelink>TargetingChallenge2K6</a>, so maybe it's a nice idea!  I'll keep checking this site for a while in case y'all have any questions.
+<p>
+<hr noshade class=wikiline size=1>
+<strong>Comments</strong>
+<p>
+Is there any bot on the repository using this type of PM yet? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+@Starrynyte: Both <a href="robowiki?WeeklongObsession" class=wikipagelink>WeeklongObsession</a> and <a href="robowiki?WeeksOnEnd" class=wikipagelink>WeeksOnEnd</a> use it, with repository links on their respective pages. @Simonton: This is a very interesting (and unique!) idea. I'd actually be skeptical it would work so well if you hadn't already proved it. =) Very neat, indeed. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Now that i get what you're trying to say, very interesting! It's like doing PM on PM...(which is better, now that you've showed it) --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Could you perhaps make an commented example of this? String based or otherwise (which is easier to understand). I'm really interested in this, i'm just not sure of implimentation. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Sorry about that, Chase; you asked me to explain this a while ago, too, and I totally didn't live up to my promise.  Well, here's <a href="robowiki?SingleTick" class=wikipagelink>SingleTick</a> the open-source, commented bot. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Thanks, this should make the development of this more advanced pattern matching technique easier and bring it into broader use. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Wow, it'll take me a while, but I will definitely start looking in to this targeting method. I've been away for so long now. Maybe not in calendar time, but in terms of development. Entirely good job in dominating the minibot  rankings like you do dude! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Why thank you.  Good to see you again!  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+I love the concept behind this, but as I think on it I come to one problem: because you match on the most frequent next movement that you appended, you also 'reinforce' that pathway, making it highly probable that you chose from the same path on the tree the next time. This would essentially leave you with a stock standard pattern matcher. Of course you get other cool things like wall bouncing, but does that justify the extra complication? I'm sure it would be possible to add wall bounce prediction to a regular PM. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<UL >
+<li> It's important to note the difference between recording and predicting a tick.  Simply predicting a tick has no bearing on what will be predicted next turn - only recording does that.  Predicting DOES, obviously, impact what's predicted for the robot's next tick in the same prediction (if that makes any sense).  Anyway, single tick matching outperformed all other pattern matchers I saw benchmarked except <a href="robowiki?Kev" class=wikipagelink>Kev</a>'s <a href="robowiki?SeaSerpent" class=wikipagelink>SeaSerpent</a>, but with <a href="robowiki?Simonton/PMResearch" class=wikipagelink>PMResearch</a> I now think there's more potential with the more traditional systems.
+</UL>
+<p>
+<UL >
+<li> Yes, I understand that. What I was referring to was that by appending the predicted move onto the predicted sequence of moves, it is much more likely to find the next match <b>for that prediction</b>by following the same path in the tree <b>because the move you appended comes from that path</b>.Thus, it would seem to me that the only time it actually finds a new match would be with the first search <b>of that prediction</b>, when you haven't appended any prediction moves, which is exactly what a normal PM gun does. I'm not trying to bash your gun, but it seems to me that if there was a way you could eliminate this weakness PM would be stronger than ever. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<p>
+Hey Simonton! Kudos to you for your explanation of this kind of <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a>! By the way, about how you note <a href="robowiki?Simonton/PMResearch" class=wikipagelink>Simonton/PMResearch</a> is making you think there's more potential in the more traditional systems, I'm personally not so sure <a href="robowiki?PatternMatching/SingleTick" class=wikipagelink>SingleTick</a> PM has lost out. In particular, I'm personally suspecting much of the strength you see in <a href="robowiki?Simonton/PMResearch" class=wikipagelink>Simonton/PMResearch</a> is to do with with the MulipleChoice<a href="robowiki?action=edit&id=MulipleChoice" class=wikipageedit>?</a> tactics (which I'm a fan of applying to all sorts of gun types these days), and that <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a>-<a href="robowiki?PatternMatching/SingleTick" class=wikipagelink>SingleTick</a> could also be quite powerful. Right now I'm working on such a <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a>-<a href="robowiki?PatternMatching/SingleTick" class=wikipagelink>SingleTick</a> <a href="robowiki?PatternMatcher" class=wikipagelink>PatternMatcher</a> so it may be interesting to compare to <a href="robowiki?Simonton/PMResearch" class=wikipagelink>Simonton/PMResearch</a>. In any case, thanks for documenting this interesting form of <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=PatternMatching/SingleTick" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=PatternMatching/SingleTick">View other revisions</a><br>Last edited May 27, 2008 5:29 EST by <a href="robowiki?Rednaxela" title="ID 13292 from d198-53-128-24.abhsia.telus.net">Rednaxela</a> <a href="robowiki?action=browse&diff=1&id=PatternMatching/SingleTick">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

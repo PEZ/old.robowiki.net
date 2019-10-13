@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>MeleeStrategy/UnderstandingCoriantumr - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Melee, Strategy, Understanding, Coriantumr'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/UnderstandingCoriantumr">MeleeStrategy/UnderstandingCoriantumr</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?MeleeStrategy" class=wikipagelink>MeleeStrategy</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H2>Melee Strategy - Understanding <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a> (and <a href="robowiki?Shiz" class=wikipagelink>Shiz</a>)</H2>
+
+<p>
+<em>By <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a></em>
+<p>
+First of all, this tutorial is just as much about <a href="robowiki?Shiz" class=wikipagelink>Shiz</a> as <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a>, so I suggest as you go through this tutorial that unless you have spent a good amount of time understanding my flavor of <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>, that you refer mostly to <a href="robowiki?Shiz" class=wikipagelink>Shiz</a>'s code (which has alot of the same core ideas without the complicated gun implementation), unless I'm talking about things specific to <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a>.  Any direct references I make to code will be from <a href="robowiki?Shiz" class=wikipagelink>Shiz</a> 1.0 and <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a> 1.1 unless I state differently.
+<p>
+<H3>Getting Started</H3>
+
+First, you'll see 3 classes that are part of <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a> (two for <a href="robowiki?Shiz" class=wikipagelink>Shiz</a>):
+<UL >
+<li> The main robot class (in <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a>.java or <a href="robowiki?Shiz" class=wikipagelink>Shiz</a>.java)
+<li> The <a href="robowiki?EnemyInfo" class=wikipagelink>EnemyInfo</a> class (or MicroEnemyInfo<a href="robowiki?action=edit&id=MicroEnemyInfo" class=wikipageedit>?</a> in <a href="robowiki?Shiz" class=wikipagelink>Shiz</a>)
+<li> The MeleeBullet<a href="robowiki?action=edit&id=MeleeBullet" class=wikipageedit>?</a> class (in <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a> only) - this is almost exactly shamelessly ripped from <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> and <a href="robowiki?Fhqwhgads" class=wikipagelink>Fhqwhgads</a>, but it's not that shameless, since I wrote them, too).
+</UL>
+<p>
+Things to notice in the <a href="robowiki?EnemyInfo" class=wikipagelink>EnemyInfo</a> class:
+<UL >
+<li> It has all the current information about the enemy that should go away at the end of the round or when the enemy dies:
+<UL >
+<li> Last time when the enemy hit me
+<li> Energy
+<li> Velocity
+<li> Waves (in <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a>)
+<li> Heading (in <a href="robowiki?Shiz" class=wikipagelink>Shiz</a> - helps in targeting blind)
+<li> Location - note that there is no location variable in the class.  It is inherited from its parent class, which is Point2D.Double.  I don't know how I came up with this idea (to inherit from Point2D), but it was pure genious - it makes alot of other operations easier (finding your distance from an enemy or from the enemy to another point, projecting points from the enemy's location, etc) than if you had a Point2D object in the enemy class or x and y coordinates, and it saves <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> in tons of places.  I recommend it.
+</UL>
+</UL>
+<p>
+<H3>Globals</H3>
+
+There is a HashMap<a href="robowiki?action=edit&id=HashMap" class=wikipageedit>?</a> called enemies which is a map from String (robot name) to the <a href="robowiki?EnemyInfo" class=wikipagelink>EnemyInfo</a> (or MicroEnemyInfo<a href="robowiki?action=edit&id=MicroEnemyInfo" class=wikipageedit>?</a>) object.  This is where the enemy objects live each round.  Note that it's static for codesize reasons, but it is reinitialized each round in the run() method.  Enemy objects are removed from this HashMap<a href="robowiki?action=edit&id=HashMap" class=wikipageedit>?</a> when they die (so if I iterate through it, I never look at dead enemies.  Also, I don't need a dead variable in my enemy objects :-).
+<p>
+<a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a> has an additional HashMap<a href="robowiki?action=edit&id=HashMap" class=wikipageedit>?</a> called stats which maps robot names to multi-dimensional arrays of ints (for targeting information).  This is really static (it is only initialized once).
+<p>
+Both robots also have a couple points representing their current location and the one they just came from (this is just a movement hack), as well as an enemy object called currentTarget (whose purpose should be obvious).
+<p>
+<H3>Radar</H3>
+
+<a href="robowiki?Shiz" class=wikipagelink>Shiz</a> fires head-on and blind, and therefore simply spins his radar like there's no tomorrow.
+<p>
+<a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a> uses <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>, and fires while looking at the enemy.  His radar is a little more complicated, but not too much so.  It's basically based on the infinite radar lock that became popular with the first pattern-matching nanos (although it wasn't invented by them) - Basically it starts with rotating the radar infinitely, but when he's getting closer to firing, he reverses the radar when he's scanning the current target (this way, the radar should swing back over the enemy).  This has maybe a 90% lock rate, which is good for its simplicity and small code size.  It also locks when it scans if there is only one other robot left on the battlefield.  The radar code in <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a> is in Coriantumr.java, lines 51, 214 and 215.
+<p>
+<H3>The Point-Generating Function</H3>
+
+<p>
+These robots use <a href="robowiki?MinimumRiskMovement" class=wikipagelink>MinimumRiskMovement</a>, which I always sayis the combination of a point-generating function and a risk function.
+<p>
+The point generating function for both <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a> and <a href="robowiki?Shiz" class=wikipagelink>Shiz</a> looks something like:
+<OL >
+<li> Pick a distance to move
+<li> Project some number of points (about 60) out from your position at that distance at regular intervals
+<li> For each point, see if it's risk is smaller than that of the point you're currently moving towards
+<li> If it is, it is the new next point.
+</OL>
+The distance to move becomes important here - in <a href="robowiki?Shiz" class=wikipagelink>Shiz</a>, it's the distance between <a href="robowiki?Shiz" class=wikipagelink>Shiz</a> and the enemy.  Note that this doesn't mean <a href="robowiki?Shiz" class=wikipagelink>Shiz</a> always moves that distance before picking a new point - that's just how far he looks.  In reality, <a href="robowiki?Shiz" class=wikipagelink>Shiz</a> will change direction as soon as there is a point that distance away from it that is better.  I found a particular weekness in this system, which is that when there are only 4 or fewer bots on the field (imagine 3 or 4 bots in the corners of the battlefield), the best point <a href="robowiki?Shiz" class=wikipagelink>Shiz</a> has to go to is on the other side of the middle of the field, so you'll see <a href="robowiki?Shiz" class=wikipagelink>Shiz</a> at this point venturing right out into the middle of the field and turning around when the distance back to its corner is roughly the same as the distance to the closest enemy.
+<p>
+I haven't gotten around to publishing a fixed version of <a href="robowiki?Shiz" class=wikipagelink>Shiz</a> in this respect, but I have fixed the problem in <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a>.  <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a>'s distance is half the distance to the closest enemy, but no more than 250.  In one-on-one, the distance is random between 0 and half the distance (not bounded).
+<p>
+I also remember if I changed my "next" point in the loop, and if I did, I remember where I was at the time.  Note that I don't always change next points when I go into the point-generating loop, in fact, I don't even think it happens that often in most cases.  Saving the last point is for later use in the risk function (if I did this update in the point-generating loop, it would screw up later calls to the risk function).
+<p>
+Another thing to notice - the point-generating function trivially discards any points lying outside the battlefield, or even too close to the walls.
+<p>
+<H3>The Risk Function</H3>
+
+This is where the real magic happens - evaluating each point.
+<p>
+Typical risk (and antigravity) functions have two parts -
+<OL >
+<li> Risk that is applied to each enemy.
+<li> Risk that is applied to constant objects like walls or the center or your current location.
+</OL>
+<p>
+<H4>Risk function elements applied to each enemy</H4>
+
+<strong>A basic antigravity-like value</strong> - how strong the force of gravity is on this enemy from the given point, calculated as <tt>(energy+50)/distance<sup>2</sup></tt>.  Without the +50, notice that I'll almost disregard enemies that are almost dead, which is good because I'll get close to people who are dying and who aren't firing as hard, but you shouldn't take those bots TOO lightly, either.  Especially if your energy is also low.
+<p>
+<strong>Decide if the robot is likely targeting me</strong> - This is possibly unique to my bots (I'm not sure that anyone else does it, but they might), but I mentioned it on the <a href="robowiki?MeleeStrategy" class=wikipagelink>MeleeStrategy</a> page because I think it has alot of merit.  Basically I make another iterator on my enemies and I see how many other enemies are at least 10% closer to this enemy than the candidate point is.  If the count is no more than 1, or if they hit me recently, or if I'm currently shooting at this enemy, I assume they might be shooting at me.  This has two effects on the risk function for this enemy:
+<UL >
+<li> Their risk is doubled.
+<li> "perpendicularity" is taken into account (I think <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> might have invented that word, I think I got it from him at least).  "Perpendicularity" is just the absolute value of the cosine of the angle between the movement path (from my position to the given point) and the line between my current location and the enemy's current location.  This means it will be zero if I'm moving at an exactly right angle to the enemy and it will be 1 if I'm moving directly toward or away from the enemy.  If you are applying this to teams, you might consider taking out the risk doubling and only multiplying the risk by perpendicularity on an enemy (particularly if the enemy is a target you want to stick with).
+</UL>
+<strong>Check to see if the path to the point intersects an enemy</strong> - This shouldn't be an issue often, and it takes up codesize, so it's currently left commented out of both bots.  If the distance to the candidate point is too far or if you picked the point before you scanned the whole battlefield, it may still be a problem, though.
+<p>
+<H4>Constant Risk Function Elements</H4>
+
+<strong>Repel the last point I was at</strong> - This helps you not get hit by head-on targeting as much.  Of course, it might make you more vulnerable to the pseudo-linear targeting algorithms that are also common in melee.  Choose your poison.  I consider this something of a hack, but <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a> does something like it, too, so it can't be that bad.  <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a> doesn't do this in 1-on-1.
+<p>
+<strong>Repel my current position lightly</strong> - This causes me to become increasingly likely to change directions as I get closer to my "next" point.
+<p>
+<H3>Switching targets</H3>
+
+See Shiz.java, lines 126-127 or Coriantumr.java, lines 162-163.  It looks like in these versions I just use shorter distance, but in the dev version, I have better resistance to thrashing and also take energy into account.  In my experiments with teams, I also would make the leader more likely to be targeted, but that's a whole different story.
+<p>
+<H3><a href="robowiki?Shiz" class=wikipagelink>Shiz</a>'s gunning</H3>
+
+<a href="robowiki?Shiz" class=wikipagelink>Shiz</a> aims and fires in the run method (Shiz.java, lines 52-54) at the location where the current target is.  I think I also experimented with projecting currentTarget forward each tick in run() (to avoid firing behind them), but it must not have been worth the codesize.
+<p>
+<H3><a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a>'s gunning</H3>
+
+Before trying to understand this, you should probably be familiar with <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>.  I recommend my tutorial at <a href="robowiki?GuessFactorTargeting/Tutorial" class=wikipagelink>GuessFactorTargeting/Tutorial</a>.  Also, see how the MeleeBullet<a href="robowiki?action=edit&id=MeleeBullet" class=wikipageedit>?</a> class is a simplified version of the WaveBullet<a href="robowiki?action=edit&id=WaveBullet" class=wikipageedit>?</a> class described there.
+<p>
+So, basically, we're looking at a segmented guess-factor gun here, with very much in common to <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> and every other bot which has copied <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>'s implementation.  The segmentations are:
+<UL >
+<li> <strong>Battle size</strong> - is this 1-on-1 or melee?  I think that Math.min(getOthers()-1, 1) is a great way of calculating this segmentation, and it should only crash if there are zero enemies left (in that case, what are you doing in on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>?)
+<li> <strong>acceleration or lateral direction</strong> - acceleration like in <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> in one-on-one, in melee it's what I call "lateral direction" - whether the enemy is moving toward you, away from you, or perpendicularly to you.
+<li> <strong>BFT (projected Bullet Flight Time)</strong> - how long it would take a bullet to reach them at the given power if they stayed at this distance?  Segmented at 15-tick intervals I guess (maybe more granularity would be good?)  Notice that I calculate my bullet power at the same time as calculating this segment index, which doesn't really add to clarity, but helps my codesize.
+<li> 31 guessfactors in each segment.  No reason, it just works.
+</UL>
+<p>
+Each scan, I update each wave, and the waves return true if they hit and I should discard them (during this update, if they hit, they also update the stats in their corresponding segment.  See MeleeBullet<a href="robowiki?action=edit&id=MeleeBullet" class=wikipageedit>?</a>.java).  Then I make a new wave from the current segment and data.
+<p>
+If I'm scanning at the current target, I iterate the guess factors in the current segment and pick the one that is highest.  There is a caveat.  On line 205 of Coriantumr.java, you'll see that I make a quick geometric guess as to whether or not the enemy can even reach that guess factor.  This is because it's quite easy to waste a shot or two in melee by projecting your enemy to keep going forward even if there's a wall there.  I can't remember exactly what the mathematical thinking was behind it, but I think it just figures out if it would be possible to reach that guess factor inside the battlefield if you turned and went at velocity 8 instantly toward the closest point on the battlefield that is in that guessfactor.  Someone should look closer at it.  At least it works.
+<p>
+Finally, I turn my gun to that best feasible guessfactor and I fire - except I don't fire yet if my gun isn't done turning or if my targets energy is more than 5 times my own (this makes me play a sort of waiting game against opponents who have an advantage, and sometimes it works :-))
+<p>
+<H3>The End</H3>
+
+<p>
+Anything else in either of these bots should be pretty transparent I think.  It looks like I have a little victory dance commented out of <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a> 1.1, too.
+<p>
+<hr noshade class=wikiline size=1>
+<H3>Comments</H3>
+
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?MeleeStrategy" class=wikipagelink>MeleeStrategy</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=MeleeStrategy/UnderstandingCoriantumr" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=MeleeStrategy/UnderstandingCoriantumr">View other revisions</a><br>Last edited April 8, 2005 1:27 EST by <a href="robowiki?Kawigi" title="ID 3848 from tide518.microsoft.com">Kawigi</a> <a href="robowiki?action=browse&diff=1&id=MeleeStrategy/UnderstandingCoriantumr">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

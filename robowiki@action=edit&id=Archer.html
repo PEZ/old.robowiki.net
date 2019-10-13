@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing Archer - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Archer'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing Archer</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="Archer"  />
+<input type="hidden" name="oldtime" value="1097853960"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="2"  />
+<input type="hidden" name="captchaArg2" value="4"  />
+<input type="hidden" name="captchaOp" value="+"  />
+<input type="hidden" name="captchaId" value="879631711708"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">==== Author: [[Ph]] ====
+==== How competetive is it? ====
+[http://rumble.robowiki.net/servlet/RatingDetails?game=roborumble&amp;name=ph.mini.Archer%200.6.6&amp;compare=true Current rating at RoboRumble]
+==== Where can I get it? ====
+Archer 0.6.6 - http://www.robocoderepository.com/BotDetail.jsp?id=2326
+==== How does it [[Movement|move]]? ====
+It uses [[RandomMovement|random movement]] based on [[PEZ]]&#39;s [[RandomMovementBot]]. Flattening based on [[Aristocles]] by [[PEZ]].
+==== How does it select a target to attack in [[melee]]? ====
+[[OneOnOne|1v1]] bot only.
+==== How does it [[Targeting|fire]]? ====
+It uses [[SegmentedData|segmented]] [[GuessFactorTargeting|guess factor gun]].
+==== How does it [[DodgingBullets|dodge bullets]]? ====
+It is an [[Avoiders|avoider]], still moves quickly.
+==== How does the [[Melee|melee]] strategy differ from [[OneOnOne|one-on-one]]  strategy? ====
+[[OneOnOne|1v1]] bot only.
+==== What does it save between rounds and matches? ====
+* Between rounds - [[GuessFactorTargeting|GF]] stuff.
+* Between matches - nothing.
+==== Can I use your code? ====
+Yes, sure! It is included in the jar package.
+==== What&#39;s next for your robot? ====
+Primary objective is better movement, but I will also try to tweak my [[Segmentation|segmentation]].
+&lt;p&gt;
+----
+==== comments, questions, feedback... ====
+Ok, just a couple of things. You say you pick your enemy in melee by bullet travel time. Would it not be easier to just pick according to whoevers closest, as unless you have an elaborate firepower calculation the 2 will produce the same result. You might also want to put in some kind of buffer so you dont &quot;thrash&quot; between enemies. Only changing when another enemy is less that 90% of the distance to your enemy seems to work well. Also, do you avoid enemy bullet impact positions all the time, even when there are 10 bots left?? If so, you might be able to improve your melee performance by waiting until there are only say 4 bots (That&#39;s what Ray Vermette used in TheArtOfWar) remaining. As when the melee is still in its founding stages, you have no idea whether the energy drop of the opponent is due to firing or not. Either that or just avoid the spots if the enemy has hit you within a given time frame. Admittedly i havent read your code so you could be doing all of the above. Good Luck!! --[[Brainfade]]
+
+Thanks, your advice applies to [[Musketeer]] too ([[Archer]] and [[Musketeer]] use the same movement and target selection method). But I don&#39;t pick enemy only by bullet travel time - see [[TimeToHit]]. I take into the account gun turn time too. So I think this strategy avoids &quot;thrashing&quot;. What do you think about my [[SegmentedData|segments]]? I use segmentation across:
+* enemy&#39;s distance to me
+* enemy&#39;s distance to wall
+* enemy&#39;s velocity
+* enemy&#39;s heading (I don&#39;t know do I really need this segment)
+
+-- [[Ph]]
+
+Why wouldn&#39;t you know if an energy drop is from an enemy firing or not when there are many enemies? -- [[PEZ]]
+
+Well it applies in any case when there are more than 2 bots, but it is just more likely when there are lots. Say if in between scans an enemy doesnt fire, but is hit by a power 3 bullet its energy will drop by 12 points. If a power 3 bullet it has already fired hits another bot it will receive 9 energy points, leading to a net result of -3 energy taht makes it look like it has fired a power 3 bullet when it hasnt. Also with lots of bots collisions are more likely to occur and the resultant damage could easily be confused with shot&#39;s being fired. I&#39;ve always thought that at the start of a melee it is better to concentrate of avoiding the massive scrum of bots that seems to occur rather than trying to avoid single bullet hits. That said all my Melee bots suck. As for your segments, i have no idea. You&#39;d need to speak to one of the melee masters (Paul Evans, Rozu, ABC, Kawigi etc.) though i would have thought that the enemy absolute heading would have done nothing for you. --[[Brainfade]]
+
+Enemy&#39;s heading is actually quite handy to a degree. If any enemy is moving with a very narrow profile to you (almost diving straight in and out) then they exhibit a much different set of spikes than at a wide profile (near perpendicular to you). Though absolute heading isn&#39;t too useful as the measure of that, you might want to seriously consider a relative heading where 0 is pointing straight at you. -- [[Kuuran]]
+
+It seems good. With this method I should recognize bots that stay perpendicular to me. I think enemy&#39;s absolute heading can be useful too, as a kind of &quot;movement signature&quot;. -- [[Ph]]
+
+I think all you&#39;re going to do is slow down learning. There&#39;s no real reason for a bot&#39;s behaviour to change as it&#39;s angle in the arena changes if you have no regard for position. A bot facing straight down will probably still behave the same if it&#39;s facing straight left if they&#39;re both perpendicular to you positions, the opponent itself probably won&#39;t even know there&#39;s a difference in the situation. The few small differences that may crop up (such as bots running longer when they&#39;re going the width of the arena than the height) can&#39;t possibly make up for the learning speed hit. -- [[Kuuran]]
+
+I recently released new version, with enemy&#39;s relative heading segmentation axis added, and it performs better (approximately 10 rating points better). What do you think about it? -- [[Ph]]
+
+There have got to be some serious issues with your bot, to be brutally honest, I also suspect the 10 point rise may be a fluke. I think that conceptually it&#39;s extremely good, with just various silly and/or implementation mistakes. I really like how you&#39;ve structured the code, too, I wish I had that kind of patience.
+
+Now, so far I haven&#39;t read all of your code (there is a lot of it) but I&#39;ve read most of the gun code, some of the other code, and run it through the FloodGrapher gauntlet. Here&#39;s what I&#39;ve noticed:
+
+* Your learning is too slow, even if you saved data your learning would be too slow. This version of Archer (0.1.3) learns a fraction over 207 times more slowly than KostyaTszyu, for example. You need to change your segmentation granularity, which is what regulates learning speed.
+* 6 segments is probably not enough for distance, you might want to use 12.
+* 2 segments is realistically not enough for velocity, you probably want to use 3 (0-2, 3-5, 6-8)
+* You might want to change your wall segment to take into account whether the enemy is within the threshold distance of a wall AND moving towards the wall (facing towards and moving forwards or facing away and moving backwards). If an enemy is just near a wall but the wall isn&#39;t affecting it&#39;s path you usually won&#39;t see the behaviour change that wall segments help you identify.
+* I&#39;ve already given my thoughts on the heading segment, and regardless of it&#39;s usefulness it&#39;s too big. 37 segments is about 30 more than anything outside your distance segments should have.
+* See above for bearing segmentation size.
+* I didn&#39;t mean relative bearing segmentation when I said it&#39;s useful to segment on a relative measure of heading. What I meant is a segment that measures how &quot;steep&quot; the opponent&#39;s approach to you is. You&#39;d only need about 3 segments, one for an opponent who is moving close to perpendicular, one for an opponent who is moving in the vicinity of 45 degrees towards or away and one for an opponent who is moving right at you. You could also differentiate between towards and away, even then you only need about 5 segments. Bearing doesn&#39;t measure this. The bearing of your bot relative to the opponent bot&#39;s heading (what they&#39;d get from e.getBearing()) is probably what you want to use, once you have that angle you&#39;d do something like Math.abs(angle) for angles 90 and under, and 180 - Math.abs(angle) for angles over 90, keep that if the velocity is positive or take Math.abs(180 - resulting angle) if the velocity is negative. Then that would give their angle of attack. That&#39;s off the top of my head, but I think it works. You should probably get your gun working without this segment first.
+* Your movement gets you stuck standing still on walls quite often. This is really getting you butchered.
+* Your movement shows flashes of adaptivity, but often then goes straight back to either running straight lines into a wall or standing still. You might want to experiment with your gravity point weightings, especially for walls.
+
+Assuming you keep your current segment layout, you may want to change the segment sizes to look something like: [12][2][5][3][3][31]. That would learn about 30 times faster (which, for the number of segments, is quite quick), greatly helping your RR@H performance. -- [[Kuuran]]
+
+----
+
+&lt;pre&gt;
+Fighting battle 33 ... ph.mini.Archer 0.6.6,arthord.micro.Muffin 0.6.1
+RESULT = arthord.micro.Muffin 0.6.1 wins 350 to 0
+Fighting battle 34 ... ph.mini.Archer 0.6.6,davidalves.net.DuelistNano 1.0
+RESULT = davidalves.net.DuelistNano 1.0 wins 350 to 0
+Fighting battle 35 ... ph.mini.Archer 0.6.6,jep.nano.Hotspur 0.1
+RESULT = jep.nano.Hotspur 0.1 wins 350 to 0
+Fighting battle 36 ... ph.mini.Archer 0.6.6,myl.micro.Predator 1.50
+RESULT = myl.micro.Predator 1.50 wins 350 to 0
+Fighting battle 37 ... ph.mini.Archer 0.6.6,mz.AdeptBSB 1.03
+RESULT = mz.AdeptBSB 1.03 wins 350 to 0
+Fighting battle 38 ... ph.mini.Archer 0.6.6,ntw.Sigsys 1.6
+RESULT = ntw.Sigsys 1.6 wins 350 to 0
+Fighting battle 39 ... ph.mini.Archer 0.6.6,ratosh.Wesco 1.4
+RESULT = ratosh.Wesco 1.4 wins 350 to 0
+Fighting battle 40 ... ph.mini.Archer 0.6.6,rz.Apollon 0.23
+RESULT = rz.Apollon 0.23 wins 350 to 0
+Fighting battle 41 ... ph.mini.Archer 0.6.6,strider.Festis 1.2.1
+RESULT = strider.Festis 1.2.1 wins 350 to 0
+Fighting battle 42 ... ph.mini.Archer 0.6.6,myl.nano.Kakuru 1.20
+RESULT = myl.nano.Kakuru 1.20 wins 350 to 0
+Fighting battle 43 ... ph.mini.Archer 0.6.6,myl.micro.Predator 1.50
+RESULT = myl.micro.Predator 1.50 wins 350 to 0
+Fighting battle 44 ... ph.mini.Archer 0.6.6,myl.micro.NekoNinja 1.30
+RESULT = myl.micro.NekoNinja 1.30 wins 350 to 0
+Fighting battle 45 ... ph.mini.Archer 0.6.6,kcn.percept.PerceptBot 2.3
+&lt;/pre&gt;
+
+I think you&#39;ve got a bug. --[[David Alves]]
+
+&lt;pre&gt;
+Executing battles ...
+Fighting battle 0 ... ph.mini.Archer 0.6.6,md.November 1.0
+RESULT = ph.mini.Archer 0.6.6 wins 3594 to 1969
+Fighting battle 1 ... ph.mini.Archer 0.6.6,lrem.Spectre 0.4.4
+RESULT = ph.mini.Archer 0.6.6 wins 3903 to 1263
+Fighting battle 2 ... ph.mini.Archer 0.6.6,dummy.micro.HummingBird 2.14
+RESULT = ph.mini.Archer 0.6.6 wins 3993 to 1928
+Fighting battle 3 ... ph.mini.Archer 0.6.6,shrub.Vapour src124
+RESULT = ph.mini.Archer 0.6.6 wins 3539 to 2121
+Fighting battle 4 ... ph.mini.Archer 0.6.6,dmp.nano.Eve 3.41
+RESULT = ph.mini.Archer 0.6.6 wins 5047 to 1067
+&lt;/pre&gt;
+
+I think it is not a bug in my code. I compiled it using JDK 5.0, so maybe it throws exceptions in your JRE. Probably I will be able to fix that quickly. --[[Ph]]
+
+I have seen that with one of my bots as well. 350 to nil... I don&#39;t think there&#39;s anything wrong with Archer. But what&#39;s wrong I don&#39;t know. =) -- [[PEZ]]
+
+I&#39;m using 1.4.2. --[[David Alves]]
+
+I&#39;ll upload version compiled with -source 1.4 version soon. --[[ph]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 2 + 4 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that Archer has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=Archer">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

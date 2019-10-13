@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing AaronR - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Aaron, R'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing AaronR</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="AaronR"  />
+<input type="hidden" name="oldtime" value="1213984990"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="3"  />
+<input type="hidden" name="captchaArg2" value="10"  />
+<input type="hidden" name="captchaOp" value="+"  />
+<input type="hidden" name="captchaId" value="091871212077"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">When I first registered on RoboWiki, this conversation played out on my page:
+
+Don&#39;t ask me for downloadable robots. They&#39;re not worth playing. --[[AaronR]]
+
+Now thats where your wrong, all bots are worth playing! &amp;nbsp;&amp;nbsp;(Unsigned)
+
+Hey, who is that? What is your name? What is your quest? --[[AaronR]]
+
+Looking at the Other Revisions page, i think it was [[Chase-san]] --[[Starrynte]]
+
+Alright, alright, I give in. --[[AaronR]]
+
+-----
+
+&#39;&#39;&#39;Robots with Source&#39;&#39;&#39;
+* [[QuantumChromodynamics]] - My first robot with a decent movement, also had an adjusted linear gun that took a long time to learn by many good movements.
+* [[TheoryOfEverything]] - Same movement as QuantumChromodynamics, but with multiple guns in a virtual guns array.
+* [[SmoothHaiku]] - A [[HaikuBot]] that takes advantage of while loops to implement [[Kawigi]]&#39;s iterative [[WallSmoothing]] method.
+* [[Horizon]] - My most recent (and best) bot, a wavesurfer with guess-factor targeting.
+
+&#39;&#39;&#39;Early Attempts&#39;&#39;&#39;
+* Borg Cube - My best (and only) attempt at a cannibal bot. I made it a long time ago...
+* Obsidian - I was trying to make [[WallSmoothing]] - it didn&#39;t work very well.
+
+&#39;&#39;&#39;[[JustForFun]]&#39;&#39;&#39;
+* [[BeerSonnet]] - Sonnet version of [[BeerPoet]]. It gets &quot;drunk&quot; and starts missing as it destroys [[SittingDuck]] bots.
+* [[SuperMyFirstRobot]] - Upgrade of MyFirstRobot. Gwahahahaha!
+----
+It seems that your &lt;i&gt;Ex-current best robot&lt;/i&gt; still is your best bot. Nice eh, that &#39;logical improvements&#39; don&#39;t always pay off?  Good luck with your next improvements!  -- [[GrubbmGait]]
+
+My solution was to run Che&#39;s pattern matcher on myself and run as far from those bullets as possible :).  &lt;i&gt;(See AntiPatternMatcherChallenge2K6)&lt;/i&gt;  -- [[Simonton]]
+
+WaveSurfing, at best, looks like a really good RandomMovement to a PatternMatching gun. Since [[Che]] is using RandomMovement, you&#39;re basically on an even playing field with it in the movement department. So I&#39;d say [[Che]]&#39;s excellent PatternMatcher is probably still stronger than your guns. Best of luck! Also, don&#39;t rush to defeat Che too quickly - then you&#39;ll have to move on to its big brother, [[Chalk]], which is a million times worse! =) -- [[Voidious]]
+
+Thanks for the tip! You are right, my guns are not very good compared to Che&#39;s pattern matcher. I&#39;ll be releasing that new bot within a couple days, here is what it looks like at present:
+* Completely pluggable framework.
+* Wavesurfing movement started out copied from the [[WaveSurfing/Tutorial|wave surfing tutorial bot]] but now has rolling averages and will move away from the enemy intelligently.
+* Virtual guns array is unsegmented and has a [[HOT]] gun, a [[CircularTargeting]] gun, and a segmented [[GuessFactorTargeting]] gun with rolling averages.
+* Supports melee but is next to useless against more than three enemies - it is really only supposed to fight 1-on-1.
+Any suggestions on how to improve it, particularly vs. pattern matchers (yes, it gets creamed by [[Tron]])? Thanks in advance. --[[AaronR]]
+
+First, I think all versions of [[Tron]] use a kinda unique gun, called [[TronsGun]] or [[DynamicClustering]]. To be more clear, it was once completely unique, but some of us have built our own versions of it since then ([[Chalk]] being the most notable, in my opinion). It&#39;s not exactly PatternMatching, so improving your movement against Tron will likely do one thing only: improve your movement against Tron. =)
+
+As for tuning your WaveSurfing to work well against PatternMatching, that&#39;s a mystery none of us have truly cracked. It seems the only way to really kick a PM gun&#39;s butt is to do AntiPatternMatching. Take a look at the [[MovementChallenge2K6/Results]] to see how well some of us do, [[Che]] is one of the reference bots. The only really useful tip I think I have for you right now is to consider ditching the HeadOnTargeting and CircularTargeting guns in your VirtualGuns array - you may well perform better with just the GuessFactor gun. (I know very few bots where the GF wouldn&#39;t be the best to choose, but your VG array might think the others are better sometimes and use them, thus decreasing your performance.) I&#39;d say at least give it a try and see how it works.
+
+Sounds like you are moving in the right direction, though - modular code, starting with the most important pieces and building onto them. Best of luck.
+
+-- [[Voidious]]
+
+I am considering ditching the HOT gun, since GF targeting will do the same thing by firing at guess factor 0. The original version of the bot used only GF targeting without the other two guns but it really performed badly against anything except wavesurfers, and that only because I kept the rolling depth low. Adding the circular gun made a big improvement in the performance. At one point I tried having two GF guns in my array, one with a rolling depth of 2 to handle adaptive movement and another with a rolling depth of 20 to handle everything else, but most of the time they just ended up firing at the exact same bin.
+
+When originally designed the bot, I did the same thing with the gun as I did with the movement: copy the code from the GuessFactorTargeting tutorial, adapt it to my framework, and add rolling averages. Do you have any quick fixes to improve a really simple GF gun? --[[AaronR]]
+
+EDIT: I just tried changing it back to the 2 GF gun system and it works this time!
+
+Horizon 0.8.6 is now released, and ranks ~94 in the roborumble. Thank you for your help! --[[AaronR]]
+
+CONGRATULATIONS ON BEATING CHE!! :) -- [[Simonton]]
+
+THANKS! ... UH-OH, MY CAPS LOCK KEY IS STUCK! =)
+
+Alas, it looks like the new version of Horizon does slightly worse overall in the rumble than the old version. See [[Horizon/Questions]] for why I think this is the case - in short, the new movement can dodge HOT and advanced targeting, but nothing in-between. &#39;&#39;Note to self: [[GrubbmGait]] says that logical improvements don&#39;t always pay off.&#39;&#39;
+
+-- [[AaronR]]
+
+Congrats on the progress with Horizon! -- [[Simonton]]
+* Thanks! -- [[AaronR]]
+
+----
+
+I just thought I should announce that I am working on a new bot. It&#39;s a melee bot ... with [[MinimumRiskMovement]] ... and [[GuessFactorTargeting]] ... and [[DynamicClustering]]. Oh, did I mention it&#39;s a [[MiniBot]]? =)
+
+Of course, I don&#39;t think I&#39;m going to be able to squeeze in [[KdTree/BucketPRKdTree|Simonton&#39;s tree]]...
+
+-- [[AaronR]]
+
+Here&#39;s an update on this bot:
+
+* The MR movement is working perfectly, thanks to extensive &lt;s&gt;stealing&lt;/s&gt; &lt;s&gt;borrowing&lt;/s&gt; code reuse from [[HawkOnFire]].
+* The DC/GF targeting is up to the &quot;why can&#39;t it hit Walls?&quot; stage.
+
+I can&#39;t seem to fit in true [[DynamicClustering]], so I&#39;m using the [[Shadow]] log-everything-in-one-array-but-weight-farther-scans-lower approach.
+
+-- [[AaronR]]
+
+I tried that....and I was only able to keep about 3000 scans before it started skipping turns. So be warned! -- [[Skilgannon]]
+
+* Well, I have to make it work before I can worry about how fast it is. =) At present, I&#39;m struggling with how to make sure that the bot doesn&#39;t log erroneous guessfactors from the waves still in the air after the current target is destroyed. That is, the bot is assuming that the waves were all fired at the current target, even if the data is for a previous target. I could make the bot log guessfactors for all bots at once with one wave, but I don&#39;t think I have the space... the bot is already 200-300 bytes over the limit, though I haven&#39;t tried any serious codeshrinking tricks yet. Anyway, don&#39;t expect this bot from me any time within the next week, since I have a lot of work... and, in case you think that I really don&#39;t have a lot of work, here is just a sample: a psychology journal article summary/essay that I haven&#39;t started writing yet, an existing C++ project where I now have to modify &#39;&#39;all&#39;&#39; of my code from keeping the data resident in &lt;code&gt;vectors&lt;/code&gt; to storing it in a database, and a 10-page research paper on firewalls that is due on Monday. So there. -- [[AaronR]]
+* Thats pretty bad. I&#39;ve got my last exam tomorrow... Additional Mathematics...where I learn all sorts of interesting stuff about summations, integral calculus, the Newton/Rhapson iterative method for solving equations, etc. Good luck on you work =). If you haven&#39;t been writing your code straight pre-shrunk, it should be pretty easy to shrink it all down a couple hundred bytes, even more by restructuring code, pulling out or inlining code snippets, etc. -- [[Skilgannon]] 
+
+----
+
+Guess who&#39;s bored and has a lot of time on his hands?
+
+Anyone care to tell me what&#39;s happened in Robocode since I left? I see that [[Dookious]] has moved down to second place... -- [[AaronR]]
+
+I fixed my surfing up quite a bit in DrussGT (gun hasn&#39;t really changed since 0.7.23)... Rednaxela has pushed past you slightly with RougeDC, [[Toorkild]] is kicking major butt in the MicroRumble, and I&#39;ve shrunk [[Toorkild]]&#39;s gun to fit into [[Cunobelin]], it just needs to be tuned to work with the system. I&#39;m sure there&#39;s something I&#39;ve missed there... but it&#39;s been pretty quiet. The [[RougeDC/TargetingLab]] and [[RougeDC/MovementLab]] pages have some interesting stuff on them wrt segments, nearest neighbors, etc. -- [[Skilgannnon]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 3 + 10 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that AaronR has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=AaronR">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

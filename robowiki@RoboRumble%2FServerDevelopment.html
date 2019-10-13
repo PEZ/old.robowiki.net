@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RoboRumble/ServerDevelopment - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Robo, Rumble, Server, Development'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/ServerDevelopment">RoboRumble/ServerDevelopment</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>@PEZ: I just uploaded the server v.b8. It synchronizes some methods, fixes a bug that was preventing RR server to write the log file, fixes another bug that allowed update of the rating files when someone was reading, and introduces a new class that will be used to remove old participants from the ratings file (it also filters bots that don't have battles for the last 5 days - I'w remove the filter when the new client is ready). Please, could you install them? -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+I have a deadline at work to meet, but we can make a trade. I install the new servlets and someone can <strong>please</strong> tell me how to make the SRC for an html IFRAME element inline. I don't want to have to make little files or ASP scripts to feed the IFRAME since I would like the pages standalone (that is, not dependent on a server to create them) if possible. Target audience can be assumed to have  a reasonably modern web browser with <a href="robowiki?JavaScript" class=wikipagelink>JavaScript</a> activated. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<UL >
+<li> It'll be ugly, but you can rewrite the content of an iframe using javascript and dhtml ...  <a rel="nofollow" href="http://www.howtocreate.co.uk/tutorials/jsexamples/rewritediv.html">http://www.howtocreate.co.uk/tutorials/jsexamples/rewritediv.html</a> -- <a href="robowiki?FnH" class=wikipagelink>FnH</a>
+<UL >
+<li> I sorta figured it could be done with <a href="robowiki?JavaScript" class=wikipagelink>JavaScript</a>.  That particular code is curiously like that of <a href="robowiki?MeleeXaxa" class=wikipagelink>MeleeXaxa</a> though. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</UL>
+</UL>
+<p>
+OK, new servlets are installed and activated. I miss the color coding of the %share column in details though: <a rel="nofollow" href="http://rumble.robowiki.dyndns.org/servlet/RatingDetails?game=minirumble&amp;name=pez.mini.VertiLeach%200.2.2">http://rumble.robowiki.dyndns.org/servlet/RatingDetails?game=minirumble&amp;name=pez.mini.VertiLeach%200.2.2</a>
+The new filtering seems to work, because now the only minibot that beats <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> doesn't show any more. =) And, I still think it's strange that <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> is not ranked #1 ... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It seems that now concurrent update is treated properly, but upload results performance has downgraded, specially when a new bot enters competition and all clients try to update results for the same bot. May be someone experienced with servlets could take a look into the current implementation? --<a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+How bad is the performance of uploads then? Maybe if the client ran the upload in a thread of its own it could continue running battles and hopefully the data will have been uploaded once the client is ready with new results. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Probably it could be a solution. Right now the client fails to upload about a 10-15% of the results for a new bot, just because it times out. It doesn't happen when it runs "normal" battles, because the same bot is not frecuently uploaded twice in a row. Anyway, I don't think it is a critical issue right now. The first priority is to fix RR@H to correctly deal with robot versions. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+@PEZ: I just uploaded the new server classes v.b9. They fix the problem with ratings (bots entering and leaving) and implement a definitive solution to the participants update, by allowing the client to tell the server when a participant has been removed (right now the only client that does it is mine. I'w release the new one as soon as I'm sure there are no bugs). They also fix the bug that made the colors associated to win/lose dissapear. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Cool! I've installed and actived the new servlets. If you want material for a wall size poster: <a rel="nofollow" href="http://rumble.robowiki.dyndns.org/servlet/RatingDetails?game=minirumble&amp;name=pez.mini.VertiLeach%200.2.2">http://rumble.robowiki.dyndns.org/servlet/RatingDetails?game=minirumble&amp;name=pez.mini.VertiLeach%200.2.2</a> =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+@PEZ: I just uploaded the server classes v.beta 10, which include the classes that implement the <a href="robowiki?RoboRumble/PremierLeague" class=wikipagelink>/PremierLeague</a> rating system. To install, just proceed as usually, AND configure Tomcat to run the GenerateLeagueResults<a href="robowiki?action=edit&id=GenerateLeagueResults" class=wikipageedit>?</a> class on server start-up (it's very time consuming to calculate the league results on-line, so it is set-up to calculate them every 12h). In my system, I made Tomcat to run the class at start-up by adding the following lines to the file web.xml in the directory WEB-INF:
+<pre>
+    &lt;servlet&gt;
+      &lt;servlet-name&gt;GenerateLeagueResults&lt;/servlet-name&gt;
+      &lt;servlet-class&gt;GenerateLeagueResults&lt;/servlet-class&gt;
+      &lt;load-on-startup&gt;5&lt;/load-on-startup&gt;
+    &lt;/servlet&gt;
+</pre>
+-- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+BTW - If correctly installed Tomcat should output a message ROBORUMBLE@HOME: Scheduling tasks ... when you restart it. -- Albert
+<p>
+OK. The new servlets are activated. Good work Albert! A question; How should this table be interpreted: <a rel="nofollow" href="http://rumble.robowiki.dyndns.org/servlet/PremierLeague?version=1&amp;game=minirumble">http://rumble.robowiki.dyndns.org/servlet/PremierLeague?version=1&amp;game=minirumble</a>
+I had expected here to see <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> have a rating of 100, but you have skipped the index I think? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yes. Just to keep thing as "real world" as possible, it skipped the index. The score column is the total score of the bot (3 points for eacg win, 1 point for a tie). The wins/ties/loses is the number of pairings the bot wins/ties/loses. The pairings is the total number of pairings fought (note that new bots have a lower number of pairings, so they are handicaped till they fight against every one - but that's fine, they have to demonstrate they are good ...). Total %wins is just the sum of all the %wins against all the enemies (it is used when there is a tie). Bots are ranked:
+<OL >
+<li> by its score (like in the premier league).
+<li> if there is a tie, by the number of battles fought (the lower the number the higher the ranking). But I can see there is a bug there and the app is doing it in the opposite way.
+<li> if there is a tie, by its %wins (it is equivalent to the "difference of goals" in the premier league).
+<li> if there is a tie, bots are just sorted alphabetically !!! 
+</OL>
+<p>
+-- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+This is great. Is the last column actually "Average % score share"? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+No, I can see it isn't. So I instead ask. What's the last column? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It's just the sum of the %scores. Let's say that a bot fought 3 enemies. It got a 70% againt the first, a 30% against the second, and a 50% against the 3rd. The last column will be 1,5 (rounded). It is analog to adding the total goals scored in the soccer league. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+@PEZ: I just uploaded the new server classes for RR@H. They support targeted pairings, correct some bugs in the <a href="robowiki?RoboRumble/PremierLeague" class=wikipagelink>/PremierLeague</a> and change the ranking system: Now it is 2 points for wins, 1 for ties (but it is almost impossible, since now a tie requires an exact 50%) and 0 for lossing. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+I've activated them now. You work fast Albert! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Hmph. I just completely reinstalled robocode and RR@H to fix the problem I was getting (which fixed it by the way), and about 12 hours later a new beta comes out. Just my luck ;). Interesting:
+<p>
+<pre>
+C:\rrhome\robocode\robots&gt;java -Xmx256M -cp .;../robocode.jar;../codesize.jar; roborumble.RoboRumbleAtHome ./roborumble/roborumble.txt
+Iteration number 0
+Downloading participants list ...
+Downloading missing bots ...
+Downloading rating files ...
+Removing old participants from server ...
+Removing entry ... pez.mini.Tityus_0.4.1 from roborumble
+OK. pez.mini.Tityus_0.4.1 will be removed from roborumble
+Removing entry ... pez.mini.Tityus_0.4.1 from minirumble
+OK. pez.mini.Tityus_0.4.1 will be removed from minirumble
+Preparing battles list ... Using smart battles is true
+Prioritary battles file not found ...
+Executing battles ...
+Fighting battle 0 ... Noran.RandomTargeting 1.0,bvh.micro.Svadilfari 0.2
+</pre>
+<p>
+Nice... But, why can't it find 'prioritary battles file'? -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+Not a problem at all. The first iteration the client runs battles as usual. Then, when it uploads results, the server tells the client which battles to run. So it runs focused pairings starting the second iteration. The message just says the first time there are no focused pairings. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Are the new servlets in place? It seems that the premier league page has been generated by the old ones. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+I'll check again. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It is b11 that's the most recent right? I installed those again now and restarted. But the PL page looks like it's the old rules anyway. (Which is remarkably like the ELO-style rankings.) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Oh! I think I forgot to include the <pre>GenerateLeagueResults$1.class</pre> into the server, so it is using the old one. I'w upload the server again with all the files. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+OK. I Just uploaded the server classes again, this time with the missing file. I didn't changed the version name, so it is the same zip (server b11 with client b7). -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+I actually noticed that this file had an older time stamp than the others and thought it strange. Should have asked about it. =) Anyways, now things are in place. I kinda like the PL mini rankings!!!! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Wow. Every single bot has full pairings. Good work <a href="robowiki?Albert" class=wikipagelink>Albert</a>! Also kinda comforting to see DT back on top in the <a href="robowiki?RoboRumble/PremierLeague" class=wikipagelink>PremierLeague</a> :D Strange, you'd think I'd be fed up of that bot by now... -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+Is there a possibility you could get the clients to try level the number of pairings? I mean that a particular bot would have been fighting all other bots about the same number of times. I tried to read the source code to see if this was possible, but I got lost somewhere when I didn't know what the server tells the client, or how. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> 
+<p>
+The server passes the pairings to the client when the client uploads the results (servlet UploadedResults<a href="robowiki?action=edit&id=UploadedResults" class=wikipageedit>?</a>), using the format "[bot1,bot2]". Note that it is only able to pass pairing for the bots the client has uploaded, because otherwise it would have to open lots of files (this way, the server reuses the files opened to calculate the ratings change to check if there is some missing pairing for the bots). Also, feeding the clients with pairings can lead to duplication of matches (it happens when two or more clients upload results for the same bot, and the first client is not able to send the results before the second one uploads its results). It is not a real problem now, because the "server pairings" are sporadic (note that the first 500 battles for a bot are fought against random enemies, and the server skips bots that have less than 500 battles, to avoid an excesive number of "server pairings") but it could be a problem if almost all pairings are decided by the server. So to implement it means to put in place a synchronization infrastructure (keep track of pairings send, allow for client to return results, check to time-outs, etc.) that would require a lot of work. Also, right now there are about 5.000 to 10.000 matches fought every day, but a complete league (ie. executing all possible pairings) requires 40.000 matches. It means 4 to 8 days to increase the number of battles fought (per pairing) by 1. It would take a long time to level the number of matches! In the mean time, probably there would be many bots that would starve. So, even if possible, I don't think it is worth the effort. 
+<p>
+P.D. My bots have been going down for some months, without any major update. I plan to dedicate my time now to put a bot into the top-10, so I'w slow down any further development of RR@H (except for bugs), since I think it is fully functional now. 
+<p>
+-- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Indeed it is. Good luck hunting for that top-10 spot! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I agree; the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> as is is extremely well functional. Good work <a href="robowiki?Albert" class=wikipagelink>Albert</a>. Maybe after a few weeks we could start on melee! :D -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+@PEZ: I just uploaded server b.12. The only difference is in the class UploadedResults<a href="robowiki?action=edit&id=UploadedResults" class=wikipageedit>?</a>, that allows the upload of results for 1000x1000 fields (for melee). -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+So that leaves the rankings and client, yes? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Once the client will be able to upload results, the Melee rankings should be OK. I'm testing the new client now ... but I need the server to accept results. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+The new upload servlet is in operation. I hope it works. It's x-mas eve here and late. =) Merry christmas everyone. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Indeed!  Merry Christmas! (1hr 20mins to go here, so i guess that's only 20 mins for you, PEZ) -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+@ PEZ: Merry Xmas! It seems RR@H needs the rating files created in the server in order to work (I think the data manager doesn't deal with new files). The following files should be created in the server: ratings_meleerumble.txt, ratings_minimeleerumble.txt, ratings_micromeleerumble.txt and ratings_nanomeleerumble.txt. The easier way would be to copy any existing ratings file (ie. ratings_teamrumble.txt) and then delete its contents to keep only the header (first two lines, starting by #). -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+OK, now the stub files are in place. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a> has put together a new Data Manager class that solves the file locking problems. The new data manager is now installed for tests and seems to work. The RR servlets responds much quicker now. The locking mechanism used in the new version are JVM 1.5 only so the RR servlets are now running on an JVM 1.5 beta. Help keep an eye on peculiarities please. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> 
+<p>
+If noone has seen anything strange regarding uploads or errors when listing rankings or details on bot scores I'll submit this and the comparison stuff to Albert tomorrow for inclusion in the real/official version. -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RoboRumble/ServerDevelopment" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RoboRumble/ServerDevelopment">View other revisions</a><br>Last edited August 14, 2004 1:31 EST by <a href="robowiki?Pulsar" title="ID 3286 from c-715672d5.016-41-67626721.cust.bredbandsbolaget.se">Pulsar</a> <a href="robowiki?action=browse&diff=1&id=RoboRumble/ServerDevelopment">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>KdTree/BucketPRKdTree - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Kd, Tree, Bucket, PRKd, Tree'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/BucketPRKdTree">KdTree/BucketPRKdTree</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?KdTree" class=wikipagelink>KdTree</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>So, thanks to a comment by <a href="robowiki?Corbos" class=wikipagelink>Corbos</a> on the <a href="robowiki?Lukious/Rewrite" class=wikipagelink>Lukious/Rewrite</a> page, <a href="robowiki?Chase-san" class=wikipagelink>Chase</a> and I started looking into <a rel="nofollow" href="http://en.wikipedia.org/wiki/Kd-tree">[KD Trees]</a>.  Here is a snippet from <a href="robowiki?Chase-san/KDTree" class=wikipagelink>Chase's KD Tree page</a> showing some timings I took for a KD implementation:
+<p>
+<PRE >
+  Looks like I gave up too early on the KDTree stuff.  I had a major inefficiency in my search algorithm.  Here are the timings I get now. 
+       7 dimensions, 26,000 scans, cluster size = 50.  Also, this is with squaring the distances, which seems to make it run a lot faster.
+    O(n) method: 2172
+    O(log n) method: 1024
+  But here's the bonus move ... 52,000 scans:
+    O(n) method: 3945
+    O(log n) method: 1260
+  104,000
+    O(n) method: 8436
+    O(log n) method: 1512
+  Are you ready for this .... 400,000 scans.  This is more than you'll get in a targeting challenge, all for less than you WERE spending on 35 rounds.
+    O(n) method: 70801
+    O(log n) method: 1756
+</PRE>
+<p>
+Pretty nice, the problem is I don't scan for a cluster size of 35 in my <a href="robowiki?Simonton/DCResearch" class=wikipagelink>DCResearch</a>.  I scan for a cluster size of 500, with about 26,000 nodes.
+<PRE >
+    O(n) method: 3936
+    O(log n) method: 3540
+</PRE>
+<p>
+But I finally, through reading up on QTrees, had an idea for one of these things that could keep itself balanced.  It's not a tremendous speedup, but it should help.  Here's my new tree (I don't know it's real name because I made it up myself ... someone else must have done it already though and given it a name).  This is 26,000 nodes clustering 500 points:
+<PRE >
+    O(n) method: 3173
+    O(log n) method: 2468
+</PRE>
+52,000 nodes
+<PRE >
+    O(n) method: 5928
+    O(log n) method: 2760
+</PRE>
+<p>
+Oh, and by the way, it works better than KD trees for the smaller cluster sizes, too.  Here's 50 @ 26,000:
+<PRE >
+    O(n) method: 2436
+    O(log n) method: 676
+</PRE>
+And at 52,000:
+<PRE >
+    O(n) method: 5052
+    O(log n) method: 692
+</PRE>
+And finally, 400,000 nodes, all for about the price of 26,000 nodes with a (unbalanced) KD tree.
+<PRE >
+    O(log n) method: 1088
+</PRE>
+<p>
+Now again, this is with totally random data.  With real data, my tree will not be perfectly balanced, so numbers will not be this good.
+<p>
+Here's how the tree works.  First, I'll briefly explain a kd tree for those who haven't heard.  It is a binary tree.  Each node in the tree keeps the location of one point in k-dimensional space (read: it has a double array of length k).  Every point stored to the left of the root node has a 0th dimension value lower than the root node's, all of the to the right has one higher.  Every point stored to the left of a node at level 1 (right below the root node) has a 1st dimension value lower than than that node ... every point stored to the left of a node at level X has a (X%k)th dimension value lower than that node ... etc.  Then, when searching the tree for the 50 points closest to point Y, you can entirely skip large portions of the tree by simply determining "ANY point with a 0th dimension value greater than this nodes will be farther away than any of these 50 points I've found so far" - so you don't every try searching through that whole right sub-tree.  
+<p>
+The trouble with a KD tree is that you can't keep it balanced without re-building the whole tree from scratch, and that takes a long time.  So here's what I've done, it's similar to a <a rel="nofollow" href="http://en.wikipedia.org/wiki/Quadtree">[quad tree]</a>.  The key lies in normalizing all the values you store to be between 0 and 1 (or any other arbitrary, but fixed range).  All the data goes in the leaf nodes; the nodes above them only represent dividing "lines", just like those in a KD tree.  Each leaf node stores up to X values, then, once it passes that boundary, the node gets split in two.  It takes on the dividing "line" that halves the space it used to represent, it gets two child nodes, and the data gets divvied between the 2 new children.  In this way the tree will always stay just as balanced as your data are (there cannot be any "bad luck" from adding points in a worst-case order), and there is never a need to re-build the tree or do any tree rotations.  It is possible, however, that your data are distributed in a fashion that makes this tree worthless (i.e. when they all gravitate exponentially more densely toward one corner of your universe).
+<p>
+Best values for X for my own DC purposes lie between 8 and 16.  If you'd like to run some timings of your own the code for it is included in the source, in the <a rel="nofollow" href="http://junit.sourceforge.net/">[JUnit]</a> tests.  There are a few intricacies I haven't mentioned here, but I'll let the code do the rest of the talking.  --<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+And <a rel="nofollow" href="http://upload.frozenonline.com/view/simonton/MyTree.jar">[here]</a> it is.  I'm told it's a confusing coding style ... so ... you'll have to deal with that.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+<hr noshade class=wikiline size=1>
+<H3>Comments</H3>
+
+<p>
+What do your numbers mean? 5052 what? Fortnights? I was assuming it was comparisons, but I would expect it to be about equal to the total number of scans if that was the case... --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<UL >
+<li> Comparisons wouldn't be fair, since the tree has more overhead per comparison than the linear method.  The units are: "milliseconds for 1000 iterations of adding the Xth node and finding one cluster", where X is the number of scans considered for that timing.  It uses all new data for each iteration (not included in the timing), in case one particular set of data would inherently favor one method over the other.-- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> What is the CPU constant on the machine you're running this on? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<li> These tests were run using a standalone application.  I have not yet plugged this into a bot.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> Yeah, I'm just trying to get an idea of how much of your 'timeframe' you are using. Milliseconds doesn't mean much to me, I run from a P2 400MHz to a P4 2.4GHz =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+</UL>
+<p>
+If anyone knows the real name for this kind of tree, let's move this page to one by that name!  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> I'm not entirely sure, but how does splitting it when you get n number of nodes keeps it perfectly balanced? It might keep it more balanced. But in any case thats interesting. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<UL >
+<li> It keeps it balanced by making the split right down the middle of the available space.  Then, as much as your data is uniformly distributed, the tree will be that balanced.  Given uniform data 1/2 of it should be on either side of the split, once you have a large enough sample. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<li> But now that I think about, it sounds sorta like a Bucket PR K-d Tree. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<UL >
+<li> What does the PR stand for? -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<li> P for point, R for Region. Meaning the data points and the region seperators are seperate from each other. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</UL>
+</UL>
+<p>
+I plugged this tree into my gun. I can now run a 1000 round battle without discarding a single scan. That's around 500 000 scans, much faster than it was taking to sequentially compare 60 000 scans, amazing. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<UL >
+<li> =D  I'm glad you like it.  You can thank <a href="robowiki?Corbos" class=wikipagelink>Corbos</a> for the tip :).  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+This might actually be a PMR tree, in the demo, try putting on node in one corner then many in another, the same with the PMR, you might of made a variation of a PMR Tree. Or you might have a unique version of a PR Kd Tree, as if it would be if you divided it evenly down the center of the nodes in the area your dividing up. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<UL >
+<li> Nope, definitely a "Bucket PR K-d Tree".  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+I had an idea for a DC-come-PM gun, but it would require about 30 dimensions. How does this tree hold up with those kinds of sizes of 'k'? -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Not so hot. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<PRE >
+ 26,000 scans, 30 dimensions:
+    O(n) method: 17093
+    O(log n) method: 27442
+ 400,000 scans, 30 dimensions:
+    O(n) method: 304462
+    O(log n) method: 365868
+</PRE>
+<p>
+Thinking about it, the tree has to look through a <em>minimum</em> of  (k + 1)^2 - 1 leaves, therefore ((k - 1)^2 - 1)*X comparisons, to find the nearest neighbor. When the leaves aren't split at equal intervals it can get quite a bit higher than that. So, a minimum of (31*31 - 1)*8 = 7680 comparisons, discounting tree overhead. I wonder if reducing X will help for higher numbers of K...-- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+<hr noshade class=wikiline size=1>
+You know I realize that a TreeMap<a href="robowiki?action=edit&id=TreeMap" class=wikipageedit>?</a> could do pretty much the exactly same thing as this, as it states "This implementation provides guaranteed log(n) time cost for the containsKey, get, put and remove operations." Just need a decent Comparator. I feel a little silly now. Though true it cannot get the nearest n as far as I know. But with a slight modification of the source... --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+That would require a lot more than a "slight" modification.  You'd have to disable height balancing, as well as integrate the comparitor enough so that it would know what level of the tree it's at.  And that's just for a standard K-d tree doing a nearest neighbor search.  As you say, more would be necessary for the nearest n neighbors, and you might as well forget about this PR bucket stuff (which increases efficiency a lot in this application).  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+They should really impliment a built-in multi-dimensional binary search tree into the base java. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Wow... I just finished modifying <a href="robowiki?Horizon" class=wikipagelink>Horizon</a> to use one of these trees, and I ran some test battles to see how much faster the bot is. The old, O(N log N) code took 3:45 to run a Horizon vs. Horizon battle of 50 rounds; the new bot takes only 45 seconds for the same battle. I never realized that so much of the execution time was going into the clustering! I thought at least a third of the slowness was in the <a href="robowiki?WaveSurfing/PrecisePrediction" class=wikipagelink>PrecisePrediction</a>. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?KdTree" class=wikipagelink>KdTree</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=KdTree/BucketPRKdTree" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=KdTree/BucketPRKdTree">View other revisions</a><br>Last edited November 4, 2007 1:00 EST by <a href="robowiki?AaronR" title="ID 9168 from 109.187.121.70.cfl.res.rr.com">AaronR</a> <a href="robowiki?action=browse&diff=1&id=KdTree/BucketPRKdTree">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

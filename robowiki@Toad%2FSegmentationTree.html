@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Toad/SegmentationTree - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Toad, Segmentation, Tree'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/SegmentationTree">Toad/SegmentationTree</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Toad" class=wikipagelink>Toad</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H2>Segmentation Tree</H2>
+
+This is my implementation of what <a href="robowiki?Vic" class=wikipagelink>Vic</a> described in <a href="robowiki?WikiTargeting/DynamicSegmentation" class=wikipagelink>WikiTargeting/DynamicSegmentation</a>.
+<p>
+The tree is binary, each internal node represent a segmentation choice. For exemple a DistanceNode<a href="robowiki?action=edit&id=DistanceNode" class=wikipageedit>?</a> would discriminate data according to a distance threshold. At the moment the internal node types used are 
+<UL >
+<li><pre>DistanceNode</pre>
+<li><pre>VelocityNode</pre>
+<li><pre>LateralVelocityNode</pre>
+<li><pre>AccelerationNode</pre>
+<li><pre>TimeSinceVelocityChangeNode</pre>
+<li><pre>WallNode</pre> 
+<li><pre>WallReverseNode</pre>.
+</UL>
+<p>
+The leaves of the tree contains the observations that fit in the segmentation obtained by following the path from the root to the leaf.
+When a leaf contains enough observations it is split. The factors used for splitting a leaf are
+<UL >
+<li>keeping approximately the same amount of data in each branch. It picks the median value for each segmentation axis, and corrects it to the closest standardised value. The standardised value allow the tree to be saved while maintaining a small file size (less than 0.6ko for a 35 rounds game even with long rounds).
+<li>the information gain of all possible internal node type. See <a href="robowiki?Segmentation/Prioritizing" class=wikipagelink>Segmentation/Prioritizing</a>
+</UL>
+<p>
+The tree is rebuild at the beginning of each round. When there is too much data to rebuild the tree completely it is just partially rebuild.
+<p>
+Two threads are used for the tree, one for inserting new observations and splitting leaves on the fly, another one is used for rebuilding the tree. 
+<p>
+The tree can be saved at the end of a game, in fact just a symbolic representation of the internal nodes, at the moment this is disabled I haven't tested if it is valuable.
+<p>
+<hr noshade class=wikiline size=1>
+<H3>Comments &amp; Questions</H3>
+
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Toad" class=wikipagelink>Toad</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Toad/SegmentationTree" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Toad/SegmentationTree">View other revisions</a><br>Last edited October 20, 2005 22:57 EST by <a href="robowiki?Florent" title="ID 5584 from 202.36.179.65">Florent</a> <a href="robowiki?action=browse&diff=1&id=Toad/SegmentationTree">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

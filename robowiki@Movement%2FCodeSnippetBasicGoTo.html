@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Movement/CodeSnippetBasicGoTo - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Movement, Code, Snippet, Basic, Go, To'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/CodeSnippetBasicGoTo">Movement/CodeSnippetBasicGoTo</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Movement" class=wikipagelink>Movement</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>How hard can it be just to move a robot to given coordinates on the battle field? Well, once you have grasped some Robocode stuff it's not hard, but for the newbie it could take a while to figure it out so here's a simplistic approach. I really recommend the more usable function in <a href="robowiki?Movement/CodeSnippetGoTo" class=wikipagelink>/CodeSnippetGoTo</a> over the below code, but you could try this first just to get a robot moving to coordinates of your choice.
+<p>
+First three utility functions:<pre>
+    private double absoluteBearingRadians(Point2D source, Point2D target) {
+        return Math.atan2(target.getX() -
+            source.getX(), target.getY() - source.getY());
+    }
+
+    private double normalRelativeAngleRadians(double angle) {
+        return Math.atan2(Math.sin(angle), Math.cos(angle));
+    }
+
+    private Point2D getRobotLocation() {
+        return new Point2D.Double(getX(), getY());
+    }
+</pre>
+The first one returns the bearing in radians from a source-point to a target-point. The second translates any angle so that it is between -(PI/2) and PI/2 radians. Radians is because the Java API works with it and I didn't want to obfuscate what's going on with calls to toDegrees() here. Check <a href="robowiki?Movement/CodeSnippetGoTo" class=wikipagelink>/CodeSnippetGoTo</a> or the <a href="robowiki?Gouldingi/Code" class=wikipagelink>Gouldingi source</a> for functions using degrees instead. The third function creates a Point2D point from the robots' coordinates.
+<p>
+Armed with these functions we can create a basic goTo() function:
+<pre>
+    private void goTo(Point2D point) {
+        setTurnRightRadians(
+            normalRelativeAngleRadians(
+                absoluteBearingRadians(getRobotLocation(), point) - getHeadingRadians()
+            )
+         );
+        setAhead(getRobotLocation().distance(point));
+    }
+ </pre>
+To move to coordinates (90,90) you would do:
+<pre>
+    goTo(90, 90);
+</pre>
+This goTo() function seldom takes you to those exact coordinates though, since it will take time to turn the robot and that is not taken into account. Also if your robot is facing away from those coordinates it is smarter to turn less and drive backwards instead. This would also make the first problem smaller and, for many uses, neglectable. Check <a href="robowiki?Movement/CodeSnippetGoTo" class=wikipagelink>/CodeSnippetGoTo</a> for a goTo() function implementing <a href="robowiki?BackAsFront" class=wikipagelink>BackAsFront</a> functinality.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Ok i got my bot moving towards a coordinate lets say (90,90),however i want it on arrival to move to another coordinate.How do i do this?Apologies if my questions seem basic :(
+<p>
+-- RockNRoll<a href="robowiki?action=edit&id=RockNRoll" class=wikipageedit>?</a>
+<p>
+There are several ways to go about this. Easiest might be to check for when <a href="robowiki?GetDistanceRemaining" class=wikipagelink>getDistanceRemaining</a>() returns 0 (zero) and then call goTo() again with the new coordinates. <a href="robowiki?Gouldingi" class=wikipagelink>Gouldingi</a> does this, though on advice from <a href="robowiki?Iiley" class=wikipagelink>iiley</a> I added some randomness to the check to get the movement to be less predictable. Search <a href="robowiki?Gouldingi/Code" class=wikipagelink>Gouldingi/Code</a> for the call to <a href="robowiki?GetDistanceRemaining" class=wikipagelink>getDistanceRemaining</a>() and let us know if it makes any sense to you. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Ok i looked at the code but i lost track :(,i tried to do this but it does not work :void doMovement(){
+<PRE >
+	goTo(new Point2D.Double (70, 400));
+	  if (getDistanceRemaining<a href="robowiki?action=edit&id=DistanceRemaining" class=wikipageedit>?</a>() &lt; 1) ;
+	      goTo(new Point2D.Double (60, 120));
+</PRE>
+im finding the guns alot easier than movement,how can i make the above work?.Also is it possible to set a list of coordinates and have my bot move randomely to them?
+<p>
+--RockNRoll<a href="robowiki?action=edit&id=RockNRoll" class=wikipageedit>?</a>
+<p>
+Your "if" statement is empty. It should be:<pre>
+	goTo(new Point2D.Double (70, 400));
+	if (getDistanceRemaining() &lt; 1)
+	    goTo(new Point2D.Double (60, 120));
+</pre>
+(Only difference is that I removed the semi-colon on the line with the "if" statement on.)
+<p>
+Also <a href="robowiki?GetDistanceRemaining" class=wikipagelink>getDistanceRemaining</a>() can return negative values so you should make sure you use Math.abs() if you want to check for "close to zero":<pre>
+	if (Math.abs(getDistanceRemaining()) &lt; 1)
+</pre>
+<p>
+Choosing coordinates randomly from a list is possible. If you use an array of Point2D and add points to it you can then use Math.random() to index into this array. I'm not on my own machine at the moment so I can't test any code. Maybe someone can write you a code snippet or I'll do it when I'm back at home. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+A code snippet on how to do that would be very appreciated PEZ :),im guessing your not at home at the minute.Although i removed the semi colon and used this:
+<PRE >
+        void doMovement(){
+	goTo(new Point2D.Double (70, 400));
+	if (Math.abs(getDistanceRemaining<a href="robowiki?action=edit&id=DistanceRemaining" class=wikipageedit>?</a>()) &lt; 1)  
+	goTo(new Point2D.Double (60, 120));
+</PRE>
+<p>
+it still does not move to the second coordinates,look forward to the code snippet ,
+<p>
+--RockNRoll<a href="robowiki?action=edit&id=RockNRoll" class=wikipageedit>?</a>
+<p>
+Here is some code that demonstrates how it could be done, however unfortunately when i started doing robocode i was unaware of the Point2D class, and so wrote my own "Coordinate" class that contains many similar features to that of Point2D, and having written it im gonna use it regardless of how much better the Point2D class is :). I commented it all heavily so it should be dead easy to understand and should be pretty easy to translate over. It should hopefully tide you over till someone who knows the Point2D class cares to comment:
+<pre>
+
+        //Declaration of the array of destination points, either write it as i have done below or declare 
+        //the array as a fixed length (Coordinate positions = new Coordinate[20]) and then allocate each position.
+        Coordinate positions[] = {new Coordinate(xpos, ypos), new Coordinate(xpos, ypos),.....};
+
+        //Finds the length of the array and takes 1(as position 0 is counted as a value 
+        //and we dont want array out of  bounds exceptions) 
+        int length = (positions.length() - 1);
+
+        //Uses the Math.random() function to calculate a random number between 0 and the maximum value
+        int index = (int)(Math.random()*length);
+
+        //Calls the goTo command on the randomly selected position.
+        goTo(positions[index]); 
+        </pre>
+<p>
+I'll be honest and say that i havent tried it, but i see no reason why it shouldnt work.  -- <a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+Cool, I had forgot I promised to give this a try. You would have to put each statement above in the correct context to make it work I guess. Also I think that "length" is a public member variable and not a method, and Math.random() returns values between 0 (inclusive) and 1 (exclusive) so no need to decrement the length variable. Which gives "int length = positions.length". -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+OK. Here's a complete bot based on <a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>'s snippet: <a href="robowiki?Movement/GoToBot" class=wikipagelink>/GoToBot</a> -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yeah Pez, you were right about ".length" being a member variable rather than a method. I was thinking of the String.length() function when i wrote the snippet. Also you were right about there being no need for for the "-1" i was forgetting that the int cast just rounded down rather than rounding off, it could have also been corrected by the line "int index = (int)Math.round(Math.random()*length);" although just not taking the 1 is easier. My problem tends to be that i am so reluctant to change my code that i end up writing much longer more complicated code to fix my problems. Damn my stubborness... -- <a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+My problem is the complete opposite. I'm always too happy to change my code. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+A very short SelfContained<a href="robowiki?action=edit&id=SelfContained" class=wikipageedit>?</a> version of goTo with <a href="robowiki?BackAsFront" class=wikipagelink>BackAsFront</a> functionality
+<pre>
+//This is a reduced version of goTo
+private void goTo(Point2D.Double go) {
+  double x = getX(), y = getY(), turnAngle;
+  double angle = robocode.util.Utils.normalRelativeAngle(Math.atan2(go.x - x, go.y - y) - getHeadingRadians());
+  setTurnRightRadians(turnAngle = Math.atan(Math.tan(angle)));
+  setAhead(go.distance(x, y)*(angle == turnAngle) ? 1 : -1);
+}
+</pre>
+-- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+If you're going for small <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a>, I believe it's smaller to have the last line as <code>setAhead((angle == turnAngle ? 1:-1)* Point2D.distance(x, y, go.x, go.y));</code>. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Maybe <code> go.distance(x, y) </code> is smaller and faster than <code>Point2D.distance(x, y, go.x, go.y)</code> ?  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Opps, yah, on both points, changed to reflect them, and I fixed one or two little bugs. (had z instead of x there somewhere). I think that two getX() and getY() might actually be smaller then a double x = getX(), y = getY(), but I have yet to test this (it doesn't make sense, but I tested it awhile back I just forget if it proved true). -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+A slightly more interesting goto snippet that has evolved seemingly by itself within Seraphim.
+<pre>
+private void setGoto(double x, double y) {
+	double myX = getX(), myY = getY(); 
+	double goAngle = Utils.normalRelativeAngle(Math.atan2(x - myX, y - myY) - getHeadingRadians());
+	setTurnRightRadians(Math.tan(goAngle));
+	setAhead(Math.cos(goAngle)*Math.sqrt((myX-x)*(myX-x)+(myY-y)*(myY-y)));
+}
+</pre>
+--<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Hey, that's slick.  I like the way it stops you when you're pointing in the completely wrong direction. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Movement" class=wikipagelink>Movement</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Movement/CodeSnippetBasicGoTo" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Movement/CodeSnippetBasicGoTo">View other revisions</a><br>Last edited January 19, 2007 23:59 EST by <a href="robowiki?Simonton" title="ID 9038 from 24-247-117-205.dhcp.klmz.mi.charter.com">Simonton</a> <a href="robowiki?action=browse&diff=1&id=Movement/CodeSnippetBasicGoTo">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

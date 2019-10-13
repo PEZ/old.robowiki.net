@@ -1,0 +1,365 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Marshmallow/Source - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Marshmallow, Source'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Source">Marshmallow/Source</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><PRE >
+ <font color="#a020f0">package</font> pez;
+ <font color="#a020f0">import</font> robocode.*;
+ <font color="#a020f0">import</font> java.awt.Color;
+</PRE>
+<p>
+<PRE >
+ <font color="#a020f0">import</font> java.util.Vector;
+ <font color="#a020f0">import</font> java.util.Iterator;
+</PRE>
+<p>
+<PRE >
+ <font color="#0000d4">// Marshmallow the Robot, by PEZ. It's good toasted too!</font>
+ <font color="#2e8b57"><b>public</b></font> <font color="#2e8b57"><b>class</b></font> Marshmallow <font color="#2e8b57"><b>extends</b></font> <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> {
+    <font color="#2e8b57"><b>static</b></font> <font color="#2e8b57"><b>final</b></font> <font color="#2e8b57"><b>double</b></font> longTravel = <font color="#f20884">99999.0</font>;
+    <font color="#2e8b57"><b>static</b></font> <font color="#2e8b57"><b>final</b></font> <font color="#2e8b57"><b>double</b></font> closeDistance = <font color="#f20884">180</font>;
+    <font color="#2e8b57"><b>static</b></font> <font color="#2e8b57"><b>final</b></font> <font color="#2e8b57"><b>double</b></font> farAwayDistance<a href="robowiki?action=edit&id=AwayDistance" class=wikipageedit>?</a> = <font color="#f20884">850</font>;
+</PRE>
+<p>
+<PRE >
+    <font color="#2e8b57"><b>double</b></font> previousEnergy = <font color="#f20884">100</font>;
+    <font color="#2e8b57"><b>double</b></font> previousDistance = <font color="#f20884">500</font>;
+    <font color="#2e8b57"><b>double</b></font> firePower = <font color="#f20884">3</font>;
+</PRE>
+<p>
+<PRE >
+    <font color="#2e8b57"><b>int</b></font> direction = <font color="#f20884">1</font>;
+</PRE>
+<p>
+<PRE >
+    Enemies enemies = <font color="#804040"><b>new</b></font> Enemies();
+    Enemy currentEnemy = <font color="#f20884">null</font>;
+</PRE>
+<p>
+<PRE >
+    <font color="#2e8b57"><b>public</b></font> <font color="#2e8b57"><b>void</b></font> run() {
+        setColors(Color.green,Color.yellow,Color.green);
+        set<a href="robowiki?AdjustGunForRobotTurn" class=wikipagelink>AdjustGunForRobotTurn</a>(<font color="#f20884">true</font>);
+        set<a href="robowiki?AdjustRadarForGunTurn" class=wikipagelink>AdjustRadarForGunTurn</a>(<font color="#f20884">true</font>);
+        <font color="#804040"><b>while</b></font> (<font color="#f20884">true</font>) {
+            set<a href="robowiki?TurnRadarRight" class=wikipagelink>TurnRadarRight</a>(<font color="#f20884">720</font>);
+            currentEnemy = enemies.getClosest();
+            <font color="#804040"><b>if</b></font> (currentEnemy != <font color="#f20884">null</font>) {
+                scan();
+                <font color="#0000d4">//fireAt(currentEnemy);</font>
+</PRE>
+<p>
+<PRE >
+            }
+            execute();
+        }
+    }
+</PRE>
+<p>
+<PRE >
+    <font color="#2e8b57"><b>public</b></font> <font color="#2e8b57"><b>void</b></font> onHitWall<a href="robowiki?action=edit&id=HitWall" class=wikipageedit>?</a>(HitWallEvent<a href="robowiki?action=edit&id=HitWallEvent" class=wikipageedit>?</a> e) {
+        direction = -direction;
+        setAhead(closeDistance * direction);
+    }
+</PRE>
+<p>
+<PRE >
+    <font color="#2e8b57"><b>public</b></font> <font color="#2e8b57"><b>void</b></font> onHitRobot<a href="robowiki?action=edit&id=HitRobot" class=wikipageedit>?</a>(HitRobotEvent<a href="robowiki?action=edit&id=HitRobotEvent" class=wikipageedit>?</a> e) {
+        direction = -direction;
+        setAhead(closeDistance * direction);
+    }
+</PRE>
+<p>
+<PRE >
+    <font color="#2e8b57"><b>public</b></font> <font color="#2e8b57"><b>void</b></font> onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a>(HitByBulletEvent<a href="robowiki?action=edit&id=HitByBulletEvent" class=wikipageedit>?</a> e) {
+        setTurnRight<a href="robowiki?action=edit&id=TurnRight" class=wikipageedit>?</a>((e.getBearing()+<font color="#f20884">100</font>) * direction);
+        direction = -direction;
+        setAhead((closeDistance) * direction);
+    }
+</PRE>
+<p>
+<PRE >
+    <font color="#2e8b57"><b>public</b></font> <font color="#2e8b57"><b>void</b></font> on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {
+        <font color="#2e8b57"><b>double</b></font> energyDelta;
+        Enemy storedEnemy = <font color="#f20884">null</font>;
+        Enemy newEnemy = <font color="#804040"><b>new</b></font> Enemy(e.getName(), e.getEnergy(), e.getBearing(), e.getDistance(), e.getTime());
+        <font color="#2e8b57"><b>int</b></font> index = enemies.indexOf(newEnemy);
+        <font color="#804040"><b>if</b></font> (index &gt;= <font color="#f20884">0</font>) {
+            storedEnemy = (Enemy)enemies.elementAt(index);
+            storedEnemy.update(newEnemy);
+            energyDelta = storedEnemy.getEnergyDelta<a href="robowiki?action=edit&id=EnergyDelta" class=wikipageedit>?</a>();
+            <font color="#804040"><b>if</b></font> (energyDelta &lt; <font color="#f20884">0</font> &amp;&amp; energyDelta &gt;= -<font color="#f20884">3</font>) {
+                elude(newEnemy.getBearing(), newEnemy.getDistance());
+            }
+        }
+        <font color="#804040"><b>else</b></font> {
+            out.println(<font color="#f20884">&quot;Adding &quot;</font> + newEnemy.getName() + <font color="#f20884">&quot; to my list of enemies&quot;</font>);
+            enemies.add(newEnemy);
+        }
+        fireAt(newEnemy);
+    }
+</PRE>
+<p>
+<PRE >
+    <font color="#2e8b57"><b>public</b></font> <font color="#2e8b57"><b>void</b></font> onRobotDeath<a href="robowiki?action=edit&id=RobotDeath" class=wikipageedit>?</a>(RobotDeathEvent<a href="robowiki?action=edit&id=RobotDeathEvent" class=wikipageedit>?</a> e) {
+        Enemy enemy = <font color="#804040"><b>new</b></font> Enemy(e.getName());
+        enemies.removeElement(enemy);
+    }
+</PRE>
+<p>
+<PRE >
+    <font color="#2e8b57"><b>private</b></font> <font color="#2e8b57"><b>void</b></font> fireAt(Enemy enemy) {
+        <font color="#0000d4">//out.println(&quot;Shooting at &quot; + enemy.getName() + &quot;, energyDelta is &quot; + enemy.getEnergyDelta<a href="robowiki?action=edit&id=EnergyDelta" class=wikipageedit>?</a>());</font>
+</PRE>
+<p>
+<PRE >
+        out.println(<font color="#f20884">&quot;Shooting at &quot;</font> + enemy.getName() + <font color="#f20884">&quot;, bearingDelta is &quot;</font> + enemy.getBearingDelta<a href="robowiki?action=edit&id=BearingDelta" class=wikipageedit>?</a>());
+        set<a href="robowiki?TurnGunRight" class=wikipagelink>TurnGunRight</a>(normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(getHeading() - getGunHeading<a href="robowiki?action=edit&id=GunHeading" class=wikipageedit>?</a>() + enemy.getBearing() - enemy.getBearingDelta<a href="robowiki?action=edit&id=BearingDelta" class=wikipageedit>?</a>()));
+        waitFor(<font color="#804040"><b>new</b></font> GunTurnCompleteCondition<a href="robowiki?action=edit&id=GunTurnCompleteCondition" class=wikipageedit>?</a>(<font color="#2e8b57"><b>this</b></font>));
+        firePower = enemy.getDistance() &lt; closeDistance ? <font color="#f20884">3</font> : <font color="#f20884">1.2</font>;
+        fire(firePower);
+    }
+</PRE>
+<p>
+<PRE >
+    <font color="#2e8b57"><b>private</b></font> <font color="#2e8b57"><b>void</b></font> elude(<font color="#2e8b57"><b>double</b></font> enemyBearing, <font color="#2e8b57"><b>double</b></font> enemyDistance) {
+        setTurnRight<a href="robowiki?action=edit&id=TurnRight" class=wikipageedit>?</a>(normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(enemyBearing+<font color="#f20884">60</font>) * direction);
+        direction = -direction;
+        setAhead(enemyDistance / <font color="#f20884">3</font>);
+    }
+</PRE>
+<p>
+<PRE >
+    <font color="#2e8b57"><b>public</b></font> <font color="#2e8b57"><b>double</b></font> normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(<font color="#2e8b57"><b>double</b></font> angle) {
+        <font color="#2e8b57"><b>double</b></font> mod = angle % <font color="#f20884">360</font>;
+</PRE>
+<p>
+<PRE >
+        <font color="#804040"><b>if</b></font>( mod &lt;= -<font color="#f20884">180</font> )
+            <font color="#804040"><b>return</b></font> <font color="#f20884">180</font>+(mod % <font color="#f20884">180</font>);
+        <font color="#804040"><b>else</b></font> <font color="#804040"><b>if</b></font>( mod &gt; <font color="#f20884">180</font> )
+            <font color="#804040"><b>return</b></font> -<font color="#f20884">180</font> + (mod % <font color="#f20884">180</font>);
+        <font color="#804040"><b>else</b></font>
+</PRE>
+<p>
+<PRE >
+            <font color="#804040"><b>return</b></font> mod;
+    }
+</PRE>
+<p>
+<PRE >
+ <font color="#2e8b57"><b>   class</b></font> Enemy {
+        <font color="#2e8b57"><b>private</b></font> String name;
+        <font color="#2e8b57"><b>private</b></font> <font color="#2e8b57"><b>double</b></font> energy;
+        <font color="#2e8b57"><b>private</b></font> <font color="#2e8b57"><b>double</b></font> bearing;
+        <font color="#2e8b57"><b>private</b></font> <font color="#2e8b57"><b>double</b></font> distance;
+        <font color="#2e8b57"><b>private</b></font> <font color="#2e8b57"><b>long</b></font> time;
+        <font color="#2e8b57"><b>private</b></font> <font color="#2e8b57"><b>double</b></font> energyDelta = -<font color="#f20884">2</font>;
+        <font color="#2e8b57"><b>private</b></font> <font color="#2e8b57"><b>double</b></font> bearingDelta = <font color="#f20884">0</font>;
+        <font color="#2e8b57"><b>private</b></font> <font color="#2e8b57"><b>long</b></font> timeDelta = <font color="#f20884">10</font>;
+</PRE>
+<p>
+<PRE >
+        <font color="#2e8b57"><b>private</b></font> <font color="#2e8b57"><b>long</b></font> getTime() {
+            <font color="#804040"><b>return</b></font> <font color="#2e8b57"><b>this</b></font>.time;
+        }
+</PRE>
+<p>
+<PRE >
+        <font color="#2e8b57"><b>public</b></font> Enemy(String name) {
+            setName(name);
+        }
+</PRE>
+<p>
+<PRE >
+        <font color="#2e8b57"><b>public</b></font> Enemy(String name, <font color="#2e8b57"><b>double</b></font> energy, <font color="#2e8b57"><b>double</b></font> bearing, <font color="#2e8b57"><b>double</b></font> distance, <font color="#2e8b57"><b>long</b></font> time) {
+            setName(name);
+            setEnergy(energy);
+            setBearing(bearing);
+            setDistance(distance);
+            <font color="#2e8b57"><b>this</b></font>.time = time;
+        }
+</PRE>
+<p>
+<PRE >
+        <font color="#2e8b57"><b>public</b></font> <font color="#2e8b57"><b>void</b></font> update(Enemy newEnemy) {
+            energyDelta = newEnemy.getEnergy() - <font color="#2e8b57"><b>this</b></font>.getEnergy();
+            <font color="#0000d4">//out.println(&quot;updating &quot; + newEnemy.getName() + &quot;, energyDelta is &quot; + this.getEnergyDelta<a href="robowiki?action=edit&id=EnergyDelta" class=wikipageedit>?</a>()); </font>
+</PRE>
+<p>
+<PRE >
+            bearingDelta = newEnemy.getBearing() - <font color="#2e8b57"><b>this</b></font>.getBearing();
+            out.println(<font color="#f20884">&quot;updating &quot;</font> + newEnemy.getName() + <font color="#f20884">&quot;, bearingDelta is &quot;</font> + <font color="#2e8b57"><b>this</b></font>.getBearingDelta<a href="robowiki?action=edit&id=BearingDelta" class=wikipageedit>?</a>());
+            timeDelta = newEnemy.getTime() - <font color="#2e8b57"><b>this</b></font>.getTime();
+            setEnergy(newEnemy.getEnergy());
+            setBearing(newEnemy.getBearing());
+            setDistance(newEnemy.getDistance());
+        }
+</PRE>
+<p>
+<PRE >
+        <font color="#2e8b57"><b>public</b></font> String getName() {
+            <font color="#804040"><b>return</b></font> <font color="#2e8b57"><b>this</b></font>.name;
+        }
+</PRE>
+<p>
+<PRE >
+        <font color="#2e8b57"><b>public</b></font> <font color="#2e8b57"><b>void</b></font> setName(String name) {
+            <font color="#2e8b57"><b>this</b></font>.name = name;
+        }
+</PRE>
+<p>
+<PRE >
+        <font color="#2e8b57"><b>public</b></font> <font color="#2e8b57"><b>double</b></font> getEnergy() {
+            <font color="#804040"><b>return</b></font> <font color="#2e8b57"><b>this</b></font>.energy;
+        }
+</PRE>
+<p>
+<PRE >
+        <font color="#2e8b57"><b>public</b></font> <font color="#2e8b57"><b>void</b></font> setEnergy(<font color="#2e8b57"><b>double</b></font> energy) {
+            <font color="#2e8b57"><b>this</b></font>.energy = energy;
+        }
+</PRE>
+<p>
+<PRE >
+        <font color="#2e8b57"><b>public</b></font> <font color="#2e8b57"><b>double</b></font> getBearing() {
+            <font color="#804040"><b>return</b></font> <font color="#2e8b57"><b>this</b></font>.bearing;
+        }
+</PRE>
+<p>
+<PRE >
+        <font color="#2e8b57"><b>public</b></font> <font color="#2e8b57"><b>void</b></font> setBearing(<font color="#2e8b57"><b>double</b></font> bearing) {
+            <font color="#2e8b57"><b>this</b></font>.bearing = bearing;
+        }
+</PRE>
+<p>
+<PRE >
+        <font color="#2e8b57"><b>public</b></font> <font color="#2e8b57"><b>double</b></font> getDistance() {
+            <font color="#804040"><b>return</b></font> <font color="#2e8b57"><b>this</b></font>.distance;
+        }
+</PRE>
+<p>
+<PRE >
+        <font color="#2e8b57"><b>public</b></font> <font color="#2e8b57"><b>void</b></font> setDistance(<font color="#2e8b57"><b>double</b></font> distance) {
+            <font color="#2e8b57"><b>this</b></font>.distance = distance;
+        }
+</PRE>
+<p>
+<PRE >
+        <font color="#2e8b57"><b>public</b></font> <font color="#2e8b57"><b>double</b></font> getEnergyDelta<a href="robowiki?action=edit&id=EnergyDelta" class=wikipageedit>?</a>() {
+            <font color="#0000d4">//out.println(&quot;getEnergyDelta<a href="robowiki?action=edit&id=EnergyDelta" class=wikipageedit>?</a>() &quot; + this.getName() + &quot;,  &quot; + this.energyDelta);</font>
+</PRE>
+<p>
+<PRE >
+            <font color="#804040"><b>return</b></font> <font color="#2e8b57"><b>this</b></font>.energyDelta;
+        }
+</PRE>
+<p>
+<PRE >
+        <font color="#2e8b57"><b>public</b></font> <font color="#2e8b57"><b>double</b></font> getBearingDelta<a href="robowiki?action=edit&id=BearingDelta" class=wikipageedit>?</a>() {
+            <font color="#0000d4">//out.println(&quot;getBearingDelta<a href="robowiki?action=edit&id=BearingDelta" class=wikipageedit>?</a>() &quot; + this.getName() + &quot;,  &quot; + this.bearingDelta);</font>
+</PRE>
+<p>
+<PRE >
+            <font color="#804040"><b>return</b></font> <font color="#2e8b57"><b>this</b></font>.bearingDelta;
+        }
+</PRE>
+<p>
+<PRE >
+        <font color="#2e8b57"><b>public</b></font> <font color="#2e8b57"><b>long</b></font> getTimeDelta<a href="robowiki?action=edit&id=TimeDelta" class=wikipageedit>?</a>() {
+            <font color="#804040"><b>return</b></font> <font color="#2e8b57"><b>this</b></font>.timeDelta;
+        }
+</PRE>
+<p>
+<PRE >
+        <font color="#2e8b57"><b>public</b></font> <font color="#2e8b57"><b>boolean</b></font> equals(Object object) {
+            <font color="#804040"><b>if</b></font> (object <font color="#804040"><b>instanceof</b></font> Enemy) {
+</PRE>
+<p>
+<PRE >
+                <font color="#804040"><b>return</b></font> (((Enemy) object).getName().equals(<font color="#2e8b57"><b>this</b></font>.getName()));
+            }
+            <font color="#804040"><b>return</b></font> <font color="#f20884">false</font>;
+        }
+    }
+</PRE>
+<p>
+<PRE >
+ <font color="#2e8b57"><b>   class</b></font> Enemies <font color="#2e8b57"><b>extends</b></font> Vector {
+        <font color="#2e8b57"><b>public</b></font> Enemies() {
+        }
+</PRE>
+<p>
+<PRE >
+        <font color="#2e8b57"><b>public</b></font> Enemy getClosest() {
+            <font color="#2e8b57"><b>double</b></font> shortestDistance = longTravel;
+            Enemy closestEnemy = <font color="#f20884">null</font>;
+            Iterator iterator = <font color="#2e8b57"><b>this</b></font>.iterator();
+            <font color="#804040"><b>while</b></font> (iterator.hasNext()) {
+                Enemy anEnemy = (Enemy)iterator.next();
+                <font color="#2e8b57"><b>double</b></font> aDistance = anEnemy.getDistance();
+                <font color="#804040"><b>if</b></font> (aDistance &lt; shortestDistance) {
+                    shortestDistance = aDistance;
+                    closestEnemy = anEnemy;
+                }
+            }
+            <font color="#804040"><b>return</b></font> closestEnemy;
+        }
+    }
+ }
+</PRE>
+<hr noshade class=wikiline size=1>
+<p>
+Hmm, this is a great way to make a bot open source and yet unreadable...  -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+Heh, ironic that <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> would use HTML tags (generated by Vim, no doubt) and then disable them on the wiki. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+You can still download them and render from the disk... --<a href="robowiki?LRem" class=wikipagelink>lRem</a>
+<p>
+The real irony is that anyone would still be interested in this old carcass of a bot. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Oh, come on, it's not as old as some interesting bots ;-) -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Especially after seeing all of these old wiki pages, Id love to see what made Marshmallow tick. I can't believe its gone from your little pet project to "old carcass" ;) -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+Well, as one of the people who kept telling him that <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a>'s targeting algorithm couldn't work, I admit I'm more surprised he didn't just re-write <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> to become <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a>.  I'm also relieved that he finally spent some time in <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a> world while retiring this bot, because I think the <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a> concept is what moved Robocode development to where it is now. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+For me it certainly was good to go via mini and micro and flank mega so to speak. But Robocode where it is today... Well, among megas, CC is the only top-5 bot with mini heritage. And neither <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> nor <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> was born in <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a> land, even if I think I helped advance both concepts using minibot techniques. As for Marshmallow being a dead old carcass... If you write a complicated enough bot, adding feature for feature without testing if they really work and not a tenth of them do work and while not caring at all about keeping your code tidy at all you go lose to the source code alltogether; Voila! old. There! carcass. Marshmallow had excellent random movement, with some surfing on top even, though I didn't have a name for it then. But I only really cared about it's guns, which were crap, save for one which might have been half good if it hadn't been hooked up in a broken <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> array. I needed to go <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a> to clean my Karma really. I had room for one targeting idea and one small movement idea in <a href="robowiki?Aristocles" class=wikipagelink>Aristocles</a> and in <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a> I had room for the same targeting idea and a more advanced movement idea. From there it was natural to step up and try dethrone that <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a> bot which seemed so unbeatable at the time. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I think the way <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a>s contributed to robocode is to avoid this whole "adding feature for feature without testing if they really work" - many of us didn't have the discipline to test every idea before assuming it worked so we needed the focus required for smaller bots where we had a few focussed features and fudged the rest.  <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a> was so good from the start because he did have that discipline, and he knew how to refine and test his bots when the best bots he had to test against were his own.  <a href="robowiki?Tad" class=wikipagelink>Tad</a> also seemed to have that kind of discipline, but might have benefitted from <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a>ting if he gave it a shot.  Focus was the main contribution I think the <a href="robowiki?MiniBotChallenge" class=wikipagelink>MiniBotChallenge</a> gave us, even if it was only really a side effect.  Back in the days when 2/3 of the top bots on the ER were <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a>s, <a href="robowiki?MegaBot" class=wikipagelink>MegaBot</a>s were huge, bloated, over-featured, had massive VG arrays, and sometimes even movement arrays that didn't work.  The best <a href="robowiki?MegaBot" class=wikipagelink>MegaBot</a>s were <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a>, <a href="robowiki?Tron" class=wikipagelink>Tron</a> (and a few other oldies, especially in melee, to be sure), <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> (thank goodness it didn't have a movement array), and the ones that were based on <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a>s - <a href="robowiki?Chameleon" class=wikipagelink>Chameleon</a> (<a href="robowiki?Spark" class=wikipagelink>Spark</a>'s movement), <a href="robowiki?CigaretBH" class=wikipagelink>CigaretBH</a> (<a href="robowiki?Spark" class=wikipagelink>Spark</a>'s gun and <a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a>'s movement), <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a> (version 0.8 was like a megabot-ized version of <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> after I figured out that <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> was better than <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a> 0.7), <a href="robowiki?Jekyl" class=wikipagelink>Jekyl</a> (originally based on <a href="robowiki?SandboxMini" class=wikipagelink>SandboxMini</a>).
+<p>
+About the top bots now - I'd assume the one bot you're talking about is your own <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a>, which was certainly based on <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a> and maybe even more so on <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> (which I can't fail to mention is a contribution related to <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>).  But <a href="robowiki?Ascendant" class=wikipagelink>Ascendant</a> is quite literally based on <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> and so is <a href="robowiki?PulsarMax" class=wikipagelink>PulsarMax</a> in a more conceptual way (although the implementation isn't).  Going down the list, I see <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a> which is clearly based on <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>'s gun, <a href="robowiki?Pear" class=wikipagelink>Pear</a> which probably gets its gun from <a href="robowiki?CigaretST" class=wikipagelink>CigaretST</a> (which wasn't quite a <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a>, but was meant to be a test bot, so it was just as minimally featured), <a href="robowiki?Phoenix" class=wikipagelink>Phoenix</a> (which was based on lots of research done through <a href="robowiki?DuelistMini" class=wikipagelink>DuelistMini</a>), and <a href="robowiki?DarkHallow" class=wikipagelink>DarkHallow</a>, (which I'm guessing started with <a href="robowiki?BlackPearl" class=wikipagelink>BlackPearl</a> and <a href="robowiki?Jekyl" class=wikipagelink>Jekyl</a>, which was based on <a href="robowiki?SandboxMini" class=wikipagelink>SandboxMini</a>).  Then we see <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a>, <a href="robowiki?Aleph" class=wikipagelink>Aleph</a> and <a href="robowiki?Apollon" class=wikipagelink>Apollon</a> (I admit, I think <a href="robowiki?Apollon" class=wikipagelink>Apollon</a> came after <a href="robowiki?Aleph" class=wikipagelink>Aleph</a> as more of an afterthought).  Then <a href="robowiki?Lacrimas" class=wikipagelink>Lacrimas</a>, which used to be a <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a> and <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>, <a href="robowiki?BlestPain" class=wikipagelink>BlestPain</a> which was definitly derived from <a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a> and <a href="robowiki?CigaretST" class=wikipagelink>CigaretST</a> before it was a wave-surfer, and <a href="robowiki?Tityus" class=wikipagelink>Tityus</a>.  So in other words, in my opinion, I see roughly half of the top 25 (including the top 3) being <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a>s or being the result of research done through <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a>s.  That doesn't seem like a huge stretch, since I think that <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>'s gun is an ancestor of the guns used by about 10 of them, and is probably an ancestor of the gun that even more of them are dodging.  I think <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a> training is what made most of the top Robocoders (minus a few) so good, and if it's not, excepting <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a> and <a href="robowiki?ABC" class=wikipagelink>ABC</a>, it was the <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a> training of others being documented on the wiki that allowed them to get to the top.
+<p>
+And soon, this rant will be about the size of <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a>'s source code, so I'll stop now (plus, with all the links, it's starting to look like a bad blog entry). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+On the countrary. More links =&gt; better wiki article, in my book. I'd still say the state of art in Robocode isn't minibot based. Minibot coding helped me focus, no doubt, but it was a rather uncessary struggle to go via <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a> to create <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a>. That was just plain tunnel vision on my side. I just had to do it since I had lost the race with <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a> of creating the first <a href="robowiki?OpenSource" class=wikipagelink>OpenSource</a> surfer. Speaking of which, I think <a href="robowiki?OpenSource" class=wikipagelink>OpenSource</a> and the sharing of ideas and knowledge on this wiki are a much greater force in advancing Robocode bots than minibotting. Yeah many minibots are open source, but it's still open source that drives it. Closed source minibots just don't advance anything else but themselves.
+<p>
+I strongly disagree <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> would be more based on <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> than on <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a>. The main thing about CC is <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>. Even if it does have a strong gun too.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Well, my point being more that <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a> was based on <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> so transitively <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> is based on <a href="robowiki?Tityus" class=wikipagelink>Tityus</a>, and many of the bits that still exist in <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> came from or were derived from <a href="robowiki?Tityus" class=wikipagelink>Tityus</a>.  If your <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> implementation is anything like mine, <a href="robowiki?Tityus" class=wikipagelink>Tityus</a>'s gun is probably partially sitting around in there, probably more than <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a>'s <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> code (but I haven't looked closely enough to say). 
+<p>
+What my real point is, though, that you wouldnj't have written <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> and <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a> might not have written <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a> if you both didn't experiment in a more limited, focussed environment first - and I consider myself to be the same way. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Yes, with Jam and me certainly minibots was the way. Actually it was Jam who helped me bring out the potential of <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> by nailing that old bug that had been plauging it for months and months.
+<p>
+I actually didn't build my <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> by turning my gun backwards. Not conceptually anyway. Technically yes, I guess in my style of <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> a <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> gun turned backwards is a key component. But there's so much more to surfing. Read the <a href="robowiki?CassiusClay/Butterfly" class=wikipagelink>CassiusClay/Butterfly</a> page and you'll see I do not really think much about the "gun" behind when modelling up my movement. CC's surfing is a straight port of <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a>'s. I've just removed most of those codesize shortcuts and worked really hard with the accuracy part. You just can't get accurate enough with <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>...
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Hi PEZ, no problem with the readibility, just a(nother) tip to generate html from Java. I remember you once said you did all your coding with Vim (and probably use this to generate the html too). Have you started using an IDE for your coding ? If so, maybe <a rel="nofollow" href="http://www.java2html.com">http://www.java2html.com</a> is of interest. You can use this tool as an Ant-build task. greetings, --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<p>
+Hmm, so all you had to do was remove the html tags... very clever -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+Thats first time anyone has mentioned <a href="robowiki?Jekyl" class=wikipagelink>Jekyl</a> as a top bot. Even back in the day I do not think it every really rose to that level. While we are on lineage, it is not fair to say that <a href="robowiki?Jekyl" class=wikipagelink>Jekyl</a> was based entirely on <a href="robowiki?SandboxMini" class=wikipagelink>SandboxMini</a>. I only used the gun initially. The original movement was just a random circular orbit that eventually evolved into a hand tuned orbiting system that appeared in <a href="robowiki?Griffon" class=wikipagelink>Griffon</a>. My next bot, and first mini, <a href="robowiki?BlackPearl" class=wikipagelink>BlackPearl</a> attempted to extend that movement system and refine what was a VirtualBullet<a href="robowiki?action=edit&id=VirtualBullet" class=wikipageedit>?</a> gun into a <a href="robowiki?Wave" class=wikipagelink>Wave</a> gun. I dabbeled briefly with a <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> gun to prove to myself I could do it and because I was having a hard time beating <a href="robowiki?Aspid" class=wikipagelink>Aspid</a> but I quickly shed that when I got to the MultipleGuess<a href="robowiki?action=edit&id=MultipleGuess" class=wikipageedit>?</a> match problem. About that time, surfing became all the rage so I worked on a <a href="robowiki?WaveSuffering" class=wikipagelink>WaveSuffering</a> movement in my next bot <a href="robowiki?DarkHallow" class=wikipagelink>DarkHallow</a>. I briefly broke the 2028 barrier with that bot only to fall to where it is currently today. Sometimes I think about dusting off the editor and trying to push this bot back into the top 10 but I just don't think I have it in me anymore. My last (and most likely final) was <a href="robowiki?StoneGhost" class=wikipagelink>StoneGhost</a>. It has very little in it that was an original thought. I implemented it based on some of <a href="robowiki?Kawigi" class=wikipagelink>kawigi</a>'s descriptions of his <a href="robowiki?Melee" class=wikipagelink>melee</a> bots. I thought at the time it would be fun to persue but I guess I do not have the fire anymore. This does not really belong here but since I was mentioned I thought I would respond with a little history jekl.* style to let everyone know that I still lurk even if I am not contributing. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+Loki, I'm still using VIM. It's an IDE of sorts. Ant is integrated so using that tool would be as easy from VIM as from any other IDE I guess. Some year ago I fooled around a bit by trying to make a wiki-plugin for colorizing java source code. I actually had one ready, but it used VIM as the colorizer and that's a pretty stupid way to do it. But maybe with a tool like the one you mention I could try it again. Depends on the licensing a bit though. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Marshmallow/Source" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Marshmallow/Source">View other revisions</a><br>Last edited June 25, 2005 8:22 EST by <a href="robowiki?PEZ" title="ID 3989 from 1-1-7-24a.dre.sth.bostream.se">PEZ</a> <a href="robowiki?action=browse&diff=1&id=Marshmallow/Source">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

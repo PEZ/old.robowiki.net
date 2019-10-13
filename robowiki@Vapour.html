@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Vapour - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Vapour'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Vapour">Vapour</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H3>Vapour</H3>
+
+Belatedly I thought I should put something in here, if only to cure the embarassment of seeing that plaintive little question mark appearing after the name on the "history" page :)
+<p>
+Vapour came second, slightly unexpectedly, in the official IBM Robocode Rumble. I say unexpectedly because Vapour was always primarily a melee bot from the start. As the rumble approached I thought I had better put some effort into improving its 1v1 performance, but that was never its forte. Even though many of the top 1v1 bots could be discounted as they would never make it through the qualifiers due to poor melee performance, there were still some good allrounders to worry about who had very good 1v1 records against Vapour in my testing.
+<p>
+The saving grace, I think, was the short duration of the 1v1 final knockout stage, only 10 rounds per duel. Bots which relied on learning over the course of a duel and storing information between rounds were disadvantaged by the brevity of the fight.
+<p>
+Some notes on Vapour's design, although if you are really interested you will find the source code packaged with it at the repository.
+<p>
+Above all I wanted to keep it "simple", although perhaps that is not the right word considering the size of the code which resulted :) There are only 2 movement strategies and two targetting strategies (and one of those is trivial and I hated having to add it in!), no bullet tracking or dodging, no storing of information between rounds.
+<p>
+1. Melee movement mode.
+<p>
+A simpler and slightly different approach to the anti-gravity idea, which I amused myself by calling "quantum gravity". The quantum bit reflects the grainier nature of the movement. Several random waypoints are generated as short vectors from the current location each time a new movement decision is due, any which get too close to the walls are discarded, and the waypoint which maximises sum of distances from all known/extrapolated enemy positions is chosen. Generally a new waypoint is chosen only when the current waypoint is reached. This means that movement is a series of straightish lines separated by short intervals of curving accelerating/decelerating motion, which nicely confuses any too-deterministic targetting. Another benefit is that even when skulking in a corner by itself, Vapour does still oscillate over a reasonably large area rather than transforming itself into an almost static target as some anti-grav proponents did in the early days.
+<p>
+2. 1v1 movement.
+<p>
+Vapour still moves by a series of waypoints, but with a weighting towards keeping within what I decided was an optimum distance band away from the enemy and moving generally perpendicular to its bearing, with occasional reverses of direction. I did think about bullet dodging, but in the end just went for generating a new waypoint each time the enemy fires on the assumption that if his tracking was any good any significant change in movement would spoil his aim. In practise this seemed to work reasonably well and was responsible for a significant improvement in Vapour's 1v1 performance over the final week of development. Maybe full bullet dodging would have been better, but we will never know :)
+<p>
+3. Radar. Mixture of concentrated tracking to get good information on the current priority target, interspersed with occasional scanning to ensure no enemy location data gets too stale for comfort. I think I may have been the first to adopt this mixed approach, although my memory may not be reliable that far back.
+<p>
+Update: memory had in fact failed me! This was true of early versions, and continues to apply if any targets have not yet been spotted or their last sighting is older than some threshold. Most of the time however the radar now adopts the approach of scanning towards the position of the oldest sighting until it has been scanned again, can't remember who originally published that technique but since Vapour is not sensitive to missed scans on its current target it seemed a better approach.
+<p>
+4. Target selection. some convoluted weighted calculation applied to all bots, taking into account distance, target heading, velocity, energy, time for my gun to come to bear, and a hysteresis factor to prevent Vapour from inefficiently switching targets all the time.
+<p>
+5. Targetting #1 - predictive.
+<p>
+Up to v26 Vapour used only linear targetting, which surprisingly was good enough to keep it atop the melee charts for quite a while agsint more sophisticated targetters. After that point, a more sophisticated form of prediction was used instead, see b) below. At v100 periodicity checking was added for 1v1 mode, at v109 further optimisation allowed this to be added into melee mode also.
+<p>
+Vapour keeps a large array of data on enemy sightings, i.e. location, heading, velocity of a bot when spotted. 200 data points for each enemy, if I recall correctly. Interpolation is used to fill in the gaps in the movement profile to make up for the fact the radar can't be everywhere at once. From this data future movement of the target is predicted - more on this in a moment. Targetting is then matter of comparing current gun bearing to the predicted future movement of the target, ticking forward into the future a frame at a time. If at any time the target intersects the current gun heading line, a calculation is made to see what bullet power and hence speed is necessary to hit the target. If any solutions are found within the permitted power/velocity range, the most powerful of those solutions is fired. If it turns out no valid shot is possible, a command is issued to the turret to turn the gun towards the target, and we will try again to generate an intercept solution next turn.
+<p>
+In some ways this is quite a "dumb" aiming strategy, in that there is no clear idea of exactly where the gun needs to point to hit the target, it is simply rotated semi-blindly in the correct direction until a shot becomes possible. This seemed unavoidable with the predcition strategy I was using, however I did have some issues with Vapour often not firing as soon as the gun had cooled, which in melee particularly translates to fewer opportunities to score damage and hence points. Much tweaking was done here to minimise the issue, but it was never quite fully resolved.
+<p>
+The target movement prediction worked in one of two ways:
+<p>
+a) If significant periodicity could be identified in the targets movements, go back one full period in the list of target movements and start stepping forward from that point. When this worked, it was quite spectacular to see, and tended to be very effective against a lot of the middle-ranking bots. Unfortunately most of the top bots were a little too random for this. Tron was a notable exception (v1.2? I think) - Vapour was often able to pick up enough periodicity in its movements to produce a much higher hit rate than previously and give Vapour the edge at 1v1.
+<p>
+b) Otherwise - a blatant cheat! - simply predict ongoing movements of target by stepping backwards through the list of movements. In some case where the target movement had the right sort of symmetry this was also very effective. Generally though it wasn't able to produce anywhere near ideal solutions but still served as a way of concentrating shots within an area in which the target was relatively likely to be found at that time, and therefore helped to increase hit percentage more than such a poor excuse for accurate prediction deserves to achieve. A hunch of mine that this would be effective enough to be worth the development effort, and I it turned out that I wouldn't regret that hunch.
+<p>
+Update: having read the page on <a href="robowiki?Relativity" class=wikipagelink>Relativity</a> I see this was not quite the innovative idea I thought at the time! <a href="robowiki?Relativity" class=wikipagelink>Relativity</a> uses an approach somewhere in between my periodic and non-periodic cases, i.e. it uses stored target movements to iterate its predicted position forward in time. Unlike my non-periodic mode it starts somewhere back in the history list and steps forward. Unlike my periodic mode it picks a random start point in the list. I think the reasoning, of a pseudo-statistical scheme that naturally produces shots that tend to be directed at places where there is a high probability of a target moving based on analysis of its past movements without use of calls to Random, is basically the same as led to my original non-periodic mode, but presumably which works better or worse varies according to the specific movement characteristics of certain targets. I might have to think about that a bit...an easy change for me to make to evaluate whether any significant difference in results occurs...
+<p>
+6. Targetting #2 - "stagnant" targets.
+<p>
+This is the strategy I really hated to add :) It turned out that the delay in the predictive targetting reacting to a slow-moving (and this was especially annoying with disabled targets) and locking on was costing a significant number of points in melee. Thus the inelegant solution was to check target range and velocity, and if it couldn't move out of the line of fire in the availalbe time forget clever prediction and just fire a power 3 bullet.
+<p>
+7. Optimisation - a constant struggle given the amount of expensive calculations being performed. I would like to revisit this sometime since I now have more ideas about better ways of doing some things in Java. Maybe if I can make some significant futher optimisations I can allow Vapour to store more target data points and do better and more frequent calculations, and improve the performance a bit more. Other than that, I think the design is pretty much at its limit without going into the realm of having multiple guns, virtual bullets, and all of that "complicated" stuff I decided I wanted to steer clear of. And that, if I ever had pursued it, would have been a whole different bot!
+<p>
+That's it for now - I always meant to write some sort of overview documentation of the bot, seemed a shame not to put in the small amount of extra effort given the amount of coding time it consumed! If I think of anything else of importance I'll come back and add it.
+<p>
+-- <a href="robowiki?Shrubbery" class=wikipagelink>Shrubbery</a>
+<hr noshade class=wikiline size=1>
+<H4>Comments / Questions</H4>
+
+Way to go! Many thanks for (finally) describing what's going on in this ancient one. Really interesting reading considering I'm just starting my exploration of the <a href="robowiki?Melee" class=wikipagelink>Melee</a> area of battles. Pity you never looked into <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> enough to see it is much simpler than most of the stuff going on in your gunning. What's described above isn't exactly a simple bot in my book. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+You may well be right - hindsight is a wonderful thing :o) However for me a major part of the interest was trying to develop something a little different to the accepted mainstream (<a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> wasn't actually mainstream or even widely/publicly known at that point, but it was fairly obvious it would become so). And my predictor was also interesting technology to play about with! 
+<p>
+/edit - must remember to sign my username manually when editing these pages! -- <a href="robowiki?Shrubbery" class=wikipagelink>Shrubbery</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+v150 released with considerable optimisation: runs 2-3 times as fast as v124 depending on the test situation. Well worth the effort! *Should* be functionally equivalent, after a week rating is virtually unchanged in 1v1 but has consistently shown better rating in melee by something in the region 7.5-10 points. I'm hoping this is a benefit of fewer skipped turns, and will not evaporate :) Overhaul of the higher level structures is next on the list - in particular to improve the modularity. Then maybe I can finally think about improvements or a new bot... -- <a href="robowiki?Shrubbery" class=wikipagelink>Shrubbery</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Vapour" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Vapour">View other revisions</a><br>Last edited May 4, 2006 22:06 EST by <a href="robowiki?GrubbmGait" title="ID 6861 from ip219-32-173-82.dyndsl.versatel.nl">GrubbmGait</a> <a href="robowiki?action=browse&diff=1&id=Vapour">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

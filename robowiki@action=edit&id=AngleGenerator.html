@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing AngleGenerator - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Angle, Generator'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing AngleGenerator</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="AngleGenerator"  />
+<input type="hidden" name="oldtime" value="1055708791"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="1"  />
+<input type="hidden" name="captchaArg2" value="5"  />
+<input type="hidden" name="captchaOp" value="*"  />
+<input type="hidden" name="captchaId" value="117513368911"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">An angle generator is one way of knowing where the robot should go next. The idea is to move a virtual point perpendicular to the enemy bot and then in each tick (or each scan, whichever you fancy) you can check the relative angle of this virtual point and steer your bot there. The virtual point needs to move with a velocity that the bot could match of course.
+
+An advantage of this movement is that you can make movement adjusting decision much more often. For instance if you should move closer or further from the enemy you needn&#39;t wait for the bot to finish a long travel before acting on this.
+
+One more advantage is that this opens up a possibility for you to know your bots FuturePosition since it&#39;s very probable that time is one of the parameters you use in the angle generator. Then you could ask your angle generator to reveal your bots position at a given time. I will consider this technique for [[Marshmallow]] 2 since it&#39;s AntiMirrorTargeting gun really could have use for that info.
+
+There are other possible generators that could be used for the same purpose of course. Like a DestinationGenerator or a whatever.
+
+-- [[PEZ]]
+
+----
+
+Wow... I don&#39;t understand this concept at all. What is the purpose of this virtual point? How do you check the relative angle of the virtual point? What does steering your bot there accomplish? How do you know in which direction you move the virtual point? I&#39;m confused... -- [[Vuen]]
+
+As long as you have points on yourself, your enemy and this virtual point it&#39;s easy to calculate any angles and dictances you need. You know where to move the virtual point the same way you know where to move your robot when not using this type of generator. Then your bot can chase the virtual point with movement orders every tick. It&#39;s good for your wall avoidance as well. I got rid of many of [[Marshmallow]]s&#39; wall hits by using a similar technique. Another thing accomplished this way is like I stated above that you can do distance adjustments and such much more often which makes for a really smooth and responsive movement. Please ask again if I&#39;m still just confusing you here.-- [[PEZ]]
+
+Oh man... I&#39;m still confused out of my brain on this one... Why is there a virtual point? Is it simply like a waypoint destination type thing? Why is it moving perpendicular to the enemy? -- [[Vuen]]
+
+The virtual point is where the angle generator gets its information. Look, it&#39;s probably just me telling about it in the wrong way to beging with. It&#39;s rather simple really. Let&#39;s suppose you have a movement where you move perpendicular to your enemy. Now when you make a movement descision, instead of sending your bot directly to it&#39;s destination you send this virtual bot. Each tick you need to update the position of this virtual bot and send your bot there. -- [[PEZ]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 1 * 5 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that AngleGenerator has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=AngleGenerator">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>UtilityClass - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Utility, Class'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=UtilityClass">UtilityClass</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Pretty much every bot utilizes a set of utility functions, often compiling them in a Utility or <a href="robowiki?BotMath" class=wikipagelink>BotMath</a> class. There are several examples on the wiki of posted utility classes, but this pages attempts to consolidate all of these utility functions onto one page. 
+<p>
+(Subpage each function. Within subpage provide as many examples as possible, with goal to find both a most stable function and a minimum codesize function)
+<p>
+<UL >
+<li>Distance<a href="robowiki?action=edit&id=UtilityClass/Distance" class=wikipageedit>?</a>: Finds the distance between two points.
+<li>[Normalise Heading]<a href="robowiki?action=edit&id=UtilityClass/NormaliseHeading" class=wikipageedit>?</a>: Adjusts an angle to be between 0 and 360 degrees (0 and 2*PI radians)
+<li>[Normalise Bearing]<a href="robowiki?action=edit&id=UtilityClass/NormaliseBearing" class=wikipageedit>?</a>: Adjusts an angle to be between -180 and 180 degrees (-PI and PI radians)
+<li>[Angle between Points]<a href="robowiki?action=edit&id=UtilityClass/PointAngle" class=wikipageedit>?</a>: Calculates the angle between two points
+<UL >
+<li> don't you need three points to have an angle of sorts??
+<UL >
+<li> It's like the angle between you and an opponent - the "first line" of the angle is hardcoded as a line going straight up in Robocode. (So straight up = zero, straight right = 90 or pi/2, etc.) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<li> I have to add, Math.atan2(y,x) (do Math.atan2(x,y) in robocode) does exactly that. (If you want to write it yourself, it's basically about figuring the quadrant that the delta X and delta Y are in, then you use arc tangent with the slope (x/y for robocode) and adjust according to the quadrant (0 for the first, PI/2 for the second, PI for the the third, and 3/2PI for the fourth)), ohh and look for division by zero exception, in which case, set the slope to be infinity -- <a href="robowiki?AvihooI" class=wikipagelink>AvihooI</a>
+</UL>
+</UL>
+<hr noshade class=wikiline size=1>
+<p>
+What is the point of normalizing within [0, 2pi]? I don't see how it makes angles more useful. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+Its usually used for calculating the absolute heading of the enemy. You use normalHeading(e.getBearing() + getHeading()) and it will return the exact angle from the norm of the enemy, and then that can be used to calculate its position. In practice I have very rarely used it, but because it is such a standard in most utility classes I added it here (its even included in the Robocode utilities class). -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+But when do you need to get an angle within [0, 2pi]? -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+Note - the reason the robocode utilities class has it is because it needs to be sure to return angles in that range to the robot sometimes. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Note - I'd have used [-pi, pi] and the mathematical convention 0 rad=x, pi/2 rad=y.
+<p>
+How about the following?
+<UL >
+<li> Normalize heading/bearing -&gt; Normalizing angles (note: I have a method that can normalize within anything in constant time)
+<li> Distance/angle between points -&gt; Converting between cartesian and polar coordinates
+</UL>
+-- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+Read what I had to say up there for Angles.
+Distance is basically pythagoras theorem (a^2+b^2=c^2)
+you do something like this: Math.sqrt(dX*dX+dY*Y).
+-- <a href="robowiki?AvihooI" class=wikipagelink>AvihooI</a>
+<p>
+Well what do you guys use? I havent put everything here to use, I just started listing things that are in my <a href="robowiki?BotMath" class=wikipagelink>BotMath</a> class (which has been compiled from most of the classes I have seen). These have just been the basic ones that I have seen every where. I plan on including some more of them.  I also have a ton of game physics stuff in my botmath if anyone thinks that should be included (I can make calls to bot math to to see the maximum speed, turning etc of my or other bots). Include whichever you can think of (just list the functions if you want). I chose to do it this way because they are a page per function, but if you feel it would be better to combine similar functions on one page I can do that too. -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+Normalizing angles is something you just need if you want your bot to make sense. Here's the method I mentioned:
+<pre>double normalize(double angle, double min, double max) {
+	return angle - (max - min) * Math.floor((angle - min) / (max - min));
+}</pre>
+Try normalize(angle, -Math.PI, Math.PI), which is equivalent to:
+<pre>double normalize(double angle) {
+	return angle - 2 * Math.PI * Math.floor((angle + Math.PI) / (2 * Math.PI));
+}</pre>
+<a href="robowiki?PassiveKillChallenge" class=wikipagelink>PHNRD</a> uses it to stay perpendicular to bullets.
+<p>
+If you have a vector class, it makes sense to put at least cartesian&lt;-&gt;polar conversion in there. -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+Here's a Vector2D class that I wrote, feel free to use it (<a href="robowiki?AvihooI" class=wikipagelink>AvihooI</a>):
+<pre>
+/*For this class, sin and cos are inversed because robocode requires it
+ *Also, the angles are in Radians */
+
+public class Vector2D
+{
+	double x,y; //Vector coordinates
+	
+	//Cartesian Representation
+	public double getX()
+	{
+		return x;
+	}
+	
+	public double getY()
+	{
+		return y;
+	}
+	
+	public void setX(double sX)
+	{
+		x = sX;
+	}
+	
+	public void setY(double sY)
+	{
+		y = sY;
+	}
+	
+	//Polar representation
+	public double getMagnitude()
+	{
+		return Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
+	}
+	
+	public double getDirection()
+	{
+		return Math.atan2(x,y);
+	}
+	
+	public void setMagnitude(double sMagnitude)
+	{
+		double theta  = getDirection();
+		x = sMagnitude * Math.sin(theta);
+		y = sMagnitude * Math.cos(theta);
+	}
+	
+	public void setDirection(double sDirection)
+	{
+		double magnitude = getMagnitude();
+		x = magnitude * Math.sin(sDirection);
+		y = magnitude * Math.cos(sDirection);
+	}
+	
+	//Vectorial manipulations
+	
+	public Vector2D Normalise()
+	{
+		double theta  = getDirection();
+		return new Vector2D(Math.sin(theta), Math.cos(theta));
+	}
+	
+	public Vector2D Add(Vector2D sVector2D)
+	{
+		return new Vector2D(x + sVector2D.x, y + sVector2D.y);
+	}
+	
+	public Vector2D Substract(Vector2D sVector2D)
+	{
+		return new Vector2D( x- sVector2D.x, y - sVector2D.y);
+	}
+	
+	public Vector2D Inverse()
+	{
+		return new Vector2D(-x,-y);
+	}
+	
+	public double Dot(Vector2D sVector2D)
+	{
+		return Math.sqrt(x * sVector2D.x + y * sVector2D.y);
+	}
+	
+	public Vector2D Multiply(double sScalar)
+	{
+		return new Vector2D(x * sScalar, y * sScalar);
+	}
+	
+	public Vector2D(double sX, double sY)
+	{
+		x = sX;
+		y = sY;
+	}
+	
+	public Point2D.Double translateToPoint()
+	{
+		return new Point2D.Double(x,y);
+	}
+	
+	public Point2D.Double translateToPoint(Point2D.Double source)
+	{
+		return new Point2D.Double(source.x + x, source.y + y);
+	}
+	
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=UtilityClass" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=UtilityClass">View other revisions</a><br>Last edited March 11, 2006 14:45 EST by <a href="robowiki?AvihooI" title="ID 6529 from 84.94.184.125.cable.012.net.il">AvihooI</a> <a href="robowiki?action=browse&diff=1&id=UtilityClass">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

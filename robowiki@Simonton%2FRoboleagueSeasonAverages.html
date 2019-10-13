@@ -1,0 +1,221 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Simonton/RoboleagueSeasonAverages - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Simonton, Roboleague, Season, Averages'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/RoboleagueSeasonAverages">Simonton/RoboleagueSeasonAverages</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Simonton" class=wikipagelink>Simonton</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I don't know the best place to do this, so here goes: I hacked together some mods for Roboleague to let me see the overall averages of my bot over several seasons in a division.  It isn't pretty, but it works.  I can't find licencing info on Roboleague, so I'm just going to paste my mods on here &amp; let you paste them into the soure &amp; compile.  Please treat this code as "open source" &amp; share any improvements you make!
+<p>
+This is in roboleague.XmlIO.  At the top of storeDivisionSeasons(...), add this line:
+<p>
+<pre>
+		storeDivisionSeasonsAverages(parent, seasons);
+</pre>
+<p>
+Now make that work by adding these functions:
+<p>
+<pre>
+	protected void storeDivisionSeasonsAverages(Element parent,
+			DivisionSeason[] seasons) {
+		Element element = parent.getOwnerDocument().createElement("SEASON");
+		parent.appendChild(element);
+		element.setAttribute("number", "Overall Averages");
+		element
+				.setAttribute("finished", isFinished(seasons) ? "true"
+						: "false");
+		storeCompetitorTotals(element, getTotalsAverages(seasons));
+		storeGroupings(element, getGroupingsAverages(seasons));
+	}
+
+	private boolean isFinished(DivisionSeason[] seasons) {
+		for (DivisionSeason season : seasons) {
+			if (!season.getCompleted()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private CompetitorResults[] getTotalsAverages(DivisionSeason[] seasons) {
+		TallySet tallies = new TallySet();
+		for (DivisionSeason season : seasons) {
+			CompetitorResults[] finalTotals = season.getFinalTotals();
+			if (finalTotals != null) {
+				for (CompetitorResults results : finalTotals) {
+					tallies.tally(results);
+				}
+			}
+		}
+		return tallies.getAverages();
+	}
+
+	private Collection getGroupingsAverages(DivisionSeason[] seasons) {
+		Map&lt;Grouping, TallySet&gt; tallies = new HashMap&lt;Grouping, TallySet&gt;();
+		for (DivisionSeason season : seasons) {
+			Collection groupings = season.getGroupings();
+			for (Object resultsObj : groupings) {
+				Grouping grouping = (Grouping) resultsObj;
+				if (grouping.getTerminated()) {
+					TallySet tally;
+					Grouping key = findGrouping(grouping, tallies.keySet());
+					if (key == null) {
+						tally = new TallySet();
+						tallies.put(grouping, tally);
+					} else {
+						tally = tallies.get(key);
+					}
+					for (CompetitorResults results : grouping.competitorResults) {
+						tally.tally(results);
+					}
+				}
+			}
+		}
+		Collection&lt;Grouping&gt; avgs = new ArrayList&lt;Grouping&gt;();
+		for (TallySet tally : tallies.values()) {
+			avgs.add(new Grouping(tally.getAverages()));
+		}
+		return avgs;
+	}
+
+	private Grouping findGrouping(Grouping grouping, Iterable&lt;Grouping&gt; space) {
+		for (Grouping g : space) {
+			if (isMatch(grouping, g)) {
+				return g;
+			}
+		}
+		return null;
+	}
+	
+	private boolean isMatch(Grouping g1, Grouping g2) {
+		if (g1.competitors.length != g2.competitors.length) {
+			return false;
+		}
+		for (Competitor c : g1.competitors) {
+			if (!contains(g2, c)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private boolean contains(Grouping grouping, Competitor competitor) {
+		for (Competitor c2 : grouping.competitors) {
+			if (competitor.id.equals(c2.id)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private Collection&lt;CompetitorResults&gt; average(
+			Map&lt;Competitor, CompetitorResults&gt; avgs,
+			Map&lt;Competitor, Integer&gt; numSeasons) {
+		List&lt;CompetitorResults&gt; results = new ArrayList&lt;CompetitorResults&gt;(avgs
+				.values());
+		for (int i = 0; i &lt; results.size(); ++i) {
+			CompetitorResults result = results.get(i);
+			int seasonCount = numSeasons.get(result.competitor);
+			result.score /= seasonCount;
+			result.survival /= seasonCount;
+			result.lastSurvivorBonus /= seasonCount;
+			result.bulletDamage /= seasonCount;
+			result.bulletDamageBonus /= seasonCount;
+			result.ramDamage /= seasonCount;
+			result.ramDamageBonus /= seasonCount;
+			result.firsts /= seasonCount;
+			result.seconds /= seasonCount;
+			result.thirds /= seasonCount;
+		}
+		Collections.sort(results);
+		for (int i = 0; i &lt; results.size(); ++i) {
+			results.get(i).rank = i + i;
+		}
+		return results;
+	}
+
+	class TallySet {
+		Map&lt;Competitor, ResultsTally&gt; tallies = new HashMap&lt;Competitor, ResultsTally&gt;();
+		void tally(CompetitorResults results) {
+			ResultsTally tally = tallies.get(results.competitor);
+			if (tally == null) {
+				tally = new ResultsTally(results.competitor);
+				tallies.put(results.competitor, tally);
+			}
+			tally.tally(results);
+		}
+		public CompetitorResults[] getAverages() {
+			CompetitorResults[] avgs = new CompetitorResults[tallies.size()];
+			int i = 0;
+			for (ResultsTally tally : tallies.values()) {
+				avgs[i++] = tally.getAvg();
+			}
+			Arrays.sort(avgs);
+			for (i = 0; i &lt; avgs.length; ++i) {
+				avgs[i].rank = i + 1;
+			}
+			return avgs;
+		}
+	}
+
+	class ResultsTally {
+		CompetitorResults tally;
+		int numTallied = 0;
+		ResultsTally(Competitor competitor) {
+			tally = new CompetitorResults(competitor);
+		}
+		void tally(CompetitorResults results) {
+			assert results.competitor == tally.competitor;
+			tally.score += results.score;
+			tally.survival += results.survival;
+			tally.lastSurvivorBonus += results.lastSurvivorBonus;
+			tally.bulletDamage += results.bulletDamage;
+			tally.bulletDamageBonus += results.bulletDamageBonus;
+			tally.ramDamage += results.ramDamage;
+			tally.ramDamageBonus += results.ramDamageBonus;
+			tally.firsts += results.firsts;
+			tally.seconds += results.seconds;
+			tally.thirds += results.thirds;
+			++numTallied;
+		}
+		CompetitorResults getAvg() {
+			CompetitorResults avg = new CompetitorResults(tally.competitor);
+			avg.score = tally.score / numTallied;
+			avg.survival = tally.survival / numTallied;
+			avg.lastSurvivorBonus = tally.lastSurvivorBonus / numTallied;
+			avg.bulletDamage = tally.bulletDamage / numTallied;
+			avg.bulletDamageBonus = tally.bulletDamageBonus / numTallied;
+			avg.ramDamage = tally.ramDamage / numTallied;
+			avg.ramDamageBonus = tally.ramDamageBonus / numTallied;
+			avg.firsts = tally.firsts / numTallied;
+			avg.seconds = tally.seconds / numTallied;
+			avg.thirds = tally.thirds / numTallied;
+			return avg;
+		}
+	}
+</pre>
+<p>
+Finally make sure next time we load this Roboleague doesn't try to read in our new avarages &amp; do strange things with them as a season of their own by modifying restoreDivisionSeasons()'s for loop to be:
+<p>
+<pre>
+		for (int i = 0; i &lt; nodeList.getLength(); i++) {
+			Element element = (Element) nodeList.item(i);
+			String numebrAttribute = element.getAttribute("number");
+			try {
+				int number = Integer.valueOf(numebrAttribute).intValue();
+				Collection groupings = restoreGroupings(element, allCompetitors);
+				boolean completed = element.getAttribute("finished").equals(
+						"true");
+				result.add(new DivisionSeason(number, groupings, completed));
+			} catch (NumberFormatException err) {
+				assert numebrAttribute.contains("Overall Averages");
+			}
+		}
+</pre>
+<p>
+Now the next time a Division's html results are created, you have overal averages at the bottom!  (B.t.w., if someone can get these to show up at the top it would be awesome!).
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Simonton" class=wikipagelink>Simonton</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Simonton/RoboleagueSeasonAverages" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Simonton/RoboleagueSeasonAverages">View other revisions</a><br>Last edited September 27, 2006 23:15 EST by <a href="robowiki?Simonton" title="ID 7817 from adsl-70-227-96-101.dsl.applwi.ameritech.net">Simonton</a> <a href="robowiki?action=browse&diff=1&id=Simonton/RoboleagueSeasonAverages">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

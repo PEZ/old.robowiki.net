@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Reach - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Reach'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Reach">Reach</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>This is the 2nd bot I've written.  The first one was called Snail<a href="robowiki?action=edit&id=Snail" class=wikipageedit>?</a>.
+<p>
+Reach currently chooses the closest other bot as it's target.
+It orbits it's target bot, with random lateral movement.
+It fires at it's target bot with an array of <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a>.
+<p>
+<H4>Current Version</H4>
+
+<p>
+Version 3, released  3 July 2007.
+<p>
+Download this version
+<UL >
+<li> <a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=3325">http://www.robocoderepository.com/BotDetail.jsp?id=3325</a>
+</UL>
+<p>
+For older versions, see the <a href="robowiki?Reach/VersionHistory" class=wikipagelink>Reach/VersionHistory</a> page.
+<p>
+<H4>Author</H4>
+
+<p>
+<a href="robowiki?Tim_Foden" class=wikipagelink>Tim Foden</a>
+<p>
+<H4>Extends</H4>
+
+<p>
+<a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>
+<p>
+<H4>What's special about it?</H4>
+
+<p>
+Apart from the fact that it's my 2nd robot... Nothing really.  :)
+<p>
+<H4>How competitive is it?</H4>
+
+<p>
+Slightly better than average.  See the <a href="robowiki?Reach/VersionHistory" class=wikipagelink>Reach/VersionHistory</a> page for more details.
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+<p>
+Orbits closest other bot, with very simple random side-to-side movement.
+<p>
+Example of the randomness:
+<p>
+<pre>
+	// movement.
+	if( getDistanceRemaining() == 0 )
+	{
+		int	range = 301;
+		double distToMove = Utils.rand(range) - range / 2;
+		setAhead( distToMove );
+	}
+</pre>
+<p>
+I have plans to improve on this later, but first I'm still working on improving
+the targetting.
+<p>
+<H4>How does it fire?</H4>
+
+<p>
+Has a VG gun implementation, with:
+<UL >
+<li> <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargetting</a> -- shoots at last known scanned position,
+<li> <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargetting</a> -- with 2 fixed factors: 0.5 &amp; 1.0,
+<li> <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargetting</a>,
+<li> Circular Velocity-pattern -- with 1000 tick history -- searches for longest match with sufficent match accuracy,
+<li> <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargetting</a> -- with 4 fixed factors: 0.25, 0.5, 0.75, 1.0. 
+</UL>
+<p>
+So in total I have 9 different guns.  The gun hit statistics are segmented by distance into 8 bins by dividing by 150.
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+<p>
+By luck.  :)
+<p>
+<H4>How does it use the <a href="robowiki?Radar" class=wikipagelink>radar</a>?</H4>
+
+<p>
+It implements <a href="robowiki?Bayen" class=wikipagelink>Bayen</a>s idea (see <a href="robowiki?Radar" class=wikipagelink>Radar</a>) of scanning towards (in fact -- 22.5 degrees past) the oldest scanned bot.  This optimises the scan when in corners, and when down to only 1 opponent bot.
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+<p>
+No difference at this time.
+<p>
+<H4>How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a>?</H4>
+
+<p>
+Always chooses closest other bot.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+<p>
+Between rounds:  Keeps virtual gun statistics.
+<p>
+Between matches: Nothing.
+<p>
+<H4>Where did you get the name?</H4>
+
+<p>
+What's in name?  :)
+<p>
+But seriously, there was no particular reason to pick it... it just came to me.
+<p>
+<H4>What's next for your robot?</H4>
+
+<p>
+Improving the <a href="robowiki?Targeting" class=wikipagelink>targetting</a> until I've hit a plateau, and then start working on the <a href="robowiki?Movement" class=wikipagelink>movement</a>.
+<p>
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+<p>
+At this point in time, <a href="robowiki?Reach" class=wikipagelink>Reach</a> hasn't been run in any public rumbles (although it has been added now -- so I hope to get some results soon), or against any significant spread of opponents here at home.  I've run a few 1v1 matches for this page though, so at the moment all I can say is...
+<p>
+Maybe <a href="robowiki?DoctorBob" class=wikipagelink>DoctorBob</a>.
+<p>
+... After having run for a couple of days in the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>, I'd now say: Yes it does have some white whales.  Largest of which is jaw.Mouse<a href="robowiki?action=edit&id=Mouse" class=wikipageedit>?</a> 0.11 (-30% -- ouch!)
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+<p>
+None.
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+<p>
+Whoa, dude, please use the preview button (I thought for a moment there was a huge discussion here :P). Atleast most of them were minor edits. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<UL >
+<li> Ah, sorry about that... I'll endeavor to make changes with fewer saves between them in future.  -- <a href="robowiki?Tim_Foden" class=wikipagelink>Tim Foden</a>
+</UL>
+<p>
+Well, as for me, I'd rather you edit all you want than you not contribute to the community =) They don't call it a "wiki" for nothin'! -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<UL >
+<li> Good point. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</UL>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Reach" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Reach">View other revisions</a><br>Last edited July 3, 2007 17:19 EST by <a href="robowiki?Tim_Foden" title="ID 11309 from 94.Red-83-45-224.dynamicIP.rima-tde.net">Tim Foden</a> <a href="robowiki?action=browse&diff=1&id=Reach">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

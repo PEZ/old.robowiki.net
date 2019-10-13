@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Segmentation/BestSegment - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Segmentation, Best, Segment'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/BestSegment">Segmentation/BestSegment</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Given a VisitCount<a href="robowiki?action=edit&id=VisitCount" class=wikipageedit>?</a> array, when it comes time to segment you need to be able to choose the division that give you the most bang for your buck.  The main goal is to maximize hit percentage, but you also need to take into account the best segmenations for future divisions.  The three main strategies would be
+<p>
+<em>Entropy</em> -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>'s description
+<p>
+I'm reading about learning decision trees and the ID3 algorithm for doing it in my machine learning class right now at school, and I saw a lot of ideas that seem relevant to guess-factor targeting, flattening and segmentation.   First is the idea of Entropy.  A set of data has an entropy from zero to log2(c) where c is the number of possible values.  It is zero if all the data has the same value, and it is log2(c) if all the possible values are evenly used.  In other words, entropy is like a measurement for flatness.  If we find the entropy of a given set of data and divide it by the max entropy, we can get a sort of normalized entropy, where our goal in movement would be to have an entropy of 1 in every segment (<a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a> has an entropy of zero on its profile).  The entropy of a set of samples is the sum of -p*log2(p) for each possible output, where p is the probability of that output within the set.  A code example, samples could be thought of as a segment:
+<p>
+<pre>
+	public static double entropy(int[] samples)
+	{
+		double sum = 0;
+		for (int i=0; i&lt;samples.length; i++)
+			sum += samples[i];
+		double entropy = 0;
+		for (int i=0; i&lt;samples.length; i++)
+			if (samples[i] != 0)
+				entropy += -samples[i]/sum*Math.log(samples[i]/sum)/Math.log(2);
+		return entropy;
+	}
+
+	public static double maxEntropy(int possibleValues)
+	{
+		return Math.log(possibleValues)/Math.log(2);
+	}
+	
+	//I may have just made this up, but it should return 1 for a segment that's flat with flat juice on top
+	public static double normalizedEntropy(int[] samples)
+	{
+		return entropy(samples)/maxEntropy(samples.length);
+	}
+</pre>
+<p>
+The next major concept is information gain.  The idea is that you can figure out what the order of importance is of your segmentations (assuming you have sufficient data I suppose) by figuring out which segmentation gives you the best information gain from before.  So say I start with unsegmented data (it's segmented somewhere, but I want to start by figuring out the entropy of the unsegmented data) and then I try applying each potential segmentation and use the one that returns the biggest information gain (basically reduces the total entropy by the most in the end).  Information gain is calculated by the following:
+<p>
+<pre>
+	Gain(S, A) = Entropy(S) - sum(% of total samples that fall in Sv * Entropy(Sv))
+</pre>
+<p>
+Here, S is the complete unsegmented data, A is the segmentation, and Sv is the data in each segment.  The idea here is that we have nearly zero information gain when this segmentation yields a bunch of segments with the same general distribution as we had with no segmentation, or if it perfectly divides the data so that we know 100% what to do for each segment, we'll approach an information gain of log2(c) (where c is the number of guess factors).  Here's some code that can do the simplest part of calculating the information gain on a certain segmentation, where <tt>samples</tt> is the unsegmented data, and <tt>segmentedSamples</tt> is the same set of data, but segmented:
+<pre>
+	public static double informationGain(int[] samples, int[][] segmentedSamples)
+	{
+		int totalSamples = 0;
+		for (int i=0; i&lt;samples.length; i++)
+			totalSamples += samples[i];
+		double entropyS = entropy(samples);
+		for (int i=0; i&lt;segmentedSamples.length; i++)
+		{
+			int segmentSamples = 0;
+			for (int j=0; j&lt;segmentedSamples[i].length; j++)
+				segmentSamples += segmentedSamples[i][j];
+			entropyS -= (double)segmentSamples/totalSamples*entropy(segmentedSamples[i]);
+		}
+		return entropyS;
+	}
+</pre>
+<p>
+If you apply this recursively on some overly complex set of data, you should be able to figure out which segmentations are more expendable (due to low information gain) and which ones you want to include in your next GF nano.  And, of course, I need to do something like this tonight and write a report about it.  Blah.
+<p>
+Upside: counts the overall spikiness of the segment
+Downside: does not always select the segment with the best hit percentage
+<p>
+<em>VisitCount<a href="robowiki?action=edit&id=VisitCount" class=wikipageedit>?</a></em> - <a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+The decision is a modified spikyness algorithm (as seen on the <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a> page), that returns a VisitsCovered<a href="robowiki?action=edit&id=VisitsCovered" class=wikipageedit>?</a> number.
+<p>
+suppose we have a Node that needs to be split, containing the following GF bins:
+(The numbers represent visits, the ^ represents bins used for targeting, taking botwidth into account)
+<pre>
+[########       ]
+[##########     ]
+[############   ]
+[############## ]
+[###############]
+[###############]
+[###############]
+[###############]
+[###############]
+[999999998877665]
+    ^^^
+</pre>
+This node is obviously very flat. Suppose botwidth covers 3 bins. VisitsCovered<a href="robowiki?action=edit&id=VisitsCovered" class=wikipageedit>?</a> will be 9+9+9=27, which in this case is not very good.
+Now suppose our algorithm finds that one of the many possible splitting parameters results in these two child nodes:
+<pre>
+[               ]
+[       #       ]
+[      ###      ]
+[     #####     ]
+[    #######    ]
+[   #########   ]
+[  ###########  ]
+[ ############# ]
+[###############]
+[123456787654321]
+       ^^^
+[               ]
+[#              ]
+[##             ]
+[###            ]
+[####           ]
+[#####        ##]
+[######     ####]
+[#######  ######]
+[###############]
+[876543211223344]
+ ^^^
+</pre>
+Now we have one VisitsCovered<a href="robowiki?action=edit&id=VisitsCovered" class=wikipageedit>?</a> number of 7+8+7 = 22, and one of 8+7+6 = 21, so we have a total of 22+21 = 43. The algorithm will have found that 43 is much better than 27 (the VisitsCovered<a href="robowiki?action=edit&id=VisitsCovered" class=wikipageedit>?</a> of the parent node). Maybe some other splits have resulted in, say, total VisitsCovered<a href="robowiki?action=edit&id=VisitsCovered" class=wikipageedit>?</a> of 29, 35, 28, 30 etc. Now the algorithm will decide that our example split is the most efficient one, since it will cover most visits.
+<p>
+Upside: finds the highest probability selection
+Downside: Not very effective against flat profiles
+<p>
+<em>Hit Percentage</em>
+<p>
+Finds the percent of data in the highest bin.
+<p>
+Upside: Finds the segment with the best spike
+Downside: Population sensitive
+<p>
+<p>
+While the Hit Percentage method is the most promising, a combination of the methods could yield the best results
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Segmentation/BestSegment" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Segmentation/BestSegment">View other revisions</a><br>Last edited April 7, 2006 4:43 EST by <a href="robowiki?Voidious" title="ID 6343 from resnet216-83.resnet.buffalo.edu">Voidious</a> <a href="robowiki?action=browse&diff=1&id=Segmentation/BestSegment">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

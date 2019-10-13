@@ -1,0 +1,348 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing PatternMatcherChallenge - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Pattern, Matcher, Challenge'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing PatternMatcherChallenge</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="PatternMatcherChallenge"  />
+<input type="hidden" name="oldtime" value="1159769129"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="10"  />
+<input type="hidden" name="captchaArg2" value="5"  />
+<input type="hidden" name="captchaOp" value="-"  />
+<input type="hidden" name="captchaId" value="099810585918"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">/PMCIndex /Results
+
+There are a lot of good PatternMatching guns out there. I&#39;ve got a nice challenge for those guns:-)
+
+first of all, you&#39;ll need PatternBot: http://robocoderepository.com/BotDetail.jsp?id=1547
+
+The challenge is to beat PatternBot in a 100 rounds match on a 1000x1000 battlefield with a bot that has the following restrictions:&lt;BR&gt;
+
+- you may only fire 0.5 power bullets (like patternbot)&lt;BR&gt;
+- your bot may NOT move (unlike patternbot :-)&lt;BR&gt;
+- of course your bot is expected to have a super duper PatternMatching gun, that&#39;s the whole fun of it :-)
+
+Your bot is given a slight advantage: PatternBot only starts firing when it gets into its movement pattern. If you hit it a few times before that, you may have a chance to win. If you don&#39;t, then only ONE bullet missed will mean you lose :-)
+
+PatternBot is expected to win from all but the best Pattern Matching Guns. Its movement is completely predictable, BUT it does have some nasty (yet predictable) surprises. On a 1000x1000 battlefield it will NOT hit any walls, so that won&#39;t break the predictability..
+
+PatternBot will hit your bot 100% of the time! So obviously, your PatternMatching gun should also get a 100% score (or a little less if you are able to hit PatternBot early).
+
+Who will be able to complete the challenge???? Please submit your score below.
+
+--[[Vic]]
+
+btw, it CAN be done, i&#39;m sure of it... I ran a test where PatternBot is also stationary to simulate 100% hit ratio. In that case i beat it on survival with a good margin. I&#39;m guessing 97% to 98% rates would do the job (if you get that initial damage)
+* it has been proven already by [[rozu]]&#39;s GlowBlowPMC.
+&lt;p&gt;
+----&lt;/p&gt;
+For those of you that are interested in a second PM Challenge i have uploaded a bot called [[http://robocoderepository.com/Controller.jsp?submitAction=downloadClass&amp;id=1567 nano.PatternBot]]. Conditions are similar.
+
+It&#39;s movement is also completely deterministic, but all bots who entered the first PM Challenge fail hopelessly because the movement has a pattern that is hard to match because of long straight displacements followed by sharp turns. Everytime it looses, the pattern changes (from a triangular to a hexagonal pattern). Everytime it gets hit, the next direction change also changes.
+
+I am curious how you deal with this one :)
+--[[Loki]] 
+----
+==== Question department ====
+* I&#39;ve seen PatternBot hit the wall once, though. Both my bot and Patternbot started out in a corner. Patternbot first bumps into my bot, then reversed and hit the wall. --[[Dummy]]
+** Yes, that can happen. I&#39;ve seen it too and it means that you will lose that round for sure :-) Fortunately we all run that same risk.. --[[Vic]]
+&lt;p&gt;
+----&lt;/p&gt;
+==== Discussion on /PMCIndex ====
+Can a bots gun performance (PMC-wise) somehow be measured in the bullet damage it inflicts on PatternBot in, say,  a 100 round match? It seems so to me. If this holds I propose that this be used for a /PMCIndex. Also it would be that this measure discriminates better guns since you by inflicting more damage prolong the matches so that a higher accuracy will have more time to increment your /PMCIndex.
+
+* Yeah, bullet damage sounds like a good measure to me. Maybe we could add an extra column &quot;hit percentage&quot;. I&#39;ll add a hit perc counter to PatternBot so we all get a fair (well...at least the same) measure. Maybe later we can decide which measure to use for sorting the table. -- [[Vic]]
+** But the sort will be identical with bullet damage and hit ratio (asuming PatternBot can measure this with enough accuracy). -- [[PEZ]]
+*** It could be, but i&#39;m not sure of it, because in the hit rate I only count from the moment PatternBot goes into its pattern. I do this because it want to measure only the rate on predictable movement. I think in this case a bot that causes maximum initial damage (you can find out to which point it is travelling) and has a hit rate of 98% will do more damage than a bot that does no initial damage and has a rate of 98.1%. I guess this also solves the sorting problem... probably bullet damage is a better measure for performance in the challenge. But still i&#39;m very interested in the hit rates because that&#39;s the more fair indication of the true PatternMatching abilities. --[[Vic]]
+**** I don&#39;t agree fully. A good pattern matcher will probably find patterns in the initial movement as well. -- [[PEZ]]
+***** Yeah well .. I guess i&#39;m kinda nitpicking here ...:-) --[[Vic]]
+** I realize now that i didn&#39;t fully understand what you where saying. You meant to say that better guns have longer matches therefore have more bullet damage. Of course PatternBot would than also have more bullet damage. A hit rate for the whole matches (including the initial part) would simply be: (challenger damage / PatternBot damage)  * 100 . This would work because we know PatternBot always has a 100% rate. This hit rate would of course produce the same sort order as bullet damage. -- [[Vic]]
+
+I might get more bullet damage if GlowBlowPMC would stop shooting if he has enough energy left at the end. because it often occurs that it&#39;s Energy is above 10 when it had a 100% hitrate during a round. If I&#39;d let PatternBot to come back I could gather more points. other improvements are file saving, to get better results the first rounds, also important might be that I adjust some things when the pattern cuts off (disabling, ramming, changing the round (already done)).
+
+&lt;pre&gt;
+1st: rz.GlowBlowPMC		25459	3400	680	18560	2818	0	0	83	32	0
+2nd: challenge.PatternBot 1.0	22558	1600	320	18361	1783	493	0	40	68	0
+&lt;/pre&gt;
+
+how about this :), you can see what I mean with the bullet damage. -- [[rozu]]
+* I see what you mean! Actually it made me realize that when hit rates will increase to nearly 100% (meaning that you inflict a lot of initial damage as well) the PMC Index (bullet damage) will actually &#39;&#39;&#39;de&#39;&#39;&#39;crease because the matches get shorter. Your idea of letting PatternBot come back might be the trick here -- [[Vic]]
+
+Tricking the Index like this would go beyond the goal for the challenge which is justing beating PatternBot. So maybe (your_damage / patternbot_damage) * 100  might yet be the better index after all. I just calculated it for Albert&#39;s last result, your two results and my two last results:
+&lt;pre&gt;
+MicroAspid  index 18514   relative damage  99.94 %
+GlowBlowPMC index 18752   relative damage 100.81 %
+GlowBlowPMC index 18361   relative damage 101.08 %
+EnderPMC    index 18734   relative damage 100.43 %
+EnderPMC    index 18916   relative damage 100.77 %
+&lt;/pre&gt;
+This shows that your last GlowBlowPMC has become much better and as mentioned before the index is dropping. It also shows that both your winning bots have a higher relative damage then my two not-winning bots. The current index doesn&#39;t reflect that. [[PEZ]], would you agree we change the index to relative damage? --[[Vic]]
+
+I agree that the [[/PMCIndex]] should be changed to relative damage. I would never had dreamt it would enter pattern matcher so good that they can even consider tricking the simple bullet damage index! -- [[PEZ]]
+
+In my last version of EnderPMC there was a bug that resulted in HeadOnTargeting in 1 or 2 % of the matches, meaning EnderPMC lost those rounds with a 30% or so hit rate. This lowered the Index considerably, while EnderPMC did win the match! Also i noticed that there can be big differences in results over 100 round matches. If you&#39;re unlucky for example you get a few of those hitwall situations like Dummy describes above. Maybe if we do something like this again we should run 1000 or even 10000 round matches to even out the (bad)luck factor. Any thoughts about that? --[[Vic]]
+&lt;p&gt;
+----&lt;/p&gt;
+==== Random chatting ====
+[[Ender]]&#39;s PatternMatching gun is currently unable to win. I previously boasted a 99.45% accuracy, but i accidently read the percentage for the closest segment only... Actually Ender gets a 93.59% hit rate in its last 100 round match (according to PatternBot dev version) which sounds much more reasonable -- [[Vic]]
+
+Cool - I&#39; quite busy now, but I&#39;w try ASAP (may be next week?) -- [[Albert]]
+
+* Great! I would be very curious how your NN gun performs -- [[Vic]]
+
+Wow, 99.45% is better than [[WallsKiller]] gets against [[Walls]] I think (closer to 92 to 93%.  Of course, that&#39;s with power 3 bullets). -- [[Kawigi]]
+
+I made a LeachPMC which got humiliated by PatternBot. Maybe a hit rate of 25% or some such... -- [[PEZ]]
+
+I&#39;m having lots of trouble hitting PatternBot at the start each round, while PatternBot is getting in position to start its patterns :-(. Perhaps I should tell my gun only to fire when a close-enough match has been found. --[[Dummy]]
+
+* If you don&#39;t fire until the pattern starts you discard the advantage you are given. And you REALLY need it :-). However, when PatternBot reaches its starting point it will first turn to heading zero. This should be predictable enough to get one or two bullets on the scoreboard early. -- [[Vic]]
+
+For symbolic pattern matchers, a special symbol should be used to indicate an empty frame from before the round started.  This would allow pattern matching during these frames. -- [[nano]]
+
+That&#39;s what LeachPMC does. It uses an ArrayList of Frame objects that look like so:&lt;pre&gt;
+class Frame {
+    static double heading;
+    double headingDelta;
+    double velocity;
+    boolean isInitialPhase;
+
+    Frame() {
+    }
+
+    Frame(double headingDelta, double velocity, boolean isInitialPhase) {
+        this.headingDelta = headingDelta;
+        this.velocity = velocity;
+        this.isInitialPhase = isInitialPhase;
+    }
+
+    static void setHeading(double newHeading) {
+        heading = newHeading;
+    }
+
+    void advanceHeading() {
+        heading += headingDelta;
+    }
+
+    char getKey() {
+        int key = 3;
+        key = key + 100 * (isInitialPhase ? 1 : 0);
+        key = key + 11 * (int)((10.0 + Math.toDegrees(headingDelta)) * 3);
+        key = key + (int)((8.0 + velocity));
+        return (char)(key);
+    }
+
+    double deltaX() {
+        return Math.sin(heading) * velocity;
+    }
+
+    double deltaY() {
+        return Math.cos(heading) * velocity;
+    }
+}
+
+class BreakFrame extends Frame {
+    char getKey() {
+        return LeachPMC.BREAK_KEY;
+    }
+
+    double deltaX() {
+        return 0;
+    }
+
+    double deltaY() {
+        return 0;
+    }
+}
+&lt;/pre&gt;
+The BreakFrame gets added at the beginning of each round. I have experimented some with adding that frame also when the radar slips and I get 4+ ticks to interpolate. Never happens against PatternBot when you are standing still though, but [[Frankie]] might try that approach again. -- [[PEZ]]
+
+You seem to take it for granted that your radar will slip.  I don&#39;t think this has to be the case.  None of my development robots ever misses a scan unless it skips a turn, and the radar still doesn&#39;t slip even if that happens.  -- [[nano]]
+
+Maybe so. I&#39;m probably thinking about the kind of radar I had a fe weeks ago. How if you print out the time since last scan in your scanned event? Print it only if it&#39;s &gt; 1. LeachPMC then prints a few 2s an occational 3 and now and then a 4. About 15 times on average per round it seems it breaks the perfection. I then interpolate the missing tick and it works for what I can judge. Please tell how your robots fare here and we might learn something about radar management as well. -- [[PEZ]]
+
+I am thinking how a about a [[RadomMovementChallenge]],every competitive bots just can fire 0.5 power bullet to against a PatternMatcherBot (it can be bot with the best ranking in [[PatternMatcherChallenge]]). This can see which bot&#39;s movement is radomer. -- [[iiley]]
+
+That would be way cool. But how about PatternMatcherBot can fire but not the challenger? Then it could fire power 1-&gt;3 bullets and it would be a better measure on movement since it&#39;s not all that productive to tune movement against 0.5 bullets. -- [[PEZ]]
+
+Yeah! Shall we discuss this further on the [[RandomMovementChallenge]] page? This page is getting cramped :-) -- [[Vic]]
+
+----
+==== Results : ====
+http://atlas.et.tudelft.nl/klli87/images/pmchallenge.gif ( -[[Dummy]])
+
+Here it go results for MicroAspid:
+
+&lt;pre&gt;
+1st: challenge.PatternBot 1.0	26363	4850	970	16855	3299	388	0	97	3	0
+2nd: apv.MicroAspid	        15935	150	30	15647	107	0	0	3	97	0
+&lt;/pre&gt;
+I just removed a low pass filter from MicroAspid (it makes sense only when fighting against random movement bots) and this are the results :-):
+&lt;pre&gt;
+1st: challenge.PatternBot 1.0	24183	2650	530	18525	2174	303	0	58	47	0
+2nd: apv.MicroAspid	        23289	2350	470	18514	1954	0	0	52	53	0
+&lt;/pre&gt;
+
+WTF! That&#39;s truly amazing [[Albert]]! How do you fit that in a micro? What are your max and min match lenghts? --[[PEZ]]
+
+Whoa!!! That&#39;s really good! You&#39;re just a pig&#39;s hair away from completing the challenge Albert! I&#39;m in awe!! --[[Vic]]
+
+This reminds me of a time when I said a fully-featured pattern-matcher could easily fit into a Minibot. -- [[Kawigi]]
+
+MicroAspid doesn&#39;t have min or max distances (it just tries to match the longest existing pattern). About fitting it into a Micro, remember NanoLauLectrik also has a variable lenght pattern matcher (it just rebuilds the predicted bearing in a more pedestrian way) :-) -- [[Albert]]
+
+Could you post MicroAspidPMC on the repository? I&#39;d love to see it in action ... even if only for the sheer joy of watching near perfection :-) --[[Vic]]
+
+here are the results of EnderPMC 1.1:
+
+http:/robocode/uploads/vic/enderpmc_1_1.jpg --[[Vic]]
+
+&lt;pre&gt;
+1st: rz.GlowBlowPMC2		24554	2750	550	18752	2502	0	0	68	45	0
+2nd: challenge.PatternBot 1.0	23855	2250	450	18601	2152	346	55	56	55	0
+&lt;/pre&gt;
+
+doesn&#39;t it look nice? -- [[rozu]]
+
+O MY GOD!!!! Read &#39;em and weep.... You are the first to complete the challenge!! Congratulations Rozu! Notice that EnderPMC inflicts just the slightest bit less bullet damage. That shouldn&#39;t have made the difference.... but what has? I&#39;ll be back later today ;-) -- [[Vic]]  ps: please crown yourself at the /PMCIndex 
+
+&lt;pre&gt;
+1st: rz.GlowBlowPMC		25459	3400	680	18560	2818	0	0	83	32	0
+2nd: challenge.PatternBot 1.0	22558	1600	320	18361	1783	493	0	40	68	0
+&lt;/pre&gt;
+
+The results from EnderPMC 1.2 alpha:
+
+&lt;pre&gt;
+1st: challenge.PatternBot	25739	3150	630	18770	2904	284	0	83	37	0
+2nd: lv.EnderPMC	        23285	1850	370	18916	2149	0	0	50	63	0
+&lt;/pre&gt;
+
+Look at the bullet damage! I&#39;m clearly losing on survival here... But currently EnderPMC gets a very high hit rate (98.4% over 100 rounds). I found that the period for PatternBot&#39;s Heading pattern is 600 ticks, so i just increased my maximum matching size from 200 to 1000. .... ok now let&#39;s see why EnderPMC loses on survival.... -- [[Vic]]
+
+Results for [[Nibbler/NibblerPMC]]
+&lt;pre&gt;
+1st: challenge.PatternBot 1.0	25506	3250	650	18666	2686	253	0	70	35	0
+2nd: cbot.pmc.NibblerPMC	22299	1750	350	18699	1500	0	0	41	65	0
+
+1st: challenge.PatternBot 1.0	24271	2750	550	18304	2095	513	57	64	45	0
+2nd: cbot.pmc.NibblerPMC	23137	2250	450	18432	2005	0	0	47	55	0
+&lt;/pre&gt;
+
+Results for MicroAspidPMC:
+&lt;pre&gt;
+1st: challenge.PatternBot 1.0	24400	2750	550	18468	2171	460	0	60	45	0
+2nd: apv.MicroAspidPMC	        23070	2250	450	18496	1873	0	0	48	55	0
+&lt;/pre&gt;
+LeachPMC:
+http:/robocode/uploads/pez/LeachPMC_1.1.4.png
+
+[[Nibbler/NibblerPMC]] just beat [[PatternBot]]! =)
+&lt;pre&gt;
+1st: cbot.pmc.NibblerPMC 1.0	24796	2750	550	18770	2725	0	0	64	45	0
+2nd: challenge.PatternBot 1.0	23632	2250	450	18608	2036	286	0	62	55	0
+&lt;/pre&gt;
+
+* Great! Congratulations [[Crippa]]! What did you change? Could you upload your winning bot on the repository? --[[Vic]]
+
+LeachPMC again:
+http:/robocode/uploads/pez/LeachPMC_1.1.7.png
+It&#39;s a bit unfair that PatternBot collects ram bonus. =) -- [[PEZ]]
+
+Some tweaks here and there, a bugfix or two, a speed-optimization, and I ditched the data-saving feature:
+http://atlas.et.tudelft.nl/klli87/images/pmchallenge2.gif&lt;br&gt;
+At least I get to win a few rounds now... :-) --[[Dummy]]
+* Good work! Ditched data-saving? Why would you do that? --[[Vic]]
+* Doing the challenge with pre-loaded data kind of made me feel like a cheater. ;-) --[[Dummy]]
+* Hey ... all is fair in love and PatternMatcherChallenge --[[Vic]]
+* Nah... other ppl are doing it without saved data from previous battles, so I&#39;m going to do it without. :-) --[[Dummy]]
+
+Lol, I just tried [[FloodHT]]&#39;s gun package on PatternBot for fun (it does choose the pattern-matcher for it), and it was getting about an 80-84% hit-rate without tweaking, and then it fell almost to nothing, and I realized an interesting flaw in the way I implemented the pattern-buffer (using a mod function to put stuff into a finite-length array).  I was matching the exact pattern I just recorded and projecting the next part of the pattern that I was going to overwrite.  So after round 60-something, it just started to miss a lot, and the hitrate instantly fell from 80 to somewhere under 40, where various stat guns took over. -- [[Kawigi]]
+
+Read &#39;em and weep:
+&lt;pre&gt;
+1st: lv.EnderPMC 1.2		26645	3800	760	18772	3312	0	0	87	24	0
+2nd: challenge.PatternBot	21626	1200	240	18504	1339	343	0	36	76	0
+&lt;/pre&gt;
+index 101.45 --[[Vic]]
+
+Here it goes the last fight for MicroAspidPMC:
+&lt;pre&gt;
+1st: apv.MicroAspidPMC	        25630	3150	630	18954	2896	0	0	84	37	0
+2nd: challenge.PatternBot 1.0	23526	1850	370	18859	2187	212	46	50	63	0
+&lt;/pre&gt;
+
+*Congrats Albert! --[[Vic]]
+
+Ok, I&#39;m starting a real go at it with [[Teancum]]&#39;s gun.  It might not be done until tomorrow, I just added a mechanism for preventing any matching or projection across rounds, and I also fixed the mod problem I described before, and I think it&#39;s ok.  Just fixing the mod problem is enough of an excuse to release a new version of Teancum soon.  Now I&#39;m trying to figure out if I should do anything with my projection-into-the-wall mechanism, which fires a faster bullet at the point of impact into the wall in the regular dev version of [[Teancum]].  His [[/PMCIndex]] right now would fall around 90%-91%, as well as his hit rate, and he wins only occasionally, without really doing anything else that wasn&#39;t in the dev version except playing with the match length, or doing anything special to hit him in the beginning.  This is probably the best so far for a [[LateralVelocity]]-based pattern-matcher.  Before I caught that mod problem, I seriously was considering just labeling myself as bad at pattern-matching and sticking with stat guns from here on out. -- [[Kawigi]]
+
+*Great! This is turning out to be a real occasion for people to improve their PM guns :-) And a lot of fun to boot. -- [[Vic]]
+
+You guys realy slayed PatternBot when i bearly beat him! This realy was a good way to improve our pattern matchers. I&#39;m not sure that i can take advantage this in the real [[Nibbler]] but at least it was fun! =) [[EnderPMC]] shows that you realy can humilliate poor PatternBot, atleast in survival.  =) --[[Crippa]]
+
+Just out of curiosity, [[Vic]] (since you didn&#39;t release source with [[PatternBot]]), would you think that pattern-matching [[PatternBot]] relative to myself should still be fundamentally correct?  Does he move relative to his opponent once he gets into position?  [[TeancumPMC]]&#39;s index is climbing... -- [[Kawigi]]
+*No, PatternBot&#39;s movement is very antisocial. It doesn&#39;t care in what position you bot is ;-) I don&#39;t know if the other high-index guns use relative data so i can&#39;t tell you if it is fundamentally wrong. Obviously EnderPMC has one of the absolute kind. I figured if it can detect absolute patterns then it can also detect relative ones.. --[[Vic]]
+* Well, I asked just because the only robot on the [[/PMCIndex]] page right now that uses it is [[Mini.FenrirPMC]], except for probably an old version of [[LeachPMC]] that [[PEZ]] ditched because of this challenge.  So I suppose that getting [[Teancum]]&#39;s [[/PMCIndex]] over 95% may be that much more of an accomplishment :-)  Another question - are people waiting for their guns to turn?  Does [[PatternBot]] wait for his gun to turn?  I&#39;m thinking I&#39;m actually firing fewer shots than him (well, less frequent shots, anyways). -- [[Kawigi]]
+* Yes, I think 95% with lateralVelocity is awesome. I guess you combine it with retreatingVelocity to calculate reasonable bullet travel times? I&#39;m currently experimenting with how much I should wait for the gun to turn. If I don&#39;t wait at all I shoot many stray bullets. If I wait for perfect alignement I shoot too few shots. I have found waiting for &quot;abs(gunHeading - predictedHeading) &lt; atan2(botWidth / 2, distance)&quot; seems to work best. -- [[PEZ]]
+* I combine it with [[AdvancingVelocity]] (-retreatingVelocity) for distance - but the distance in turn gets used (and always has been in [[Teancum]]) for bearing offsets, too.  One thing that&#39;s nice about this approach, though, is that calculating the final bearing is not overly complicated. -- [[Kawigi]]
+* I wonder if you can get much higher than 95%. Do you think it&#39;s possible? On gun turn waiting: EnderPMC always waits for the gun to stop turning completely. Yet it fires faithfully every 12 ticks. Are you aiming only when your gun is cool? -- [[Vic]]
+* One approach (something I&#39;ve started and will really try tomorrow) is to aim for a future pattern match - I start out by calculating bulletv (20-power*3) and then I initialize bulletd (the distance the bullet has travelled) to -bulletv*Math.ceil(getGunHeat()/getGunCoolingRate()).  If I start doing that a few turns before my gun cools, I may be able to not need to wait for it (by having it already aimed for that specific time).  Also, I&#39;ve seen it do 96% PMCIndex... if I went for more rounds, I may even be able to out-damage him, even without accounting for the starting game in any special way.  And I have another possible mathematically picky thing to try, too.  But now, I&#39;m going to bed.
+
+YALPMCR (Yet another LeachPMC result):
+http:/robocode/uploads/pez/LeachPMC_1.1.10.png&lt;br&gt;
+!!! -- [[PEZ]]
+
+:-DDDDD (YAEFK)-- [[Kawigi]]
+
+* Great! Congrats [[PEZ]]! You now officially have an awesome PatternMatching gun ;-) -- [[Vic]]
+
+Ok, here&#39;s my official first-version submission of TeancumPMC:
+&lt;pre&gt;
+1st: challenge.PatternBot 1.0	26836	4150	830	18325	3215	315	0	86	17	0
+2nd: kawigi.sbf.TeancumPMC	19824	850	170	18059	744	0	0	21	83	0
+&lt;/pre&gt;
+-- [[Kawigi]]
+
+The final(?) version of LeachPMC:
+http:/robocode/uploads/pez/LeachPMC_1.2.png&lt;br&gt;
+It quite consistently beats PatternBot. It&#39;s using a general pattern matcher gun with only a few tweaks to score higher against PatternBot. Mainly a very long &quot;movie&quot;, info on pre-pattern-phase in the movie and slightly different matching in the beginning and end of the rounds. -- [[PEZ]]
+
+
+New results of EnderPMC 1.3 after a bugfix:
+
+&lt;pre&gt;
+1st: lv.EnderPMC 1.3		26677	4000	800	18564	3312	0	0	84	20	0
+2nd: challenge.PatternBot	20855	1000	200	18245	846	460	102	29	80	0
+index 101.75
+&lt;/pre&gt;
+
+-- [[Vic]]
+
+After fixing [[BlackPearl]]&#39;s projection error (Thanks [[Kawigi]]) Pearl is now getting this result:
+&lt;pre&gt;
+1st: challenge.PatternBot 1.0	26935	4800	960	17087	3298	733	57	98	4	0
+2nd: jekl.mini.BlackPearl	16606	200	40	16133	233	0	0	4	96	0
+Index: 94.42%
+&lt;/pre&gt;
+
+* Great Jim! Hopefully you will be able to beat PatternBot soon. -- [[Vic]]
+
+Quick update:
+&lt;pre&gt;
+1st: challenge.PatternBot 1.0	25566	3500	700	18190	2710	465	0	79	29	0
+2nd: jekl.mini.BlackPearl	21240	1450	290	18055	1444	0	0	33	70	0
+Index: 99.26
+&lt;/pre&gt;
+-- [[Sparafucil3|jim]]
+
+I guess we&#39;re all just posting our scores like this?  No - I&#39;m going to start a results page! -- [[Simonton]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 10 - 5 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that PatternMatcherChallenge has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=PatternMatcherChallenge">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

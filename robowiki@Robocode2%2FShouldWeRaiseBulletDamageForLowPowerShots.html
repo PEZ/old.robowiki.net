@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Robocode2/ShouldWeRaiseBulletDamageForLowPowerShots - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Robocode2/Should, We, Raise, Bullet, Damage, For, Low, Power, Shots'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/ShouldWeRaiseBulletDamageForLowPowerShots">Robocode2/ShouldWeRaiseBulletDamageForLowPowerShots</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Robocode2" class=wikipagelink>Robocode2</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>It would be good to remove the Robocode penalty against using fast bullets. Currently it seems that nearly all bullet power calculation algorithms can be replaced by p = 3 with attendant gain of strength (<a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> being an honourable exception). I suggest that the points calculation be changed so that every bullet hit gets a fixed 6 points plus up to 10 points more, depending on bullet power. So power 0.1 bullets would get 6 points, power 3 would get 16. -- <a href="robowiki?Tad" class=wikipagelink>Tad</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+I disagree. Both <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> and Linnet have shown that firing at low power sometimes is a good thing. Also, I think that your rule would make .1 power shots too effective.
+<p>
+if I define a bullet's "goodness" as 
+<p>
+goodness = ((chance of hit) * (damage done + energy gained) - (energy lost)) / (firing frequency)
+<p>
+Assume a 15% chance to hit with power 3, 30% with power .1 (it should be roughly double since the time to hit is roughly half)
+<p>
+Under your rules
+<UL >
+<li> goodness(3) = (.15  * (16 + 12) - 3 ) / 16 = 0.075
+<li> goodness(.1) = (.3 * (6 + 4.5) - .1) / 11 = 0.277
+</UL>
+<p>
+This is the formula that Duelist uses to calculate what shot power to use, if anyone's interested. :-P
+<p>
+Essentially .1 power shots are almost free and have a high chance to hit, so raising the damage they do like that would really unbalance the game.
+<p>
+--<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+I haven't thought about this very deeply or done the math. Probably you are right that 6 points for a 0.1 bullet is too much. The question is whether we should change the balance in order to make power selection of less than 3 more of a viable option. Your formula ignores the fact that getting rid of energy fast lowers how many points your opponent gets by killing you. Another factor is that by firing a 0.1 bullet you have to wait for the gun to cool before you can do some real damage. -- <a href="robowiki?Tad" class=wikipagelink>Tad</a>
+<p>
+I'm taking the gun cooling into account. The "firing frequency" term is how often you can fire if you're firing shots of a given power. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Thanks for the formula, I sure was interested. =) Anyway I think we should leave the rules as they are. They seem to work. But I don't think that raising damage for low power shots would unbalance the game. Within any sets of rules there's always room for using them to your advantage. The current rules are fine. Just fine. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Duelist sorts its hit rates by how long the bullet takes to reach the target, not the target distance. It then finds what bullet power will give it the best "goodness".  --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+I dont think its appropriate to raise the damage of lowpower bullets? Is there any GOOD reason to do so? I however think damage should be linearly dependent on power. Thus taking away the extra boost for &gt;= 1.2 bullets would be a realistic change in my eyes -- <a href="robowiki?Jimpa" class=wikipagelink>Jimpa</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Why don't make it another variable like the cooling rate? I mean, you should be able to change the bonus, but it defaults to 0 (as in <a href="robowiki?Robocode" class=wikipagelink>Robocode</a>). Competitions would probably use the default, unless the bonus change becomes a clear superior choice. --<a href="robowiki?Qetu" class=wikipagelink>Qetu</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Robocode2" class=wikipagelink>Robocode2</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Robocode2/ShouldWeRaiseBulletDamageForLowPowerShots" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Robocode2/ShouldWeRaiseBulletDamageForLowPowerShots">View other revisions</a><br>Last edited May 18, 2006 13:08 EST by <a href="robowiki?Kinsen" title="ID 7051 from 71.142.177.136">Kinsen</a> <a href="robowiki?action=browse&diff=1&id=Robocode2/ShouldWeRaiseBulletDamageForLowPowerShots">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

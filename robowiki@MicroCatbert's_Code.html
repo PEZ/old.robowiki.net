@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>MicroCatbert&#39;s Code - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Micro, Catbert's, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=MicroCatbert's+Code">MicroCatbert's Code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>The code:
+<p>
+<pre>
+package dil;
+import robocode.*;
+import java.awt.Color;
+import java.awt.geom.Point2D;
+import java.io.*;
+/**
+ * MicroCatbert - a robot by Dil
+ * I used some code from DuelistNanoMelee 1.0(goto function) and Calypso 3.6(some average Velocity targeting gun turning).
+ */
+public class MicroCatbert extends AdvancedRobot
+{
+	static double v, vi;
+	static String name;
+	/**
+	 * run: MicroCatbert's default behavior
+	 */
+	public void run() {
+		//Classsic Catbert colors
+		setColors(Color.red,Color.red,Color.white);
+		setAdjustGunForRobotTurn(true);
+		setTurnRadarRight(Double.POSITIVE_INFINITY);
+	}
+
+	/**
+	 * onScannedRobot: What to do when you see another robot
+	 */
+	public void onScannedRobot(ScannedRobotEvent e) {
+		//all purpose vars
+		double inf=getHeadingRadians()+e.getBearingRadians();
+		//targeting
+		//velocity for targeting init
+		if(vi+getRoundNum()*getOthers()==1) {
+			try {
+				BufferedReader r = new BufferedReader(new FileReader(getDataFile("v"+(name=e.getName())+".dat")));
+				// Try to get the avg vel
+				v = Double.parseDouble(r.readLine());
+			} catch (Exception a) {}
+			vi=1;
+		}
+		v = 0.995*v + 0.005*e.getVelocity()*Math.cos(e.getHeadingRadians()-getHeadingRadians());
+		setTurnGunLeftRadians(Math.sin(getGunHeadingRadians() - (inf + (e.getEnergy() == 0 ? 0 : -Math.sin(inf)*Math.asin(v/(20-3*3))))));
+		//driving
+		double dX,dY,mX,mY,tA,nTA;
+		dX= getBattleFieldWidth() -((mX=getX())+Math.sin(inf)*e.getDistance());
+		dY= getBattleFieldHeight() -((mY=getY())+Math.cos(inf)*e.getDistance());
+		setTurnRightRadians(nTA = Math.atan(Math.tan(tA = ((Math.atan2(dX - mX, dY - mY) - (inf = getHeadingRadians())) + (7.0 * Math.PI)) % (2.0 * Math.PI) - Math.PI)));
+		setAhead((tA == nTA ? 1.0 : -1.0) * Point2D.Double.distance(mX, mY, dX, dY));
+
+		//radar
+		setTurnRadarLeftRadians(getRadarTurnRemaining());
+		fire(Math.min(getEnergy()/5, 1200/e.getDistance()));
+    }
+
+	public void onDeath(DeathEvent e) {
+		if(name != null) {
+			try {
+				PrintStream w = new PrintStream(new RobocodeFileOutputStream(getDataFile("v"+ name +".dat")));
+				w.println(v);
+				w.close();
+			} catch (Exception a) {}
+		}
+	}
+	public void onRobotDeath(RobotDeathEvent e) {
+		onDeath(null);
+	}
+}
+</pre>
+Suggested changes:
+<pre>
+if(getRoundNum()==getNumRounds() &amp;&amp; name != null)
+</pre>
+As pretty and small as that code is, it will never return true.  It's misdocumented in the Robocode API - getRoundNum<a href="robowiki?action=edit&id=RoundNum" class=wikipageedit>?</a>() returns a number from 0 from getNumRounds<a href="robowiki?action=edit&id=NumRounds" class=wikipageedit>?</a>()-1.  And eventually you may find that a gun that learns as fast as this one isn't worth the space for saving data, of course you said that you were going to add a pattern-matcher anyways I think. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+It's completely unecessary to check the round number before writing the data anyways. Write it down after every round and you both save bytes and gain the convenience of being able to interrupt matches and still have the data file updated. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Data bug fixed, and the pattern matcher is coming. --<a href="robowiki?Dil" class=wikipagelink>Dil</a>
+<p>
+if you want smaller code use robocode.util.Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>() to normalize your angles -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=MicroCatbert's_Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=MicroCatbert's_Code">View other revisions</a><br>Last edited July 13, 2003 17:17 EST by <a href="robowiki?Dil" title="ID 1503 from 216-99-213-225.dsl.aracnet.com">Dil</a> <a href="robowiki?action=browse&diff=1&id=MicroCatbert's_Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>VirtualGuns/CodeSnippets - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Virtual, Guns, Code, Snippets'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/CodeSnippets">VirtualGuns/CodeSnippets</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H4>Segmented <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> </H4>
+
+by <a href="robowiki?Stelokim" class=wikipagelink>Stelokim</a>. Excerpted from Moojuk<a href="robowiki?action=edit&id=Moojuk" class=wikipageedit>?</a>.
+Credits: <a href="robowiki?GFTargetingBot" class=wikipagelink>GFTargetingBot</a>
+<p>
+<pre>
+...
+			VirtualBullets vb = new VirtualBullets(this);
+			vb.gunLocation = new Point2D.Double(getX(), getY());
+			VirtualBullets.targetLocation = (Point2D.Double) GFTUtils.project(vb.gunLocation, absBearing, enemyDistance);
+			vb.bulletPower = bulletPower;
+			vb.setSegmentations(enemyDistance, enemyVelocity, lastEnemyVelocity);
+			vb.bearing[0] = patternMatchedBearing1(eX, eY, bulletPower, enemyLog1, bestIndex(enemyLog1), e.getHeadingRadians(), enemyVelocity);
+			vb.bearing[1] = wave.bearing + wave.mostVisitedBearingOffset();
+			vb.bearing[2] = circularBearing(eX, eY, enemyVelocity, bulletPower, e.getHeadingRadians(), e.getHeadingRadians() - lastEnemyHeading);
+			vb.bearing[3] = absBearing;
+			vb.bearing[4] = absBearing + 2.0 * (Math.random() - 0.5) * wave.MAX_ESCAPE_ANGLE;
+//			vb.bearing[5] = patternMatchedBearing1(eX, eY, bulletPower, enemyLog1, bestIndex(enemyLog1), e.getHeadingRadians(), enemyVelocity);
+//			vb.bearing[6] = wave.bearing + wave.worstVisitedBearingOffset();
+
+//			if (getGunHeat() == 0)
+			addCustomEvent(vb);
+			int bestGun = vb.bestGun();
+			out.println(bestGun);
+
+			for (int i = 0; i &lt; VirtualBullets.GUN_INDEXES; i++) {
+				out.print(i + " ");
+				switch (i) {
+					case 0: out.print("PM "); break;
+					case 1: out.print("GF "); break;
+					case 2: out.print("CT "); break;
+					case 3: out.print("HT "); break;
+					case 4: out.print("RT "); break;
+//					case 5: out.print("PM1"); break;
+//					case 6: out.print("AS"); break;
+				}
+				out.print(" " + vb.buffer[i]);
+				out.println(i == bestGun ? " *" : "");
+			}
+								
+			double angle = vb.bearing[bestGun];
+			setTurnGunRightRadians(Utils.normalRelativeAngle(angle - getGunHeadingRadians()));
+...
+
+
+    static class VirtualBullets extends Condition {
+		static final int GUN_INDEXES = 5; // change this accordingly
+    	private static final double MAX_DISTANCE = 900;
+    	private static final int DISTANCE_INDEXES = 5;
+    	private static final int VELOCITY_INDEXES = 5;
+		
+    	static Point2D.Double targetLocation;
+
+    	double bulletPower;
+    	Point2D.Double gunLocation;
+    	double[] bearing = new double[GUN_INDEXES];
+
+    	private AdvancedRobot robot;
+    	private double distanceTraveled;
+
+		static int[][][][] statBuffers = new int[DISTANCE_INDEXES][VELOCITY_INDEXES][VELOCITY_INDEXES][GUN_INDEXES];
+    	private int[] buffer;
+		    	
+    	VirtualBullets(AdvancedRobot _robot) {
+    		this.robot = _robot;
+    	}
+    	
+    	public boolean test() {
+    		advance();
+    		if (hasArrived()) {
+				for (int gun = 0; gun &lt; GUN_INDEXES; gun++) {
+					double x = gunLocation.x + distanceTraveled * Math.sin(bearing[gun]);
+					double y = gunLocation.y + distanceTraveled * Math.cos(bearing[gun]);
+					if (Math.abs(x - targetLocation.x) &lt;= 18 &amp;&amp; Math.abs(y - targetLocation.y) &lt;= 18) {
+						buffer[gun]++;
+					}
+				}		
+    			robot.removeCustomEvent(this);
+    		}
+    		return false;
+    	}
+
+    	void setSegmentations(double distance, double velocity, double lastVelocity) {
+    		int distanceIndex = (int)(distance / (MAX_DISTANCE / DISTANCE_INDEXES));
+    		int velocityIndex = (int)Math.abs(velocity / 2);
+    		int lastVelocityIndex = (int)Math.abs(lastVelocity / 2);
+    		buffer = statBuffers[distanceIndex][velocityIndex][lastVelocityIndex];
+    	}
+
+    	private void advance() {
+    		distanceTraveled += (20.0 - 3.0 * bulletPower);
+    	}
+
+    	private boolean hasArrived() {
+    		return distanceTraveled &gt; gunLocation.distance(targetLocation) - 18;
+    	}
+
+		private int bestGun() {
+			int result = 0;
+			for (int i = 0; i &lt; GUN_INDEXES; i++) {
+				if (buffer[i] &gt; buffer[result]) {
+					result = i;
+				}
+			}
+			return result;
+		}
+
+		private int worstGun() {
+			int result = 0;
+			for (int i = 0; i &lt; GUN_INDEXES; i++) {
+				if (buffer[i] &lt; buffer[result]) {
+					result = i;
+				}
+			}
+			return result;
+		}	
+    	
+    }
+</pre>
+<hr noshade class=wikiline size=1>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=VirtualGuns/CodeSnippets" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=VirtualGuns/CodeSnippets">View other revisions</a><br>Last edited February 16, 2007 1:50 EST by <a href="robowiki?Stelokim" title="ID 9056 from 121.133.34.190">Stelokim</a> <a href="robowiki?action=browse&diff=1&id=VirtualGuns/CodeSnippets">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>PureAggression - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Pure, Aggression'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=PureAggression">PureAggression</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><hr noshade class=wikiline size=1>
+<H2><a href="robowiki?PureAggression" class=wikipagelink>PureAggression</a></H2>
+
+I hope it can live up to it's name.
+<hr noshade class=wikiline size=1>
+<H4><a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a></H4>
+
+<hr noshade class=wikiline size=1>
+<H4>Extends</H4>
+
+<a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>, I just couldn't make any sense out of how to make a Robot...
+<p>
+<hr noshade class=wikiline size=1>
+<H4>What's special about it?</H4>
+
+Not much.
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=3421">http://www.robocoderepository.com/BotDetail.jsp?id=3421</a>
+<p>
+<hr noshade class=wikiline size=1>
+<H4>How competitive is it?</H4>
+
+It's getting better, debuted at 442.  Then I added a crappy linear projection piece, and extended the range of the gun a little, and used the linear projection to cut the corners when chasing people down to ram them.  That jumped it up to 421 or so, but the projection would get caught in an infinite loop all the time, on my local battles it said it would enter no score, don't know how the rumble would handle it.  But I just got that fixed, re-entered it, and now it's sitting at 368/567.
+<hr noshade class=wikiline size=1>
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+It now uses linear projection for it's movement, it finds a collision point (in time and space) if the enemy stays on it's current course at it's current speed, and heads for that point, readjusting the projection every turn.  I think of it as cutting corners, if I was behind Walls, chasing it up the right side, and then it turned the corner, I should be able to smash him against the top, rather than chasing behind him across the top.
+<p>
+I just made a little scaled down constraint programming system for figuring the turns.  I pass the priorities between robot, gun, and radar to the constructor, then I can just pass in the effective turns I'd like to make, and it gives me back the turns I should make i.e.  if radar is the highest priority, and I pass in (radar: 83, gun: -14, robot: -6), I get back out (radar: 45, gun: 20, robot: 10) for effective turns of (radar: 75, gun: 30, robot: 10) which is not what the gun and robot wanted to do... but that's what the priorities were.  If someone has some simple way of doing this kind of thing, I wouldn't mind hearing about it, there's a bit of processing involved with this way... propagating constraints and domain reductions around and such.
+<p>
+The reason I separated it out from the run() of the robot is that I'd like to incorporate the reverse of direction when it makes sense, and the coasting at near (but not equal to) zero, for the acceleration boost.  As well as, even later, when to slow down to turn sharper...  I needed a place for all that to live.  Not complex choices about where on the field to move, just simple mechanical type choices.
+<hr noshade class=wikiline size=1>
+<p>
+<H4>How does it fire?</H4>
+
+It fires power 3's at fairly close range, limiting the firepower only to try to finish with a ram, but if near death (&lt; 16.0) it fires to kill.  It figures a collision point for the bullet, same as for a ram and fires at the angle to get it there.  It aims for the center of the bot, I haven't worked in the dimensions of the bot yet.  To keep it from running itself out of energy, it only fires if it would hit within 12 turns if the enemy stayed on course, that seems like it's pushing it to me.
+<hr noshade class=wikiline size=1>
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+It uses the "soak up punishment" dodging scheme at the moment, that's a really easy one to program!
+<hr noshade class=wikiline size=1>
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+<a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> only for now.
+<hr noshade class=wikiline size=1>
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+Nothing.
+<hr noshade class=wikiline size=1>
+<p>
+<H4>Where did you get the name?</H4>
+
+From the strategy...  I want to make a nice elegant, intelligent bot, with very good defense... but I think that will take a long time.
+Eventually I would have to start adding the offense anyway.  I thought I could get something out relatively fast at the other end of the spectrum.  (Dumb and brutal...)
+<hr noshade class=wikiline size=1>
+<p>
+<H4>What's next for your robot?</H4>
+
+Probably some rudimentary dodging, and the guts to fire from range, and some rotational projection...  I think I will probably keep a history of enemy positions and velocities, and project with an average of the most recent turns, equal to the number of turns it will take for the bullet to hit the projected point.
+<hr noshade class=wikiline size=1>
+<p>
+<H4>Comments, questions, feedback:</H4>
+
+<hr noshade class=wikiline size=1>
+For future refinements, you may want to investigate the <a href="robowiki?RamBots" class=wikipagelink>RamBots</a> and <a href="robowiki?RambotChallenge2K6" class=wikipagelink>RambotChallenge2K6</a> pages, and see how its kin approach this tactic. -- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin</a>
+<p>
+There is one way of defending against this type of attack - <a href="robowiki?PerpendicularMovement" class=wikipagelink>PerpendicularMovement</a>. The trick to dodging a straight-on rambot is to move perpendicular and orbit it. Effectively, you wait for it to get close, then sidestep out of the way. So basically, any <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> bot or anything using the <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a> will kill the bot you are proposing. ;-) Consider looking at <a href="robowiki?GrubbmThree" class=wikipagelink>GrubbmThree</a> for a rambot that doesn't die easily. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<p>
+I knew there might be some refinements in the close quarters movement necessary... but if I just slow down... then I can turn and pursue quite easily, and if they are standing still, then I should be able to shoot them quite a bit...  Actually I'm glad to hear, I pretty much assumed, but I'm glad to have another confirmation that <a href="robowiki?RamBots" class=wikipagelink>RamBots</a> are not as tough as they might seem.  That means there will be many challenges to come.  What is the highest ranking <a href="robowiki?RamBot" class=wikipagelink>RamBot</a>?  Or are they even competitive at all? --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a> 
+<p>
+The highest one I can name off the top of my head is <a href="robowiki?GrubbmThree" class=wikipagelink>GrubbmThree</a>, which is ranked #226. So no, they aren't really competitive. If you want a good start for a movement, you can get a basic <a href="robowiki?PerpendicularMovement" class=wikipagelink>PerpendicularMovement</a> just by adding Math.PI/2 (or 90, if you are using degrees) to your setTurnXXX() line. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<p>
+The best one to come along was KC's <a href="robowiki?MaxRisk" class=wikipagelink>MaxRisk</a>.  He withdrew it from the rumble but the rumble has a long memory: ( <a rel="nofollow" href="http://rumble.fervir.com/rumble/RatingDetails?game=roborumble&amp;name=kc.micro.rammer.MaxRisk%200.6">http://rumble.fervir.com/rumble/RatingDetails?game=roborumble&amp;name=kc.micro.rammer.MaxRisk%200.6</a> )  1641 rating is pretty solid, given an approximate average of 1600 across the rumble.  The top bots really really hate rambots, because they tend to be problem bots for them, draging their rating down. -- Martin
+<hr noshade class=wikiline size=1>
+I've got my gun / radar / robot turning all working together now, and a rudimentary chase'em down movement in place, I notice that when I merely use setAhead(8.0) each turn that my robot only moves at a velocity of 4.0...  Does anyone know the reason for this?  When I use setAhead(16.0) it's velocity goes up to 7.0...  So I've been using setAhead(1000.0) so that it will just go the full 8.0.  Do most people just do something like that, and use setMaxVelocity<a href="robowiki?action=edit&id=MaxVelocity" class=wikipageedit>?</a>() when they want to slow down? --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<p>
+<UL >
+<li>setAhead(8.0) tells the bot to move 8 units ahead and stop.  If it moved at velocity 8.0, it would overshoot the mark by 12 units because it can't brake instantly.  Let's say you were at a stop and told it to move ahead 8.  It would accelerate to a velocity of 1 and move one unit.  Then it would accelerate to 2 and move 2 units.  Then 3 and 3 units.  Then it would slow to 2 and move the final 2 units.  Then it would slow to 0.  If you were already moving at a velocity between 3 and 6, it would set a velocity of 4, then 2, then 2 again, then 0.  I've written an adapter that basically tells it to move forward or backward 64 units (arbitrary) and then hold back the velocity using setMaxVelocity<a href="robowiki?action=edit&id=MaxVelocity" class=wikipageedit>?</a>.  'setAhead' is one of the weaker interfaces, in my opinion. -- Martin
+</UL>
+<p>
+<UL >
+<UL >
+<li> I couldn't of explained it any better Martin. Robocode is very smart in how it does things, setAhead(8), means to literally move forward 8 pixels. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+</UL>
+</UL>
+<p>
+<UL >
+<li>You can actually use this to your advantage. If the enemy has moved to the side, and you have a large adjustment to make to your heading, you can call something like setAhead(30*Math.abs(Math.cos(headingChange))); Because cos is 1 when headingChange is 0, you will move full speed when going straight, but slow down when you need to turn. This can help, because you can turn sharper angles when you are going slower. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+<hr noshade class=wikiline size=1>
+<p>
+It's not perfect, but it never will be.  It stomps the sample bots!  I will have it in the Rumble as soon as I can figure out how to get it in there.  :) --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<hr noshade class=wikiline size=1>
+I've got an official rank, that seems to move around a bit in the low 440's.  Disappointing, it was inevitable I suppose, the realist in me expected this, and is actually quite satisfied, the optimist however is crushed.  :)  The twentieth percentile, it's a good baseline, lots of room for improvement.  Now I can see how smallish tweaks affect overall performance... --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<p>
+One quite obvious improvement you can make, is firing at a greater distance than point-blank only. A lot of bots move away (or at least move) when you get close, so there are only a few moments that you actually ram the opponent. Starting to fire (maybe somewhat lighter bullets) from a distance of lets say 200 pixels would increase your bulletdamage done and therefor your score. Remember that 36 pixels is as close you can get (2 times half botwidth). I found it a good way to start simple and understand the mechanisms of this 'game' instead of trying to fight against the best immediately. My first entrance was a lot worse than yours, so there still is hope. Good luck with your improvements!  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+One more suggestion, this time on movement. There is a very usefull piece of code to be found at <a href="robowiki?BackAsFront" class=wikipagelink>BackAsFront</a>. Short said: If your destination lies behind you, and your turnangle is more than 90 degrees, just drive backward and turn 180-turnangle degrees.   -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+I just wrote something to do just what you've said above, if it's closer to the rear, switch perspectives, an go that way...  but I think either the slowdown in transition, or the fact that it can sometimes bounce back and forth a bit when switching directions is a bit of a disadvantage, enough that it counteracts the advantage of following the more direct route...  my rating is almost identical (1 spot lower as of now with around 1500 battles...)  Does that seem reasonable?  Or would you guess I've introduced some other bugs?  --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<p>
+If <a href="robowiki?BackAsFront" class=wikipagelink>BackAsFront</a> doesn't help for a <a href="robowiki?RamBot" class=wikipagelink>RamBot</a>, then there are definitely still bugs. And since you're using linear projection for your movement, how about using it for your gun as well? Then you could also take shots (with smaller power bullets) until you get there, because your linear projection will have a better chance of hitting them. But get the bugs out before you add new features =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+<UL >
+<li> I'm using the linear projection for movement and firing both, it fires if it can hit the projected location within 12 turns...  (at the slowest bullet speed of 11, that's a range of 132), do you think I should extend the range further?  I already see many misses at that range, I don't want to run myself out of energy...  --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+</UL>
+<p>
+<UL >
+<UL >
+<li> That some of your bullets will miss is inevitable. In fact, it is 'profitable' (ie the enemy loses more energy than you) to fire if your hit rate is above 10%, and you still get more points at less than that due to bullet damage. If I were you I'd fire 2 power bullets at all other distances, and 3 power if you are closer than 150. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<UL >
+<li> I will try that tweak in isolation, and see what happens to my rating.  :)  --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+</UL>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<UL >
+<UL >
+<li> Wow, now I understand what <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a> meant when he said that was an obvious improvement, thanks Skilgannon for bringing it up again...  I put that in place, with no other changes, and apparently that was worth an 80 spot jump in the rankings... from 371 to 292  (only about 750 battles so far though) I didn't think it would be <em>that</em> kind of difference...  I will pay more attention to everyone in the future!  --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+</UL>
+</UL>
+</UL>
+</UL>
+<p>
+<UL >
+<li> I've watched many battles against all the sample bots (I've run 100 rounds with each of them), I saw no exceptions, no skipped turns, and no radar slips (I explicitly check for skips and slips and output to the robot console)...  I actually watched probably 200 battles take place, and didn't notice any behavior that looked like a bug.  What would you consider to be a bug (what should I be looking for)?  How would you suggest trying to find a bug of this nature?  Should I try downloading some of the problem bots?  Thanks for any help!  --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+</UL>
+<p>
+<UL >
+<UL >
+<li> A bug would be where, instead of backing up, your bot turned more than 90 degrees and went forward instead. Or maybe if you turned the wrong way. Give your bot a try against <a href="robowiki?RaikoNano" class=wikipagelink>RaikoNano</a>. He's one tough bot, especially his movement. The sample bots aren't a very good representation of the Rumble, IMO. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<UL >
+<li> Wow, I copied and pasted the code since it didn't seem downloadable from anywhere, that thing destroys me...  I beat it in score consistently, but it kills be every time.  --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+</UL>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<UL >
+<UL >
+<li> Very unexpected (to me at least), I put in your suggestion, power 2's all the time, and otherwise what I was doing before... power 3s, but try to kill with a ram for bonus.  It enabled me to kill <a href="robowiki?RaikoNano" class=wikipagelink>RaikoNano</a> 2/10, I was dying 10/10 before...  I'm surprised at this, learning experience I guess.  I'm playing it too tight with my energy, you have to spend energy to make energy...  :)  --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+</UL>
+</UL>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<UL >
+<UL >
+<li> After having thought about this, it makes complete sense...  I will get points for hits <em>even if I lose</em> by firing from further away...  --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+</UL>
+</UL>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<UL >
+<UL >
+<UL >
+<li> That's the nature of the scoring system. In the very early versions of Robocode, scoring was based on survival only; this was changed when a few bots were released that couldn't be hit by any form of targeting that existed at the time, and were winning without firing a bullet. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+</UL>
+</UL>
+</UL>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<UL >
+<UL >
+<UL >
+<li> Not only do you get points for hits, you also get extra energy every time your bullet hits, in fact, 3 times what the bullets power was. So firing a lot helps in more ways than one. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</UL>
+</UL>
+</UL>
+</UL>
+</UL>
+<p>
+<UL >
+<UL >
+<UL >
+<li> I don't think I have any bugs like that, but seeing my robot turn 90 degrees might be a very rare occurance, it recalculates the projections, and turns every tick...  I've never seen it run away from anything.  The worst thing I can see is that when it wants to go a direction close to perpendicular to it's heading, it sometimes oscillates 10 degrees back and forth, unable to decide between turning and going forward, or turning and going backward...  but I think that's just how the numbers work out.  --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+</UL>
+</UL>
+</UL>
+<p>
+I don't know if you've noticed, but you are 50 points below the top <a href="robowiki?RamBot" class=wikipagelink>RamBot</a>. Nice! -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<UL >
+<li>Note that the real number 1 rambot is currently not active in the rumble. To match it you need at least an additional 10 points (Just to encourage you ;-)  ). But indeed, nice improvements!  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<UL >
+<li> When you say 10 points... do you mean 10% higher score share average?  --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<li> No, I mean rumble points. <a href="robowiki?GrubbmThree" class=wikipagelink>GrubbmThree</a> has around 1630 points, <a href="robowiki?MaxRisk" class=wikipagelink>MaxRisk</a> had about 1640.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<li> Ah sorry, you were saying that I would need an additional 10 rumble points after I hypothetically overtook <em>you</em>...  lol, maybe in 2009.  I can only think of very minor tweaks to improve ramming, I think most improvement lies in the gun, and that's getting away from being a ram bot...  we'll see.  --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+</UL>
+</UL>
+<hr noshade class=wikiline size=1>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=PureAggression" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=PureAggression">View other revisions</a><br>Last edited October 8, 2007 11:10 EST by <a href="robowiki?BenHorner" title="ID 11928 from ip70-171-163-89.om.om.cox.net">BenHorner</a> <a href="robowiki?action=browse&diff=1&id=PureAggression">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

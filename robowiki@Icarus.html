@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Icarus - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Icarus'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Icarus">Icarus</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H3>A <a href="robowiki?NanoBot" class=wikipagelink>NanoBot</a> by <a href="robowiki?PEZ" class=wikipagelink>PEZ</a></H3>
+
+Probably as lousy as all my other nano attempts...
+<p>
+Download it from <a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=2353">http://www.robocoderepository.com/BotDetail.jsp?id=2353</a>
+<p>
+The random movement is quite <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> inspired. With an idiots way of doing what the <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a> does for smarter bots. The gun is semi-linear. Sometimes I use blocking calls making it do some more unpredictable things. =)
+<H4>Source</H4>
+
+<pre>
+package pez.nano;
+import robocode.*;
+import robocode.util.Utils;
+
+// This code is released under the RoboWiki Public Code Licence (RWPCL), datailed on:
+// http://robowiki.net/?RWPCL
+//
+// Icarus, by PEZ. - Something small
+// http://robowiki.net/?Icarus
+// $Id: Icarus.java,v 1.4 2004/08/25 16:51:40 peter Exp $
+
+public class Icarus extends AdvancedRobot {
+    static int direction = 7;
+    static double bulletVelocity = -3;
+    static double distance;
+    static int hits;
+
+    public void run() {
+	turnRadarRightRadians(Double.POSITIVE_INFINITY);
+    }
+
+    public void onScannedRobot(ScannedRobotEvent e) {
+	distance = e.getDistance();
+	double v = 0.6 * bulletVelocity / distance;
+	if (hits &gt; 3 &amp;&amp; Math.random() &gt; Math.pow(v, v)) {
+	    direction = -direction;
+	}
+	setAhead(direction * 15);
+	setTurnRight(normalizeDegrees(e.getBearing() + 90 - direction));
+
+        double enemyAbsoluteBearing = getHeadingRadians() + e.getBearingRadians();
+	setTurnGunRightRadians(Utils.normalRelativeAngle(enemyAbsoluteBearing - getGunHeadingRadians() + e.getVelocity() * Math.sin(e.getHeadingRadians() - enemyAbsoluteBearing) / 13.0));
+	setFire(distance &lt; 140 ? 3.0 : 1.9);
+
+	setTurnRadarLeftRadians(getRadarTurnRemaining());
+    }
+
+    public void onHitWall(HitWallEvent e) {
+	if (hits &lt; 4) {
+	    turnRight(normalizeDegrees(e.getBearing() - 100)); 
+	    ahead(100);
+	}
+	else {
+	    direction = -direction;
+	}
+    }
+
+    public void onHitByBullet(HitByBulletEvent e) {
+	bulletVelocity = e.getVelocity();
+	hits++;
+    }
+
+    double normalizeDegrees(double angle) {
+	return Math.toDegrees(Utils.normalRelativeAngle(Math.toRadians(angle)));
+    }
+}
+</pre>
+<hr noshade class=wikiline size=1>
+<H4>Comments?</H4>
+
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Icarus" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Icarus">View other revisions</a><br>Last edited August 25, 2004 16:54 EST by <a href="robowiki?PEZ" title="ID 3032 from 192.168.0.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=Icarus">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

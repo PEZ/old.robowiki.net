@@ -1,0 +1,262 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Resin - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Resin'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Resin">Resin</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H4>A silly <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> gun by <a href="robowiki?PEZ" class=wikipagelink>PEZ</a></H4>
+
+<p>
+(See <a href="robowiki?ResinRRGC" class=wikipagelink>ResinRRGC</a> for a download link).
+<p>
+The idea behind this gun is simple (but maybe not worth it anyway...). Resin fires a <a href="robowiki?Wave" class=wikipagelink>Wave</a> every tick and for each tick it takes for the wave to hit the enemy it records a pattern (at the moment the pattern is built from heading-delta and velocity). When the wave reaches the enemy the <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> that would have hit is stored in the wave. The accumulated pattern and its corresponding pattern is saved in a pattern buffer. This buffer is then searched before shooting and if there's a match the guess factor is retrieved and the gun aimed.
+<p>
+Problem is this gun can't even hit <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> reliably... Maybe someone curious will look at the code and see if the whole idea is crap or if there's a bug in the implementation. Here's the code for version 0.3:
+<p>
+<pre>
+package pez.rumble.pgun;
+import pez.rumble.utils.*;
+import robocode.*;
+import robocode.util.Utils;
+import java.util.*;
+import java.awt.geom.*;
+
+// Resin, a gun by PEZ. For CassiusClay - Sting like a bee! (A Gigant Resin bee in this case.)
+// http://robowiki.net/?CassiusClay
+//
+// This code is released under the RoboWiki Public Code Licence (RWPCL), datailed on:
+// http://robowiki.net/?RWPCL
+// (Basically it means you must keep the code public if you base any bot on it.)
+//
+// $Id: Resin.java,v 1.3 2004/07/26 22:22:51 peter Exp $
+
+public class Resin {
+    public static boolean isTC = false; // TargetingChallenge
+
+    static final double WALL_MARGIN = 18;
+    static final double MAX_DISTANCE = 900;
+    static final double MAX_BULLET_POWER = 3.0;
+    static final double BULLET_POWER = 1.91;
+
+    static Map[] patterns = new HashMap[(int)(MAX_DISTANCE / 11)];
+
+    long lastScanTime;
+    Point2D enemyLocation = new Point2D.Double();
+    double lastEnemyBearingDirection = 0.73;
+    double lastHeading;
+    double lastVelocity;
+    List waves = new ArrayList();
+
+    Rectangle2D fieldRectangle;
+    AdvancedRobot robot;
+
+    public Resin(AdvancedRobot robot) {
+	this.robot = robot;
+	fieldRectangle = PUtils.fieldRectangle(robot, WALL_MARGIN);
+	PatternWave.pattern = "";
+	if (patterns[0] == null) {
+	    for (int i = 0, n = patterns.length; i &lt; n; i++) {
+		patterns[i] = new HashMap();
+	    }
+	}
+    }
+
+    public void onScannedRobot(ScannedRobotEvent e) {
+	// common wave based PEZ gun stuff that should be extracted to other classes ...
+	double enemyDistance = e.getDistance();
+	int distanceIndex = (int)Math.min(PatternWave.DISTANCE_INDEXES - 1, (enemyDistance / (MAX_DISTANCE / PatternWave.DISTANCE_INDEXES)));
+
+	double wantedBulletPower = isTC ? MAX_BULLET_POWER : distanceIndex &gt; 0 ? BULLET_POWER : MAX_BULLET_POWER;
+	double bulletPower = wantedBulletPower;
+	if (!isTC) {
+	    bulletPower = Math.min(Math.min(e.getEnergy() / 4, robot.getEnergy() / 5), wantedBulletPower);
+	}
+	double bulletVelocity = PUtils.bulletVelocity(bulletPower);
+
+	PatternWave wave = new PatternWave(robot);
+	wave.setBulletVelocity(bulletVelocity);
+	wave.bulletPowerIndex = (int)(bulletPower / 0.65);
+	wave.distanceIndex = distanceIndex;
+	Point2D robotLocation = new Point2D.Double(robot.getX(), robot.getY());
+	wave.setGunLocation(robotLocation);
+	double enemyBearing = robot.getHeadingRadians() + e.getBearingRadians();
+	wave.setStartBearing(enemyBearing);
+	wave.setTargetLocation(enemyLocation);
+
+	double lateralVelocity = e.getVelocity() * Math.sin(e.getHeadingRadians() - enemyBearing);
+	if (e.getVelocity() != 0) {
+	    lastEnemyBearingDirection = wave.maxEscapeAngle() * PUtils.sign(lateralVelocity);
+	}
+	double bearingDirection = lastEnemyBearingDirection / (double)PatternWave.MIDDLE_FACTOR;
+	wave.setBearingDirection(bearingDirection);
+
+	enemyLocation.setLocation(PUtils.project(robotLocation, enemyBearing, enemyDistance));
+
+
+
+	long timeSinceLastScan = robot.getTime() - lastScanTime;
+	lastScanTime = robot.getTime();
+
+	//Pattern matching stuff..
+	waves.add(wave);
+	double approachVelocity = e.getVelocity() * -Math.cos(e.getHeadingRadians() - enemyBearing);
+	double headingChange = lastHeading - e.getHeading();
+	double velocity = e.getVelocity();
+	int lateralSign = lateralVelocity == 0 ? 0 : PUtils.sign(lateralVelocity);
+	int approachSign = approachVelocity == 0 ? 0 : PUtils.sign(approachVelocity);
+	for (int i = 0; i &lt; timeSinceLastScan; i++) {
+	    PatternWave.addTick((int)(headingChange / timeSinceLastScan), (int)velocity, lateralSign, approachSign);
+	}
+	int matchingGF = matchingGF();
+	lastHeading = e.getHeading();
+	lastVelocity = e.getVelocity();
+	if (PatternWave.passingWave != null &amp;&amp; waves.size() &gt; PatternWave.passingWave.age * 2 &amp;&amp; robot.getEnergy() &gt; 0) {
+	    wave.preludePattern = PatternWave.passingWave.getPattern();
+	    if (PatternWave.passingWave.preludePattern != null) {
+		addPatternGF(PatternWave.passingWave);
+	    }
+	}
+	
+	//Aim and shoot!
+	robot.setTurnGunRightRadians(Utils.normalRelativeAngle(enemyBearing - robot.getGunHeadingRadians() +
+		    bearingDirection * (matchingGF - PatternWave.MIDDLE_FACTOR)));
+	if (isTC || robot.getEnergy() &gt;= BULLET_POWER || e.getEnergy() &lt; robot.getEnergy() / 3.0 || distanceIndex &lt; 1) {
+	    robot.setFire(bulletPower);
+	}
+	if (robot.getOthers() &gt; 0 &amp;&amp; robot.getEnergy() &gt; 0) {
+	    robot.addCustomEvent(wave);
+	}
+    }
+
+    static void addPatternGF(PatternWave wave) {
+	String pattern = wave.preludePattern;
+	for (int i = 0, n = Math.min(patterns.length - 1, pattern.length()); i &lt;= n; i++) {
+	    String subPattern = pattern.substring(0, n - i);
+	    Map buffer = patterns[n - i];
+	    PatternGF pGF = (PatternGF)buffer.get(subPattern);
+	    if (pGF == null) {
+		pGF = new PatternGF();
+	    }
+	    pGF.guessFactors[wave.guessFactor]++;
+	    buffer.put(subPattern, pGF);
+	}
+    }
+
+    int matchingGF() {
+	int gf = PatternWave.MIDDLE_FACTOR;
+	if (PatternWave.passingWave != null) {
+	    String pattern = PatternWave.passingWave.getPattern();
+	    for (int i = 0, n = Math.min(patterns.length - 1, pattern.length()); i &lt;= n; i++) {
+		PatternGF pGF = (PatternGF)(patterns[n - i].get(pattern.substring(0, n - i)));
+		if (pGF != null) {
+		    gf = pGF.mostVisited();
+//System.out.println("Found match. pattern = " + pattern.substring(0, n - i));
+		    break;
+		}
+	    }
+	}
+	return gf;
+    }
+}
+
+class PatternGF {
+    String pattern;
+    int[] guessFactors = new int[PatternWave.FACTORS];
+
+    int mostVisited() {
+	int mostVisitedIndex = PatternWave.MIDDLE_FACTOR;
+	double most = guessFactors[PatternWave.MIDDLE_FACTOR];
+	for (int i = 1; i &lt; PatternWave.FACTORS; i++) {
+	    double visits = guessFactors[i];
+	    if (visits &gt; most) {
+		mostVisitedIndex = i;
+		most = visits;
+	    }
+	}
+	return mostVisitedIndex;
+    }
+}
+
+class PatternWave extends Wave {
+    static final double MAX_VELOCITY = 8;
+    static final int BULLET_POWER_INDEXES = 5;
+    static final int DISTANCE_INDEXES = 7;
+    static final int WALL_INDEXES = 4;
+    static final double WALL_INDEX_WIDTH = 5.5;
+    static final int FACTORS = 37;
+    static final int MIDDLE_FACTOR = (FACTORS - 1) / 2;
+
+    static String pattern = "";
+    static PatternWave passingWave;
+
+    String myPattern;
+    String preludePattern;
+    int bulletPowerIndex;
+    int distanceIndex;
+    int guessFactor;
+    int age = 0;
+
+    public PatternWave(AdvancedRobot robot) {
+	init(robot, FACTORS);
+    }
+    
+    public boolean test() {
+	advance(1);
+	age++;
+	if (passed(0)) {
+	    if (getRobot().getOthers() &gt; 0) {
+		guessFactor = visitingIndex();
+		passingWave = this;
+	    }
+	    getRobot().removeCustomEvent(this);
+	    myPattern = pattern.substring(pattern.length() - age);
+	}
+	return false;
+    }
+
+    String getPattern() {
+	return (char)(64 + distanceIndex) + "" + (char)(64 + bulletPowerIndex) + "" + myPattern;
+    }
+
+    static void addTick(int headingChange, int velocity, int lateralSign, int approachSign) {
+        int key = 33;
+        key += 3 * 3 * MAX_VELOCITY * 2 * headingChange;
+        key += 3 * 3 * (MAX_VELOCITY + velocity);
+        key += 3 * (1 + lateralSign);
+        key += 1 + approachSign;
+        pattern += (char)(key);
+    }
+}
+</pre>
+<p>
+The code is uncommented as always with me. But at least it's small. =) The only thing slightly tricky is that I use an array of HashMaps as pattern buffers. The maps are indexed with the pattern (a String) and the objects stored are the waves themselves. (Consumes loads of memory, yes, but I won't optimize stuff like that until I see that the gun is actually working.) The array of maps is indexed with the pattern length. This way map lookups can be made on sub patterns. Resin always tries to find a pattern matching the full current wave first but then starts matching shorter and shorter patterns.
+<p>
+Well, the gun is crap at its current. Any help or comments is truly appreciated.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+OK, so I have found a major bug now. Anyone about to give me some help might want to wait a little while until I publish a version where this bug is nailed. (The bug is about me shrinking the pattern to be matched from the wrong end.) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Now the bug should be fixed. I also changed things so the pattern includes the sign of where the enemy is going lateraly and advancing. Did this to hit <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> better, but that didn't help. <strong>This gun still can't hit <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> reliably!</strong> Also added visit counts for the guess factors. Making the gun work like a simple statistical gun when there are short pattern matches. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Hmmm, I think I have found out where this gun fails. It's fundamental. I try to match against the patterns of while the bullet is in the air... I must of course match against the patterns before the bullets are fired! Is there a punishment connected to being too stupid? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yes, your guns can't hit <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a>.  But seriously, I was about to say what you did - when I attempted a gun of this style, I found the pattern and used the projection from BFT ticks *later* as my bearing.  Or something like that. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Well, that's about what I did before fixing that first bug. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Now I've tried to match the guess_factor &lt;=&gt; pattern pairs such that the pattern before the wave was shot is paired with the guess factor that should have hit. Now I hit <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> a bit better, but I still miss loads of shots... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+The gun works fine against spinbot if you disable <a href="robowiki?ResinRRGC" class=wikipagelink>ResinRRGC</a>'s movement; are you recording the opponent's displacement relative to your bot?  --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<p>
+Hmm, I haven't noticed your observation and question until now Dummy. I had no idea it performed better against <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> if I disabled movement... However, Resin's <a href="robowiki?TargetingChallenge" class=wikipagelink>TargetingChallenge</a> score is far from good. I don't think any of my measures are really relative to my bot. Well, two of them are by definition but it's still formulas that should work if I am moving... I could be wrong though, I haven't really wrapped my mind around those formulas. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Well, you couldn't have noticed me much earlier; your reply came like 9 minutes after I posted my question! :-p --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<p>
+Ah, then you must have posted your question just after I had loaded the Changes page, because then the page where several days old. Funny coincidence. I was going to write here that I will abandon this gun. But your observation made me rethink. No I am rethinking again maybe. This gun might not have something to offer compared to the best PM guns out there anyway. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Resin" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Resin">View other revisions</a><br>Last edited July 30, 2004 21:54 EST by <a href="robowiki?PEZ" title="ID 3032 from 192.168.0.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=Resin">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

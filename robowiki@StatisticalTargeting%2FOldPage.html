@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>StatisticalTargeting/OldPage - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Statistical, Targeting, Old, Page'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/OldPage">StatisticalTargeting/OldPage</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H4>What it is</H4>
+
+A collection of <a href="robowiki?Targeting" class=wikipagelink>Targeting</a> methods/techniques that use statistics to keep track of the enemy. The first robocoder to go strictly statistical I think must have been <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a> and the statistical knight of bots is <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a>.
+<p>
+Statistical targeting is a wide concept. In it's direct sense it means you keep statistics on where the opponent most often moves after being fired at (virtually or physically). One way of collecting these statistics are <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>. Another way is <a href="robowiki?Wave" class=wikipagelink>Wave</a>'s and Mako and others uses the physical bullet. Many bots keep many targeting methods up their sleave and then use some means to see what method to use in a given situation. One way is with a PatternAnalyser<a href="robowiki?action=edit&id=PatternAnalyser" class=wikipageedit>?</a>, another a statistical approach - <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a>. <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> can be put on top of any other aiming method, if it is statistical or not, even pattern matching. Marshmallow and probably many other bots have pattern matchers in their virtial guns array.
+<p>
+Ergo, statistical targeting is not anonymous with <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> in any way. <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> is just one way of many to help a statistical gun collect its data. <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> can help a pattern matching gun as well, but I would say that in that case <a href="robowiki?Wave" class=wikipagelink>Wave</a>s are a better choice. Now and then <a href="robowiki?Wave" class=wikipagelink>Wave</a>s are said to give you an infinite number of <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>. But that's to stretch things. Maybe I'm splitting hairs here, but I would say that <a href="robowiki?Wave" class=wikipagelink>Wave</a>s allows you to not create one single virtual bullet but gives you a granularity in the results equal to creating loads of <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Statistical Targeting is basically made up of 3 parts:
+<OL >
+<li> The type of data to be gathered
+<OL >
+<li> Firing Angle
+<OL >
+<li> <a href="robowiki?LaserTargeting" class=wikipagelink>LaserTargeting</a>
+<li> <a href="robowiki?AveragedBearingOffsetTargeting" class=wikipagelink>AveragedBearingOffsetTargeting</a>
+<li> <a href="robowiki?AngularTargeting" class=wikipagelink>AngularTargeting</a>
+<li> <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>
+</OL>
+</OL>
+<li> How the data is gathered
+<OL >
+<li> <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>
+<li> <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a>
+<li> <a href="robowiki?Wave" class=wikipagelink>Wave</a>s
+</OL>
+<li> How the data is processed
+<OL >
+<li> <a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a>
+<OL >
+<li> <a href="robowiki?BestPSpace" class=wikipagelink>BestPSpace</a>
+</OL>
+</OL>
+</OL>
+-- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+<hr noshade class=wikiline size=1>
+<UL >
+<li> Possibly in this category is <a href="robowiki?BestPSpace" class=wikipagelink>BestPSpace</a>, but <a href="robowiki?Albert" class=wikipagelink>Albert</a> will possibly correct me on that.
+</UL>
+<a href="robowiki?BestPSpace" class=wikipagelink>BestPSpace</a> keeps lots of information about probability distributions, but it is not using any real information, nor making an accurate simulation (to reproduce reality), to build them, so I don't know if it belongs to this category or not.
+<p>
+<hr noshade class=wikiline size=1>
+<a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, Up above you say that Statistical Targeting is used to "keep statistics on where the opponent most often moves after being fired at." I can understand how that would have relevance to a Bot that was attempting to dodge your shot. Does this mean that a Statistical Gun is meant to be most effective vs. dodging enemies? Jekyl makes no attempt to dodge and does not re-act in any way to bullet being fired upon it yet <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> has no problem thrashing it. I am missing something here. Thanks for your patience. -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+Some bots react on your fire, some doesn't. What I do when collecting statistics is to track bullets only when I fire. That way it doesn't matter if the enemy is a dodger or not. I'm sure you could insert checks for this and maybe choose different tactics depending on if  you are against a dodger or not. I haven't tried this myself though. I'd answer your question with a "no", statistical targeting isn't specifically meant to deal with dodger. It's just that assuming everyone is a dodger simplyfies things a bit. Does this answer your question? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+With <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>, I decided to fire a virtual bullet on every scan, whether or not I fire, and this seems to work well, but possibly would be less effective on a true dodger (which is probably why he can't hit himself).  I've considered that with <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a>, I'll probably have multiple variations of this, at least one of which will fire virtual bullets every turn and one will fire virtual bullets only when I fire. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Thanks Guys. I think it is finally starting to sink in. I hope I have not bothered you too awful much. Can you tell who has finally started to develop his own gun?  I am hoping to get it into a release this weekend so it can be in next week's rumble. My last question (at least on this topic, for now =^&gt; ), once you have gathered the data how do you use it? Simply choose the bearing your stats say he is most likely to occupy, based on your segmented data, and fire there? Have I finally got it? <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+That's basically what statistical targeting is about ;-)  The beauty of the system is that it says, "if you can't make a science out of hitting them, make it an art."  It's not an 'always exact' solution for the majority of bots, but it's a great-most-of-the-time shot against pretty much everyone. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Yes, in the case of <a href="robowiki?LaserTargeting" class=wikipagelink>LaserTargeting</a> and similar systems you do just that Jim. In the case of factored targeting you check your factor for the given segment and use it. It sound a bit like you are trying a <a href="robowiki?LaserTargeting" class=wikipagelink>LaserTargeting</a> type of gun? That's a good choice I would say. A good test bot with that type of gun is <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a> since its <a href="robowiki?ShrapnelDodging" class=wikipagelink>ShrapnelDodging</a> very often brings it to the same sectors. If you can get more than 20% hit rate in the range 400-500 distances you are getting somewhere and if you can get better than 25% you have it really going. Don't worry about bothering anyone Jim. I, for one, just love trying to answer questions. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Well, actually I started with the gun from <a href="robowiki?SandboxMini" class=wikipagelink>SandboxMini</a> (imitation is the sincerest form of flattery). I am trying to understand what is happening on a macro level before I get into the details of working this gun. I am planning on putting together a <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> and WaveTargeting<a href="robowiki?action=edit&id=WaveTargeting" class=wikipageedit>?</a> gun to give me a statistical gun and a pattern gun. Thats the plan anyways. Now a thought that I have: Given that everyone is firing at some sort of spike, would it not be possible to use this to "poison" someones targeting. Everyone is trying to flatten the curve. I say why? Why not make the spike really big. Encourage a bot to shoot there. As a target, I only need to be one step ahead. If you learn to shoot at delta one (I am thinking on terms of +/- 46 degrees cut up into 9 steps from -40 to 40), I need to somehow recognize this (I was hit there) and move on to the next spot. You would continue to fire at delta one while I will be at delta two. Once you have learned delta two I would move on to delta 3. I could even try to figure out how long it took you to learn to try and intelligently step forward right as the enemy bot figured it out. I would imagine a pattern matcher may have some success at this but maybe not. I would imagine that someone has a bot that would still pick up on this (<a href="robowiki?PEZ" class=wikipagelink>PEZ</a> seemingly has a million guns so one of M's would be bound to figure it out =^&gt;) but if we keep our eye on the prize, how would that affect <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a>, Princess, Cigarette, et al? Can we as a target, use their deterministic targeting against them, and accurately predict where they are shooting and avoid it? Thoughts? <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+Of course the problem is actually creating the spike without being there long enough to be hit, i have spent a sigbificant amount of time trying to create a "multi-spiked" system but have failed miserably. It seems to me that the second you try to do this, you end up oscillating between 2 points and become pattern matcher fodder. Don't forget that regardless of the angle from you're previous position, if you sit still then the best angle is 0. Also the problem with accurately avoiding points based on where you think they are going to shoot, is that you have to know the specific firing mechanism that they are using. This is possible aginst pattern matchers, but you have to predict you're position using the same algorithm (i tried pattern matching myself and fermat still ate me alive). The other problem is that you can end up with a battlefield full of AG points to avoid and consequently you barely move (at least thats what happens to me). Having just re-read what i've written and am not sure i answered the question, but oh well...   -- <a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+I think DT will have you for lunch if you create a spike, even on purpose. I wouldn't worry too much about Marshmallow's many guns though. None of them are very good. I'll be working with them soon though to fix that. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+DT having me for lunch. Now thats something different =^&gt;. I am finalizing some changes in Jekyl for release sometime this weekend. After that I am going to give this a try. What I find encouraging is that so many people think it won't work. That means I am thinking out side the box. Unfortunately for me <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, I too am an emperist. -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+Me too. Me too. The <a href="robowiki?EmpiricResearch" class=wikipagelink>EmpiricResearch</a> page was started by me after all. I think it's cool that you are gonna try this. We can't all rush in the same direction if we are going to stand a change to take DT down. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+DT's shallow rolling guns will get you if you're poisoning his long term guns. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I think thats the case too. But for me the question is how fast does he learn? If I start dogding +1 everytime he shoots, the long term guns may not be able to pick up on it. The short term guns are a question mark. But if it takes the short term guns 3 shots to pick up on this, and I can determine that, I can just jump to +/-2 on the next shot. Both the long term guns and his short term guns should be affected as they are only as good as their previous observations. If I understand the concept, they can not predict a behavior that they have not seen. I am also curious to see if the rolling averages can be manipulated as well. Rolling averages tend to weight recent observations. Old observations are still there, they just are not as relevant. There has to be some periodicity to this as well which might be able to be manipulated. This may not prove all that effective, but something has to unseat DT. It can't be anything we have already done or we would have unseated him already. -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+But my experience is that flattened movement can be quite effective against DT. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+The shallow rolling guns are the fast learners. There is presumably one which picks up much faster than every shot, as Paul has hinted that's what gets several of the better flatteners. You're either tricking those and the longer-term guns or guess factor guns or something else in the VG array are getting you, or you're tricking the longer-term guns and the shorter-term ones are getting you. I don't believe DT's gun is something to be foiled by a simple trick. It's simply a matter of making a movement which is flat with nothing really predictable in it's nature, make the movement strong rather than trying to find a weakness in the gun. That said, I still stand by what I said in the <a href="robowiki?ProvocativeMovement" class=wikipagelink>ProvocativeMovement</a> topic. I'd like to see that bait and switch movement made, but in my mind it switches to a flattened movement quite frequently, and doesn't bait if it detects an opponent using stat targetting. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+But for the fast learning guns to catch the movement I think that the whole VG array must be fast learning so it must be possible to trick it somehow. I usually try to contaminate DT's statistics by switching to slightly different tuning factors for a few rounds. It seems to work. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Hmm, is it just me or are some of these comments pretty similar to <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>... Although this was talking about creating the spikes yourself, it still seems to cover some of the general concept, moving away from previous GFs, the vulnerability to pattern matchers, etc.  -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+<a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> is just a different technique with the same general goal in mind.  At this point, <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> is probably more thoroughly developed than <a href="robowiki?ProvocativeMovement" class=wikipagelink>ProvocativeMovement</a> or bait-and-switch. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=StatisticalTargeting/OldPage" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=StatisticalTargeting/OldPage">View other revisions</a><br>Last edited July 3, 2005 17:50 EST by <a href="robowiki?Jokester" title="ID 4853 from 24-151-76-150.dhcp.nwtn.ct.charter.com">Jokester</a> <a href="robowiki?action=browse&diff=1&id=StatisticalTargeting/OldPage">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Segmentation/Segments - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Segmentation, Segments'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Segments">Segmentation/Segments</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><strong>Segments</strong>
+<p>
+When gathering data for a statistical operation, you will segment on one or more of these variables.  Here are most of the variables that are segmented on, feel free to add variables and how to collect them to the list.
+<p>
+<UL >
+<li> VisitCount<a href="robowiki?action=edit&id=VisitCount" class=wikipageedit>?</a>: Typically <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a>, but it could be applied to whatever you wish.  You always have this segment.
+<UL >
+<li> <pre> (oldAngle-newAngle)/max_escape_angle // eg, Math.asin(max bot velocity/bullet velocity)</pre>
+</UL>
+<li> Distance: Range to the target at shot time.
+<UL >
+<li> <pre> e.getDistance() </pre>
+</UL>
+<li> Bullet Flight Time: Time from fire until the bot will be hit.
+<UL >
+<li> <pre> e.getDistance() / (20 - 3 * shotPower) </pre>
+</UL>
+<li> Bullet Power: The power of the bullet you fire with. Could be useful against wavesurfers that weight danger on power.
+<UL >
+<li> <pre> shotPower </pre>
+</UL>
+<li> Target Velocity: The targets velocity.
+<UL >
+<li> <pre> e.getVelocity() </pre>
+</UL>
+<li> Target Heading: Can either use the change in target heading or relative target heading.
+<UL >
+<li> <pre> e.getHeading() - oldHeading </pre>
+<li> <pre> e.getHeading() - (e.getBearing() + getHeading()) // abs heading - abs bearing </pre>
+</UL>
+<li> Target <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a>: The velocity perpendicular to your direction.
+<UL >
+<li> <pre> e.getVelocity() * Math.sin(e.getHeadingRadians() - (e.getBearingRadians() + getHeadingRadians())) </pre>
+</UL>
+<li> Target <a href="robowiki?AdvancingVelocity" class=wikipagelink>AdvancingVelocity</a>: The velocity parallel to your direcion.
+<UL >
+<li> <pre> e.getVelocity() * -1 * Math.cos(e.getHeadingRadians() - (e.getBearingRadians() + getHeadingRadians())) </pre>
+</UL>
+<li> Target Acceleration: If target is accelerating, constant, or decelerating. Often very useful.
+<UL >
+<li> <pre>    int accelSegment(double deltaBearing, double oldDeltaBearing) {
+        int delta = (int)(Math.round(5 * enemyDistance * (Math.abs(deltaBearing) - Math.abs(oldDeltaBearing))));
+        if (delta &lt; 0) {
+            return 0;
+        }
+        else if (delta &gt; 0) {
+            return 2;
+        }
+        return 1;
+    }</pre>
+</UL>
+<li> Near Wall: Probably the most useful. Usually split into middle, near wall, and near corner.
+<li> Move Times: Number of ticks since the velocity was last 0, since velocity changed, or since velocity was max speed. Useful against stop and go and oscillators, and many other types of movement. Some tanks, like <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a>, also make this (inversely) proportional to the enemy's distance.
+<UL >
+<li> <pre>
+if(enemyVelocity==0) moveTimes=0;  else  moveTimes++;
+moveTimesIndex = Math.min(9, moveTimes/5);
+</pre>
+</UL>
+<li> Wave Type: If data is from real or virtual bullet. Only useful if profiles match.
+</UL>
+<p>
+<p>
+<a href="robowiki?Melee" class=wikipagelink>Melee</a>
+<UL >
+<li> Antigravity Force: The magnitude of the antigravity vector acting on an enemy
+<UL >
+<li> This means calculating the antigravity for the enemy rather than for self, and segmenting on this; I had been planning something similar in another of my bots a while back, but never got around to it
+</UL>
+<li> Robots Remaining: The number of enemies remaining.
+</UL>
+<p>
+<a href="robowiki?Teams" class=wikipagelink>Teams</a>
+<UL >
+<li> Number of Teammates: The number of teammates an enemy has remaining
+<UL >
+<li> Could be very useful; droids can die when there are no radars left, and certain teams may modify their movement strategies based on this (DrunkenTeam<a href="robowiki?action=edit&id=DrunkenTeam" class=wikipageedit>?</a> comes to mind)
+</UL>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+I have a question about the calculation of <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a> and <a href="robowiki?AdvancingVelocity" class=wikipagelink>AdvancingVelocity</a>. This page says to multiply the velocity by the sin and cos, respectively, of this angle:
+<pre>
+(e.getHeadingRadians() - e.getBearingRadians() + getHeadingRadians())
+</pre>
+But it seems to me it should be this:
+<pre>
+(Math.PI - (e.getHeadingRadians() - (e.getBearingRadians() + getHeadingRadians()))
+</pre>
+Let's take two example situations. The opponent is directly above me, and we're both facing up (zero radians). The first solution gives 0 (sin=0, cos=1), the second gives Pi (sin=0, cos=-1). Clearly they are both right for the <a href="robowiki?LateralVelocity" class=wikipagelink>LateralVelocity</a>, but the first gives them a positive <a href="robowiki?AdvancingVelocity" class=wikipagelink>AdvancingVelocity</a> while the second gives a negative. Second example: we're in the same positions, but now my heading is Pi/4 (45 degrees). The first equation now calculates to (0 - (-Pi/4) + Pi/4) = Pi/2 (sin=1, cos=0), while the second calculates to (Pi - (0 - (Pi/4 - Pi/4))) = Pi (sin=0, cos=-1); the same as it did in the first situation. I see no way they should be 100% lateral and 0% advancing in this situation.
+<p>
+The "Math.Pi - ..." thing could be dropped if positive advancing = moving away from you, but it sounds like the opposite of that. Could somebody please just confirm to me that my assessment is correct? I'm pretty new to Robocode, and I'm afraid I'm just misunderstanding something here... Thanks. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Take another look at <a href="robowiki?AdvancingVelocity" class=wikipagelink>AdvancingVelocity</a>:
+<pre>
+double advancingvelocity = -Math.cos(e.getHeadingRadians()-absbearing)*e.getVelocity();
+</pre>
+Note you make Math.cos(angle) negative to get the <a href="robowiki?AdvancingVelocity" class=wikipagelink>AdvancingVelocity</a> vector. Hope that helps. --<a href="robowiki?Corbos" class=wikipagelink>Corbos</a>
+<p>
+Yes, now I see that... Thanks. This means that I am looking at it correctly. It was still wrong on this page, though, as the last two pieces of the "angle" expression would need parens to be subtracing the absolute bearing. I'll go ahead and edit them here... -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I believe I fixed the formula for relative heading, but I wouldn't mind somebody double checking it ;) (This page has been around a while...) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Segmentation" class=wikipagelink>Segmentation</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Segmentation/Segments" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Segmentation/Segments">View other revisions</a><br>Last edited February 8, 2006 5:02 EST by <a href="robowiki?Voidious" title="ID 5554 from resnet216-234.resnet.buffalo.edu">Voidious</a> <a href="robowiki?action=browse&diff=1&id=Segmentation/Segments">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

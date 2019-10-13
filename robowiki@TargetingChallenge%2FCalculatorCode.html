@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>TargetingChallenge/CalculatorCode - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Targeting, Challenge, Calculator, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/CalculatorCode">TargetingChallenge/CalculatorCode</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?TargetingChallenge" class=wikipagelink>TargetingChallenge</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Since this is a code sharing wiki here's the code for the TCCalc CGI script. It's just a quick hack and doesn't show how my coding principles work. =) It's good to have the code public for when there's need to add features to it and I might need help with that or ironing out bugs. Please feel free to use the code if you find it useful for any automation of your calculations on <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a> results. Of course, if you do that, feel free to host the resulting CGI on the wiki. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<pre>
+#!/usr/bin/perl -w
+use CGI::Carp qw(fatalsToBrowser warningsToBrowser);
+use strict;
+use XML::DOM;
+use CGI qw/:standard/;
+
+print header,
+start_html('TC Calculator'),
+h1('A TC Calculator'),
+start_multipart_form,
+table(
+Tr(td('RoboLeague battle file'), td(filefield('uploaded_file', '', 50))),
+Tr(td('Author'), td(textfield('author')))),
+submit,
+end_form,
+hr,
+"\n\n";
+
+if (param('uploaded_file')) {
+    my $author = param('author');
+    my $file = upload('uploaded_file');
+    my @bots = ('SandboxDT 1.91',
+		'AspidMovement 1.0',
+		'TheArtOfWar 1.2TC',
+		'Sparrow 2.5TC',
+		'Cigaret 1.31TC',
+		'Tron 2.01',
+		'Fhqwhgads 1.1TC',
+		'HTTC 1.0',
+		'Yngwie 1.0',
+		'FunkyChickenTC 1.0');
+    my %scores;
+    my $parser = new XML::DOM::Parser;
+    my $document;
+    my @file = &lt;$file&gt;;
+    $document = $parser-&gt;parse(join("\n", @file));
+    my $league = $document-&gt;getElementsByTagName('LEAGUE')-&gt;item(0);
+    my $rounds = $league-&gt;getAttribute('rounds_per_grouping');
+    my $challenger = $league-&gt;getAttribute('focused_competitor_id');
+    my ($challengerName, $version) = ($challenger =~ m/([^ ]+) (.*)/);
+    my $seasons = 0;
+    my @seasonTotals;
+    foreach my $season ($document-&gt;getElementsByTagName('SEASON')) {
+	$seasons++;
+	foreach my $grouping ($season-&gt;getElementsByTagName('GROUPING')) {
+	    my ($bot, $score);
+	    foreach my $results ($grouping-&gt;getElementsByTagName('RESULTS')) {
+		if ($results-&gt;getAttribute('id') eq $challenger) {
+		    $score = $results-&gt;getAttribute('bullet_damage');
+		}
+		else {
+		    $bot = $results-&gt;getAttribute('id');
+		    if ($bot eq 'Tron 2.01TC') {
+			$bot = 'Tron 2.01';
+		    }
+		}
+	    }
+	    $scores{$bot} = $score;
+	    $scores{$bot . '-summary'} += $score;
+	}
+	print "Season: " . $season-&gt;getAttribute('number') . br();
+	my $total_score;
+	print '| [[' . $challengerName . ']] ' . $version . ' | [[' . $author . ']] | ';
+	foreach my $bot (@bots) {
+	    my $score = 100 * $scores{$bot} / ($rounds * 100);
+	    print sprintf("%.2f", $score) . ' | '; 
+	    $total_score += $score;
+	}
+	print "'''" . sprintf("%.2f", $total_score / @bots) . "''' | " . br() . "\n";
+	push @seasonTotals, $total_score;
+    }
+    $document-&gt;dispose();
+
+    if ($seasons &gt; 1) {
+	print br() . 'Average:' . br();
+	my $total_score = 0;
+	print '| [[' . $challengerName . ']] ' . $version . ' | [[' . $author . ']] | ';
+	foreach my $bot (@bots) {
+	    my $score = (100 * $scores{$bot . '-summary'} / ($rounds * 100)) / $seasons;
+	    print sprintf("%.2f", $score) . ' | '; 
+	    $total_score += $score;
+	}
+	my $sumDiffSq = 0;
+	for (my $i = 0; $i &lt; $seasons; $i++) {
+	    $sumDiffSq += (($total_score / @bots) - ($seasonTotals[$i] / @bots)) ** 2;
+	}
+	my $sd = sqrt($sumDiffSq / ($seasons - 1));
+	my $confidenceLevel = $sd / sqrt($seasons);
+	print "'''" . sprintf("%.2f", $total_score / @bots) . "''' | " . "\n" . br() . br() .
+	    $seasons .  " seasons, confidence interval = " . sprintf("%.3f", $confidenceLevel) . br() . "\n";
+    }
+}
+
+print end_html();
+</pre>
+<hr noshade class=wikiline size=1>
+<H4>Comments or questions welcome</H4>
+
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?TargetingChallenge" class=wikipagelink>TargetingChallenge</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=TargetingChallenge/CalculatorCode" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=TargetingChallenge/CalculatorCode">View other revisions</a><br>Last edited November 27, 2003 12:08 EST by <a href="robowiki?PEZ" title="ID 1836 from 212.75.87.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=TargetingChallenge/CalculatorCode">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

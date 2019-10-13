@@ -1,0 +1,327 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Radar/Old - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Radar, Old'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Old">Radar/Old</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Radar" class=wikipagelink>Radar</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><hr noshade class=wikiline size=1>
+If you're out for a good 1v1 radar which still works in melee, wants to save time and are not building a <a href="robowiki?NanoBot" class=wikipagelink>NanoBot</a>. Check out <a href="robowiki?Radar/RadarBot" class=wikipagelink>/RadarBot</a>. It's the radar from <a href="robowiki?SnippetBot" class=wikipagelink>SnippetBot</a> mangled through my coding style. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+I'm in no way an expert in <a href="robowiki?Robocode" class=wikipagelink>Robocode</a>, but since I've got radar sweeps to work reasonably well in <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> I might at least start the page about this important part of the game. When I first started out with Robocode I was happy just spinning the radar around and around. But I soon found out that it was the intelligence gathered by the scanner that meant everything for everything else I wanted to do with the robot. I first thought out a very complicated and lousy scheeme that I rather not want to think about any longer. Then I read this excellent article about <a rel="nofollow" href="http://www-106.ibm.com/developerworks/library/j-radar.html">[effective radar sweeps]</a> and started to try implement something along those lines in my robot. Basicly it was something like:
+<UL >
+<li> Check the bearing to all known enemies
+<li> Send the radar in the direction, and a bit past, the enemy to which you haeve the largest bearing
+</UL>
+If you don't have a recent bearing info on all enemies on the battle field you do a full sweep instead. <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> already had a collection of Enemies which seemed an apropriate place to put a function like this. Today I decided to go for a simpler approach. I just:
+<UL >
+<li> Send the radar in the direction, and a bit past, of the enemy of which I have the oldest intelligence gathered.
+</UL>
+Here's the function:
+<pre>
+double getRadarSweepTurn(double direction) {
+    if (numRecent == robot.getOthers() &amp;&amp; oldestEnemy != null) {
+        double radarTurn = oldestEnemy.getAbsoluteBearing() - robot.getRadarHeading();
+        return Rutils.normalRelativeAngle(radarTurn +
+            Rutils.sign(radarTurn) * Math.min(Math.abs(oldestEnemy.getAbsoluteBearingDelta()) * 5, 22.5));
+    }
+    else {
+        return 180 * direction;
+    }
+}
+</pre>
+The line containing the magic number 22.5 makes sure that if I have a small bearingDelta to the oldestEnemy I go shortly past it and if the bearingDelta is large I go at least 22.5 degrees past it. This magic number was explained in that article I mentioned above as being half the distance the radar travels in one tick. It works, so I have accepted it. =)
+In the beginning of each round (id est; in the beginning of the run() method, before the while (true) loop) I register a RadarTurnCompleteCondition custom event which executes the following code:
+<pre>
+double sweepTurn = school.getRadarSweepTurn(radarDirection);
+setTurnRadarRight(sweepTurn);
+radarDirection = Math.sign(sweepTurn);
+</pre>
+"school" being the school of Enemies. If you're even considering competing in <a href="robowiki?Melee" class=wikipagelink>Melee</a> battles I guess you'll eventually end up with a collection like that anyway. This radar management works quite OK in <a href="robowiki?Melee" class=wikipagelink>Melee</a> battle as far as I can judge and it isn't all that bad in <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> battle either. Though you might want to experiment with drastically shrinking that magic number 22.5 when you have only one enemy. <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> doesn't do that. It uses a completely different, and even simpler, management of the radar in <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> situations.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+By <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>:
+<p>
+As for radar, yeah I scan the opponent every tick in duels. Turn on visible
+scan arcs and you'll see Duelist goes back and forth in a tiny arc across
+the opponent. Here's my radar code. You're free to use it but you'll have to
+adapt quite a bit. However it should all be legible - I like big fat
+function names that tell me EXACTLY what the function does. :-P
+<pre>
+double scan() {
+    double radarOffset;
+    Enemy target = environment.getTarget();
+
+    double scanArcWidth = .05;
+
+    if (me.getTime() - target.getLastScannedTime() &gt; 8){ //Scan out of date, sweep radar in full circle
+        return QUARTERCIRCLE;
+    }
+
+    //Find angle to move radar so that it points directly at the enemy
+    radarOffset = angularDifferenceBetween(me.getRadarHeading(),me.getAbsoluteAngleTo(environment.getTarget()));
+
+    //Move radar so it sweeps a little past him.
+    if (radarOffset &lt; 0)
+
+        radarOffset -= scanArcWidth;
+    else
+        radarOffset += scanArcWidth;
+
+    return radarOffset;
+}
+</pre>
+<p>
+In case it isn't clear, here's what the variables and functions are:
+<UL >
+<li> radarOffset: How much we should turn the radar on this turn.
+<li> scanArcWidth: How wide the scan ard should be. I use a narrow one because I think it looks cooler but it makes no difference in 1-v-1.
+<li> Enemy: a class used to represent the enemy. "target" is an instance of enemy with our current target.
+<li> QUARTERCIRCLE: a constant representing a quarter of a circle.
+<li> angularDifferenceBetween(double a, double b): the shortest way to turn from angle "a" to angle "b"
+<li> getAbsoluteAngleTo(Enemy e): The angle to our enemy, NOT relative to our current heading. Note that when you do ScannedRobotEvent.getBearing() the number is relative to your current heading, so you need to adjust for this...
+</UL>
+<p>
+<p>
+If you've looked at <a href="robowiki?SnippetBot" class=wikipagelink>SnippetBot</a> by Alisdair Owens, this should look familiar,
+except that he uses radians and I use degrees.
+<hr noshade class=wikiline size=1>
+Here's the current <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> radar of Marshmallow (inside on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>()):
+<pre>
+if (isOneOnOne) {
+    setTurnRadarRight(RUtils.normalRelativeAngle(getHeading() + e.getBearing() - getRadarHeading()) * 1.6);
+}
+</pre>
+Works pretty well, but at times it the radar "slips" off of the enemy. I'd be grateful to anyone who can help in minimizing that, my pattern matcher is sensitive to these glitches. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+The one for Aspid is like follows:
+<pre>
+ setTurnRadarRightRadians(Math.sin((targetBearing=e.getBearingRadians() + getHeadingRadians()) - getRadarHeadingRadians())*1.5);
+</pre>
+I took the idea of using Math.sin() from Duelist bots. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+I've seen many bot's referring to that Duelist radar. What is the rationale behind using Math.sin like this? I'm too thick to understand what's going on... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+x = Math.asin(Math.sin(x)) is a well-known way to normalize an angle in Minibots. It will find the equivalent angle between -pi/2 and pi/2. For example, 6 radians becomes -.28... Radians. So a basic radar would be 
+<p>
+set<a href="robowiki?TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>(Math.asin(Math.sin(e.getBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a>() + get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>() - getRadarHeadingRadians<a href="robowiki?action=edit&id=RadarHeadingRadians" class=wikipageedit>?</a>())).
+<p>
+What I did was drop the Math.asin() since for angles close to 0, sin(x) is approximately equal to x. Since the angle to the enemy  is roughly 0, Math.sin(x) alone is close enough to the correct normalized angle to work. If you then multiply this by a number, you're having the radar sweep past the target, so that on the next turn it will sweep back, and so on. Multiplying by less than two will give a scan arc that gets smaller and smaller (with both bots stationary), equal to 2 will give a constant size scan arc, and larger than two will give a scan arc that gets larger and larger, up to the limit of 45 degrees per tick. I use 3, which makes the scan arc get larger over time, and makes the arc wide enough that I don't need to use  set<a href="robowiki?AdjustRadarForGunTurn" class=wikipagelink>AdjustRadarForGunTurn</a>(true), which costs 5 bytes. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<hr noshade class=wikiline size=1>
+Hrm, quick radar question. An upcoming megabot of mine does this logic for it's radar mangement in melee:
+1) Find the least up to date opponent
+2) Determine if his position is so out of date that it's useless, if so, spin, if not, be intelligent (the spinning condition here practically never happens in practice)
+3) If the position is reasonable, spin to 22.5 degrees past it.
+<p>
+The problem: In doing this, if the robots fill more than 180 degrees of arc, it does 360 spins. The reason behind this is, if you spin 200 degrees, the oldest scan is at the start of that 200 degrees, and it's faster to spin to it 160 than 200 degrees. However, for that one tick gain on the oldest scan I'm losing all the intermediary scans of going back along that same arc, instead it's taking a shortcut and scanning wall.
+<p>
+The problem is figuring out if it's desirable to get that oldest scan up to date that one tick faster, I'm not sure if it is or not and would appreciate comments. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+The tactic used by most (I believe) for melee radar scans is to keep track of how many robots you have scanned in this sweep, and once that number == getOthers(), then you sweep back.  This is more efficient than 360-degree sweeps (in every case I think), and should minimize the total time between scans for all bots, though it will not minimize the individual scan times for each bot.  If you need more frequent scans of your target than that, I'm sure you can come up with a tradeoff of some kind.  My bot-in-development needs so much information that I haven't even tried melee at all yet because of the difficulty of getting enough data.  -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+Not quite what I was getting at. As it is minimizes both individual and total scan times, whenever you have less than 180 degrees of arc filled (often since the center is a bad place &lt;tm&gt;). But there are cases when I get caught somewhere in the middle and surrounded, in which case it forces itself to do 360 sweeps rather than sweeping just the arc with bots in it. So it'll minimize the wait time for the oldest bot, but not minimize the overall scan times. I'm wondering if I should stick with this or look into changing that. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Maybe we're just not understanding each other, but it seems to me that the method I described should solve your problem.  With it, you will scan the smallest possible arc that contains all other bots.  -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+Keeping track of how many bots you have scanned, and reversing radar rotation when number == getOthers won't necessarily get you smallest possible arc, but it's always less than 360 degrees, and it is simple.<br>
+I encountered two problems with this type of radar-control:
+1) There is a possibility that you count the same bot twice in one sweep:
+<p>
+<img src="http://kcl.kwokkie.net/klli87/images/sweep.gif">
+<br><small>(images edited with MS-Paint)</small>
+<p>
+2) If your bot moves near corners often, there is a possibility that there are bots outside your scan-range (in a 1000x1000 field), as your maximum scanrange is 1200 IIRC. Thus making the radar revers sometime later  -- <a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<p>
+Though 2) is a very valid point, 1) can be overcome by a HashMap<a href="robowiki?action=edit&id=HashMap" class=wikipageedit>?</a> of robot names to booleans (or something similar), and only incrementing "robotsScanned" if you haven't scanned the bot already in this sweep. -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+I solved 1) by adding names of scanned Bots to an <a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a> :-)<br>
+2) can be overcome as well... I do that by keeping track of a timer... reverse if you sweeped 360 degrees or more. --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<p>
+I think most radar schemes suffer performance loss when robots fall out of range, because it's so difficult to say for sure. It would require more code than is really worth it (or this is my feeling on the matter, anyway) for this obscure case, unless you've got a megabot with everything else perfect.
+<p>
+You're right, though, we crossed lines somewhere, let me rephrase my question: Currently I minimize individual and total scan times when bots don't end up on opposite sides or in certain other odd configurations, however, in these cases I minimize individual scan times. The question is an opinion poll: Is this preferable to a method like the one you describe where total scan times for the enemy school is minimized in all cases, and with no regard for an oldest scan lagging around a few extra ticks? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I guess that depends on a lot of factors: For example, wether you need up-to-date information about a bot or not. If it's a bot that you are currently attacking, then you might want to scan that bot more often... if it's a bot that's at the other side of the screen, you might as well ignore it (if you're not attacked by it) for the time being.<br>
+The robot I'm currently (slowly) working on uses <a href="robowiki?Parakeet" class=wikipagelink>Parakeet</a>'s <a href="robowiki?PatternMatcher" class=wikipagelink>PatternMatcher</a> in melee, and actually works best if every bot is scanned at a constant interval of 8 timeframes. This means I only need to spin the radar in one direction and can forget about fancy radar-control. Of course enemy bots won't sit still, so scantimes vary from 7-9 timeframes... nothing that can't be fixed with some inter/extra-polation. :-) --<a href="robowiki?Dummy" class=wikipagelink>Dummy</a>
+<p>
+Agreed.  Here's my megabot radar manager (I have a turn right Double.Infinity in initialization.  Also, botNameList<a href="robowiki?action=edit&id=NameList" class=wikipageedit>?</a> is a Vector().
+<p>
+<pre>
+//-------------------------------------------------------------------------------
+// Scan all bots.  Reverse when complete.  Does a real good job. (From mld.Steel)
+//-------------------------------------------------------------------------------
+public void onScannedRobot(ScannedRobotEvent e)
+{
+	if(!botNameList.contains(e.getName()))
+	{
+		botNameList.add(e.getName());
+		if(botNameList.size() &gt;= me.getOthers())
+		{
+			botNameList.clear();
+			me.setTurnRadarLeft(me.getRadarTurnRemaining());
+
+		}
+	}
+}
+</pre>
+<p>
+Basically, when all bots have been added to the radar, reverse direction.  It gives me on average a scan about every 3 ticks (usually 1 tick, 5 ticks 1 tick, 5 ticks between scans if bot is on end of run or 3 ticks, 3 ticks, if in the middle of the radar scan.)  Of course there's code elsewhere to fix when bots die and such, but by itself, it's does well.  To fix the missing ticks of info, I just Linear Interpolate between the last 2 known positions.  -- <a href="robowiki?Miked0801" class=wikipagelink>Miked0801</a>
+<hr noshade class=wikiline size=1>
+I just learnt a really good lesson when it comes to radar. I thought my <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> was pretty independent on the effectivness of the radar. Not so. <a href="robowiki?Rozu" class=wikipagelink>rozu</a> observed that it missed scans now and then. And before I had come around to ask for help about the radar <a href="robowiki?Jim" class=wikipagelink>Jim</a> sent me a slightly modified version of the <a href="robowiki?SnippetBot" class=wikipagelink>SnippetBot</a> radar. It was very stable, but it didn't scan every tick. Not even close. I then discoverd I had quite a lot of code that more or less assumed I got a scan every tick. At the same time I realized that some peculiar bugs I have observed was due to my previous radar "slipping" like it did. I have now moved all such code so it is called from the scanned robot event. And I also fixed the radar so that it is both stable and scans almost every tick. Now my <a href="robowiki?SymbolicPatternMatching" class=wikipagelink>SymbolicPatternMatching</a> gun is my best gun in important segments against quite a few bots. Which means I have a stronger Marshmallow. Thanks <a href="robowiki?Rozu" class=wikipagelink>rozu</a> and <a href="robowiki?Jim" class=wikipagelink>Jim</a>. I hope I can return the help some day. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li> If you still skip some radar scan ticks every now and again, you can extrapolate the missing data. Just use your pattern matcher's predict function :-) <a href="robowiki?Vic" class=wikipagelink>Vic</a>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+For efficient radar code, I'm not very good at that... But if you're looking for small radar code, the smallest lock code I've been able to come up with for <a href="robowiki?NanoBots" class=wikipagelink>NanoBots</a> that works with both <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> and [Melee] is very simple:
+<p>
+<pre>public class ScanBot extends AdvancedRobot {
+	public void run() {
+		setTurnRadarRight(Double.POSITIVE_INFINITY);
+	}
+	public void onScannedRobot(ScannedRobotEvent e) {
+		if (getOthers() == 1) setTurnRadarLeft(getRadarTurnRemaining());
+	}
+}</pre>
+<p>
+The radar is turning around infinitely; upon scanning an enemy, if there is only one enemy, the radar turn is reversed. That's all there is to it. This scan code is extremely small, but the lock misses a turn every time the enemy crosses one of the 45º angles around the robot. It's very powerful for <a href="robowiki?NanoBots" class=wikipagelink>NanoBots</a> though, and IIRC that's the code my NanoVolver<a href="robowiki?action=edit&id=NanoVolver" class=wikipageedit>?</a> uses. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+This is also the radar system used by all the nano-pattern matchers I believe.  One interesting feature of it is that if you miss a scan, sometimes you miss like 7, sometimes you miss 1. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+The infinite nano radar skipping scans depends on which side the enemy crosses to. If the enemy leaves the 45 degree arc in the direction of spin the lock is reacquired, if the enemy leaves in the direction opposing spin the radar has to spin the current direction for 7 units before it's in the same 45 degrees block as the opponent. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+<a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, I have been giving some thought to your missing scan events that you mentioned above. I have put a println in my on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>() to print out the time of the event. I then ran a 100 round 1-v-1 match vs M (which I lost :( ) to see what would happen. I printed every turn. I did not miss one (disclaimer: I did miss the first 8 - 10 as my radar scanned the field). This got me to thinking that maybe the problem you are facing is one of trying to do too much. The scannedRobotEvent<a href="robowiki?action=edit&id=RobotEvent" class=wikipageedit>?</a> has a priority of 10 by default, the lowest priority defined by default. I know you also have a lot of custom events that you use to drive M's behavior. Have you tried changing the priority of the scannedRobotEvent<a href="robowiki?action=edit&id=RobotEvent" class=wikipageedit>?</a> and see if that changes your results? I am still in the dark on the Robocode event system and would not mind seeing a discussion of that at some point in the future. An event manager is my <a href="robowiki?OceansOfSpareTime" class=wikipagelink>OceansOfSpareTime</a> project =^&gt; <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+Thanks for this idea! I must of course try it. You don't happen to know how it is done? =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Look in the API for setEventPriority<a href="robowiki?action=edit&id=EventPriority" class=wikipageedit>?</a>(). It is a method of <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>. Thats also where I got the information on event prioritizations. It also repesents the sum of my knowledge regarding the Event model in Robocode :( <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+OK. Now I've tried it. Doesn't seem to make a difference. But I have a stable scanner anyway. So I'll leave it as it is for now. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It was worth a shot. I am curious as to why we get such different results with essentlially the same code. Maybe it is my inferior OS and hardware =^&gt;. <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+I've noticed there seem to be three popular melee radars, I'm curious which everyone picks:
+<p>
+EDIT: The inspiration for a radar combining the positive elements of 2 and 3 has hit me and I'm using that, but I'm still curious to see who uses what and why. I've also added my best guess at <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a>'s radar as 4, though I think only Paul uses this scheme. Quite creative.
+<p>
+1) Spin 360 - Reliable, consistent scan times, slow.
+<p>
+2) Spin in a direction until every opponent has been seen once, then flip directions - Sometimes the fastest in terms of scan time (during the degenerate case of radar 3), though scan times are inconsistent. This radar has a degenerate case, however: whichever direction the radar starts spinning (let's say right), if there is a bot in the opposite direction very close (let's say 10 degrees to the left) and more bots in the direction of motion (let's say 40 and 80 degrees to the right) it will be forced to spin full rotations, rather than the smaller possible arc.
+<p>
+3) Always spin to a position a little bit past the robot which hasn't been seen for the longest period of time - Consistently and reliably finds the fastest scan times when all robots are arranged so they occupy less than 180 degrees of arc, however degenerates to 360 sweeps if they occupy more than that. Inconsistent scan times.
+<p>
+4) Spin 360 to get a picture of the battlefield, pick an opponent, scan that opponent only (1v1 style) for 8 ticks, spin 360 to get a battlefield update, etc. Consistent scan times, reliable, fast to get data on an opponent, slow to react to battlefield changes.
+<p>
+Is there another scheme I'm missing? Which scheme do your melee bots use? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Radar is one thing my mega-bot is good at :)
+<p>
+I actually go to some length to find what two enemies have the largest distance (in degrees) between them at any given time, and I change direction upon scanning one of them (so this is 2) without the degenerative case). Not sure is it was woth the effort though :) -- <a href="robowiki?FnH" class=wikipagelink>FnH</a>
+<p>
+I've been giving that scheme some thought, was it really that difficult to implement? Also, how do you fix the case where it's scanning two robots, but simply scanning the larger of the two arcs between them? Or with many opponents scanning the arc between the end bots that doesn't contain the remainder of the opponent robots? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I turn the radar untill I know where every bot is (eliminating problem 2), then I sort all bots and see where the greatest arc is. I note between which two bots this arc is positioned, and make sure I don't enter that arc by changing direction at the right moments (when scanning one of the two bots and when I'm not inside the great arc). I took a while to get it all right due to the circular nature of the problem (the difference between a bot at bearing 355 and one at bearing 5 is only 10) and because I was still new at robocode back then :) It probably would be implemented faster today. It's also the only code I ported over from my old bot tho the new one (which doesn't even has melee code yet :)) ... -- <a href="robowiki?FnH" class=wikipagelink>FnH</a>
+<p>
+Paul isn't the only one to use the radar scheme described in 4), <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a> does that, too. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+<hr noshade class=wikiline size=1>
+Maybe I am just being an idiot,
+But I can not find a reason for keeping the radarsweep as small as possible in one on one. If it is at a constant 22.5 degrees, you still get the maximum capabilities of the radar, and I don't find a problem coding that either.
+So why? --<a href="robowiki?DragonTamer" class=wikipagelink>DragonTamer</a>
+<p>
+[edit]My stupid, I read wrong again. I don't see a difference in either way; I just find it easier to program the thin scan that the wide scan. Fractal is the only one of my bots that uses a large radar sweep, and I have no clue why I bothered to program it to do so. All my other bots (not counting nanos) use the simple radar lock used so well by <a href="robowiki?TrackFire" class=wikipagelink>TrackFire</a>, and it works beautifully. However, when I do use this, to end my turn I usually call scan() instead of execute(); this is because with this radar scheme, if both you and the opponent are not moving, the radar doesn't move so you may not get a scan. I'm not quite sure how Robocode handles this, but that's how I do it just in case. -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<hr noshade class=wikiline size=1>
+Out of curiousity. I have visible scan arcs now since I've got all this CPU power. Watching my bots fight each other or <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> or other bots using the same radar I see something a bit peculiar. The two bots never have the same width on the radar lock. Sometime one of them have a rather wide lock and the other just have a line. It seems arbritrary. What could cause this you think. Check the <a href="robowiki?VertiLeach/Code" class=wikipagelink>VertiLeach/Code</a> to see the radar I am talking about. It's a tuned <a href="robowiki?NanoSatan" class=wikipagelink>NanoSatan</a> radar. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+When you initially spin the radar around the radar stops at 45 degree intervals at the end of the turn. When you see your target the first time the radar has passed them to the next 45 degree marker. Then you spin the radar back by 2 times however far the radar is from the robot in terms of angle, causing it to stop on the other side of the robot exactly the same distance as it had passed it by. So the width is always twice however far the robot was from the next 45 degree line. Does this make sense? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Very much. I have never really stopped to figure how the radar lock really works. Thanks! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+One thing I'd like to mention is the value of synchronizing the radar with the gun and the gun heat in melee battles.
+There are two basic uses of the radar: the "big picture" scan of all your opponents, and the "target acquisition"
+scan of your target when you're getting ready to fire.  Once you fire your gun, it will be hot for at least 10
+ticks (under the default gun cooling rate.)  Since you can do a 360 scan of the arena and re-acquire a radar lock on
+your previous target before your gun cools down, it makes sense to do that each time you fire. -- DrDish<a href="robowiki?action=edit&id=DrDish" class=wikipageedit>?</a>
+<p>
+Funny. Thats exactly the same idea that i had when i developped my first bot: HataMoto<a href="robowiki?action=edit&id=HataMoto" class=wikipageedit>?</a>. It is a melee bot. Very old and buggy, but still my only melee bot. Try to test it with visible scan arcs ... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+That is what Coriantumr, <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a> and <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> do, too, give-or-take.  It's especially a good thing to do if your bot doesn't fire blind (I can't speak for DT, but I know that <a href="robowiki?FloodHT" class=wikipagelink>FloodHT</a> and Coriantumr don't fire blind, even in melee). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Re. scheme 4 - I don't think Paul can lay claim to having invented that. As far as I know it first appeared in <a href="robowiki?Silver" class=wikipagelink>Silver</a> and was later carried over into early versions of <a href="robowiki?Vapour" class=wikipagelink>Vapour</a>. I naturally can't say whether anyone else was using it independently prior to this time, but I didn't notice any! <a href="robowiki?Vapour" class=wikipagelink>Vapour</a> continued to utilise it for the case where it either doesn't know all targets yet, or one or more target sightings are older than some threshold. Non-scanned targets are extrapolated and the extrapolations are used for directing continuing more efficient radar scanning (basically scheme 3, but with continuous scan of one target as we approach ready-to-fire time as mentioned elsewhere above), but if some target hasn't been sighted for a while clearly we have lost track of it and the only way to be sure it isn't sneaking up from behind is to throw a full scan into the mix. In practise it is quite likely we will spot the stale/missing target early in the scan and revert to scheme 3-ish, so the loss of efficiency is minimised. Personally I always admired the robots that switch to a narrow beam when in a 1v1 situation, looks really cool, but felt I should stick to a wide beam in all circumstances "just in case" :) -- <a href="robowiki?Shrubbery" class=wikipagelink>Shrubbery</a>
+<p>
+And while I think about it - how many people use the onHitRobot<a href="robowiki?action=edit&id=HitRobot" class=wikipageedit>?</a> event to generate a pseudo "scan" of the other robot? I used to do this, but ended up commenting it out in <a href="robowiki?Vapour" class=wikipagelink>Vapour</a>, feeling it wasn't particualrly useful. -- <a href="robowiki?Shrubbery" class=wikipagelink>Shrubbery</a>
+<p>
+My feeling is you have other problems with your radar if you're bumping into robots enough for that to be useful ;-) -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Hmm, Ive never really seen that much of a problem with radar.  I am currently using a set up that alot of people use, where it scans to the oldest target.  In <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> it still basically locks.  The only change I might try would be to have a lock on in melee for my current target.  Is there any big reason to have a narrow beam lock? -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+ummm... It looks cool when you have the scan arcs on?  I guess I'm more of a wide arc kind of guy ;-) -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+The trouble with just scanning to the oldest target, it seems to me, is: what happens if you have completely lost track of one or more targets? It may be out of range of your radar, it may reappear within your range but outside the arc described by known targets, and you may never spot it again. Unless you have something to cope with this situation.
+<p>
+Re. the onHitRobot<a href="robowiki?action=edit&id=HitRobot" class=wikipageedit>?</a> thing, I suspect you are totally correct Kawigi - it just offends my sense of "rightness" somehow not to take advantage of every possible source of information. Still trying hard to justify a need for it, and failing dismally :) -- <a href="robowiki?Shrubbery" class=wikipagelink>Shrubbery</a>
+<p>
+<p>
+If you dont care too much about codesize ive got a method that works 99.999% of the time and never slips. Works in both <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a> and Melee but it completley ignores all other bots in Melee. Make this your while(true) loop:
+<p>
+if(lastScanned &gt;= 3) {
+<PRE >
+	haveTarget = false;
+</PRE>
+}
+scan();
+if(haveTarget) {
+<PRE >
+	//put all of your robot behavior here
+	set<a href="robowiki?TurnRadarRightRadians" class=wikipagelink>TurnRadarRightRadians</a>(robocode.util.Utils.normal<a href="robowiki?RelativeAngle" class=wikipagelink>RelativeAngle</a>(absoluteBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a> -getRadarHeadingRadians<a href="robowiki?action=edit&id=RadarHeadingRadians" class=wikipageedit>?</a>()));
+</PRE>
+}
+else {
+<PRE >
+	set<a href="robowiki?TurnRadarRight" class=wikipagelink>TurnRadarRight</a>(360);
+</PRE>
+}
+lastScanned++;
+execute();
+<p>
+Then Add "haveTarget = true;" and "absoluteBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a> = get<a href="robowiki?HeadingRadians" class=wikipagelink>HeadingRadians</a>() + e.getBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a>();" to the beginning of on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> and add "lastScanned = 0;" to the end of it. Oh... and create "int lastScanned", "boolean haveTarget", "double absoluteBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a>". 
+<PRE >
+ -- Dan724<a href="robowiki?action=edit&id=Dan724" class=wikipageedit>?</a>
+</PRE>
+<p>
+Why people keep telling about 99.9999% locks, while the old good lock found in <a href="robowiki?SnippetBot" class=wikipagelink>SnippetBot</a> locked at 100%?
+<PRE >
+ --<a href="robowiki?LRem" class=wikipagelink>lRem</a>
+</PRE>
+<p>
+Actually, I'm skeptical that the code above actually locks on well enough to call it "99.99%" - That looks like the radar I had in <a href="robowiki?SpareParts" class=wikipagelink>SpareParts</a>, actually, except that it accounts better for the fact that it can slip better - you really pretty much always want to try and turn your radar past the enemy by at least a bit (and no reason not to turn it past them 22.5 degrees if you can). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+<a href="robowiki?SnippetBot" class=wikipagelink>SnippetBot</a> does not lock 100%, it 'misses' some scans because it wants to scan more than 45 degrees sometimes. Further I would replace the 360 in the else-branch with Double.POSITIVE_INFINITY just for safety. In my code I still check a 'scan-timeout' just in case. Maybe in the future someone will setup a league on a large(r) battlefield and then I am ready for it :-)  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Long ago I've tried to tweak Spectre for big battlefields. And in fact it won almost any battle I set up - just because 80% of enemies kept throwing out exceptions, and the others simply got lost. Big battlefields are the only situation in which you have to make your movement aid your radar - and no bots I know of do that. --<a href="robowiki?LRem" class=wikipagelink>lRem</a>
+<p>
+Teambattles are fought on a 1200x1200 battlefield with a reasonable change of enemies out of reach of the radar. Therefor all my bots can cope with that situation. However, they do not actively search for enemies in that case, but at least they are 'big-battlefield-aware'. -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+I think I remember hearing that <a href="robowiki?Tron" class=wikipagelink>Tron</a> had a search / wander mode when it couldn't see anyone.  I've coded such a thing, but I don't think I've released a bot with it as yet. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+<UL >
+<li> Yes, Tron will wander randomly when nobody is visible for the last 20 ticks (iirc). Shadow is also ready for big battlefield melee battles. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+</UL>
+<p>
+<a href="robowiki?TheBigLeague" class=wikipagelink>TheBigLeague</a> never got started I presume. -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+No, I don't think it did, but the <a href="robowiki?LongThinLeague" class=wikipagelink>LongThinLeague</a> made it a little further. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+<a href="robowiki?Vapour" class=wikipagelink>Vapour</a> can handle big arenas, although not with any particular cleverness :) Would be interesting to explore that aspect... -- <a href="robowiki?Shrubbery" class=wikipagelink>Shrubbery</a> 
+<p>
+Well that radar works well for me, perhaps you should try it out -- Dan724<a href="robowiki?action=edit&id=Dan724" class=wikipageedit>?</a>
+<p>
+I am now working on a radar that scans targets based on prioritization.  It will weight each target using a system similar to <a href="robowiki?MinimumRiskMovement" class=wikipagelink>MinimumRiskMovement</a>, although tweaked for the purpose.  In alot of cases it will just end up performing something similar to other efficient melee radars, in that it will spin and reverse, but in the situations that there is more than 180 degrees between targets it can decide whether it is more useful to reverse and scan them all, getting old data on the last robot, or to go directly to the last robot in the fastest turn.  It still needs alot of tweaking at the moment, but I think it should allow for things like melee lock and the most efficient use of radar without it having to be directly hardcoded. -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<p>
+Any success with that radar yet? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Radar" class=wikipagelink>Radar</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Radar/Old" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Radar/Old">View other revisions</a><br>Last edited June 6, 2007 20:18 EST by <a href="robowiki?Dummy" title="ID 6977 from c529c2358.cable.wanadoo.nl">Dummy</a> <a href="robowiki?action=browse&diff=1&id=Radar/Old">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

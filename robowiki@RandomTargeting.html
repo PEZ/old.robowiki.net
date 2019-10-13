@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RandomTargeting - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Random, Targeting'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=RandomTargeting">RandomTargeting</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>A method of <a href="robowiki?Targeting" class=wikipagelink>Targeting</a>.
+<hr noshade class=wikiline size=1>
+First some maths:
+<p>
+Let's assume a triangle with sides a,b,c and angles (vertices) A,B,C, where A is the angle oposed to a, B to b and C to c. The sines law says that 
+<pre>a/sin(A) = b/sin(B) = c/sin(C)</pre>
+(from this point I recommend to draw a graphic)
+<p>
+Now let's say that your bot is in the vertex A and the enemy bot is in the vertex C. We will fire a bullet with angle A to intercept (hit) the bot in vertex B. We know the value of b (it is the distantance - D - from your bot to the enemy). 
+We don't know c, but we now that it will be the distance travelled by the bullet. Also, we know that a will be the distance travelled by the enemy bot. If we put it as a function of time.
+<pre>
+b = D
+c = Vb * t (Vb is the bullet speed)
+a = Vr * t (Vr is the enemy bot velocity)
+</pre>
+Now, using the sines law 
+<pre>a/sin(A) = c/sin(C) -&gt; Vr*t / sin(A) = Vb*t / sin(C) -&gt; 
+sin(A) = Vr/Vb * sin(C) -&gt; A = asin( Vr/Vb * sin(C) )
+</pre>
+We don't know which value C has (unless we assume enemy's movement is linear) but we can take the worst scenario where
+<pre>C = PI/2 -&gt; sin(C) = 1
+A = asin ( Vr/Vb * 1 ) = asin (Vr/Vb)</pre>
+RESULTS: Whatever the enemy bot does, it will not be able to move an angle greater than asin(Vr/Vb), so you can choose a random gun bearing (relative to the enemy bot) of +-asin(Vr/Vb) and just fire!!! Thats why we call it random targeting.
+
+For a power 3 bullet (remember Vb = 20-3*power) this angle is +-0.814 RAD or +- 46.6 DEG.
+
+Some successful nanobots (and some micros) use this firing method. Its implementation is really small, and for unpredictable movements is good enough (anyway, if it is unpredictable, it doesn't matters where you fire).
+<p>
+Of course, you are not taking any advantage of predictable enemy movement, so it is not so good against bots that tend to move lineary or in wide arcs.
+<p>
+There are some improvements you can make to this firing method. 
+<p>
+<UL >
+<li> The most common one is to keep track of succesful angles (ie. the ones used that get more hits) and use them more than the others (doing like this, your bot would learn to consistently hit some targets - ie. linnear movement). Taking this improvement to the extreme leads to <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>.
+<li> Another possible improvement is to use C in the calculations (remember, we know it, but we are not sure the enemy bot will not turn). It could be useful at short ranges. Always using C, and choosing the maximum angle leads to <a href="robowiki?LinearTargeting" class=wikipagelink>LinearTargeting</a>.
+</UL>
+<p>
+Albert
+<p>
+<hr noshade class=wikiline size=1>
+A simpler method is to assume that the enemy is travelling in a circle around you, which is often true among nanobots.
+<p>
+If the enemy is traveling in a circle around you, the maximum distance it can cover before a bullet reaches it is enemyVelocity / bulletVelocity. This is in radians. For example, a full-power bullet fired at an enemy going at full speed should be fired at an angle between -8/11 and +8/11, relative to firing directly at the target. 
+<p>
+--<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+<hr noshade class=wikiline size=1>
+A variation of this is used by the <a href="robowiki?PerceptualBot" class=wikipagelink>PerceptualBot</a> <a href="robowiki?Pandora" class=wikipagelink>Pandora</a>.
+<p>
+In one-on-one survival battles you can work out, with the robocode rules at the time of writing, that you need to hit one bullet out of eight to stay ahead of the other bot on energy. Therefore <a href="robowiki?Pandora" class=wikipagelink>Pandora</a> will randomly select a point on an arc of length 320 with the enemy currently in the middle of the arc. Because most bots are <a href="robowiki?Oscillators" class=wikipagelink>Oscillators</a>, I use a gaussian (bell-shaped normal distribution) random variable.
+<p>
+--<a href="robowiki?Tobe" class=wikipagelink>tobe</a>
+<hr noshade class=wikiline size=1>
+<a href="robowiki?RandomTargeting" class=wikipagelink>RandomTargeting</a> is also the name of a bot. Wrongly named bot I think:
+<pre>
+Fighting battle 8 ... pez.mini.Pugilist 1.5,Noran.RandomTargeting 0.02
+RESULT = pez.mini.Pugilist 1.5 wins 5876 to 0
+</pre>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<a href="robowiki?FloodNano" class=wikipagelink>FloodNano</a> also has random targeting, but only in a small range, so it won't hit any kind of musashi-trick-esque movement. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RandomTargeting" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RandomTargeting">View other revisions</a><br>Last edited February 26, 2007 12:58 EST by 212.18.170.245 <a href="robowiki?action=browse&diff=1&id=RandomTargeting">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>UbaRamLT - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Uba, Ram, LT'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=UbaRamLT">UbaRamLT</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>This bot is based almost completely off the <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> Challenge bot B.  I just wanted to make it quick so I copied someone else's LT gun.  Sorry. --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+<pre>
+
+package bayen;
+
+import java.awt.geom.Point2D;
+
+import robocode.AdvancedRobot;
+import robocode.ScannedRobotEvent;
+import robocode.util.Utils;
+
+public class UbaRamLT extends AdvancedRobot{
+	
+	public void run(){
+		setAdjustRadarForGunTurn(true);
+		setAdjustGunForRobotTurn(true);
+		do{
+			turnRadarRightRadians(Double.POSITIVE_INFINITY);
+		} while(true);
+	}
+	
+	public void onScannedRobot(ScannedRobotEvent e){
+		double bulletPower = Math.min(3.0,getEnergy());
+		double myX = getX();
+		double myY = getY();
+		double absoluteBearing = getHeadingRadians() + e.getBearingRadians();
+		double enemyX = getX() + e.getDistance() * Math.sin(absoluteBearing);
+		double enemyY = getY() + e.getDistance() * Math.cos(absoluteBearing);
+		double enemyHeading = e.getHeadingRadians();
+		double enemyVelocity = e.getVelocity();
+		
+		
+		double deltaTime = 0;
+		double battleFieldHeight = getBattleFieldHeight(), battleFieldWidth = getBattleFieldWidth();
+		double predictedX = enemyX, predictedY = enemyY;
+		while((++deltaTime) * (8) &lt; Point2D.Double.distance(myX, myY, predictedX, predictedY)){		
+			predictedX += Math.sin(enemyHeading) * enemyVelocity;	
+			predictedY += Math.cos(enemyHeading) * enemyVelocity;
+			if(	predictedX &lt; 18.0 
+				|| predictedY &lt; 18.0
+				|| predictedX &gt; battleFieldWidth - 18.0
+				|| predictedY &gt; battleFieldHeight - 18.0){
+				
+				predictedX = Math.min(Math.max(18.0, predictedX), battleFieldWidth - 18.0);	
+				predictedY = Math.min(Math.max(18.0, predictedY), battleFieldHeight - 18.0);
+				break;
+			}
+		}
+		double theta = Utils.normalAbsoluteAngle(Math.atan2(predictedX - getX(), predictedY - getY()));
+		deltaTime = 0;
+		predictedX = enemyX;
+		predictedY = enemyY;
+                double turnAmt = theta;
+                double moveAmt = Double.POSITIVE_INFINITY;
+                moveWithBackAsFront(moveAmt, turnAmt);
+		setTurnRadarRightRadians(Utils.normalRelativeAngle(absoluteBearing - getRadarHeadingRadians()));
+		//setTurnRightRadians(Utils.normalRelativeAngle(theta - getHeadingRadians()));
+		//setAhead(Double.POSITIVE_INFINITY);
+		while((++deltaTime) * (11) &lt; Point2D.Double.distance(myX, myY, predictedX, predictedY)){		
+			predictedX += Math.sin(enemyHeading) * enemyVelocity;	
+			predictedY += Math.cos(enemyHeading) * enemyVelocity;
+			if(	predictedX &lt; 18.0 
+				|| predictedY &lt; 18.0
+				|| predictedX &gt; battleFieldWidth - 18.0
+				|| predictedY &gt; battleFieldHeight - 18.0){
+				
+				predictedX = Math.min(Math.max(18.0, predictedX), battleFieldWidth - 18.0);	
+				predictedY = Math.min(Math.max(18.0, predictedY), battleFieldHeight - 18.0);
+				break;
+			}
+		}
+		theta = Utils.normalAbsoluteAngle(Math.atan2(predictedX - getX(), predictedY - getY()));
+		setTurnGunRightRadians(Utils.normalRelativeAngle(theta - getGunHeadingRadians()));
+		//if(e.getDistance() &lt; 200)
+		fire(3);
+	}
+    void moveWithBackAsFront(double distance, double bearing) {
+        double angle = Utils.normalRelativeAngle(bearing - getHeadingRadians());
+	double turnAngle = Math.atan(Math.tan(angle));
+        setTurnRightRadians(turnAngle);
+        int direction = angle == turnAngle ? 1 : -1;
+        setAhead(distance * direction);
+    }
+
+	
+	
+}
+</pre>
+<p>
+The first improvement I should do, is to do something like <a href="robowiki?BackAsFront" class=wikipagelink>BackAsFront</a>. Instead of sometimes turning more than 90 degrees at start, you then take the shortest path to where you want to go.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Okay, improvement made!  It really helped, so thanks.  I just used the code in <a href="robowiki?BackAsFront" class=wikipagelink>BackAsFront</a>.  Plus, it killed Dookious in a 10 round match (which doesn't mean much b/c it's only 10 rounds, but it means I'm improving!) --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=UbaRamLT" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=UbaRamLT">View other revisions</a><br>Last edited February 20, 2006 21:05 EST by <a href="robowiki?Bayen" title="ID 5955 from pool-68-238-252-117.phlapa.fios.verizon.net">Bayen</a> <a href="robowiki?action=browse&diff=1&id=UbaRamLT">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Mer/Code - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Mer, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Code">Mer/Code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Mer" class=wikipagelink>Mer</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package strider;
+
+import robocode.*;
+import robocode.util.Utils;
+
+/**
+ * This code is released under the RoboWiki Public Code Licence (RWPCL),
+ * datailed on: http://robowiki.net/?RWPCL
+ *
+ * Mer is a NanoBot with a hybrid statistical/random targeting.
+ * It adjusts the random distribution based on the success of
+ * the bullets it fires.
+ * http://robowiki.net/?Mer
+ *
+ * @author Strider
+ * @version 1.1.0
+ */
+public class Mer extends AdvancedRobot {
+
+    private static final double PI_2 = 1.5707963268;
+    
+    // Note! This must be true: POWER+(BINS-1)*BIN_ENCODING &lt;= 3.0
+    
+    private static final double POWER = 2.0;
+    private static final double BIN_ENCODING = 1.0/256.0;
+    private static final double GF1 = 0.61;	// asin(8/(20-3*POWER))
+    private static final int BINS = 21;
+    private static final int BIN_INIT = 1;
+    private static final int BIN_INC = 5;
+
+    private static double drive = 150;
+    private static int stat[] = new int[BINS];
+    private static int tot = BINS * BIN_INIT;
+    private static int bin;
+
+    static {
+	java.util.Arrays.fill(stat, BIN_INIT);
+    }
+    
+    public void run() {
+	setColors(java.awt.Color.yellow, java.awt.Color.green, null);
+	turnRadarRightRadians(Double.POSITIVE_INFINITY);
+    }
+
+    
+    public void onScannedRobot(ScannedRobotEvent e) {
+	if (getDistanceRemaining() == 0) {
+	    setAhead(drive = -drive);
+	}
+	double dir = e.getBearingRadians() + getHeadingRadians();
+	setTurnGunRightRadians(Utils.normalRelativeAngle(dir +
+	    (bin * 2 - (BINS-1)) *
+	    (e.getVelocity()*Math.sin(e.getHeadingRadians()-dir)&gt;=0
+	     ? GF1/(BINS-1)
+	     :-GF1/(BINS-1)) - getGunHeadingRadians()));
+	if (setFireBullet(POWER + bin * BIN_ENCODING) != null) {
+	    int b = -1;
+	    int i = (int) (Math.random() * tot);
+	    do {
+	    } while ((i -= stat[bin = ++b]) &gt;= 0);
+	}
+	setTurnRadarLeftRadians(getRadarTurnRemainingRadians());
+	setTurnRightRadians(e.getBearingRadians() + PI_2);
+    }
+
+    public void onBulletHit(BulletHitEvent e) {
+	try {
+	    stat[(int)((e.getBullet().getPower()-POWER)/BIN_ENCODING)] += BIN_INC;
+	    tot += BIN_INC;
+	} catch (ArrayIndexOutOfBoundsException ex) {
+	}
+    }
+
+    // The debug code below weights 100 bytes!
+    
+//     public void onWin(WinEvent e) {
+// 	showStats();
+//     }
+
+//     public void onDeath(DeathEvent e) {
+// 	showStats();
+//     }
+
+//     private void showStats() {
+// 	out.println("Total hits: " + tot);
+// 	for (int i = 0; i &lt; BINS; i++) {
+// 	    StringBuffer sb = new StringBuffer();
+// 	    for (int j = 0; j &lt; stat[i]*100/tot; j++) {
+// 		sb.append('#');
+// 	    }
+// 	    out.println(sb);
+// 	}
+//     }
+    
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Mer" class=wikipagelink>Mer</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Mer/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Mer/Code">View other revisions</a><br>Last edited September 15, 2004 22:33 EST by <a href="robowiki?Strider" title="ID 3440 from strider.campus.luth.se">Strider</a> <a href="robowiki?action=browse&diff=1&id=Mer/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

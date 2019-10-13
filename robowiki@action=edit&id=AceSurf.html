@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing AceSurf - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Ace, Surf'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing AceSurf</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="AceSurf"  />
+<input type="hidden" name="oldtime" value="1208094436"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="7"  />
+<input type="hidden" name="captchaArg2" value="11"  />
+<input type="hidden" name="captchaOp" value="+"  />
+<input type="hidden" name="captchaId" value="125452742752"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">This is my second nanobot, in an attempt to create a Nano Surfer , or NS as referred from here onwards.
+
+=== Bot Name ===
+AceSurf
+
+=== Author ===
+[[Aryary]]
+
+==== Great, I want to try it. Where can I download it? ====
+
+http://www.robocoderepository.com/BotDetail.jsp?id=3352
+
+==== How competitive is it? ====
+
+I like the jump from 1.1(40+) to 1.2 (20+ - 30), way to go!
+
+==== How does it [[Movement|move]]? ====
+
+A combination of StopAndGo with additional stuff, now more like Surfing (1.2+) 
+
+==== How does it fire? ====
+
+Linear Targeting with little velocity management.
+
+==== How does it [[DodgingBullets|dodge bullets]]? ====
+
+The choice is Yours, StopAndGo or [[WaveSurfing]]
+
+==== How does the [[Melee|melee]] strategy differ from [[OneOnOne|one-on-one]]  strategy? ====
+
+No Difference
+
+==== How does it select a target to attack/avoid in [[Melee|melee]]? ====
+
+It does?
+
+==== What does it save between rounds and matches? ===
+
+Distances being hit by enemy (between rounds).
+
+==== Where did you get the name? ====
+
+It is supposed to Surf, so I want it to surf as a Nano Well, Thus AceSurf.
+
+==== Can I use your code? ====
+ 
+Please Follow the RWCPL (For Version 1.1, 1.2 needs time to be readable)
+----
+&lt;pre&gt;
+package ary.nano;
+
+import robocode.AdvancedRobot;
+import robocode.HitByBulletEvent;
+import robocode.HitWallEvent;
+import robocode.ScannedRobotEvent;
+import robocode.util.Utils;
+
+public class AceSurf extends AdvancedRobot {
+
+  private static double move = 100, enemyEnergy;
+  private static int[] hit = new int[41]; //hit array to track where I am hit
+  private static int gf = 0;
+
+  public void run() {
+    // helps targeting accuracy
+	//setAdjustRadarForGunTurn(true);
+    setAdjustGunForRobotTurn(true);
+		
+    turnRadarRightRadians(Double.POSITIVE_INFINITY); //turn Radar
+  }
+  
+  public void onScannedRobot(ScannedRobotEvent e) {
+	double reuse = 10000; //Ultimate variable
+	setTurnRadarLeftRadians(getRadarTurnRemaining()); //Radar Lock
+    //if enemy fired a bullet
+	if (enemyEnergy &gt; (enemyEnergy = e.getEnergy())) {
+		gf = (int)((3*move*Math.random()))/20; //get GF
+		for(int x = 40; x &gt;= 0; x--) //loop through the array
+			if(hit[x] &lt; reuse) reuse = hit[x]; // get least dangerous one
+		if(hit[gf+20] &gt; reuse) move = -move; //if it is more dangerous than it, reverse
+			
+		//out.println(gf);
+		setMaxVelocity(8); ///keep it 8 for consistency
+		setAhead(3*move*Math.random()); //Move with whatever distance you deifned
+    }
+    // turn perpendicular with range control (approx not so close and not so far, I hope)
+    setTurnRightRadians(Math.cos((reuse = e.getBearingRadians()) - 2000/10000));
+	//semi - linear targeting (from the wiki)
+	setTurnGunRightRadians(Utils.normalRelativeAngle((reuse += getHeadingRadians()) - getGunHeadingRadians() + 
+	(e.getVelocity() * Math.sin(e.getHeadingRadians() - reuse) / 16.0)));
+	setFire(2.5); //best firepower
+  }
+  public void onHitByBullet(HitByBulletEvent e){
+	hit[gf+20]++; //log your gf hits
+  }
+
+  public void onHitWall(HitWallEvent e) {
+    setAhead(move = -move); //kinda bad, but best so far.
+  }
+}
+&lt;/pre&gt;
+----
+==== What&#39;s next for your robot? ====
+
+better movement (1.2 Done) + better Gun (Like GF Guns, my objective)
+
+==== Does it have any [[WhiteWhale]]s? ====
+
+The [[Neophyte]] series, PRAL and Pattern, Don&#39;t know how I got past SRAL.
+
+==== What other robot(s) is it based on? ====
+
+The nano linear targeting, modified by me after using it (new way of getting velocities)
+
+----
+==== Comments, questions, feedback: ====
+Comments Please :D
+
+You can probably drop &lt;code&gt;setMaxVelocity(8);&lt;/code&gt;, as its stays 8 without it and free yourself up some bytes. 2000/10000 is division between integers and will probably produce 0 or 1, but not .2 as you are planning for?? (it would probably be smaller and less erronous just to write .2). The random while getting the gf would make this more of a really complex random movement, perhaps with the above fixes you might have enough room to add something more exact. As for the 2.5 firepower being the best, and it may very well be for a nano (or this nano).. but I know that in mega competitions, 1.9 is very popular. --[[Chase-san]]
+:Also, since move is 100, 3*100*1 = 300, 300/20 = 15, thus 0 to 15 or -15 to 0 (depending if move is pos or neg), thus gf(gf+20) will never produce the numbers 0 to 5, as 0+20 = 20 and -15+20 = 5, meaning you have 5 unused numbers? The random number in the setAhead is also problematic as it may cause the robot to stall and be hit in a specific turn. Perhaps if you used a basic linear extrapolation to guess where you will be in say (distance/4.5 time (using 1.5 bullet power as a reference)) and use that in your calculation. I personally have always wanted to see a nano-surfer. So best of luck, i&#39;m jus ttrying to help you improve your robot. --[[Chase-san]]
+
+1.9 is very good for Mega, I have done megabots :D. Hmm, and oh well, thanks for the info, I was just trying to see if I could fit in the prediction it some other way, like determining your distance. And hmm, I shall try to add better guns in there, you know it is terrible with that gun , although the movement is , I would say, like taking up too much codesize? -- [[aryary]]
+
+I wrote a nano surfer called [[WaveSnake]] in which surfing was done with choosing different velocities, avoiding the complexities of prediction. Even then, the movement took up almost all of the codesize though. Also, I think 2.5 bullet power might be the best at close range because the hit percentage will be so high. -- [[Kev]]
+
+Hmmm, movement does take out plenty of codesize, but managed to squeeze everything into 190, after looking at your code (special thanks :D ) . Also, s there any nice targeting I can use that avoids linear exploitation? I will be releasing it after this. Thanks -- [[Aryary]]
+
+In 59 bytes, I&#39;m not sure. Take a look at [[Splinter]], otherwise I suggest a random*linear gun. RaikoNano uses this to good effect, and your movement should be quite a bit stronger. -- [[Skilgannon]]
+
+
+1.2 is out , found some way to avoid some circumstances with new &quot;surfing&quot; techniques. Is there any improvement, in both terms of surfing and targeting? Just collecting feedback, and if you want the code, I will see what I can do. -- [[Aryary]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 7 + 11 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that AceSurf has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=AceSurf">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

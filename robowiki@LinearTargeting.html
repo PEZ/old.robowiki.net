@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>LinearTargeting - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Linear, Targeting'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=LinearTargeting">LinearTargeting</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?LinearTargeting/Discussion" class=wikipagelink>/Discussion</a> <a href="robowiki?LinearTargeting/BuggyImplementations" class=wikipagelink>/BuggyImplementations</a> <a href="robowiki?LinearTargeting/NanoLinearTargeting" class=wikipagelink>/NanoLinearTargeting</a>
+<p>
+A method of <a href="robowiki?Targeting" class=wikipagelink>Targeting</a> which assumes that the target will continue in the same direction at the same speed.
+<p>
+Sample implementation:
+<pre>
+		//Add import robocode.util.* for Utils and import java.awt.geom.* for Point2D
+		//This code goes in your onScannedRobot() event handler
+		
+		double bulletPower = Math.min(3.0,getEnergy());
+		double myX = getX();
+		double myY = getY();
+		double absoluteBearing = getHeadingRadians() + e.getBearingRadians();
+		double enemyX = getX() + e.getDistance() * Math.sin(absoluteBearing);
+		double enemyY = getY() + e.getDistance() * Math.cos(absoluteBearing);
+		double enemyHeading = e.getHeadingRadians();
+		double enemyVelocity = e.getVelocity();
+		
+		
+		double deltaTime = 0;
+		double battleFieldHeight = getBattleFieldHeight(), battleFieldWidth = getBattleFieldWidth();
+		double predictedX = enemyX, predictedY = enemyY;
+		while((++deltaTime) * (20.0 - 3.0 * bulletPower) &lt; Point2D.Double.distance(myX, myY, predictedX, predictedY)){		
+			predictedX += Math.sin(enemyHeading) * enemyVelocity;	
+			predictedY += Math.cos(enemyHeading) * enemyVelocity;
+			if(	predictedX &lt; 18.0 
+				|| predictedY &lt; 18.0
+				|| predictedX &gt; battleFieldWidth - 18.0
+				|| predictedY &gt; battleFieldHeight - 18.0){
+				predictedX = Math.min(Math.max(18.0, predictedX), battleFieldWidth - 18.0);	
+				predictedY = Math.min(Math.max(18.0, predictedY), battleFieldHeight - 18.0);
+				break;
+			}
+		}
+		double theta = Utils.normalAbsoluteAngle(Math.atan2(predictedX - getX(), predictedY - getY()));
+		
+		setTurnRadarRightRadians(Utils.normalRelativeAngle(absoluteBearing - getRadarHeadingRadians()));
+		setTurnGunRightRadians(Utils.normalRelativeAngle(theta - getGunHeadingRadians()));
+		fire(bulletPower);
+</pre>
+This is the code used in <a href="robowiki?WaveSurfingChallenge" class=wikipagelink>WaveSurfingChallenge</a> Bot B.
+<p>
+NOTE: This algorithm assumes that bots will come to a stop when they reach a wall. 
+There are much faster algorithms to do this on <a href="robowiki?LinearTargeting/BuggyImplementations" class=wikipagelink>/BuggyImplementations</a> but they don't seem to be correct all the time. If anyone can correct them it would be much appreciated. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+NOTE: There is a simpler way to do linear targeting with the help of trigonometry. It has the disadvantage of _not_ knowing if it goeas out of the arena. It has the very real advantage of being non-iterative and does not need to estimate the time for the bullet to reach the enemy, that is calculated exactly.
+<p>
+<hr noshade class=wikiline size=1>
+I tried implementing this but I get an error saying that I haven't done anything in a so much time. -- <a href="robowiki?Kinsen" class=wikipagelink>Kinsen</a>
+<p>
+The easiest way is to rip it out of <a href="robowiki?WaveSurfingChallenge" class=wikipagelink>WaveSurfingChallenge</a> Bot B. As this code is public that is allowed. I should replace the 'fire' by 'setFire' by the way. --<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+<hr noshade class=wikiline size=1>
+Isn't this code used in MyFirstTeam<a href="robowiki?action=edit&id=MyFirstTeam" class=wikipageedit>?</a>? --T.
+<p>
+Nope... I just checked MyFirstTeam<a href="robowiki?action=edit&id=MyFirstTeam" class=wikipageedit>?</a> (MyFirstLeader<a href="robowiki?action=edit&id=MyFirstLeader" class=wikipageedit>?</a> and MyFirstDroid<a href="robowiki?action=edit&id=MyFirstDroid" class=wikipageedit>?</a>), and all it does is have the droids fire directly at enemy bots. (The leader sends messages to teammates with a point, and they fire at it.)  -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<hr noshade class=wikiline size=1>
+<p>
+I was implementing this algorithm into my bot for use against linear movers and I got a curious result against Sample.Walls. Apparently Sample.Walls when it is moving along the edge of the battlefield is closer than 18 pixels to the edge of the battlefield, thus the code above breaks out of the while loop after one iteration, causing almost HOT against it! I assume that 18 pixels is the bots length but that bots are actualy not square? I couldnt find any dimensions for the bots in the FAQ or the Wiki so where did the 18 pixels come from? --<a href="robowiki?Wolfman" class=wikipagelink>wolfman</a>
+<p>
+The dimension of the bot is a non-rotating square of 36x36 (see <a href="robowiki?BeginnersFAQ" class=wikipagelink>BeginnersFAQ</a>), therefor the 18. Alas doubles are not that precise, so the calculated predicted position could be something like 17.997. In my bots I use 17 instead of 18, but using 17.9 would also do.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Yup that makes sense. Perhaps the code above needs to be changed to 17?
+<p>
+As an aside I might try speeding up this type of targeting trying the following: Use the trig method first. If the location using the trig method is outside the battlefield (using a simple bounds check) then use the iterative method instead? It would be faster for some situations but slower when the target will intersect the wall because of the added overhead of the trig method plus the iterative. Might be worth profiling to see how often each method is called in a typical match. 
+<p>
+Oh and after reading my change maybe the fastest method is to get the location using the trig way, check to see if the predicted location is outside the bounds, then if so use a simple 2D line-box intersection method to find the location where the source -&gt; target line meets the battlefield bounds. Non iterative but produces the same result. Usefull in slowbots that use this targeting method. I need to check but I am hoping that the java.geom API includes a 2D line-box intersection method to make life easy! :)
+<p>
+--<a href="robowiki?Wolfman" class=wikipagelink>wolfman</a>
+<p>
+<UL >
+<li> wolfman: I think you mean target -&gt; predicted target position, not source-&gt;predicted target position. --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+</UL>
+<p>
+Maybe something like this?
+<pre>
+double ang=sign(enemyVelocity)*Math.asin(Math.abs(enemyVelocity) / (20.0 - 3.0 * bulletPower)); //note sign() returns the sign of a number, and is different from Math.sin, and this is the trig way without checking
+Line2D.Double enemyMovement=new Line2D.Double(enemyPosition, projectPoint(enemyPosition,enemyHeading,1000));
+Line2D.Double bulletMovement=new Line2D.Double(myPosition, projectPoint(myPosition,Math.atan2(enemyPosition.getX()-myPosition.getX(),enemyPosition.getY()-myPosition.getY())+ang,1000);
+//Tango's lineintersect method
+Point2D.Double intersect=new Point2D.Double(0,0);//point you are actually firing at
+double num   =   (enemyMovement.getY2()-enemyMovement.getY1())*(enemyMovement.getX1()-bulletMovement.getX1()) -
+                 (enemyMovement.getX2()-enemyMovement.getX1())*(enemyMovement.getY1()-bulletMovement.getY1());
+
+double denom =   (enemyMovement.getY2()--enemyMovement.getY1())*(bulletMovement.getX2()--bulletMovement.getX1()) -
+                 (enemyMovement.getX2()--enemyMovement.getX1())*(bulletMovement.getY2()--bulletMovement.getY1());
+
+intersect.x = bulletMovement.getX1() + (bulletMovement.getX2()-bulletMovement.getX1())*num/denom;
+intersect.y = bulletMovement.getY1() + (bulletMovement.getY2()-bulletMovement.getY1())*num/denom;
+//nanos iterative lineintersectwithshape method
+if(!field.contains(intersect)){ //is where you are firing at in the battlefield?
+	int TRACE_DEPTH = 16;
+	Point2D middle;
+	boolean containsFirst;
+	if ((containsFirst = field.contains(enemyMovement.getP1())) == field.contains(enemyMovement.getP2())){
+	}
+	for (int i = 0; i &lt; TRACE_DEPTH; i++) {
+		middle = new Point2D.Double((enemyMovement.getX1() + enemyMovement.getX2()) / 2, (enemyMovement.getY1() + enemyMovement.getY2()) / 2);
+		if (containsFirst != field.contains(middle)){
+			enemyMovement = new Line2D.Double(enemyMovement.getP1(), middle);
+		}else{
+			enemyMovement = new Line2D.Double(middle, enemyMovement.getP2());
+		}
+	}
+	intersect.x=(enemyMovement.getX1() + enemyMovement.getX2()) / 2;
+	intersect.y=(enemyMovement.getY1() + enemyMovement.getY2()) / 2;	
+}
+ang=Math.atan2(intersect.getX()-myPosition.getX(),intersect.getY()-myPosition.getY());
+setTurnGunRightRadians(ang-getGunHeadingRadians());
+setFire(bulletPower);
+</pre>
+Didn't check it at all, but correct me if i had mistakes...Btw you can change the iterative line intersect with shape method into the non-iterative one. Alot of functions need to be added, and you'll need to import java.awt.geom.*; --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a> (post edited)
+<p>
+Using the law of Sines, you can calculate this directly (which is how nanos do linear aiming)
+<p>
+Let the B be the location of the target and A be our location.  Let C be the interect location taking into account the bullet and enemy velocity.
+<pre>
+  a  
+C---B
+ \  |
+ b\ |c
+   \|
+    A
+</pre>
+<p>
+Neat, now, lets redefine the triangle points to be internal angles.
+<p>
+The law of Sines states that 
+<pre>
+a / sin(A) = b / sin(B) = c / sin(C) = 2 * Radius of a circle touching all 3 points.
+</pre>
+<p>
+The "lead angle" is A - the term we need to solve for.
+<p>
+a = the enemy velocity., b = bullet velocity, B = enemyHeading - his bearing (the Angle on the bow for submarine buffs).
+Then, 
+<p>
+<pre>
+A = arcSin((a * sin(B) / b)
+</pre>
+<p>
+This doesn't calculate time for arrival nor intercept point, but that could be calculated easily with the resultant aim vector.
+The above code runs quick and is very small. --<a href="robowiki?Miked0801" class=wikipagelink>Miked0801</a>
+<p>
+This is a nice way to understand it!  I've been having fun with the law of sines in my surfing lately.  Notice on <a href="robowiki?LinearTargeting/NanoLinearTargeting" class=wikipagelink>/NanoLinearTargeting</a> that <a href="robowiki?Kev" class=wikipagelink>Kev</a> discovered you can drop the arcsin; it makes almost no difference for the range of numbers robots use in this case. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Thanks for the tip!  That's a few more bytes to try and catch up to you with. --<a href="robowiki?Miked0801" class=wikipagelink>Miked0801</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=LinearTargeting" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=LinearTargeting">View other revisions</a><br>Last edited October 24, 2007 17:17 EST by <a href="robowiki?Miked0801" title="ID 12104 from 207.170.253.180">Miked0801</a> <a href="robowiki?action=browse&diff=1&id=LinearTargeting">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

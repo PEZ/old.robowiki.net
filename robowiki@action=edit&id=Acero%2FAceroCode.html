@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing Acero/AceroCode - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Acero, Acero, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing Acero/AceroCode</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="Acero/AceroCode"  />
+<input type="hidden" name="oldtime" value="1081459258"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="8"  />
+<input type="hidden" name="captchaArg2" value="9"  />
+<input type="hidden" name="captchaOp" value="+"  />
+<input type="hidden" name="captchaId" value="029836582093"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">&lt;pre&gt;
+package ahf;
+import robocode.*;
+import java.awt.geom.Rectangle2D;
+import robocode.util.Utils;
+
+public class Acero extends AdvancedRobot
+{
+	static double direction;
+	
+	public void run(){
+			direction=1;
+			setAdjustRadarForGunTurn(true);
+			do{
+				turnRadarRightRadians(1);
+			}
+			while(true);
+	}
+	public void onScannedRobot(ScannedRobotEvent e){ 
+		double enemyAbsoluteBearing;
+		double distance;
+		double goalDirection =(enemyAbsoluteBearing=e.getBearingRadians()+getHeadingRadians())-(Math.PI/2+((distance=e.getDistance())&gt;=600?0:0.4  ))*direction;
+	
+		while (!new Rectangle2D.Double(19.0,19.0,762.0,562.0).contains(getX()+Math.sin(goalDirection)*120,getY()+Math.cos(goalDirection)*120)){
+			goalDirection = goalDirection+direction*.1;	
+			if (Math.random()&lt;.01)
+				direction=-direction;
+		}
+		goalDirection = Utils.normalRelativeAngle(goalDirection-getHeadingRadians());
+		setTurnRightRadians(Math.tan(goalDirection));
+	    setAhead(100*(Math.abs(goalDirection) &gt; Math.PI/2 ?-1:1));
+		if (Math.random()&lt;.04)
+			direction=-direction;
+		setTurnGunRightRadians(Utils.normalRelativeAngle(enemyAbsoluteBearing-getGunHeadingRadians()));
+		setFire(2);
+		setTurnRadarRightRadians(Utils.normalRelativeAngle(enemyAbsoluteBearing - getRadarHeadingRadians()) );
+    }
+}	
+      				
+&lt;/pre&gt;
+can anyone make it smaller?
+
+oh yeah,in the next version i&#39;ll take out the distance variable or do somthing better than math.random&lt;.04:direction*=-1
+--[[andrew]]
+
+You could replace your radar code and get some space. Take a look to any of the open source nanos (ie. NanoLauLectrik) to see the implementation. It avoids the do-while loop in the run method and makes the setTurnRadar... simpler. -- [[Albert]]
+
+isn&#39;t this the best radar configuration there is for nanos? the do while loop is the same as the turnrightradians(infiniti) thing in terms of bytes. and the loop is better because when it falls off, it doesn&#39;t just die. 
+
+I haven&#39;t measured the exact number of bytes used, but 
+ public void run() { turnRadarRightRadians(Double.POSITIVE_INFINITY); }
+ public void onScannedRobot(ScannedRobotEvent e) { setTurnRadarLeftRadians(getRadarTurnRemaining()); }
+will probably be smaller (anyway, it&#39;s worth a try). In the other hand, it never stops when it falls, because the remaining turn of infinity is just infinity :-) [[Albert]]
+
+thanks Albert, i&#39;ll try it. --[[andrew]]
+
+Changing your while loop to a do-while loop will make it slightly smaller, too, if you think it&#39;s ok to do. -- [[Kawigi]]
+
+don&#39;t i have a do-while loop?--[[andrew]]
+
+he means the while loop in your &quot;onScannedRobot&quot; handler... --[[Brainfade]]
+
+ah. thanks, i&#39;ll try it. --[[andrew]]
+
+anyone know what the most effective gun would be. i can have about 15 more bytes while having head on. --[[andrew]]
+
+cool codesize 219!--mike
+
+yeah,with the help of mike, codesize is now 219 w/ same functionality. --[[andrew]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 8 + 9 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that Acero/AceroCode has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=Acero/AceroCode">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Acero" class=wikipagelink>Acero</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

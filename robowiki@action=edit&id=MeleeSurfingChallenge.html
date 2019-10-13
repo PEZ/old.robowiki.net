@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing MeleeSurfingChallenge - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Melee, Surfing, Challenge'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing MeleeSurfingChallenge</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="MeleeSurfingChallenge"  />
+<input type="hidden" name="oldtime" value="1169686103"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="9"  />
+<input type="hidden" name="captchaArg2" value="2"  />
+<input type="hidden" name="captchaOp" value="-"  />
+<input type="hidden" name="captchaId" value="368462831320"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">Think you&#39;re pretty good at dodging bullets? How many can you dodge at once?
+
+&#39;&#39;&#39;Directions&#39;&#39;&#39;
+
+Here&#39;s how you run a MeleeSurfingChallenge:
+* Get the reference bots here: http://davidalves.net/robocode/wiki.challenge.MeleeSurfingChallengeTeams_1.0.jar 
+* Team A fires with HeadOnTargeting, Team B fires with LinearTargeting. Source code for both bots is included.
+* Run 1000 rounds against each of them
+* Arena size 1000 x 1000
+* Everything else set to Robocode defaults
+* You are not allowed to fire any bullets
+
+Your bot&#39;s score is average amount of life you had at the end of each round. 100 means that the reference teams never hit you. You calculate your score like this: 
+ 100 - (reference team&#39;s bullet damage score / 1000)
+
+&#39;&#39;&#39;Results&#39;&#39;&#39;
+|Bot Name                              |Author         |Type        | Score vs. Team A | Score vs. Team B |&#39;&#39;&#39;Overall Score&#39;&#39;&#39; |Comment
+|Slartibartfass 0.4 + dev              |[[Krabb]]      |MR/MR       | 48.989           | 0.656            | &#39;&#39;&#39; 24.8225&#39;&#39;&#39;     | score vs team B is broken.
+|[[David Alves/Phoenix|Phoenix]] 0.41  |[[David Alves]]|MR/WS       | 0.488            | 3.607            | &#39;&#39;&#39;2.0475&#39;&#39;&#39;       |
+|[[Griezel]] 0.3                       |[[GrubbmGait]] |MR/MR       | 0.451            | 3.543            | &#39;&#39;&#39;1.9970&#39;&#39;&#39;       |
+|Sparrow 2.5TC                         |[[Dummy]]      |RM/RM       | 0.408            | 0.991            | &#39;&#39;&#39;0.6995&#39;&#39;&#39;       |
+
+Sparrow&#39;s Score is included for reference, it has a decent random melee movement.
+
+For the &quot;Type&quot; column, show your melee and 1-v-1 movement like this: &lt;code&gt;RM/WS&lt;/code&gt; for RandomMovement in melee, WaveSurfing in 1-v-1.
+&lt;pre&gt;
+Key:
+RM - RandomMovement
+WS - WaveSurfing
+SG - Stop &#39;n&#39; Go
+MR - MinimumRiskMovement
+&lt;/pre&gt;
+&#39;&#39;&#39;Chat&#39;&#39;&#39;
+----
+
+Let&#39;s see some  high scores! 20 or more should be possible. =) --[[David Alves]]
+
+I was on the way to build exactly this challenge bots, to test my team bots. Thanks for doing it :) But i think the reference bots should stop shooting, if they would hit a team mate. Or they must avoid friendly bullets. Otherwise a position in one line with two reference bots would give you an advantage. I´m not a melee specialist, but i think it´s not an advantage to do this in a normal melee match?! --[[Krabb]]
+
+I&#39;m not a melee expert, but it seems like it might make sense to run this challenge on 1000x1000, since that&#39;s what the melee rumble runs in. Some MiniBots (and smaller) might have the size of the field hardcoded, I would think. Anyway, cool challenge, and nice scores [[Krabb]]. - [[Voidious]]
+
+Ah sorry, field size was supposed to be 1000x1000, fixed now. Phoenix and Sparrow were run on 1000x1000.
+
+I think there is to much free space in this challenge, its not realistic. May be we should raise the reference bots to 9 and let only 3 of them fire at the chellanger. But the actual chellange is still good to mesure the movement against HOT and LT, which is i think the goal of this challenge.--[[Krabb]]
+
+I think without needing to avoid being targeted the test won&#39;t accurately reflect the robot&#39;s melee dodging ability. Although it would do terribly in a real battle, FemtoWalls sets a new high [[MeleeSurfingChallenge]] score (62.239 vs. team A). [[Krabb]]&#39;s idea might work to stop wall riders like this because the challenge bots will be getting disabled more evenly, making it much harder for robots that move a lot to win. Another (pretty drastic) solution would be making the challenge something like 6 challenge bots, the challenger, and 3 other movement-only bots with the sample bots shooting at the closest target.
+
+&lt;pre&gt;
+public class FemtoWalls extends Robot{ //this could implement droid too
+	public void run(){
+		turnLeft(getHeading() % 90);
+		do{
+			ahead(Double.POSITIVE_INFINITY);
+			turnRight(90);
+		}while(true);
+	}
+}
+&lt;/pre&gt;
+
+|1st: kc.tests.FemtoWalls|	142861|	119600|	22950|	0|	0|	309|	1|	765|	235|	0|
+|2nd: Team: wiki.challenge.MeleeSurfingChallengeTeamA|	78774|	30400|	6080|	37614|	4679|	0|	0|	235|	1228|	0|
+
+-- [[Kev]]
+
+This is not a challenge to mesure your meleeruble ranking! Its a good one to test your bullet avoidance against HOT and LT, and this is sure not the only factor in a melee battle. We must create more challenges to get an accurate reflection of the rumble and i think this is a good start. --[[Krabb]]
+
+I see what you mean. Some challenges like the [[SpinBotChallenge]] are more of challenges in themselves rather than say the [[TargetingChallenge2K6]] which is kind of an extension of the rumble. I think it&#39;s good to see more melee-based challenges, as it is a very underlooked aspect of Robocode. -- [[Kev]]
+
+This is not really meant as a good measure of bot performance, just a fun (and hard!) challenge, like SpinBotChallenge. =) --[[David Alves]]
+
+[[Griezel]] survives 114 times against teamB and 0 (=zero!) times against teamA. I think [[Dummy]]&#39;s BlindDroid could score very well in this challenge.  -- [[GrubbmGait]]
+
+@Krabb: Why do you say &quot;score vs. Bot B broken?&quot; on your score comment? Was there some problem running the challenge? @Kev, you&#39;re right, we need more melee challenges... Let&#39;s revive the SampleBotMeleeChallenge. =) --[[David Alves]]
+
+I first run the chellange on 800x600 and then tried it on 1000x1000. But while the 1000x1000 battle vs. Team A was running i worked on my gun and accidentally reduced the movement lateral velocity segmentation to one segment. May be &quot;broken&quot; is the wrong vocable :) --[[Krabb]]
+
+Lol, I was just working on reference teams for exactly this! I didn&#39;t realize it was the same till just now. Do your bots avoid shooting each other?
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 9 - 2 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that MeleeSurfingChallenge has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=MeleeSurfingChallenge">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

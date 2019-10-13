@@ -1,0 +1,312 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>SingleTick - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Single, Tick'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=SingleTick">SingleTick</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>An open-source, bare-bones implementation of <a href="robowiki?PatternMatching/SingleTick" class=wikipagelink>Single Tick Pattern Matching</a>.
+<pre>
+package simonton.tutorial;
+
+import java.awt.*;
+import java.awt.geom.*;
+import java.util.*;
+import java.util.List;
+
+import robocode.*;
+import robocode.util.*;
+
+/**
+ * This is a robot that fires using naive, single-tick, symbolic pattern
+ * matching, for demonstration purposes.
+ * 
+ * @author Simonton
+ */
+public class SingleTick extends AdvancedRobot {
+
+	/**
+	 * Controls the largest pattern size that will try to be matched.
+	 */
+	private static final int MAX_PATTERN_LENGTH = 30;
+
+	/**
+	 * Just what it sounds like (set it to 3 for a targeting challenge, .5 for
+	 * the pattern matcher challenge).
+	 */
+	private static final double FIRE_POWER = .5;
+	private static final double FIRE_SPEED = Rules.getBulletSpeed(FIRE_POWER);
+	
+	/**
+	 * Maps all the patterns in which the enemy bot moves to an array containing
+	 * the number of times it took each possible step during the next tick.
+	 * &lt;p&gt;
+	 * The number passed to its constructor controls the number of patterns you
+	 * allow SingleTick to store, and therefore the amount of memory it will
+	 * consume. This is currently calibrated to take its fair share of memory on
+	 * a 256MB client (about 100MB, depending on how predictable is the enemy
+	 * and how long are the rounds). Increase this number and watch SingleTick's
+	 * performance improve!
+	 */
+	private static Map&lt;String, int[]&gt; matcher = new LRUMap&lt;String, int[]&gt;(
+			40000);
+
+	/**
+	 * Stores predicted positions for onPaint().
+	 */
+	private static List&lt;Point2D.Double&gt; predictions = new ArrayList&lt;Point2D.Double&gt;();
+
+	/**
+	 * The direction the enemy was facing last tick.
+	 */
+	private static double lastEnemyHeading;
+
+	/**
+	 * A running history of each step the enemy takes.
+	 */
+	private static String enemyHistory;
+
+	public void run() {
+		setAdjustGunForRobotTurn(true);
+		setAdjustRadarForGunTurn(true);
+
+		// reset the enemy history every round, so that we don't get wierd
+		// patterns from between rounds
+		enemyHistory = "";
+
+		// 100% radar lock :)
+		turnRadarRight(Double.POSITIVE_INFINITY);
+		do {
+			scan();
+		} while (true);
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e) {
+
+		// fire.
+		setFire(FIRE_POWER);
+
+		// look.
+		double absoluteBearing = e.getBearingRadians() + getHeadingRadians();
+		double radarTurn = absoluteBearing - getRadarHeadingRadians();
+		setTurnRadarRightRadians(Utils.normalRelativeAngle(radarTurn));
+
+		// memorize.
+		double enemyH = e.getHeadingRadians();
+		int enemyV = (int) Math.rint(e.getVelocity());
+		int thisStep = encode(enemyH - lastEnemyHeading, enemyV);
+		lastEnemyHeading = enemyH;
+		if (thisStep == (char) -1) {
+			// The turn rate we saw was greater than possible, so this must have
+			// been our first scan of the round. Don't try to do anything with
+			// this illegal symbol; just wait till next tick.
+			return;
+		}
+		record(thisStep);
+		enemyHistory = (char) thisStep + enemyHistory;
+
+		// aim.
+		predictions.clear(); // comment to speed execution a LITTLE.
+		Point2D.Double myP = new Point2D.Double(getX(), getY());
+		Point2D.Double enemyP = project(myP, absoluteBearing, e.getDistance());
+//// Uncomment to speed execution a LOT.
+//		double turnsTillFire = getGunHeat() / getGunCoolingRate();
+//		if (turnsTillFire &lt; 3.000000001) { // account for double in-precision
+			String pattern = enemyHistory;
+			for (double d = 0; d &lt; myP.distance(enemyP); d += FIRE_SPEED) {
+				int nextStep = predict(pattern);
+				enemyH += decodeDH(nextStep);
+				enemyV = decodeV(nextStep);
+				enemyP = project(enemyP, enemyH, enemyV);
+				predictions.add(enemyP); // comment to speed execution a LITTLE.
+				pattern = (char) nextStep + pattern;
+			}
+//		}
+//// Uncomment to speed execution a LOT.
+		absoluteBearing = Math.atan2(enemyP.x - myP.x, enemyP.y - myP.y);
+		double gunTurn = absoluteBearing - getGunHeadingRadians();
+		setTurnGunRightRadians(Utils.normalRelativeAngle(gunTurn));
+	}
+
+	public void onPaint(Graphics2D g) {
+		g.setColor(Color.WHITE);
+		for (Point2D.Double p : predictions) {
+			g.fillOval((int) p.x - 1, (int) p.y - 1, 3, 3);
+		}
+	}
+
+	/**
+	 * Increments the number of times "thisStep" was taken after the last series
+	 * of moves the enemy made.
+	 * 
+	 * @param thisStep
+	 *        The symbol representing the step the enemy took immediately after
+	 *        those in "enemyHistory".
+	 */
+	private void record(int thisStep) {
+		int maxLength = Math.min(MAX_PATTERN_LENGTH, enemyHistory.length());
+		for (int i = 0; i &lt;= maxLength; ++i) {
+			String pattern = enemyHistory.substring(0, i);
+			int[] frequencies = matcher.get(pattern);
+			if (frequencies == null) {
+				// frequency tables need to hold 21 possible dh values times 17 possible v values
+				frequencies = new int[21 * 17];
+				matcher.put(pattern, frequencies);
+			}
+			++frequencies[thisStep];
+		}
+	}
+
+	/**
+	 * @return The symbol representing the step the enemy has most frequently
+	 *         taken after those in "pattern".
+	 */
+	private int predict(String pattern) {
+		int[] frequencies = null;
+		for (int patternLength = Math.min(pattern.length(), MAX_PATTERN_LENGTH); frequencies == null; --patternLength) {
+			frequencies = matcher.get(pattern.substring(0, patternLength));
+		}
+		int nextTick = 0;
+		for (int i = 1; i &lt; frequencies.length; ++i) {
+			if (frequencies[nextTick] &lt; frequencies[i]) {
+				nextTick = i;
+			}
+		}
+		return nextTick;
+	}
+
+	/**
+	 * @param dh
+	 *        The change in the enemy's heading from last tick to this tick.
+	 * @param v
+	 *        The enemy's current velocity.
+	 * @return The symbol to use in the symbolic pattern matcher, or "(char) -1"
+	 *         if dh was out-of-bounds (greater than the maximum turn rate).
+	 */
+	private static int encode(double dh, int v) {
+		if (Math.abs(dh) &gt; Rules.MAX_TURN_RATE_RADIANS) {
+			// this is to catch the start-of-round, when illegal
+			// symbols could otherwise be generated.
+			return (char) -1;
+		}
+		int dhCode = (int) Math.rint(Math.toDegrees(dh)) + 10;
+		int vCode = v + 8;
+		return (char) (17 * dhCode + vCode);
+	}
+
+	/**
+	 * @return The change in the enemy's heading that "symbol" represents.
+	 */
+	private static double decodeDH(int symbol) {
+		return Math.toRadians(symbol / 17 - 10);
+	}
+
+	/**
+	 * @return The enemy's velocity that "symbol" represents.
+	 */
+	private static int decodeV(int symbol) {
+		return symbol % 17 - 8;
+	}
+
+	/**
+	 * @return The point which is "distance" pixels away from "p" in the
+	 *         direction of "angle".
+	 */
+	private static Point2D.Double project(Point2D.Double p, double angle,
+			double distance) {
+		double x = p.x + distance * Math.sin(angle);
+		double y = p.y + distance * Math.cos(angle);
+		return new Point2D.Double(x, y);
+	}
+}
+
+/**
+ * A hash map with a maximum size. After this size has been reached, adding new
+ * mappings will kick out the least recently used entries in the map.
+ * 
+ * @author Simonton
+ */
+class LRUMap&lt;K, T&gt; extends LinkedHashMap&lt;K, T&gt; {
+	private final int maxSize;
+	private boolean hitCap = false;
+
+	public LRUMap(int maxSize) {
+		super((int) (maxSize / .75) + 2, .75f, true);
+		this.maxSize = maxSize;
+	}
+
+	protected boolean removeEldestEntry(Map.Entry&lt;K, T&gt; eldest) {
+		if (size() &gt; maxSize) {
+			if (!hitCap) {
+				System.out.println("Hit memory cap (" + maxSize + ")");
+				hitCap = true;
+			}
+			return true;
+		}
+		return false;
+	}
+}
+</pre>
+<hr noshade class=wikiline size=1>
+Well, there it is.  Not a great performer, but provides the skeleton used in <a href="robowiki?WeeklongObsession" class=wikipagelink>WeeklongObsession</a> and <a href="robowiki?WeeksOnEnd" class=wikipagelink>WeeksOnEnd</a>.  To give you some ideas how to improve its performance, here is what <a href="robowiki?WeeklongObsession" class=wikipagelink>WeeklongObsession</a> has modified:
+<p>
+<UL >
+<li> As soon as a predicted position is out-of-bounds, it simulates a wall hit in the predicted history, so that it 1) will not shoot toward a position that is out-of-bounds and 2) predicts bots that bounce off walls <i>very</i> nicely.
+<li> Will not return a step that must have come from a wall hit from the pattern matcher.
+<li> Keeps track of every 2 degrees change in heading, instead of every degree. This halves the size of the frequency tables, which almost halves the memory it needs (well ... actually, almost doubles the number patterns that it tracks).
+<li> Matches on <i>change</i> in velocity instead of velocity.  This allows the frequency tables to be drasticly shortened.  In fact <a href="robowiki?WeeklongObsession" class=wikipagelink>WeeklongObsession</a> doesn't need to use an LRUMap at all for 35 round battles, it fits them all into about 150 MB (whereas <a href="robowiki?SingleTick" class=wikipagelink>SingleTick</a> fills that much in less than 5 rounds). You have to be careful with this, though, to prevent predicting out-of-control velocities!
+</UL>
+<p>
+<a href="robowiki?WeeksOnEnd" class=wikipagelink>WeeksOnEnd</a> adds one further improvement:
+<p>
+<UL >
+<li> Folds the pattern matching in half, so that it records &amp; predicts backward movement as if it were forward movement. This is a bit more memory efficient, and learns most enemy movements faster.
+</UL>
+<p>
+Lifelong obsession adds the following:
+<p>
+<UL >
+<li> Segmenting (on the distance to the enemy and the enemy's forward distance to a wall).
+<li> Folding the pattern matcher in half again, so that it records &amp; predicts counterclockwise movement as if it were clockwise movement.
+<li> Using custom classes instead of Strings to improve memory &amp; execution time.  This actually improved things enough to safely run 2 single-tick guns in a VG array, though <a href="robowiki?LifelongObsession" class=wikipagelink>LifelongObsession</a> does not do so, except in the TC2K6.
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+<p>
+If you leave questions here, I'll try to answer them by adding comments in the code.  --<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<hr noshade class=wikiline size=1>
+Too sad this code can't be compiled by Jikes. :( I turned on Eclipse SDK to compile this :)
+<p>
+I think using maximum turning depending on a velocity can improve correctness a little. Like so:
+<pre>
+	private static int encode(double dh, int v) {
+		if (Math.abs(dh) &gt; Rules.getTurnRateRadians(v)) {
+			return (char) -1;
+		}
+...
+</pre>
+<p>
+-- <a href="robowiki?Stelokim" class=wikipagelink>Stelokim</a>
+<p>
+No, because the maximum turn rate is determined by the bot's velocity LAST tick (since, internally, the bot turns before it moves).  That check in the encode method is really only to catch when a symbol would be out-of-bounds, and cause an <tt>ArrayIndexOutOfBoundsException<a href="robowiki?action=edit&id=ArrayIndexOutOfBoundsException" class=wikipageedit>?</a></tt> when trying to enter it into a frequency table.  Given 100% radar lock this is impossible except when <tt>lastEnemyHeading<a href="robowiki?action=edit&id=EnemyHeading" class=wikipageedit>?</a></tt> is from a previous round.  If the enemy bot <i>happens</i> to start a round facing almost the same direction as the end of the last round, the check in the <tt>encode</tt> method may not catch it, causing a bogus symbol in the pattern matcher.  I think this would be both rare and negligible, but you could replace the <tt>if</tt> statement in <tt>encode</tt> with a flag like this (setting it to <tt>true</tt> at the beginning of the <tt>run</tt> method) to prevent it:
+<pre>
+		// memorize.
+		double enemyH = e.getHeadingRadians();
+		if (startOfRound) {
+			lastEnemyHeading = enemyH;
+			startOfRound = false;
+			return;
+		}
+		int enemyV = (int) Math.rint(e.getVelocity());
+		int thisStep = encode(enemyH - lastEnemyHeading, enemyV);
+		record(thisStep);
+		lastEnemyHeading = enemyH;
+		enemyHistory = (char) thisStep + enemyHistory;
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=SingleTick" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=SingleTick">View other revisions</a><br>Last edited March 26, 2007 14:25 EST by <a href="robowiki?Simonton" title="ID 7817 from technisource-router.mtec.mtu.edu">Simonton</a> <a href="robowiki?action=browse&diff=1&id=SingleTick">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

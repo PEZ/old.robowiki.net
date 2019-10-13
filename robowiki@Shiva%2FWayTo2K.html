@@ -1,0 +1,294 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Shiva/WayTo2K - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Shiva, Way, To2K'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/WayTo2K">Shiva/WayTo2K</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Shiva" class=wikipagelink>Shiva</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>This is your best bot yet <a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>, isn't it? Tell, tell. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Hmmm, let me refrase that. This is the bot with the biggest potential of your bots yet, in'it? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Well as one can see in the rankings it is currently not my best bot, because my Star is some little points i front of him. But you are right that it has a big potential. While Star2 has alway been a bot that tried to has a flat movement-profile by a movement-algo and no adaptive movement (althought it detected if it was fighting a head-on targeter and then circled instantly one direction <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a>-like), Shiva uses <a href="robowiki?EnemyWave" class=wikipagelink>EnemyWave</a> - surfing (for now surfs unsegmented hitIndexes). 
+Nice one is watching my activities and i give my best to break the 1900-barrier ( well i know that 1900 points dont really seem to be barrier for you) with this bot. Finally i have to say that Shiva was not ment as a bot, but as a test for a new movement i want to built in HuntedHunter<a href="robowiki?action=edit&id=HuntedHunter" class=wikipageedit>?</a>. --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+1900 barrier will not be a barrier for you soon once you get your surfing together. Unless you turn your gun completely and shoot backwards. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Hope u r right :D --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+I know I am right. What you should hope is that you do get that surfing act together. Truly good that you start with unsegmented stats. You don't want bugs in indexing interfer with your results while you are ironing out the really important issues. My strongest advice is that you look at each and every little line and statement and see if there is any assumptions you do there that you can make a test for if the assumption holds. Assumptions are bad and assertions are good. That's PEZ rule #1 of robocoding in general and <em><strong><a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> in particular</strong></em>. You should also think hard on how you predict your future positions. Especially when wall smoothing. My sincerest wishes to you of good luck in this. Wave surfing was a real pain for me while getting it together. But looking backward it was all worth it and there was much fun in it too. <a href="robowiki?PugilistGL" class=wikipagelink>PugilistGL</a> I can really recommend you look at. Not the surfing, because that version had a bad implementation. But the GL graphing in it was worth a lot for me. Please steal it in its entirety. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Shiva is my third try of implementing WafeSurfing<a href="robowiki?action=edit&id=WafeSurfing" class=wikipageedit>?</a> and this time i try to do all correctly ( i try ...). About future position prediction: i use rozu's precise prediction code snippet and use one and the same methode for move and predict so that i wont get problems from this side. This methode provides some wall smoothing stuff and if wall avoidance-angle is to big i take current position - some kind of wall bouncing without bouncing ;D . My current problem is bin-smoothing and my algo to decide how to move. Hope to fix tha soon ...   --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<hr noshade class=wikiline size=1>
+Sorry u guys but it seems like i need your help: I have written some GL stuff for Shiva in order to see what it thinks and correct the bugs in it. But the problem is: I cant see at least one thing that is unnormal our not wished. My future position prediction works well and my bot moves to that GF seen from the wave to dodge that has been hit lowest. ( of cause i smooth bins  - therefore i took the methode by PEZ posted on the <a href="robowiki?SilverSurfer" class=wikipagelink>SilverSurfer</a> site). As PEZ told above it should not be a problem at all if wave surfing works properly to get a score better than 1900 points, but as you can see in the ranking table Shiva has about 1860. Is it possible that this comes from surfing only the wave that is going to hit me next and that  i dont segment the hit-index at all ? --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+More experienced persons could probably corect me if I'm wrong but I think you should get more than 1860 at least from that, probably over 1900. No segmentation is a good thing to start with, wish I had done that. Don't worry about the smoothing for now. Pez helped me concentrate on the important parts of wave surfing at the <a href="robowiki?PulsarMax" class=wikipagelink>PulsarMax</a> page. Looks like you have most of the basic head on targeting avoidance done correctly, but you should get higher score's against bons.<a href="robowiki?NanoStalker" class=wikipagelink>NanoStalker</a>! Make sure you keep moving forward there too, maybe some close distance problem? Maybe a guess factor index problem at close range? I still tend to move into head on targeters due to my wall avoidance at times but it's better to keep moving forward anyway. Can't wait until I sort out my wall avoidance at closer ranges. --<a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+Surfing the wave that is going to reach me next is what i do, actually. An unsegmented hit index for starting is also what i did, just for the reason that (i allways say it), i wanted it working with ~99% against HeadOnTargetings<a href="robowiki?action=edit&id=HeadOnTargetings" class=wikipageedit>?</a> (and u r pretty there as i can see...). Smoothing bin is a good idea, and helped a lot for me. Another is RollingAverages<a href="robowiki?action=edit&id=RollingAverages" class=wikipageedit>?</a> (or any similar), are u using anything like that? Once u think that you have a good moving against HeadOns<a href="robowiki?action=edit&id=HeadOns" class=wikipageedit>?</a>, i think that the next good step would be the segmentation. If u think that is time for it, that should gave u a lot of points (for example, a velocity segmentation should give u a very good performance against linear targetings). But i would only go to segmentation, if i think that the basis is good... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+<strong>I did it!!!</strong> well of cause not 2K but 1900 is really good for that. @axe: thanks for your advice. I use bin smoothing and in the next time i will try to make things you mentioned above working. Thanks alot. --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+Congrats! <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> surelly pays it´s suffering cost! -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Your performance against <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a>s is getting almost perfect (~96%)! That is a very good sign. If i was u, i´ll try to get this perfect, because getting it perfect (~99%) would mean a more precise WS (u r almost there anyway...). When u get the segmentation (u will get surprised about the points hidden in segmentations), this more precise WS should reflect also against other bots...  -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Shure, i am working on that ... --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+It looks like you have sorted a lot of things out. Check question. Are you yet doing any WallSmooting<a href="robowiki?action=edit&id=WallSmooting" class=wikipageedit>?</a>? If not, I think you have some 50+ points hiding there alone. This is because if you bounce instead of smooth then your surfing is effectively overridden for the duration of the bounce. What I do is that I always smooth unless I'm close to the opponent, then I still smooth, but only some 20% and then I allow the bounce. If you go the smoothing path then you also need to start figure on how smoothing affects where when your future positions impacts with the surfed wave. I iterate the wave and my bots wall-smoothed position at the same time to do this. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Oh no. I do use wall smoothing and i implemented it correctly in my future position prediction. I tested that alot. Currently im not shure about the performance of my gun - seems like i need to test some and i just wondered about this piece of code posted on the <a href="robowiki?SilverSurfer" class=wikipagelink>SilverSurfer</a> page by PEZ, i think : <pre>double smoothedVisits(int index , int [] visits) {
+		double smoothed = 0;	
+		double edgeFactor = 0;	
+       	for (int i = 0; i &lt; visits.length ; i++) {
+	   		edgeFactor += 1.0 / Math.pow(Math.abs(index - i) + 1.0, 1.5);
+	   		smoothed += (double)visits[index] / Math.pow(Math.abs(index - i) + 1.0, 1.5);
+		}
+        return (smoothed / edgeFactor) ;
+    }</pre>
+Isnt edgeFactor always the same independent from index ??? --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<UL >
+<li> Ehh ... sorry. Its of cause not alway the same but this code doest smooth right? --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+</UL>
+<p>
+Never mind the edge factor thingy there. It corrects a bin smoothing problem that probably doesn't exist. Besides it's used for movement in the snippet above and not for targeting. Don't smooth your targeting data. I have yet never seen it improve a gun. I'd say that unless your gun is badly broken it is not where you should try find points at the moment. Even a half-bad gun should bring your bot above 1950 if you have the surfing in shape. Something is not working as it should in your surfing. I'm pretty sure about this. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yes i do use that code for movement, but it doesnt work imho. But wait i will test.. --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+Is it possible that it should be smoothed+=(double)visits[<strong>i</strong>] ??? --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+<p>
+Yes! Good eyes you have there. =) I've not used that version much so haven't been bitten by that bug too much I guess. Here's the version used in the currently released version of <a href="robowiki?Pugilist" class=wikipagelink>Pugilist</a>:
+<pre>
+    double smoothedVisits(int index) {
+        double smoothed = 0;
+        int i = 1;
+        do {
+            smoothed += ((double)(fastVisits[i] / (double)(DISTANCE_INDEXES * VELOCITY_INDEXES * VELOCITY_INDEXES)) +
+                (double)visits[i]) / Math.sqrt((double)(Math.abs(index - i) + 1.0));
+            i++;
+        } while (i &lt; FACTORS);
+        return smoothed / Math.sqrt(distance(targetLocation, 0) / bulletVelocity);
+    }
+</pre>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Quickly compiled a new version of Shiva (0.7) with bugfix of that. In my calculation it should bring at least 10 rating points. Lets c --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+<pre>10	cf.proto.Shiva 0.7	1959.52	details	graph	125	1-6-2004:12:50</pre> 10 points ??? 80 points !!! of cause not enough battles but seems like this bugfix pushes me alot. --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a> 
+<p>
+I was going to point out that your guess was probably way too low for the impact of a bug like that. I'll keep my fingers crossed that you'll stay above 1950. Then you can move on to segmentation a while I think. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Thanks for your help. I hope so (difficult to type with crossed fingers :D ) --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<hr noshade class=wikiline size=1>
+Strange things happen. The only thing i changed from version 0.7 to 0.70.1 was that i removed my victory dance so that Shiva could dodge bullets even if the enemy was dead. I changed this because in some cases i got hit although the enemy was already dead. And my ranking gets now from 1950 - well 0.2 point to that - to 1940 and a negative momentum. Of cause it has not yet 200 battles done, but i am wondering ... --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+My guess is that it will have zero, zilch, nada, no impact whatsoever on the performance. Victory dance, freeze or surf when the enemy has died doesn't matter. Dead enemies don't shoot. As the saying goes. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Thats just the point, because my performance is not the same. --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+But you don't know that yet. Wait 'til you have 600+ battles and see. And my guess is just that. A guess. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Well i couldnt wait till it got 600+ battles, but it looks like you were right .... ! i shoudnt have paniced like that but you know i could see my baby loose and drop. Now uploaded version 0.8 . I am a 100 perecent sure it will break the 1950 limit but i am not sure if robocode is sure too :D . --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a> 
+<p>
+Looks good though. But who created those official rankings NOW. couldnt you wait for shiva to get 500 battles? :D --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+The cron daemon did. =) Always Wednesday nights. I always forget about it too. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+The details sheet of S 0.8 looks really good by the way. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I am in my "stasis" phase (just taking a break), but i can´t stay away from a peeking. Man, u germans are making a nice "blitz-krieg"(sorry if my german is incorrect!) here. It´s been funny to watch that german running to the 2K (u and <a href="robowiki?Mue" class=wikipagelink>mue</a>)! No doubts that the two can reach there, i am just curious about who will make it first. Nice, very nice... And congrats again to u two! -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>    
+<p>
+Who! Chasing DT now. You might need some work on your gun for that. Then again, you might not, depending on how far you think you have gotten with the surfing. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Axe nearly perfect, we would say Blitzkrieg. Yes i was really happy to see another german flag in the rankings - you know germans have always been very good robocoders ( ms with hit Ares which was ruler in robocode a long time ago, and grafis with his geek-series ... ) . Hope we can continue like that and fight for the 2k.
+<p>
+@PEZ, right. I think my gun gun is the weakest point of Shiva at the moment. Not that i have tested much but its just a feeling. I will have to work on that. --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+Ahhhhhhhhhhh. I just checked the rankings. <strong>1977</strong> points ! <strong>#9</strong> . Only <strong>3 red fields</strong> in my ranking table ( Shadow, Tron3 and <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> - i always knew that i am not good in boxing :D ). <strong>TOP 10</strong> and just one place behind that person (and bot) that seems to me so untouchable a long time. A dream is getting reality. <strong>2k</strong>, i am coming, you can put some bottles of bear in the fridge,but ... no i will bring german bear with me when i join. Than you can see and taste what bear is :D --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+You eat bears in Germany?  Do you have grizzly bears, polar bears, black bears, or what? ( ;-p ) -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Oh yes and we all are really bad in english. :D . 
+<p>
+Good news. Now only 2 red field if my ranking left. I took boxing lessons :D 
+<p>
+--<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+I spent 10 years in Germany (Wiesbaden, Zwiebrucken, and Augsburg). If you are taking requests I would like one of these: [<a rel="nofollow" href="http://www.park-bellheimer.de/produkte/park-priminator.htm">[1]</a>]. It will have to chill until I get there and of course I would like it vom fass mit ein bratwurst und saurkraut. Sorry for my poor German. I should stick to English =^&gt; -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+Was that something about vomit, bratwurst and saurkraut?  Well, all's fair in beer and war... -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I dont know that beer but i am sure you would like Rothaus Pils as well :D . But what beer do you people drink in amerika. bud? you cant call that beer !!! And a friend of mine who was about a half year in the usa told me, that americans have no idea what a real beer is. :D  
+<p>
+And jim, your german is not worse than my english.
+<p>
+<PRE >
+ --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+</PRE>
+<p>
+Released 0.9 . Should be better against bots starting with abc :D . Hopefully even better against weak bots, but i am not sure how it will perform against superb gf targeting bots. lets c . 2K?? :D  --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+I would say that in America is brewn some of the finest beers in existance. Chocolate Brew from Brooklyn Brewery is the best beer I have ever tasted. And in Boston they have Samuel Adam's Brewery, producing really, really fine beer. My fav from there is Winter Lager. It's a big seller here in Sweden around X-mas times. Bud is, like the saying goes, like making love in a canoe. Agree with you there. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Have you guys ever tried Belgian beer? Now THAT country sure knows how to brew! My absolute favourite one is "speciale palm". It has the softest, most silky taste I've ever come across. And the colour is just....beautiful. I think I'm getting emotional... --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Oh, yes. In Stockholm we have two bars who are #1 and #2 in the world counted by the number of Belgian beers they offer. Not even in Belgium itself can you find a bar even competing. If you ever needed an excuse to go to Stockholm... =) I'm mainstream when it comes to Belgian beer I guess. Leffe Bruin is my fav. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+As a non-drinker, my idea of beer is that it's like rancid barley with distilled water, so from that standpoint discussing the finest and best-tasting is a little humorous.  And what the heck kind of saying is "like making love in a canoe"?  You make it sound like people are saying that all the time :-p -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Well, they are saying that about Bud. And Miller. And Michelob. It's f***ing close to water. Beer is hardly a distillate. Maybe you are confusing it with Whisk(e)y? It starts out a bit like with beer, but then you take it astep further in the fermentory phase, producing something like a really bad wine. From there you distill it. But not all the way to almost 100% like you do with Vodka. More like 70%. Which means you keep a lot of the characteristics of the water and malted barley. Like with beer it can be done with different degrees of skill and care. There is quite fine non-alcoholic beer by the way. They sell mainly two makes here; Jever and Clausthaler. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I once went monastary hoping in Belgium with a book about the worlds best ales. I must say that cloistered monks in Belgium make some very fine beer. They just do not bottle it so it is very hard to transport. All in all good beer. If you want to find good beer in America you must go to the micro-breweries. Bud, Michelob, etc are all garbage. I would not call them beer as even comparing them to beer sullies the good name of beer =^&gt; -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+Which isn't a good name in <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>'s book. =) <a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>, if your bot doesn't break the 2K barrier this release. Know that it did touch ground. I saw it chase CC in the table. It was 2007 when 105 battles where fought. Cooool!!!! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Beer from belgium is really good, but i prefer german and czech beer. If you speek german, visit www.bier.de and view the top 10 of beers.
+<p>
+Too sad that i couldnt see that score of 2007. Well now it dropped down back to 1980. But i work on 2k. At the moment i continue improving my movement - i am full of ideas, but my gun seems to need improvements much more. I quickly wrote a new robots with Shivas movement and worked the pugilist punch in. It performed much better. But anyway i am sure that i can make it to 2k without any gun tweak.
+<p>
+--<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+I think you might have a very strong movement there. You should release a test version 0.91.p or something just to calibrate I think. My movement is as easily pluggable as my gun btw. So you could plug it in together with your gun and see how our movements compare in performance. Note that in the current release of CC there's a bug where I don't pass bullet collision events to the movement. This is how the gun and movement should be plugged in:
+<pre>
+public class CassiusClay extends AdvancedRobot {
+    static boolean isTC = false; // http://robowiki.net/?TargetingChallenge
+    static boolean isMC = false; // http://robowiki.net/?MovementChallenge
+
+    Butterfly floater;
+    Bee stinger;
+
+    public void run() {
+	Bee.isTC = isTC;
+	floater = new Butterfly(this);
+	stinger = new Bee(this);
+
+	setColors(new Color(60, 30, 10), Color.green, Color.black);
+	setAdjustRadarForGunTurn(true);
+	setAdjustGunForRobotTurn(true);
+
+	do {
+	    turnRadarRightRadians(Double.POSITIVE_INFINITY); 
+	} while (true);
+    }
+
+    public void onScannedRobot(ScannedRobotEvent e) {
+	if (!isTC) {
+	    floater.onScannedRobot(e);
+	}
+	if (!isMC) {
+	    stinger.onScannedRobot(e);
+	}
+	setTurnRadarRightRadians(Utils.normalRelativeAngle(getHeadingRadians() + e.getBearingRadians() - getRadarHeadingRadians()) * 2);
+    }
+
+    public void onHitByBullet(HitByBulletEvent e) {
+	floater.onHitByBullet(e);
+    }
+
+    public void onBulletHitBullet(BulletHitBulletEvent e) {
+	floater.onBulletHitBullet(e);
+    }
+}
+</pre>
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Well i just released 1.0. That DOES NOT include your gun, and i hope it can break the 2K limit. But i will release a bot that includes your gun. It will be a wiki bot, because i dont want to get into the 2K-club with a bot that is not 100% written of me. I thought of calling that new bot <a href="robowiki?BoxingVirus" class=wikipagelink>BoxingVirus</a> ( maybe u know that Shiva is a virus from the book "operation rainbow" by tom clancy). Would that be ok??? 
+--<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+It would be entirely OK. But I would rather consider just release a .p release that you let run it's 600+ battles and then just recall it. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I would recall that wiki bot, too. I just dont want to release a bot with the mainpackage cf, that is not a complete and true deathcon - bot. understand that? 
+-- <a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+Roger that! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Shouldnt there by a static in front of butterfly and bee, or how do u save data between rounds ??? --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+Data is saved in statics inside the butterfly and bee. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+ok. version 1.0 : 60 battles score: 1984.11 momentum : 35 . Wins to SilverFirst<a href="robowiki?action=edit&id=SilverFirst" class=wikipageedit>?</a> and has not yes a red field. Fought against Shadow, SiverFirst<a href="robowiki?action=edit&id=SiverFirst" class=wikipageedit>?</a>, <a href="robowiki?PulsarMax" class=wikipagelink>PulsarMax</a> ,<a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> and <a href="robowiki?SilverSurfer" class=wikipagelink>SilverSurfer</a>. I am happpy. --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+No, you haven't met CC yet. It'll try its hardest to give you a red record. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Hm strange. i was sure that i saw a CC field in the rankings. Now there is none. I am crazy. 1999.19 points at 84 battles and a positive momentum... --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+Now there is a CC field in my ranking. But it is not colored. :P --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+(edit conflict) Now there's suddenly 9 battles against CC. 44%. I'll have to sharpen CC's punch I guess. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Well, I still have some edge against Shiva:
+<pre>
+1st: pez.rumble.CassiusClay 1.0.6c   78880	32750	6550	34306	5269	4	0	657	344
+2nd: cf.proto.Shiva 1.0              51873	17200	3440	28342	2865	25	0	347	655
+</pre>
+=) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+? And now no CC field on Shiva's details sheet. I think that maybe it's an old CC appearing and disappearing. We have yet to see the new versions fight in the rumble. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Damn it. Thats a just about 39% . --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+36% against Aleph. I never had big problems with this bot. That is robocode: Add things that make you better against some bots and you will get weaker against others. And not seldomly you get worse overall :( --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+Well, it has a mean PM gun after all. Your gun is probably too much like the gun <a href="robowiki?Aleph" class=wikipagelink>Aleph</a> is dodging. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+You might be right. And what do you thing about this: i calculate my firePower like this : 1100/distaceToEnemy<a href="robowiki?action=edit&id=ToEnemy" class=wikipageedit>?</a>. (of cause i make it lower if i or my enemy has low energy ) . Do you agree that that might give my a to high firepower overall that is really easy to dodge? Wha would u suggest? --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+You know what I think. =) Two comments anyway:
+<OL >
+<li> Yes, you start firing power 3 at distances somewhere below 400. My (unintentional) tests shows that that costs 30 rating points.
+<li> Unless you segment on bullet power you contaminate your stats. Some earlier version of <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> segmented using an array of bullet powers that I could index using the distanceIndex. That way I always had the same bullet power for a given distance segment. But then I tested with using 1.9 all the time instead and got better results in the rumble...
+</OL>
+Regarding contamination. Either segment on bullet power or don't collect data from waves with energy managed bullets in them.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Test,test,test. I will be away for 2 days, and please, if it happens that shiva could stay over 2k, add it to the club :D ,but i dont think that it will do anyway, not yet. --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+There's an even cooler club you might join though. The ahead-of-DT club! =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, I thought you segmented on <a href="robowiki?BulletTravelTime" class=wikipagelink>BulletTravelTime</a>? Doesn't that take care of both distance and bullet power in one segment? --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+No, I don't segment on BTT. I think that's generally a bad idea since a weak bullet traveling far is very different from a strong bullet traveling short. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+That's interesting... why is it so much different in your opinion? <a href="robowiki?Locke" class=wikipagelink>Locke</a> does segment on BTT, so maybe there's some points to be gained here. My reason for using BTT is this: I do not use GF's when I store my Waves. Instead I use Distance+Heading. When I use an observation, it can happen that the actual BTT will differ from the observation's BTT. In such a case I will have to adjust the distance travelled explicitely. (When you use GF's, you automatically adjust - one of the beauties of GF's). For this adjustment I have to know the BTT of the observation and the expected BTT of the actual situation. Then I can calculate a "BTTFactor" and multiply this with my stored Distance travelled.  --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+Something I think many robocoders forget is the importance of those walls. I reason that the distance segmentation is so important because of what the walls forces bots to do. Segmenting on BTT totally misses this aspect if it is not combined with segmentation on either distance or bullet power. The beautiful thing with using same bullet power always and don't collect data on energy managed bullets is that it makes BTT tell the same story as distance does. I would go that track with your dual need for BTT info. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li> I tend to think another large thing about segmenting on distance is that weak movements tend to look different at a distance than close up, i.e. - if you oscillate 400 pixels back and forth all the time, you'll have a thin profile far away and a wide one close up.  But what really influences that difference is that it takes longer for the bullet to get there when they're far away.  I think the philosophy in segmenting on distance is that robots use distance as a parameter in their movement, and the philosophy in BTT is that robots either use BTT as a parameter in their movement OR don't use distance or BTT as a parameter to their movement. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+</UL>
+<p>
+I see your point here! Very interesting. I will try this asap. --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>, 39.9% against CC in your details sheet. Pretty ironic. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Now over 40%. Shiva beats <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a>, Lacrimas and SilverFirst<a href="robowiki?action=edit&id=SilverFirst" class=wikipageedit>?</a>. But i dont know what i am doing wrong against weak enemies. Maybe 1.02 will make it over 1990. --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+1992. I like that ahead-of-DT club :D --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+Wow, looks like you finally passed 2k (2014 points after 561 battles). Very impressive! --<a href="robowiki?Mue" class=wikipagelink>Mue</a>
+<p>
+Indeed! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Well done! -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+You probably win the "Rating / Age" league. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Way to go! Congratulations, man! Please insert your entry at <a href="robowiki?The2000Club" class=wikipagelink>The2000Club</a>. Welcome... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Something funny that i thought: Shiva surelly rhymes with Java (at least in portuguese &amp; english)! Was that intented? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a> 
+<p>
+Congratulations! What a rapid rise to that exclusive little club! --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<p>
+I love that club. Oh what a feeling ... just incredible. <strong> I DID IT.</strong>. Thanks to all of u and axe for inviting me to that club. I get 125,625 rating / age ( i am 16 now) - who can compete ?
+<p>
+If anybody wonders what i did to get this: I wrote a new gun. (i prevented the name from being obfuscated so u can see how i named it : Shiva2KGun :D ). Its a really simple gun that segments on velocity, accl, distance, wall and time-since-last-velocity-change, but it uses two bins. One for fast learning purpose and the other for long battles ( i might be the first one doing this in an old version of Oldman - if not i am going to give credits to whoever this invented). I am happy :D)))))))))))))) --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+<p>
+You might be the first one doing it that simple. CC does it to since some later version. But DT has been equipped with something like it since version 1.71 or something. Though that obviously isn't as simple as ours. =) Please run the <a href="robowiki?TargetingChallenge" class=wikipagelink>TargetingChallenge</a> with that new gun of yours. You can probably tweak the time-since... and wall segments. I find that those two are worth experimenting with. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Ok so credits go to <a href="robowiki?Paul" class=wikipagelink>Paul</a> and <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>. To be honest i remembered that way of increasing learing speed when i plugged your gun with <a href="robowiki?Shiva" class=wikipagelink>Shiva</a>s movement to <a href="robowiki?BoxingVirus" class=wikipagelink>BoxingVirus</a> - no idea how i could have forgot it. About the TC i am going to do some tweaks first before adding. Version 1.1 uses a gun-version i hacked within ONE hour just to get that damn 2k ;/ . It needs alot improvements and than it will be testet in the TC. I also planned to run some <a href="robowiki?MovementChallenge" class=wikipagelink>MovementChallenge</a> tests. Now that 2k is done - why not work day and night for top5, top3 and maybe ... "I'm just a dreeeeeeamer ... " :D Watch this place !!! --<a href="robowiki?Deathcon" class=wikipagelink>deathcon</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Shiva" class=wikipagelink>Shiva</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Shiva/WayTo2K" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Shiva/WayTo2K">View other revisions</a><br>Last edited June 12, 2004 10:00 EST by <a href="robowiki?Deathcon" title="ID 3033 from krlh-d9b92b8e.pool.mediaWays.net">Deathcon</a> <a href="robowiki?action=browse&diff=1&id=Shiva/WayTo2K">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

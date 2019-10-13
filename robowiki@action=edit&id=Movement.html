@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing Movement - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Movement'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing Movement</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="Movement"  />
+<input type="hidden" name="oldtime" value="1186235409"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="5"  />
+<input type="hidden" name="captchaArg2" value="1"  />
+<input type="hidden" name="captchaOp" value="*"  />
+<input type="hidden" name="captchaId" value="084425291818"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">Movement is one of the two most important parts of a robot (the other being [[Targeting]]).  It is how your robot moves around the battlefield.  Your Movement is what stops the enemy&#39;s Targeting from correctly guessing where you will be when a bullet reaches you.
+
+The implementation of a movement system may well find a specific point it wants to move to.  To do that you need a goTo() method.  You can find out more on /CodeSnippetGoTo, /CodeSnippetBasicGoTo and /GoToBot
+
+----
+==== PatternMovement ====
+* LinearMovement - Moving in a straight line.  Vulnerable to LinearTargeting.
+* [[Oscillators]] - Moving in a set pattern, which repeats (although the period can be hundreds of ticks long).  Vulnerable to PatternMatching.
+* CircleBots - Moves in circles. Vulnerable to CircularTargeting.
+* WallBots - Moves along the walls. Vulnerable to LinearTargeting, except when near corners.
+* RamBots - Moves to hit the enemy.  Vulnerable to most targeting, but gets extra ram bonus.
+* StopAndGo - Movement reacts on enemyfire. Effective against LinearTargeting and CircularTargeting, vulnerable to PatternMatching and GuessFactorTargeting.
+
+==== OneOnOneMovement ====
+
+* AntiGravityMovement - Works by imagining forces repeling your robot from the other robots, and the walls.  Works well in Melee &amp; 1on1.
+* [[PerpendicularMovement]] - A general term describing a lot of movements systems.  They move at right angles to the enemy so their bearing changes as much as possible.
+** RandomMovement - Moves in a randomly determined way, often combined with other techniques to avoid moving in undesirable ways. Check RandomMovementBot for an implementation.
+** DynamicDistancing - selecting a distance from the enemy using past experience.
+** [[CircleStrafing]]
+* [[Cannibals]] - Copy the direction of the enemy (often using MirrorMovement). Vulnerable to AntiMirrorTargeting, and to bad enemy movement.
+* ProvocativeMovement - Moving in a way that aids your Targeting, rather than harming your enemy&#39;s.
+* ChaoticMovement - Similar to RandomMovement, in that is moves in a completely unpredictable way.
+* [[ArbitraryMovement]] - Moves in an arbitary, but often unpredictable way.
+* [[NeuralReinforcementLearningMovement]] - Moves in a learned fashion, using a NeuralNetwork
+* TrackMovement
+* FlatMovement - Moving in such a way that all possible targeting methods should hit roughly equally. (Creating a &quot;flat&quot; graph if one were to graph the movement.)
+* WaveSurfing - Moving with respect to where bullets are fired from, usually combined with GuessFactor data about how the enemy has hit you.
+** [[WaveSurfing/TrueSurf|True Surfing]] - Continually re-evaluates moving forwards or backwards, &quot;surfing&quot; [[EnemyWave]]s similarly to a real surfer.
+** [[WaveSurfing/GoToStyle|GoTo-Style]] - Calculates the range it could get to before the closest wave &quot;breaks&quot;, and goes to the safest part of the wave (or all waves).
+** [[WaveSurfing/ShrapnelSurf|Shrapnel Surfing]] - Calculates the most dangerous part of the oncoming wave(s), and moves furthest from that area.
+** [[WaveSurfing/ReverseForwardSensors|Reverse/Forward Sensors]] - A form of [[WaveSurfing/TrueSurf|True Surfing]] that does *not* use [[WaveSurfing/PrecisePrediction|Precise Prediction]], but tries to approximate similar results.
+** [[WaveSurfing/Experiments|Experiments]] - Miscellaneous WaveSurfing experiments.
+** [[WaveSurfing/PrecisePrediction|Precise Prediction]] - Using very precise prediction code to get extremely exact results from your WaveSurfing. Could be used in any of the WaveSurfing methodologies.
+==== MeleeMovement ====
+* CornerMovement
+* AntiGravityMovement - Works by imagining forces repeling your robot from the other robots, and the walls.  Works well in Melee &amp; 1on1.
+* MinimumRiskMovement - Picks a selection of possible moves, and follows the run with least risk (ie. furthest from enemies)
+* BombSheltering - in [[melee]], hides behind weak enemy bots to avoid being hit
+* WantedTerrain
+----
+&#39;&#39;&#39;Challenges&#39;&#39;&#39;
+* MovementChallenge - Test your movement in a controlled environment.
+** CurveFlatteningChallenge: Try to avoid being hit by one of the GuessFactor guns around (in days long past).
+** AntiPatternMatcherChallenge: Try to avoid being hit by the champion of the PatternMatcherChallenge.
+* MovementChallenge2K6 - Updated with some much scarier guns.
+** WaveSurfingChallenge2K6 - Test your movement against HeadOnTargeting, LinearTargeting, and CircularTargeting.
+** CurveFlatteningChallenge2K6 - Try to avoid being hit by three excellent GuessFactor guns.
+** AntiPatternMatcherChallenge2K6 - Try to avoid being hit by a potent PatternMatching gun.
+* WaveSurfingChallenge: Can you dodge *every* bullet these bots fire?
+* PassiveKillChallenge: 
+* SampleBotChallenge/Movement: 1 Movement, 11 SampleBots, 0% hit rate. Can it be done?
+
+&#39;&#39;&#39;Other&#39;&#39;&#39;
+* FuturePosition - a code snippet to work out where your movement system will take you.
+* WallAvoidance
+* MultiMode
+* [[Saving]]
+* [[Teleport]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 5 * 1 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that Movement has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=Movement">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

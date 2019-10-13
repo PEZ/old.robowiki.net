@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>SpinBotChallenge/St00pid - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Spin, Bot, Challenge, St00pid'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/St00pid">SpinBotChallenge/St00pid</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?SpinBotChallenge" class=wikipagelink>SpinBotChallenge</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package dummy;
+import robocode.*;
+import java.awt.geom.Point2D;
+//import java.awt.Color;
+
+/**
+ * St00pid - a robot by Kwok-Cheung Li, also known as "Dummy"
+ * designed to participate in the Pez' SpinBotChallenge
+ * http://robowiki.net/cgi-bin/robowiki?SpinBotChallenge
+ */
+
+public class St00pid extends Robot
+{
+
+	long scantime=0;
+	double bearing = 0;
+	double heading=0;
+	double spinbotTurnRate = rad(6.25);
+	double spinbotVelocity = 5;
+	double enemyX, enemyY;
+	double enemyDist;
+	double radarturn;
+	double adjustradar=10;
+	double timetohit=1;
+	double direction=150;
+	double tX, tY;
+	boolean found = false;
+
+	public double rad(double deg)
+	{
+		return Math.PI * deg/180;
+	}
+	
+	public double deg(double rad)
+	{
+		return 180 * rad/Math.PI;
+	}
+	
+	public double angle_180(double ang)
+	{
+		return (ang + 900)%360 - 180;
+	}
+		
+	public void radar()
+	{
+		radarturn = angle_180(bearing - getRadarHeading());
+		if (radarturn&gt;0)
+			adjustradar = 10;
+		else
+			adjustradar = -10;
+		turnRadarRight(angle_180(bearing - getRadarHeading()) + adjustradar);
+		while(!found)
+		{
+			turnRadarRight(adjustradar);
+		}	
+	}
+	
+	public void move()
+	{
+		if (getTime()&gt;timetohit)
+		{
+			turnRight(angle_180(bearing - getHeading() + 90));
+			adjustForWall();
+			ahead(direction);
+			direction = -direction;
+			timetohit = getTime() + enemyDist/11 - 14;
+		}
+		else
+		doNothing();
+	}
+	
+	public void adjustForWall()
+	{
+		double tX, tY, dX, dY;
+		double newHeading;
+		double sign;
+		dX = direction * Math.sin(rad(getHeading()));
+		dY = direction * Math.cos(rad(getHeading()));
+		tX = getX() + dX;
+		tY = getY() + dY;
+		
+		if (tX&gt;=20 &amp;&amp; tX&lt;=getBattleFieldWidth()-20 &amp;&amp; tY&gt;=20 &amp;&amp; tY&lt;=getBattleFieldHeight()-20)
+			return;
+		
+		if (tX &lt; 20)
+		{
+			tX = 20;
+			if (dY&lt;0)
+				sign = -1;
+			else
+				sign = 1;
+			dX = 20-getX();
+			dY = sign * Math.sqrt(direction*direction - dX*dX);
+		}
+		
+		if (tX &gt; getBattleFieldWidth()-20)
+		{
+			tX = getBattleFieldWidth()-20;
+			if (dY&lt;0)
+				sign = -1;
+			else
+				sign = 1;
+			dX = getBattleFieldWidth()-20-getX();
+			dY = sign * Math.sqrt(direction*direction - dX*dX);
+		}
+		
+		if (tY &lt; 20)
+		{
+			tY = 20;
+			if (dX&lt;0)
+				sign = -1;
+			else
+				sign = 1;
+			dY = 20-getY();
+			dX = sign * Math.sqrt(direction*direction - dY*dY);
+		}
+		
+		if (tY &gt; getBattleFieldHeight()-20)
+		{
+			tY = getBattleFieldHeight()-20;
+			if (dX&lt;0)
+				sign = -1;
+			else
+				sign = 1;
+			dY = getBattleFieldHeight()-20-getY();
+			dX = sign * Math.sqrt(direction*direction - dY*dY);
+		}
+		double turn = deg(Math.atan2(dX, dY)) - getHeading();
+		if (direction&lt;0)
+			turn += 180;
+		turnRight(angle_180(turn));
+	}
+
+	public void gun()
+	{
+		if (Math.abs(bearing - getGunHeading()) &lt; 20)
+			turnGunRight(angle_180(bearing - getGunHeading()));
+		// db is the distance the simulated bullet has travelled; db will probably
+		// be initialized at a negative value, because we want to offset the fact
+		// that the last scan may be some time ago (we're working with Robots, not
+		// AdvancedRobots, remember?) and that the gun needs time (probably one tick
+		// to turn before firing...
+		if (!(getGunHeat()&lt;1))
+			return;
+			
+		double db=(scantime-getTime() - 1)*11;
+		double ww = rad(heading);
+		double eX = enemyX - getX();
+		double eY = enemyY - getY();
+		do
+		{
+			db+=11; //11 is the velocity of a fire(3) bullet.
+			double dx=spinbotVelocity*Math.sin(ww);
+			double dy=spinbotVelocity*Math.cos(ww);
+			ww+=spinbotTurnRate;  // turn w radians for next step
+			eX+=dx;
+			eY+=dy;
+		}while (db&lt; Point2D.distance(0,0,eX,eY));
+		double ang = angle_180(deg(Math.atan2(eX, eY)) - getGunHeading());
+		turnGunRight(ang);
+		fire(3);
+	}
+	
+	public void run() 
+	{
+		turnRadarRight(360);
+		while (!(getGunHeat()&lt;1))
+		{
+			found = false;
+			radar();
+		}
+		timetohit = getTime() + enemyDist/11 - 20;
+		while(true) 
+		{
+			move();
+			found = false;
+			radar();
+			gun();
+		}
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e) 
+	{
+		found = true;
+		scantime = getTime();
+		bearing = e.getBearing() + getHeading();
+		heading = e.getHeading();
+		enemyDist = e.getDistance();
+		enemyX = getX() + enemyDist * Math.sin(rad(bearing));
+		enemyY = getY() + enemyDist * Math.cos(rad(bearing));
+		spinbotVelocity = e.getVelocity();
+	}
+	
+
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?SpinBotChallenge" class=wikipagelink>SpinBotChallenge</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=SpinBotChallenge/St00pid" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=SpinBotChallenge/St00pid">View other revisions</a><br>Last edited October 14, 2004 21:31 EST by c529c2358.cable.wanadoo.nl <a href="robowiki?action=browse&diff=1&id=SpinBotChallenge/St00pid">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

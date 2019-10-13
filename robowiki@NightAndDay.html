@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>NightAndDay - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Night, And, Day'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=NightAndDay">NightAndDay</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?NightAndDay/VersionHistory" class=wikipagelink>/VersionHistory</a>
+<p>
+<p>
+<H3>Bot Name</H3>
+
+Two bots:
+Night and Day,as a team, make:
+<p>
+<a href="robowiki?NightAndDay" class=wikipagelink>NightAndDay</a>
+<p>
+Day extends Night, but changes the color from black to white.
+<p>
+<H4>Author</H4>
+
+<p>
+Skilgannon
+<p>
+<H4>Extends</H4>
+
+<p>
+<a href="robowiki?TeamRobot" class=wikipagelink>TeamRobot</a>
+<p>
+<H4>What's special about it?</H4>
+
+<p>
+My first <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> bot(s), and my first team. It is designed so that I only have to change a few constants and it will be able to act as a full 5v5 team. It also uses rudimentary friendly-fire avoidance, by using Line2D.Double.distSeg(Point2D.Double) and projecting the absolute bearing of bots.
+<p>
+<H4>How competitive is it?</H4>
+
+<p>
+The latest version looks pretty strong, but 1.0 was a bit of a flop.
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+<p>
+It uses <a href="robowiki?MinimumRiskMovement" class=wikipagelink>MinimumRiskMovement</a> with several ideas taken from <a href="robowiki?Shiz" class=wikipagelink>Shiz</a> (namely only moving parallel to bots which I are likely to target me), but all my own code and implementation. I've also expanded on the idea somewhat, keeping track of which bots are *actually* targeting me and moving parallel to them.
+<p>
+<H4>How does it fire?</H4>
+
+<p>
+1.0 used a segmented PlayItForward<a href="robowiki?action=edit&id=PlayItForward" class=wikipageedit>?</a> gun, which rebuilt 50 movements, but the recent versions use a simple <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> gun, based off of <a href="robowiki?Connavar" class=wikipagelink>Connavar</a>, and adapted to hit non-relative movements.
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+<p>
+It randomly reverses every now and again, according to when Raiko's flattener says it should. I should probably switch to Waylander's flattener, though.
+<p>
+<H4>How does the <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+<p>
+I tried to use functions for everything, so that there are no specific cases for 2v2, 2v1, 1v2, or 1v1. The closest it comes to special casing is by segmenting its gun on the number of teammates it has.
+<p>
+<H4>How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a>?</H4>
+
+<p>
+It attacks bots that are:
+<UL >
+<li> Not on its team (duh)
+<li> Easier to hit because they are:
+<UL >
+<li> Closer
+<li> Moving parallel to the absolute bearing
+</UL>
+<li> Have less energy
+</UL>
+<p>
+It will only change targets if the new target's 'targetabililty' *0.9 is greater than that of the old target. This prevents thrashing.
+<p>
+This is a fine balance between trying to make both teammates gang up on one enemy in order to get a 2v1 advantage, and trying to shoot the easiest to hit bot in order to a) keep my energy high and b) inflict maximum damage.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+<p>
+No saving between matches (<a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> rules), but between rounds it saves the successful <a href="robowiki?GuessFactors" class=wikipagelink>GuessFactors</a>
+<p>
+<H4>Where did you get the name?</H4>
+
+<p>
+They are the two swords wielded by <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a> in several books by David Gemmell.
+<p>
+<H4>Can I use your code?</H4>
+
+<p>
+Under the following terms:
+<UL >
+<li>Your bot MUST be <a href="robowiki?OpenSource" class=wikipagelink>OpenSource</a>.
+<li>You give credit in your code, and in any documentation of your bot.
+<li>Pleeaase don't just take my bot, tweak it and release it under another name. Rather tell me about the changes, and I'll give you credit. =)
+</UL>
+<p>
+<H4>What's next for your robot?</H4>
+
+<p>
+Beating <a href="robowiki?LuminariousDuo" class=wikipagelink>LuminariousDuo</a> and <a href="robowiki?MarioBros" class=wikipagelink>MarioBros</a> - <em>how</em> I have no idea
+<p>
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+<p>
+<a href="robowiki?LuminariousDuo" class=wikipagelink>LuminariousDuo</a> and <a href="robowiki?MarioBros" class=wikipagelink>MarioBros</a>
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+<p>
+None really....some of the gun stuff I double checked against <a href="robowiki?Connavar" class=wikipagelink>Connavar</a>, and the flattener is from Raiko, although that should change soon.
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+<p>
+<p>
+Nice name. =) Going to do one black one white like <a href="robowiki?YinYang" class=wikipagelink>YinYang</a>? --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+If I continue with the idea, then yes, definately =). I realised it was a bit tough to fit a pattern matcher that stored data on multiple enemies, and has scan interpolation, and still fit a GF gun with scan interpolation, so I've made something that is a cross between the two: a segmented play-it-forward gun, that reconstructs the last 50 movement patterns in that set of 'bins'. I've also got an optimal radar scanning (inspired by a comment by <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>) that scans in the direction of the enemy who was scanned the longest time ago - so it should be pretty effective for melee as well. It's got my-location sharing, which will be used for movement. Right now I'm at 1200 bytes, and all I have to add is the movement. I'm pretty sure I'll go for <a href="robowiki?MinimumRiskMovement" class=wikipagelink>MinimumRiskMovement</a> - although a special case for 1v1 at the end would be nice if I can fit it =). -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+<UL >
+<li> My gun seems so simple by comparison: lightly segmented <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>, no scan interpolation, no <a href="robowiki?RollingAverage" class=wikipagelink>RollingAverage</a>. =) I wonder if your optimal radar is smaller than mine - I'm happy with how well mine functions now, but it does take up several hundred bytes. It's still 100+ bytes smaller than my full-scan-sharing radar that I tried out in the laboratory, though. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+<UL >
+<li> The nice thing about scanning in the direction of the bot that hasn't been scanned for the longest is that it doesn't only work for <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a>, but Melee as well. The only difference for Melee is that sometimes a bot might be out of range - I'll have to figure out something for that. Here's my radar - I'm not sure how many bytes it uses:
+</UL>
+<pre>
+            Enumeration allE = enemies.elements();
+            double otherAngle = absBearing;
+            int oldestScan = Integer.MAX_VALUE;
+            do{
+               EnemyInfo tmp = (EnemyInfo)allE.nextElement();
+               if(tmp.lastScanTime &lt; oldestScan &amp;&amp; tmp != eInfo &amp;&amp; tmp.isAlive &amp;&amp; !(eInfo == currentTarget &amp;&amp; getGunHeat() &lt; 1)){
+                  otherAngle = absoluteAngle(myLocation,tmp.location);
+                  oldestScan = tmp.lastScanTime;
+               }
+            }while(allE.hasMoreElements());
+         
+            setTurnRadarRight(Utils.normalRelativeAngle(otherAngle - getRadarHeadingRadians())*2);
+</pre>
+<PRE >
+ -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</PRE>
+<p>
+<UL >
+<li> That's nice right there. At first glance, I think that's a lot smaller than my radar code, but I'm actually counting all the prerequisites (e.g., managing that enemies collection) when I say mine's several hundred bytes, so it might not be all that much worse. Mine should work the same, but I basically turn the radar back if I've covered Math.PI or less since seeing the previous enemy, or if there's just one enemy left. And yeah, mine doesn't port to melee either. =) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+<p>
+I'm going away until next week wednesday....so I don't think I'll have an entry this week. Good luck, guys! -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Going away again, probably until next week wednesday (again), so good luck for <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a>! -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=NightAndDay" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=NightAndDay">View other revisions</a><br>Last edited January 5, 2008 13:24 EST by <a href="robowiki?Skilgannon" title="ID 12382 from ctb-cache4-vif1.saix.net">Skilgannon</a> <a href="robowiki?action=browse&diff=1&id=NightAndDay">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

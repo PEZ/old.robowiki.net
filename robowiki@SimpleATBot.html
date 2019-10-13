@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>SimpleATBot - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Simple, ATBot'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=SimpleATBot">SimpleATBot</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package ntc;
+import robocode.*;
+import robocode.util.Utils;
+import java.util.*;
+import java.awt.geom.*;
+
+/**
+ * SimpleATBot - a robot by Starrynte
+ * Demonstrates AreaTargeting with a simple MinimumRiskMovement
+
+ * Changes
+ * 0.1
+ *     Created!
+ *     
+ */
+public class SimpleATBot extends AdvancedRobot
+{
+	static Hashtable enemies=new Hashtable();
+	static double segment;
+	static Point2D.Double lastPosition,myPos,nextDestination;
+	
+	public void run() {
+		setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
+		segment=(Math.PI*2)/(getOthers()*3);
+		lastPosition=myPos=nextDestination=new Point2D.Double(getX(),getY());
+		do{
+			if(getTime()&gt;10){
+				move();
+				gun();
+			}
+			segment=(Math.PI*2)/(getOthers()*3);
+			myPos.setLocation(getX(),getY());
+			execute();
+		}while(true);
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e) {
+		Enemy en=(Enemy)enemies.get(e.getName());
+		if(en==null){
+			en=new Enemy();
+			enemies.put(e.getName(),en);
+		}
+		en.live=true;
+		en.energy=e.getEnergy();
+		en.pos=projectPoint(myPos,e.getBearingRadians()+getHeadingRadians(),e.getDistance());		
+	}
+	
+	public boolean move(){		
+		for(int i=0;i&lt;100;i++){
+			Point2D.Double testPoint=projectPoint(myPos,Math.random()*2*Math.PI,50+Math.random()*150);
+			if(evaluate(testPoint)&lt;evaluate(nextDestination)){
+				nextDestination=testPoint;
+			}
+		}
+		lastPosition=myPos;
+		driveTo(nextDestination);
+		return true;
+	}
+
+	public boolean gun(){
+		int[] botsInArea=new int[(int)segment];
+		Enumeration e=enemies.elements();
+		int curSegment=0;
+		while(e.hasMoreElements()){
+			Enemy en=(Enemy)e.nextElement();
+			if(en.live){
+				double ang=calcAngle(myPos,en.pos);			
+				botsInArea[(int)(Math.abs(Math.floor(ang/segment)))]++;
+			}
+		}
+		for(int i=0;i&lt;(int)segment;i++){
+			int bots=botsInArea[i];
+			int curBots=botsInArea[curSegment];
+			if(bots&gt;curBots){
+				curSegment=i;
+			}
+		}
+		out.println("Using segment " + (curSegment*segment) + "~" + ((curSegment*segment)+segment));
+		setTurnGunRightRadians(Utils.normalRelativeAngle(((curSegment*segment)+Math.random()*segment)-getGunHeadingRadians()));
+		setFire(2);
+		return true;
+	}
+	
+	private double evaluate(Point2D.Double p){
+		double risk=(1/lastPosition.distanceSq(p)) + (0.5/myPos.distanceSq(p));
+		Enumeration e=enemies.elements();
+		while(e.hasMoreElements()){
+			Enemy en=(Enemy)e.nextElement();
+			double thisRisk=en.energy/en.pos.distanceSq(p);
+			if(en.live){
+				risk+=thisRisk;
+			}
+		}
+		return risk;
+	}
+	
+	private double calcAngle(Point2D.Double s,Point2D.Double t){
+		return Math.atan2(t.getX()-s.getX(),t.getY()-s.getY());
+	}
+
+	private Point2D.Double projectPoint(Point2D.Double s, double ang, double dist){
+		return new Point2D.Double(s.getX()+(Math.sin(ang)*dist),
+				s.getY()+(Math.cos(ang)*dist));
+	}
+
+	private void driveTo(Point2D.Double next){
+		driveTo(next.getX(),next.getY());
+	}
+
+	private void driveTo(double nextX, double nextY){
+		double myX = getX();double myY = getY();double turnAngle;double normalizedTurnAngle;
+		setTurnRightRadians(normalizedTurnAngle =  Math.atan(Math.tan(turnAngle = ((Math.atan2(nextX - myX, nextY - myY) - getHeadingRadians()) + (7.0 *  Math.PI)) % (2.0 * Math.PI) -  Math.PI)));
+		setAhead((normalizedTurnAngle == turnAngle ? 1.0 : -1.0) * (java.awt.geom.Point2D.Double.distance(myX, myY, nextX, nextY)));
+	}
+
+	class Enemy{
+		boolean live;
+		double energy;
+		Point2D.Double pos;
+	}
+}
+</pre>
+When I run the bot, I get an
+<pre>
+Exception: java.lang.ArrayIndexOutOfBoundsException: 3 &gt;= 0
+java.lang.ArrayIndexOutOfBoundsException: 3 &gt;= 0
+    at java.util.Vector.elementAt(Vector.java:432)
+    at ntc.SimpleATBot.gun(SimpleATBot.java:65)
+    at ntc.SimpleATBot.run(SimpleATBot.java:28)
+    at robocode.peer.RobotPeer.run(Unknown Source)
+    at java.lang.Thread.run(Thread.java:595)
+</pre>
+Help? --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+A Vector comes empty, so on line 65 you're trying to fetch the 4th value (index 3) from a Vector with 0 values (3 &gt;= 0).  I suggest skipping the vectory and using an array (<tt>int[] botsInArea<a href="robowiki?action=edit&id=InArea" class=wikipageedit>?</a> = new int[numSegments]</tt>).
+<p>
+Hm...I didin't know you could initialize an array with a variable...but i'll try it. Thnx --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Ok, changed the code a bit, but now I get an
+<pre>
+Exception: java.lang.ArrayIndexOutOfBoundsException: 8
+java.lang.ArrayIndexOutOfBoundsException: 8
+    at ntc.SimpleATBot.gun(SimpleATBot.java:68)
+    at ntc.SimpleATBot.run(SimpleATBot.java:29)
+    at robocode.peer.RobotPeer.run(Unknown Source)
+    at java.lang.Thread.run(Thread.java:595)
+
+</pre>
+It might be a problem with the hashtable, <tt>calcAngle()</tt>, or <tt>projectPoint()</tt>, since those are some functions (and variable) called by <a href="robowiki?SimpleATBot" class=wikipagelink>SimpleATBot</a> (both directly and indirectly) --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+Ok, ArrayIndexOutOfBoundsException<a href="robowiki?action=edit&id=ArrayIndexOutOfBoundsException" class=wikipageedit>?</a> fixed now (now I just have to tweak the movement a bit...and the gun! It always uses the 'due north' segment as the area), but the code isn't updated yet. I will update as soon as i can --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=SimpleATBot" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=SimpleATBot">View other revisions</a><br>Last edited February 21, 2007 3:13 EST by <a href="robowiki?Starrynte" title="ID 9186 from cpe-75-84-70-177.socal.res.rr.com">Starrynte</a> <a href="robowiki?action=browse&diff=1&id=SimpleATBot">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing AdvancingVelocity - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Advancing, Velocity'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing AdvancingVelocity</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="AdvancingVelocity"  />
+<input type="hidden" name="oldtime" value="1091875976"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="9"  />
+<input type="hidden" name="captchaArg2" value="8"  />
+<input type="hidden" name="captchaOp" value="+"  />
+<input type="hidden" name="captchaId" value="422558087463"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">The speed at which your opponent is moving toward you, perpendicular to LateralVelocity.  If you stand still, RamFire usually has an AdvancingVelocity of 8 and MyFirstRobot will probably normally have an AdvancingVelocity of close to 0.  A robot moving straight away from you would have an AdvancingVelocity of -8.
+
+The formula for calculating this is:
+&lt;pre&gt;
+	double advancingvelocity = -Math.cos(e.getHeadingRadians()-absbearing)*e.getVelocity();
+&lt;/pre&gt;
+absbearing is the absolute bearing to your target.  If you take off the negative sign, I suppose it would be the retreating velocity.  --[[Kawigi]]
+
+----
+==== Questions / Comments ====
+
+I tried using the sign of the advancing velocity in CassiusClay version 1.9.6.10. But I think maybe I did that segmentation the wrong way. This is the relevant code:
+&lt;pre&gt;
+	double approachVelocity = e.getVelocity() * -Math.cos(e.getHeadingRadians() - enemyBearing);
+	wave.approachSignIndex = 1 + (approachVelocity == 0 ? 0 : PUtils.sign(approachVelocity));
+&lt;/pre&gt;
+-- [[PEZ]]
+
+This is how I calculate advancing velocity, so assuming enemyBearing above is the abs bearing then it&#39;s exactly the same.
+&lt;pre&gt;
+double advancingvelocity = -Math.cos(firedAt.getValue(firedAt.heading, stepsBack)-PulsarMax.robotStats.getAbsBearingTo(firedAt, stepsBack))*firedAt.getValue(firedAt.velocity, stepsBack);
+&lt;/pre&gt;
+Clearer:
+&lt;pre&gt;
+double advancingvelocity = -Math.cos(enemyHeading-absBearingToEnemy)*enemyVelocity;
+&lt;/pre&gt;
+But most of all I think comparing that double to 0 is way to restrictive. Have some margin instead perhaps? This is coming from somone with 50 less score of course though...
+
+-- [[Pulsar]]
+
+Yes, I always forget about the danger in comparing doubles to 0. But in this case it might hold since it&#39;s a true zero value in the velocity reading I want to check for. I&#39;ll test with some debug outputting now. Thanks! -- [[PEZ]]
+
+Yup. You are entirely right. I get very few hits in the middle bucket the above way. In fact I get exactly what I asked for when thinking zero velocity would be the mid bucket. That&#39;s not very good... -- [[PEZ]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 9 + 8 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that AdvancingVelocity has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=AdvancingVelocity">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

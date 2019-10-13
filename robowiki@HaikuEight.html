@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>HaikuEight - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Haiku, Eight'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=HaikuEight">HaikuEight</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>This one doesn't actually work that well, what it should do is run figure-eights laterally to its opponent.  There should be a way to get it to work and even keep it firing (without firing I should be able to do some arbitrary figure-8 pretty easily).  Still, it shows some semblance of figure-eight movement if it starts away from the walls.
+<p>
+<pre>
+package kawigi.haiku;
+import robocode.*;
+
+/**
+ * HaikuEight - does figure-8's laterally to its opponent, if it doesn't hit the walls (which it does often).
+ */
+public class HaikuEight extends AdvancedRobot
+{
+	public void run()
+	{
+		turnRight(720);
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e)
+	{
+		setAhead(Double.POSITIVE_INFINITY);
+		setTurnRight((getTime()%180 &lt; 90) ? 720 : -720);
+		setFire(e.getEnergy()/4);
+	}
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=HaikuEight" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=HaikuEight">View other revisions</a><br>Last edited August 6, 2003 23:30 EST by <a href="robowiki?Kawigi" title="ID 1391 from tide78.microsoft.com">Kawigi</a> <a href="robowiki?action=browse&diff=1&id=HaikuEight">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

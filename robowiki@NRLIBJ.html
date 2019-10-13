@@ -1,0 +1,268 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>NRLIBJ - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='NRLIBJ'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=NRLIBJ">NRLIBJ</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>A library for creating <a href="robowiki?NeuralNetwork" class=wikipagelink>NeuralNetwork</a>s.
+<p>
+Used by <a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a>.
+<p>
+You can download it from <a rel="nofollow" href="http://www.dcs.napier.ac.uk/~denaro/">http://www.dcs.napier.ac.uk/~denaro/</a>
+<hr noshade class=wikiline size=1>
+I have for a while now assumed that nrlibj wants values between 0 and 1 for inputs and produces values between 0 and 1 for outputs. But reading some pages on the subject of NeuralNetworks<a href="robowiki?action=edit&id=NeuralNetworks" class=wikipageedit>?</a> I see that often values between -1 and 1 are assumed. Is this the case for nrlibj as well? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+No. NRLIBJ uses values between 0 and 1. But you can create new node class and use a function between -1 and 1. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+<p>
+Just some code to save the network with DataStream<a href="robowiki?action=edit&id=DataStream" class=wikipageedit>?</a> put it in the NNet and the Layer class : (use the same method name)
+<p>
+<p>
+<p>
+<PRE >
+ Saving
+</PRE>
+<p>
+<PRE >
+    IN NNet
+</PRE>
+<p>
+<PRE >
+    /**
+     *  Description of the Method
+     *
+     *@param  dos              Description of the Parameter
+     *@exception  IOException  Description of the Exception
+     */
+    public void save(DataOutputStream<a href="robowiki?action=edit&id=DataOutputStream" class=wikipageedit>?</a> dos) throws IOException {
+        dos.writeInt(this.lyr.length);
+        for (int i = 0; i &lt; lyr.length; i++) {
+            this.lyr[i].saveLayer(dos);
+        }
+        for (int i = 0; i &lt; lyr.length; i++) {
+            this.lyr[i].saveLink(dos);
+        }
+        dos.flush();
+    }
+</PRE>
+<p>
+<PRE >
+    Class Layer
+       /**
+     *  Description of the Method
+     *
+     *@param  dos              Description of the Parameter
+     *@exception  IOException  Description of the Exception
+     */
+    void saveLayer(DataOutputStream<a href="robowiki?action=edit&id=DataOutputStream" class=wikipageedit>?</a> dos) throws IOException {
+        int i;
+        int x;
+        int y;
+        int n;
+        int mbuff = -1;
+        String SClass;
+        if (this.mbuff != null) {
+            mbuff = this.mbuff.nlyr;
+        }
+        if (this.node.length &gt; 0) {
+            SClass = this.node[0].getClass().getName();
+        } else {
+            SClass = "unknown";
+        }
+        dos.writeInt(this.nlyr);
+        dos.writeInt(this.nx);
+        dos.writeInt(this.ny);
+        dos.writeUTF(SClass);
+        dos.writeInt(mbuff);
+    }
+</PRE>
+<p>
+<PRE >
+        /**
+     *  Description of the Method
+     *
+     *@param  dos              Description of the Parameter
+     *@exception  IOException  Description of the Exception
+     */
+    void saveLink(DataOutputStream<a href="robowiki?action=edit&id=DataOutputStream" class=wikipageedit>?</a> dos) throws IOException {
+        int i;
+        int n;
+        for (n = 0; n &lt; this.node.length; n++) {
+            dos.writeInt(n);
+            dos.writeInt(this.node[n].lnk.length - 1);
+            dos.writeFloat(this.node[n].lnk[0].wgt);
+            for (i = 1; i &lt; this.node[n].lnk.length; i++) {
+                dos.writeInt(this.node[n].lnk[i].nfrom.nlyr);
+                dos.writeInt(this.node[n].lnk[i].nfrom.nn);
+                dos.writeFloat(this.node[n].lnk[i].wgt);
+            }
+        }
+    }
+</PRE>
+<p>
+<p>
+<PRE >
+    LOADING
+</PRE>
+<p>
+<p>
+<PRE >
+  In NNet
+</PRE>
+<p>
+<PRE >
+      public NNet(DataInputStream<a href="robowiki?action=edit&id=DataInputStream" class=wikipageedit>?</a> dis) throws IOException
+    {
+    	this.loadNNet(dis);
+    }
+</PRE>
+<p>
+<PRE >
+        /**
+     *  Description of the Method
+     *
+     *@param  dis              Description of the Parameter
+     *@exception  IOException  Description of the Exception
+     */
+    void loadNNet(DataInputStream<a href="robowiki?action=edit&id=DataInputStream" class=wikipageedit>?</a> dis) throws IOException {
+        int i;
+        int nlayer;
+        nlayer = dis.readInt();
+        this.lyr = new Layer[nlayer];
+        for (i = 0; i &lt; this.lyr.length; i++) {
+            this.lyr[i] = loadLayer(dis, this.lyr);
+        }
+        for (i = 0; i &lt; this.lyr.length; i++) {
+            this.lyr[i].loadLink(dis, this.lyr);
+        }
+    } 
+</PRE>
+<p>
+<p>
+<PRE >
+      /**
+     *  Description of the Method
+     *
+     *@param  dis              Description of the Parameter
+     *@param  layer            Description of the Parameter
+     *@return                  Description of the Return Value
+     *@exception  IOException  Description of the Exception
+     */
+    Layer loadLayer(DataInputStream<a href="robowiki?action=edit&id=DataInputStream" class=wikipageedit>?</a> dis, Layer layer[]) throws IOException {
+        int nlyr;
+        int nx;
+        int ny;
+        int lbuff;
+        String Cnode;
+        Layer lay;
+        nlyr = dis.readInt();
+        nx = dis.readInt();
+        ny = dis.readInt();
+        Cnode = dis.readUTF();
+        lbuff = dis.readInt();
+        if (ny &gt; 0) {
+            lay = new Layer(nlyr, nx, ny, Cnode);
+        } else {
+            lay = new Layer(nlyr, nx, Cnode);
+        }
+        if (lbuff &gt;= 0) {
+            lay.mbuff = layer[lbuff];
+        }
+        return lay;
+    }
+</PRE>
+<p>
+<p>
+<PRE >
+    In Layer
+</PRE>
+<p>
+<PRE >
+        /**
+     *  Description of the Method
+     *
+     *@param  dis              Description of the Parameter
+     *@param  layer            Description of the Parameter
+     *@exception  IOException  Description of the Exception
+     */
+    void loadLink(DataInputStream<a href="robowiki?action=edit&id=DataInputStream" class=wikipageedit>?</a> dis, Layer layer[]) throws IOException {
+        int i;
+        int l;
+        int nn;
+        int nlink;
+        int lfrom;
+        int nnfrom;
+        float wgt;
+        for (i = 0; i &lt; this.node.length; i++) {
+            nn = dis.readInt();
+            nlink = dis.readInt();
+            this.node[i].lnk = new Link[nlink + 1];
+            this.node[i].lnk[0] = new Link(dis.readFloat(), null);
+            for (l = 1; l &lt; this.node[i].lnk.length; l++) {
+                lfrom = dis.readInt();
+                nnfrom = dis.readInt();
+                wgt = dis.readFloat();
+                this.node[i].lnk[l] = new Link(wgt, layer[lfrom].node[nnfrom]);
+            }
+        }
+    }
+ <a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+</PRE>
+<p>
+<p>
+Some other Node class Tanh is for output between -1 and 1 and Gaussian output 0 1:
+<p>
+public class NodeGaussian<a href="robowiki?action=edit&id=NodeGaussian" class=wikipageedit>?</a> extends NodeLin<a href="robowiki?action=edit&id=NodeLin" class=wikipageedit>?</a> {
+<PRE >
+	float x=1f;
+</PRE>
+<p>
+<PRE >
+	public NodeGaussian<a href="robowiki?action=edit&id=NodeGaussian" class=wikipageedit>?</a>(int nn,int nly,float b)
+	{
+		super(nn,nly,b);
+	}
+</PRE>
+<p>
+<PRE >
+	protected float afn(float x)
+	{
+		this.x=x;
+		return (float) Math.exp(-x*x);
+	}
+	protected float df(float y)
+	{
+		return -2f*x*y;
+	}
+</PRE>
+<p>
+}
+<p>
+public class NodeTanh<a href="robowiki?action=edit&id=NodeTanh" class=wikipageedit>?</a> extends NodeLin<a href="robowiki?action=edit&id=NodeLin" class=wikipageedit>?</a> {
+<p>
+<PRE >
+	public NodeTanh<a href="robowiki?action=edit&id=NodeTanh" class=wikipageedit>?</a>(int nn,int nly,float b)
+	{
+		super(nn,nly,b);
+	}
+</PRE>
+<p>
+<PRE >
+	protected float afn(float x)
+	{
+		return (float)  2f / (1f + (float)Math.exp(-2 * x)) - 1f;
+	}
+	protected float df(float y)
+	{
+		return 1-y*y;
+	}
+</PRE>
+}
+<p>
+<a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=NRLIBJ" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=NRLIBJ">View other revisions</a><br>Last edited July 3, 2003 10:13 EST by 212.109.72.xxx <a href="robowiki?action=browse&diff=1&id=NRLIBJ">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Musashi - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Musashi'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Musashi">Musashi</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Author: <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Where can i get it?: <a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=1759">http://www.robocoderepository.com/BotDetail.jsp?id=1759</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Miyamoto Musashi - Born at Japan, in the year of 1584. Criator of the "Ni-Ten" (Two Skies) sword school. Became one of the most famous samurai in the history, author of the book "Go Rin No Sho" (A Book Of Five Rings). Described himself as not only a swordsman, but a Strategist. Engage in countless battles and duels, like the episode of the battle against the Yoshioka swordsmen school, where he alone, defeated a huge group of swordsmen. He also defeated and killed in duel the samurai Sasaki Kojiro (known as the most talented and dangerous swordsman of his epoch), using himself a wood paddle. It was the victory of the perseverance, training and strategy against the natural born talent.
+<p>
+Read more: <a rel="nofollow" href="http://www.samurai-archives.com/musashi.html">http://www.samurai-archives.com/musashi.html</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+This is my first duel bot. It is originally based in the HataMoto<a href="robowiki?action=edit&id=HataMoto" class=wikipageedit>?</a> code (my first melee bot).
+<p>
+Aiming system: 
+I call it "Vectorial Pattern Matching", since it uses vectorial calculation and operations to perform the pattern matching.
+<p>
+How it works:
+<pre>
+
+Scanning:
+ . Store the last 25,000 opponents scanned positions, interpolating any missed scan (necessary to melee).
+ . Also calculate and store for each scan [[Musashi]]'s actual position and the "SamplesVectors", wich consist of 7 
+vectors v1:(p to p-1), v2:(p to p-2), v3:(p to p-5), v4:(p to p-10), v5:(p to p-20), v6:(p to p-40) and v7:(p to p-80) -
+ (where p is the actual position, p-5 is the position 5 ticks before...)
+
+Aiming:
+ . Take the latest "SamplesVector" (V1,V2..V7). 
+ . Rotate each of the stored SamplesVector by the angle diff between V1 and v1.
+ . calculate the each sample's rate: |V1-v1|+|V2-v2|+|V3-v3|+|V4-v4|+|V5-v5|+|V6-v6|+|V7-v7|.
+ . for each sample rate add the diff between samples and actual (* 1/100): distance to me, distance to wall and 
+distance to corner.
+ . Take the bests 50 rated SamplesVector.
+ . "Play the movie" for each of the 50 bests, and calculate the guns angle to hit the target at these points.
+ . Now rate each angle calculating it's diff. to each one of the 49 others.
+ . Take the angle with the best (minimum) rate.
+ . Fire at will...
+
+</pre> 
+Credits for <a href="robowiki?ABC" class=wikipagelink>ABC</a>, his <a href="robowiki?TronsGun" class=wikipagelink>TronsGun</a> inspired the <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a> feature.  
+<hr noshade class=wikiline size=1>
+To do list:
+<PRE >
+ . Beat <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> :). Beat <a href="robowiki?Shadow" class=wikipagelink>Shadow</a> &amp; <a href="robowiki?Tron" class=wikipagelink>Tron</a> :)). Beat <a href="robowiki?DT" class=wikipagelink>DT</a> :)))).
+ . Finish this page.
+ . Work in it's movement.
+ . Clean the code (if u try to read the code, u surely agree with me)
+</PRE>
+<hr noshade class=wikiline size=1>
+Way to go with 2.14. You sliced the number of positions to the top in half and passed <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a>, <a href="robowiki?Aspid" class=wikipagelink>Aspid</a> and <a href="robowiki?Tron" class=wikipagelink>Tron</a>! Was it movement changes this time? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Thanks, u can't imagine the smile in my face. Yes, it was a movement change. I was working trying to flatten it's movement, just like u suggested. It's quite crude yet, but i think that i'm in the right path. (I am writing this and looking at my to-do list above. I can't believe that i actually beaten one of my favorite bots: <a href="robowiki?Tron" class=wikipagelink>Tron</a>. That to-do list was to be a joke). :-)))))))))))))))))))))))))))) -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Great work, keep it up! Shadow needs a portuguese speaking bot in the top 10 to chat with. :) -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Oh, I can imagine that smile. Believe me I can. The day <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> wrote me on the wiki that <a href="robowiki?Marshmallow" class=wikipagelink>Marshmallow</a> had reached top-10 in <a href="robowiki?EternalRumble" class=wikipagelink>EternalRumble</a> I was walking on clouds! Few things can compete with that emotion. And today the fight near the top has tighten up considerably so your top-25 spot is definatley comparable to that. You have quite a few of the top-10 bots of those days behind you now. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+There's something very predictable about your movement. <a href="robowiki?GloomyDark" class=wikipagelink>GloomyDark</a> has an easy time hitting it for some reason. I haven't analysed it very closely but I suspect it might be Gloomy's segmentation on the time the enemy has kept traveling without changing speed. You might want to make a modified version of <a href="robowiki?RoboGrapherBot" class=wikipagelink>RoboGrapherBot</a> that segments like <a href="robowiki?GloomyDark" class=wikipagelink>GloomyDark</a> does and see if you can find the predictable element. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It looks to me like you have a problem with power 3 <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a>. Your problem bot list is very similar to Shadow's: bots like kawigi.sbf.Barracuda and jep.Terrible are much more of a problem than they should. From what I observed of Musashi's movement, you are taking a very similar path to Shadow's, so, if you find a good solution to avoiding those bots while still remaining unpredictable to the better guns, please tell me! :) -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+But <a href="robowiki?Barracuda" class=wikipagelink>Barracuda</a> doesn't shoot with <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a>, does it? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It surely looks to me like it does, maybe it is a bug? -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Could be that against your movement it ends up shooting head on. Looks like <a href="robowiki?MakoHT" class=wikipagelink>MakoHT</a> is also on your problem bot list (and, to a lesser extent, also on <a href="robowiki?Musashi" class=wikipagelink>Musashi</a>'s). <a href="robowiki?MakoHT" class=wikipagelink>MakoHT</a> and <a href="robowiki?Barracuda" class=wikipagelink>Barracuda</a> have similar targeting systems. Does <a href="robowiki?MakoHT" class=wikipagelink>MakoHT</a> also seem to fire head on? Then maybe you can get some clues on how to adjust your movement by studying the pages about <a href="robowiki?AngularTargeting/Factored" class=wikipagelink>AngularTargeting/Factored</a> and <a href="robowiki?MakoHT" class=wikipagelink>MakoHT</a>'s code. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yes, <a href="robowiki?MakoHT" class=wikipagelink>MakoHT</a> is also a big problem bot of mine. If I change my movement to never invert the circling direction, I go from 45% survival to 80% against <a href="robowiki?MakoHT" class=wikipagelink>MakoHT</a>. My problem is that I never was able to optimise a "stop and go" movement as good as a "always on the run" one. I have movement variations that can defeat both Barracuda and <a href="robowiki?MakoHT" class=wikipagelink>MakoHT</a>, but those degrade my performance against the other top bots (including other versions of Shadow). I'll keep searching, though... ;) -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Indeed. I think it's quite impossible to tune a stop-and-go movement that generally performs better than a keep-moving one. At least as long as stop-and-go means changing direction unfrequently. But you might come away with starting out with Shadow's regular movement and then keep an eye on how frequently you are being hit in <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> 1.0. And if this is unfrequent you can tune your movement to change direction less often. This should fool both <a href="robowiki?Barracuda" class=wikipagelink>Barracuda</a> and <a href="robowiki?MakoHT" class=wikipagelink>MakoHT</a>, and possibly also <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Thanks for the incentive words. The <a href="robowiki?Musashi" class=wikipagelink>Musashi</a>'s new flat movement it's quite simple: 
+<UL >
+<li> It moves in a circle aroud the enemy.
+<li> It haves 3 distance management modes: Get closer, Get away, and Hold off (the seed of a future DistanceManagement<a href="robowiki?action=edit&id=DistanceManagement" class=wikipageedit>?</a> system).
+<li> If it is closer then 400 (empiric), Get away; If it's near a wall, Get closer; Otherelse, Hold off.
+<li> The flat factor: takes the last fired enemy's bullet power, and calculate the time it would take to hit me (lets call it time_to_hit_me). At each tick i use the following formula to decide if it will invert the direction: ((Math.random()* time_to_hit_me * 0.45) &lt; 1)
+</UL>
+As i said, it's quite simple, and it's yet very crude. That formula, for example, is based on tests with <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>'s <a href="robowiki?RoboGrapher" class=wikipagelink>RoboGrapher</a>, and didn't understood the reason of the 0.45 factor, i originally started without that factor, but <a href="robowiki?RoboGrapher" class=wikipagelink>RoboGrapher</a> pointed a huge spike near 1.0 GF, so i introduced that factor, and the 0.45 came to be the best.
+I think that the HeadOnTarget<a href="robowiki?action=edit&id=HeadOnTarget" class=wikipageedit>?</a> weakness can be avoided if i start to track down how frequently it's being hit in GF 0.0, indicating a HeadOnTarget<a href="robowiki?action=edit&id=HeadOnTarget" class=wikipageedit>?</a> gun. And then just stop inverting it's direction (as <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> said). My tests confirmed what <a href="robowiki?ABC" class=wikipagelink>ABC</a> said, if I stop changing direction, <a href="robowiki?Barracuda" class=wikipagelink>Barracuda</a> is defeated easily.
+By the way: can anyone explain me the reason of that 0.45 factor? When i think about it, it doesn't make sense... (but the fact is that it works). -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+I can't explain it. But it is the same factor I empirically use to end up at. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It's a mysterious world of magic numbers... There is also something about 0.85 that makes it special. If you always run for time_to_hit_me * 0.85 and then invert direction, GF guns (non-segmented) will have a hard time hitting you, while PM guns will hit you 100% after the first inversion. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+@Paul: Can the master explain it? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Have you tried this movement vs. another graphing robot (such as <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>)? I have implemented it myself and was not having much success with it so I went ahead and downloaded Musashi for testing. I think you would do well to look at it this way too. I was getting the same results with Musashi as I was with my attempt to clone it. Against bots which fire Waves at actual shot time (like <a href="robowiki?Jekyl" class=wikipagelink>Jekyl</a> for instance) the spike at zero is very pronounced at ranges above 300 or so which is not good. I do think this line of research holds promise as I think that at ranges between 200 - 300 this movement was pretty flat but a little too narrow for my liking. I have been searching for a way to define reverse probability as a function of target distance for quite some time now but I have not been able to find it yet. If you can find a way to vary your .45 factor as a function of distance I think you will be golden. Then if you add some functionality to vary the reverse probability based on being hit by the enemy at some guess factor I think you will truly have something. I will be watching Musashi a bit more closely to see how well you do with this. =^&gt; -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+Very good observations, <a href="robowiki?Jim" class=wikipagelink>Jim</a>. About another graphing bots, the fact is that i didn't knew about existing others, and i still don't know how to use for example <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> (Is there somewhere anything explaining how to use it?). <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>'s <a href="robowiki?RoboGrapher" class=wikipagelink>RoboGrapher</a> is an amazing tool, but other sources of info would shurelly be usefull.<br>
+About the function of distance, that was my intention in the first place whith the time_to_hit_me factor. But u are correct, i didn't analized the curve in the ranges, i have only payed attention to the general curve (stupid, stupid, stupid...). Probably when i analize every range segment, i will find that the 0.45 factor is not a constant, but depends on the distance. And also if and when i implement a "beeing hit at <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a>", that should introduce another factor too. Thanks a lot. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>   
+<p>
+<a href="robowiki?Jim" class=wikipagelink>Jim</a>, haven't u meant <a href="robowiki?FloodGrapher" class=wikipagelink>FloodGrapher</a>? I have just "discovered" it. Let's see how it works... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+<a href="robowiki?Axe" class=wikipagelink>Axe</a>, you are correct. You need both <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> and <a href="robowiki?FloodGrapher" class=wikipagelink>FloodGrapher</a>. <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>'s <a href="robowiki?RoboGrapher" class=wikipagelink>RoboGrapher</a> is a derivitive of <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>'s <a href="robowiki?FloodGrapher" class=wikipagelink>FloodGrapher</a>. They share many of the same characteristics.  There are many pull downs to choose from (range, acceleration, velocity, proximity to wall). You should quickly be able to isolate your weakest elements and then be able to make adjustemnts. Be aware that a fix to one will most likely affect another. The trick is to try and balance them all. Also keep in mind that <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> fires a wave every tick. This can lead you to a movement profile that is mostly good overall and yet not all that good against bots that fire waves only at shot time. When I testes <a href="robowiki?Musashi" class=wikipagelink>Musashi</a> vs <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>, I noticed it had a very flat profile at the 200 - 300 range. But when I test <a href="robowiki?Musashi" class=wikipagelink>Musashi</a> vs. <a href="robowiki?Jekyl" class=wikipagelink>Jekyl</a>, I notice that the 200 - 300 range is not that great either (<a href="robowiki?Jekyl" class=wikipagelink>Jekyl</a> fires waves at shot time and is able to find a dodger a bit better than <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>). Right now I think you are about to enter the stage that I am in: Subtle tweaks and massive rounds against <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> followed by pouring over results followed subtle tweaks followed by massive rounds against <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> folowed by......... I hope you have a fast computer. You are going to need it =^&gt; -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+What needs to be done is to make a <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> development kit.  (That having been said, I all of a sudden realize why more bots keep beating mine).  Package an updated version of <a href="robowiki?FloodGrapher" class=wikipagelink>FloodGrapher</a> (the only difference from the current version would be to change the labels on the distance to be projected bullet flight time in increments of 10 ticks) with a couple variations of <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> - one could be <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> 1.4, one would be <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> 1.4 who only fires a wave when it fires a real bullet, one would probably be a stationary (TC) version, there could be one that always fires power 3 bullets, one that fires lower-powered bullets, one that disables <a href="robowiki?DynamicDistancing" class=wikipagelink>DynamicDistancing</a>, or has configurable distancing... -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I for one would love to see this as you well know. I have said it before and I will say it again: <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> is the best bot in the world to test against as it provides such valuable feedback. If I might suggest: Perhaps a Properties file that allows the behaviors to be specified (ie: distance=200 dynamic=[true || false] behavior=[normal || reference || challenge] waves=[every_tick || shot_time]). You would not have to worry about being a mini anymore so byte count would not matter. It would save me from maintaining the hacked versions that keep laying around for all of this too =^&gt; -- <a href="robowiki?Sparafucil3" class=wikipagelink>jim</a>
+<p>
+The other cool thing to do would possibly be to make a more readily extensible version of the bot altogether - based on <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> but certainly not strictly <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>.  The feature I see here is to also specify in the properties file the very nature of the segmentation - and even add classes to represent new segmentation divisions. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Subclassing works for this stuff. It's quite easy if you make all configurable stuff into abstract methods of the super class. The implementation bots get really small. But I would leave this as an exercise to the users of <a href="robowiki?FloodGrapher" class=wikipagelink>FloodGrapher</a>. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+There it is. A very rustic attempt to avoid <a href="robowiki?Musashi" class=wikipagelink>Musashi</a>'s movement weakness against those <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a> guns. The fact is that is so rustic that i'm too embarrassed to explain now (even knowing that if it works, no need i'll have to be ashamed). The major problem is that i'm been in a lack of time these days, so ugly (and fast) is beautifull... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a> 
+<p>
+It works man. Please let us know what it was you did. Musashi is now top-10 material! Must feel great, huh? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I have to thank u all people again. Getting advices from people like <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, <a href="robowiki?ABC" class=wikipagelink>ABC</a>, <a href="robowiki?Jim" class=wikipagelink>jim</a> and others is surely a good short cut to the top. Thanks.<br>
+I think that it is too soon to talk about top 10, <a href="robowiki?Musashi" class=wikipagelink>Musashi</a> tends to fall a little once the GF guns gain data about it, it happens allways... Right now it is at 13th (rating 1815.69), but i doubt that it would stay there.<br>
+My intent in v2.15 was to get rid off the <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a> weakness, however maintaining a reasonable flat moving against the top bots. I think that it was achieved successfully, as an example, against <a href="robowiki?Barracuda" class=wikipagelink>Barracuda</a> v2.14 was rating 43.2%, v2.15 beats it by 84.7!! Similar bots are not a problem now too. Quoting <a href="robowiki?Jim" class=wikipagelink>jim</a>: "Beat everyone else as well as they do, then beat them".<br>
+This was achieved as i said, in an ugly way - althout simple (I just can't decide if it is ugly because is ugly or if it is nice because is really simple...):
+<UL >
+<li> It was introduced a static boolean named "flat", initialized false. This property is used to decide if it will try to invert the direction (as explained above as "flat factor"). Since it is initialized as false, it will start orbitting the enemy at full throttle, inverting the direction only when is about to hit a wall.
+<li> When it inverses the direction (about to hit walls), stores the current time at a property named "last_inversion".
+<li> Now comes the trick: When hitten by a bullet:
+</UL><PRE>
+   <pre>
+    public void hitByBullet(double pw) {
+        long lastRevDelta= getTime() - last_inversion;
+        long hitAtMaxSpeed=
+            (long) ((him.getDistance() + 100) / RoboMath.getBulletVelocity(pw));
+        if ((him != null) &amp;&amp; (him.getDistance()&gt;200)&amp;&amp;(hitAtMaxSpeed &lt; lastRevDelta) &amp;&amp; (!flat)) {
+            flat= true;
+	}
+    }
+   </pre> 
+</PRE>
+My intention is to do this in the future by getting a record of Hitten GFs, and use this data to adjust the "flat factor" (fixed at 0.45 by now). But since I'm short on time to robocoding... That was the fastest way to get it done. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+To <a href="robowiki?ABC" class=wikipagelink>ABC</a>: U asked me to let u know if i find a solution... There it is. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Cool. Thanks for sharing this. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Hey!!! I was quoted. This might be a first. Congrats on entering the top of the table. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+Amazing how such a simple solution can work so well... Of course now Musashi gets most of its ranking points from the weaker bots (see the LRP graph), it's still most impressive how you can improve your ranking so much just by taking care of some "simple" problem bots. Great work, and congrats! -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+I already saw it. One good thing here is that we see how much we can gain paying a little attention to the weaker bots.<br>
+In the LRP develop discussion i once saw this <a href="robowiki?Paul" class=wikipagelink>Paul</a>'s frasis: "A positive gradient would indicate a good gun is being let down by relativley poor movement.". At that time i thougth it was a little strange (not entirely wrong, althout)... Now i think that a positive gradient just means that you aren't paying attention to the weaker bots. And if your bot is at a top position, it means that you are loosing a lot of easy points. <br>
+<a href="robowiki?Musashi" class=wikipagelink>Musashi</a> proved to me this since version 2.14 had a negative gradient, and after improving it's movement with v2.15 it now has a positive gradient. Against strong bots, it's movement is probably one of the most weak among the top 30 (maibe even among the top 50). But against the weaker bots (in particular the <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a> ones) it is probably the strongest movement (even strongest than <a href="robowiki?DT" class=wikipagelink>DT</a> or <a href="robowiki?Lacrimas" class=wikipagelink>Lacrimas</a>).<br>
+The good news is that i have now a strong moving against weaker bots, the bad news is that i'll have now to improve against the tough ones... (good and bad to me, of course) -- <a href="robowiki?Axe" class=wikipagelink>Axe</a> 
+<p>
+I also thought you could interpret an LPR graph like Musashi 2.14's like that. That's why I created <a href="robowiki?Swiffer" class=wikipagelink>Swiffer</a>. It tries to move strong against the weak and against the strong too. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+You'll notice <a href="robowiki?SpareParts" class=wikipagelink>SpareParts</a> doing exceptionally well against head-on targeting, too (of course, it was built on some of the same ideas as <a href="robowiki?Swiffer" class=wikipagelink>Swiffer</a>).  If I were to do it again, I'd probably have some kind of random stop-and-go movement, and if I got hit try just vibrating for a minute, and if I got hit again, go to more advanced movement. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<hr noshade class=wikiline size=1>
+Sweet. Top-10! Congratulations! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Thnx. The gun was broken, can u imagine that? There is a moving change in 2.16, introducing some of that "No fear from the walls", but what really made difference was the gun's major bug (i was using radians in a point that i was supposed to be using degrees :P). I'll have now to spare a lot of time tweaking it again... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Sun of a beach!! Those mirror moving bots are giving me a really bad time:
+<pre>
+eat.HumblePieLite_1.0    46.2%
+non.mega.NaN_0.1         39.3%
+(does any one knows any other MirrorMovement bot?)
+</pre>
+<a href="robowiki?NaN" class=wikipagelink>NaN</a> beeing my third worst result, behind only of <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a> 36.3% and DT 37.7%.  
+I think that i am putting together a anti-mirror system. I made mine <a href="robowiki?Jim" class=wikipagelink>Jim</a>'s mantra: "Beat everyone below u. Then beat the top.". -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+I doubt you need an anti-mirror system really. Lots of good bots eat humble pie for lunch (pun intended) without anti mirror guns. Though it doesn't hurt having one, but the time spent on it is probably better spent on figuring why those bots hit your movement better than you do. Funny that you pick up Jim's mantra now when <a href="robowiki?ABC" class=wikipagelink>ABC</a> has gotten to the top by making sure his bot beats DT and Lacrimas. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li> You make it sound as if Shadow was not beating the bottom of the ladder badly already. As I recall he was. -- <a href="robowiki?Jim" class=wikipagelink>jim</a> 
+<UL >
+<li> Yeah, I know. But I do think that if you create a movement that DT can't hit you are almost in the clear. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</UL>
+</UL>
+<p>
+I am not saying that i won't work on top bots, but that i'll work <b>first</b> on the low ranked. <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a> came from that mantra. I don't matter that much rating 37% with <a href="robowiki?DT" class=wikipagelink>DT</a>, but rating 39% against <a href="robowiki?NaN" class=wikipagelink>NaN</a> really bothers me. 
+You are obviously right about sparing some time on figuring out why they hit my moving better than me. I think that the reason is that my move is strong against PM guns (see results against <a href="robowiki?Shadow" class=wikipagelink>Shadow</a>, <a href="robowiki?Tron" class=wikipagelink>Tron</a> &amp; me), but very weak against GF and other guns (let me know if u have a better analisys).<br>
+About the anti-mirror system, isn't really that difficult to make it (actually i'm in the verge of getting it done). And is also a funny kind of revenge against the <a href="robowiki?MirrorMovement" class=wikipagelink>MirrorMovement</a> bots (they are really obsessing me). Do they want to steal my moving? Go ahead, be my guest... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Good. Obsession is the key to Robocode success. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Out of interest how many Rumble bots use mirroring? --  <a href="robowiki?Paul" class=wikipagelink>Paul</a>
+<p>
+I know the three: <a href="robowiki?HumblePie" class=wikipagelink>HumblePie</a>, <a href="robowiki?HumblePieLite" class=wikipagelink>HumblePieLite</a> &amp; <a href="robowiki?NaN" class=wikipagelink>NaN</a>. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Ok. It's done. Version 2.17: a 4-hours implementation of an <a href="robowiki?AntiMirrorSystem" class=wikipagelink>AntiMirrorSystem</a>, it should be the "ultimate death" to <a href="robowiki?MirrorMovement" class=wikipagelink>MirrorMovement</a> bots. Hopfully i didn't introduced any bug in the hurry... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>   
+<p>
+Maybe DogManSPE<a href="robowiki?action=edit&id=DogManSPE" class=wikipageedit>?</a> is a mirror too, version 2.16 scores:<br>
+<pre>sgs.DogManSPE_1.1 53.2%</pre>
+With v2.17 i have just beaten it by ~97%... This or i've got a crashed down DogManSPE<a href="robowiki?action=edit&id=DogManSPE" class=wikipageedit>?</a>. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<UL >
+<li> He isn't a mirror. Just crashes with a <a href="robowiki?NullPointerException" class=wikipagelink>NullPointerException</a> sometimes. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+</UL>
+<p>
+Version 2.17 was buggy, replacing with 2.18 -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+It works man! Care to share the details? I don't think we have a page about <a href="robowiki?AntiMirrorTargeting" class=wikipagelink>AntiMirrorTargeting</a> in general. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li> Sure, just give me a few days. But i'll call it <a href="robowiki?AntiMirrorSystem" class=wikipagelink>AntiMirrorSystem</a>, if u don't mind. Actually is a combination of MirrorDetecting<a href="robowiki?action=edit&id=MirrorDetecting" class=wikipageedit>?</a> + <a href="robowiki?AntiMirrorTargeting" class=wikipagelink>AntiMirrorTargeting</a> + AntiMirrorMoving<a href="robowiki?action=edit&id=AntiMirrorMoving" class=wikipageedit>?</a>. By the way, i know that the idea of a anti-mirror system isn't new, actualy is very obvious and there is a lot of different possible approaches, but am i the first to implement something in that way? Let me know if u know someone else, afterall, there is a special flavor on beeing the first :) -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+</UL>
+<p>
+Very good work, top10 with 1850 points, congrats! I believe Prairiewolf and Swiffer also sometimes use mirror movement. Tron and Shadow can also be used as testers if you put "behavior=sandboxkiller" in their properties files. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<UL >
+<li> fantastic! There is a way to beat Shadow! 35 rounds: 83.79%, 35 wins for Musashi! I think that for <a href="robowiki?Shadow" class=wikipagelink>Shadow</a>, taking that he already kills DT, it would be more appropriated if u call that setting "musashislunch" :) -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<li> lol, I used to have to resort to mirrorMovement to win against DT 1.91, it was a great morale booster. Glad to hear that it works for you now. ;)
+</UL>
+<p>
+Btw, I can't test against <a href="robowiki?Musashi" class=wikipagelink>Musashi</a> at home because it is incompatible with java 1.3. Would it be too hard to fix? -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<UL >
+<li> I will try, but expect some days, i'm downloading the 1.3.1 sdk now. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a> 
+</UL>
+<p>
+You're probably doing indexOf() on a String instance. Make it a StringBuffer<a href="robowiki?action=edit&id=StringBuffer" class=wikipageedit>?</a> and things should work on 1.3.1. If it is not that you are using regular expressions which are not supported by stock 1.3.1. Then you'll have to include a regexp packagein your jar. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li> probably that indexOf(). and probably a lot others in List, Collections... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<li> I don't think the Collections farmework changed all that much between 1.3.1 and 1.4.1, did it? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</UL>
+<p>
+I think <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> has some things backwards - the StringBuffer<a href="robowiki?action=edit&id=StringBuffer" class=wikipageedit>?</a> indexOf is new, the String indexOf has been around since the stone ages (I was teaching students how to use it before 1.4 was released). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+If it takes too much work never mind, I'll eventually be forced to upgrade... Btw <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, Tityus 0.9.1 also crashes, here is what the console says: 
+<pre>pez.mini.Tityus 0.9.1: Throwable: java.lang.NoSuchFieldError: YELLOW
+java.lang.NoSuchFieldError: YELLOW
+    at pez.mini.Tityus.run(Tityus.java:52)
+    at robocode.peer.RobotPeer.run(RobotPeer.java:616)
+    at java.lang.Thread.run(Unknown Source)
+</pre>
+<p>
+-- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Stupid me. I just didn't like using lower case constants... I'll fix that for T 0.9.4. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I'll fix mines too, it isn't polite to leave your bot prostrate in others computers :) -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+I was running Musashi vs <a href="robowiki?NaN" class=wikipagelink>NaN</a> and while the <a href="robowiki?AntiMirror" class=wikipagelink>AntiMirror</a> was working nicely for the most part, at one point Musashi turn and ran straight into the corner, then sat there unmoving except for a bit of rotation and not firing at all. I assume that's a bug? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Probably (I have already saw this against <a href="robowiki?OldManXP" class=wikipagelink>OldManXP</a>), thnx for notice it! But ain't sharp that killing against <a href="robowiki?NaN" class=wikipagelink>NaN</a>? That 3.0 pwr bullets are the testimony of faith that i believe in the slaughter. There should be only one. -- <a href="robowiki?Axe" class=wikipagelink>axe</a>
+<p>
+Indeed, very, very, very impressive the 98 percent of the time it works. Just solve the issue with that corner bug and maybe get some work in on looser mirrors and you're gold. Also, I suggest detecting mirrors who only flip one axis. That is to say mirrors going to {BattleFieldWidth<a href="robowiki?action=edit&id=BattleFieldWidth" class=wikipageedit>?</a> - yourX, yourY} or {yourX, BattleFieldHeight<a href="robowiki?action=edit&id=BattleFieldHeight" class=wikipageedit>?</a> - yourY} instead of {BattleFieldWidth<a href="robowiki?action=edit&id=BattleFieldWidth" class=wikipageedit>?</a> - yourX, BattleFieldHeight<a href="robowiki?action=edit&id=BattleFieldHeight" class=wikipageedit>?</a> - yourY} all the time. I believe the only production one of these is <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a>, but myself and many others have played with these, and if -x, -y mirrors start being ruined by these <a href="robowiki?AntiMirrorSystem" class=wikipagelink>AntiMirrorSystem</a>s you might see a resurgence of mirroring in mirrors like this as well as "looser" mirrors like <a href="robowiki?OldManXP" class=wikipagelink>OldManXP</a>. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+That's the idea, it's like chess, every attack have a counterpart, and also every defense. By doing this, all the robocoding comunity will take a step further. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+So I checked to see how good this bot really is, I took a tough rammer boot called SniperBot<a href="robowiki?action=edit&id=SniperBot" class=wikipageedit>?</a> and put it in a duel with Musashi, at first, SniperBot<a href="robowiki?action=edit&id=SniperBot" class=wikipageedit>?</a> simply rammed it to death, then at the third round, it figured that it's a rammer and simply moved away from it while shooting at it, brilliant learning! - Avihoo Ilan
+<p>
+<table border="1" bgcolor="#efefef" cellspacing="1" cellpadding="1">
+<tr><td bgcolor="#FFCC99"><b>Banzai! v0.5</b> (rambot)</td><td bgcolor="#FFCC99"><b>Score %</b></td><td bgcolor="#FFCC99"><b>Battles</b></td><td bgcolor="#FFCC99"><b>Last Battle</b></td><td bgcolor="#FFCC99"><b>Expected %</b></td><td bgcolor="#FFCC99"><b>Problem Bot Index</b></td></tr>
+<tr><td>axeBots.Musashi_2.18</td><td bgcolor="#99CC00">78.7</td><td>7</td><td>6-3-2006:13:11</td><td bgcolor="#FF6600">30.1</td><td bgcolor="#99CC00">48.6</td></tr>
+</table>
+<p>
+While he may catch on to the ramming technique, he still gets his lunch money beaten out of him by a superior rambot. -- <a href="robowiki?Martin_Alan_Pedersen" class=wikipagelink>Martin</a> / <a href="robowiki?Banzai" class=wikipagelink>Banzai!</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Musashi" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Musashi">View other revisions</a><br>Last edited March 6, 2006 21:30 EST by <a href="robowiki?Martin_Alan_Pedersen" title="ID 5692 from NetAPP">Martin Alan Pedersen</a> <a href="robowiki?action=browse&diff=1&id=Musashi">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

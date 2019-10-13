@@ -1,0 +1,273 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Seed/Source - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Seed, Source'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Source">Seed/Source</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Seed" class=wikipagelink>Seed</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package taqho;
+
+import robocode.*;
+
+import java.awt.Color;
+
+
+/**
+ * Seed - My first robot
+ *   
+ * Step 1: Focus on learning to move around.
+ *  There seem to be wall huggers and corner huggers, but the in thing seems to be anti-grav 
+ *  robots which move randomly but avoiding walls. 
+ *  This version will stick to basics. Corners to start with.
+ *
+ * Things to learn later:
+ *  - avoiding walls
+ *  - avoiding other robots (is this necessary)
+ *  - When locating a target, track them if they move
+ *  - when locating a target, track them when I move
+ *  - when locating a target, track them when we both move
+ *  - what to do when I get hit by a robot
+ *  - what to do when I get hit by a bullet
+ *  - can I optimise usage of heat to shot as soon as possible thereafter
+ *  - scanning quickly
+ *  - strobing an enemy in target to avoid bullets from it
+ *  - float close to the wall 
+ **/
+
+public class Seed extends Robot {
+
+	// General class variables
+	final double wallMargin = 35;
+
+	final int STATE_GOTOCORNER = 1;
+	final int STATE_INCORNER = 2;
+	int state = STATE_GOTOCORNER;
+	
+	// Corner variables
+	double cornerX;
+	double cornerY;
+	int currentCorner = 0;
+	int newCorner = 0;
+	
+	// Scanning variables
+	final int SCAN_RIGHT = 1;
+	final int SCAN_LEFT = 2;
+	double scanStart;
+	double scanEnd;
+	int    scanDirection = SCAN_RIGHT;
+	int    scanSweeps = 10;
+	int    scanStep = 5;
+
+	
+	// Movement variables
+	final boolean MOVE_FORWARD = true;
+	final boolean MOVE_BACKWARD = false;
+	boolean moveDirection;	
+	boolean damaged = false;
+
+	public void run() {	
+		setColors(Color.green, Color.black, Color.yellow);
+
+		double distance;
+
+		while (true) {
+			distance = 50;
+			// Check distance in case I get waylaid or blocked
+			while (distance &gt; 40) {
+				choseCorner();
+				gotoXY(cornerX, cornerY);
+				distance = distanceToXY(cornerX, cornerY);
+			}
+			state = STATE_INCORNER;
+			currentCorner = newCorner;
+			scanArenaFromCorner();
+			state = STATE_GOTOCORNER;
+		}
+	}
+
+	public void choseCorner() {
+		while (newCorner == currentCorner) {
+			newCorner = (int)(Math.random()*4+1);
+		}		
+		switch (newCorner) {
+			case 1:
+				cornerX = wallMargin;
+				cornerY = wallMargin;
+				scanStart = -5;
+				scanEnd = 95;
+				break;
+			case 2:
+				cornerX = wallMargin;
+				cornerY = getBattleFieldHeight() - wallMargin;
+				scanStart = 85;
+				scanEnd = 185;
+				break;
+			case 3:
+				cornerX = getBattleFieldWidth() - wallMargin;
+				cornerY = getBattleFieldHeight() - wallMargin;
+				scanStart = 175;
+				scanEnd = 275;
+				break;
+			case 4:
+				cornerX = getBattleFieldWidth() - wallMargin;
+				cornerY = wallMargin;
+				scanStart = 265;
+				scanEnd = 365;
+				break;
+		}
+		
+	}
+	
+	public double distanceToXY(double x, double y) {
+		double xDiff = Math.abs(x - getX());
+		double yDiff = Math.abs(y - getY());
+		return Math.sqrt(xDiff*xDiff + yDiff+yDiff);		
+	}
+	
+	public void scanArenaFromCorner() {
+		// Start aiming
+		double needToTurn = scanStart - getGunHeading();
+		out.println("needToTurn=" + needToTurn + " = " + scanStart + " - " + getGunHeading());
+		turnGunRight(needToTurn);
+		scanDirection = SCAN_RIGHT;
+		int sweeps = 0;
+				
+		// Determine duration of scanning from here
+		if (getOthers() &gt; 2) {
+			scanSweeps = 5;
+		} else { // Fewer robots, move more...
+			scanSweeps = 1;
+		}
+
+		damaged = false;												
+
+		while (sweeps &lt; scanSweeps &amp;&amp; !damaged) {
+			if (scanDirection == SCAN_RIGHT) {
+				turnGunRight(scanStep);
+				if (getGunHeading() &gt; scanEnd) {
+					scanDirection = SCAN_LEFT;
+					sweeps += 1;
+				}
+			} else {
+				turnGunLeft(scanStep);
+				if (getGunHeading() &lt; scanStart) {
+					scanDirection = SCAN_RIGHT;
+					sweeps += 1;
+				}
+			}
+			
+		}
+	}
+	
+	public void gotoXY(double toX, double toY) {
+		
+		if (getX() + toX &lt; getWidth()) toX += (getWidth()/2);
+		else if (getX() + toX &gt; (getBattleFieldWidth() - getWidth())) toX -= (getWidth()/2);
+		
+		if (getY() + toY &lt; getWidth()) toY += (getWidth()/2);
+		else if (getY() + toY &gt; (getBattleFieldHeight() - getWidth())) toY -= (getWidth()/2);
+				
+		double relativeToX = toX - getX();
+		double relativeToY = toY - getY();
+		double headingToXY = radToDeg(this.arctan(relativeToX, relativeToY));		
+		double tankTurn = headingToXY - getHeading();		
+		double distance = Math.sqrt(relativeToX*relativeToX + relativeToY*relativeToY);
+		
+		tankTurn = normalRelativeAngle(tankTurn);
+
+		if (tankTurn &gt; 90 || tankTurn &lt; -90) {
+			moveDirection = MOVE_BACKWARD;
+		} else {
+			moveDirection = MOVE_FORWARD;
+		}
+					
+		if (moveDirection) {
+			turnRight(tankTurn);
+			ahead(distance);
+		} else {
+			turnRight(normalRelativeAngle(tankTurn-180));
+			back(distance);
+		}
+	}
+	
+				
+	/**
+	 * onScannedRobot:  Fire!
+	 */	
+	public void onScannedRobot(ScannedRobotEvent e) {
+		if (e.getDistance() &lt; 50 &amp;&amp; getEnergy() &gt; 50)
+			fire(3);
+		else
+			fire(1);
+		if (!damaged) scan();
+	}
+	
+	/**
+	 * onHitRobot:  Aim at it.  Fire Hard!
+	 */	
+	public void onHitRobot(HitRobotEvent e) {
+		double turnGunAmt = normalRelativeAngle(e.getBearing() + getHeading() - getGunHeading());
+		turnGunRight(turnGunAmt);
+		fire(3);
+	}	
+
+	/**
+	 * onHitByBullet: What to do when you're hit by a bullet
+	 */
+	public void onHitByBullet(HitByBulletEvent e) {
+			damaged = true;		
+			double turnGunAmt = normalRelativeAngle(e.getBearing() + getHeading() - getGunHeading());
+			turnGunRight(turnGunAmt);
+			fire(3);
+	}
+			
+	/**
+	 * normalRelativeAngle:  returns angle such that -180&lt;angle&lt;=180
+	 */
+	public double normalRelativeAngle(double angle) {
+		if (angle &gt; -180 &amp;&amp; angle &lt;= 180)
+			return angle;
+		double fixedAngle = angle;
+		while (fixedAngle &lt;= -180)
+			fixedAngle += 360;
+		while (fixedAngle &gt; 180)
+			fixedAngle -= 360;
+		return fixedAngle;
+	}	
+
+	private double normalizeAngle(double r)
+		{
+		while(r&gt;Math.PI) r-=2*Math.PI;
+		while(r&lt;-Math.PI) r+=2*Math.PI;
+		return r;
+		}
+
+	public double radToDeg(double rad) {
+		return rad * 180.0 / Math.PI;
+	}
+
+	public double degToRad(double deg) {
+		return deg * Math.PI / 180.0;
+	}
+	
+	public double arctan( double dy, double dx) {
+		if (dx == 0.0) {
+			if (dy &gt; 0.0) return Math.PI*0.5;
+			else return Math.PI*1.5;
+		} else {
+			if ((dx &gt; 0.0) &amp;&amp; (dy &gt; 0.0)) return normalizeAngle(Math.atan(dy/dx));
+			else if ((dx &lt; 0.0) &amp;&amp; (dy &gt; 0.0)) return normalizeAngle(Math.PI - Math.atan(dy/Math.abs(dx)));
+			else if ((dx &lt; 0.0) &amp;&amp; (dy &lt; 0.0)) return normalizeAngle(Math.PI + Math.atan(dy/dx));
+			else return normalizeAngle(Math.PI*2 - Math.atan(Math.abs(dy)/dx));
+		}
+	}
+	
+		
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Seed" class=wikipagelink>Seed</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Seed/Source" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Seed/Source">View other revisions</a><br>Last edited January 22, 2003 23:01 EST by <a href="robowiki?PEZ" title="ID 1002 from 192.168.0.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=Seed/Source">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

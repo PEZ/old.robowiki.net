@@ -1,0 +1,182 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>PluggableRobot/ListenerDelegate - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Pluggable, Robot, Listener, Delegate'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/ListenerDelegate">PluggableRobot/ListenerDelegate</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?PluggableRobot" class=wikipagelink>PluggableRobot</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+/*
+ * PluggableRobot, by Robert J. Walker
+ * Home page: http://robowiki.net/cgi-bin/robowiki?PluggableRobot
+ * This software is made available under the RoboWiki Limited Public Code License (RWLPCL). The full
+ * text of the license may be found at http://robowiki.net/cgi-bin/robowiki?RWLPCL.
+ */
+package rjw.pluggablerobot;
+
+import java.util.*;
+
+import robocode.*;
+
+/**
+ * Class that manages all the event listeners for a PluggableRobot and delegates events to the
+ * appropriate EventListeners. Unlike the default Robocode behavior, events are doled out first by
+ * listener (first registered, first notified), then by the order of the listener interfaces
+ * declared on the listener implementation. So a class with a declaration like this:
+ *     public class MyClass implements ScannedRobotListener, EventListener.Death
+ * ...will get notified of the ScannedRobotEvent *before* the DeathEvent!
+ * @author Robert J. Walker
+ */
+public class ListenerDelegate {
+	private ArrayList&lt;EventListener&gt; _listeners = new ArrayList&lt;EventListener&gt;();
+	private static HashMap&lt;Class&lt;? extends EventListener&gt;, ListenerInvoker&gt; _invokers;
+
+	// Build the invoker map, allowing us to look up invokers by listener class
+	static {
+		_invokers = new HashMap&lt;Class&lt;? extends EventListener&gt;, ListenerInvoker&gt;();
+		_invokers.put(EventListener.Death.class,
+				new ListenerInvoker&lt;EventListener.Death, DeathEvent&gt;() {
+					protected Class&lt;DeathEvent&gt; eventClass() { return DeathEvent.class; }
+					protected void invokeListener(EventListener.Death listener, DeathEvent event) {
+						listener.notifyDeath(event);
+					}
+				}
+		);
+		_invokers.put(EventListener.Win.class,
+				new ListenerInvoker&lt;EventListener.Win, WinEvent&gt;() {
+					protected Class&lt;WinEvent&gt; eventClass() { return WinEvent.class; }
+					protected void invokeListener(EventListener.Win listener, WinEvent event) {
+						listener.notifyWin(event);
+					}
+				}
+		);
+		_invokers.put(EventListener.SkippedTurn.class,
+				new ListenerInvoker&lt;EventListener.SkippedTurn, SkippedTurnEvent&gt;() {
+					protected Class&lt;SkippedTurnEvent&gt; eventClass() { return SkippedTurnEvent.class; }
+					protected void invokeListener(EventListener.SkippedTurn listener, SkippedTurnEvent event) {
+						listener.notifySkippedTurn(event);
+					}
+				}
+		);
+		_invokers.put(EventListener.ScannedRobot.class,
+				new ListenerInvoker&lt;EventListener.ScannedRobot, ScannedRobotEvent&gt;() {
+					protected Class&lt;ScannedRobotEvent&gt; eventClass() { return ScannedRobotEvent.class; }
+					protected void invokeListener(EventListener.ScannedRobot listener, ScannedRobotEvent event) {
+						listener.notifyScannedRobot(event);
+					}
+				}
+		);
+		_invokers.put(EventListener.HitByBullet.class,
+				new ListenerInvoker&lt;EventListener.HitByBullet, HitByBulletEvent&gt;() {
+					protected Class&lt;HitByBulletEvent&gt; eventClass() { return HitByBulletEvent.class; }
+					protected void invokeListener(EventListener.HitByBullet listener, HitByBulletEvent event) {
+						listener.notifyHitByBullet(event);
+					}
+				}
+		);
+		_invokers.put(EventListener.BulletHit.class,
+				new ListenerInvoker&lt;EventListener.BulletHit, BulletHitEvent&gt;() {
+					protected Class&lt;BulletHitEvent&gt; eventClass() { return BulletHitEvent.class; }
+					protected void invokeListener(EventListener.BulletHit listener, BulletHitEvent event) {
+						listener.notifyBulletHit(event);
+					}
+				}
+		);
+		_invokers.put(EventListener.BulletHitBullet.class,
+				new ListenerInvoker&lt;EventListener.BulletHitBullet, BulletHitBulletEvent&gt;() {
+					protected Class&lt;BulletHitBulletEvent&gt; eventClass() { return BulletHitBulletEvent.class; }
+					protected void invokeListener(EventListener.BulletHitBullet listener, BulletHitBulletEvent event) {
+						listener.notifyBulletHitBullet(event);
+					}
+				}
+		);
+		_invokers.put(EventListener.BulletMissed.class,
+				new ListenerInvoker&lt;EventListener.BulletMissed, BulletMissedEvent&gt;() {
+					protected Class&lt;BulletMissedEvent&gt; eventClass() { return BulletMissedEvent.class; }
+					protected void invokeListener(EventListener.BulletMissed listener, BulletMissedEvent event) {
+						listener.notifyBulletMissed(event);
+					}
+				}
+		);
+		_invokers.put(EventListener.HitRobot.class,
+				new ListenerInvoker&lt;EventListener.HitRobot, HitRobotEvent&gt;() {
+					protected Class&lt;HitRobotEvent&gt; eventClass() { return HitRobotEvent.class; }
+					protected void invokeListener(EventListener.HitRobot listener, HitRobotEvent event) {
+						listener.notifyHitRobot(event);
+					}
+				}
+		);
+		_invokers.put(EventListener.HitWall.class,
+				new ListenerInvoker&lt;EventListener.HitWall, HitWallEvent&gt;() {
+					protected Class&lt;HitWallEvent&gt; eventClass() { return HitWallEvent.class; }
+					protected void invokeListener(EventListener.HitWall listener, HitWallEvent event) {
+						listener.notifyHitWall(event);
+					}
+				}
+		);
+		_invokers.put(EventListener.RobotDeath.class,
+				new ListenerInvoker&lt;EventListener.RobotDeath, RobotDeathEvent&gt;() {
+					protected Class&lt;RobotDeathEvent&gt; eventClass() { return RobotDeathEvent.class; }
+					protected void invokeListener(EventListener.RobotDeath listener, RobotDeathEvent event) {
+						listener.notifyRobotDeath(event);
+					}
+				}
+		);
+	}
+
+	/**
+	 * Register a new EventListener.
+	 */
+	public void register(EventListener listener) {
+		_listeners.add(listener);
+	}
+
+	/**
+	 * Hand out event notifications to the EventListeners. 
+	 */
+	public void processEvents(Vector&lt;Event&gt; events) {
+		// Notify listeners in the order they were registered
+		for(EventListener listener : _listeners) {
+			Class[] interfaces = listener.getClass().getInterfaces();
+
+			// Iterate the interfaces on each listener that descend from EventListener
+			for(Class iface : interfaces) {
+				if(!EventListener.class.isAssignableFrom(iface)) continue;
+
+				// Get the invoker and the corresponding event class for this interface
+				ListenerInvoker invoker = _invokers.get(iface);
+				Class&lt;? extends Event&gt; eventClass = invoker.eventClass();
+
+				// Iterate the events and hand the ones of the proper type to the invoker
+				for(Event event : events) {
+					if(!eventClass.isAssignableFrom(event.getClass())) continue;
+					invoker.invokeListener(listener, event);
+				}
+			}
+		}
+	}
+
+	
+	/**
+	 * An object that knows about a Robocode Event class and how to invoke its corresponding
+	 * EventListener.
+	 * @author Robert J. Walker
+	 */
+	private static abstract class ListenerInvoker&lt;K extends EventListener, V extends Event&gt; {
+		/**
+		 * Returns the Robocode Event class handled by this ListenerInvoker.
+		 */
+		protected abstract Class&lt;V&gt; eventClass();
+
+		/**
+		 * Invokes the given EventListener, passing in a Robocode Event object.
+		 */
+		protected abstract void invokeListener(K listener, V event);
+	}
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?PluggableRobot" class=wikipagelink>PluggableRobot</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=PluggableRobot/ListenerDelegate" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=PluggableRobot/ListenerDelegate">View other revisions</a><br>Last edited November 2, 2007 23:51 EST by <a href="robowiki?RobertWalker" title="ID 10744 from mind4.fttp.xmission.com">RobertWalker</a> <a href="robowiki?action=browse&diff=1&id=PluggableRobot/ListenerDelegate">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

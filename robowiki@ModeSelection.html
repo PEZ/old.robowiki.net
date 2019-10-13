@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>ModeSelection - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Mode, Selection'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=ModeSelection">ModeSelection</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?ModeSelection" class=wikipagelink>ModeSelection</a> is a way of designing the robot to be modular. Alisdair Owens (Author of Nicator) and I both came up with similar ideas about it when we were at university, however he used interfaces but I use inheritance. Both have advantages &amp; disadvantages, but I will only discuss using inheritance. Both of my bots - Viper<a href="robowiki?action=edit&id=Viper" class=wikipageedit>?</a> &amp; <a href="robowiki?Warlord" class=wikipagelink>Warlord</a> - use this coding technique. 
+<p>
+Note this technique probably isnt best for bots trying to fit into weight categories.
+<p>
+So whats the idea behind <a href="robowiki?ModeSelection" class=wikipagelink>ModeSelection</a>?? Well here are a few points:
+<UL >
+<li> It allows multiple modes to be used in a single bot with ease
+<li> Modes can be added to the bot and seamlessly fit in
+<li> You can learn which mode is the best if you want
+</UL>
+<p>
+Ok, so whats a mode? A mode can be anything that you want your robot to do. For instance, in <a href="robowiki?Warlord" class=wikipagelink>Warlord</a> I use modes for radar, movement, tracking, and gun. Eg:
+<p>
+For radar we might want the following modes:
+<UL >
+<li> Sweep mode - This makes the radar do a 360 degree sweep.
+<li> Track mode - This makes the radar track one particular bot.
+<li> Find mode - This makes the radar rotate until we find a bot we are looking for.
+</UL>
+<p>
+Now allready we can see how this might be usefull. In Melee battles we would want to use Sweep every 20 ticks, then use Find to move the radar to our current target, then use Track to keep the radar on the target until its time to sweep again.
+<p>
+So how do we do this? Well the way I do it is to have an abstract class called Mode. Then each mode we want can be a subclass of it:
+<p>
+<pre>
+public abstract class Mode
+{
+   public Mode() {}
+	
+   public abstract void update();
+   public abstract double getScore();
+}
+</pre>
+<p>
+update is called to make the Mode do something (Like it might call set<a href="robowiki?TurnRadarRight" class=wikipagelink>TurnRadarRight</a>(360) in sweep mode).
+getScore is called by the Manager (see below). The score returned should be the priority of the mode.
+<p>
+So how do we select a mode. Well then what we can have is a class called Manager. This has methods addMode(Mode m), update. So when we intialise our robot we call addMode on the manager with our three modes (Find, Sweep, Track). Then each tick we call update. The manager will then find the mode with the highest priority and call that mode's update method, thus carrying out the modes "wishes".
+<p>
+In the radar case, what we do is in the Sweep getScore method we simply do:
+<p>
+<pre>
+public double getScore()
+{
+  if(AdvancedRobot.getTime() % 20 == 0) // We want to scan
+  {
+    bScanning = true;  // We are now scanning
+    return 100; // High priority
+  }
+  else if(bScanning) // If we are currently scanning
+  {
+    return 50;   // Reasonable priorty - we want to continue our sweep, but can be overidden by other modes if they wish
+  }
+ 
+  return 0;  // Not scanning, dont want to scan, let other modes do stuff
+}
+</pre>
+<p>
+Thus you can see that its a really powerfull way of doing a bot. The modes can interrupt other modes if they want. You can add a mode easily to a bot (Inherit from Mode, call addMode on the manager).
+<p>
+This is usefull for gun aiming - each mode could use a different algorithm to fire with. The modes return their accuracy as the priority, and the most accurate mode is chosen to fire with.
+<p>
+Well, that turned into a bit of a lecture didnt it! I could go into way more depth, but I think thats enough for now.
+<p>
+Expansion:
+<UL >
+<li> You can make sub-classes of Mode abstract - ie have RadarMode<a href="robowiki?action=edit&id=RadarMode" class=wikipageedit>?</a> which all modes that do stuff to the radar inherit from. They can then use the extra functionality that you have added to RadarMode<a href="robowiki?action=edit&id=RadarMode" class=wikipageedit>?</a> as well as still being a Mode.
+<li> Learning modes - automatically adjust priority based on experience.
+</UL>
+<p>
+Feel free to comment on this, and correct my speling! (Deliberate mistake :D)
+<p>
+-<a href="robowiki?Wolfman" class=wikipagelink>wolfman</a>
+<p>
+<hr noshade class=wikiline size=1>
+I'm currently working on a Modular robot myself - combining (so far) 2 radar modes, 6 aiming strategies and 6 movement patterns.  I have a school competition to pit it in on Saturday, afterwards I'll probably stick it up at the repository and fill the <a href="robowiki?Polymorphism" class=wikipagelink>Polymorphism</a> gap with it's easily expandable design. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=ModeSelection" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=ModeSelection">View other revisions</a><br>Last edited March 26, 2003 22:18 EST by <a href="robowiki?Tango" title="ID 1197 from webcacheH06a.cache.pol.co.uk">Tango</a> <a href="robowiki?action=browse&diff=1&id=ModeSelection">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Gaia - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Gaia'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Gaia">Gaia</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Hi there, this is the page of my ({{<a href="robowiki?HoD" class=wikipagelink>HoD</a>]]) next bot, called Gaia.
+Why Gaia ?
+Gaia is , if i remember correctly, the mother of earth. She created a lot of simple lifeforms. And so does Gaia (the bot). It consists of little (only some bytes long) DNA-strings, which are actually byte-arrays, but calling them strings sounds better.
+now, assume that the battlefield is the earth, and my bot represents all lifeforms. some little animals live here, some there...(here and there are the situations my bot is in). when a lifeform is asked to do something (the bot is in a specific situation), it gets control over the bot, and if it fails, it dies, and is replaced by another one. if it is successful, it may live on, and evolve, make little children, and so on. it may also populate other places (means, be asked to control the bot in other situations that are partly equal).
+thats the basic principle :
+identify the situation the bot is in (this is done by me, the programmer), for every situation build up random lifeforms until some survive, and by the time, the bot gets better and better (the bot is then poplated by very specific "lifeforms", beating a specific enemy robot).
+the more specific the identification of the situation, the more effective will the lifeforms created by gaia get.
+<p>
+because of the fact that i use only very short dna-string, the 200k-data limit is enough...
+(this is for the movement...as for the gun, i'll use an improved version of nihils gun)
+<p>
+<a href="robowiki?HoD" class=wikipagelink>HoD</a>
+<p>
+<hr noshade class=wikiline size=1>
+so, here is some detailled information how it works:
+<p>
+the movement. the basic principle : check in which situation you are in. create a random movement pattern. execute it.
+if it works : cool. if it works several times : very cool. let it mutate. now we have several movement patterns for this situation (mother and daughters), to fool some pattern matchers. if the pattern fails, kill it.
+i've decided to use a maximum number of situations that can be recorded, because otherwise there would be billions of possibilities (...). if the maximum limit is reached, a new pattern (DNA-string) can only be created if another fails. like on earth^^. this should end up in a stable set of dna-strings that work against a specific robot, after some hundred rounds of fighting.
+if the dna-memory is full, and gaia gets into an unknown situation, it tries to remember the most similar one. this is done by calculating the "distance" to another situation. distance means, the situation (the sector you are in, the distance to the enemy etc.) is interpretated as a n-dimensional vector. (every situation is considered as a vector, or a point in n-dimensional space, so you can calculate the nearest known point to the one you are in)
+<p>
+after every round, gaia checks for similar dna-strings/situations and combine them into 1, to save memory. for example, a pattern works for every sector, if the distance to the enemy bot is xxx or lower. 
+then it deletes all situations from the memory except one, and put the weighting-factor of "sector" to 0 or a low value. this will make sure that next time the distance is xxx or lower, the pattern that worked will be considered as "the nearest situations pattern".
+this is, btw, the way a human brain works, i think.
+<p>
+doesn't situations need a lot of memory ? no, they don't. :P i use i simple integer to save it. 4 bits to specify the sector gaia is in, another 3 to specifiy the distance-level to the enemy and so on. just 4 bytes per situation is more than enough.
+this way, i can save everything in a hashmap,using the situations integer-value as a key. cool, isn't it ?
+<p>
+some more details without context :
+i divided the battlefield into several sectors (corners, middle, near the walls).
+0-100 is distancelevel 0, 100-250 is 1, 250-500 is 2, and so on...
+i also save the number of bullets that are still on the fly, and some other things.
+<p>
+now, isn't this freaky ? in theory, gaia should be able to avoid about every bullet, if the dna-string-language is able to provide the needed functions.
+<p>
+<p>
+now the gun :
+i'm using a bullet ring, only saving the center and radius. i'm also firing 13 virtual bullets, but not calculating them before the ring touches the enemy. then, i check which bullets would have hit. if a vb hits, fine, use this method from now on in this specific situation (situations are mostly similar to the ones i used for the movement). if not, check the angle, and use this angle from now on (this is mostly like guess factor targeting).
+<p>
+comments are welcome. 
+<p>
+maybe the text is difficult to understand, but just read it several times...
+<p>
+the newest version of gaia (0.01) is already able to change it's colors :)
+at the moment, i'm developing the dna-language...should be done this week...
+<p>
+i'll keep you up to date about my newest creation here, so come here from time to time.
+<p>
+<a href="robowiki?HoD" class=wikipagelink>HoD</a>
+<hr noshade class=wikiline size=1>
+I am very curious about Gaia! The idea sounds great and i can't wait to see if it stands in practise --<a href="robowiki?Vic" class=wikipagelink>Vic</a>
+<hr noshade class=wikiline size=1>
+I just decided that Gaia is female. From now on, i'll say "she", instead of "it". <a href="robowiki?HoD" class=wikipagelink>HoD</a>
+<hr noshade class=wikiline size=1>
+A little update : the theory is now completed. i needed to change some details, but the basic principle remains the same. i'm developing a basic structure of my genetic/neural stuff independend from the complete robocode-bot-stuff to make it more flexible. maybe i'll release it, but only maybe. i don't really know how neural nets work, but it think, mine is one. if not, who cares ? (to be honest, i think, my creation is even better than a neural net. if i'm right, time will tell) <a href="robowiki?HoD" class=wikipagelink>HoD</a>
+<hr noshade class=wikiline size=1>
+Interesting brand new idea. Waiting for the results. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<hr noshade class=wikiline size=1>
+The basic neural net code is ready. includes :
++ the ability to eat a floatarray that contains various information (makes it easy to use)
++ the ability to understand which of these informations are important and which are not after some generations (which is very cool)
++ an abstract neuron class. write your own classes that implement it, add some useful functions, then add the class to the neural network main class just by addNeuron(neuron). this way, my nn is VERY flexible....just provide it with the neurons it needs to control the bot, and let it do the rest. for example, if you want to make a neural calculator, give it a neuron that adds two floats, one that multiplicates etc., give it some input, rate the output, and after some tries,  the nn is able to calculate like a real calculator :)
++ the ability to re-identify a known situation (and even a slightly different ones!) at ultra-speed.
+i wonder how long it would take for a nn to develop antigravity movement....
++ the ability to develop random "thoughts" (in this case, move-combos), and make children of thoughts that already exists by changing the neuron-used-order, add a new one, delete one, etc. (this is the genetic part)
+<p>
+-&gt; my next step will be : write a lot of neuron-classes that provide all necessary functions like setahead setturnright etc.
+<p>
+i'm going to sleep now. <a href="robowiki?HoD" class=wikipagelink>HoD</a>
+<p>
+<hr noshade class=wikiline size=1>
+Very cool. Reminds me of a M:TG card called Child of Gaia. I wonder... *digs up his old deck*... Ah yes. Very cool card. Cost 3GGG, 7/7, Trample, Upkeep GG, and 1G regenerates. Sweet card; I have two in my deck. Cool.
+<p>
+As for my splurge of relevancy... This idea sounds very good. However, the problem seems to me that there are many different guns out there; for a movement system to be powerful it has to be able to defend against all of these guns. It would seem very difficult for an evolving DNA neuron sequence to adapt to all gunning systems without understanding their functionality. <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a>'s movement system for example mathematically folds the walls into it's movement, and avoids getting cornered, all the while normalizing it's movement curve. It seems difficult to imagine an evolved movement system to be able to compete with such a well handcrafted system.
+<p>
+Not to say that this idea won't be totally cool; I've thought a lot about an idea like this before. The difference is that in my idea the bot learned from other bots' movement systems rather than creating it's own. For example if you fought it a billion rounds agaisnt Walls, it would move exactly like Walls; if you fought it a billion rounds against Spinbot, it would move exactly like Spinbot. If you fight both, it will learn which movement works best against which enemy. The problem was that I couldn't really wrap my head around programming a pattern analyser that matched things like randomness. Anything beyond the likes of the sample bots were too complicated for me to even begin imagining how to design such an analyser. Hence I never really took the idea off the ground.
+<p>
+However, a genetically evolved movement system is different, and it's a subject I'm extremely interested in; I'm glad your trying it out. Good luck! :-) -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+<hr noshade class=wikiline size=1>
+i didn't plan to let my bot use the same dna-strings against every bot...the data will be separated.
+the point is that if my dna-language is providing enough functions to create a movement that is good enough, and the ai gets enough (and the correct) input, and the created strings are rated correctly, it WILL find a good enough movement to out-maneuver the enemy bot. it just needs enough time, and ram.
+as for the first part, the needed functions, i decided that there will be a dna-command for every command robocode provides. the dna-strings will be able to do everything what a hand-coded movement will be able to do.
+the difference will be that a hand-coded algorith may take very complex things into consideration (to develop antigrav-movement by randomly build dna-strings is nearly impossible) making the bots movement very general, means it will work in many cases, but my bot will build up short strings for very specific situations.
+it will try to solve lots of little problems indepentend from each other, while sandboxdt's movement tries to solve all problems at once....
+<p>
+edit:
+<p>
+i thought about using neural targeting. there are some bots out that do that already, but i don't understand how they do it. they have a nn, they give it some input...but what the hell happens then ?
+in my case, i have to write neurons that provide some basic functions. how does a nn work without this ? what are they doing with the input ?
+i can't believe they develop circular aiming or something like that just by getting some input and having no idea what to to...
+<a href="robowiki?HoD" class=wikipagelink>HoD</a>
+<p>
+Feedforward multilayer neural networks (like the kind used in NRLIBJ) are a very specific mathematical concept.  Each node sums its inputs, applies a limiting function, and then outputs the same value over its output connections, which multiply the value by some weight before arriving at the next node.  The way that the network actually learns is through a complex algorithm called back-propagation, which computes the error at the output layer, and then figures out which nodes were responsible for that error and adjusts their output weights.  Using this learning algorithm, this kind of neural network can map any continuous function, linear or non-linear.  If you'd like more information, a Google for "back-propagation" or "feedforward multilayer neural network" should return something useful. -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+<hr noshade class=wikiline size=1>
+seems like you want a "who can tell the more complicated things "-game ? ok : my situation-identification is based on multidimensional strechted circles, with single points stored in a recursive 2D tree to speed up the comparision-process....
+sounds as cool as what you said :P
+the reason i need to improve my nn is that i can't use genetic guns...they would simply suck. to move succesfully, it is enough to try out what works...for aiming, you need to understand why and how it works....
+<a href="robowiki?HoD" class=wikipagelink>HoD</a>
+<p>
+Not at all, I was attempting to answer your questions.  I hope I didn't offend you. -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+<a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a> is open source. You can take a look into it (also check <a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a> and <a href="robowiki?NeuralTargeting" class=wikipagelink>NeuralTargeting</a> pages). You will see that it has a velocity and a heading change vector as inputs, and the outputs of the network are the predicted velocity and heading change for the next tick. So it aims iterating on the NN (use the predicted headings and velocities to guess the enemy movement). -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<hr noshade class=wikiline size=1>
+You only feed the nn with headingchanges and velocity per frame (the mathematical vector) or do you mean the last few frames (the class vector/arraylist) ? if you only give it the last change &amp; velocity, i won't have a chance against anything what you need more information for (myfirstrobot, stop-and-go....)
+ok, my fault, i didn't look up the links...
+well, there is a new update : my nn has gone to the next level :)
+it know understands that some inputs are important if the n-th inputvalue is near to a specific one. for example, the exact position is not important if you are in the middle of a field, but it is if you are near to a wall or corner.
+<p>
+as i said, i thought about using neural aiming. i have no hope that there is a way to make a nn develop guessfactortargeting by learning. i'm trying to do it another way :
+a child, that has never learned anything with vectors, accelerated movement etc. is able to learn to catch flying balls. even a dog can.
+i'm trying to use this fact. my nn doesn't need to know the exact formula (i'll give it some basics like headon-fire, iterative targeting etc. to make it not being a fool at the beginning, but this won't be the trump card...). 
+it doesn't need to calculate the exact goal of a bot. for simple ones, it has it's basic neurons that i'll steal from <a href="robowiki?Nihil" class=wikipagelink>Nihil</a>.
+what my exact plan is, i don't know. i need a good idea. ^^
+<a href="robowiki?HoD" class=wikipagelink>HoD</a>
+<p>
+<hr noshade class=wikiline size=1>
+Update : the nn is now learning in a human style. if it knows only a few situations, it behaves the same way in most cases (the maximum tolerated distance between known and new situation when identifing a new one is big at the beginning. this is how humans do it. what worked once is tried again and again until it fails, if you don't know how to do it better), and as its experience rises, its reactions become more specific.
+I also implemented !!!the famous <a href="robowiki?Calculatortest" class=wikipagelink>Calculatortest</a>!!!, because it's a simple way to find bugs. found some, and fixed the most of them.
+also improved the basic neuron. it now has flags for "i am the last, don't let anything happen after i was used" and "i am lonely, i have no connections, use me alone, or don't use me." -&gt; needed for headon-aiming for example.
+It won't take long until my nn is bug-free and ready to fight....
+<a href="robowiki?HoD" class=wikipagelink>HoD</a>
+<hr noshade class=wikiline size=2>
+Newsletter : the nn has just mastered the <a href="robowiki?Calculatortest" class=wikipagelink>Calculatortest</a> perfectly ! i'll begin to write the tankcontroller-neurons soon (~this weekend), and train Gaia....
+<a href="robowiki?HoD" class=wikipagelink>HoD</a>
+<hr noshade class=wikiline size=1>
+Just to let you know : I'm not dead, i'm just not online. <a href="robowiki?HoD" class=wikipagelink>HoD</a>
+<p>
+Glad you're still around; the wiki has been a little slow lately and I've been looking for something Robocode-ish to chat about. When will we be able to see a working version of Gaia? -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<hr noshade class=wikiline size=1>
+Unfortunately, my CPU has been burned to death, but i'll get a new one the next few days. 
+The state of Gaia is :
+<p>
++ nn completely implemented. 
+<p>
++ i decided to give gaia 8 control-neurons for the movement. up, down, left, right, and move diagonal. it will drive a minimum amount of 40 pixels, and it will stop just before a linear-iteration aimed bullet would hit, or when it would hit a wall by driving 20 more pixels, or just before the enemy is able to shoot again (this will avoid incomplete moves (interrupted by another shot of the enemy), which are difficult to rate), or randomly on the way.
+i think (hope) this will end up in a strong movement, and even guessfactor targeting won't help much.
+maybe i'll use another 8 neurons for the same directions, but different movement styles.
+<p>
++ some (4) guns implemented. based on <a href="robowiki?Nihil" class=wikipagelink>nihil</a>'s gun, but improved, partly a bit, partly a lot (especially the pattern matcher kicks ass now)
+<p>
+still to do : 
+- convert the situation gaia is in to an array of floats to feed the nn. this will be the most difficult part. what does the bot need to know to beat the enemy ?
+<p>
+- use a second nn for choosing the right gun (this will be gaia's greatest strengh, i think. it will be able to choose the best gun depending on the situation classified by a nn, not by distance alone)
+<p>
+performance until now :
++ kills every samplebot without moving (if using the correct gun)
++ kills patternbot without moving *hrhr*
+<p>
+ps :
+the code is very structured this time...looks like i finally learned how to write really big programs without screwing everything up *happy*
+<p>
+<a href="robowiki?HoD" class=wikipagelink>HoD</a>
+<p>
+<UL >
+<li> A thought on what the 'situation' involves - I've put a reasonable amount of time thinking about this as it relates to statistical targeting (see <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a>) and I'm conviced that at the very least, in <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a>, it should include the enemy's velocity relative to you, their current acceleration (are they speeding up?  Slowing down?), something about their relationship to the wall (I use if they would hit it going in a straight line for so many turns), and distance.  I think that time since they've changed directions and your velocity relative to them could be added to it for something possibly more refined.  In melee, it's probably a little different.  I have yet to re-implement the gun well for that. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+My thoughts for what the nn needs to know (for avoiding bullets) :
+1. how many enemy bullets are on the fly
+2. the past movements done
+3. the position of the enemy &amp; gaia
+4. has gaia been hit the last 10 frames or did it stop the last 10 frames ?
+5. did gaias own pattern matcher found a pattern in her movement ?
+<p>
+for the gun-choosing, i'll add the speeding up/slowing down-number..
+<a href="robowiki?HoD" class=wikipagelink>HoD</a>
+<p>
+<hr noshade class=wikiline size=1>
+If i would be a game developing company, i would release a teaser video now. :)
+gaia is 70% ready, i "just" need to put the pieces together. expect a first fighting version someday the next week.
+<p>
+edit (just to let you know) : 
+i changed the nn-usage a bit. i'm using a modified (improved &amp; more random movements inside &amp; fuzzy little randomizations) version of nihil's antigravity movement as a standard movement, because it works in the most situations. the nn will take control of gaia in the situations where the antigravity-movement fails. this way, the overall performance and memory usage should be better.
+<a href="robowiki?HoD" class=wikipagelink>HoD</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Gaia" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Gaia">View other revisions</a><br>Last edited May 18, 2006 20:06 EST by <a href="robowiki?GrubbmGait" title="ID 6861 from ip195-142-172-82.dyndsl.versatel.nl">GrubbmGait</a> <a href="robowiki?action=browse&diff=1&id=Gaia">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

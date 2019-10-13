@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Ali - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Ali'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Ali">Ali</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><b>Difference (from prior major revision)</b>
+(no other diffs)<br> <br><strong>Changed: 1,2c1,102</strong><br><table width="95%" bgcolor=#ffffaf class=wikidiffold><tr><td>
+ null<br> avariciously.aboriginal microeconomics Elsie frontiers sponge transcriber upholsters watering dreamers <a rel="nofollow" href="http://phenterminehclhere.blogspot.com/">[phentermine ]</a> precomputing spurs <br></td></tr></table><table width="95%" bgcolor=#cfffcf class=wikidiffnew><tr><td>
+<H2>Ali - a bot by <a href="robowiki?PEZ" class=wikipagelink>PEZ</a></H2><br><br> <br> Download it from the <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a>: <a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=2416">http://www.robocoderepository.com/BotDetail.jsp?id=2416</a><br><H3>How does it fire?</H3><br><br> It uses a log of all ticks with information in five dimensions together with the <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> that would have hit the enemy at that tick. When firing the current tick is compared to every tick in the log and the "closest" ones are examined for the most commonly occuring guess factor which is then used to aim the gun. From what I understand this gun is very similar in design to <a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a>'s gun. Even though that's accidental. I just realized I can suddenly understand some of what's going on in <a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a>! =) Also see <a href="robowiki?Ali/BumbleBee" class=wikipagelink>/BumbleBee</a>.<br><H3>How does it move?</H3><br><br> <a href="robowiki?CassiusClay/Butterfly" class=wikipagelink>CassiusClay/Butterfly</a> (that is, <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>)<br> <br> Which means this bots floats like a butterfly and stings like a bumble-bee. =)<br><H3>How competetive?</H3><br><br> With Butterfly movement it's bound to be competetive. But the gun is yet not very good. Rumble performance:<br> <br> * Version 0.1 - <strong>1973</strong> (PM gun)<br> * Version 0.2 - <strong>2042</strong> (Fuzzy GF gun)<br> * Version 0.2.1 - <strong>2043</strong><br> ** Bug fixes in the fuzzy matching.<br> ** The log is now cleaned and truncated to 8000 waves when it reaches 12000 waves. (Based on how often each scan is fuzzily matched.)  <br> * Version 0.2.2 - <strong>2042</strong><br> ** Uses normalized real data instead of crude indexes<br> * Version 0.2.3 - <strong>1999</strong><br> ** Only runs the matching once before firing<br> ** Uses straight differences when matching (so called Manhattan distance)<br> ** Tweaked dimensions weighting<br> * Version 0.2.4 - <strong>1987</strong><br> ** Back to Euclidian distances in matching<br> ** Reset the dimension weighting back to 0.2.2<br> * Version 0.2.5 - <strong>2046</strong><br> ** Back to 0.2.3 config<br> ** Gunalignment and "only-run-matching-once-per-bullet" re-visited.<br> * Version 0.3 - <strong>1974</strong><br> ** Segmentation on velocity and wall proximity only<br> ** Removed <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a>. Now only uses the best matching log entry.<br> * Version 0.3.1 - <strong>1995</strong> - As of May 2005. Not comparable with the above scores, but with the below.<br> ** Segmentation wall proximity, time since velocity change and distance traveled last 15, 60 and 120 ticks (<a href="robowiki?TronsGun" class=wikipagelink>TronsGun</a> inspired)<br> ** Reinstalled <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a>. Using the 15 best matching entries.<br> ** Chebyshev Distance (|a - b|) used for comparing log entries<br> * Version 0.4.1 - <strong>2018</strong><br> ** ApproachVelocity<a href="robowiki?action=edit&id=ApproachVelocity" class=wikipageedit>?</a> dimension removed<br> ** Dimensions somewhat normalized around 0-75<br> * Version 0.4.2 - <strong>2032</strong><br> ** Reverse wall distance dimension added<br> ** Tuned the threshold to select the log entries used for <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a><br> ** Tuned the weights on each dimension<br> * Version 0.4.3 - <strong>2032</strong><br> ** Using a fixed cluster size (100) of the <strong>best</strong> matching log entries.<br> ** To speed things up the log is first filtered through a coarse selection of half-good matches.<br> ** Weighting of dimensions: Firedistance = 1 and all others 2.<br> * Version 0.4.4 - <strong>2031</strong><br> ** Minor tweak of cluster size and coarse filtereing threshold<br> ** Refactored the selection process<br> * Version 0.4.5 - <strong>2034</strong> (Top 10!)<br> ** Tweaking weights of segmentation dimensions<br> * Version 0.4.6 - <strong>2037</strong><br> ** Using Euclidian distances for phase-2 cluster selection<br> * Version 0.4.7 - <strong>2037</strong><br> ** <a href="robowiki?DCBot" class=wikipagelink>DCBot</a> inspired weighting of the dimensions (an experiment)<br> ** Added segmentation on approach angle and time-since-fired. (Also DCBot inspired)<br> ** Squared Euclidian distances used for both phase 1 &amp; 2. (Squared since it should render the exact same results and I save quite a few calls to Math.sqrt() this way.)<br> ** Some other stuff too that I can't really recall. All in all too many experiments in one batch to really be useful for feedback. But it seems in my little testing that the short-battle performance has imporoved.<br> (Everything is about the gun in this bot. The movement is always the same as the current dev version of <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a>.)<br> <hr noshade class=wikiline size=1><br><H3>Comments or questions anyone?</H3><br><br> <br> An alligator floating like a butterfly and stinging like a bumble-bee? :-) -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a><br> <br> If it was an alligator it would instead just bite, roll and drown its enemies. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a><br> <br> <a href="robowiki?Ali/BumbleBee" class=wikipagelink>/BumbleBee</a> reminds me of <a href="robowiki?DuelistMicroMkII" class=wikipagelink>DuelistMicroMkII</a>'s gun. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a><br> <br> Yeah, from the descriptions they sound very similar! Though you talk about your gun as a <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> gun. I think of B/umbleBee as purely <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a>. Most <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> guns are 1-length matchers, aren't they? Or 2-length when they deal with acceleration maybe. I might be wrong here, but I think <a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a>'s gun is similar to our two guns as well. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a><br> <br> Here's the distinction: GF guns break all possible situations into segments and then look for the segment that the opponent is currently in. PM guns look at a the history of recent moves and try to find a time in the past that the enemy has moved in a similar way. GF guns break things up into discrete chunks whereas PM guns try to find the most similar previous state. <a href="robowiki?DuelistMicroMkII" class=wikipagelink>DuelistMicroMkII</a> and <a href="robowiki?Ali/BumbleBee" class=wikipagelink>/BumbleBee</a> are a cross between the two because they only look at the current enemy state like a GF gun would, but then they find the most similar previous state (like a PM gun) rather than looking in a specific segment. <a href="robowiki?TronsGun" class=wikipagelink>TronsGun</a> also seems similar, incidentally. I count acceleration as being part of the "current enemy state". "State matcher" is probably a good name for this type of gun, since it works like a PM gun but operates on  the current enemy state instead of operating on patterns of enemy moves. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a><br> <br> Like all my micro and nanobots, <a href="robowiki?DuelistMicroMkII" class=wikipagelink>DuelistMicroMkII</a> includes source, so feel free to take a look at the gun. I was going to match on more factors than the 2 I use, but I ran out of space. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a><br> <br> Your distinction is very different from mine. Whether it's a GF gun or not is only dependent on if it uses GFs for the actual aiming or not. Instead of storing heading and velocity in the log for replay, <a href="robowiki?Ali/BumbleBee" class=wikipagelink>/BumbleBee</a> simply stores the GF, just like Bee does. The difference between <a href="robowiki?Bee" class=wikipagelink>Bee</a> and <a href="robowiki?BumbleBee" class=wikipagelink>BumbleBee</a> is only on how they store the data. Bee decides beforehand what segmentations to use. <a href="robowiki?Ali/BumbleBee" class=wikipagelink>/BumbleBee</a> makes the decision later. <a href="robowiki?Ali/BumbleBee" class=wikipagelink>/BumbleBee</a> could build up the same buffers on the fly as Bee does continously. The matching part is similar between the two guns. If <a href="robowiki?BumbleBee" class=wikipagelink>BumbleBee</a> is a state matcher, so is Bee. If Bee is a <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a>, so is <a href="robowiki?Ali/BumbleBee" class=wikipagelink>/BumbleBee</a>. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a><br> <br> What would you call <a href="robowiki?DuelistMicroMkII" class=wikipagelink>DuelistMicroMkII</a>? --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a><br> <br> Haven't looked at the code yet. I'll do that first and then answer you. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a><br> <br> OK. So now I have checked. It's even more similar to <a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a>'s gun than <a href="robowiki?Ali/BumbleBee" class=wikipagelink>/BumbleBee</a> is. But it's still a StatisticalGun<a href="robowiki?action=edit&id=StatisticalGun" class=wikipageedit>?</a> I would say. You store the diff-angle and the current target direction instead of the GF. And you only find the best match instead of the best matche<strong>s</strong> like I do. Otherwise it's the same. It's a StatisticalGun<a href="robowiki?action=edit&id=StatisticalGun" class=wikipageedit>?</a> that only uses one sample of the statistics. =) But a few simple changes would enable it to use more samples. Even though I suspect you'd have a hard time staying a micro then... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a><br> <br> I wouldn't call a single match gun a StatisticalGun<a href="robowiki?action=edit&id=StatisticalGun" class=wikipageedit>?</a>, there are no statistics involved. A traditional GF gun and a <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a> PM are statistical guns. The difference between a pattern matcher and a "state matcher" is in what you match, PM involves a time series while (traditional) GF guns don't. When you include time-sice-something in a GF gun, the distinction blurs. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a><br> <br> Which would mean Bee is in that blurred zone? Your definition of Statistical vs PM leaves Cigaret and <a href="robowiki?DuelistMicroMkII" class=wikipagelink>DuelistMicroMkII</a> without any home in either. They are not statistical (since they only look at the best macthing sample) and they are not PM (since they don't include a time series). What I am beginning to think here is that PM and statistical has all the time been the wrong categorizations. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a><br> <br> There are a lot of different ways you can look at a gun. The PM and GF distinction was good enough when the two main (good) gun types were either statistical gf-based or best match PM-based. These days there are a lot of different combinations of gun characteristics, it's very hard to classify them all in just two separate groups. I would call Cigaret (and others, like <a href="robowiki?DuelistMicroMkII" class=wikipagelink>DuelistMicroMkII</a>) a GF-based best match gun. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a><br> <br> Yes, but since it's entirely possible to make a GF based <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> gun and also make it <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a> between several matches the whole distinction is uninteresting to divide guns with. The word pattern-matching doesn't anywhere state that it involves a time series. It's just one axis over which to build patterns. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a><br> <br> Agreed, almost every gun can be said to be <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a>... So, find a better name for time series matching... :) -- <a href="robowiki?ABC" class=wikipagelink>ABC</a><br><H2>Revisiting</H2><br><br> Checking this page I wonder why I almost abandonded this gun path. Version 0.2.5 seems to be a quite good gun and it should be open for improvement. I had planned to go for movement on <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> when I've gotten the <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> thingy somewhat working. But now I wonder... I also wonder if I shouldn't go for <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> using these gun principles. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a><br> <br> Hey PEZ, I noticed that sometimes Ali doesn't finish off a disabled opponent. Probably doesn't cost it much in rating points, but just letting you know. --<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a><br> <br> Thanks. What I will do if I start working with this gun again is to make it use Bee for all descisions like that. Only the data storage and processing will be different. That should make it possible for me to plug this gun into CC's <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> array too, should I fancy. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a><br></td></tr></table>
+<hr class=wikilinediff>
+<div class=wikitext><H2>Ali - a bot by <a href="robowiki?PEZ" class=wikipagelink>PEZ</a></H2>
+
+<p>
+Download it from the <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a>: <a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=2416">http://www.robocoderepository.com/BotDetail.jsp?id=2416</a>
+<p>
+<H3>How does it fire?</H3>
+
+It uses a log of all ticks with information in five dimensions together with the <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> that would have hit the enemy at that tick. When firing the current tick is compared to every tick in the log and the "closest" ones are examined for the most commonly occuring guess factor which is then used to aim the gun. From what I understand this gun is very similar in design to <a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a>'s gun. Even though that's accidental. I just realized I can suddenly understand some of what's going on in <a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a>! =) Also see <a href="robowiki?Ali/BumbleBee" class=wikipagelink>/BumbleBee</a>.
+<p>
+<H3>How does it move?</H3>
+
+<a href="robowiki?CassiusClay/Butterfly" class=wikipagelink>CassiusClay/Butterfly</a> (that is, <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>)
+<p>
+Which means this bots floats like a butterfly and stings like a bumble-bee. =)
+<p>
+<H3>How competetive?</H3>
+
+With Butterfly movement it's bound to be competetive. But the gun is yet not very good. Rumble performance:
+<p>
+<UL >
+<li> Version 0.1 - <strong>1973</strong> (PM gun)
+<li> Version 0.2 - <strong>2042</strong> (Fuzzy GF gun)
+<li> Version 0.2.1 - <strong>2043</strong>
+<UL >
+<li> Bug fixes in the fuzzy matching.
+<li> The log is now cleaned and truncated to 8000 waves when it reaches 12000 waves. (Based on how often each scan is fuzzily matched.)  
+</UL>
+<li> Version 0.2.2 - <strong>2042</strong>
+<UL >
+<li> Uses normalized real data instead of crude indexes
+</UL>
+<li> Version 0.2.3 - <strong>1999</strong>
+<UL >
+<li> Only runs the matching once before firing
+<li> Uses straight differences when matching (so called Manhattan distance)
+<li> Tweaked dimensions weighting
+</UL>
+<li> Version 0.2.4 - <strong>1987</strong>
+<UL >
+<li> Back to Euclidian distances in matching
+<li> Reset the dimension weighting back to 0.2.2
+</UL>
+<li> Version 0.2.5 - <strong>2046</strong>
+<UL >
+<li> Back to 0.2.3 config
+<li> Gunalignment and "only-run-matching-once-per-bullet" re-visited.
+</UL>
+<li> Version 0.3 - <strong>1974</strong>
+<UL >
+<li> Segmentation on velocity and wall proximity only
+<li> Removed <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a>. Now only uses the best matching log entry.
+</UL>
+<li> Version 0.3.1 - <strong>1995</strong> - As of May 2005. Not comparable with the above scores, but with the below.
+<UL >
+<li> Segmentation wall proximity, time since velocity change and distance traveled last 15, 60 and 120 ticks (<a href="robowiki?TronsGun" class=wikipagelink>TronsGun</a> inspired)
+<li> Reinstalled <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a>. Using the 15 best matching entries.
+<li> Chebyshev Distance (|a - b|) used for comparing log entries
+</UL>
+<li> Version 0.4.1 - <strong>2018</strong>
+<UL >
+<li> ApproachVelocity<a href="robowiki?action=edit&id=ApproachVelocity" class=wikipageedit>?</a> dimension removed
+<li> Dimensions somewhat normalized around 0-75
+</UL>
+<li> Version 0.4.2 - <strong>2032</strong>
+<UL >
+<li> Reverse wall distance dimension added
+<li> Tuned the threshold to select the log entries used for <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a>
+<li> Tuned the weights on each dimension
+</UL>
+<li> Version 0.4.3 - <strong>2032</strong>
+<UL >
+<li> Using a fixed cluster size (100) of the <strong>best</strong> matching log entries.
+<li> To speed things up the log is first filtered through a coarse selection of half-good matches.
+<li> Weighting of dimensions: Firedistance = 1 and all others 2.
+</UL>
+<li> Version 0.4.4 - <strong>2031</strong>
+<UL >
+<li> Minor tweak of cluster size and coarse filtereing threshold
+<li> Refactored the selection process
+</UL>
+<li> Version 0.4.5 - <strong>2034</strong> (Top 10!)
+<UL >
+<li> Tweaking weights of segmentation dimensions
+</UL>
+<li> Version 0.4.6 - <strong>2037</strong>
+<UL >
+<li> Using Euclidian distances for phase-2 cluster selection
+</UL>
+<li> Version 0.4.7 - <strong>2037</strong>
+<UL >
+<li> <a href="robowiki?DCBot" class=wikipagelink>DCBot</a> inspired weighting of the dimensions (an experiment)
+<li> Added segmentation on approach angle and time-since-fired. (Also DCBot inspired)
+<li> Squared Euclidian distances used for both phase 1 &amp; 2. (Squared since it should render the exact same results and I save quite a few calls to Math.sqrt() this way.)
+<li> Some other stuff too that I can't really recall. All in all too many experiments in one batch to really be useful for feedback. But it seems in my little testing that the short-battle performance has imporoved.
+</UL>
+</UL>
+(Everything is about the gun in this bot. The movement is always the same as the current dev version of <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a>.)
+<hr noshade class=wikiline size=1>
+<H3>Comments or questions anyone?</H3>
+
+<p>
+An alligator floating like a butterfly and stinging like a bumble-bee? :-) -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+If it was an alligator it would instead just bite, roll and drown its enemies. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<a href="robowiki?Ali/BumbleBee" class=wikipagelink>/BumbleBee</a> reminds me of <a href="robowiki?DuelistMicroMkII" class=wikipagelink>DuelistMicroMkII</a>'s gun. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Yeah, from the descriptions they sound very similar! Though you talk about your gun as a <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> gun. I think of B/umbleBee as purely <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a>. Most <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a> guns are 1-length matchers, aren't they? Or 2-length when they deal with acceleration maybe. I might be wrong here, but I think <a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a>'s gun is similar to our two guns as well. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Here's the distinction: GF guns break all possible situations into segments and then look for the segment that the opponent is currently in. PM guns look at a the history of recent moves and try to find a time in the past that the enemy has moved in a similar way. GF guns break things up into discrete chunks whereas PM guns try to find the most similar previous state. <a href="robowiki?DuelistMicroMkII" class=wikipagelink>DuelistMicroMkII</a> and <a href="robowiki?Ali/BumbleBee" class=wikipagelink>/BumbleBee</a> are a cross between the two because they only look at the current enemy state like a GF gun would, but then they find the most similar previous state (like a PM gun) rather than looking in a specific segment. <a href="robowiki?TronsGun" class=wikipagelink>TronsGun</a> also seems similar, incidentally. I count acceleration as being part of the "current enemy state". "State matcher" is probably a good name for this type of gun, since it works like a PM gun but operates on  the current enemy state instead of operating on patterns of enemy moves. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Like all my micro and nanobots, <a href="robowiki?DuelistMicroMkII" class=wikipagelink>DuelistMicroMkII</a> includes source, so feel free to take a look at the gun. I was going to match on more factors than the 2 I use, but I ran out of space. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Your distinction is very different from mine. Whether it's a GF gun or not is only dependent on if it uses GFs for the actual aiming or not. Instead of storing heading and velocity in the log for replay, <a href="robowiki?Ali/BumbleBee" class=wikipagelink>/BumbleBee</a> simply stores the GF, just like Bee does. The difference between <a href="robowiki?Bee" class=wikipagelink>Bee</a> and <a href="robowiki?BumbleBee" class=wikipagelink>BumbleBee</a> is only on how they store the data. Bee decides beforehand what segmentations to use. <a href="robowiki?Ali/BumbleBee" class=wikipagelink>/BumbleBee</a> makes the decision later. <a href="robowiki?Ali/BumbleBee" class=wikipagelink>/BumbleBee</a> could build up the same buffers on the fly as Bee does continously. The matching part is similar between the two guns. If <a href="robowiki?BumbleBee" class=wikipagelink>BumbleBee</a> is a state matcher, so is Bee. If Bee is a <a href="robowiki?StatisticalTargeting" class=wikipagelink>StatisticalTargeting</a>, so is <a href="robowiki?Ali/BumbleBee" class=wikipagelink>/BumbleBee</a>. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+What would you call <a href="robowiki?DuelistMicroMkII" class=wikipagelink>DuelistMicroMkII</a>? --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Haven't looked at the code yet. I'll do that first and then answer you. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+OK. So now I have checked. It's even more similar to <a href="robowiki?Cigaret" class=wikipagelink>Cigaret</a>'s gun than <a href="robowiki?Ali/BumbleBee" class=wikipagelink>/BumbleBee</a> is. But it's still a StatisticalGun<a href="robowiki?action=edit&id=StatisticalGun" class=wikipageedit>?</a> I would say. You store the diff-angle and the current target direction instead of the GF. And you only find the best match instead of the best matche<strong>s</strong> like I do. Otherwise it's the same. It's a StatisticalGun<a href="robowiki?action=edit&id=StatisticalGun" class=wikipageedit>?</a> that only uses one sample of the statistics. =) But a few simple changes would enable it to use more samples. Even though I suspect you'd have a hard time staying a micro then... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I wouldn't call a single match gun a StatisticalGun<a href="robowiki?action=edit&id=StatisticalGun" class=wikipageedit>?</a>, there are no statistics involved. A traditional GF gun and a <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a> PM are statistical guns. The difference between a pattern matcher and a "state matcher" is in what you match, PM involves a time series while (traditional) GF guns don't. When you include time-sice-something in a GF gun, the distinction blurs. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Which would mean Bee is in that blurred zone? Your definition of Statistical vs PM leaves Cigaret and <a href="robowiki?DuelistMicroMkII" class=wikipagelink>DuelistMicroMkII</a> without any home in either. They are not statistical (since they only look at the best macthing sample) and they are not PM (since they don't include a time series). What I am beginning to think here is that PM and statistical has all the time been the wrong categorizations. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+There are a lot of different ways you can look at a gun. The PM and GF distinction was good enough when the two main (good) gun types were either statistical gf-based or best match PM-based. These days there are a lot of different combinations of gun characteristics, it's very hard to classify them all in just two separate groups. I would call Cigaret (and others, like <a href="robowiki?DuelistMicroMkII" class=wikipagelink>DuelistMicroMkII</a>) a GF-based best match gun. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Yes, but since it's entirely possible to make a GF based <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a> gun and also make it <a href="robowiki?MultipleChoice" class=wikipagelink>MultipleChoice</a> between several matches the whole distinction is uninteresting to divide guns with. The word pattern-matching doesn't anywhere state that it involves a time series. It's just one axis over which to build patterns. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Agreed, almost every gun can be said to be <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a>... So, find a better name for time series matching... :) -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+<H2>Revisiting</H2>
+
+Checking this page I wonder why I almost abandonded this gun path. Version 0.2.5 seems to be a quite good gun and it should be open for improvement. I had planned to go for movement on <a href="robowiki?CassiusClay" class=wikipagelink>CassiusClay</a> when I've gotten the <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> thingy somewhat working. But now I wonder... I also wonder if I shouldn't go for <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> using these gun principles. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Hey PEZ, I noticed that sometimes Ali doesn't finish off a disabled opponent. Probably doesn't cost it much in rating points, but just letting you know. --<a href="robowiki?Wcsv" class=wikipagelink>wcsv</a>
+<p>
+Thanks. What I will do if I start working with this gun again is to make it use Bee for all descisions like that. Only the data storage and processing will be different. That should make it possible for me to plug this gun into CC's <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> array too, should I fancy. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Ali" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Ali">View other revisions</a><br>Last edited May 18, 2006 21:34 EST by <a href="robowiki?Florent" title="ID 6624 from 148.187.103-84.rev.gaoland.net">Florent</a> <a href="robowiki?action=browse&diff=1&id=Ali">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

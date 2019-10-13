@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Rednaxela/SurvivalTest.sh - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Rednaxela, Survival, Test.sh'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/SurvivalTest.sh">Rednaxela/SurvivalTest.sh</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Here's a utility I quickly made up so I can evaluate the effectiveness of changes I make to the <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a>. The advantage of this as opposed to just tuning up the number of rounds, is that 2 trials of 75 rounds is different than 1 trial of 150 rounds when bots that learn between rounds are concerned. It's tuned to get the survival rate according to the <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> rules, but it wouldn't be hard to adapt to other things. It probably would have been more flexible to adapt <a href="robowiki?RoboResearch" class=wikipagelink>RoboResearch</a> to support survival tests like this, however I thought it would be easier to hack up my own quick solution. Here's the script I hacked up for anyone interested.
+<p>
+<hr noshade class=wikiline size=1>
+<pre>
+#!/bin/sh
+
+# Configuration
+TRIALS=20
+ROUNDS=75
+TESTNAME="LunarTest"
+MYROBOT="ags.lunartwins.LunarTwins"
+ENEMYBOT="voidious.team.LuminariousDuo 1.0591"
+FIELDWIDTH=800
+FIELDHEIGHT=800
+
+# Init things
+RESULTFILE="${TESTNAME}.result"
+TMPFILE="${TESTNAME}.tmp"
+BATTLEFILE="${TESTNAME}.battle"
+echo &gt; ${RESULTFILE}
+TOTAL=0
+
+# Generate Battle File
+echo "#${TESTNAME} Battle File" &gt; ${BATTLEFILE}
+echo "robocode.battle.numRounds=${ROUNDS}" &gt;&gt; ${BATTLEFILE}
+echo "robocode.battle.gunCoolingRate=0.1" &gt;&gt; ${BATTLEFILE}
+echo "robocode.battleField.width=${FIELDWIDTH}" &gt;&gt; ${BATTLEFILE}
+echo "robocode.battle.rules.inactivityTime=450" &gt;&gt; ${BATTLEFILE}
+echo "robocode.battle.selectedRobots=${MYROBOT},${ENEMYBOT}" &gt;&gt; ${BATTLEFILE}
+echo "robocode.battleField.height=${FIELDHEIGHT}" &gt;&gt; ${BATTLEFILE}
+
+# Run the trials
+echo "${TESTNAME} Survival Rates" &gt;&gt; ${RESULTFILE}
+for i in `seq 1 ${TRIALS}`;
+do
+    echo "Trial ${i}..."
+    ./robocode.sh -battle "./${BATTLEFILE}" -results "./${TMPFILE}" -nodisplay 2&gt;&amp;1 | grep "initializing"
+    VALUE=`cat LunarTest.tmp | grep "${MYROBOT}" | cut -d $'\t' -f 9`
+    VALUE=`echo "100*${VALUE}/${ROUNDS}" | bc -l`
+    TOTAL=`echo "${VALUE}+${TOTAL}" | bc -l`
+    echo "Round ${i}: ${VALUE}%" &gt;&gt; ${RESULTFILE}
+done
+AVERAGE=`echo "${TOTAL}/${TRIALS}" | bc -l`
+echo "Average: ${AVERAGE}%" &gt;&gt; ${RESULTFILE}
+
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Rednaxela/SurvivalTest.sh" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Rednaxela/SurvivalTest.sh">View other revisions</a><br>Last edited March 3, 2008 3:11 EST by <a href="robowiki?Rednaxela" title="ID 13292 from h134-28.reznet.ucalgary.ca">Rednaxela</a> <a href="robowiki?action=browse&diff=1&id=Rednaxela/SurvivalTest.sh">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

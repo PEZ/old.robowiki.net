@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>HaikuParrot - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Haiku, Parrot'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=HaikuParrot">HaikuParrot</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>This is from <a href="robowiki?FunkyLeech" class=wikipagelink>FunkyLeech</a>, it pretty much just tries to mirror your movement relative to itself.  I could spin the gun so it could fire at what it sees, but the more constant scans allow it to mirror more accurately.  For a 5th line, I'd fire and use the gun to track (sub "Gun" in for all the "Radar"s in the code).
+<pre>
+package kawigi.haiku;
+import robocode.*;
+
+/**
+ * HaikuParrot - a robot poem by Kawigi.  Doesn't fire, but mimics your movement.
+ */
+public class HaikuParrot extends AdvancedRobot
+{
+	public void run()
+	{
+		turnRadarRight(Double.POSITIVE_INFINITY);
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e)
+	{
+		setAhead(e.getVelocity()*Math.abs(e.getVelocity())/4 + e.getVelocity()/2);
+		setTurnRightRadians(robocode.util.Utils.normalRelativeAngle(e.getHeadingRadians()-getHeadingRadians() - Math.PI));
+		setTurnRadarLeft(getRadarTurnRemaining());
+	}
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=HaikuParrot" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=HaikuParrot">View other revisions</a><br>Last edited August 6, 2003 23:35 EST by <a href="robowiki?Kawigi" title="ID 1391 from tide78.microsoft.com">Kawigi</a> <a href="robowiki?action=browse&diff=1&id=HaikuParrot">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

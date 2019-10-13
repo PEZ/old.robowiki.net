@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RamBots/HowRamDamageWorks - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Ram, Bots, How, Ram, Damage, Works'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/HowRamDamageWorks">RamBots/HowRamDamageWorks</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RamBots" class=wikipagelink>RamBots</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>If two robots are moving in the same direction (and both forward), but the one in front is moving more slowly, and the one behind hits it, is that counted as a ram for both of them? --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<UL >
+<li> Yip! Otherwise my bots wouldn't get any ram damage against those pesky rambots! =) -- Skilgannon
+</UL>
+<p>
+This is from the [Robocode FAQ]<a href="robowiki?action=edit&id=Robocode_FAQ" class=wikipageedit>?</a>:
+<p>
+<p>
+<PRE >
+ Q: What happens when a my robot hits another robot?
+ A: If your robot was moving towards the other robot when hitting it (i.e. ramming), your robot's move is marked as
+    complete, and your robot receives 1.2 score points.   Both robots takes a constant 0.6 damage.
+</PRE>
+<p>
+<p>
+<p>
+I don't know why I was considering to be a better source of information than the javadoc comments... Just because I read it before I knew the javadocs existed I guess. =) Now I will have to test it to find out which is right! --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<UL >
+<li>And I think the FAQ is right. A non-moving, non-firing bot and a non-firing rambot go down on energy at the same rate. The only thing is that the rammer gets the scoring bonus and used to win the battle (as source of the ramdamage, until the latest robocode version). No test done though, just digged in my memory how the behaviour of <a href="robowiki?GrubbmThree" class=wikipagelink>GrubbmThree</a> and opponents was during its development. -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</UL>
+<p>
+Ok, I just did a test, I rammed <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a> to death with Interactive before the countdown started... Interactive was disabled at the end (both received 0.6 damage per ram) and it scored 290.
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Category</td><td colspan="0.5">Score</td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Total Score </td><td colspan="0.5">290 </td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Survival </td><td colspan="0.5">50 </td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Surv Bonus </td><td colspan="0.5">10 </td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Bullet Dmg </td><td colspan="0.5">0 </td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Bullet Bonus</td><td colspan="0.5">0 </td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Ram Dmg * 2 </td><td colspan="0.5">200 </td><td colspan="0.5"></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'>Ram Bonus </td><td colspan="0.5">30 </td><td colspan="0.5"></td></TR>
+</TABLE>
+I'm thinking the non survival score 230 = 290 - 50 - 10 comes from: 30% bonus for the 100 actual damage done, and then 2 score points for each point of damage. So ram damage is the same for rammer and rammee, and <strike>I think the multiplier for score has changed from 1.2 to 2 since the FAQ was written...</strike> each point of ram damage is worth 2 score points (as opposed to the 1 for 1 ratio on bullet damage), so for a single ram of 0.6 damage, you get 1.2 score points. --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<p>
+Read carefully, per ram you get 0.6 damage and 1.2 scoring 'bonus'. That is a factor 2. Totally you ram 100 damage and thus get a 200 scoring points. -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RamBots" class=wikipagelink>RamBots</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RamBots/HowRamDamageWorks" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RamBots/HowRamDamageWorks">View other revisions</a><br>Last edited September 22, 2007 22:06 EST by <a href="robowiki?BenHorner" title="ID 11928 from ip70-171-163-89.om.om.cox.net">BenHorner</a> <a href="robowiki?action=browse&diff=1&id=RamBots/HowRamDamageWorks">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Machete/Code - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Machete, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Code">Machete/Code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Machete" class=wikipagelink>Machete</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+   package jk.nano;
+   import robocode.*;
+   import robocode.util.*;
+   import java.awt.geom.*;
+   import java.awt.*;
+   
+   
+    public class Machete extends AdvancedRobot{
+      final static int STICK = 144;
+      static double move = STICK;
+      static double lastEnemyEnergy;
+      static int deaths;
+      // double x;
+      // double y;
+   	
+   	
+       public void run(){
+         turnRadarRightRadians(Double.POSITIVE_INFINITY);
+      }
+       public void onScannedRobot(ScannedRobotEvent e){
+         double absbearing;
+         double tempmove;
+         double goAngle = Math.PI/2 + (tempmove = move)/500 + (absbearing = getHeadingRadians() + e.getBearingRadians());
+         if(deaths &gt; 5){
+            if(Math.random()  &lt;  30.0/e.getDistance())
+               move = -tempmove;
+            setAhead(tempmove);
+         }
+            
+         if((lastEnemyEnergy - (lastEnemyEnergy = e.getEnergy())) &gt; 0 )
+            setAhead(tempmove/3.0);
+            
+         while(!new Rectangle2D.Double(18,18,764,564).
+         // contains(x = getX() + tempmove*Math.sin(goAngle-= tempmove*0.0001),y = getY() + tempmove*Math.cos(goAngle)));
+         contains(getX() + tempmove*Math.sin(goAngle-= tempmove*0.0001),getY() + tempmove*Math.cos(goAngle)));
+      
+         setTurnRightRadians(Utils.normalRelativeAngle(goAngle - getHeadingRadians()));
+      
+         setTurnGunRightRadians(Utils.normalRelativeAngle(e.getVelocity()*Math.sin(e.getHeadingRadians() -absbearing)/13*Math.random() + absbearing - getGunHeadingRadians()));
+      
+         setFire(getEnergy()/16);
+         setTurnRadarLeft(getRadarTurnRemaining());
+      }
+   
+       public void onDeath(DeathEvent e){
+         deaths++;
+      }
+      //  public void onPaint(java.awt.Graphics2D g) {
+   //       g.setColor(Color.green);
+   //       g.drawOval((int)(x),(int)(y),
+   //             2,2);
+   //    }
+   }
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Machete" class=wikipagelink>Machete</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Machete/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Machete/Code">View other revisions</a><br>Last edited January 14, 2008 13:41 EST by <a href="robowiki?Skilgannon" title="ID 12382 from ctb-cache4-vif1.saix.net">Skilgannon</a> <a href="robowiki?action=browse&diff=1&id=Machete/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

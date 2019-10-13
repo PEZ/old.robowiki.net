@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RobocodeGL/TroubleShooting - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Robocode, GL/Trouble, Shooting'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/TroubleShooting">RobocodeGL/TroubleShooting</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RobocodeGL" class=wikipagelink>RobocodeGL</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>From the <a href="robowiki?StatGrapher" class=wikipagelink>StatGrapher</a> page...
+<p>
+Sorry for a dumb question. I can't compile the above:<pre>
+|| Found 4 semantic errors compiling "C:/robocode/robots/wiki/graphing/StatGrapher.java":
+|| 
+|| 3. import robocode.robocodeGL.LineGL;
+|| &lt;------------------------&gt;
+|| *** Error: The import "robocode/robocodeGL/LineGL" is not valid, since it does not name a type in a package.
+</pre>
+It's the first time I try to compile any <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a> stuff so it's probably just some classpath thing or what? I have just installed gl4java and <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a> and it seems to work great. David, if you read this, can you post a link to where DuelistMiniGL<a href="robowiki?action=edit&id=DuelistMiniGL" class=wikipageedit>?</a> can be downloaded? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li> Did u pointed your IDE to the gl4java.jar and to the robocodeGL_0.1.4.zip? Is the problem running or just compiling gl stuff? I had myself some trouble when trying to use RoboCodeGL<a href="robowiki?action=edit&id=RoboCodeGL" class=wikipageedit>?</a>, but it´s a very worthness tool indeed, doing my <a href="robowiki?WaveSurfer" class=wikipagelink>WaveSurfer</a> without it would be a nightmare...-- <a href="robowiki?Axe" class=wikipagelink>Axe</a>  
+</UL>
+<p>
+DuelistMicroGL<a href="robowiki?action=edit&id=DuelistMicroGL" class=wikipageedit>?</a>: <a rel="nofollow" href="http://robocoderepository.com/BotDetail.jsp?id=1296">http://robocoderepository.com/BotDetail.jsp?id=1296</a> Have fun! :-) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Does the path to the robocode package point to the one with <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a> installed in it, or just to a plain install? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Yeah, most likely the problem is that the original robocode.jar is on the classpath, and the <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a> classes are not. -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+How should the classpath be set then? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<UL >
+<li> If you are talking about compiling, depends on the IDE, i think. The important is that u point to both gl4java.jar and robocodeGL_0.1.4.zip. To run, i am using in the .bat: "java -classpath .;.\robocode\robocodeGL\;gl4java.jar -Xmx256M robocode.robocodeGL.Robocode", with the gl4java.jar in my robocode root dir. I am presuming that u followed the instructions for installing the <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a> (unzipping it in your rc root dir), and also installed gl4java correctly... It´s a great tool, but the instalation could be easier... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>  
+<li> Well, yes, I'm talknig about compiling. It runs OK. Which I assume means I have installed things correctly. But how I try I can't get <a href="robowiki?StatGrapher" class=wikipagelink>StatGrapher</a> to compile. The search continues... -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<li> Wich IDE are u using, PEZ? Since u are running it, it seems to be only a problem to set the classpath within your IDE... I use eclipse, if it´s your case, go to "Project/Properties<a href="robowiki?action=edit&id=RobocodeGL/Properties" class=wikipageedit>?</a>/Java<a href="robowiki?action=edit&id=RobocodeGL/Java" class=wikipageedit>?</a> Build Path", choose the "Libraries" tab and finally click in "Add External JARs" to add both "robocodeGL_0.1.4.zip" and "gl4java.jar"... If it isn´t Eclipse, try to find the place where u added the Robocode.jar in order to compile your bots and add the two files too... That is the best that i can sugest for now, hope that this help u... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<li> I use "make". Here's the relevant part of the Makefile:
+</UL>
+<pre>gl:
+	C:/Program/Java/j2sdk_nb/j2sdk1.4.2/bin/javac -classpath "C:\Program\Java\j2sdk_nb\j2sdk1.4.2\jre\lib\rt.jar;C:\Program\Java\j2sdk_nb\j2sdk1.4.2\jre\lib\ext\gl4java.jar;${ROBOCODE_DIR}/robocode/robocodeGL;${ROBOCODE_DIR}/robots" *.java
+</pre>
+I get similar results using jikes. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Found it! I needed to include ${ROBOCODE_DIR} in my classpath as well. Naturally, since I no longer include robocode.jar. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+I've reduced the number of errors I've been getting, but I don't understand this one:
+<p>
+<PRE >
+ c:\robocodeGL\robocodeGL_0.1.4.zip(robocode/manager/GLPreferences<a href="robowiki?action=edit&id=RobocodeGL/GLPreferences" class=wikipageedit>?</a>.java):13: class GLPreferences is public, should be declared in a file named GLPreferences.java
+</PRE>
+<p>
+It looks like it's complaining that a file doesn't exist when it is looking at it... -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Have you not unzipped it yet?? -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I unzipped it, but it failed to find some of the files (it looks like I have to include every single folder separately in the classpath, is there not a use subfolders option?), so I added the zip itself to the classpath as well, which fixed most of the errors, leaving just that one. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Test with a classpath like this:
+<pre>
+"C:\Program\Java\j2sdk_nb\j2sdk1.4.2\jre\lib\rt.jar;C:\Program\Java\j2sdk_nb\j2sdk1.4.2\jre\lib\ext\gl4java.jar;${ROBOCODE_DIR};${ROBOCODE_DIR}/robocode/robocodeGL;${ROBOCODE_DIR}/robots"
+</pre>
+Replace the java paths with something working on your machine. And replace ${ROBOCODE_DIR} with your robocode directory unless you are using "make" like I do. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+After trying that, and then fiddling with it a bit (the java installation on this computer is a mess, nothing's where's it's meant to be...), i've got down to one error, which seems to be related to <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a>, and not GL in general:
+<pre>
+c:\robocodeGL\robocode\robocodeGL\Robocode.
+symbol  : class Robocode
+location: package robocode
+                robocode.Robocode.main(a);
+                        ^
+</pre>
+<p>
+I think I extracted everything correctly, so I'm stuck again... I'm sure this could be made easier...
+<p>
+-- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Does that mean you are using a separate robocode dir for robocodeGL? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It does.  I tried to use the same install, and it got confused because of all the mods in there, so I made a new one.  It shouldn't be a problem, I extracted the robocode.jar and all that. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+No, it shouldn't be the problem. I'm just trying to figure it out. Did it work as a regular robocode install before you tried RCGL on it? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yes.  I haven't moved any bots over yet, so i've only run the samples, but it seems fine. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+OK. And then you unjared robocode.jar there. And then unzipped <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a>? Did you manage to compile the sources like the readme-file tells to do? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It's compiling the sources that gets the error message above. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+It doesn't look like much of an error message from here. Try with jikes. It can sometimes give much clearer error messages. (and somtimes it's the other way around. I always try with the other compiler if one of them gives me unhelpful messages.) Can you tell us what command you are using to compile stuff? And the relevant environment variables like CLASSPATH, JAVA_HOME and such.  Also the current working directory when you issue the command. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I put it in a batch file:
+<pre>
+cd C:\PROGRA~1\j2sdk_nb\j2sdk1.4.2\bin
+javac -classpath "C:\Progra~1\j2sdk_nb\j2sdk1.4.2\jre\lib\rt.jar;C:\Progra~1\j2sdk_nb\j2sdk1.4.2\jre\lib\ext\gl4java.jar;c:\robocodeGL;c:\robocodeGL/robocode/robocodeGL;c:\robocodeGL/robots;" c:\robocodeGL\robocode\robocodeGL\*.java
+</pre>
+<p>
+-- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I don't know if it matters any. But you could try this instead maybe:
+<pre>
+SET J="C:\PROGRA~1\j2sdk_nb\j2sdk1.4.2"
+c:
+cd \robocodeGL
+%J%\bin javac -classpath "%J%\jre\lib\rt.jar;%J%\jre\lib\ext\gl4java.jar;.;./robocode/robocodeGL;./robots;" .\robocode\robocodeGL\*.java
+</pre>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Or. Could it be that the robocode dir must be named robocode maybe? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+See the update at the bottom of the <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a> page and let me know if it works! -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+<hr noshade class=wikiline size=1>
+I get this error, when i am compiling robocodeGL:
+<p>
+robocode\robocodeGL_0.1.4\robocode\robocodeGL\RenderElement<a href="robowiki?action=edit&id=RenderElement" class=wikipageedit>?</a>?.java:12: package rob
+ocode.manager does not exist
+import robocode.manager.GLPreferences;
+^
+robocode\robocodeGL_0.1.4\robocode\robocodeGL\RenderElement<a href="robowiki?action=edit&id=RenderElement" class=wikipageedit>?</a>?.java:13: package rob
+ocode.robocodeGL.system does not exist
+import robocode.robocodeGL.system.*;
+^
+robocode\robocodeGL_0.1.4\robocode\robocodeGL\RenderElement<a href="robowiki?action=edit&id=RenderElement" class=wikipageedit>?</a>?.java:22: cannot find
+symbol
+symbol : class GLFont
+location: class robocode.robocodeGL.RenderElement<a href="robowiki?action=edit&id=RenderElement" class=wikipageedit>?</a>?
+private static GLFont glfont = null;
+^
+robocode\robocodeGL_0.1.4\robocode\robocodeGL\RenderElement<a href="robowiki?action=edit&id=RenderElement" class=wikipageedit>?</a>?.java:30: cannot find
+symbol
+symbol : class GLFont
+location: class robocode.robocodeGL.RenderElement<a href="robowiki?action=edit&id=RenderElement" class=wikipageedit>?</a>?
+public static void init(GLFont glf) {
+^
+robocode\robocodeGL_0.1.4\robocode\robocodeGL\Robocode.java:4: package robocode.
+manager does not exist
+import robocode.manager.GLPreferences;
+^
+robocode\robocodeGL_0.1.4\robocode\robocodeGL\Robocode.java:5: package robocode.
+robocodeGL.system does not exist
+import robocode.robocodeGL.system.*;
+^
+robocode\robocodeGL_0.1.4\robocode\robocodeGL\RenderElement<a href="robowiki?action=edit&id=RenderElement" class=wikipageedit>?</a>?.java:81: package Sys
+temRenderElement<a href="robowiki?action=edit&id=RenderElement" class=wikipageedit>?</a>? does not exist
+if( (!(label instanceof SystemRenderElement<a href="robowiki?action=edit&id=SystemRenderElement" class=wikipageedit>?</a>?.RobotNam<a href="robowiki?action=edit&id=RobotNam" class=wikipageedit>?</a>?
+eLabelElement<a href="robowiki?action=edit&id=LabelElement" class=wikipageedit>?</a>? ) || GLPreferences.getInstance().isDrawRobotName<a href="robowiki?action=edit&id=DrawRobotName" class=wikipageedit>?</a>?()) &amp;&amp;
+^
+robocode\robocodeGL_0.1.4\robocode\robocodeGL\RenderElement<a href="robowiki?action=edit&id=RenderElement" class=wikipageedit>?</a>?.java:81: cannot find
+symbol
+symbol : variable GLPreferences
+location: class robocode.robocodeGL.RenderElement<a href="robowiki?action=edit&id=RenderElement" class=wikipageedit>?</a>?
+if( (!(label instanceof SystemRenderElement<a href="robowiki?action=edit&id=SystemRenderElement" class=wikipageedit>?</a>?.RobotNam<a href="robowiki?action=edit&id=RobotNam" class=wikipageedit>?</a>?
+eLabelElement<a href="robowiki?action=edit&id=LabelElement" class=wikipageedit>?</a>? ) || GLPreferences.getInstance().isDrawRobotName<a href="robowiki?action=edit&id=DrawRobotName" class=wikipageedit>?</a>?()) &amp;&amp;
+<p>
+^
+robocode\robocodeGL_0.1.4\robocode\robocodeGL\RenderElement<a href="robowiki?action=edit&id=RenderElement" class=wikipageedit>?</a>?.java:82: package Sys
+temRenderElement<a href="robowiki?action=edit&id=RenderElement" class=wikipageedit>?</a>? does not exist
+(!(label instanceof SystemRenderElement<a href="robowiki?action=edit&id=SystemRenderElement" class=wikipageedit>?</a>?.RobotEne<a href="robowiki?action=edit&id=RobotEne" class=wikipageedit>?</a>?
+rgyLabelElement<a href="robowiki?action=edit&id=LabelElement" class=wikipageedit>?</a>?) || GLPreferences.getInstance().isDrawRobotEnergy<a href="robowiki?action=edit&id=DrawRobotEnergy" class=wikipageedit>?</a>?())&amp;&amp;
+^
+robocode\robocodeGL_0.1.4\robocode\robocodeGL\RenderElement<a href="robowiki?action=edit&id=RenderElement" class=wikipageedit>?</a>?.java:82: cannot find
+symbol
+symbol : variable GLPreferences
+location: class robocode.robocodeGL.RenderElement<a href="robowiki?action=edit&id=RenderElement" class=wikipageedit>?</a>?
+(!(label instanceof SystemRenderElement<a href="robowiki?action=edit&id=SystemRenderElement" class=wikipageedit>?</a>?.RobotEne<a href="robowiki?action=edit&id=RobotEne" class=wikipageedit>?</a>?
+rgyLabelElement<a href="robowiki?action=edit&id=LabelElement" class=wikipageedit>?</a>?) || GLPreferences.getInstance().isDrawRobotEnergy<a href="robowiki?action=edit&id=DrawRobotEnergy" class=wikipageedit>?</a>?())&amp;&amp;
+<p>
+^
+robocode\robocodeGL_0.1.4\robocode\robocodeGL\RenderElement<a href="robowiki?action=edit&id=RenderElement" class=wikipageedit>?</a>?.java:83: package Sys
+temRenderElement<a href="robowiki?action=edit&id=RenderElement" class=wikipageedit>?</a>? does not exist
+(!(label instanceof SystemRenderElement<a href="robowiki?action=edit&id=SystemRenderElement" class=wikipageedit>?</a>?.RobotSco<a href="robowiki?action=edit&id=RobotSco" class=wikipageedit>?</a>?
+reLabelElement<a href="robowiki?action=edit&id=LabelElement" class=wikipageedit>?</a>?) || GLPreferences.getInstance().isShowScores<a href="robowiki?action=edit&id=ShowScores" class=wikipageedit>?</a>?()))
+^
+robocode\robocodeGL_0.1.4\robocode\robocodeGL\RenderElement<a href="robowiki?action=edit&id=RenderElement" class=wikipageedit>?</a>?.java:83: cannot find
+symbol
+symbol : variable GLPreferences
+location: class robocode.robocodeGL.RenderElement<a href="robowiki?action=edit&id=RenderElement" class=wikipageedit>?</a>?
+(!(label instanceof SystemRenderElement<a href="robowiki?action=edit&id=SystemRenderElement" class=wikipageedit>?</a>?.RobotSco<a href="robowiki?action=edit&id=RobotSco" class=wikipageedit>?</a>?
+reLabelElement<a href="robowiki?action=edit&id=LabelElement" class=wikipageedit>?</a>?) || GLPreferences.getInstance().isShowScores<a href="robowiki?action=edit&id=ShowScores" class=wikipageedit>?</a>?()))
+<p>
+^
+robocode\robocodeGL_0.1.4\robocode\robocodeGL\Robocode.java:29: cannot find symb
+ol
+symbol : variable GLPreferences
+location: class robocode.robocodeGL.Robocode
+GLPreferences.getInstance().setDebugAllowed<a href="robowiki?action=edit&id=DebugAllowed" class=wikipageedit>?</a>?(debug);
+^
+robocode\robocodeGL_0.1.4\robocode\robocodeGL\Robocode.java:32: cannot find symb
+ol
+symbol : variable GLRenderer
+location: class robocode.robocodeGL.Robocode
+GLRenderer.startup();
+^
+robocode\robocodeGL_0.1.4\robocode\robocodeGL\Robocode.java:38: cannot find symb
+ol
+symbol : class Robocode
+location: package robocode
+robocode.Robocode.main(a);
+^
+Note: robocode\robocodeGL_0.1.4\robocode\robocodeGL\RenderElement<a href="robowiki?action=edit&id=RenderElement" class=wikipageedit>?</a>?.java uses unch
+ecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+15 errors
+<p>
+could anyone help me? -- <a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+Kawigi solved my problem, big thx to him!!!! -- <a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+For anyone else that runs into problems that look like this, the problem here was that robocodeGL was extracted into the wrong place.  You should:
+<OL >
+<li> extract robocode (jar -xf robocde.jar).  This should create a folder called robocode with alot of java and class files.
+<li> unzip robocodeGL into the base robocode folder (I don't know if the zip file has any files in its root, but all the stuff should pretty much end up in the new robocode folder that came out of robocode.jar at this point).
+<li> compile the new java files (javac -classpath .;java4gl.jar robocode\robocodeGL\*.java should probably work)
+</OL>
+<p>
+A side thing we figured out:
+<p>
+If you have Robocode 1.0.7 and not 1.0.6, the names of the explosion image files are different.  You'll have to modify GLRenderer.java to use the new explosion image paths (which should be relatively simple to figure out).  Otherwise, <a href="robowiki?RobocodeGL" class=wikipagelink>RobocodeGL</a> will throw an exception on boot. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+return (10&lt;&lt;getX()&lt;&lt;(getBattleFieldWidth<a href="robowiki?action=edit&id=BattleFieldWidth" class=wikipageedit>?</a>()-10));
+<UL >
+<UL >
+<UL >
+<li> Semantic Error: The type of this expression, "double", is not an integral type.?
+</UL>
+</UL>
+</UL>
+jeremybub<a href="robowiki?action=edit&id=Jeremybub" class=wikipageedit>?</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RobocodeGL" class=wikipagelink>RobocodeGL</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RobocodeGL/TroubleShooting" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RobocodeGL/TroubleShooting">View other revisions</a><br>Last edited June 25, 2006 23:51 EST by pool-71-161-136-184.spfdma.east.verizon.net <a href="robowiki?action=browse&diff=1&id=RobocodeGL/TroubleShooting">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

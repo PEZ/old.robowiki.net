@@ -1,0 +1,186 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>UnderDark4/UnderDark4.java - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Under, Dark4/Under, Dark4.java'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/UnderDark4.java">UnderDark4/UnderDark4.java</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?UnderDark4" class=wikipagelink>UnderDark4</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><h1><a href="robowiki?UnderDark4" class=wikipagelink>UnderDark4</a>.java</h1>
+<hr width=75%>
+<pre>
+package matt;
+
+import robocode.*;
+import java.awt.Color;
+import java.awt.geom.*;
+
+import matt.Wave;
+import matt.Utils;
+
+public class UnderDark4 extends Robot{
+    int _maxWaves = 256;
+    int _aveHistory = 2;
+    int _segmentation = 11;
+    
+    double GuessFactor;
+    double rawGF[] = new double[_segmentation];
+    static double index[];
+    int direction = 1;
+    int numGoodHits = 0;
+    int scanNum = 0;
+    
+    Bullet shells[] = new Bullet[_maxWaves];
+    Rectangle2D.Double battleField = new Rectangle2D.Double();
+    Wave waves[] = new Wave[_maxWaves];
+    
+    public void run() {
+        for(int initWaves = 0; initWaves &lt; _maxWaves; initWaves++){
+            waves[initWaves] = new Wave();
+        }
+        
+        rawGF[0] = -1;
+        rawGF[1] = -.8;
+        rawGF[2] = -.6;
+        rawGF[3] = -.4;
+        rawGF[4] = -.2;
+        rawGF[5] = 0;
+        rawGF[6] = .2;
+        rawGF[7] = .4;
+        rawGF[8] = .6;
+        rawGF[9] = .8;
+        rawGF[10] = 1;
+        
+        if(getRoundNum()==0){
+            index = new double[_segmentation];
+            for(int initIndex = 0; initIndex &lt; _segmentation; initIndex++){
+                index[initIndex] = 0;
+            }
+            out.println("Reseting Index");
+        }
+        
+        battleField.setRect(0, 0, getBattleFieldWidth(), getBattleFieldHeight());
+        
+        setColors(new Color(125,125,125),new Color(125,125,125),new Color(125,125,125));
+        setAdjustGunForRobotTurn(true);
+        setAdjustRadarForRobotTurn(true);
+        setAdjustRadarForGunTurn(true);
+        while(true){
+            for(int win=0; win &lt; _segmentation; win++){
+                out.println("Index of GF "+rawGF[win]+": "+index[win]);
+            }
+            turnRadarRight(Double.POSITIVE_INFINITY);
+        }
+    }
+
+    public void onScannedRobot(ScannedRobotEvent e){
+        //Update Waves
+        for(int updateWave=0; updateWave &lt; _maxWaves; updateWave++){
+            if(waves[updateWave] != null &amp;&amp; shells[updateWave] != null &amp;&amp; waves[updateWave].getStatus()){
+                waves[updateWave].update(shells[updateWave]);
+                if(Point2D.distance(waves[updateWave].getOrigin().x, waves[updateWave].getOrigin().y, shells[updateWave].getX(), shells[updateWave].getX())-waves[updateWave].getDistanceTo()&gt;waves[updateWave].getDistanceTo()+10){
+                    waves[updateWave].kill();
+                    out.println("Killed Wave "+updateWave);
+                }
+            }
+        }
+        
+        //Generate New GF
+        double GF = (int)(Math.random()*_segmentation);
+        GF = rawGF[(int)GF];
+        double power = (2200/Math.pow(e.getDistance(),1.15));
+        if(power&gt;3)
+            power=3;
+        if(power&lt;.1)
+            power=.1;
+        
+        //Shoot
+        double v = 8*GF;
+        if(scanNum%3==0 || getRoundNum()%3 != 0){
+            double temp = Double.NEGATIVE_INFINITY;
+            for(int peak=0; peak &lt; _segmentation; peak++){
+                if(index[peak] &gt;= temp){
+                    temp = index[peak];
+                    GuessFactor = rawGF[peak];
+                }
+            }
+            v = GuessFactor*8;
+            GF = GuessFactor;
+            out.println("Using GF: "+GuessFactor);
+        }
+        double theta = Utils.normalizeBearing(Math.toDegrees(Math.asin(v/(20-3*power)*Math.sin(Math.PI+Math.toRadians(getHeading())+Math.toRadians(e.getBearing())-Math.toRadians(e.getHeading())))+Math.toRadians(getHeading())+Math.toRadians(e.getBearing())-Math.toRadians(getGunHeading())));
+        turnGunRight(theta);
+        shells[getFreeWave()] = fireBullet(power);
+        waves[getFreeWave()] = new Wave(new Point2D.Double(getX(), getY()), 0, e.getDistance(), GF, shells[getFreeWave()]);
+        
+        //Move
+        if(scanNum%5==0)
+            direction *= -1;
+        turnRight(e.getBearing()+90-(10*direction));
+        ahead(100*direction);
+        
+        scanNum++;
+    }
+    
+    public void onBulletHit(BulletHitEvent e){
+        Bullet focus = e.getBullet();
+        for(int bulletSense=0; bulletSense &lt; _maxWaves; bulletSense++){
+            if(shells[bulletSense]==focus){
+                index[reverseLookup(waves[bulletSense].getGF())]++;
+                out.println("Wave "+bulletSense+" has hit &amp; has been killed (GF: "+waves[bulletSense].getGF()+")");
+                waves[bulletSense].kill();
+            }
+        }
+    }
+    
+    public void onBulletMissed(BulletMissedEvent e){
+        Bullet focus = e.getBullet();
+        for(int bulletSense=0; bulletSense &lt; _maxWaves; bulletSense++){
+            if(shells[bulletSense]==focus){
+                out.println("Wave "+bulletSense+" has missed &amp; has been killed");
+                waves[bulletSense].kill();
+            }
+        }
+    }
+    
+    public void onDeath(DeathEvent e){
+        for(int lose=0; lose &lt; _segmentation; lose++){
+            out.println("Index of GF "+rawGF[lose]+": "+index[lose]);
+        }
+    }
+    
+    public void onWin(WinEvent e){
+        for(int win=0; win &lt; _segmentation; win++){
+            out.println("Index of GF "+rawGF[win]+": "+index[win]);
+        }
+    }
+    
+    public void onHitWall(HitWallEvent e){
+        direction *= -1;
+    }
+    
+    int getFreeWave(){
+        for(int scan=0; scan &lt; _maxWaves; scan++){
+            if(!waves[scan].getStatus()){
+                return scan;
+            }
+        }
+        return -1;
+    }
+    
+    int reverseLookup(double value){
+        for(int lookup=0; lookup &lt; _segmentation; lookup++){
+            if(rawGF[lookup]==value){
+                return lookup;
+            }
+        }
+        return -5;
+    }
+}
+</pre>
+<hr width=75% align=left>
+<b>Questions, Comments, or anything else</b>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?UnderDark4" class=wikipagelink>UnderDark4</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=UnderDark4/UnderDark4.java" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=UnderDark4/UnderDark4.java">View other revisions</a><br>Last edited July 18, 2005 19:28 EST by <a href="robowiki?UnderDark" title="ID 4723 from d149-67-30-72.try.wideopenwest.com">UnderDark</a> <a href="robowiki?action=browse&diff=1&id=UnderDark4/UnderDark4.java">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

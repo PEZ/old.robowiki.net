@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Hanji/AGravEngine - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Hanji, AGrav, Engine'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/AGravEngine">Hanji/AGravEngine</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Hanji" class=wikipagelink>Hanji</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>This class encapsulates the <a href="robowiki?AntiGravityMovement" class=wikipagelink>AntiGravityMovement</a> Algorithm. Hopefully the comments will make things clear enough, but feel free to ask questions. I also have a subclass, <a href="robowiki?Hanji/AGravEngineGL" class=wikipagelink>/AGravEngineGL</a>, which draws GravPoints<a href="robowiki?action=edit&id=GravPoints" class=wikipageedit>?</a> to the screen using <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a>
+<hr noshade class=wikiline size=1>
+<pre>
+ package neh;
+
+ import java.util.Vector;
+ import neh.RobocodeUtils;
+ import neh.GravPoint;
+
+ /**
+ * AGravEngine -&gt; an engine encapsulating the Anti-gravity movement
+ * algorithm. By NEH (aka Hanji)
+ **/
+ public class AGravEngine {
+		
+	/**The Points that it is concerned with.**/
+	protected Vector gravPoints = new Vector();
+
+	/**
+	 * The force, if any, of the walls. It is assumed that the walls will
+	 * never attract, so this is always positive (meaning repulsion in this
+	 * case).
+	 **/
+	protected double wallForce = 0.0;
+	
+	/**The width of the battlefield.**/
+	protected double width;
+
+	/**The height of the battlefield**/
+	protected double height;
+	
+	/*The components of the force**/
+	protected double xForce = 0.0;
+	protected double yForce = 0.0;
+	
+	/**
+	 * The exponent used in cacluating a point's effect on a location.
+	 * The effect is proportionate to distance^pointDropoff. This field 
+	 * has an initial value of 2.0.
+	 **/
+	protected double pointDropoff = 2.0;
+	
+	/**
+	 * The exponent used in cacluating the walls' effect on a location.
+	 * The effect is proportionate to distance^wallDropoff. This field
+	 * has an initial value of 3.0.
+	 **/ 
+	protected double wallDropoff = 3.0;
+	
+	/**Initializes the width and height to 0**/
+	public AGravEngine() {
+		this(0,0);
+	}
+
+	/**Initializes the dimensions to the specified values**/
+	public AGravEngine(double width, double height) {
+		this.width = width;
+		this.height = height;
+	}
+	
+	/**Adds a point to the list.**/
+	public void addPoint(GravPoint g) {
+		gravPoints.add(g);
+	}
+	
+	/**Removes a point from the list.**/
+	public boolean removePoint(GravPoint g) {
+		return gravPoints.remove(g);
+	}
+	
+	/**Returns the number of points currently contained.**/
+	public long getNumPoints() {
+		return gravPoints.size();
+	}
+	
+	/**Returns the force with which the walls repel.**/
+	public double getWallForce() {
+		return wallForce;
+	}
+	
+	/**Sets the force with which the walls repel.**/
+	public void setWallForce(double wf) {
+		wallForce = wf;
+	}
+	
+	/**Returns the value of the point dropoff exponent.**/
+	public double getPointDropoff() {
+		return pointDropoff;
+	}
+	
+	/**Sets the value of the point dropoff exponent.**/
+	public void setPointDropoff(double pdf) {
+		pointDropoff = pdf;
+	}
+	
+	/**Returns the value of the wall dropoff exponent.**/
+	public double getWallDropoff() {
+		return wallDropoff;
+	}
+	
+	/**Sets the value of the wall dropoff exponent.**/
+	public void setWallDropoff(double wdf) {
+		wallDropoff = wdf;
+	}
+	
+	/**Removes all points from the list.**/
+	public void reset() {
+		gravPoints = new Vector();
+	}
+	
+	/**
+	 * Calculates the current force and kills any GravPoints
+	 * that have gone past their lifetimes
+	 * @param curX The X coordinate of the point for which
+	 * gravity is being calculated.
+	 * @param curY The Y coordinate of the point for which
+	 * gravity is being calculated.
+	 * @param time The current time.
+	 **/
+	public void update(double curX, double curY, long time) {
+		xForce = 0.0;
+		yForce = 0.0;
+		Vector deadPoints = new Vector();
+		GravPoint g;
+		double force;
+		double angle;
+		for(int i=0;i&lt;gravPoints.size();i++) {
+			g = (GravPoint) gravPoints.elementAt(i);
+			if(g.update(time)) {
+				deadPoints.add(g);
+				continue;
+			}
+			force = g.strength/Math.pow(
+								RobocodeUtils.dist(curX, curY, g.x, g.y),
+								pointDropoff);		
+			angle = RobocodeUtils.getBearing(curX, curY, g.x, g.y);
+			xForce += force * Math.sin(angle);
+			yForce += force * Math.cos(angle);
+		}
+		xForce += wallForce/Math.pow(curX, wallDropoff);
+	    xForce -= wallForce/Math.pow(width-curX, wallDropoff);
+	    yForce -= wallForce/Math.pow(height-curY, wallDropoff);
+	    yForce += wallForce/Math.pow(curY, wallDropoff);
+		
+		for(int i=0;i&lt;deadPoints.size();i++) {
+			gravPoints.remove(deadPoints.elementAt(i));
+		}
+	}
+	
+	/**
+	 * Returns the force in the X direction (calculated in
+	 * update())
+	 **/
+	public double getXForce() {
+		return xForce;
+	}
+	
+	/**
+	 * Returns the force in the Y direction (calculated in
+	 * update())
+	 **/
+	public double getYForce() {
+		return yForce;
+	}	
+	
+ }
+</pre>
+This class also requires the <a href="robowiki?Hanji/GravPoint" class=wikipagelink>/GravPoint</a> class, and you will have to either replace the calls to <a href="robowiki?Hanji/RobocodeUtils" class=wikipagelink>RobocodeUtils</a>.* with your own equivalents, or grab that class as well.
+<hr noshade class=wikiline size=1>
+<strong>Questions or comments:</strong>
+<p>
+I'm working on a bot with this engine. It took me quite a while to find some good values for the dropoffs and wallforce. I neeeded to change the lines:
+<p>
+xForce += force * Math.sin(angle);
+yForce += force * Math.cos(angle);
+<p>
+into:
+<p>
+xForce -= force * Math.sin(angle);
+yForce -= force * Math.cos(angle);
+<p>
+otherwise other bots attracted my bot. It works pretty good if you place some additional points (e.g. center and corners).
+<p>
+Noran
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Hanji" class=wikipagelink>Hanji</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Hanji/AGravEngine" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Hanji/AGravEngine">View other revisions</a><br>Last edited May 16, 2005 2:25 EST by <a href="robowiki?XLittleP" title="ID 4704 from fsk23.eastnet.gatech.edu">XLittleP</a> <a href="robowiki?action=browse&diff=1&id=Hanji/AGravEngine">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

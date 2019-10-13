@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing Ann - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Ann'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing Ann</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="Ann"  />
+<input type="hidden" name="oldtime" value="1163304492"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="8"  />
+<input type="hidden" name="captchaArg2" value="4"  />
+<input type="hidden" name="captchaOp" value="+"  />
+<input type="hidden" name="captchaId" value="572269504264"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">I am Ann Pierce, age 17, I got interested in robocode thanks to my [[Chase-san|older brother]].
+I am now working on my first robot.
+
+----
+-- Comments and suggestions: --
+
+Welcome to Robocode (and the Wiki).  Kick [[Chase-san|his]] fanny. -- [[Martin Alan Pedersen|Martin]] &lt;font size=-4&gt;(My first thought was that this was a post about artificial neural networks.)&lt;/font&gt;
+
+Hey, welcome to the wiki! Good luck with your first bot. --[[wcsv]]
+
+[[Chase-san|He]] won&#39;t stand a chance against what i&#39;m building! But of course its not all self made code. I&#39;m basing parts off some of the wiki bots. Like BasicSurfer and so on. -- Ann
+
+Welcome to the Wiki, Ann. I think you might be our first female wiki citizen. =) I&#39;d suggest starting with something a little simpler than BasicSurfer, that&#39;s pretty tough stuff to tackle before you&#39;ve had much time to get familiar with Robocode. Starting out by writing a LinearTargeting gun, then moving to a GuessFactor gun might be a better way to get warmed up. Be sure to let us know if you want help with anything. Voidious and I are often on on AIM, but the best place place to ask for help is probably on the wiki... unless you want to keep it a secret from your brother. ;-) Good luck! --[[David Alves]]
+
+I&#39;m the only girl? I feel so like a nerd now. Oh well, anyway, considering I have to kidnap his computer to do it (mine is to old to run anything quickly), i&#39;m pretty sure he will know what i&#39;m doing. I&#39;ll look into linear guns (which so happens I found a class called project in BasicSurfer, which will help with that). -Ann
+
+Hi, Ann. Welcome to the wiki! I&#39;d suggest making NanoBots. Although that may seem too restrictive and tough at a glance, that helps learning robocode mechanics and clear meanings. -- [[Stelokim]]
+*While I&#39;d agree that starting less ambitious is good, I think coding with code size in mind does not make things clear.  The [[Strategy]] page is probably one of the better places to start to gain familiarity with all that is Robocode. -- Martin
+
+Welcome to this &#39;nerdy&#39; wiki. [[Kawigi]] has made an excellent ExtendsRobot called [[Girl]], but I don&#39;t think that that counts. It seems a good idea to start with something easy like RandomMovement and LinearTargeting, just to understand the basics and the behaviour of Robocode. You will probably pick up things a lot faster than I did, so in a few weeks I&#39;ll expect at least a top-100 bot from you!  -- [[GrubbmGait]]
+
+Welcome from me too! WaveSurfing is surely not the easiest way to get started, but if you&#39;re up for some serious WaveSuffering, knock yourself out :P I second Martin&#39;s comment that making CodeSize restricted bots might be a bad idea, but I would recommend using them as opponents to test against when you start, because they are limited in features while still often good overall bots. And don&#39;t worry, you don&#39;t have to be a girl to feel nerdy for programming tanks in your spare time... -- [[Voidious]]
+
+You bet I will, i&#39;ll be in the top 100 in no time! Nothing&#39;s gonna stop me. I already got a linear gun working. Chase wants me off his computer now, since i&#39;v been on it all day. ^-^ --Ann
+
+The guess factor gun was harder then I thought it would be, but i&#39;ll try to get it working. --Ann
+*The thing with guess-factor guns (and really any advanced gun) is that they are never really done.  Even after you get it relatively bug free, there&#39;s all sorts of tuning you can do. -- Martin
+
+My guessfactor didn&#39;t work out, so instead i&#39;m trying to get a pattern matcher working. --Ann
+
+
+Help! It doesn&#39;t work, what went wrong?
+
+&lt;pre&gt;
+//Log settings for pattern matcher.
+static final int maxLogSize = 500;
+static final int patternSize = 7;
+static Vector patternLog = new Vector();
+
+
+//////////// Setup ////////////
+// Here we set up most of the general data used later.
+double absoluteBearingToEnemy, distanceToEnemy, energyOfEnemy;
+double a;
+int i, j;
+
+absoluteBearingToEnemy = e.getBearingRadians() + getHeadingRadians();
+distanceToEnemy = e.getDistance();
+energyOfEnemy = e.getEnergy();
+myLocation = new Point2D.Double(getX(), getY());
+Point2D.Double locationOfEnemy = project(myLocation, absoluteBearingToEnemy, distanceToEnemy);
+
+//////////// Gun ////////////
+// The gun is unfinished, but will be pattern matching
+// First we need to log the current move
+
+//Define all the viarables were going to use.
+double heading, velocity, angle, testScore, bestScore;
+
+angle = 0; //this way if we don&#39;t find one, it will just fire right on.
+heading = e.getHeadingRadians();
+velocity = e.getVelocity();
+
+//I use a point2D so I don&#39;t have to make a new class to contain the data.
+Point2D.Double current = new Point2D.Double(heading, velocity);
+
+//Add this data into the 0 position of the Vector
+patternLog.add(0, current);
+		
+//this is here to remind me
+//0 = current move
+//1 = last turn
+//2 = 2 turns ago
+//etc
+		
+//only do the testing if the size of the log of data is larger then the amount of data we need to test.
+if(patternLog.size() &gt; patternSize+1) {
+	//I set this to infinity so that it will test and assign non-zero locations.
+	bestScore = Double.POSITIVE_INFINITY;
+
+	//start at the pattern size plus one because everything below that point is the current data.
+	//Now we test it till it is 1 less then the max log size
+	// or until 1 less then the current log size
+	// that way we will have a future value to assign the direction too.
+	// but now that  Ilook at it I realize that since 0 is the latest data,
+	// that this is only wasting space but
+	// won&#39;t cause it to not function correctly.
+	for(i = patternSize+1; i &lt; maxLogSize-1 &amp;&amp; i &lt; patternLog.size()-1; i++) {
+		//we set both the testScore and the testAngle to zero so that we can get
+		//reliable data out of them.
+		testScore = 0;
+		testAngle = 0;
+
+		//we start this for at 1 because otherwise it won&#39;t have enough.. back history
+		// hmm thats backwards..
+		for(j = 1; j &lt; patternSize; j++) {
+			//This is risky as max_value is huge
+			//test backwards into the recent cache to get the correct one.
+			//This has the benefit of working sooner.
+			Point2D.Double test = (Point2D.Double)patternLog.get(i-j);
+			Point2D.Double recent = (Point2D.Double)patternLog.get(j);
+			
+			Point2D.Double test1 = (Point2D.Double)patternLog.get(i-1);
+			Point2D.Double recent1 = (Point2D.Double)patternLog.get(j-1);
+					
+			test = new Point2D.Double( Utils.normalRelativeAngle(test.x + test1.x), test.y);
+			recent = new Point2D.Double( Utils.normalRelativeAngle(recent.x + recent1.x), test.y);
+					
+			//Now i&#39;m not 100% sure exactly how this works, but lets hope it works well enough.
+			//Otherwise it will have to be changed.
+			testScore += test.distance(recent);
+		}
+		//Need to find a way to turn this into a angle now
+		//I hope this works
+		Point2D.Double newPos = (Point2D.Double)patternLog.get(i+1);
+		newPos = project(locationOfEnemy, Utils.normalRelativeAngle(current.x + newPos.x), newPos.y);
+		testAngle = absoluteBearing(myLocation, newPos) - absoluteBearingToEnemy;
+
+		if(testScore &lt; bestScore) {
+			bestScore = testScore;
+			bestAngle = testAngle;
+		}
+	}
+	angle = bestAngle;	
+}//End (patternLog.size() &gt; patternSize) if statement
+
+setTurnGunRightRadians(Utils.normalRelativeAngle(absoluteBearingToEnemy-getGunHeadingRadians()+angle));
+setFire(3);
+&lt;/pre&gt;
+
+I just don&#39;t know what its doing wrong, it should aim and fire where the bot should be next. -- Ann
+
+Do some graphical debugging - draw where your robot thinks the enemy is and where they should be. At least, assuming it&#39;s merely inaccurate, rather then actually crashing. I wrote a simple pattern matching gun recently, and that had the problem that I had the sign one of the factors the wrong way around - so I was working out the right pattern, it was just the wrong way around. You might have a bug like that.
+
+Your Java code is much better then mine, though. It&#39;s Greek to me. --[[Jp]]
+
+I have no idea how to do visual debugging. I decided to scrap the code, it was making robocode run really slow. I&#39;ll try making one with normal arrays and reweight the heading which has a weight of about 6 (0 to 2pi) and the velocity which has a weight of about 14 (-8 to 8). Perhaps set the velocity to absolute. --Ann
+
+Any pattern matcher is going to run really slowly.  It&#39;s the nature of the beast.  It may be a fun exercise (which is really what Robocode boils down to in the end) but be prepared for really slow performance while testing and in the Rumble.  If you want some graphical debugging code, I posted some a while ago [[Ugluk/RobocodeSG|here]] and David Alves has posted some [[David_Alves/DrawingBot|here]]. -- Martin
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 8 + 4 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that Ann has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=Ann">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

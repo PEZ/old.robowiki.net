@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing AntiAntiSurferSurfing - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Anti, Anti, Surfer, Surfing'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing AntiAntiSurferSurfing</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="AntiAntiSurferSurfing"  />
+<input type="hidden" name="oldtime" value="1239892970"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="11"  />
+<input type="hidden" name="captchaArg2" value="5"  />
+<input type="hidden" name="captchaOp" value="-"  />
+<input type="hidden" name="captchaId" value="835793318299"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">Well, in my latest version of my development bot, I changed the segmentations around, and I noticed that despite overall increases in performance nearly all around, there was one spot where I had a significant performance drop: The very top advanced bots. I then ran some test battles against such bots, and watched their debugging consoles. So what did I find? They suddenly started getting their AntiSurferTargeting accurate on me (before they were often indecisive about which gun to use). So what segmentation change caused this? Well I&#39;m not completely certain yet, however I believe the fact that I removed a weak segment on time (and in DynamicClustering, a time segment is basically the same as a rolling average effect) was the cause. So I suppose why I was fooling AntiSurferTargeting before was because I was rolling my stats just as they roll their stats over time.
+
+So what I call AntiAntiSurferSurfing (nice name huh :)), is an extension of flattening that came to mind in response to noticing the effect of rolling surfing stats against AntiSurferTargeting guns. To start, I&#39;ll break down one way of looking at other movements:
+* Traditional WaveSurfing: GuessFactor based learning of non-adaptive targeting (that it works on adaptive targeting too is a side effect)
+* WaveSurfer Flattening: Basically a GuessFactor gun flipped in reverse
+* AntiPatternMatching: Basically a PatternMatcher gun flipped in reverse
+So, logically, wouldn&#39;t a good way to counter AntiSurferTargeting be to basically flip one of those guns in reverse? Well, what characteristics do the common AntiSurferTargeting guns have? Well...
+* Based on a normal GuessFactor gun
+* Quickly rolling all stats
+* Often decrement the probability of aiming somewhere after there&#39;s an actual hit there
+So for AntiAntiSurferSurfing what do we want to do? Well I think:
+* Based on normal WaveSurfer flattening
+* Quickly rolling all stats
+* Slightly increment the probability of going somewhere when hit there
+The last point in particular I think is somewhat counter-intuitive with normal Robocode thought, and indeed that last quality would be a weakness to Non-AntiSurferTargeting, however I don&#39;t think that would really be too big an issue when the flattening is the dominant factor (just as decrementing on hit is NOT a particularly strong factor in AntiSurferTargeting). I think something like this is probably the best way to counter AntiSurferTargeting, however it&#39;s biggest weakness is probably against plain GuessFactor targeting, and thus for this to be of any use, the real key would be knowing when to use it. I think what would be a real breakthrough, would be if someone found a nice way to try to estimate how quickly the enemy is currently rolling stats, and estimate if they&#39;re decrementing places they hit. A VirtualGuns-like MultiMode movement could do the trick for knowing when to use this to some degree, but in order to deal with how suddenly the enemy may switch guns you would need to have rolling stats on which movement is better, and I&#39;m not sure if there would be enough information to learn which to use quickly enough. What are some other people&#39;s thoughts on countering things like AntiSurferTargeting? :)
+
+-- [[Rednaxela]]
+
+Hi Rednexela, which bot does this? I think I implements this in very buggy way of very-buggy BlackHole 0.1.11, but it screw up with normal stats and getting flat stats instead :-) Perhaps I need to do some Crowd Movement. --[[Nat]]
+
+No bot does this to my knowledge, just a random idea... :) -- [[Rednaxela]]
+
+Was just thinking how hard it could be to test this, as any bot with an AS gun surely uses VirtualGuns, so thought I&#39;d mention it&#39;s really easy to disable Dooki&#39;s regular gun to test against his AS gun. Just comment out &lt;code&gt;_gunManager.addGun(_mainGun);&lt;/code&gt; in &lt;nowiki&gt;dgun/DookiLightning.java&lt;/nowiki&gt; / &lt;code&gt;initializeGuns()&lt;/code&gt;. -- [[Voidious]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 11 - 5 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that AntiAntiSurferSurfing has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=AntiAntiSurferSurfing">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

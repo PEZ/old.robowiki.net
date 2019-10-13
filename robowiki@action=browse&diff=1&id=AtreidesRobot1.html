@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>AtreidesRobot1 - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Atreides, Robot1'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=AtreidesRobot1">AtreidesRobot1</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><b>No diff available--this is the first major revision.</b>
+(<a href="robowiki?action=browse&diff=2&id=AtreidesRobot1">minor diff</a>)<hr class=wikilinediff>
+<div class=wikitext>package atreides.robot;
+<p>
+import robocode.*;
+<p>
+/**
+<PRE >
+ * <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a> - a sample robot by Mathew Nelson
+ * 
+ * Moves in a circle, firing hard when an enemy is detected
+ */
+</PRE>
+public class <a href="robowiki?AtreidesRobot1" class=wikipagelink>AtreidesRobot1</a> extends <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> {
+<p>
+<PRE >
+	/**
+	 * <a href="robowiki?SpinBot" class=wikipagelink>SpinBot</a>'s run method - Circle
+	 */
+	public void run() {
+	  	while (true) {
+			// Tell the game that when we take move,
+			//  we'll also want to turn right... a lot.
+			setTurnRight<a href="robowiki?action=edit&id=TurnRight" class=wikipageedit>?</a>(10000);
+			// Limit our speed to 5
+			setMaxVelocity<a href="robowiki?action=edit&id=MaxVelocity" class=wikipageedit>?</a>(5);
+			// Start moving (and turning)
+			ahead(10000);
+			// Repeat.
+	  	} 
+	}
+</PRE>
+<p>
+<PRE >
+	/**
+	 * on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>: Fire hard!
+	 */
+	public void on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {
+	  fire(3);
+	}
+</PRE>
+<p>
+<PRE >
+	/**
+	 * onHitRobot<a href="robowiki?action=edit&id=HitRobot" class=wikipageedit>?</a>:  If it's our fault, we'll stop turning and moving,
+	 *              so we need to turn again to keep spinning.
+	 */
+	public void onHitRobot<a href="robowiki?action=edit&id=HitRobot" class=wikipageedit>?</a>(HitRobotEvent<a href="robowiki?action=edit&id=HitRobotEvent" class=wikipageedit>?</a> e) {
+		if (e.getBearing() &gt; -10 &amp;&amp; e.getBearing() &lt; 10)
+			fire(3);
+		if (e.isMyFault<a href="robowiki?action=edit&id=MyFault" class=wikipageedit>?</a>())
+			turnRight(10);
+	}
+</PRE>
+}
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=AtreidesRobot1" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=AtreidesRobot1">View other revisions</a><br>Last edited January 17, 2005 4:05 EST by 24.84.131.197 <a href="robowiki?action=browse&diff=1&id=AtreidesRobot1">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

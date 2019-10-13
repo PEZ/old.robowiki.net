@@ -1,0 +1,287 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Simonton/RoboleagueScripting - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Simonton, Roboleague, Scripting'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/RoboleagueScripting">Simonton/RoboleagueScripting</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Simonton" class=wikipagelink>Simonton</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I don't know the best place to do this, so here goes:  I hacked together some mods for Roboleague to let me try all combinations of different parameters in my bot.  I hope to start making good use of it tonight.  WARNING: THIS IS A SERIOUS HACK.  Using it is not pretty.  But it works.  I can't find licencing info on Roboleague, so I'm just going to paste my mods on here &amp; let you paste them into the soure &amp; compile.  Please treat this code as "open source" &amp; share any improvements you make!
+<p>
+This is in <tt>roboleague.gui.RoboLeagueGui</tt>.  Starting from the end of the constructor:
+<p>
+<pre>
+		// new Thread() {
+		// public void run() {
+		bg_initialize();
+		// }
+		// }.start();
+
+		run(args);
+	}
+
+	private void run(String[] args) {
+		if (args.length == 0) {
+			return;
+		}
+
+		int i = 0;
+		String file = args[i++];
+		if (!file.endsWith(".xml")) {
+			System.out.println(file + " should end with .xml");
+			return;
+		}
+
+		if (args.length == 1) {
+			if (load(new File(file))) {
+				runSeasons(1);
+			}
+			return;
+		}
+
+		int numSeasons = Integer.parseInt(args[i++]);
+		List&lt;Variable&gt; vars = new LinkedList&lt;Variable&gt;();
+		while (i &lt; args.length) {
+			i = makeVariableList(args, vars, i);
+		}
+		System.out.println("RUNNING SINGLE VARIABLES");
+		for (int season = 1; season &lt;= numSeasons; ++season) {
+			int minRun = Integer.MAX_VALUE;
+			for (i = 0; i &lt; vars.size(); ++i) {
+				int finished = runSingle(vars, i, file, season);
+				vars.get(i).initialize();
+				if (finished == -1) {
+					System.out.println("INTURRUPTED!");
+					return;
+				}
+				if (finished &lt; minRun) {
+					minRun = finished;
+				}
+			}
+			season = minRun;
+			System.out.println("FINISHED SEASON " + season);
+		}
+		System.out.println("RUNNING COMBINED VARIABLES");
+		for (int season = 1; season &lt;= numSeasons; ++season) {
+			season = runCombined(vars, 0, file, season);
+			if (season == -1) {
+				System.out.println("INTURRUPTED!");
+				return;
+			}
+			System.out.println("FINISHED SEASON " + season);
+		}
+		System.out.println("DONE!");
+		gracefullExit();
+	}
+
+	private int runSingle(List&lt;Variable&gt; vars, int i, String originalFile,
+			int season) {
+		Variable var = vars.get(i);
+		int minCount = Integer.MAX_VALUE;
+		for (String val : var.values) {
+			System.setProperty(var.name, val);
+			int count = run(vars, originalFile, season);
+			if (count == -1) {
+				return -1;
+			}
+			if (count &lt; minCount) {
+				minCount = count;
+			}
+		}
+		return minCount;
+	}
+
+	// returns min seasons run, or -1 when there was an inturrupt
+	private int runCombined(List&lt;Variable&gt; vars, int i, String originalFile,
+			int curSeason) {
+		if (i == vars.size()) {
+			return run(vars, originalFile, curSeason);
+		}
+		Variable var = vars.get(i);
+		int minCount = Integer.MAX_VALUE;
+		for (String val : var.values) {
+			System.setProperty(var.name, val.toString());
+			int count = runCombined(vars, i + 1, originalFile, curSeason);
+			if (count == -1) {
+				return -1;
+			}
+			if (count &lt; minCount) {
+				minCount = count;
+			}
+		}
+		return minCount;
+	}
+
+	private int run(List&lt;Variable&gt; vars, String originalFile, int curSeason) {
+		File file = new File(getFilename(vars, originalFile));
+		if (exists(file, originalFile) &amp;&amp; load(file)) {
+			int seasonCount = getCompletedSeasonCount();
+			if (seasonCount &lt; curSeason) {
+				runSeasons(1);
+				try {
+					runSeasonJob.join();
+				} catch (InterruptedException e) {
+					// no prob, we'll abort when inturrupted
+					// possible race condition if inturrupted right away,
+					// but the job is still running, we get the old season
+					// count, then the new non-terminated state (it depends
+					// on the order in which the state &amp; season count are
+					// updated)
+				}
+				int newSeasonCount = getCompletedSeasonCount();
+				if (newSeasonCount == seasonCount) {
+					return -1;
+				}
+				return newSeasonCount;
+			}
+			System.out.println(file + " already ran season " + curSeason);
+			return seasonCount;
+		}
+		System.out.println("Couldn't find, create, or run " + file);
+		return Integer.MAX_VALUE;
+	}
+
+	private String getFilename(List&lt;Variable&gt; vars, String originalFile) {
+		String filename = originalFile.substring(0, originalFile.length() - 4);
+		Set&lt;Variable&gt; varSet = new TreeSet&lt;Variable&gt;(vars);
+		for (Variable var : varSet) {
+			filename += "-" + var;
+		}
+		return filename + ".xml";
+	}
+
+	private boolean load(File file) {
+		CompetitionDataModel before = loadedDataModel;
+		bg_openDataModel(file);
+		if (loadedDataModel == null || loadedDataModel == before) {
+			System.out.println("Load failed");
+			return false;
+		}
+		return true;
+	}
+
+	public int getCompletedSeasonCount() {
+		int num = 0;
+		if (loadedDataModel instanceof Division) {
+			Division division = (Division) loadedDataModel;
+			num = division.getSeasonCount();
+		} else if (loadedDataModel instanceof League) {
+			League league = (League) loadedDataModel;
+			num = league.getSeasonCount();
+		} else {
+			// loadedDataModel is null, maybe?
+			return 0;
+		}
+		if (!loadedDataModel.getTerminated()) {
+			--num;
+		}
+		return num;
+	}
+
+	private boolean exists(File file, String originalFile) {
+		if (file.isFile()) {
+			return true;
+		}
+
+		// nope ... try to make it!
+		try {
+			InputStream in = new FileInputStream(originalFile);
+			OutputStream out = new FileOutputStream(file);
+			for (int b = in.read(); b != -1; b = in.read()) {
+				out.write(b);
+			}
+			in.close();
+			out.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	// &lt;property&gt; &lt;numvals&gt; &lt;value&gt; &lt;value&gt; &lt;value&gt; ...
+	// &lt;property&gt; number &lt;start&gt; &lt;end&gt; &lt;step&gt;
+	private int makeVariableList(String[] args, List&lt;Variable&gt; vars, int i) {
+		String property = args[i++];
+		List&lt;String&gt; vals = new LinkedList&lt;String&gt;();
+		String type = args[i++];
+		if ("number".equals(type)) {
+			double start = Double.parseDouble(args[i++]);
+			double end = Double.parseDouble(args[i++]);
+			double step = Double.parseDouble(args[i++]);
+			for (double val = start; val &lt;= end; val += step) {
+				vals.add(Double.toString(val));
+			}
+		} else {
+			for (int j = Integer.parseInt(type); j &gt; 0; --j) {
+				vals.add(args[i++]);
+			}
+		}
+		vars.add(new Variable(property, vals));
+		return i;
+	}
+
+	class Variable implements Comparable&lt;Variable&gt; {
+		final String name;
+		final List&lt;String&gt; values;
+		Variable(String name, List&lt;String&gt; values) {
+			this.name = name;
+			this.values = values;
+			initialize();
+		}
+		public void initialize() {
+			System.setProperty(name, values.get(0));
+		}
+		public String toString() {
+			return name + "=" + System.getProperty(name);
+		}
+		public int compareTo(Variable o) {
+			return name.compareTo(o.name);
+		}
+	}
+</pre>
+<p>
+Now, to use the new mod, pass command line aruments to roboleague in this form:
+<PRE >
+  java roboleague.gui.RoboLeagueGui<a href="robowiki?action=edit&id=RoboLeagueGui" class=wikipageedit>?</a> {base-xml-file} {target-number-of-seasons} {variable}*
+</PRE>
+<p>
+Where a variable is in the form:
+<PRE >
+  {variable-name} {number-of-values} {value} {value} {value} ...
+</PRE>
+or
+<PRE >
+  {variable-name} number {start-value} {end-value} {step-size}
+</PRE>
+<p>
+This will set the appropriate values for each variable in System.properties, as many of them as you want, and run them in every combination.  The results for each combination of variables will be stored in a file starting with the name of the base xml file, followed by the names of the variables and their values for the runs in that file.  So, test.xml becomes test_var1-value1.xml and test_var1-value2.xml.  Note that test.xml itself should not contain any results, or else they will be carried over into every run.
+<p>
+The code is well behaved if you inturrupt it, and it knows how to start back up again where it left off the next time you run Roboleague with the same command line args.
+<p>
+To make use of these variables in System.properties (where the new mod puts them), do something like this:
+<p>
+<pre>
+		int variable = default-value;
+		String cmdVariable = System.getProperty("variable-name-in-command-line");
+		if (cmdVariable != null) {
+			try {
+				variable = (int) Double.parseDouble(cmdVariable);
+			} catch (NumberFormatException err) {
+				System.out.println("Couldn't understand " + cmdVariable);
+			}
+		}
+		System.out.println("Using pattern depth " + variable);
+</pre>
+<p>
+Notice that all "number" variables on the command line get stored in System.properties using Double.toString(value), so they should be de-coded with Double.parseDouble(valueString), not, for example, Integer.parseInt(...).
+<p>
+<hr noshade class=wikiline size=1>
+Now in version 1.1!  It has been updated to vary all variables while keeping the others fixed at their first values, THEN start in on all the rest of the combinations.  It also now sorts the variable names when naming files, so that you can change the order of them at will without losing saved data (changing the order lets you dictate which variables are varied first).  I think it should also allow you to define a variable twice (e.g. <tt>wallMargin number 110 120 2 wallMargin number 130 200 10</tt>), but I did not test that.  I think there's a bug in the order in which it does "first vary each variable while keeping the others fixed", but I'm not sure.
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Simonton" class=wikipagelink>Simonton</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Simonton/RoboleagueScripting" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Simonton/RoboleagueScripting">View other revisions</a><br>Last edited September 30, 2006 2:10 EST by <a href="robowiki?Simonton" title="ID 7817 from adsl-70-227-96-101.dsl.applwi.ameritech.net">Simonton</a> <a href="robowiki?action=browse&diff=1&id=Simonton/RoboleagueScripting">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

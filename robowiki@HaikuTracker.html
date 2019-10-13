@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>HaikuTracker - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Haiku, Tracker'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=HaikuTracker">HaikuTracker</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Has anyone made a <a href="robowiki?HaikuTracker" class=wikipagelink>HaikuTracker</a>?  The best i can get is 6 lines (5 if it either doesn't fire or uses that trick of putting the fire command in another line, which i think i cheating, as you could do that for the whole thing as have a <a href="robowiki?MegaBot" class=wikipagelink>MegaBot</a> in one line). -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+<pre>
+package tango.haiku;
+import robocode.*;
+
+public class HaikuTracker extends AdvancedRobot
+{
+	String TargetName;
+	public void run() {
+		setTurnGunRight(Double.POSITIVE_INFINITY);
+		
+	}
+
+
+	public void onScannedRobot(ScannedRobotEvent e) {
+		if (TargetName==null || TargetName==e.getName()) {
+			TargetName=e.getName(); 
+			turnRight(e.getBearing()); 
+			ahead(e.getDistance()-20);
+			fire(3);
+		}
+	}
+
+}
+</pre>
+<p>
+Actually you couldn't, try. At best you might be able to squeeze a nano down to Haiku size, and I certainly have been unable to do that with a nano as complex as <a href="robowiki?NanoSatan" class=wikipagelink>NanoSatan</a>. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Ok, so maybe it was an exageration, but i still don't like it.  I've just had an idea for reducing the lines, so hang on. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Here's my best shot at it:
+<p>
+<pre>
+package tango.haiku;
+import robocode.*;
+
+public class HaikuTracker extends AdvancedRobot
+{
+	String TargetName;
+	public void run() {
+		setTurnGunRight(Double.POSITIVE_INFINITY);
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e) {
+		turnRight(((TargetName = (TargetName == null || TargetName == e.getName()) ? e.getName() : TargetName) == e.getName()) ? e.getBearing() : 0);
+		ahead((TargetName == e.getName()) ? ((fireBullet(3) == null)?1:1) * e.getDistance() - 20 : 0);
+	}
+}
+</pre>
+-- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+<p>
+That's pretty much what i did, except mine doesn't fire, because i don't like your method, so i changed e.getDistance()-20 to +20, so it rams, rather than fire. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+<pre>
+package tango.haiku;
+import robocode.*;
+
+public class HaikuTracker extends AdvancedRobot
+{
+	String TargetName;
+	public void run() {
+		setTurnGunRight(Double.POSITIVE_INFINITY);
+		
+	}
+
+
+	public void onScannedRobot(ScannedRobotEvent e) {
+			if (TargetName==null) TargetName=e.getName();
+			turnRight(((TargetName==e.getName())?1:0)*e.getBearing()); 
+			ahead(((TargetName==e.getName())?1:0)*e.getDistance()+20);
+	}
+
+}
+</pre>
+<p>
+OK, so it's not pretty much what i did anymore, because you just changed it... i'm not sure if i call that cheating... -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I have a further change as well..
+<p>
+<pre>
+package tango.haiku;
+import robocode.*;
+
+public class HaikuTracker extends AdvancedRobot
+{
+	String TargetName;
+	public void run()
+	{
+		setTurnGunRight(Double.POSITIVE_INFINITY);
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e)
+	{
+		turnRight(((TargetName = (TargetName == null || TargetName == e.getName()) ? e.getName() : TargetName) == e.getName()) ? e.getBearing() : 0);
+		ahead((TargetName == e.getName()) ? ((fireBullet(3) == null)?1:1) * e.getDistance() - 20 : 0);
+	}
+
+	public void onRobotDeath(RobotDeathEvent e)
+	{
+		TargetName = (TargetName == e.getName()) ? null : TargetName;
+	}
+}
+</pre>
+Now it will actually acquire a next target once the current dies. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I wanted to do that, but didn't have enough lines.  I still don't like your methods.  I'm going to suggest a vote on whether they are in the spirit of <a href="robowiki?HaikuBots" class=wikipagelink>HaikuBots</a>. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+If you check tobe's website there's also another version of <a href="robowiki?HaikuTracker" class=wikipagelink>HaikuTracker</a> which simply rotates until it sees a bot in front of it, then moves forward, rotates again, etc. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Does it work in melee?  ie. does it remember names? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+No, here is the code:
+<pre>
+/**
+ * HaikuTracker - a robot poem by Michael Dorgan
+ */
+public class HaikuTracker extends AdvancedRobot
+{
+    public void run() 
+    {
+        turnLeft(Double.POSITIVE_INFINITY);
+    }
+
+    public void onScannedRobot(ScannedRobotEvent e) 
+    {
+        setAhead(e.getDistance()-140);
+        setTurnLeft(getTurnRemaining());
+        setFire(3);
+    }
+}
+</pre>
+-- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Ours are better.  I don't understand the set commands.  Won't that bot go in a wierd curve, rather than towards the enemy? :-/ -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I was wondering about that myself, it does. However that's not neccesarily a bad thing, you still end up in the same place, and curves are harder to hit, plus it can move continually to most recently seen position, rather than go to a waypoint and then move to the next seen position in increments. The big fault I see is that it has to turn the robot around almost 360 if the opponent moves just a bit to it's right side. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I don't think you do end up in the same place.  You won't even end up facing in the right direction.  A curve is longer than a straight line, so the distance will be wrong, and because some of it's movement would be in the wrong direction at the beginning of the turn, it would end up with the correct heading, but the desired heading would have changed because it is in the wrong place. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+But it's correcting and recalculating every tick. The desired heading doesn't change either, you end up a bit closer because of the circular route, but it's like taking a string with fixed ends and pulling on the middle, the ends just pull closer to each other, their relative orientation remains the same. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+How about you watch it, rather than speculating whether or not it works? -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I already have, I think at this point it's a matter of debating code efficiency, which is hard to judge from performance alone. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=HaikuTracker" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=HaikuTracker">View other revisions</a><br>Last edited August 31, 2003 16:42 EST by <a href="robowiki?Kuuran" title="ID 1330 from Toronto-HSE-ppp3671163.sympatico.ca">Kuuran</a> <a href="robowiki?action=browse&diff=1&id=HaikuTracker">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

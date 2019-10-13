@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>HowToMakeNiceAimingGraphics - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='How, To, Make, Nice, Aiming, Graphics'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=HowToMakeNiceAimingGraphics">HowToMakeNiceAimingGraphics</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Someone asked how I get the aiming graphics for <a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a>.
+<p>
+The first think you will need is <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a>.
+<p>
+Then do as follows:
+<p>
+<pre>
+
+1. Import the following libraries.
+
+import java.awt.geom.Point2D;
+import java.awt.geom.Line2D;
+import robocode.robocodeGL.system.GLRenderer;
+import robocode.robocodeGL.PointGL;
+import robocode.robocodeGL.LineGL;
+import java.awt.Color;
+
+2. Declare the following variables.
+
+static int n,m; 
+static Line2D[] ps = new Line2D[100000];
+----
+What is the advantage of this over using awt shapes (such as Ellipse2D.Double, Rectangle2D.Double)?
+
+3. On your scan event add the following code (targetBearing is the absolute bearing to the target).
+
+ps[n] = new Line2D.Double(getX(),getY(),getX()+eGetDistance*Math.sin(targetBearing),getY()+eGetDistance*Math.cos(targetBearing));
+
+4. Before firing, call the method calculateGunBearings(); (see below)
+
+5. When firing (probably in your scan event) add (note that predBearing is the relative bearing to target for firing):
+
+PointGL pt4 = new PointGL(); pt4.setPosition(getTime(),50+50*predBearing); pt4.setSize(2); pt4.setColor(Color.green); GLRenderer.getInstance().addRenderElement(pt4);		
+
+
+6. At the end of your scan event, add:
+
+n++;
+
+7. The method is as follows:
+
+   public void calculateGunBearings() {
+     for (int i=m+1; i&lt;((int)n-1); i++) {	
+	Line2D gun = new Line2D.Double(ps[i].getP1(),ps[i].getP2());
+	int j = 0;
+	while (j*11.0 &lt; gun.getP1().distance(gun.getP2())-20.0 &amp;&amp; i+j&lt;n ) { 
+	     j++; gun.setLine(gun.getP1(),ps[i+j].getP2());
+	}
+	if (i+j &lt; n) {
+	     double angle = bearings[m] = normalRelativeAngle(Math.atan2(gun.getX2()-gun.getX1(),gun.getY2()-gun.getY1()) - Math.atan2(ps[i].getX2()-gun.getX1(),ps[i].getY2()-gun.getY1()));
+	     double tolerance = Math.asin(50/ps[i].getP1().distance(ps[i].getP2()));
+	     PointGL pme = new PointGL(); pme.setPosition(getTime()-n+m,50+angle*50+tolerance*50); pme.setColor(Color.white); GLRenderer.getInstance().addRenderElement(pme);
+	     PointGL pme2 = new PointGL(); pme2.setPosition(getTime()-n+m,50+angle*50-tolerance*50);	pme2.setColor(Color.white); GLRenderer.getInstance().addRenderElement(pme2);
+	     m++;
+	}
+     }
+   }
+</pre>
+<p>
+-- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=HowToMakeNiceAimingGraphics" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=HowToMakeNiceAimingGraphics">View other revisions</a><br>Last edited September 19, 2007 12:41 EST by eth16467.sa.adsl.internode.on.net <a href="robowiki?action=browse&diff=1&id=HowToMakeNiceAimingGraphics">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>N/source - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='N/source'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/source">N/source</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?N" class=wikipagelink>N</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package baal.nano;
+import robocode.*;
+import robocode.util.Utils;
+
+// N 1.4
+// 247 bytes.
+
+public class N extends AdvancedRobot
+{
+	static final double infinity = Double.POSITIVE_INFINITY;
+	static double move = 45;
+			
+	public void run() {
+		setAdjustGunForRobotTurn(true);
+		turnRadarRightRadians(infinity);
+	}
+	public void onScannedRobot(ScannedRobotEvent e) {
+		double absoluteBearing = getHeadingRadians() + e.getBearingRadians();
+		if (Math.random() &lt; 0.07 || getGunHeat() &lt;= 0.1)
+			move = -move;
+		setTurnRadarLeftRadians(getRadarTurnRemaining());
+		setTurnGunRightRadians(Utils.normalRelativeAngle(absoluteBearing - getGunHeadingRadians() + 
+			(e.getVelocity() * Math.sin(e.getHeadingRadians() - absoluteBearing) / 13.0)));
+		if(e.getEnergy() &gt;= 15.0 || getEnergy() - e.getEnergy() &lt;= 7.0) {
+			setAhead(((getGunHeat()*100)*Math.random())*move);
+			setTurnRight(e.getBearing() + 80.0);
+			fire(2.5 - Math.max(0, (30 - getEnergy()) / 16));
+		}
+		else if(getEnergy() - e.getEnergy() &gt;= 7.0){
+			setTurnRight(e.getBearing());	
+			setAhead(infinity);
+			fire(1.0);
+		}
+	}
+	public void onHitWall(HitWallEvent e) {
+		setAhead(move = -move * 10 * Math.random());
+	}
+}
+</pre>
+<p>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<H3>Comments / Feedback</H3>
+
+<p>
+Can anyone hint at why my movement brings the suckage? <a href="robowiki?Baal" class=wikipagelink>Baal</a>
+<p>
+Try using <tt>setTurnLeftRadians(Math.cos(absoluteBearing))</tt> (I'm assuming you want to always move perpendicular to the enemy?).  Also, take the <tt>Math.cos()</tt> out of the setAhead method. -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+I really don't care about my position relative to the enemy, I just want to dodge bullets :-) -- <a href="robowiki?Baal" class=wikipagelink>Baal</a>
+<p>
+In general, your best bet is to stay perpendicular then ;) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I'm testing it now with 
+<pre>
+setAhead(MoveLength * Math.random() * 2 * Direction);
+setTurnLeftRadians(Math.cos(absoluteBearing));
+</pre>
+and the movement is weird, i'm assuming that increasing movelength will increase distance away,
+correct? -- <a href="robowiki?Baal" class=wikipagelink>Baal</a>
+<p>
+<p>
+Changing moveLength will not change your distance to the enemy.  To do that you must turn your bot such that it angles slightly away/toward the enemy (and be careful, because this this adjustment to the angle will be opposite depending on whether you are travelling backward or forward).  MoveLength<a href="robowiki?action=edit&id=MoveLength" class=wikipageedit>?</a> currently will change how far your robot tries to travel between each tick.  That is, it will change its speed.  Note that calling setAhead(20) or greater each tick will move your bot at full speed.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+ok, got the perpindicular movement working, and I'm getting a 50% increase in scores in my tests. Updating rumble version -- <a href="robowiki?Baal" class=wikipagelink>Baal</a>
+<p>
+Looks like <a href="robowiki?N" class=wikipagelink>N</a> scores 130 points better in ranking, meaning you rank 50 places up. Congrats with this nice improvement, but I expect to see more jumps like this from you.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Thanks, I'm messing with some circular prediction code, but I'm seeing it causes some scores to drop from my HOT gun, I need to find a way to fit virtual guns in <a href="robowiki?N" class=wikipagelink>N</a> :) -- <a href="robowiki?Baal" class=wikipagelink>Baal</a>
+<p>
+Yep, against oscillators a circular or linear gun is hopeless. On the other hand, a reasonable circular gun alone would improve your score in the rumble considerably, meaning from 1400 to (close to) 1500. A virtual gun array is only beneficial if each gun itself can hit what it is supposed to hit.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Yup, Version 0.5 had a linear gun, and changing it to Head On increased my rating in the nanorumble about 100 points. I'm hoping that a vguns array using a HOT gun and a circular prediction gun will get me a couple of ratings. Thinking about it, a vguns array would probably get me in the top 50 IF  i can fit it in a nano, else, I'll just try to improve the movement, and maybe do a simple random gun. :-) <a href="robowiki?Baal" class=wikipagelink>Baal</a>
+<p>
+A reasonable way to combine the ideas if you can't fit the VGs in is to use a weighted average of their velocity or something. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Hadn't thought of that...  -- <a href="robowiki?Baal" class=wikipagelink>Baal</a>
+<p>
+Looking at your suggestion again Kawigi, wouldn't that be somewhat like Mean Targeting?  -- <a href="robowiki?Baal" class=wikipagelink>Baal</a>
+<p>
+Well, I'm going to hold off updating N with any new stuff immediatly. I am instead going to focus on shrinking the code, which I know I get down from 240 -ish. -- <a href="robowiki?Baal" class=wikipagelink>Baal</a>
+<p>
+In-lining the Move function should save you a few bytes (maybe 3?) -- <a href="robowiki?Nfwu" class=wikipagelink>Nfwu</a>
+<p>
+Any ideas on where to spend my 30-something bytes of code I have left? I'm leaning towards Energy management, but can't seem to devise an efficient algorithm, any ideas -- <a href="robowiki?Baal" class=wikipagelink>Baal</a>
+<p>
+I don't know the exact byte count off-hand, but this is the kind of code I use in <a href="robowiki?Komarious" class=wikipagelink>Komarious</a>: <code>        double power = 2 - Math.max(0, (30 - getEnergy()) / 16);</code>. So I fire power=2 as long as I'm over 30 energy, and that scales down to around 0.2 bullet power at 1 energy; you could easily tweak it to whatever values you want, of course. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Thanks, void -- <a href="robowiki?Baal" class=wikipagelink>Baal</a>
+<p>
+You can save some room by removing the else statement and placing the setTurnLeftRadians<a href="robowiki?action=edit&id=TurnLeftRadians" class=wikipageedit>?</a> from it before the if statement, as robocode always uses the last turn statement given. Also I think you can make Math.cos(e.getBearingRadians<a href="robowiki?action=edit&id=BearingRadians" class=wikipageedit>?</a>()) * Math.PI/2 into a variable and that will save some space too.
+<p>
+Like so
+<pre>
+setTurnLeftRadians(absoluteBearing = (Math.cos(e.getBearingRadians()) * Math.PI/2));
+if(e.getDistance() &gt; MoveLength) {
+	setTurnLeftRadians(absoluteBearing - Direction);
+}
+</pre>
+<p>
+--<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+I'm not sure it will save any space at all, but you might change the radar to degrees, since N uses a infinity lock --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+<p>
+I'm a bytesaver I guess, but I guess if you have colors you have enough to spare huh? Degrees is overrated IMHO. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+1.25 is 219 as shown above, so I'm really not that pressed for space :P, Thats not to say your suggestions will go unheeded, just that I really don't need the space at the moment. :) -- <a href="robowiki?Baal" class=wikipagelink>Baal</a>
+<p>
+After I allowed this page to die, I've performed CPR, and successfully ressucitated this page :P. Just a note: version 1.4 is 247 bytes as above. -- <a href="robowiki?Baal" class=wikipagelink>Baal</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?N" class=wikipagelink>N</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=N/source" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=N/source">View other revisions</a><br>Last edited March 29, 2008 0:59 EST by <a href="robowiki?Baal" title="ID 13522 from 68-191-96-32.dhcp.dctr.al.charter.com">Baal</a> <a href="robowiki?action=browse&diff=1&id=N/source">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

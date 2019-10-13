@@ -1,0 +1,1964 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Toad/SegmentationTreeCode - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Toad, Segmentation, Tree, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/SegmentationTreeCode">Toad/SegmentationTreeCode</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Toad" class=wikipagelink>Toad</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>This is the code used in Toad RRGC 1.1
+<p>
+<pre>
+package florent;
+
+import java.io.File;
+import java.io.OutputStreamWriter;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Vector;
+
+import robocode.AdvancedRobot;
+import robocode.Condition;
+import robocode.RobocodeFileOutputStream;
+
+
+
+//TODO add a thread dedicated to add leaves
+
+
+public class SegmentationTree implements Serializable,Runnable{
+	//TODO try segmentation on distance traveled in the last 15,30 ticks
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2503026896538361157L;
+	private static final boolean RUMBLE = Toad.RUMBLE;
+	private boolean saveToFile = false, showSegementation = false;
+	private int completeRebuildRound = 7;
+	private int GF_ZERO;
+	private int GF_ONE;	
+	private double[] ALL_ACCEL = {Double.NEGATIVE_INFINITY,-1.5,-.5,0,.5,Double.POSITIVE_INFINITY};//-1.5,0,.5 vs FloodMini &amp; PulsarMAX	
+	private double[] ALL_DISTANCE = {Double.NEGATIVE_INFINITY,100,150,200,250,300,350,400,450,500,550,600,650,Double.POSITIVE_INFINITY};
+	private double[] ALL_POWER = {Double.NEGATIVE_INFINITY,.5,1,1.5,2,2.5,Double.POSITIVE_INFINITY};
+	private double[] ALL_TIME = {Double.NEGATIVE_INFINITY,.1,.15,.25,.3,.45,.55,.65,.7,.9,1.1,Double.POSITIVE_INFINITY};
+	private double[] ALL_VEL = {Double.NEGATIVE_INFINITY,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,Double.POSITIVE_INFINITY};
+	private double[] ALL_WALL = {Double.NEGATIVE_INFINITY,.15,.4,.8,.1,1.3,1.6,Double.POSITIVE_INFINITY};
+	private double[] ALL_WALL_REVERSE = {Double.NEGATIVE_INFINITY,.5,.75,1,1.45,Double.POSITIVE_INFINITY};//1.45 &amp; 0.73 vs Quest
+	private double minAccel=.5,minVel=1.5,minLatvel = 1.5,minDistance=150,minPower=4,minWall=.15,minTime=.1,minWallReverse = .35;
+	private int threshold;	
+	private boolean verbose = false;
+	private int rebuilding = 0;
+	private boolean start = false;
+	private boolean rebuild = true;
+	private Node root;
+	private int leaves = 0,weightedLeaves = 0;;
+	public AdvancedRobot me;
+	private boolean bufferingEntry = false;
+	private Vector buffer = new Vector();
+	private Thread rebuildThread,treeThread;
+	private boolean rebuildingInProcess = false,addingInProcess = false;
+	private WeightedVisitRecorder recorder = new WeightedVisitRecorder();
+	private boolean dynamicTree = true;
+	private boolean quitThread = false;
+	private double round;
+	
+	
+	private Segmentation seg;
+	
+	public SegmentationTree(int gf0,int gf1, int threshold){
+		GF_ZERO = gf0;
+		GF_ONE = gf1;
+		this.threshold =threshold*5;
+		root = new NonPreTerminalNode();
+		root.nSeg=new NodeSegmentation();
+	}
+	
+	public void init(){
+		quitThread=false;
+		round = me.getRoundNum();
+		treeThread = ((Toad)me).giveThread(this);//new Thread(this);
+		//System.out.println(treeThread.getThreadGroup());
+		treeThread.start();
+		treeThread.setPriority(Thread.MAX_PRIORITY);
+	}
+	
+	public void setRoot(Node node){
+		System.out.println("Root changed");
+		root = node;
+	}
+	
+	private int getRealThreshold(){
+		return threshold;
+	}
+	
+	public void newEntry(double d, double e, double f, double g, double h, double i, double j, double k, double wallReverse, boolean vb){
+
+		//System.out.println("newEntry");
+		//if (!vb){		
+		leaves++;
+		weightedLeaves += vb ? 1 : 5;
+			//System.out.println("add new leaf " + leaves);
+		Leaf leaf = new Leaf(d,e,f,g,h,i,j,k,wallReverse);
+		leaf.weigth = vb ? 1 : 5;
+		buffer.add(leaf);
+		treeThread.setPriority(Thread.MAX_PRIORITY);
+	/*		//root.accept(new TreeAddVisitor(leaf));
+		if (!bufferingEntry){
+			TreeAddVisitor v =new TreeAddVisitor(leaf);
+			v.test();
+		//	Thread p = new Thread(v);
+		//	p.start();
+		//	me.addCustomEvent(v);
+		//}
+		} else {
+			buffer.add(leaf);
+		}*/
+
+	}
+
+	
+	public void run(){
+		quitThread=false;
+		if (!RUMBLE)
+			System.out.println("Tree started");
+		while(!quitThread){
+			if(!rebuildingInProcess){				
+				if (buffer.size()&gt;0){
+				//	System.out.println(buffer.size());
+					Leaf leaf = (Leaf)buffer.get(0);
+					buffer.remove(leaf);
+					TreeAddVisitor v = new TreeAddVisitor(leaf);
+					addingInProcess = true;
+					v.test();
+					addingInProcess = false;
+				} else
+					treeThread.setPriority(Thread.MIN_PRIORITY);
+			}
+		}
+	}
+	
+	
+	public int getPeak(double d, double e, double f, double g, double h, double i, double j, double k, double wallReverse){
+		Leaf leaf = new Leaf(d,e,f,g,h,i,j,k,wallReverse);
+		return getPeak(leaf);
+	}
+	public int getPeak(Leaf leaf){
+		if (leaves == 0) return GF_ZERO;
+		TreePeakVisitor peak = new TreePeakVisitor(leaf);
+		root.accept(peak);
+		return peak.getPeak();
+	}
+	
+	public void clean(){
+		TreeCleanerVisitor v = new TreeCleanerVisitor();
+		root.accept(v);
+		if (!RUMBLE) System.out.println("NPTN:"+v.nptn+"|PTN:"+v.ptn);
+	}
+	
+	public void populate(){
+		TreeVisitor v = new TreePopulatorVisitor();
+		root.accept(v);	
+	}
+	
+	public void rebuild(){
+
+		if (!rebuild)
+			return;
+		//root.accept(new TreeRebuildVisitor());
+		bufferingEntry = true;
+		TreeRebuildVisitor visitor = new TreeRebuildVisitor();
+		rebuildThread = new Thread(visitor);
+		while(addingInProcess){};
+		rebuildThread.start();
+		rebuildThread.setPriority(Thread.MAX_PRIORITY);
+		
+
+		//me.addCustomEvent(visitor);
+		//visitor.priority=50;
+	}
+	
+	public void endRound(){
+		quitThread=true;
+		if (!RUMBLE)
+			System.out.println(buffer.size()+":"+rebuildingInProcess+":"+addingInProcess);
+	}
+	
+	public void setRebuild(boolean rebuild) {
+		this.rebuild = rebuild;
+	}
+
+	public boolean isRebuilding(){
+		return ((rebuilding != 0)||start);
+	}
+	
+	public Node save(){
+		root.accept(new TreeCleanerVisitor());		
+		return root;
+	}
+
+	public SymbolicTree saveSymbolic(){
+		TreeSaveSymbolicVisitor v = new TreeSaveSymbolicVisitor();
+		root.accept(v);
+		return v.getTheNode();
+	}
+	
+	public void restoreFromSymbolicTree (SymbolicTree sTree){
+		SymbolicTree.TreeRestoreSymbolicVisitor v  = sTree.new TreeRestoreSymbolicVisitor(sTree,root,this);
+		Thread restoreThread = new Thread(v);
+		restoreThread.start();
+	}
+	
+	public void restore(Node node){
+		node.accept(new TreePopulatorVisitor());
+		root = node;
+	}
+	
+	public NonPreTerminalNode getNode(int code){
+		int offset = 0;
+		if (code == -1)
+			return new NonPreTerminalNode();
+		if (code&lt;ALL_ACCEL.length)
+			return new AccelNode(ALL_ACCEL[code]);
+		offset+=ALL_ACCEL.length;
+		if  (code&lt;offset+ALL_DISTANCE.length)
+			return new DistanceNode(ALL_DISTANCE[code-offset]);
+		offset+=ALL_DISTANCE.length;
+		if (code&lt;offset+ALL_VEL.length)
+			return new LatvelNode(ALL_VEL[code-offset]);
+		offset += ALL_VEL.length;
+		if (code&lt;offset+ALL_POWER.length)
+			return new PowerNode(ALL_POWER[code-offset]);
+		offset+=ALL_POWER.length;
+		if (code&lt;offset+ALL_TIME.length)
+			return new MoveTimeNode(ALL_TIME[code-offset]);
+		offset+=ALL_TIME.length;
+		if (code&lt;offset+ALL_VEL.length)
+			return new VelNode(ALL_VEL[code-offset]);
+		offset+=ALL_VEL.length;
+		if (code&lt;offset+ALL_WALL.length)
+			return new WallNode(ALL_WALL[code-offset]);
+		offset+=ALL_WALL.length;
+		if (code&lt;offset+ALL_WALL_REVERSE.length)
+			return new WallReverseNode(ALL_WALL_REVERSE[code-offset]);
+		return null;
+	}
+	
+	
+	
+	/**
+	 * @return Returns the start.
+	 */
+	public boolean isStart() {
+		return start;
+	}
+
+	/**
+	 * @param start The start to set.
+	 */
+	public void setStart(boolean start) {
+		this.start = start;
+	}
+
+	/**
+	 * @param verbose The verbose to set.
+	 */
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
+	}
+	
+	
+	//tree structure
+	abstract class Node implements Serializable {	
+		protected int count;
+		protected NodeSegmentation nSeg;
+		public void accept(TreeVisitor v){
+			count = 0;
+		}
+		/**
+		 * @return Returns the count.
+		 */
+		public int getCount() {
+			return count;
+		}
+		/**
+		 * @param count The count to set.
+		 */
+		public void setCount(int count) {
+			this.count = count;
+		};	
+	}
+	
+	/**
+	 * we need a state pattern here
+	 */
+	public class NonPreTerminalNode extends Node{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 2511616405755008534L;
+		protected Node right,left;	
+		protected ArrayList[] factors;
+		
+		protected NonPreTerminalNode(){
+			factors = new ArrayList[GF_ONE+1];
+			for (int i=0;i&lt;GF_ONE+1;i++)
+				factors[i]=new ArrayList();
+			if (rebuild){
+				left = new DynamicNode();
+				right = new DynamicNode();
+				left.nSeg=new NodeSegmentation();
+				right.nSeg=new NodeSegmentation();
+			} else {
+				left = new StaticNode();
+				right = new StaticNode();
+			}
+		}
+		
+		
+		public boolean goRight(Leaf leaf) {
+			return false;
+		}
+		
+		/**
+		 * @return Returns the left.
+		 */
+		public Node getLeft() {
+			return left;
+		}
+
+		/**
+		 * @param left The left to set.
+		 */
+		public void setLeft(Node left) {
+			this.left = left;
+		}
+
+		/**
+		 * @return Returns the right.
+		 */
+		public Node getRight() {
+			return right;
+		}
+
+		/**
+		 * @param right The right to set.
+		 */
+		public void setRight(Node right) {
+			this.right = right;
+		}
+		
+		/**
+		 * precond right and left are PreTerminalNode
+		 * @param list
+		 */
+		public void fillFactors(ArrayList[] list){
+			for (int k = 0; k&lt;GF_ONE;k++){
+				Iterator it = list[k].listIterator();
+				while(it.hasNext()){
+					count++;
+					Leaf leaf = ((Leaf)it.next());
+					add(leaf);
+					if (goRight(leaf)){
+						((PreTerminalNode)right).add(leaf);
+					}
+					else
+						((PreTerminalNode)left).add(leaf);
+				}
+			}
+		}
+		
+		public void add(Leaf leaf){
+			factors[(int) FUtils.bindToRange(Math.round((1d+leaf.gf)*GF_ZERO),0,GF_ONE)].add(leaf);			
+		}
+		
+		public ArrayList[] getLeaves(){
+			return factors;
+		}
+		
+		/* (non-Javadoc)
+		 * @see florent.segmentation.DynamicSegmentation.Node#accept(florent.segmentation.DynamicSegmentation.TreeVisitor)
+		 */
+		public void accept(TreeVisitor v) {
+			v.visitNPTN(this);
+		}
+		
+		public int code(){
+			return -1;
+		}
+
+		public String toString(){
+			return "NonPreTerminal root";
+		}
+		
+	}
+
+	class StaticNonPreTerminalNode extends NonPreTerminalNode{
+		private NonPreTerminalNode node;
+		private double[] factors = new double[GF_ONE+1];
+		
+		public StaticNonPreTerminalNode(NonPreTerminalNode node){
+			this.node = node;
+		}
+		
+		public void addLeaf(Leaf leaf){
+			recorder.setWeight(leaf.getWeigth());
+			recorder.registerVisit(leaf.getGf(),factors);
+		}
+		
+		public void accept(TreeVisitor v) {
+			v.visitSNPTN(this);
+			v.visitNPTN(node);
+		}
+		
+		public int code(){
+			return node.code();
+		}
+		
+	}
+	
+	class DistanceNode extends NonPreTerminalNode {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -3017031763049964074L;
+		protected double distance;
+		
+		public DistanceNode(double distance){
+			this.distance= distance;
+		}
+		
+		public boolean goRight(Leaf leaf){
+			return leaf.getDistance()&gt;distance;
+		}
+
+		/**
+		 * @return Returns the distance.
+		 */
+		public double getDistance() {
+			return distance;
+		}
+		
+		public int code(){
+			return Arrays.binarySearch(ALL_DISTANCE,distance)+ALL_ACCEL.length;
+		}
+		
+		public String toString(){
+			return "Distance:"+distance;
+		}
+		
+	}
+	
+	class AccelNode extends NonPreTerminalNode {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -5774124356484777243L;
+		protected double accel;
+		
+		public AccelNode(double accel){
+			this.accel=accel;
+		}
+		
+		public boolean goRight(Leaf leaf){
+			return leaf.getAccel()&gt;accel;
+		}
+		
+		public double getAccel(){
+			return accel;
+		}
+		
+		public int code(){
+			return Arrays.binarySearch(ALL_ACCEL,accel);
+		}
+		
+		public String toString(){
+			return "Acceleration:"+accel;
+		}
+		
+	}
+	
+	class VelNode extends NonPreTerminalNode {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 943213232679268372L;
+		protected double velocity;
+		
+		public VelNode(double velocity){
+			this.velocity=velocity;
+		}
+		
+		public boolean goRight(Leaf leaf){
+			return leaf.getVelocity()&gt;velocity;
+		}
+		
+		public double getVelocity(){
+			return velocity;
+		}
+		
+		public int code(){
+			return Arrays.binarySearch(ALL_VEL,velocity)+ALL_ACCEL.length+ALL_DISTANCE.length+ALL_VEL.length+ALL_POWER.length+ALL_TIME.length;
+		}
+		
+		public String toString(){
+			return "Velocity:"+velocity;
+		}
+		
+	}
+	
+	class LatvelNode extends NonPreTerminalNode {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 2699104696000932491L;
+		protected double latvel;
+		
+		public LatvelNode(double latvel){
+			this.latvel=latvel;
+		}
+		
+		public boolean goRight(Leaf leaf){
+			return leaf.getLatvel()&gt;latvel;
+		}
+		
+		public double getLatvel(){
+			return latvel;
+		}
+		
+		public int code(){
+			return Arrays.binarySearch(ALL_VEL,latvel)+ALL_ACCEL.length+ALL_DISTANCE.length;
+		}
+		
+		public String toString(){
+			return "Lateral Velocity:"+latvel;
+		}
+		
+	}	
+	
+	class MoveTimeNode extends NonPreTerminalNode {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -403423486376627154L;
+		protected double move;
+		
+		public MoveTimeNode(double move){
+			this.move=move;
+		}
+		
+		public boolean goRight(Leaf leaf){
+			return leaf.getMoveTime()&gt;move;
+		}
+		
+		public double getMoveTime(){
+			return move;
+		}
+		
+		public int code(){
+			return Arrays.binarySearch(ALL_TIME,move)+ALL_ACCEL.length+ALL_DISTANCE.length+ALL_VEL.length+ALL_POWER.length;
+		}
+		
+		public String toString(){
+			return "Move Time:"+move;
+		}
+		
+	}
+
+	class PowerNode extends NonPreTerminalNode {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -4244374812884848001L;
+		protected double power;
+		
+		public PowerNode(double power){
+			this.power=power;
+		}
+		
+		public boolean goRight(Leaf leaf){
+			return leaf.getFirePower()&gt;power/50d;
+		}
+		
+		public double getPower(){
+			return power;
+		}
+		
+		public int code(){
+			return Arrays.binarySearch(ALL_POWER,power)+ALL_ACCEL.length+ALL_DISTANCE.length+ALL_VEL.length;
+		}
+		
+		public String toString(){
+			return "Power:"+power;
+		}
+	}
+
+	class WallNode extends NonPreTerminalNode {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -2695158178698601457L;
+		protected double wall;
+		
+		public WallNode(double wall){
+			this.wall= wall;
+		}
+		
+		public boolean goRight(Leaf leaf){
+			return leaf.getWallIndex()&gt;wall;
+		}
+		
+		public double getWall(){
+			return wall;
+		}
+		
+		public int code(){
+			return Arrays.binarySearch(ALL_WALL,wall)+ALL_ACCEL.length+ALL_DISTANCE.length+ALL_VEL.length+ALL_POWER.length+ALL_TIME.length+ALL_VEL.length;
+		}
+		
+		public String toString(){
+			return "Wall:"+wall;
+		}
+		
+	}
+	
+	class WallReverseNode extends NonPreTerminalNode {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -2695158178698601457L;
+		protected double wall;
+		
+		public WallReverseNode(double wall){
+			this.wall= wall;
+		}
+		
+		public boolean goRight(Leaf leaf){
+			return leaf.getWallIndex()&gt;wall;
+		}
+		
+		public double getWall(){
+			return wall;
+		}
+		public int code(){
+			return Arrays.binarySearch(ALL_WALL_REVERSE,wall)+ALL_ACCEL.length+ALL_DISTANCE.length+ALL_VEL.length+ALL_POWER.length+ALL_TIME.length+ALL_VEL.length+ALL_WALL.length;
+		}
+		
+		public String toString(){
+			return "Wall Reverse:"+wall;
+		}
+		
+	}
+	
+	abstract class PreTerminalNode extends Node{
+		/**
+		 * 
+		 */
+		protected Leaf leaf;
+		protected boolean done = false;
+		
+
+		
+		public boolean isDone(){
+			return done;
+		}
+		
+		/**
+		 * @param leaf The leaf to set.
+		 */
+		public void setLeaf(Leaf leaf) {
+			this.leaf = leaf;
+		}
+
+		public abstract void add(Leaf leaf);
+		
+		public abstract int getPeak();
+		
+
+		public void fillFactors(ArrayList[] list){
+			for (int k = 0; k&lt;GF_ONE;k++){
+				Iterator it = list[k].listIterator();
+				while(it.hasNext()){
+					add((Leaf)it.next());
+				}
+			}
+		}
+
+
+		/* (non-Javadoc)
+		 * @see florent.segmentation.DynamicSegmentation.Node#accept(florent.segmentation.DynamicSegmentation.TreeVisitor)
+		 */
+		public void accept(TreeVisitor v) {
+			v.visitPTN(this);
+		}
+		
+		
+	}
+	class StaticNode extends PreTerminalNode{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -8584356499226512475L;
+
+		private double[] factors;
+		
+		public StaticNode(){
+			factors = new double[GF_ONE+1];
+			if (verbose) System.out.println("new static node");
+		}
+		
+		public void add(Leaf leaf) {
+			recorder.setWeight(leaf.getWeigth());
+			recorder.registerVisit(leaf.getGf(),factors);			
+		}
+
+
+		public int getPeak(){
+	        int bestGF = (int)(GF_ZERO*(6d/5d));
+	        double bestVal = 0;
+	        int halfWidth = (int)Math.floor(Math.atan(18d/leaf.distance)*GF_ONE);
+	        for (int gf = GF_ONE; gf &gt; 0; gf--){
+	            double tmp = 0;
+	       //     for (int i = Math.max(1, gf-halfWidth); i &lt;= Math.min(gf+halfWidth, GF_ONE); i++){
+	                tmp += factors[gf];
+	                if (tmp &gt; bestVal){
+	                    bestGF = gf;
+	                    bestVal = tmp;
+	                }
+	        //    }
+	        }
+			return bestGF;
+		}
+	}
+	
+	class DynamicNode extends PreTerminalNode implements Runnable{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -3948835283424191222L;
+		/**
+		 * 
+		 */
+
+		private ArrayList[] factors;
+		private Leaf leaf;
+		private boolean done = false;
+		private boolean accelDone=false,velDone=false,latvelDone=false,distanceDone=false,powerDone=false,wallDone=false,moveDone=false,wallReverseDone=false;
+		private double minAccel1 = Double.POSITIVE_INFINITY,minVel1 = Double.POSITIVE_INFINITY, minLatvel1 = Double.POSITIVE_INFINITY, minDistance1 = Double.POSITIVE_INFINITY, minPower1 = Double.POSITIVE_INFINITY, minWall1 = Double.POSITIVE_INFINITY, minMove1 = Double.POSITIVE_INFINITY, minWallReverse1 = Double.POSITIVE_INFINITY;
+		private double maxAccel1 = Double.NEGATIVE_INFINITY,maxVel1 = Double.NEGATIVE_INFINITY, maxLatvel1 = Double.NEGATIVE_INFINITY, maxDistance1 = Double.NEGATIVE_INFINITY, maxPower1 = Double.NEGATIVE_INFINITY, maxWall1 = Double.NEGATIVE_INFINITY, maxMove1 = Double.NEGATIVE_INFINITY, maxWallReverse1 = Double.NEGATIVE_INFINITY;
+		
+		public DynamicNode(){
+			factors = new ArrayList[GF_ONE+1];
+			for (int i=0;i&lt;=GF_ONE;i++)
+				factors[i]=new ArrayList();
+		}
+
+		public DynamicNode(ArrayList[] factors){
+			this.factors = factors;
+		}
+		
+		public boolean isDone(){
+			return done;
+		}
+		
+		/**
+		 * @param leaf The leaf to set.
+		 */
+		public void setLeaf(Leaf leaf) {
+			this.leaf = leaf;
+		}
+
+		/**
+		 * @return Returns the factors.
+		 */
+		public ArrayList[] getFactors() {
+			return factors;
+		}
+
+
+		public void add(Leaf leaf){
+			//for (int i =0 ;i&lt;leaf.weigth ;i++)
+			try{
+				factors[(int) FUtils.bindToRange((int)(FUtils.bindToRange(leaf.getGf(),-1,1)*GF_ZERO+GF_ZERO),0,GF_ONE)].add(leaf);
+	/*			minAccel1 = Math.min(minAccel1,leaf.accel);
+				minVel1 = Math.min(minVel1,leaf.velocity);
+				minLatvel1 = Math.min(minLatvel1,leaf.latvel);
+				minDistance1 = Math.min(minDistance1,leaf.distance);
+				minWall1 = Math.min(minWall1,leaf.wallIndex);
+				minWallReverse1 = Math.min(minWallReverse1,leaf.wallReverse);
+				minMove1 = Math.min(minMove1,leaf.moveTime);
+				minPower1 = Math.min(minPower1,leaf.firePower);
+				maxAccel1 = Math.max(maxAccel1,leaf.accel);
+				maxVel1 = Math.max(maxVel1,leaf.velocity);
+				maxLatvel1 = Math.max(maxLatvel1,leaf.latvel);
+				maxDistance1 = Math.max(maxDistance1,leaf.distance);
+				maxWall1 = Math.max(maxWall1,leaf.wallIndex);
+				maxWallReverse1 = Math.max(maxWallReverse1,leaf.wallReverse);
+				maxMove1 = Math.max(maxMove1,leaf.moveTime);
+				maxPower1 = Math.max(maxPower1,leaf.firePower);*/
+			//	System.out.println(minAccel1+"/"+maxAccel1+":"+minAccel+"|"+minVel1+"/"+maxVel1);
+				
+			}catch(Exception e){
+				System.out.println("gf"+leaf.getGf()+"\n"+e);
+			}
+		}
+				
+		
+		public int getPeak(){
+/*			int idx = GF_ONE;
+			int val = 0;
+			int best = 0;
+			for (int i=GF_ONE;i&gt;-1;i--){
+				val = 0;
+				if (i==GF_ONE) val = 2*factors[GF_ONE].size()+factors[GF_ONE-1].size();
+				else if (i==0) val = 2*factors[0].size()+factors[1].size();
+				else val=factors[i-1].size()+factors[i].size()+factors[i+1].size();
+				if (val&gt;best){
+					idx = i;
+					best = val;
+				}
+			}
+			*/
+	        int bestGF = (int)(GF_ZERO*(6d/5d));
+	        double bestVal = 0;
+	        int halfWidth = (int)Math.floor(Math.atan(18d/leaf.distance)*GF_ONE);
+	        for (int gf = GF_ONE; gf &gt; 0; gf--){
+	            double tmp = 0;
+	          //  for (int i = Math.max(1, gf-halfWidth); i &lt;= Math.min(gf+halfWidth, GF_ONE); i++){
+	                tmp += factors[gf].size();
+	                if (tmp &gt; bestVal){
+	                    bestGF = gf;
+	                    bestVal = tmp;
+	                }
+	           // }
+	        }
+			return bestGF;
+		}
+		
+		public void run(){
+			split();
+		}
+		
+		public NonPreTerminalNode split(){
+			
+			rebuilding++;	
+			start = false;
+			accelDone=velDone=latvelDone=powerDone=wallDone=moveDone=distanceDone=wallReverseDone = false;
+/*			accelDone = maxAccel1-minAccel1 &lt; minAccel; 
+			velDone = maxVel1- minVel1 &gt; minVel;
+			latvelDone = maxLatvel1- minLatvel1 &lt; minLatvel;
+			powerDone = maxPower1- minPower1 &lt; minPower;
+			wallDone = maxWall1- minWall1 &lt; minWall;
+			wallReverseDone = maxWallReverse1- minWallReverse1 &lt; minWallReverse;
+			distanceDone = maxDistance1- minDistance1 &lt; minDistance;
+			moveDone = maxMove1- minMove1 &lt; minTime;
+*/			if (accelDone&amp;&amp;velDone&amp;&amp;latvelDone&amp;&amp;powerDone&amp;&amp;wallDone&amp;&amp;moveDone&amp;&amp;distanceDone&amp;&amp;wallReverseDone)
+				return null;
+			
+			ArrayList accelArray = accelDone ? null : new ArrayList() ;
+			ArrayList velArray =  velDone ? null : new ArrayList();
+			ArrayList latvelArray =  latvelDone ? null : new ArrayList();
+			ArrayList powerArray =  powerDone ? null : new ArrayList();
+			ArrayList wallArray =  wallDone ? null : new ArrayList();
+			ArrayList wallReverseArray =  wallReverseDone ? null : new ArrayList();
+			ArrayList moveArray =  moveDone ? null : new ArrayList();
+			ArrayList distanceArray =  distanceDone ? null : new ArrayList();
+
+//			Iterator it;			
+			for (int i=0;i&lt;=GF_ONE;i++){
+				//it = factors[i].listIterator();
+				//while(it.hasNext()){				
+				//	Leaf leaf = (Leaf) it.next();
+				for (int j=0;j&lt;factors[i].size();j++){
+					Leaf leaf = (Leaf)factors[i].get(j);
+					if (!accelDone) accelArray.add(new java.lang.Double(leaf.getAccel()));
+					if (!velDone) velArray.add(new java.lang.Double(leaf.getVelocity()));
+					if (!latvelDone) latvelArray.add(new java.lang.Double(leaf.getLatvel()));
+					if (!powerDone) powerArray.add(new java.lang.Double(leaf.getFirePower()));
+					if (!wallDone) wallArray.add(new java.lang.Double(leaf.getWallIndex()));
+					if (!wallReverseDone) wallReverseArray.add(new java.lang.Double(leaf.getWallReverse()));
+					if (!moveDone) moveArray.add(new java.lang.Double(leaf.getMoveTime()));
+					if (!distanceDone) distanceArray.add(new java.lang.Double(leaf.getDistance()));
+				}
+			}
+			
+			if (!accelDone) Collections.sort(accelArray);
+			if (!velDone) Collections.sort(velArray);
+			if (!latvelDone) Collections.sort(latvelArray);
+			if (!powerDone) Collections.sort(powerArray);
+			if (!wallDone) Collections.sort(wallArray);
+			if (!wallReverseDone) Collections.sort(wallReverseArray);
+			if (!moveDone) Collections.sort(moveArray);
+			if (!distanceDone) Collections.sort(distanceArray);
+			
+			
+			//TODO add checks for minimum width of segmentation and an attribute to tell if the node can be split any further
+			accelDone = accelDone ? accelDone : Math.abs(((Double)accelArray.get(0)).doubleValue()-((Double)accelArray.get(accelArray.size()-1)).doubleValue())&lt;minAccel;
+			latvelDone = latvelDone ? latvelDone : Math.abs(((Double)latvelArray.get(0)).doubleValue()-((Double)latvelArray.get(latvelArray.size()-1)).doubleValue())&lt;minLatvel;
+			velDone = velDone ? velDone : Math.abs(((Double)velArray.get(0)).doubleValue()-((Double)velArray.get(velArray.size()-1)).doubleValue())&lt;minVel;
+			distanceDone = distanceDone ? distanceDone : Math.abs(((Double)distanceArray.get(0)).doubleValue()-((Double)distanceArray.get(distanceArray.size()-1)).doubleValue())&lt;minDistance;
+			powerDone = powerDone ? powerDone : Math.abs(((Double)powerArray.get(0)).doubleValue()-((Double)powerArray.get(powerArray.size()-1)).doubleValue())&lt;minPower;
+			moveDone = moveDone ? moveDone : Math.abs(((Double)moveArray.get(0)).doubleValue()-((Double)moveArray.get(moveArray.size()-1)).doubleValue())&lt;minTime;
+			wallDone = wallDone ? wallDone : Math.abs(((Double)wallArray.get(0)).doubleValue()-((Double)wallArray.get(wallArray.size()-1)).doubleValue())&lt;minWall;
+			wallReverseDone = wallReverseDone ? wallReverseDone : Math.abs(((Double)wallReverseArray.get(0)).doubleValue()-((Double)wallReverseArray.get(wallReverseArray.size()-1)).doubleValue())&lt;minWallReverse;
+
+			if (accelDone&amp;&amp;velDone&amp;&amp;latvelDone&amp;&amp;powerDone&amp;&amp;wallDone&amp;&amp;moveDone&amp;&amp;distanceDone&amp;&amp;wallReverseDone)
+				return null;
+			
+			double accelMean =accelDone ? -1000 : FUtils.closestBorder(ALL_ACCEL,((java.lang.Double)(accelArray.get(accelArray.size()/2))).doubleValue());
+			double velMean =velDone ? -1000 :FUtils.closestBorder(ALL_VEL,((java.lang.Double)(velArray.get(velArray.size()/2))).doubleValue());
+			double latvelMean =latvelDone ? -1000 :FUtils.closestBorder(ALL_VEL,((java.lang.Double)(latvelArray.get(latvelArray.size()/2))).doubleValue());
+			double powerMean =powerDone ? -1000 :FUtils.closestBorder(ALL_POWER,((java.lang.Double)(powerArray.get(powerArray.size()/2))).doubleValue());
+			double wallMean =wallDone ? -1000 :FUtils.closestBorder(ALL_WALL,((java.lang.Double)(wallArray.get(wallArray.size()/2))).doubleValue());
+			double wallReverseMean =wallReverseDone ? -1000 :FUtils.closestBorder(ALL_WALL_REVERSE,((java.lang.Double)(wallReverseArray.get(wallReverseArray.size()/2))).doubleValue());
+			double moveMean =moveDone ? -1000 :FUtils.closestBorder(ALL_TIME,((java.lang.Double)(moveArray.get(moveArray.size()/2))).doubleValue());
+			double distanceMean =distanceDone ? -1000 :FUtils.closestBorder(ALL_DISTANCE,((java.lang.Double)(distanceArray.get(distanceArray.size()/2))).doubleValue());
+			
+
+			
+
+
+			AccelNode accelNode = accelDone ? null :new AccelNode(accelMean);
+			MoveTimeNode moveNode = moveDone ? null : new MoveTimeNode(moveMean);
+			VelNode velNode = velDone ? null : new VelNode(velMean);
+			LatvelNode latvelNode = latvelDone ? null : new LatvelNode(latvelMean);
+			PowerNode powerNode = powerDone ? null : new PowerNode(powerMean);
+			WallNode wallNode = wallDone ? null : new WallNode(wallMean);
+			WallReverseNode wallReverseNode = wallReverseDone ? null : new WallReverseNode(wallReverseMean);
+			DistanceNode distanceNode = distanceDone ? null : new DistanceNode(distanceMean);
+
+			if (!accelDone) accelNode.fillFactors(factors);
+			if (!moveDone) moveNode.fillFactors(factors);
+			if (!velDone) velNode.fillFactors(factors);
+			if (!latvelDone) latvelNode.fillFactors(factors);
+			if (!powerDone) powerNode.fillFactors(factors);
+			if (!wallDone) wallNode.fillFactors(factors);
+			if (!wallReverseDone) wallReverseNode.fillFactors(factors);
+			if (!distanceDone) distanceNode.fillFactors(factors);
+						
+			double[] factorsCount = getFactorsCount();
+			double accel =accelDone || FUtils.isConstant(accelArray)  ? 0 : getGain(accelNode,factorsCount);
+			double vel =  velDone || FUtils.isConstant(velArray) ? 0 :getGain(velNode,factorsCount);
+			double latvel = latvelDone || FUtils.isConstant(latvelArray)  ? 0 : getGain(latvelNode,factorsCount);
+			double dist = distanceDone || FUtils.isConstant(distanceArray) ? 0 : getGain(distanceNode,factorsCount);
+			double power = powerDone || FUtils.isConstant(powerArray) ? 0 : getGain(powerNode,factorsCount);
+			double move = moveDone || FUtils.isConstant(moveArray) ? 0 : getGain(moveNode,factorsCount);
+			double wall = wallDone || FUtils.isConstant(wallArray)  ? 0 : getGain(wallNode,factorsCount);
+			double wallReverse = wallReverseDone || FUtils.isConstant(wallReverseArray)  ? 0 : getGain(wallReverseNode,factorsCount);
+			
+			NonPreTerminalNode best;// = new NonDynamicNode(maxAccel,maxDistance,maxFirePower,maxLatVel,maxMoveTime,maxVelocity,maxWallIndex,minAccel,minDistance,minFirePower,minLatVel,minMoveTime,minVelocity,minWallIndex);
+			
+			if (verbose) System.out.print("Splitting on acceleration...");
+			best = accelNode;
+			if (best != null){
+				best.nSeg=new NodeSegmentation(nSeg);
+				best.nSeg.decisionValue=accelMean;
+				best.left.nSeg=new NodeSegmentation(nSeg);
+				best.right.nSeg=new NodeSegmentation(nSeg);
+				best.left.nSeg.highAcceleration=accelMean;
+				best.right.nSeg.lowAcceleration=accelMean;
+			}
+			double bestGain = accel;
+			if (vel&gt;=bestGain || best == null){
+				if (verbose) System.out.print("NO/velocity...");
+				best=velNode;
+				bestGain = vel;
+				if (best != null){
+					best.nSeg=new NodeSegmentation(nSeg);
+					best.nSeg.decisionValue=velMean;
+					best.left.nSeg=new NodeSegmentation(nSeg);
+					best.right.nSeg=new NodeSegmentation(nSeg);
+					best.left.nSeg.highVelocity=velMean;
+					best.right.nSeg.lowVelocity=velMean;
+				}
+			}
+			if (latvel&gt;=bestGain || best == null){
+				if (verbose) System.out.print("NO/lateral velocity...");
+				best=latvelNode;
+				bestGain = latvel;
+				if (best != null){
+					best.nSeg=new NodeSegmentation(nSeg);
+					best.nSeg.decisionValue=latvelMean;
+					best.left.nSeg=new NodeSegmentation(nSeg);
+					best.right.nSeg=new NodeSegmentation(nSeg);
+					best.left.nSeg.highLateralVelocity=latvelMean;
+					best.right.nSeg.lowLateralVelocity=latvelMean;
+				}
+			}
+			if (dist&gt;=bestGain || best == null){
+				if (verbose) System.out.print("NO/distance...");
+				best=distanceNode;
+				bestGain = dist;
+				if (best != null){
+					best.nSeg=new NodeSegmentation(nSeg);
+					best.nSeg.decisionValue=distanceMean;
+					best.left.nSeg=new NodeSegmentation(nSeg);
+					best.right.nSeg=new NodeSegmentation(nSeg);
+					best.left.nSeg.highDistance=distanceMean;
+					best.right.nSeg.lowDistance=distanceMean;
+				}
+			}
+			if (power&gt;=bestGain || best == null){
+				if (verbose) System.out.print("NO/fire power...");
+				best=powerNode;
+				bestGain = power;
+				if (best != null){
+					best.nSeg=new NodeSegmentation(nSeg);
+					best.nSeg.decisionValue=powerMean;
+					best.left.nSeg=new NodeSegmentation(nSeg);
+					best.right.nSeg=new NodeSegmentation(nSeg);
+					best.left.nSeg.highPower=powerMean;
+					best.right.nSeg.lowPower=powerMean;
+				}
+			}
+			if (move&gt;=bestGain || best == null){
+				if (verbose) System.out.print("NO/move time...");				
+				best=moveNode;
+				bestGain = move;
+				if (best != null){
+					best.nSeg=new NodeSegmentation(nSeg);
+					best.nSeg.decisionValue=moveMean;
+					best.left.nSeg=new NodeSegmentation(nSeg);
+					best.right.nSeg=new NodeSegmentation(nSeg);
+					best.left.nSeg.highTime=moveMean;
+					best.right.nSeg.lowTime=moveMean;
+				}
+			}
+			if (wall&gt;=bestGain || best == null){
+				if (verbose) System.out.print("NO/wall...");
+				best=wallNode;
+				bestGain = wall;
+				if (best != null){
+					best.nSeg=new NodeSegmentation(nSeg);
+					best.nSeg.decisionValue=wallMean;
+					best.left.nSeg=new NodeSegmentation(nSeg);
+					best.right.nSeg=new NodeSegmentation(nSeg);
+					best.left.nSeg.highWall=wallMean;
+					best.right.nSeg.lowWall=wallMean;
+				}
+			}
+			if (wallReverse&gt;=bestGain || best == null){
+				if (verbose) System.out.print("NO/wall reverse...");
+				best=wallReverseNode;
+				bestGain = wallReverse;
+				if (best != null){
+					best.nSeg=new NodeSegmentation(nSeg);
+					best.nSeg.decisionValue=wallReverseMean;
+					best.left.nSeg=new NodeSegmentation(nSeg);
+					best.right.nSeg=new NodeSegmentation(nSeg);
+					best.left.nSeg.highWallReverse=wallReverseMean;
+					best.right.nSeg.lowWallReverse=wallReverseMean;
+				}
+			}
+			if (verbose) System.out.println("YES");
+			if (bestGain == 0)
+				return null;
+			Node son;
+			try{
+			if (best.getRight().getCount()&gt;getRealThreshold() &amp;&amp; (son=((DynamicNode) best.getRight()).split()) != null)
+				best.setRight(son);
+			if (best.getLeft().getCount()&gt;getRealThreshold() &amp;&amp; (son=((DynamicNode) best.getLeft()).split())!=null)
+				best.setLeft(son);
+			} catch (Exception e){System.out.println(e+"\n"+bestGain+best+"\n"+accel+accelDone+accelNode+"\n"+vel+velDone+velNode+"\n"+latvel+latvelDone+latvelNode+"\n"+dist+distanceDone+distanceNode+"\n"+power+powerDone+powerNode+"\n"+wall+wallDone+wallNode+"\n"+move+moveDone+moveNode);}
+			rebuilding--;			
+			return best;
+		}
+		/**
+		 * precond node kids are DynamicNodes
+		 * @param node
+		 * @param factorsCount
+		 * @return
+		 */
+		private double getGain(NonPreTerminalNode node,double[] factorsCount){
+			DynamicNode right,left;
+			right = (DynamicNode) node.getRight();
+			left = (DynamicNode) node.getLeft();
+			double[][] seg = new double[2][GF_ONE+1];
+			seg[0] = right.getFactorsCount();
+			seg[1] = left.getFactorsCount();
+			return FUtils.informationGain(factorsCount,seg);
+		}
+		
+		public int getCount(){
+			double[] factorsCount = getFactorsCount();
+			int val = 0;
+			for (int i=0;i&lt;GF_ONE+1;i++)
+				val += factorsCount[i];
+			return val;
+		}
+		
+		public double[] getFactorsCount(){
+			double[] factorsCount= new double[GF_ONE+1];
+			for (int i=0;i&lt;GF_ONE+1;i++){
+				factorsCount[i] = factors[i].size();
+			}
+			return factorsCount;
+		}
+		
+
+
+		/* (non-Javadoc)
+		 * @see florent.segmentation.DynamicSegmentation.Node#accept(florent.segmentation.DynamicSegmentation.TreeVisitor)
+		 */
+		public void accept(TreeVisitor v) {
+			v.visitPTN(this);
+		}
+		
+		
+	}
+	
+	class Leaf implements Serializable{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 8764985023831432109L;
+		private double accel;
+		private double velocity;
+		private double latvel;
+		private double distance;
+		private double firePower;
+		private double wallIndex;
+		private double gf;
+		private double moveTime;
+		private double weigth;
+		private double wallReverse;
+		
+
+		/**
+		 * @param accel
+		 * @param distance
+		 * @param power
+		 * @param gf
+		 * @param latvel
+		 * @param time
+		 * @param velocity
+		 * @param index
+		 */
+		public Leaf(double accel, double distance, double power, double gf, double latvel, double time, double velocity, double index, double wallReverse) {			
+			this.accel =  accel;
+			this.distance =  distance;
+			firePower =  power;
+			this.gf = gf;
+			this.latvel =  Math.abs(latvel);
+			moveTime = time;
+			this.velocity =  Math.abs(velocity);
+			wallIndex =  index;
+			this.wallReverse=wallReverse;
+			
+		}
+
+
+		/**
+		 * @return Returns the accel.
+		 */
+		public double getAccel() {
+			return accel;
+		}
+
+
+		/**
+		 * @return Returns the distance.
+		 */
+		public double getDistance() {
+			return distance;
+		}
+
+		/**
+		 * @return Returns the firePower.
+		 */
+		public double getFirePower() {
+			return firePower;
+		}
+
+		/**
+		 * @return Returns the latvel.
+		 */
+		public double getLatvel() {
+			return latvel;
+		}
+
+
+
+		/**
+		 * @return Returns the velocity.
+		 */
+		public double getVelocity() {
+			return velocity;
+		}
+
+		/**
+		 * @return Returns the wallIndex.
+		 */
+		public double getWallIndex() {
+			return wallIndex;
+		}
+
+
+		/**
+		 * @return Returns the gf.
+		 */
+		public double getGf() {
+			return gf;
+		}
+
+
+		/**
+		 * @return Returns the moveTime.
+		 */
+		public double getMoveTime() {
+			return moveTime;
+		}
+
+
+		public double getWeigth() {
+			return weigth;
+		}
+
+
+		public void setWeigth(double weigth) {
+			this.weigth = weigth;
+		}
+
+
+		public double getWallReverse() {
+			return wallReverse;
+		}
+
+
+		
+		
+	}
+	
+	
+	//visitor pattern for the tree
+	abstract class TreeVisitor extends Condition{
+		public void visitNPTN(NonPreTerminalNode node){if (verbose)System.out.println(node.left+"|"+node.right);};
+		public void visitSNPTN(StaticNonPreTerminalNode node){};
+		public void visitPTN(PreTerminalNode node){if (verbose)System.out.println("counts:"+node.getCount());};
+		public boolean test(){
+			return false;
+		}
+	}
+	
+	//implements the visit based on a leaf
+	class TreeLeafVisitor extends TreeVisitor{
+		protected Leaf leaf;
+		protected NonPreTerminalNode father;
+		protected boolean done =false;
+		protected PreTerminalNode theNode;
+		
+		public TreeLeafVisitor(Leaf leaf){
+			this.leaf=leaf;
+		}
+		
+		public void visitNPTN(NonPreTerminalNode node){
+			father = node;
+			if (node.goRight(leaf)){
+				node.getRight().accept(this);
+			}
+			else
+				node.getLeft().accept(this);
+		};
+		public void visitPTN(PreTerminalNode node){
+			theNode = node;
+			node.setLeaf(leaf);
+			done = true;
+		};
+		
+		public PreTerminalNode getNode(){
+			while (!done){};
+			return theNode;
+		}
+	}
+	
+	class TreeAddVisitor extends TreeLeafVisitor implements Runnable{
+		private boolean running = false;
+		
+		public TreeAddVisitor(Leaf leaf){
+			super(leaf);
+		}
+		
+		public boolean test(){
+			if (!running){
+				running=true;
+				root.accept(this);				
+				me.removeCustomEvent(this);
+			}
+			return false;
+		}
+		
+		public void run(){
+			running=true;
+			root.accept(this);
+			running=false;
+		}
+		
+		public void visitNPTN(NonPreTerminalNode node){
+			father = node;
+			node.setCount((int) (node.getCount()+leaf.weigth));
+			node.add(leaf);
+			if (node.goRight(leaf)){
+				node.getRight().accept(this);
+			}
+			else
+				node.getLeft().accept(this);
+		};
+		
+		public void visitSNTPN(StaticNonPreTerminalNode node){
+			node.addLeaf(leaf);
+		}
+		
+		public void visitPTN(PreTerminalNode node){
+			if (dynamicTree)
+				for (int i =0 ;i&lt;leaf.weigth ;i++)
+					node.add(leaf);
+			else
+				node.add(leaf);
+			node.setCount((int) (node.getCount()+leaf.weigth));
+			if (rebuild&amp;&amp;dynamicTree){
+			//System.out.println(node.getCount());
+			if (node.getCount() &gt; getRealThreshold()){
+				Node son = ((DynamicNode) node).split();
+				if (node.equals(father.getRight())&amp;&amp; son!= null){
+					father.setRight(son);
+					if (verbose) {
+						double[] factorsCount = ((DynamicNode) node).getFactorsCount();
+						System.out.println("split"+((PreTerminalNode)((NonPreTerminalNode)(father.getRight())).getRight()).getCount()+"/"+((PreTerminalNode)((NonPreTerminalNode)(father.getRight())).getLeft()).getCount());
+						double[] factorsCountRight = ((DynamicNode) ((NonPreTerminalNode)(father.getRight())).getRight()).getFactorsCount();
+						double[] factorsCountLeft = ((DynamicNode)((NonPreTerminalNode)(father.getRight())).getLeft()).getFactorsCount();
+						System.out.print(FUtils.doubleArrayToString(factorsCount)+"\n"+FUtils.doubleArrayToString(factorsCountLeft)+"|"+FUtils.doubleArrayToString(factorsCountRight));
+					}
+				}
+				else if (son!=null){
+					father.setLeft(son);
+					if (verbose){
+						double[] factorsCount = ((DynamicNode) node).getFactorsCount();
+						System.out.println("split"+((PreTerminalNode)((NonPreTerminalNode)(father.getLeft())).getRight()).getCount()+"/"+((PreTerminalNode)((NonPreTerminalNode)(father.getLeft())).getLeft()).getCount());
+						double[] factorsCountRight = ((DynamicNode)((NonPreTerminalNode)(father.getLeft())).getRight()).getFactorsCount();
+						double[] factorsCountLeft = ((DynamicNode)((NonPreTerminalNode)(father.getLeft())).getLeft()).getFactorsCount();
+						System.out.print(FUtils.doubleArrayToString(factorsCount)+"\n"+FUtils.doubleArrayToString(factorsCountLeft)+"\n"+FUtils.doubleArrayToString(factorsCountRight)+"\n");
+					}
+					
+				}
+			}
+			}
+				
+		};
+	}
+	
+	//TODO modify to allow static tree &amp;&amp; use NPTN node as well as PTN node
+	class TreePeakVisitor extends TreeLeafVisitor{
+		private int idx;
+		private ArrayList factorsList = new ArrayList(15);
+		
+		public TreePeakVisitor(Leaf leaf){
+			super(leaf);
+		}
+		
+		public void visitSNTPN(StaticNonPreTerminalNode node){
+			factorsList.add(node.factors);
+		}
+		
+		public void visitPTN(PreTerminalNode node){
+			node.setLeaf(leaf);
+			if (!dynamicTree)
+				factorsList.add(((StaticNode)node).factors);
+			idx = node.getPeak();			
+		};
+		
+		public int getPeak(){
+			if (!dynamicTree){
+				double[][] buffers = (double[][]) factorsList.toArray();
+			//	for (int i=0;i&lt;factorsList.size();i++){
+			//		buffers[i]=(double[])factorsList.get(i);
+			//	}
+				double bestVal=0;
+				idx = (int) (GF_ZERO*(6d/5d));
+				for (int gf = 0;gf&lt;GF_ONE;gf++){
+					double tmp = 0;
+					for (int i=0;i&lt;factorsList.size();i++){
+						tmp += 1000*buffers[i][gf]/Math.max(1,buffers[i][0]);
+					}
+					if (tmp&gt;bestVal){
+						bestVal = tmp;
+						idx = gf;
+					}
+
+				}
+			}
+			
+			return idx;
+		}
+	}
+
+	
+	class TreeCleanerVisitor extends TreeVisitor{
+		NonPreTerminalNode father;
+		int nptn,ptn;
+		
+		public void visitNPTN(NonPreTerminalNode node){
+			nptn++;
+			father = node;
+			if (node.getRight()!=null)
+				node.getRight().accept(this);
+			if (node.getLeft()!=null)
+				node.getLeft().accept(this);
+		};
+		public void visitPTN(PreTerminalNode node){
+			ptn++;
+			if (node.equals(father.getRight())){
+				father.setRight(null);
+			} else {
+				father.setLeft(null);
+			}
+		};
+	}
+	
+	class TreePopulatorVisitor extends TreeVisitor{		
+		public void visitNPTN(NonPreTerminalNode node){
+			if (node.getRight() == null)
+				node.setRight(new StaticNode());
+			else 
+				node.getRight().accept(this);
+			if (node.getLeft() == null)
+				node.setLeft(new StaticNode());
+			else 
+				node.getLeft().accept(this);
+		};
+		
+	}
+	/**
+	 * 
+	 * @author Florent Lacroute
+	 * called only when reubild == true
+	 */
+	class TreeRebuildVisitor extends TreeVisitor implements Runnable{
+		private NonPreTerminalNode father;
+		private int MAX_REBUILD = weightedLeaves&lt;10000 ? weightedLeaves+1: threshold*16;
+		private int MIN_REBUILD = getRealThreshold();
+		private boolean running = false;
+		private double startTime;		
+		private int heigth = 0;
+		
+		public void run(){
+			startTime=me.getTime();
+			running = true;
+			rebuildingInProcess=true;
+			root.accept(this);
+			rebuildingInProcess=false;
+			bufferingEntry = false;
+	/*		for (int i = 0; i&lt;buffer.size();i++){
+				TreeAddVisitor v = new TreeAddVisitor((Leaf)buffer.get(i));				
+				v.test();
+			}
+			buffer.clear();		*/	
+			running = false;			
+			if (!RUMBLE) 
+				System.out.println("tree rebuilded:"+(me.getTime()-startTime)+"|maxRebuild"+MAX_REBUILD+"|weightedLeaves:"+weightedLeaves);
+
+			if (saveToFile || showSegementation){
+				TreeSegmentationVisitor v = new TreeSegmentationVisitor();
+				v.seg = new Segmentation();
+				root.accept(v);
+				System.out.println(v.seg.toString());
+				if (saveToFile){
+					try{
+						File file = me.getDataFile("seg");
+						RobocodeFileOutputStream o = new RobocodeFileOutputStream(file);
+						OutputStreamWriter out = new OutputStreamWriter(o);
+						out.write(v.ptnSeg);	
+						out.flush();
+						out.close();
+					} catch(Exception e){System.out.println(e);};
+				}
+			}
+		}
+		
+		public boolean test(){
+			if (!running){
+				running=true;
+				root.accept(this);
+				me.removeCustomEvent(this);
+			}
+			return false;
+		}
+		
+		public void visitNPTN(NonPreTerminalNode node){
+			if (quitThread)
+				return;
+			if ((node.getCount()&lt;MAX_REBUILD)&amp;&amp;(node.getCount()&gt;MIN_REBUILD)){
+				if (verbose) System.out.println("rebuild");				
+			//	TreeCollectorVisitor v = new TreeCollectorVisitor(node);
+			//	node.accept(v);
+			//	while (!v.isDone()){}
+			//	DynamicNode newNode = new DynamicNode(v.getLeaves());
+				DynamicNode newNode = new DynamicNode(node.getLeaves());
+				newNode.nSeg = new NodeSegmentation(node.nSeg);
+				if (verbose) System.out.println(FUtils.doubleArrayToString(newNode.getFactorsCount()));
+				Node theNode= newNode.split();				
+				if (theNode == null)
+					return;
+				if (father == null){
+					node.setRight(new DynamicNode());
+					node.setLeft(theNode);
+				}
+				else if (father.getRight().equals(node)){
+					father.setRight(theNode);
+				//	((NonPreTerminalNode) father.getRight()).getRight().accept(this);
+				//	((NonPreTerminalNode) father.getRight()).getLeft().accept(this);
+				}
+				else if (father.getLeft().equals(node)){
+					father.setLeft(theNode);
+				//	((NonPreTerminalNode) father.getLeft()).getRight().accept(this);
+				//	((NonPreTerminalNode) father.getLeft()).getLeft().accept(this);
+				}
+				
+
+			}
+			else {
+				father = node;
+				if (!RUMBLE){
+					String space = "";
+					for (int i=0;i&lt;heigth;i++)
+						space +="  ";
+					System.out.println("No more rebuild for "+space+node.toString());
+				}
+				heigth++;
+				if (node.getRight() != null)
+					node.getRight().accept(this);
+				if (node.getLeft() != null)
+					node.getLeft().accept(this);
+				heigth--;
+			}
+		};
+		public void visitPTN(PreTerminalNode node) {
+			try {
+				visitPTN((DynamicNode)node);			
+			} catch (Exception e){
+				System.out.println("inappropriate use of TreeRebuildVisitor"+e);
+			}
+		}
+		public void visitPTN(DynamicNode node){
+			Node son ;
+			if (node.getCount() &gt; threshold &amp;&amp; (son=node.split()) != null){
+				
+				if (node.equals(father.getRight())){
+					father.setRight(son);
+			
+				}
+				else if (son!=null){
+					father.setLeft(son);					
+				}
+			}
+		};
+		
+	}
+	/**
+	 * used only on dynamic trees
+	 */
+	class TreeCollectorVisitor extends TreeVisitor{
+		private ArrayList[] leaves;
+		private boolean done = false;
+		private int count;
+		
+		public TreeCollectorVisitor(Node node){
+			leaves = new ArrayList[GF_ONE+1];
+			count = node.getCount();
+			for (int i=0;i&lt;GF_ONE+1;i++){
+				leaves[i] = new ArrayList();
+			}
+		}
+		
+		public boolean isDone(){
+			return done;
+		}
+		
+		/**
+		 * @return Returns the leaves.
+		 */
+		public ArrayList[] getLeaves() {
+			return leaves;
+		}
+
+		public void visitNPTN(NonPreTerminalNode node){			
+			if (node.getRight() != null)
+				node.getRight().accept(this);
+			if (node.getLeft() != null)
+				node.getLeft().accept(this);
+
+		};
+		
+		public void visitPTN(PreTerminalNode node) {
+			try {
+				visitPTN((DynamicNode)node);			
+			} catch (Exception e){
+				System.out.println("inappropriate use of TreeCollectorVisitor"+e);
+			}
+		}
+
+		public void visitPTN(DynamicNode node){
+			ArrayList[] all = node.getFactors();
+			int size = 0;
+			for (int i=0;i&lt;all.length;i++){			
+				leaves[i].addAll(all[i]);
+				size += leaves[i].size(); 				
+			}
+			if (count==size)
+				done =true;
+		};
+	}
+	
+	public class TreeSegmentationVisitor extends TreeVisitor{
+
+		Segmentation seg;
+		String ptnSeg = "";
+	
+		public TreeSegmentationVisitor(){
+
+		}
+		
+		public void visitPTN(PreTerminalNode node) {
+			ptnSeg += node.nSeg.toString()+"\n";
+		}
+
+		public void visitNPTN(NonPreTerminalNode node) {
+			
+			if (node.getLeft() != null)
+				node.getLeft().accept(this);
+			
+			if (node instanceof DistanceNode) {
+				DistanceNode node2 = (DistanceNode) node;
+				seg.addDistance(node2.getDistance());
+				
+			}
+			if (node instanceof PowerNode) {
+				PowerNode node2 = (PowerNode) node;
+				seg.addPower(node2.getPower());
+				
+			}
+			if (node instanceof WallNode) {
+				WallNode node2 = (WallNode) node;
+				seg.addWall(node2.getWall());
+				
+			}
+
+			if (node instanceof WallReverseNode) {
+				WallReverseNode node2 = (WallReverseNode) node;
+				seg.addWallReverse(node2.getWall());
+				
+			}
+			if (node instanceof VelNode) {
+				VelNode node2 = (VelNode) node;
+				seg.addVelocity(node2.getVelocity());
+				
+			}
+			if (node instanceof LatvelNode) {
+				LatvelNode node2 = (LatvelNode) node;
+				seg.addLateralVelocity(node2.getLatvel());
+				
+			}
+			if (node instanceof MoveTimeNode) {
+				MoveTimeNode node2 = (MoveTimeNode) node;
+				seg.addMove(node2.getMoveTime());
+				
+			}
+			if (node instanceof AccelNode) {
+				AccelNode node2 = (AccelNode) node;
+				seg.addAcceleration(node2.getAccel());
+				
+			}
+			
+			if (node.getRight() != null)
+				node.getRight().accept(this);
+
+		}
+		
+	}
+	
+	public class TreeSaveSymbolicVisitor extends TreeVisitor{
+		SymbolicTree right,left,theNode;
+		
+		public void visitNPTN(NonPreTerminalNode node){
+			theNode = new SymbolicTree(node.code());
+			if (node.left!=null){
+				TreeSaveSymbolicVisitor visitorLeft = new TreeSaveSymbolicVisitor();			
+				node.left.accept(visitorLeft);
+				theNode.setLeft(visitorLeft.theNode);
+			}
+			if (node.right!=null){
+				TreeSaveSymbolicVisitor visitorRight = new TreeSaveSymbolicVisitor();
+				node.right.accept(visitorRight);
+				theNode.setRight(visitorRight.theNode);
+			}
+		}
+
+		public SymbolicTree getTheNode() {
+			return theNode;
+		};
+
+	}
+	
+	
+
+
+
+}
+
+class SymbolicTree implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7361823116265138539L;
+	private byte code;
+	private SymbolicTree left,right;
+	
+	public SymbolicTree(int code){
+		this.code=(byte)code;
+	}
+
+	public SymbolicTree getLeft() {
+		return left;
+	}
+
+	public void setLeft(SymbolicTree left) {
+		this.left = left;
+	}
+
+	public SymbolicTree getRight() {
+		return right;
+	}
+
+	public void setRight(SymbolicTree right) {
+		this.right = right;
+	}
+
+	public int getCode() {
+		return code;
+	}
+	
+	public void accept(TreeRestoreSymbolicVisitor v){
+		v.visit(this);
+	}
+	
+	//TODO test this
+	public class TreeRestoreSymbolicVisitor implements Runnable{		
+		
+		private SegmentationTree.Node root;
+		private SegmentationTree.NonPreTerminalNode newNode;
+		private SegmentationTree fullTree;
+		private SymbolicTree tree;
+		
+	//	public TreeRestoreSymbolicVisitor(){};
+		
+		public TreeRestoreSymbolicVisitor(SymbolicTree tree,SegmentationTree.Node root,SegmentationTree fullTree){
+			this.tree=tree;
+			this.root = root;
+			this.fullTree=fullTree;
+		}
+		
+		public void visit(SymbolicTree node){
+			//TODO add a decorator pattern to Node to allow to register hits at different heights in the tree
+			newNode = fullTree.getNode(node.code);//fullTree.new StaticNonPreTerminalNode(fullTree.getNode(node.code));
+			System.out.println(newNode.toString()+"|symbolic code:"+node.code);
+			if (node.left != null){
+				TreeRestoreSymbolicVisitor v = new TreeRestoreSymbolicVisitor(null,null,fullTree);
+				node.left.accept(v);
+				newNode.left=v.newNode;
+			} else {
+				newNode.left = fullTree.new StaticNode();
+			}
+			if (node.right!=null){
+				TreeRestoreSymbolicVisitor v = new TreeRestoreSymbolicVisitor(null,null,fullTree);
+				node.right.accept(v);
+				newNode.right=v.newNode;
+			} else {
+				newNode.right = fullTree.new StaticNode();
+			}
+		}
+
+		public void run() {
+			tree.accept(this);
+			fullTree.setRoot(newNode);
+			
+		}
+
+
+	}
+}
+
+
+class Segmentation {
+	HashSet wallSlices = new HashSet(),wallReverseSlices = new HashSet(),distanceSlices = new HashSet(),velocitySlices = new HashSet(),lateralVelocitySlices = new HashSet(),accelerationSlices = new HashSet(),powerSlices = new HashSet(),moveTimeSlices = new HashSet(); 
+	
+	public void addDistance(double distance){
+		distanceSlices.add(new Double(distance));
+	}
+	
+	public void addWall(double wall){
+		wallSlices.add(new Double(wall));
+	}
+	public void addWallReverse(double wall){
+		wallReverseSlices.add(new Double(wall));
+	}	
+	public void addVelocity(double velocity){
+		velocitySlices.add(new Double(velocity));
+	}
+	public void addLateralVelocity(double lateralVelocity){
+		lateralVelocitySlices.add(new Double(lateralVelocity));
+	}
+	
+	public void addAcceleration(double acceleration){
+		accelerationSlices.add(new Double(acceleration));
+	}
+	
+	public void addPower(double power){
+		powerSlices.add(new Double(power));
+	}
+	
+	public void addMove(double move){
+		moveTimeSlices.add(new Double(move));
+	}
+	
+	public String toString(){
+		String res = "wall";
+		for (Iterator it = wallSlices.iterator(); it.hasNext();){
+			res += ":"+((Double)it.next()).toString();
+		}
+		res+="\nwall reverse";
+		for (Iterator it = wallReverseSlices.iterator(); it.hasNext();){
+			res += ":"+((Double)it.next()).toString();
+		}
+		res+="\ndistance";
+		for (Iterator it = distanceSlices.iterator(); it.hasNext();){
+			res += ":"+((Double)it.next()).toString();
+		}
+		res+="\naccel";
+		for (Iterator it = accelerationSlices.iterator(); it.hasNext();){
+			res += ":"+((Double)it.next()).toString();
+		}
+		res+="\nvel";
+		for (Iterator it = velocitySlices.iterator(); it.hasNext();){
+			res += ":"+((Double)it.next()).toString();
+		}
+		res+="\nlatvel";
+		for (Iterator it = lateralVelocitySlices.iterator(); it.hasNext();){
+			res += ":"+((Double)it.next()).toString();
+		}
+		res+="\npower";
+		for (Iterator it = powerSlices.iterator(); it.hasNext();){
+			res += ":"+((Double)it.next()).toString();
+		}
+		res+="\nmoveTime";
+		for (Iterator it = moveTimeSlices.iterator(); it.hasNext();){
+			res += ":"+((Double)it.next()).toString();
+		}
+		return res;
+	}
+}
+
+class NodeSegmentation{
+	double lowDistance, highDistance;
+	double lowVelocity, highVelocity;
+	double lowLateralVelocity, highLateralVelocity;
+	double lowAcceleration, highAcceleration;
+	double lowPower,highPower;
+	double lowTime,highTime;
+	double lowWall,highWall;
+	double lowWallReverse,highWallReverse;
+	
+	double decisionValue;
+	
+	public NodeSegmentation(){
+		lowDistance=lowVelocity=lowLateralVelocity=lowAcceleration=lowPower=lowTime=lowWall=lowWallReverse=Double.NEGATIVE_INFINITY;
+		highDistance=highVelocity=highLateralVelocity=highAcceleration=highPower=highTime=highWall=highWallReverse=Double.POSITIVE_INFINITY;
+	};
+	
+	public NodeSegmentation(NodeSegmentation seg){
+		lowDistance=seg.lowDistance;
+		highDistance=seg.highDistance;
+		lowVelocity=seg.lowVelocity;
+		highVelocity=seg.highVelocity;
+		lowAcceleration=seg.lowAcceleration;
+		highAcceleration=seg.highAcceleration;
+		lowLateralVelocity=seg.lowLateralVelocity;
+		highLateralVelocity=seg.highLateralVelocity;
+		lowPower=seg.lowPower;
+		highPower=seg.highPower;
+		lowTime=seg.lowTime;
+		highTime=seg.highTime;
+		lowWall=seg.lowWall;
+		highWall=seg.highWall;
+		lowWallReverse=seg.lowWallReverse;
+		highWallReverse=seg.highWallReverse;
+		
+		decisionValue=seg.decisionValue;
+		
+	}
+	
+	public String toString(){
+		String res = "";
+		res += "["+lowDistance+":"+highDistance+"]";
+		res += "["+lowVelocity+":"+highVelocity+"]";
+		res += "["+lowLateralVelocity+":"+highLateralVelocity+"]";
+		res += "["+lowAcceleration+":"+highAcceleration+"]";
+		res += "["+lowPower+":"+highPower+"]";
+		res += "["+lowTime+":"+highTime+"]";
+		res += "["+lowWall+":"+highWall+"]";
+		res += "["+lowWallReverse+":"+highWallReverse+"]";
+		return res;
+	}
+	
+}
+
+
+</pre>
+<p>
+<H3>Comments &amp; Questions</H3>
+
+<p>
+I haven't looked at the code in any real concept analysis but it seems like a nice system. Some code details that might or might not have an impact:
+<UL >
+<li>Your threading flags are not thread safe. Meaning that you can very well have threads running at the same time that you are trying to prevent from running at the same time. They are <code>boolean</code>s so the writes and reads to them are atomic but the differents threads views of them are not synchronized.
+<li>Busy wait. You have at least one busy wait in there (<code>while(addingInProcess){};
+</code>). It uses valuable CPU time and could have a big effect on RR@Home performance (time wise) if it isn't a very rare case. Regardless it is bad practice.
+<li>Thread priorities, now this is a complicated matter, possbly having different effects on different platforms too. Could also cause starvation and combined with the busy wait above could have some nasty side effects. It could also have changed the busy wait to be less of a problem (but far from solving it). I would not make use of the thread priorities myself. Rather some systme of only doing the lower priority stuff if some condition is met. Such as: "Haven't run the rebuild in a while/since a certain number of inserts" etc.
+<li>Are nodes and leafs thread safe somehow? It is harder to see directly from the code as it might be on a higher level. The buffer <code>Vector</code> is thread safe but that only helps when modifying the actual buffer (add and remove).
+<li>A very minor thing, the following can be replaced with one statement:
+</UL>
+<p>
+<pre>
+Leaf leaf = (Leaf)buffer.get(0);
+buffer.remove(leaf);
+</pre>
+<p>
+Could instead be written as:
+<pre>
+Leaf leaf = (Leaf)buffer.remove(0);
+</pre>
+<p>
+<p>
+-- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+<p>
+Thanks for the feedback.
+<UL >
+<li>I will synchronise those flags for the next version.
+<li>I knew about the busy wait, but it shouldn't be a problem the way I use the tree it was just a precaution. I launch the rebuild operation just once at the beginning of the round so there should not be any leaf to add before it starts. The only case where it would happen would be if at the end of the previous round one leaf was remaining in the buffer.
+<li>Thread priorities, well I was not that keen on using them either. I put them in so I would not have to restart the adding thread (<code>treeThread</code>), this allowed me to have a single thread running for it. The priorities prevent the thread from using too much CPU time when there is nothing to do. I guess I could restart the thread when I have a new entry and the thread is not running. The <code>rebuildThread</code> is just run once at the beginning of each round, thread priority here was just used to make the tree available sooner.
+<li>Nodes and leaf are not thread safe. But there is only two threads operating on the tree either <code>treeThread</code> or <code>rebuildThread</code>, I made sure with the flags that only one them operate on the tree, I dont want to put flags inside the tree structure. The buffer is used by the main thread of the robot to add leaves in it and <code>treeThread</code> remove them.
+<li>Ok I'll change that.
+</UL>
+<p>
+-- <a href="robowiki?Florent" class=wikipagelink>Florent</a>
+<p>
+Ahh you are just rebuilding once in every round, that explains it.
+Regarding the flags, it would work if you made them volatile if everyone was using a java 5 VM or later. Now I'm afraid you indeed have to synchronize :( -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Toad" class=wikipagelink>Toad</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Toad/SegmentationTreeCode" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Toad/SegmentationTreeCode">View other revisions</a><br>Last edited October 24, 2005 22:08 EST by <a href="robowiki?Pulsar" title="ID 5517 from c-3d5672d5.016-41-67626721.cust.bredbandsbolaget.se">Pulsar</a> <a href="robowiki?action=browse&diff=1&id=Toad/SegmentationTreeCode">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

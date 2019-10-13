@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>HaikuGoTo - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Haiku, Go, To'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=HaikuGoTo">HaikuGoTo</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>This is a haiku version of <a href="robowiki?Movement/GoToBot" class=wikipagelink>Movement/GoToBot</a>, except it doesn't fire (i needed 2 more lines for that).  I think it works, and is only 4 lines, but please check for me. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+<pre>
+package tango.haiku;
+import robocode.*;
+import java.awt.geom.*;
+
+public class HaikuGoTo extends AdvancedRobot
+{
+	double ran, ran2;
+	public void run() {
+		setTurnGunRight(Double.POSITIVE_INFINITY);
+		while(true) {
+			turnRight(Math.toDegrees(Math.atan2(((ran=Math.random())*(getBattleFieldWidth()-36)+18)-getX(),((ran2=Math.random())*(getBattleFieldHeight()-36)+18)-getY()))-getHeading());
+			ahead(Point2D.distance((ran*(getBattleFieldWidth()-36)+18),(ran2*(getBattleFieldHeight()-36)+18),getX(),getY()));
+		}
+	}
+
+}
+</pre>
+<p>
+Actually, since you're already spinning your gun, you only need one more line to fire.  But I think this maybe can be done with firing in a <a href="robowiki?HaikuBot" class=wikipagelink>HaikuBot</a>, maybe I'll give that a shot sometime... -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+<pre>
+package tango.haiku;
+import robocode.*;
+import java.awt.geom.*;
+
+public class HaikuGoTo extends AdvancedRobot
+{
+	double ran, ran2;
+	public void run() {
+		setTurnGunRight(Double.POSITIVE_INFINITY);
+		while(true) {
+			turnRight(((fireBullet(3) == null)?1:1) * Math.toDegrees(Math.atan2(((ran=Math.random())*(getBattleFieldWidth()-36)+18)-getX(),((ran2=Math.random())*(getBattleFieldHeight()-36)+18)-getY()))-getHeading());
+			ahead(Point2D.distance((ran*(getBattleFieldWidth()-36)+18),(ran2*(getBattleFieldHeight()-36)+18),getX(),getY()));
+		}
+	}
+
+}
+</pre>
+<p>
+This one aims and has a line to spare if I understand haiku correctly:
+<p>
+<pre>
+package tango.haiku;
+import robocode.*;
+import java.awt.geom.*;
+
+public class HaikuGoTo extends AdvancedRobot
+{
+	double ran, ran2;
+	public void run() {
+		turnGunRight(Double.POSITIVE_INFINITY);
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e)
+	{
+		turnRight(((fireBullet(3) == null)?1:1) * Math.toDegrees(Math.atan2(((ran=Math.random())*(getBattleFieldWidth()-36)+18)-getX(),((ran2=Math.random())*(getBattleFieldHeight()-36)+18)-getY()))-getHeading());
+		ahead(Point2D.distance((ran*(getBattleFieldWidth()-36)+18),(ran2*(getBattleFieldHeight()-36)+18),getX(),getY()));
+	}
+}
+</pre>
+<p>
+With firing! I think, I didn't actually test this. Of course this doesn't aim, but a rewrite to move some things into a scanned method and maybe use an infinite radar could probably handle that, I'm not sure how many lines would turn out. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+What I posted originally didn't work. Does now. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+lol, well, that's creative...  Would anybody enter if I made a 4-line bot division in the <a href="robowiki?RobocodeLittleLeague" class=wikipagelink>RobocodeLittleLeague</a>? -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I might be interested, depends on how the competition is, no competition doesn't make for a fun league. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I'm guessing it will be hard to beat HaikuWalls<a href="robowiki?action=edit&id=HaikuWalls" class=wikipageedit>?</a> in melee (although <a href="robowiki?HaikuCircleBot" class=wikipagelink>HaikuCircleBot</a> doesn't do bad) and there are a few decent 1-on-1 haiku's, as well (<a href="robowiki?HaikuChicken" class=wikipagelink>HaikuChicken</a> beats <a href="robowiki?NanoSatan" class=wikipagelink>NanoSatan</a> sometimes, I think). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+It does, impressive. I need to rewrite his matcher so it stops taking forever to pick up that a target has stopped (frequent wide firing when it stops seems to be where it's picking up most of it's points). If a new nano contest does start up I'll seriously consider revamping <a href="robowiki?NanoSatan" class=wikipagelink>NanoSatan</a> to be competitive and working on some Haikus, I'm certainly not making much progress on my <a href="robowiki?MegaBot" class=wikipagelink>MegaBot</a>. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I realised i only needed one more line when i woke up this morning.  The line i had removed was set<a href="robowiki?AdjustGunForRobotTurn" class=wikipagelink>AdjustGunForRobotTurn</a>(true), which although nice, is not actually needed.  You're latest is only 3 lines if i'm counting right (do declarations count as lines?), so you could have the fire() separate, and it would look much better:
+<p>
+<pre>
+package tango.haiku;
+import robocode.*;
+import java.awt.geom.*;
+
+public class HaikuGoTo extends AdvancedRobot
+{
+	double ran, ran2;
+	public void run() {
+		turnGunRight(Double.POSITIVE_INFINITY);
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e)
+	{
+		fire(3);
+                turnRight((Math.toDegrees(Math.atan2(((ran=Math.random())*(getBattleFieldWidth()-36)+18)-getX(),((ran2=Math.random())*(getBattleFieldHeight()-36)+18)-getY()))-getHeading());
+		ahead(Point2D.distance((ran*(getBattleFieldWidth()-36)+18),(ran2*(getBattleFieldHeight()-36)+18),getX(),getY()));
+	}
+}
+</pre>
+<p>
+-- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+PS.  I would be up for a haiku division in a league.  It would be more about skill than having too much time on your hands, which the megabots are a bit. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Indeed, I left the latest with the in-line fire because I wanted to show that the line remained for expansion. As for variable declarations, that's a very good question, I was just logging on to ask it myself. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I think that trick with putting fire in another line is just cheating.  It's not making a bot that is only 4 lines, it's making a bot that is 5 lines and pretending it's only 4. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I believe declarations do count, so you'd probably have to put the inline fire back in.  There will be another small-bot competition soon, I'm working out the details right now.  If I do add a Haiku-league, it will be dissimilar to the <a href="robowiki?FemtoBot" class=wikipagelink>FemtoBot</a> experiment (Mike will want to kill me...) in that it won't be about making the smallest codesize for an effective robot (which is how <a href="robowiki?HaikuBots" class=wikipagelink>HaikuBots</a> started), but rather a league where every competitor is limited to 4 Semicolons, not including imports/package declarations (that also means that all will have to be open source, hope that doesn't bother anyone). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Open source is unavoidable.  If we are doing it by semi colons, then i'm perfectly happy to accept Kuuran's inline fire() and suchlike.  If we were going on "poetic purity", then i wouldn't, but as long as everyone has the same rules, it is fair.  Will you be doing separate 1v1 and melee haiku leagues?  What will be the rules regarding originality?  There are a lot of haiku bots open source already, that people could use.  Yours for instance. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+There would be seperate melee and haiku leagues.  I suppose the hard part in doing this would be getting everyone to give unique names to their Haiku's (I.e.- not having 3 <a href="robowiki?HaikuTracker" class=wikipagelink>HaikuTracker</a>s and 2 HaikuRamfire<a href="robowiki?action=edit&id=HaikuRamfire" class=wikipageedit>?</a>'s). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I guess the majority concensus has been that they do count, but if you're running the league I'm going to ask you to consider these ambiguous cases: A variable declaration. A variable declaration with initialization. Are they the same? Do both count as lines? -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+My response - be as creative as you can, and use as few semicolons as possible.  I'll leave it at that, full knowing that some <a href="robowiki?HaikuBots" class=wikipagelink>HaikuBots</a> may be <a href="robowiki?MicroBots" class=wikipagelink>MicroBots</a> by codesize.  It would probably make sense to attempt to declare every variable you use (if you use variables) on one line.  I don't much care about assignment, global variables are going to be assigned zero or null values anyways. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I say we go purely on number of semi-colons.  In the whole thing, including declaratations, imports, etc.  So, if we allow 4 lines or active code, 1 line of declaration, and 2 imports/packages that is a maximum of 7 semi-colons.  You can use the semi-colons in different places if you want, basically meaning perceptual bots get 5 lines, instead of 4. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=HaikuGoTo" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=HaikuGoTo">View other revisions</a><br>Last edited May 5, 2006 6:24 EST by <a href="robowiki?Florent" title="ID 6624 from 156.187.103-84.rev.gaoland.net">Florent</a> <a href="robowiki?action=browse&diff=1&id=HaikuGoTo">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

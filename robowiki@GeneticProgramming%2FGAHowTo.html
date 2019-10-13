@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>GeneticProgramming/GAHowTo - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Genetic, Programming, GAHow, To'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/GAHowTo">GeneticProgramming/GAHowTo</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?GeneticProgramming" class=wikipagelink>GeneticProgramming</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>If you want to evolve robocode tanks, there are several things that you need to do.  This page discusses only issues that are specific to Robocode.  You might want to search for a tutorial on Genetic Algorithms first.  
+<p>
+<h3>Decide on a Representation</h3>
+Genetic algorithms can treat any arbitrary string as a genome.  But you have to decide what the string means, i.e. how to interpret each genome.  The simplest solution would be to treat each genome as Java code, and try to compile and run it.  But the overwhelming majority of programs won't even compile, so this probably won't work.  Instead, I created my own robot control language, called TABLEREX.  In Java, I wrote a robocode controller that works by interpreting TABLEREX programs.  To test a given TABLEREX program, I write it to a file in the controller's directory, and then the controller reads the file at the beginning of the battle.  TABLEREX is encoded as a fixed-length binary string, which is particularly well-suited for genetic algorithms.  There are no ungrammatical TABLEREX programs; every program can be interpreted.  You can see the details of the TABLEREX representation in my paper[<a rel="nofollow" href="http://www.ai.mit.edu/people/jacobe/research/robocode/genetic_tanks.pdf">[1]</a>], and if you want I can email you my Java TABLEREX interpreter.
+<p>
+<h3>Evaluation</h3>
+The most obvious way to evaluate your tank controllers is in combat against other tanks.  This is what I did for my project, but I am not completely convinced that it is the best approach.  If you are going to do this, there are a couple of things that you need to decide on.  Most of the issues here boil down to one consideration: time.  Even on a fast computer, doing this stuff takes a long, long time, and you often can't do the best, "fairest" evaluation because it would just take too long.
+<p>
+<h4>Starting Positions</h4>
+Robocode battles seem to be very sensitive to starting position.  An inferior robot can sometimes win if it gets lucky and starts out facing its adversary's back.  If you are going to allow randomized starting positions, you will need a lot of battles to get a fair evaluation -- perhaps 25 or more.  But having a lot of battles slows things down considerably.  
+<p>
+To avoid this, I tried a couple of things.  I decompiled the Robocode engine and modified it so that I could set the starting positions manually.  This is not hard to do, and it appears to be within the rules of the license, so long as you don't redistribute the modified code.  I tried evaluating robots with a single, "fair" starting position: each robot starts out in a corner, facing 90 degrees away from its adversary.  This had the desired result of speeding things up, but I found that my evolved robots could not win from any other starting position.  I also tried using randomized starting positions, but I kept the positions constant for each generation.  That is, each robot was evaluated using the same set of randomized starting positions.  This seemed more fair than using a different set of starting positions for each individual, and it appeared to make a big difference in how well evolution worked.
+<p>
+<h4>Adversaries</h4>
+The first thing I tried was having my evolved robots fight each other.  This did not work at all: my robots just didn't do anything.  Might have just been a stupid mistake on my part, and I think it's worth trying some more.  Anyway, instead, I evaluated my tanks by having them fight some of the "initial" bots that ship with Robocode, and also some bots from the Robocode repository.  Here again there is a decision: do you evaluate against a single adversary, or against multiple adversaries.  When I used only one adversary, my evolved tanks were generally incapable of beating any other adversaries.  But using multiple adversaries slowed the process down considerably, especially when combined with multiple starting positions.
+<p>
+<hr noshade class=wikiline size=1>
+That's funny.. i had the same idea for my bot. Although i wanted to give them a few good starting-genetic-strings to speed up their evolution.
+AND,of course, saving the genetic-strings (in my case, int-arrays) seperated for every robot.
+the idea behind it was : computers are stupid. they can't build up cool and clever strategies like antigrav-movement or guessfactor targeting by evolving, or it would take some thousand years... so why not give them a set of good dna, and let the bots tweak their dna a bit here and there until they get the best out of it ? <a href="robowiki?HoD" class=wikipagelink>HoD</a>
+<p>
+I guess that would depend on what your aim was, if you want to test GAs then you don't want to have any involvement, if you want a good bot then you should probably sart with some kind of modular robot and pick moduals and constants at random.  Or, i guess you could just run something like this for a couple of years and see what comes out... -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<hr noshade class=wikiline size=1>
+Unfortunately, this "run for a couple of years" thing doesn't actually work.  Unlike real evolution, GA will almost always reach a plateau eventually, and simply refuse to develop any further.
+I'd be really interested to see somebody experiment with pre-seeding the population as you suggest. -- <a href="robowiki?Jacob" class=wikipagelink>Jacob</a>
+<p>
+Allow me to pull this into a bit more of a philosophical debate; why do you say "unlike real evolution"? Do you believe real evolution cannot plateau and refuse to develop further? -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+Hey it's me again. I've half read through your paper, and the concept seems extremely interesting. However, the TableRex<a href="robowiki?action=edit&id=TableRex" class=wikipageedit>?</a> language itself seems fairly limited. A 'plateau' is inevitable with such a seemingly limited design. From your knowledge and interest in programming games, you've undoubtedly played <a href="robowiki?CoreWars" class=wikipagelink>CoreWars</a>, as TableRex<a href="robowiki?action=edit&id=TableRex" class=wikipageedit>?</a> seems to greatly ressemble <a href="robowiki?RedCode" class=wikipagelink>RedCode</a>; so why not build an evolutionary language closer to <a href="robowiki?RedCode" class=wikipagelink>RedCode</a>? Fixed-length genomes, seperate genomes for events, and a limiting style of directly linear code execution seem to be the downfalls of the evolutionary code.
+<p>
+Why not use a language for interpreting the genome that almost exactly matches that of <a href="robowiki?RedCode" class=wikipagelink>RedCode</a>? <a href="robowiki?CoreWars" class=wikipagelink>CoreWars</a> evolvers such as YACE et al have managed to design warriors so powerful that they are undefeatable by handcrafted programs; a similar system in Robocode could crush the competition.
+<p>
+I'd be willing to write a robot to interpret a more <a href="robowiki?RedCode" class=wikipagelink>RedCode</a>-style genome with many more features if someone could help with the evolver. I've never taken any classes on <a href="robowiki?GeneticProgramming" class=wikipagelink>GeneticProgramming</a> (or any programming classes for that matter), but I have some good ideas for a highly powerful genome interpreter. I'll see if I can write up a page on a new type of genome interpreter soon to see if someone wants to help with an evolver. If anyone is interested in continuing work on genetic programming in Robocode, let me know!
+<p>
+-- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+<hr noshade class=wikiline size=1>
+I'm working on it too. Check here: <a rel="nofollow" href="http://hvilela.blogspot.com/2009/02/robocode-and-genetic-algorithms.html">http://hvilela.blogspot.com/2009/02/robocode-and-genetic-algorithms.html</a> -- <a href="robowiki?HVilela" class=wikipagelink>HVilela</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?GeneticProgramming" class=wikipagelink>GeneticProgramming</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=GeneticProgramming/GAHowTo" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=GeneticProgramming/GAHowTo">View other revisions</a><br>Last edited February 28, 2009 19:25 EST by 201-11-215-198.pltce701.dsl.brasiltelecom.net.br <a href="robowiki?action=browse&diff=1&id=GeneticProgramming/GAHowTo">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>ScruchiPu/Tests - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Scruchi, Pu, Tests'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Tests">ScruchiPu/Tests</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Since <a href="robowiki?NeuralTargeting" class=wikipagelink>NeuralTargeting</a> is such an interesting (from both a competetive and an academic point of view) subject I thought that now when we have a NN robot with an active developer we should experiment some with it.
+<hr noshade class=wikiline size=1>
+<H4><a href="robowiki?Gouldingi" class=wikipagelink>Gouldingi</a> 100 rounds tests</H4>
+
+My first test will be against a really simple robot - <a href="robowiki?Gouldingi" class=wikipagelink>Gouldingi</a> because I have tried to make it move quite randomly and as such <a href="robowiki?NeuralTargeting" class=wikipagelink>NeuralTargeting</a> should have a hard time against it. But there is obviously non-random behaviour in the movement since some bots (most notably <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> can hit it with 25%+ hit rate. Could SchruchiPu<a href="robowiki?action=edit&id=SchruchiPu" class=wikipageedit>?</a>'s <a href="robowiki?NeuralNetwork" class=wikipagelink>NeuralNetwork</a> find the weaknesses? How long would it take? This would be easier if <a href="robowiki?Albert" class=wikipagelink>Albert</a> logged <a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a>'s hit rate and maybe some more info, but I will just use the scores for now. Gouldingi is a good test case also because it is not a very learning bot. And it certainly does not save any data between matches. Also SchruchiPu<a href="robowiki?action=edit&id=SchruchiPu" class=wikipageedit>?</a> is one <strong>slow</strong> robot. At least on my JRE 1.3.1.
+<p>
+Enough talking. The results after the first 100 rounds are:
+<pre>
+ Bot              Rounds won      Score
+ Gouldingi               74        9558
+ ScruchiPu               26        3445
+</pre>
+<p>
+Hmmm, <a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a> must have  run into some error this match. Gouldingi won 100-0... I didn't watch the game so I don't know, no stack traces in <a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a>'s output though. I'll check it up...
+<p>
+... <a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a> has stopped moving. Maybe something goes wrong when it tries to load the saved data? I'll pick these tests up again when <a href="robowiki?Albert" class=wikipagelink>Albert</a> has fixed the bug.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It works fine in my computer. Could you post the error? I found some bugs in the NRLIBJ routines to save and retrieve data and corrected them, but may be there is some more bug. 
+<p>
+BTW, i ran some tests. There are the results:
+<p>
+first 50 (score, bullet damage, 1rst, 2nds): 
+<p>
+<a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a> 3453 1569 30 22
+Gouldingi 3166 1641 24 28
+<p>
+2nd 50:
+<p>
+<a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a> 3133 1501 26 24
+Gouldingi 3268 1479 26 26
+<p>
+3rd 50: 
+<p>
+<a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a> 3722 1652 32 19
+Gouldingi 2925 1599 19 31
+<p>
+-- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Too bad you don't get the same behaviour. There's no error I can post. It's just that <a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a> behaves really funny. Stand still most of the time, radar not pointing at Gouldingi, only shooting occasionally. Could it be that I use Java 1.3.1? Strange effect if so, since it seems to be related to reading saved data. (I only guess that since it works if I remove Goudlingi's zip-file.) A bit strange as well that <a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a> is competing better against Gouldingi in your tests than in mine (assuming I have removed the zip-file of course). It suggests that <a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a> has other problems on 1.3.1 Java, doesn't it? Are you using Gouldingi 1.1? It has slightly improved movement from 1.0. Though it is a bit strange that a simple bot like Goudlingi should beat a robot of yours...
+<p>
+I have downloaded the <a href="robowiki?NRLIBJ" class=wikipagelink>NRLIBJ</a> and tried the T2ex example. It took a while before I could get it to compile and then it took a while before I could make it to run as well. I had to qualify all nrlibj things with the package name. Is it the same for you? What kind of problems did you fix with loading and saving files? Could you share the fix? Since the nrlibj interface is so simple I think I will try  making a <a href="robowiki?NeuralTargeting" class=wikipagelink>NeuralTargeting</a> gun as well.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It was against 1.0 :-) If <a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a> behaves in a funny way, then it is beacuse it has some problem when reading the neural network. I don't know if it is related with 1.3 (may be someone else with 1.3 could check?). 
+Why do you find strange that a simple bot can beat it? It's released as an experimental bot, and it is not ready for competition. Also the network topology has a lot influence on the results, and also the variables you feed into the network (pe. my last prototype feeds also the fire time and it seems it improves aiming significantly). 
+<p>
+About the fixes: I had to change all the package names, change the node creation library to avoid using reflect class (I was having problems with Robocode security manager), change the write routines to avoid numbers like 0.9123445E-1 (because the tokenizer was not able to read the "E") and comment some lines somewhere else (when reading) because they were creating strange results... I'w post the corrected source codes ASAP (it will be tomorrow, because I have them in another computer). -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=ScruchiPu/Tests" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=ScruchiPu/Tests">View other revisions</a><br>Last edited April 6, 2003 17:12 EST by <a href="robowiki?Albert" title="ID 1059 from 235.Red-80-58-32.pooles.rima-tde.net">Albert</a> <a href="robowiki?action=browse&diff=1&id=ScruchiPu/Tests">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

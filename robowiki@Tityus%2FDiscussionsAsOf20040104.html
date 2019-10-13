@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Tityus/DiscussionsAsOf20040104 - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Tityus, Discussions, As, Of20040104'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/DiscussionsAsOf20040104">Tityus/DiscussionsAsOf20040104</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>In the scanned robot event you have :
+<pre>
+        setTurnGunRightRadians(Utils.normalRelativeAngle(
+            enemyAbsoluteBearing + maxEscapeAngle(bulletVelocity(enemyFirePower)) *
+		sign(deltaBearing) * mostVisitedFactor() - getGunHeadingRadians()));
+</pre>
+should that be bulletPower instead of enemyFirePower<a href="robowiki?action=edit&id=FirePower" class=wikipageedit>?</a>?  Was wondering why it wouldn't beat <a href="robowiki?DuelistMicro" class=wikipagelink>DuelistMicro</a>... :)
+<p>
+- Jamougha
+<p>
+Phew! Thanks for telling me. I often have problems against the small Duelists, but this bug might be giving it an unfair advantage. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Now a new Tityus is out there. I added it to the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>@Home again now that it might have a chance to enter the top-30. I'm curious <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>, how come you tested Tityus? It has been dormant for some while now.
+<p>
+<a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>, if you read this, please update Tityus before the next season of <a href="robowiki?RobocodeLittleLeague" class=wikipagelink>RobocodeLittleLeague</a>. It might be version 0.5.1 or 0.5.2 then, if I find something to tweak. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I've been coding away from home, and rather than re-write my old gun I decided to borrow one for the duration; Tityus' is almost identical to mine, though much more elegantly written.  I was quite shocked when it did worse than head-on targeting :) but I fixed and changed a few things.  
+Congrats on the #8 re-entry, btw!  - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+You are entirely welcome to borrow Tityus gun. Just remember it's <a href="robowiki?RWPCL" class=wikipagelink>RWPCL</a> so you must show what you changed. =) Again thanks for helping it recover from that ugly bug. I was very, very frustrated when T started to fall down the rankings and I couldn't fix it. Seeing the company in the top-10 in mini #8 isn't too bad! -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Thanks, I may just keep using it and release the bot as open-source in a few days.  Right now it barely beats 0.5.1 over a thousand rounds, and my movement is definitely not as good, so I figure you can get Tityus up a few more places yet. :-D  - <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+I'm sure <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> gun can be improved. It's not exactly the best gun around. =) But I'm not sure <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> beating T 0.5.1 over 1000 rounds really shows this. It depends on what you aim at. Tityus gun is opted for <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>@Home short battles. Then your high segmentation might slow learning a bit. But it pays in long battles for sure. And even if T 0.5.1 movement is better than <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>'s (which I am not sure it is) it might not be better against T's gun. None the less I will look at <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>'s gun and see what I could consider to tweak in my gun. This is the beauty of open sourcing a bot. I would never have found that bug without your help and the gun will surely evolve faster with two or more people using it than with just me. I hereby promise never to close the source of any of my bots again. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yeah, open source is great.  Saved me a good few days. ;-)
+I've had problems with over-segmentation in shorter battles too.  For over a week my best gun vs most bots was completely unsegmented!  Now that you're firing a wave every round you have a lot more leeway, though.  Segmenting on whether or not a bot was approaching the walls was a big breakthrough for <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>, do try it in Tityus.  The other segment is a load of junk. :-)
+Hmmm, the nicest thing would be to have oodles of segments and remove most of them depending on how much data is in the bucket.  Unfortunately I don't think I can fit that into a mini, but maybe for <a href="robowiki?Raiko" class=wikipagelink>Raiko</a>'s eventual big brother.  -  <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+<a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> does that segmentation, but it's the first one I take out when I do guess-factor guns in Micros, not because it's not good (it helps against bots like Cigaret if I remember right, it was the segmentation that got me beating Cigaret, which was a couple versions ago of both bots), but because bots don't spend as much time in different segments there. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+That's an interesting observation. Maybe it's that different segmentation is needed? Like wall proximity and such. I'll try such a segmentation in <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> once I have gotten the movement to work. Once you have a basic gun, movement is more important for your performance than targeting. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+A real basic gun may also leave you with glaring weaknesses, but a reasonably segmented guess-factor gun without any coding bugs usually doesn't generally have that problem.  And adding a segment for whether or not the opponent was approaching the wall jumped <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> from 30th to 12th in the ER (in retrospect, I'm surprised it made such a distance - more than half-way to the top). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+For the record. With "basic gun" I meant a "reasonably segmented guess factor gun". I'm not one of those counting GF targeting as "advanced". It's simpler than most other techniques. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<a href="robowiki?Jim" class=wikipagelink>Jim</a>, if you test <a href="robowiki?BlackPearl" class=wikipagelink>BlackPearl</a> .69 against T 0.6.2, remove T's data file on BP first. I accidently packaged it with a saved file from a 1000 round battle against that BP. It was my last test before releasing... Oh, yes, BP won that fight pretty comfortably. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Tityus" class=wikipagelink>Tityus</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Tityus/DiscussionsAsOf20040104" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Tityus/DiscussionsAsOf20040104">View other revisions</a><br>Last edited January 4, 2004 13:15 EST by <a href="robowiki?PEZ" title="ID 1949 from 192.168.0.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=Tityus/DiscussionsAsOf20040104">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

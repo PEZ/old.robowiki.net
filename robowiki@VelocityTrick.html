@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>VelocityTrick - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Velocity, Trick'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=VelocityTrick">VelocityTrick</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>An experiment by <a href="robowiki?Xero" class=wikipagelink>Xero</a> to see if velocity changes messed up guns.
+The code from part of Python's run() method is here. This code is changed from the original Python run method to be more pluggable.
+<PRE >
+ do {
+            doScanner();
+			velocityChange++;
+			if(velocityChange &gt;= 100) {
+				velocityChange = 0;
+				double maxVel=Math.random()*9+3;
+				if(maxVel &gt; 8) {
+					maxVel = 7.49;
+				}
+				out.println("Max velocity:" + maxVel);
+				setMaxVelocity<a href="robowiki?action=edit&id=MaxVelocity" class=wikipageedit>?</a>(maxVel);
+			}
+                        //etc.
+                     while(true);
+</PRE>
+<p>
+<p>
+<p>
+Well, you'll never end up reaching that maxVel &lt; .4 part because the &lt; .5 condition covers that. I've found it a lot better to just do maxVel=Math.random()*12+3; (12 because I've found it better to have the bot spend more time at full speed and 3 because you never set the speed below that in your code.) -- <a href="robowiki?Alcatraz" class=wikipagelink>Alcatraz</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=VelocityTrick" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=VelocityTrick">View other revisions</a><br>Last edited May 3, 2006 21:23 EST by <a href="robowiki?Xero" title="ID 6820 from ACAA0FD2.ipt.aol.com">Xero</a> <a href="robowiki?action=browse&diff=1&id=VelocityTrick">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>GresSuffurd/GresVretter - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Gres, Suffurd, Gres, Vretter'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/GresVretter">GresSuffurd/GresVretter</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?GresSuffurd" class=wikipagelink>GresSuffurd</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?GresSuffurd/GresVretter" class=wikipagelink>GresVretter</a> is the gun of <a href="robowiki?GresSuffurd" class=wikipagelink>GresSuffurd</a>. It starts out as a really really (really?) simple <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> gun, based upon <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>'s <a href="robowiki?GuessFactorTargeting/Tutorial" class=wikipagelink>GuessFactorTargeting Tutorial</a>. It will gradually improve until it is good enough for <a href="robowiki?The2000Club" class=wikipagelink>The2000Club</a>.
+<p>
+<hr noshade class=wikiline size=1>
+<strong>version history</strong> (newest entry on top)
+<p>
+<font size = -1>
+<UL >
+<li> <strong>0.2.6</strong> (20070523) 
+<UL >
+<li> removed decay in gunstats
+<li> removed GF1 protection factor
+</UL>
+<li> <strong>0.2.5</strong> (20070222) 
+<UL >
+<li> changed wallsegmentation from 3 to 5 bins (no - heading within 75 dist - heading 150 - retreat 75 - retreat 150)
+</UL>
+<li> <strong>0.2.4</strong> (20070207) 
+<UL >
+<li> do not fire virtual waves if opponent has not moved yet
+</UL>
+<li> <strong>0.2.3</strong> (20070125) 
+<UL >
+<li> small bugfix weighting non-bullet waves in unsegmented buffer
+<li> introduce some decay in gunstats
+</UL>
+<li> <strong>0.2.2</strong> (20061212) 
+<UL >
+<li> reverted anti-ram behaviour
+</UL>
+<li> <strong>0.2.1</strong> (20061127) 
+<UL >
+<li> adapted energymanagement when enemy is close (anti-ram)
+</UL>
+<li> <strong>0.2.0</strong> (20061116) 
+<UL >
+<li> also firing non-bullet waves with 0.1 weight
+</UL>
+<li> <strong>0.1.5</strong> (20061107) 
+<UL >
+<li> using proper onDeath (by David_Alves) and keep events in line with WeefSuffurd<a href="robowiki?action=edit&id=WeefSuffurd" class=wikipageedit>?</a>
+</UL>
+<li> <strong>0.1.4</strong> (20061007) 
+<UL >
+<li> bugfixing hitted bin detection
+<li> fire HOT and without waves on disabled enemies
+</UL>
+<li> <strong>0.1.3</strong> (20061005) 
+<UL >
+<li> as 0.1.1 plus : record all hitted bins and fire on highest concentration (3-bin wide)
+</UL>
+<li> <strong>0.1.2</strong> (20061001) 
+<UL >
+<li> segmenting on lateral ( 0 - 2.5 - 5.5 - 8) and advancing ( -8 - -4 - 4 - 8) velocity only
+</UL>
+<li> <strong>0.1.1</strong> (200609xx) 
+<UL >
+<li> no changes, just some cosmetical adjustments. Released in the rumble as part of <a href="robowiki?GresSuffurd" class=wikipagelink>GresSuffurd</a> v0.1.0
+</UL>
+<li> <strong>0.1.0</strong> (20060630) 
+<UL >
+<li> added trick for faster learning (quite rudimentary (and probably not effective))
+<li> added <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>' tip about asin(8/bulletvelocity)*constant
+</UL>
+<li> <strong>0.0.7</strong> (20060627) 
+<UL >
+<li> segmenting on acceleration, distance and wallproximity (segments as below)
+</UL>
+<li> <strong>0.0.6</strong> (20060624) 
+<UL >
+<li> segmenting on wallproximity only ( none - heading for wall within 90 pixels - retreating from wall within 90 pixels )
+</UL>
+<li> <strong>0.0.5</strong> (20060622) 
+<UL >
+<li> segmenting on acceleration only ( accell - decell - time &lt; 6 - time &lt; 16 - time &lt; 36 - time &gt;= 36 )
+</UL>
+<li> <strong>0.0.4</strong> (20060618) 
+<UL >
+<li> segmenting on absvelocity only ( 0 - 1.9 - 6.1 - oo )
+</UL>
+<li> <strong>0.0.3</strong> (20060612) 
+<UL >
+<li> segmenting on distance only ( 0-300-450-600-oo )
+</UL>
+<li> <strong>0.0.2</strong> (20060531) 
+<UL >
+<li> unsegmented gun (37 bins), firing only bulletwaves, with one-bin hitdetection
+</UL>
+</UL>
+<p>
+</font>
+<H4><a href="robowiki?RRGunChallenge" class=wikipagelink>RRGunChallenge</a></H4>
+
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <strong>Version</strong> </td><td colspan="0.5"> <strong>RR Rating</strong> </td><td colspan="0.5"> <strong>PL Rating</strong> </td><td colspan="0.5"> <strong>Date</strong> </td><td colspan="0.5"> <strong>Comments</strong></td></TR>
+<TR VALIGN='CENTER' ><td align="center" colspan='0.5'>0.2.0      </td><td align="center" colspan="0.5">1829 (59)    </td><td align="center" colspan="0.5">420-58       </td><td align="left" colspan="0.5"> 20061118 </td><td colspan="0.5"> still 40 points behind topguns</td></TR>
+<TR VALIGN='CENTER' ><td align="center" colspan='0.5'>0.1.0      </td><td align="center" colspan="0.5">1791 (66)    </td><td align="center" colspan="0.5">357-67       </td><td align="left" colspan="0.5"> 20060630 </td><td colspan="0.5"> still very much to do</td></TR>
+<TR VALIGN='CENTER' ><td align="center" colspan='0.5'>0.0.3      </td><td align="center" colspan="0.5">1758 (87)    </td><td align="center" colspan="0.5">348-74       </td><td align="left" colspan="0.5"> 20060621 </td><td colspan="0.5"> Just for reference (close to GrubbmGrbRRGC<a href="robowiki?action=edit&id=GrubbmGrbRRGC" class=wikipageedit>?</a>)</td></TR>
+</TABLE>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<H4><a href="robowiki?TargetingChallenge2K6" class=wikipagelink>TC2K6 500 rounds</a></H4>
+
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <strong>Version</strong> </td><td colspan="0.5"> <strong>BFly</strong> </td><td colspan="0.5"> <strong>CC</strong> </td><td colspan="0.5"> <strong>Chk</strong> </td><td colspan="0.5"> <strong>Cig</strong> </td><td colspan="0.5"> <strong>Cya</strong> </td><td colspan="0.5"> <strong>DM</strong> </td><td colspan="0.5"> <strong>FM</strong> </td><td colspan="0.5"> <strong>Grb</strong> </td><td colspan="0.5"> <strong>RMB</strong> </td><td colspan="0.5"> <strong>Tig</strong> </td><td colspan="0.5"> <strong>Total</strong> </td><td colspan="0.5"> <strong>Seasons</strong></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.2.5 </td><td colspan="0.5"> 97.25 </td><td colspan="0.5"> 59.09 </td><td colspan="0.5"> 80.76 </td><td colspan="0.5"> 80.67 </td><td colspan="0.5"> 71.38 </td><td colspan="0.5"> 93.77 </td><td colspan="0.5"> 91.31 </td><td colspan="0.5"> 88.01 </td><td colspan="0.5"> 86.68 </td><td colspan="0.5"> 74.44 </td><td colspan="0.5"> <strong>82.34</strong> </td><td align="right" colspan="0.5">2</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.1.4 </td><td colspan="0.5"> 96.11 </td><td colspan="0.5"> 48.47 </td><td colspan="0.5"> 70.18 </td><td colspan="0.5"> 79.79 </td><td colspan="0.5"> 64.73 </td><td colspan="0.5"> 93.43 </td><td colspan="0.5"> 91.17 </td><td colspan="0.5"> 87.72 </td><td colspan="0.5"> 86.97 </td><td colspan="0.5"> 68.87 </td><td colspan="0.5"> <strong>78.75</strong> </td><td align="right" colspan="0.5">1</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.0.7 </td><td colspan="0.5"> 96.24 </td><td colspan="0.5"> 45.31 </td><td colspan="0.5"> 72.57 </td><td colspan="0.5"> 78.25 </td><td colspan="0.5"> 59.62 </td><td colspan="0.5"> 91.74 </td><td colspan="0.5"> 88.12 </td><td colspan="0.5"> 89.72 </td><td colspan="0.5"> 86.50 </td><td colspan="0.5"> 66.17 </td><td colspan="0.5"> <strong>77.42</strong> </td><td align="right" colspan="0.5">1</td></TR>
+<TR VALIGN='CENTER' ><td align="center" colspan='0.5'>Grb</td><td colspan="0.5"> 89.78 </td><td colspan="0.5"> 48.80 </td><td colspan="0.5"> 57.37 </td><td colspan="0.5"> 73.56 </td><td colspan="0.5"> 49.48 </td><td colspan="0.5"> 89.37 </td><td colspan="0.5"> 86.28 </td><td colspan="0.5"> 83.25 </td><td colspan="0.5"> 88.96 </td><td colspan="0.5"> 63.44 </td><td colspan="0.5"> <strong>73.03</strong> </td><td align="right" colspan="0.5">1</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.0.5 </td><td colspan="0.5"> 87.97 </td><td colspan="0.5"> 36.39 </td><td colspan="0.5"> 62.10 </td><td colspan="0.5"> 74.15 </td><td colspan="0.5"> 33.74 </td><td colspan="0.5"> 91.45 </td><td colspan="0.5"> 87.84 </td><td colspan="0.5"> 87.13 </td><td colspan="0.5"> 81.95 </td><td colspan="0.5"> 54.35 </td><td colspan="0.5"> <strong>69.71</strong> </td><td align="right" colspan="0.5">1</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.0.3 </td><td colspan="0.5"> 88.50 </td><td colspan="0.5"> 34.65 </td><td colspan="0.5"> 60.53 </td><td colspan="0.5"> 76.20 </td><td colspan="0.5"> 36.42 </td><td colspan="0.5"> 89.22 </td><td colspan="0.5"> 85.10 </td><td colspan="0.5"> 84.80 </td><td colspan="0.5"> 85.25 </td><td colspan="0.5"> 43.89 </td><td colspan="0.5"> <strong>68.46</strong> </td><td align="right" colspan="0.5">1  </td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.1.2 </td><td colspan="0.5"> 93.83 </td><td colspan="0.5"> 27.22 </td><td colspan="0.5"> 53.39 </td><td colspan="0.5"> 69.37 </td><td colspan="0.5"> 23.43 </td><td colspan="0.5"> 89.08 </td><td colspan="0.5"> 80.99 </td><td colspan="0.5"> 81.76 </td><td colspan="0.5"> 76.48 </td><td colspan="0.5"> 44.86 </td><td colspan="0.5"> <strong>64.04</strong> </td><td align="right" colspan="0.5">1</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.0.2 </td><td colspan="0.5"> 88.95 </td><td colspan="0.5"> 28.09 </td><td colspan="0.5"> 54.46 </td><td colspan="0.5"> 67.79 </td><td colspan="0.5"> 22.75 </td><td colspan="0.5"> 90.24 </td><td colspan="0.5"> 80.80 </td><td colspan="0.5"> 81.07 </td><td colspan="0.5"> 77.82 </td><td colspan="0.5"> 38.60 </td><td colspan="0.5"> <strong>63.06</strong> </td><td align="right" colspan="0.5">1  </td></TR>
+</TABLE>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<H4><a href="robowiki?TargetingChallenge2K6/FastLearning" class=wikipagelink>TC2K6 FastLearning</a></H4>
+
+<p>
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <strong>Version</strong> </td><td colspan="0.5"> <strong>BFly</strong> </td><td colspan="0.5"> <strong>CC</strong> </td><td colspan="0.5"> <strong>Chk</strong> </td><td colspan="0.5"> <strong>Cig</strong> </td><td colspan="0.5"> <strong>Cya</strong> </td><td colspan="0.5"> <strong>DM</strong> </td><td colspan="0.5"> <strong>FM</strong> </td><td colspan="0.5"> <strong>Grb</strong> </td><td colspan="0.5"> <strong>RMB</strong> </td><td colspan="0.5"> <strong>Tig</strong> </td><td colspan="0.5"> <strong>Total</strong> </td><td colspan="0.5"> <strong>Seasons</strong></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.2.5 </td><td colspan="0.5"> 94.34 </td><td colspan="0.5"> 57.69 </td><td colspan="0.5"> 76.85 </td><td colspan="0.5"> 75.39 </td><td colspan="0.5"> 64.94 </td><td colspan="0.5"> 89.50 </td><td colspan="0.5"> 88.91 </td><td colspan="0.5"> 84.95 </td><td colspan="0.5"> 82.14 </td><td colspan="0.5"> 77.15 </td><td colspan="0.5"> <strong>79.19</strong> </td><td colspan="0.5"> 15 </td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.1.4 </td><td colspan="0.5"> 93.03 </td><td colspan="0.5"> 53.38 </td><td colspan="0.5"> 67.97 </td><td colspan="0.5"> 73.09 </td><td colspan="0.5"> 61.09 </td><td colspan="0.5"> 89.98 </td><td colspan="0.5"> 92.40 </td><td colspan="0.5"> 85.57 </td><td colspan="0.5"> 82.37 </td><td colspan="0.5"> 68.60 </td><td colspan="0.5"> <strong>76.75</strong> </td><td colspan="0.5"> 15</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.2.0 </td><td colspan="0.5"> 95.68 </td><td colspan="0.5"> 45.79 </td><td colspan="0.5"> 65.23 </td><td colspan="0.5"> 74.72 </td><td colspan="0.5"> 62.78 </td><td colspan="0.5"> 89.94 </td><td colspan="0.5"> 90.15 </td><td colspan="0.5"> 88.03 </td><td colspan="0.5"> 85.99 </td><td colspan="0.5"> 65.65 </td><td colspan="0.5"> <strong>76.40</strong> </td><td colspan="0.5"> 15</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.0.7 </td><td colspan="0.5"> 92.43 </td><td colspan="0.5"> 52.60 </td><td colspan="0.5"> 68.10 </td><td colspan="0.5"> 70.93 </td><td colspan="0.5"> 60.62 </td><td colspan="0.5"> 85.52 </td><td colspan="0.5"> 87.83 </td><td colspan="0.5"> 82.29 </td><td colspan="0.5"> 81.45 </td><td colspan="0.5"> 68.01 </td><td colspan="0.5"> <strong>74.98</strong> </td><td colspan="0.5"> 15</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.1.0 </td><td colspan="0.5"> 90.74 </td><td colspan="0.5"> 50.43 </td><td colspan="0.5"> 63.50 </td><td colspan="0.5"> 72.02 </td><td colspan="0.5"> 56.28 </td><td colspan="0.5"> 89.43 </td><td colspan="0.5"> 88.04 </td><td colspan="0.5"> 85.19 </td><td colspan="0.5"> 81.56 </td><td colspan="0.5"> 67.24 </td><td colspan="0.5"> <strong>74.45</strong> </td><td colspan="0.5"> 15</td></TR>
+<TR VALIGN='CENTER' ><td align="center" colspan='0.5'>Grb</td><td colspan="0.5"> 84.30 </td><td colspan="0.5"> 45.48 </td><td colspan="0.5"> 55.82 </td><td colspan="0.5"> 67.14 </td><td colspan="0.5"> 47.19 </td><td colspan="0.5"> 87.89 </td><td colspan="0.5"> 88.25 </td><td colspan="0.5"> 83.04 </td><td colspan="0.5"> 87.54 </td><td colspan="0.5"> 65.45 </td><td colspan="0.5"> <strong>71.21</strong> </td><td colspan="0.5"> 15</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.0.5 </td><td colspan="0.5"> 91.55 </td><td colspan="0.5"> 41.02 </td><td colspan="0.5"> 62.08 </td><td colspan="0.5"> 72.22 </td><td colspan="0.5"> 41.73 </td><td colspan="0.5"> 90.14 </td><td colspan="0.5"> 81.67 </td><td colspan="0.5"> 82.82 </td><td colspan="0.5"> 80.03 </td><td colspan="0.5"> 57.42 </td><td colspan="0.5"> <strong>70.07</strong> </td><td colspan="0.5"> 15</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.0.3 </td><td colspan="0.5"> 80.62 </td><td colspan="0.5"> 37.42 </td><td colspan="0.5"> 60.53 </td><td colspan="0.5"> 68.74 </td><td colspan="0.5"> 42.43 </td><td colspan="0.5"> 87.89 </td><td colspan="0.5"> 85.44 </td><td colspan="0.5"> 81.79 </td><td colspan="0.5"> 80.57 </td><td colspan="0.5"> 46.82 </td><td colspan="0.5"> <strong>67.23</strong> </td><td colspan="0.5"> 15</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.1.2 </td><td colspan="0.5"> 90.67 </td><td colspan="0.5"> 32.98 </td><td colspan="0.5"> 52.26 </td><td colspan="0.5"> 65.75 </td><td colspan="0.5"> 31.82 </td><td colspan="0.5"> 88.81 </td><td colspan="0.5"> 78.97 </td><td colspan="0.5"> 81.65 </td><td colspan="0.5"> 77.77 </td><td colspan="0.5"> 46.04 </td><td colspan="0.5"> <strong>64.67</strong> </td><td colspan="0.5"> 15</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.0.2 </td><td colspan="0.5"> 79.29 </td><td colspan="0.5"> 27.96 </td><td colspan="0.5"> 55.30 </td><td colspan="0.5"> 64.31 </td><td colspan="0.5"> 27.63 </td><td colspan="0.5"> 88.68 </td><td colspan="0.5"> 77.88 </td><td colspan="0.5"> 81.20 </td><td colspan="0.5"> 78.95 </td><td colspan="0.5"> 38.94 </td><td colspan="0.5"> <strong>62.01</strong> </td><td colspan="0.5"> 15</td></TR>
+</TABLE>
+<hr noshade class=wikiline size=1>
+<p>
+<H4><a href="robowiki?TargetingChallenge" class=wikipagelink>TC old 500 rounds</a></H4>
+
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <strong>Version</strong> </td><td colspan="0.5"> <strong>DT</strong> </td><td colspan="0.5"> <strong>Asp</strong> </td><td colspan="0.5"> <strong>TAOW</strong> </td><td colspan="0.5"> <strong>Spar</strong> </td><td colspan="0.5"> <strong>Cig</strong> </td><td colspan="0.5"> <strong>Tron</strong> </td><td colspan="0.5"> <strong>Fhqw</strong> </td><td colspan="0.5"> <strong>HTTC</strong> </td><td colspan="0.5"> <strong>Yngw</strong> </td><td colspan="0.5"> <strong>Funk</strong> </td><td colspan="0.5"> <strong>Total</strong> </td><td colspan="0.5"> <strong>Comment</strong></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.2.5 </td><td colspan="0.5"> 82.61 </td><td colspan="0.5"> 90.71 </td><td colspan="0.5"> 100.00</td><td colspan="0.5"> 97.95 </td><td colspan="0.5"> 80.48 </td><td colspan="0.5"> 88.09 </td><td colspan="0.5"> 94.85 </td><td colspan="0.5"> 89.35 </td><td colspan="0.5"> 98.00 </td><td colspan="0.5"> 89.03 </td><td colspan="0.5"> <strong>91.11</strong> </td><td colspan="0.5"> 2 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.1.4 </td><td colspan="0.5"> 81.10 </td><td colspan="0.5"> 90.90 </td><td colspan="0.5"> 100.00</td><td colspan="0.5"> 98.33 </td><td colspan="0.5"> 81.17 </td><td colspan="0.5"> 86.26 </td><td colspan="0.5"> 95.53 </td><td colspan="0.5"> 88.93 </td><td colspan="0.5"> 97.62 </td><td colspan="0.5"> 88.22 </td><td colspan="0.5"> <strong>90.81</strong> </td><td colspan="0.5"> 1 season</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.2.0 </td><td colspan="0.5"> 82.07 </td><td colspan="0.5"> 90.45 </td><td colspan="0.5"> 99.91 </td><td colspan="0.5"> 97.56 </td><td colspan="0.5"> 78.32 </td><td colspan="0.5"> 88.86 </td><td colspan="0.5"> 95.92 </td><td colspan="0.5"> 88.28 </td><td colspan="0.5"> 97.77 </td><td colspan="0.5"> 87.57 </td><td colspan="0.5"> <strong>90.67</strong> </td><td colspan="0.5"> 2 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.0.7 </td><td colspan="0.5"> 79.15 </td><td colspan="0.5"> 89.45 </td><td colspan="0.5"> 99.86 </td><td colspan="0.5"> 96.94 </td><td colspan="0.5"> 79.17 </td><td colspan="0.5"> 85.19 </td><td colspan="0.5"> 92.49 </td><td colspan="0.5"> 88.49 </td><td colspan="0.5"> 97.06 </td><td colspan="0.5"> 87.13 </td><td colspan="0.5"> <strong>89.49</strong> </td><td colspan="0.5"> 1 season</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.0.5 </td><td colspan="0.5"> 78.27 </td><td colspan="0.5"> 89.13 </td><td colspan="0.5"> 100.00</td><td colspan="0.5"> 94.65 </td><td colspan="0.5"> 71.98 </td><td colspan="0.5"> 86.75 </td><td colspan="0.5"> 88.43 </td><td colspan="0.5"> 90.00 </td><td colspan="0.5"> 95.71 </td><td colspan="0.5"> 85.10 </td><td colspan="0.5"> <strong>88.00</strong> </td><td colspan="0.5"> 1 season</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.0.3 </td><td colspan="0.5"> 61.50 </td><td colspan="0.5"> 83.19 </td><td colspan="0.5"> 99.96 </td><td colspan="0.5"> 92.59 </td><td colspan="0.5"> 74.43 </td><td colspan="0.5"> 80.22 </td><td colspan="0.5"> 81.09 </td><td colspan="0.5"> 87.07 </td><td colspan="0.5"> 94.58 </td><td colspan="0.5"> 84.84 </td><td colspan="0.5"> <strong>83.96</strong> </td><td colspan="0.5"> 1 season</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.0.6 </td><td colspan="0.5"> 63.86 </td><td colspan="0.5"> 85.07 </td><td colspan="0.5"> 99.78 </td><td colspan="0.5"> 89.17 </td><td colspan="0.5"> 72.18 </td><td colspan="0.5"> 83.98 </td><td colspan="0.5"> 82.62 </td><td colspan="0.5"> 84.71 </td><td colspan="0.5"> 92.37 </td><td colspan="0.5"> 82.92 </td><td colspan="0.5"> <strong>83.67</strong> </td><td colspan="0.5"> 1 season</td></TR>
+<TR VALIGN='CENTER' ><td align="center" colspan='0.5'>Grb</td><td colspan="0.5"> 58.37 </td><td colspan="0.5"> 79.62 </td><td colspan="0.5"> 87.36 </td><td colspan="0.5"> 95.28 </td><td colspan="0.5"> 71.76 </td><td colspan="0.5"> 80.97 </td><td colspan="0.5"> 91.17 </td><td colspan="0.5"> 84.51 </td><td colspan="0.5"> 96.64 </td><td colspan="0.5"> 88.57 </td><td colspan="0.5"> <strong>83.42</strong> </td><td colspan="0.5"> 3 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.1.2 </td><td colspan="0.5"> 70.23 </td><td colspan="0.5"> 86.24 </td><td colspan="0.5"> 99.73 </td><td colspan="0.5"> 89.86 </td><td colspan="0.5"> 67.31 </td><td colspan="0.5"> 82.11 </td><td colspan="0.5"> 77.11 </td><td colspan="0.5"> 84.73 </td><td colspan="0.5"> 94.14 </td><td colspan="0.5"> 80.89 </td><td colspan="0.5"> <strong>83.23</strong> </td><td colspan="0.5"> 1 season</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.0.4 </td><td colspan="0.5"> 69.71 </td><td colspan="0.5"> 85.57 </td><td colspan="0.5"> 99.96 </td><td colspan="0.5"> 90.63 </td><td colspan="0.5"> 63.73 </td><td colspan="0.5"> 81.59 </td><td colspan="0.5"> 72.50 </td><td colspan="0.5"> 86.26 </td><td colspan="0.5"> 94.38 </td><td colspan="0.5"> 80.85 </td><td colspan="0.5"> <strong>82.52</strong> </td><td colspan="0.5"> 1 season</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.0.2 </td><td colspan="0.5"> 64.01 </td><td colspan="0.5"> 85.48 </td><td colspan="0.5"> 98.91 </td><td colspan="0.5"> 87.55 </td><td colspan="0.5"> 69.22 </td><td colspan="0.5"> 80.30 </td><td colspan="0.5"> 71.78 </td><td colspan="0.5"> 86.39 </td><td colspan="0.5"> 95.30 </td><td colspan="0.5"> 80.92 </td><td colspan="0.5"> <strong>81.98</strong> </td><td colspan="0.5"> 1 season</td></TR>
+</TABLE>
+<p>
+<H4><a href="robowiki?TargetingChallenge/FastLearning" class=wikipagelink>TC old FastLearning</a></H4>
+
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'> <strong>Version</strong> </td><td colspan="0.5"> <strong>DT</strong> </td><td colspan="0.5"> <strong>Asp</strong> </td><td colspan="0.5"> <strong>TAOW</strong> </td><td colspan="0.5"> <strong>Spar</strong> </td><td colspan="0.5"> <strong>Cig</strong> </td><td colspan="0.5"> <strong>Tron</strong> </td><td colspan="0.5"> <strong>Fhqw</strong> </td><td colspan="0.5"> <strong>HTTC</strong> </td><td colspan="0.5"> <strong>Yngw</strong> </td><td colspan="0.5"> <strong>Funk</strong> </td><td colspan="0.5"> <strong>Total</strong> </td><td colspan="0.5"> <strong>Comment</strong></td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.2.0 </td><td colspan="0.5"> 75.33 </td><td colspan="0.5"> 87.16 </td><td colspan="0.5"> 99.99 </td><td colspan="0.5"> 95.35 </td><td colspan="0.5"> 73.53 </td><td colspan="0.5"> 85.29 </td><td colspan="0.5"> 94.97 </td><td colspan="0.5"> 83.98 </td><td colspan="0.5"> 95.80 </td><td colspan="0.5"> 87.08 </td><td colspan="0.5"> <strong>87.85</strong> </td><td colspan="0.5"> 30 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.2.5 </td><td colspan="0.5"> 75.11 </td><td colspan="0.5"> 86.98 </td><td colspan="0.5"> 99.87 </td><td colspan="0.5"> 96.63 </td><td colspan="0.5"> 74.50 </td><td colspan="0.5"> 83.41 </td><td colspan="0.5"> 93.94 </td><td colspan="0.5"> 84.71 </td><td colspan="0.5"> 95.58 </td><td colspan="0.5"> 85.60 </td><td colspan="0.5"> <strong>87.63</strong> </td><td colspan="0.5"> 15 seasons</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 0.1.4 </td><td colspan="0.5"> 70.69 </td><td colspan="0.5"> 87.93 </td><td colspan="0.5"> 99.73 </td><td colspan="0.5"> 95.32 </td><td colspan="0.5"> 72.30 </td><td colspan="0.5"> 83.03 </td><td colspan="0.5"> 92.50 </td><td colspan="0.5"> 85.18 </td><td colspan="0.5"> 95.38 </td><td colspan="0.5"> 84.91 </td><td colspan="0.5"> <strong>86.70</strong> </td><td colspan="0.5"> 15 seasons</td></TR>
+<TR VALIGN='CENTER' ><td align="center" colspan='0.5'>Grb</td><td colspan="0.5"> 58.72 </td><td colspan="0.5"> 76.04 </td><td colspan="0.5"> 86.00 </td><td colspan="0.5"> 94.01 </td><td colspan="0.5"> 67.05 </td><td colspan="0.5"> 80.57 </td><td colspan="0.5"> 90.32 </td><td colspan="0.5"> 82.37 </td><td colspan="0.5"> 96.37 </td><td colspan="0.5"> 86.50 </td><td colspan="0.5"> <strong>81.79</strong> </td><td colspan="0.5"> 15 seasons</td></TR>
+</TABLE>
+<p>
+<p>
+As <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> already stated with his <a href="robowiki?GFTargetingBot" class=wikipagelink>GFTargetingBot</a>, <a href="robowiki?WaveSurfers" class=wikipagelink>WaveSurfers</a> are designed to evade (basic) GF-guns. Therefor the 'old' <a href="robowiki?TargetingChallenge" class=wikipagelink>TargetingChallenge</a> might be better to measure the performance in the early stages of development.
+<hr noshade class=wikiline size=1>
+<p>
+Hey Grubbm - I took a glance through your gun's source, just because I was curious. I didn't find anything like a bug in it, and I'll hold off on any tuning-type suggestions for now, because I see you are taking development one step at a time. 
+<p>
+However, one thing stood out as somewhat "mathematically incorrect" in my mind: you use Math.asin(9 / bulletvelocity) instead of Math.asin(8 / bulletvelocity). If this is to give a buffer above the 1.0 mark for some reason, I would suggest instead using something like Math.asin(8 / bulletvelocity) * 1.2. The reason being that using 9 instead of 8 (their max speed) will not be as consistent with different bullet powers. For instance, using 9 instead of 8 results in about an extra 15% when bulletvelocity = 11, but an extra 17.6% at bulletvelocity = 14. A very small point, and it will only make a difference with varying bullet powers, but every bit of precision counts =) Best of luck with this 2K-destined bot. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Nice hint, i am doing this asin(9/velocity) in all my bots :) Thanks! --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a> 
+<p>
+Indeed I am using 9 instead of 8 for GF&gt;1.0 reasons. I figured that 90% of the bullets would be of power 1.9, and I just needed something to fight an occasional index-exception. You are right though and I will change it. With my gun I still have lots of ground to cover, like taking into account the botwidth with hit-detection, firing a wave each tick, and ofcourse segmentation issues. I haven't even checked if my waves are aligned yet. I think I am just too old to comprehend everything at once, so I absorb this stuff with little bites because I want to know what I am doing and why. ;-)  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Yeah, if you're using the same bullet power mostly, the effect will be negligible. It's more like the kind of thing that would bother me on a philosophical level ;) Also, I noticed that your gun code seemed like it might be choosing different bullet powers (like maybe in melee?). I think that the way you are developing it is quite wise, and that you will probably save yourself a lot of headaches in the long run. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+If I had known that a GF-gun was this simple, I had never wasted my time with a PM-gun. Now that my rudimentary GF-gun outperforms <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a> (at least in the <a href="robowiki?TargetingChallenge2K6" class=wikipagelink>TargetingChallenge2K6</a>), I must put some time in a <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> movement that can evade the simplest targetters.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+<p>
+Hmm, your original gun is doing far better then mine is so far, i'm trying to make it so that I can get a high rate against <a href="robowiki?TheArtOfWar" class=wikipagelink>TheArtOfWar</a>, however it seems that no matter how hard I try (though different bin sizes do show different preformace levels), I can't seem to get a relatively high hit rate dispite how high other guns can get. -- <a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Your version 0.1.57 looks quite similar to my v0.0.2 (except for Fhqw). Don't forget that I (think I) have the gamephysics things right(like radar, events before run, fire before turngun) because I have two years experience with robocode. On the other hand, this is my first GF-gun so there still might be some buggy things in there.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+I thought that using non-bullet waves would increase the score, apparantly I thought wrong. -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?GresSuffurd" class=wikipagelink>GresSuffurd</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=GresSuffurd/GresVretter" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=GresSuffurd/GresVretter">View other revisions</a><br>Last edited May 23, 2007 9:19 EST by <a href="robowiki?GrubbmGait" title="ID 9333 from styx18.ict.nl">GrubbmGait</a> <a href="robowiki?action=browse&diff=1&id=GresSuffurd/GresVretter">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

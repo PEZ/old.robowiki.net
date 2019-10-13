@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>UnderDark4/Wave.java - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Under, Dark4/Wave.java'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Wave.java">UnderDark4/Wave.java</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?UnderDark4" class=wikipagelink>UnderDark4</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><h1>Wave.java</h1>
+<hr width=75%>
+<pre>
+package matt;
+
+import robocode.*;
+import java.awt.geom.Point2D;
+
+public class Wave {
+    public boolean active;
+    public double radius;
+    public double GF;
+    public double distanceTo;
+    
+    public Bullet bullet;
+    public Point2D.Double origin;
+
+    public Wave(){
+        this.active = false;
+    }
+    public Wave(Point2D.Double origin, double radius, double distanceTo, double GF, Bullet bullet){
+        this.origin = origin;
+        this.radius = radius;
+        this.GF = GF;
+        this.bullet = bullet;
+        this.distanceTo = distanceTo;
+        this.active = true;
+    }
+    
+    public void update(Bullet bullet){
+        this.radius = Point2D.distance(this.origin.x, this.origin.y, bullet.getX(), bullet.getY());
+        this.active = true;
+    }
+    
+    public void kill(){
+        this.active = false;
+    }
+    
+    public Point2D.Double getOrigin(){
+        return this.origin;
+    }
+    
+    public Bullet getBullet(){
+        return this.bullet;
+    }
+    
+    public double getGF(){
+        return this.GF;
+    }
+    
+    public double getRadius(){
+        return this.radius;
+    }
+    
+    public double getDistanceTo(){
+        return this.distanceTo;
+    }
+    
+    public boolean getStatus(){
+        return this.active;
+    }
+}
+</pre>
+<hr width=75% align=left>
+<b>Questions, Comments, or anything else</b>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?UnderDark4" class=wikipagelink>UnderDark4</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=UnderDark4/Wave.java" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=UnderDark4/Wave.java">View other revisions</a><br>Last edited July 18, 2005 19:28 EST by <a href="robowiki?UnderDark" title="ID 4723 from d149-67-30-72.try.wideopenwest.com">UnderDark</a> <a href="robowiki?action=browse&diff=1&id=UnderDark4/Wave.java">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

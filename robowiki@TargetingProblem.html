@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>TargetingProblem - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Targeting, Problem'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=TargetingProblem">TargetingProblem</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>The fundamental problem to be solved in targeting is to find the targeting angle (Z) at which to shoot, so as to maximize the probability of an impact given the information available (X)
+<p>
+The information that is available (X) is:
+<UL >
+<li> the observed past motions of the enemy robot
+<li> the current state of the enemy robot (position, speed, direction, etc)
+</UL>
+<p>
+Mathematicaly stated, you are attempting to find the angle (Z) for which the estimated probability that the target will be hit at that angle (Y) will be heighest, given the conditional information available (X).
+<p>
+So:
+Z = max Z' where Z' = P(Y|X)
+<p>
+The probability is essentially one of estimating a conditional probability density, based upon a small and sparse data set - which is a very hard problem to solve well!
+<p>
+There are many possible approaches.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Segmentation algorithms attempt to solve the problem by attempting to directly estimate the conditional probabilities P(Y|X), by simply recording the real statistics as they happen. 
+<p>
+In the simplest case, no state information is used, so the estimates are simply P(Y), i.e. the chance that the enemy robot will be struck at any particular angle, as measured so far. This is done by building-up a histogram/table of what angle you should have fired at to hit the enemy robot, each shot. of Clearly, this approach will only work well if the enemy robot's state is unimportant to the firing angle (i.e. if it is stationary, or always moving in a circle at constant speed and distance around your robot).
+<p>
+In more complex approaches, some state information is used. Unfortunatly, in general state information is continuous, which means that it cannot be simply recorded to make a probability table, as can be done in the nieve approach above. 
+To solve this problem, the continuous state information is <em>quantized</em> into seperate states. For example, the movement of the enemy might be quantized into three states (travelling left, staying still, travelling right). 
+Three seperate histograms can then be generated as above, showing hit angle frequencies, when the enemy state was each of the possibilities. 
+<p>
+Unfortunatly, this also means that the data set (observed hit angles) is being split into three, and so the data available becomes much more sparse. This reduces the accuracy of the estimated probabilities. 
+<p>
+In more extreme cases, one might want to consider a large number of possible enemy states, e.g. two states for enemy direction, three for enemy speed, five for enemy distance, say. This results in 2*3*5=30 histograms to be constructed, which reduces the data in each historgram by a factor of 30 (assuming the data is equally spread). Clearly, this becomes a problem quite quickly as more states are added, especially given the typical data set (~20 shots per round).
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Another possible approach would be to attempt to model the problem in a continuous way way, so that the conditional probabilties P(Y|X) can be directly pulled-out.
+<p>
+One way of doing this would be to estimate the probability density function using a guassian mixture model, for example. So, for any given current state (X), the probability of a hit for any given angle (Y) can be pulled-out.
+<p>
+Equally, one might try to use a neural network to model the probability density function. There are various ways of doing this with a neural network; the approach that I would use would be to quantize the hit angles (Y) into a number of seperate levels. For each, I would have a neural network (multi-layer perceptatron) which would target the classification problem - estimating whether there will be a hit or not at that particular network's angle. In theory, the neural networks will converge to estimate the probability density function, thus solving the problem.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Vector quantization is another approach which could be used. The space of state vs hit angle could be considered as a set of vectors (points). A number of "representitive vectors" could then be generated, using k-means, or the classic iterative Vector Quantization algorithm. The "representitive vectors" have a neighbourhood which can be used either for segmentation as above, or the representitive vector's Y's could be used directly as the estimated best Z' (though this may not work well in some cases).
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Nice write-up. I've renamed the page to <a href="robowiki?TargetingProblem" class=wikipagelink>TargetingProblem</a>, as that is more commonly the format used for multi-word pages on this site - I hope you don't mind. By the way, who made this update? ;) I think there is quite a bit that could be added or elaborated on here, but I will post my notes later on when I have more time. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I'm assuming 'continuous way way' is actually 'continuous way' unless I'm wrong (there's some phrase like that in chinese too except it was correct)...interesting information...this nicely kinda summarizes what Targeting is. --<a href="robowiki?Starrynte" class=wikipagelink>Starrynte</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=TargetingProblem" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=TargetingProblem">View other revisions</a><br>Last edited August 18, 2007 1:09 EST by <a href="robowiki?Starrynte" title="ID 10964 from cpe-75-84-83-181.socal.res.rr.com">Starrynte</a> <a href="robowiki?action=browse&diff=1&id=TargetingProblem">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

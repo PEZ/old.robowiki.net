@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing Apollon - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Apollon'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing Apollon</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="Apollon"  />
+<input type="hidden" name="oldtime" value="1086089711"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="7"  />
+<input type="hidden" name="captchaArg2" value="2"  />
+<input type="hidden" name="captchaOp" value="-"  />
+<input type="hidden" name="captchaId" value="329259415696"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">My test bot.
+I don&#39;t know what to do with [[Aleph]] at the moment so I started to work on [[Apollon]] to see if there are some small changes with great effect. my first version of Apollon had something like 3200 bytes. So it took me some time to squeeze it into a MiniBot (currently 1496 bytes). -- [[rozu]]
+
+Looks like a strong mini! Way cool. Is it using WaveSurfing? -- [[PEZ]]
+
+It is. with the exact movement prediction just to see if the whole thing fits into a mini. -- [[rozu]]
+
+Can you share the code for that mini-sized predictor? -- [[PEZ]]
+
+Sure. I&#39;ll need some time to make it readable...
+
+this is the code I&#39;d use to predict my FuturePosition at the time (getTime() + 10) if I want to go to the point (200, 300) with the well known goTo code somewhere in the run method (I think it should also work for inside the ScannedRobotEvent, though I didn&#39;t try it):
+
+&lt;pre&gt;
+double moveAngle = Math.atan2(200 - getX(), 300 - getY()) - getHeadingRadians();
+double moveDir = 1;
+
+if(Math.cos(moveAngle) &lt; 0) {
+	moveAngle += Math.PI;
+	moveDir = -1;
+}
+
+setAhead(100 * moveDir);
+setTurnRightRadians(Utils.normalRelativeAngle(moveAngle));
+&lt;/pre&gt;
+
+this is the desired piece of code. I&#39;m not using setMaxVelocity, so it is quiet small.
+It returns the predicted position.
+
+&lt;pre&gt;
+private Point2D.Double predictPosition() {
+	
+	Point2D.Double predictedPosition = new Point2D.Double(getX(), getY());
+	double predictedVelocity = getVelocity();
+	double predictedHeading = getHeadingRadians();
+	double maxTurning, moveAngle, moveDir;
+	int counter = 1;
+	
+	do {
+		// the movement code basically the same as above
+		moveAngle = Math.atan2(200 - predictedPosition.x, 300 - predictedPosition.y) - predictedHeading;
+		moveDir = 1;
+		
+		if(Math.cos(moveAngle) &lt; 0) {
+			moveAngle += Math.PI;
+			moveDir = -1;
+		}
+		
+		moveAngle = Utils.normalRelativeAngle(moveAngle);
+		
+		// maxTurning is built in like this, you can&#39;t turn more then this in one tick 
+		maxTurning = Math.PI/720d*(40d - 3d*Math.abs(predictedVelocity));
+		predictedHeading = Utils.normalRelativeAngle(predictedHeading + limit(-maxTurning, moveAngle, maxTurning));
+		
+		// this one is nice ;). if predictedVelocity and moveDir have different signs you want to breack down
+		// otherwise you want to accelerate (look at the factor &quot;2&quot;)
+		predictedVelocity += (predictedVelocity * moveDir &lt; 0 ? 2*moveDir : moveDir);
+		predictedVelocity = limit(-8, predictedVelocity, 8);
+		
+		// calculate the new predicted position
+		predictedPosition = translatePoint(predicted, predictedVelocity, predictedHeading);
+			
+	} while(++counter &lt; 10);	
+	
+	return predictedPosition;
+}
+
+// the math functions used above
+private static double limit(double min, double value, double max) {
+	return Math.max(min, Math.min(value, max));
+}
+
+private static Point2D.Double translatePoint(Point2D.Double p, double dist, double ang) {
+	return new Point2D.Double(p.x + dist*Math.sin(ang), p.y + dist*Math.cos(ang));
+}
+&lt;/pre&gt;
+
+I didn&#39;t make any tests so far with exactly this piece of code. please tell me (or correct) if you can see some misbehavior and/or mistakes. -- [[rozu]]
+
+
+Wow. Way cool. I just might try it in Pugilist to see if it works. And if it helps me with my GF1 problem. I can&#39;t fit this probably, but it&#39;s good to know if it would help. =) -- [[PEZ]]
+
+OK, so I tried it. It didn&#39;t compile at first, but I managed to fix that. It grew my bot with 200 bytes as I suspected. Unfortunately I didn&#39;t get an answer on whether it would help my bot. My reverse destination points are of the battle field for some reason. And I don&#39;t understand how to fix it. If you have RobocodeGLV014 you can maybe try yourself to apply this to PugilistGL? It&#39;s the destinations calculated inside &lt;tt&gt;&lt;nowiki&gt;updateDirectionStats()&lt;/nowiki&gt;&lt;/tt&gt; that I fed your predictor with. Aamzingly simple to apply it when we both thing goTo() style. =) -- [[PEZ]]
+
+BTW. This is pretty cool:
+&lt;pre&gt;
+Fighting battle 18 ... rz.Apollon 0.2,kawigi.sbf.Barracuda 1.0
+RESULT = rz.Apollon 0.2 wins 3358 to 120
+&lt;/pre&gt;
+
+-- [[PEZ]]
+
+thx, ... . can you send me a version of Pugilist with the above predictor implemented to zuestro@student.ethz.ch. I don&#39;t need the GL stuff for this (PugilistGL looks complicated ;)) -- [[rozu]]
+
+Eh, I trashed it when I didn&#39;t get it to work. But it&#39;s easy enough for me to redo it. I&#39;ll do it in PugilistGL, because &#39;&#39;&#39;I&#39;&#39;&#39; need it for this. That&#39;s how I saw the reverse predicted destinations wasn&#39;t on the battle field. Pugilist is as complicated as PugilistGL so it doesn&#39;t matter if it comes to that. It&#39;ll make a nice demo of the predictor too I think. =) -- [[PEZ]]
+
+why is this code so long? if predicting code needs to be this complex, i&#39;m definitely doing something very wrong.--[[andrew]]
+
+Sure there are some bytes you could gain if you don&#39;t want it to be readable. You also have to make the difference between &quot;absolutely accurate&quot; prediction and &quot;will be more or less the same&quot; prediction. In many cases the code above belongs into the first group. And if you want to be really accurate look here: FuturePosition (this one is a little bit longer). -- [[rozu]]
+
+Long? Remove the comments if you like. It&#39;s only a few lines of code. And it&#39;s hardly complex. What it does is iterate the position of the bot from the current position, using current heading and velocity, to the desired destination point, accounting for acceleration and decceleration and max turn angle at a given velocity. Nothing of that can be discarded if you want to do precise prediction. For something simpler, look at Pugilist, which basicly uses the RandomMovementBot movement for prediction. Of course it&#39;s more like &quot;what&#39;s my desired destination?&quot; than an actual prediction. -- [[PEZ]]
+
+i guess i just don&#39;t understand what it does,that&#39;s what makes it look complicated to me.--andrew
+
+OK, I&#39;ll rephrase that. I mean it&#39;s not more complex than the task at hand. It&#39;s not trivial to predict your future position accurately. -- [[PEZ]]
+
+Wow.  I didn&#39;t think I&#39;d ever see a minibot at #2 again, even with only 88 battles. :-)  Looks like I&#39;m going to have to do some work on [[Raiko]] shortly. -- [[Jamougha]]
+
+&quot;Wow&quot; is right. --[[andrew]]
+
+Thx, but... Just the typical rz.A... bot behavior going up fast and then falling down deep ;). I think it&#39;ll stand still somewhere at around 1960 (not a big deal for Raiko). -- [[rozu]]
+
+1975 after 400+ battles. I&#39;d say that&#39;ll be hard for Raiko unless Jamougha changes strategy for it. -- [[PEZ]]
+
+[[Jim]] has gotten the above predictor to work. I have plugged it in a bot I call [[PPP]] and it makes a world of difference I tell you. Now I&#39;m having spikes near GF-1 as well. =) This is with only the flattener active (that is, no adaption). Looks kinda funny. I&#39;ll post yet another profile shot (yaps) on the PPPugilist page. Right now I&#39;m just awaiting [[Jim]]&#39;s permission to release the bot for test in the rumble. Can you place the above code under the [[RWPCL]] umbrella? That would make it clearer what you can and cannot do with the code. You should be the only one allowed to use it for closed source bots I think. -- [[PEZ]]
+
+Sure use this code under the licence: &quot;make whatever you want with this code and it would be nice if you give credit&quot; -- [[rozu]]
+
+The code above used to find out a future position can probably make a big difference for wave surfers using to goto-style methode, but wave surfers that circle around the enemy (or the position the enemy was when it shot the wave that is nearest to you) cant find out their future position with this piece of code and the current heading precise. What i am doing in my current project ( - which is not yett running - so i should better say what i am trying to do) is to have a function that calculates a referenced move point with wished circle direction, circle center and move step from my current position. So i can simulate my future move - and end position. What i didnt do is to check if the single steps are really possible - i could implement that with the above shown code. Hope one could understand this. --[[deathcon]]
+
+That&#39;s what I do in [[PPP]] and I think that&#39;s what [[Apollon]] does too, as does RaikoMX and possibly other surfers. -- [[PEZ]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 7 - 2 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that Apollon has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=Apollon">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

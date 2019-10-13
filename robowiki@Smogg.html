@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Smogg - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Smogg'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Smogg">Smogg</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package cx.femto;
+import robocode.*;
+/**
+ *-----------------------------------------------------------------
+ * @author:iiley (iiley@hotmail.com)
+ * http://www.robochina.org
+ * When i miss her,I fish out a cigarat,smoking deeply,missing deeply....
+ * I spit a circle smog,I see she was smileing there
+ * 1.0: Smog's femto version.Maybe it can did better than Smog?(codesize:186)
+ * future:let me smoke some first!
+ *------------------------------------------------------------------
+ * Thanks to the following:
+ * dummy 
+ * Daniel Pereira
+ * robotobo
+ * kawigi
+ * and a general thanks to all NanoBot developers for being so creative
+ */
+public class Smogg extends AdvancedRobot
+{
+	private static double e_energy;
+	public void run( ) {
+		turnRadarRight(Double.POSITIVE_INFINITY);
+	} 
+    // -------------------- function for event handle ---------------
+   	public void onScannedRobot( ScannedRobotEvent e ) {
+		double enemyDir=e.getDistance();  //enemyDir is distance now
+		if(e_energy!=(e_energy=e.getEnergy()) &amp;&amp; getDistanceRemaining()==0){    
+				setAhead(Math.sin(getTime()/8)*enemyDir*1.5);
+		}
+		//these code is used to around my rival prefer distance 140
+		//220=0.5*Math.PI*140,140 is the prefer distance
+        enemyDir=220/enemyDir;
+		setTurnRightRadians(e.getBearingRadians()-(getVelocity()&gt;0?enemyDir:(Math.PI-enemyDir)));
+		setTurnGunLeftRadians(Math.asin(Math.sin(getGunHeadingRadians()-(enemyDir=e.getBearingRadians()+getHeadingRadians())-Math.asin(e.getVelocity()*Math.sin(e.getHeadingRadians()-enemyDir)/11)*(1+Math.random()*(0.4-Math.abs(e.getVelocity())/10)))));
+		setFire(e_energy/4d);
+		setTurnRadarLeft(getRadarTurnRemaining());
+	}
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Smogg" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Smogg">View other revisions</a><br>Last edited September 15, 2003 2:09 EST by <a href="robowiki?Iiley" title="ID 1546 from 203.113.34.xxx">Iiley</a> <a href="robowiki?action=browse&diff=1&id=Smogg">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

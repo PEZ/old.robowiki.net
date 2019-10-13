@@ -1,0 +1,240 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Gouldingi/Code - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Gouldingi, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Code">Gouldingi/Code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Gouldingi" class=wikipagelink>Gouldingi</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>The full source code of a bot that for a second was #6 on <a href="robowiki?EternalRumble" class=wikipagelink>EternalRumble</a> <a href="robowiki?OneOnOne" class=wikipagelink>OneOnOne</a>. For the moment it's #11.
+<p>
+<UL >
+<li> Codesize: <em>1442</em>
+</UL>
+<pre>
+package pez.mini;
+import robocode.*;
+import java.awt.geom.*;
+import java.awt.Color;
+import java.util.*;
+
+// Gouldingi, by PEZ. Small, hard to catch and sharp teeth.
+//
+// Gouldingi is open source under GPL-like conditions. Meaning you can use
+// the code. Meaning you should feel obliged to share any improvements you do
+// to the code. Meaning you must release your bots code if you directly use this
+// code.
+//
+// Home page of this bot is: http://robowiki.dyndns.org/?Gouldingi
+// The code should be available there and it is also the place for you to share any
+// code improvements.
+//
+// $Id: Gouldingi.java,v 1.9 2003/04/18 10:08:30 peter Exp $
+
+public class Gouldingi extends AdvancedRobot {
+    private static Point2D location = new Point2D.Double();
+    private static Point2D oldLocation = new Point2D.Double();
+    private static Point2D enemyLocation = new Point2D.Double();
+    private static Point2D oldEnemyLocation = new Point2D.Double();
+    private static Rectangle2D fieldRectangle;
+    private static double guessedHeading;
+    private static double enemyDistance;
+    private static double enemyEnergy;
+    private static double absoluteBearing;
+    private static double deltaBearing;
+    private static double meanOffsetFactor;
+    private static double meanAimFactorLeft;
+    private static double meanAimFactorStraight;
+    private static double meanAimFactorRight;
+    private static double velocity;
+
+    public void run() {
+        fieldRectangle = new Rectangle2D.Double(0, 0 , getBattleFieldWidth(), getBattleFieldHeight());
+        setColors(Color.gray, Color.yellow, Color.black);
+        setAdjustGunForRobotTurn(true);
+        setAdjustRadarForGunTurn(true);
+        turnRadarRightRadians(Double.POSITIVE_INFINITY); 
+
+        while (true) {
+            if (Math.random() &lt; 0.05) {
+                velocity = Math.min(8, Math.random() * 24);
+            }
+            setMaxVelocity(Math.abs(getTurnRemaining()) &gt; 45 ? 0.1 : velocity);
+            if (getOthers() == 0) {
+                moveRandomly();
+            }
+            execute();
+        }
+    }
+
+    public void onScannedRobot(ScannedRobotEvent e) {
+        oldLocation.setLocation(location);
+        location.setLocation(getX(), getY());
+        oldEnemyLocation.setLocation(enemyLocation);
+        absoluteBearing = getHeading() + e.getBearing();
+        enemyEnergy = e.getEnergy();
+        enemyDistance = e.getDistance();
+        toLocation(absoluteBearing, enemyDistance, location, enemyLocation);
+        deltaBearing = normalRelativeAngle(absoluteBearing(oldLocation, enemyLocation) -
+            absoluteBearing(oldLocation, oldEnemyLocation));
+        aimGun();
+        moveRandomly();
+        if (enemyEnergy &gt; 0 &amp;&amp; (getEnergy() &gt; 0.2 || enemyDistance &lt; 150)) {
+            Bullet bullet = setFireBullet(bulletPower(enemyEnergy));
+            if (bullet != null) {
+                addCustomEvent(new CheckUpdateFactors(bullet));
+            }
+        }
+        setTurnRadarLeftRadians(getRadarTurnRemaining()); 
+    }
+
+    private void moveRandomly() {
+        if (Math.abs(getDistanceRemaining()) &lt; Math.random() * 50) {
+            Point2D dLocation = new Point2D.Double();
+            double relativeAngle = -36 + 72 * Math.random();
+            double distanceExtra = 3;
+            double angle = absoluteBearing + 180 + relativeAngle;
+            if (isCornered() || enemyDistance &gt; 600) {
+                distanceExtra = -1;
+            }
+            if (enemyEnergy == 0 &amp;&amp; getOthers() == 1) {
+                distanceExtra = -10;
+            }
+            distanceExtra *= Math.abs(relativeAngle);
+            toLocation(angle, enemyDistance + distanceExtra, enemyLocation, dLocation);
+            if (!fieldRectangle.contains(dLocation)) {
+                angle = absoluteBearing + 180 - relativeAngle;
+                toLocation(angle, enemyDistance + distanceExtra, enemyLocation, dLocation);
+            }
+            translateInsideField(dLocation, 35);
+            goTo(dLocation);
+        }
+    }
+
+    private double bulletPower(double enemyEnergy) {
+        double power = 3;
+        power = Math.min(enemyEnergy / 4, power);
+        power = Math.min(getEnergy() / 3, power);
+        return power;
+    }
+
+    private void aimGun() {
+        double guessedDistance = location.distance(enemyLocation);
+        double meanAimFactor = meanAimFactorStraight;
+        if (deltaBearing &lt; -0.3) {
+            meanAimFactor = meanAimFactorLeft;
+        }
+        else if (deltaBearing &gt; 0.3) {
+            meanAimFactor = meanAimFactorRight;
+        }
+        guessedHeading = absoluteBearing(location, enemyLocation);
+        if (Math.abs(deltaBearing) &gt; 0.05) {
+            guessedHeading += deltaBearing * meanAimFactor;
+        }
+        else {
+            guessedHeading += meanOffsetFactor;
+        }
+        Point2D impactLocation = new Point2D.Double();
+        toLocation(guessedHeading, guessedDistance, location, impactLocation);
+        translateInsideField(impactLocation, 1);
+        guessedHeading = absoluteBearing(location, impactLocation);
+        setTurnGunRight(normalRelativeAngle(guessedHeading - getGunHeading()));
+    }
+
+    private void goTo(Point2D point) {
+        double distance = location.distance(point);
+        double angle = normalRelativeAngle(absoluteBearing(location, point) - getHeading());
+        if (Math.abs(angle) &gt; 90) {
+            distance *= -1;
+            if (angle &gt; 0) {
+                angle -= 180;
+            }
+            else {
+                angle += 180;
+            }
+        }
+        setTurnRight(angle);
+        setAhead(distance);
+    }
+
+    private boolean isCornered() {
+        double m = 100;
+        double mnX = m;
+        double mnY = m;
+        double mxX = fieldRectangle.getWidth() - m;
+        double mxY = fieldRectangle.getHeight() - m;
+        double x = location.getX();
+        double y = location.getY();
+        return ((x &lt; mnX &amp;&amp; (y &lt; mnY || y &gt; mxY)) || (x &gt; mxX &amp;&amp; (y &lt; mnY || y &gt; mxY)));
+    }
+
+    private void translateInsideField(Point2D point, double margin) {
+        point.setLocation(Math.max(margin, Math.min(fieldRectangle.getWidth() - margin, point.getX())),
+                          Math.max(margin, Math.min(fieldRectangle.getHeight() - margin, point.getY())));
+    }
+
+    private void toLocation(double angle, double length, Point2D sourceLocation, Point2D targetLocation) {
+        targetLocation.setLocation(sourceLocation.getX() + Math.sin(Math.toRadians(angle)) * length,
+                                   sourceLocation.getY() + Math.cos(Math.toRadians(angle)) * length);
+    }
+
+    private double absoluteBearing(Point2D source, Point2D target) {
+        return Math.toDegrees(Math.atan2(target.getX() - source.getX(), target.getY() - source.getY()));
+    }
+
+    private double normalRelativeAngle(double angle) {
+        angle = Math.toRadians(angle);
+        return Math.toDegrees(Math.atan2(Math.sin(angle), Math.cos(angle))); 
+    }
+
+    public double rollingAvg(double value, double newEntry, double n, double weighting ) {
+        return (value * n + newEntry * weighting)/(n + weighting);
+    } 
+
+    class CheckUpdateFactors extends Condition {
+        private long time;
+        private double bulletVelocity;
+        private double bulletPower;
+        private double bearingDelta;
+        private Point2D oldRLocation = new Point2D.Double();
+        private Point2D oldELocation = new Point2D.Double();
+        private double oldBearing;
+
+        public CheckUpdateFactors(Bullet bullet) {
+            this.time = getTime();
+            this.bulletVelocity = bullet.getVelocity();
+            this.bulletPower = bullet.getPower();
+            this.bearingDelta = deltaBearing;
+            this.oldRLocation.setLocation(location);
+            this.oldELocation.setLocation(enemyLocation);
+            this.oldBearing = absoluteBearing(oldRLocation, oldELocation);
+        }
+
+        public boolean test() {
+            if (bulletVelocity * (getTime() - time) &gt; oldRLocation.distance(enemyLocation) - 10) {
+                double impactBearing = absoluteBearing(oldRLocation, enemyLocation);
+                double bearingDiff = normalRelativeAngle(impactBearing - oldBearing);
+                meanOffsetFactor = rollingAvg(meanOffsetFactor, bearingDiff, 20, bulletPower);
+                if (Math.abs(bearingDelta) &gt; 0.05) {
+                    double factor = bearingDiff / bearingDelta;
+                    if (bearingDelta &lt; -0.3) {
+                        meanAimFactorLeft = rollingAvg(meanAimFactorLeft, factor, 75, bulletPower);
+                    }
+                    else if (bearingDelta &gt; 0.3) {
+                        meanAimFactorRight = rollingAvg(meanAimFactorRight, factor, 75, bulletPower);
+                    }
+                    else {
+                        meanAimFactorStraight = rollingAvg(meanAimFactorStraight, factor, 75, bulletPower);
+                    }
+                }
+                removeCustomEvent(this);
+            }
+            return false;
+        }
+    }
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Gouldingi" class=wikipagelink>Gouldingi</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Gouldingi/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Gouldingi/Code">View other revisions</a><br>Last edited April 24, 2003 21:14 EST by <a href="robowiki?PEZ" title="ID 1052 from 192.168.0.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=Gouldingi/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

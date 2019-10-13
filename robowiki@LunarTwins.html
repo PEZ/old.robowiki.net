@@ -1,0 +1,320 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>LunarTwins - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Lunar, Twins'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=LunarTwins">LunarTwins</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H3>Bot Name</H3>
+
+Team: LunarTwins<br>
+Bots: LunarLeader, LunarRover
+<p>
+<H4>Author</H4>
+
+<a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+<H4>What's special about it?</H4>
+
+Well, the fact that it's a highly competitive <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> team, without using any advanced targeting or dodging. It's also the only <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> team I know of that only has one robot that scans. Additionally, I coded the first release in less than a 36 hour period which was refreshing :)
+<p>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<a rel="nofollow" href="http://homepages.ucalgary.ca/~agschult/ags.lunartwins.LunarTwins_1.2.jar">http://homepages.ucalgary.ca/~agschult/ags.lunartwins.LunarTwins_1.2.jar</a>
+<p>
+<H4>How competitive is it?</H4>
+
+Well, in <a href="robowiki?TwinDuel/Results20080307" class=wikipagelink>it's first TwinDuel</a> it won every single match, most by a large margin. I'd call that very competitive.
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+Attempts to surround the enemy to pin them, no dodging at all. For now I won't explain exactly how this works, but it shouldn't be too hard to tell from reading the code or observing it in action.
+<p>
+<H4>How does it fire?</H4>
+
+Simple <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> including wall collision handling. They often seem to hit each other when missing the enemy but still they do well...
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+It doesn't. In fact it's aggressive movement makes it very easy to hit, not that I care ;)
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+It doesn't.
+<p>
+<H4>How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a>?</H4>
+
+It targets the enemy leader first, and when that's gone it targets other enemies.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+There's nothing to save, it doesn't learn. In fact it's nearly perceptual. :)
+<p>
+<H4>Where did you get the name?</H4>
+
+I was pondering tactics of surrounding and causing one enemy to hit the other, which led to pondering close orbiting, which led to me thinking about moons, and thus they're the <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a>.
+<p>
+As far as the individual bots, well LunarLeader was obvious and I liked the rhythm of it, and LunarRover is just cool and represents that bot just going where it's told :)
+<p>
+<H4>Can I use your code?</H4>
+
+It's in the jar, but you probably don't want to touch this mess. If you really want to use code from it though, ask me.
+<p>
+<H4>What's next for your robot?</H4>
+
+<UL >
+<li> Find ways to reduce code size without removing features or making it unreadable (not that it isn't already unreadable...)
+<li> Possibly add a special movement case for LunarLeader when it has lost LunarRover, which would be more evasive.
+<li> Consider making LunarRover not a droid so it can be less helpless in LunarLeader's absence. Not sure this is worth it though
+<li> See if movement can be improved by keeping tabs on the other enemy
+</UL>
+<p>
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+Well, 1.1a had troubles against <a href="robowiki?GeminiTeam" class=wikipagelink>GeminiTeam</a>. The new 1.2 release seems to fare a little better...
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+Well, it shares a little utility code from my unreleased monster <a href="robowiki?Gwynfor" class=wikipagelink>Gwynfor</a>. Besides that? All from scratch. Can't even give credit for <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> or <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a> technology as I don't use those here.
+<p>
+<H4>Version History</H4>
+
+<p>
+0.1
+<UL >
+<li> Initial Release, though it never saw the official <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> field
+<li> LunarLeader used <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> while LunarRover used <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a>
+</UL>
+<p>
+0.2
+<UL >
+<li> Fixed an issue that would make skipped turns cause errors
+<li> Switched LunarRover to <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> too
+<li> Uncommented a line that made LunarLeader ensure it's goal points are inside the battlefield. It commented out in testing and I forgot to uncomment it in 0.1
+<li> Made the angular velocity of the enemy a rolling average
+</UL>
+<p>
+1.0
+<UL >
+<li> Last release until  it actually sees the official <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> field
+<li> Cut 100 to 200 <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> from the RelativePoint class
+<li> Add logic to go for the other team's leader first, as that seems somewhat beneficial
+</UL>
+<p>
+1.1
+<UL >
+<li> I lied, one more release
+<li> Improve logic to go for the enemy's leader first
+<li> Decide bulletpower based on the distance to the enemy
+<li> Move relative to their predicted location next tick instead of relative to the scanned location
+</UL>
+<p>
+1.1a
+<UL >
+<li> Lots of changes to get <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> reduced all the way to 1627
+<li> Some minor bugfixes for corner cases (which apparently was some kind of <a href="robowiki?PerformanceEnhancingBug" class=wikipagelink>PerformanceEnhancingBug</a>... gah... not that fixing it hurt performance that much)
+<li> Behavior is identical to 1.1 except for that very minor <a href="robowiki?PerformanceEnhancingBug" class=wikipagelink>PerformanceEnhancingBug</a>
+</UL>
+<p>
+1.2
+<UL >
+<li> Tweaked goalpoint selection a bit (which cost a whole ~300 codesize...)
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Sorry, I actually ran the tourney last night (Thursday is the "normal" day), but didn't get time to upload the results before leaving the house this morning. I look forward to seeing your new team in action next week! -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+No worries, I know it's too late for this week. I'm looking forward to seeing it next week too! Actually, I find watching <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> about as fun as <a href="robowiki?Wolverine" class=wikipagelink>Wolverine</a>'s finish, though that just might be me being weird. :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Hmm, I'm sorry to say that I'm running into some JVM problems with <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a>. I'm still running the <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> with an old Robocode (1.1.3) because I need to update the code some for the new versions. I am ready and willing to update it if/when someone has a team that works in the current version but not in 1.1.3, so that's not really the issue, but just background. This is the error I get in 1.1.3 and 1.4.9:
+<pre>
+LunarLeader [0.1] (1): Exception: java.security.AccessControlException: Preventing LunarLeader [0.1] (1) from access: (java.io.FilePermission /Users/pcupka/robocode_1.4.9/robots/.robotcache/ags.lunartwins.LunarTwins_0.1.jar_/robocode/RobotStatus.class read): You may only read files in your own root package directory. 
+java.security.AccessControlException: Preventing LunarLeader [0.1] (1) from access: (java.io.FilePermission /Users/pcupka/robocode_1.4.9/robots/.robotcache/ags.lunartwins.LunarTwins_0.1.jar_/robocode/RobotStatus.class read): You may only read files in your own root package directory. 
+    at robocode.security.RobocodeSecurityManager.checkPermission(Unknown Source)
+    at java.lang.SecurityManager.checkRead(SecurityManager.java:871)
+    at java.io.File.length(File.java:813)
+    at robocode.security.RobocodeClassLoader.loadRobotClass(Unknown Source)
+    at robocode.security.RobocodeClassLoader.loadClass(Unknown Source)
+    at java.lang.ClassLoader.loadClass(ClassLoader.java:251)
+    at java.lang.ClassLoader.loadClassInternal(ClassLoader.java:374)
+    at ags.lunartwins.util.EnemyRobot.onScannedRobotEvent(EnemyRobot.java:31)
+    at ags.lunartwins.LunarLeader.onScannedRobot(LunarLeader.java:27)
+    at robocode.peer.robot.EventManager.onScannedRobot(Unknown Source)
+    at robocode.peer.robot.EventManager.processEvents(Unknown Source)
+    at robocode.peer.RobotPeer.tick(Unknown Source)
+    at robocode.AdvancedRobot.execute(Unknown Source)
+    at ags.lunartwins.LunarBase.run(LunarBase.java:54)
+    at robocode.peer.RobotPeer.run(Unknown Source)
+    at java.lang.Thread.run(Thread.java:613)
+</pre>
+In 1.5.4, I get this:
+<pre>
+LunarLeader [0.1] (1): Throwable: java.lang.NoSuchMethodError: java.lang.Math.copySign(DD)D
+java.lang.NoSuchMethodError: java.lang.Math.copySign(DD)D
+    at ags.lunartwins.LunarLeader.doRadar(LunarLeader.java:93)
+    at ags.lunartwins.LunarBase.run(LunarBase.java:52)
+    at robocode.peer.RobotPeer.run(Unknown Source)
+    at java.lang.Thread.run(Thread.java:613)
+</pre>
+I'm running Apple's Java 5 JVM on Mac OS X 10.5.2. Are you using Java 6? What version of Java and OS are you using? And are you using built in Robocode classes in your bot (in regards to the 1.1.3 / 1.4.9 error)? Glad I decided to test it out right away, as that gives us almost a full week to iron out any issues...
+<p>
+-- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I'm using Java 6, however I am compiling with the Java 5 compatible target. Using Sun JDK 1.6.0.04 on Linux more specifically.  I do reference the robocode.peer.RobotPeer<a href="robowiki?action=edit&id=RobotPeer" class=wikipageedit>?</a>.WIDTH/HEIGHT constant for bot size, of course hard coding that shouldn't be an issue because it's not like that changes. I also reference the DefaultBattleField<a href="robowiki?action=edit&id=DefaultBattleField" class=wikipageedit>?</a> class (Which is basically just a shell that stores height/width) in order to store my own representation of the battlefield size. As for the error in 1.5.4, it appears that java.lang.Math.copySign() isn't part of Java 5 (and the Java 5 target doesn't check if the APIs used exist in the old versions). I'll try and remove those Robocode internal references and the copySign() reference. Hopefully this won't hurt the codesize too much as this bot is pretty bloated as far as codesize per function -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Cool - I'm glad to hear at least the errors all make sense to you. =) I'll gladly help you shrink some <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> if you need it. I'm not the master (that'd be <a href="robowiki?Simonton" class=wikipagelink>Simonton</a> or <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>), but I've got some experience with it and I'm sure I could find some bytes. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+By the way, java.awt.geom.Point and java.awt.geom.Point2D.Double are good replacements for how you're using DefaultBattleField<a href="robowiki?action=edit&id=DefaultBattleField" class=wikipageedit>?</a>, I think. A lot of us use Point2D.Double like that all over the place. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Okay, I removed those references to Robocode internal classes, and replaced java.lang.Math.copySign(). Except for fixing copySign() the <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> actually decreased slightly. Also made on minor tweak that looks like it helps a little. It's re-released under the same filaname/url, so you can download and try again Voidious. I just replaced DefaultBattleField<a href="robowiki?action=edit&id=DefaultBattleField" class=wikipageedit>?</a> with a simple blank class with public ints of height and width, and that only takes 5 <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a>, Point2D.Double might work better though (Actually, I already have an AbsolutePoint<a href="robowiki?action=edit&id=AbsolutePoint" class=wikipageedit>?</a> and RelativePoint<a href="robowiki?action=edit&id=RelativePoint" class=wikipageedit>?</a> class derived from Point2D which handles all the nice trig as well as making it easy to keep track of which variables are relative points and what ones are absolute points). Some help shrinking <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> might be nice some time, though at the moment shouldn't be necessary, besides if my <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> was shrinked I might have room for features to let it threaten your <a href="robowiki?LuminariousDuo" class=wikipagelink>LuminariousDuo</a> ;) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Oh, one thing I forgot to mention, it still wouldn't work in <a href="robowiki?RoboCode" class=wikipagelink>RoboCode</a> versions below 1.5.x, because it relies on the onStatus() callback which was introduced then. I'll see if I can get rid of reliance on that without hurting <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> too much. In the meantime, feel free to watch it on 1.5.4 -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Yep, it's working on 1.5.4 for me and failing on pre-1.5, like you said. I should just get my automation code updated to work with 1.5.4, as I don't think it's right to force people to code to 1.1.3 compatibility to support my own laziness. :) I'll look into that this weekend / week and I'll make a post once I've got that done. Good luck next week! -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Woo! What do you think of it's behavior? ;) Anyways, I just re-released again, after very quickly making it not reliant on onStatus(), and this actually decreased <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> a little too so I think I'll keep it this way even if it's a little less safe anyways. You can test on lower version again if you want, I think it will work. Anyways, thanks! Good luck too, hopefully <a href="robowiki?LuminariousDuo" class=wikipagelink>LuminariousDuo</a> won't get knocked out before facing <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> in the bracket style tourney :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Hmm, at least according to some new test battles.... it's seeming that making LunarRover use <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> too,  and re-adding one small feature I commented out and forgot that I commented (checking if goal points for movement are within the battlefield), brings it's test battles with <a href="robowiki?LuminariousDuo" class=wikipagelink>LuminariousDuo</a> to a point where either could easily win a given match. I might just making a 0.2 release before 0.1 even gets a chance to see the <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> battlefield... Hopefully I'm not too threatening Voidious :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Just a heads up, I did encounter this error once in Robocode 1.1.3, but I'm not sure if it's specific to that or just happens very rarely, so you might want to just check it out:
+<pre>
+ags.lunartwins.LunarLeader [0.1]: Exception: java.lang.NullPointerException
+java.lang.NullPointerException
+    at ags.lunartwins.util.RelativePoint.fromPP(RelativePoint.java:80)
+    at ags.lunartwins.LunarBase.run(LunarBase.java:37)
+    at robocode.peer.RobotPeer.run(Unknown Source)
+    at java.lang.Thread.run(Thread.java:613)
+</pre>
+As for the strategy, I like it a lot. =) Having more focus on strategy than advanced movement and targeting is something I've always wanted to see in the <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a>. In fact, my first attempt at a team was a <a href="robowiki?RamBot" class=wikipagelink>RamBot</a> teamed with <a href="robowiki?Komarious" class=wikipagelink>Komarious</a> - the hope was that the <a href="robowiki?RamBot" class=wikipagelink>RamBot</a> would enable them to kill one enemy bot quickly, leaving the other bot to battle with my champion <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a> duelist. =) It didn't work out that well, but <a href="robowiki?David_Alves" class=wikipagelink>David Alves</a> later tweaked my <a href="robowiki?KomariousTeam" class=wikipagelink>KomariousTeam</a> into a strong contender (and even reigning champ for a short while). Speaking of which, I notice that <a href="robowiki?KomariousTeam" class=wikipagelink>KomariousTeam</a> seems to beat <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> pretty consistently. 
+<p>
+Just to be sure, you do remember that it's survival that counts in the <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a>, right? I just happened to notice that <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> has the higher score even more often than higher survival, and I hope you didn't misinterpret that. Not that it doesn't do well there... It crushes <a href="robowiki?MarioBros" class=wikipagelink>MarioBros</a> and <a href="robowiki?Shiz" class=wikipagelink>Shiz</a>, and it has close matches with <a href="robowiki?GeminiTeam" class=wikipagelink>GeminiTeam</a> and <a href="robowiki?NightAndDay" class=wikipagelink>NightAndDay</a>. I'm definitely impressed! I confess I didn't expect a team with a <a href="robowiki?Droid" class=wikipagelink>Droid</a> to do so well. This should really shake things up!
+<p>
+-- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Hmm... odd error, however I can see how that would occur if <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> is skipping turns... When coding <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> I wasn't really thinking of efficiency, and I was calling the very slow getGoal() (which is what does the bulk of the work) multiple times per turn, and same with getTarget() which does the <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a>. Anyways, I just made a fix for this, so it will only call each once, and will also make this error impossible even if it is skipping turns. I should release that fix along with other improvements in 0.2 soon. According to a benchmark I just did though, I don't see how it would be slow enough to be skipping even with that inefficiency, but anyways that fix I made should fix the error even if it still skips.
+<p>
+Hmm, <a href="robowiki?KomariousTeam" class=wikipagelink>KomariousTeam</a> beats <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a>? Hmm, just testing that now on my system seems to show that fight as very very even. Well 1.1.3 did have a lower cpu constant, and in <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> I have some very inefficient code in places (recalculating things too much) the fix for the above error should drastically reduce CPU use of <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> and should thus improve performance if it's turns were indeed taking too long. Also, after enabling the little improvements I mentioned above that I haven't released yet, it seems to beat <a href="robowiki?KomariousTeam" class=wikipagelink>KomariousTeam</a> fairly consistently (and crush <a href="robowiki?MarioBros" class=wikipagelink>MarioBros</a> by a bigger margin than before). I guess we'll see if you'll see that improvement on your system too once I release 0.2 (which I hope to improve against <a href="robowiki?LuminariousDuo" class=wikipagelink>LuminariousDuo</a>'s wiggling before releasing, but that might happen today even) :)
+<p>
+Yes, I do know it's survival that counts, and that <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> tends to dominate in score more often. It's not like I mind having a good score too of course, and yes I do look at the survival counts not score. Anyways, I hope this will shake things up indeed :)
+<p>
+-- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+I believe I was running 1.5.4 for the <a href="robowiki?KomariousTeam" class=wikipagelink>KomariousTeam</a> battles, but you've probably tested more exhaustively than I have. I ran 3-4 battles and they all seemed to be solid wins for <a href="robowiki?KomariousTeam" class=wikipagelink>KomariousTeam</a>, but they may be closer in general. Looking forward to seeing 0.2 in the <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> next week! -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Well either way, <a href="robowiki?KomariousTeam" class=wikipagelink>KomariousTeam</a> seems to be my biggest <a href="robowiki?ProblemBot" class=wikipagelink>ProblemBot</a> besides <a href="robowiki?LuminariousDuo" class=wikipagelink>LuminariousDuo</a> I suppose :) What's encouraging is I am seeing some intermittent narrow wins against <a href="robowiki?LuminariousDuo" class=wikipagelink>LuminariousDuo</a> now, and just have to work to improve that a little. Thanks, I'm looking forward to it too! :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Oh, one thing I just found, is that I was using a 800x600 field instead of 800x800, and that using 800x800 does cause a rather large decrease in my performance. That may explain differences we were seeing. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Okay, well the performance decrease on an 800x800 field is disappointing, but makes sense as that makes it harder to pin an opponant against a wall this way. Anyways,  I've now released 0.2, which according to my tests may be a match for <a href="robowiki?KomariousTeam" class=wikipagelink>KomariousTeam</a> and <a href="robowiki?LuminariousDuo" class=wikipagelink>LuminariousDuo</a> even in the 800x800 field... :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Another thing to consider is that many teams probably assume an 800x800 field (pretty sure <a href="robowiki?KomariousTeam" class=wikipagelink>KomariousTeam</a> does), so it may have more been that their performance decreased on the 800x600. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+True true. Of course, the <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> 0.2 seems to do better than the last revision even on the 800x800 field :) I presume your earlier testing was on the proper 800x800? One thing I'm finding interesting, is that in my testing of 0.2 on an 800x800 field, it seems to win about 50% of the time against <a href="robowiki?KomariousTeam" class=wikipagelink>KomariousTeam</a> except it seems to get a head start in the early game before they've learned where <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> tends to move/fire. This head start seems to be about 5 to 15 rounds worth (and I would guess is spread through the first 20 or 30 rounds). Against <a href="robowiki?LuminariousDuo" class=wikipagelink>LuminariousDuo</a> it seems to win more often than not, but it seems very close and doesn't seem to have the same kind of head start that it has against <a href="robowiki?KomariousTeam" class=wikipagelink>KomariousTeam</a>. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Well, I just dropped between 100 and 200 <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> by getting rid of some old performance optimizations in RelativePoint in favor of simplicity, and that felt nice. :) Also, I just implemented smarter selection of the initial target by making it target the leader first (though if at a later time it sees both at once it will go for the closest one), and compared modes of first-seen-first, leader-first, and non-leader-first in actual battle against a few different teams. Interestingly, it made absolutely no difference (or even very slightly better with first-seen-first) against bots that I already crushed. Against bots <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> had a closer match with before, it seems that going for the leader first gave a rather notable improvement in how often it won. I guess I'm keeping this feature. Hmm... I think I'm feeling confident enough in it for a 1.0 release now, and I'll leave it to rest until the <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> is next run. After all I need to be able to concentrate on things besides Robocode :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Well, currently <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> used a fixed bulletpower of 3, which seemed to work decently. I promise I won't make any more released until after <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> is run this week, but I decided to experiment with bulletpower a bit. Power level 1 was horrible and could virtually never win, it just didn't do enough damage, and I didn't expect better from it anyways. Power level 2 seemed to work decently, however it was worse than 3 still. I then tried 2.5, and that was a notable improvement over either 2 or 3, so clearly there's some sweet spot between 2 and 3 that's somewhere near 2.5. So, if I'm going to optimize bulletpower a bit I might as well go all the way and and make it depend on distance to the opponant, after all I do have some free codesize and at sufficently close range there's no reason not to use pwer level 3. Anyways, I guess that's going on my "What's next" list up there. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Wow, graphing statistics is too fun. Today I ran some more comprehensive (150 trials of 75 rounds each, for each configuration) tests of <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> verses <a href="robowiki?LuminariousDuo" class=wikipagelink>LuminariousDuo</a> at 3 bulletpower and 2.5 bulletpower, and made a pretty graph of the results. It seems to show that as I thought 2.5 bulletpower was an overall improvement though it seems to reduce how consistent the score is slightly.
+<p>
+<img src="http://homepages.ucalgary.ca/~agschult/LunarTest.png">
+<p>
+The blue line is with 3.0 bulletpower and the red line is with 2.5 bulletpower. Running those 150 trials took over an hour for each configuration. Anyways, now I'll need to figure out a method to use for figuring out the optimal firepower for different distances. I'm suspecting that to do that, it may actually be most sensible to use <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> at various bulletpower levels in the robot, instead of gathering the statistics externally from the robot. I have some nice ideas to plot those statistics, but I'm not sure I'll get the motivation to code the gathering of these statistics in the robot, considering it doesn't use VirtualBullets/Waves<a href="robowiki?action=edit&id=VirtualBullets/Waves" class=wikipageedit>?</a> anyways due to codesize.
+<p>
+-- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Here's another pretty image!
+<p>
+<img src="http://homepages.ucalgary.ca/~agschult/LunarTest2.png">
+<p>
+The green was my first attempt at adjusting bulletpower based on distance, which used either 3.0, 2.5 or 2.0 depending on distance, which was certainly an improvement from 2.5 bulletpower. Then I tweaked the distances at which it changed bulletpower, and got some further improvement, as shown in the orange curve. Of course, the orange didn't improve my worst battles compared to the green, but it did increase the average margin that I won by without a negative effect on anything else. I'm liking this method of statistical measuring of tweaks. I made these plots using a combination of the raw data from <a href="robowiki?Rednaxela/SurvivalTest.sh" class=wikipagelink>Rednaxela/SurvivalTest.sh</a> as well as using <a rel="nofollow" href="http://en.wikipedia.org/wiki/R_(programming_language)">[GNU R]</a> , and if anyone is interested I can post more details about the workflow/configuration I'm using for this. Anyways it seems that since 1.0 release I've managed to improve my rate against <a href="robowiki?LuminariousDuo" class=wikipagelink>LuminariousDuo</a> from averaging at 58% to about 66%, while eliminating the bad losses and slightly increasing more overwhelming wins. I'm thinking I'll generate statistics on these configurations against other bots like <a href="robowiki?MarioBros" class=wikipagelink>MarioBros</a> or <a href="robowiki?GeminiTeam" class=wikipagelink>GeminiTeam</a> before doing more tweaking. Anyways, these graphs are a pain to produce as at least on my machine it each line needs about 100 trials of 75 rounds to give stable enough graphs. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Wow, very nice testing methods and pretty graphics - way to be! Except the part where you demolish my team. =) Might be the inspiration I need to make some updates. I've tweaked bullet power quite a bit in <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>, but not so much in <a href="robowiki?LuminariousDuo" class=wikipagelink>LuminariousDuo</a>. This week might be my last chance to make an update, as next week <a rel="nofollow" href="http://www.smashbros.com">[Smash Bros]</a> comes out, and you will never seeme again. =) (Just kidding ... sorta.) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Sorry about demolishing your team there. :) If it makes you feel any better, it still gets demolished by a smaller margin than other teams I've tested against. Actually from what I've observed, your team's wall avoidance and distancing seems of rather good quality particularly considering the <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> limit, it makes it awfully hard to trap. In some ways I would say that <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> is kind of a benchmark of how good a team's wall avoidance and distancing is at avoiding getting trapped. Anyways, I do hope that this upcoming shake up in <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> will inspire some people to update their teams... of course the timing of <a rel="nofollow" href="http://www.smashbros.com">[Smash Bros]</a> could indeed be a problem.... :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Well, I think I'm done with spewing pretty graphs for a while after this one:
+<p>
+<img src="http://homepages.ucalgary.ca/~agschult/LunarTest3.png">
+<p>
+Here's a nice graph showing that the same bulletpower tweaks also improved results against <a href="robowiki?InevitableTeam" class=wikipagelink>InevitableTeam</a> by a notable amount.  The shape of the curve wasn't affected in the same way but it was also an overall improvement. Anyways, next I'll be be looking at adjusting the bulletpower by a smooth formula instead of in steps like this.-- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Well, I didn't have any luck getting better results by adjusting bulletpower via a smooth formula rather than steps, however I was able to get a big leap against various teams by, instead of moving relative to their current possition, moving relative to their predicted position a mere 1 tick in the future.  I won't show the graph for that one though, as I don't want to cause Voidious and others to dispair too much. :) One other thought, is I think I may be able to improve this a little more even, by telling the droid to move relative to the enemy's location 2 ticks ahead instead of 1 tick ahead, due to how the droid's information on the enemy is always 1 tick older than the leader's information. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+All this exciting development is making me want to make a <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> bot :P I'm going to start abstracting later today, after I work on Claude<a href="robowiki?action=edit&id=Claude" class=wikipageedit>?</a> some more. So have fun at the top this week Rednaxela, because I'm coming for you -- <a href="robowiki?Baal" class=wikipagelink>Baal</a>
+<p>
+Best of luck Baal! I'm certainly hoping this may spark more activity in the <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> arena. Just remember I'm not going to make <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> an easy one to take down though ;) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<a href="robowiki?GruwelTwins" class=wikipagelink>GruwelTwins</a>
+Hmm, results were slightly improved a little more after making it more stubborn about killing the leader first. I think I'll probably make a 1.1 release as soon as this week's <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> results are posted. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Nice team, real sticky bulleys. They crush <a href="robowiki?GrauwuarG" class=wikipagelink>GrauwuarG</a> and it seemes I can't do anything about it. You may have another problemteam though: <a href="robowiki?GruwelTwins" class=wikipagelink>GruwelTwins</a> slaughters your 1.0 version with 60-15. Looking forward to the next <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a>!  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+It seems the trick to beating <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> may be fighting up close...counter-intuitive as that may seem. =) -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Hmm, I haven't tested against <a href="robowiki?GruwelTwins" class=wikipagelink>GruwelTwins</a>. I think I'll have to do that some time to improve it's weak spots. Yes Skilgannon, that is one of the tricks against it. So long as <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> is in close range to one enemy, while the other enemy hangs back a long distance, <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> will have a rather significant energy advantage (unless the far away enemy somehow gets a 100% hit rate). If the robot that isn't being ganged up upon gets close enough to have a high enough hit rate, the <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> loses the advantage. I'm thinking implementing an idea based on <a href="robowiki?BombSheltering" class=wikipagelink>BombSheltering</a> may help <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> a bit though. Anyways, thanks for the compliment <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>! -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Cool to see <a href="robowiki?GruwelTwins" class=wikipagelink>GruwelTwins</a> laying some smack down where nobody else can! That team won the first <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> (by quite a margin) and hasn't been updated since. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+<a href="robowiki?GruwelTwins" class=wikipagelink>GruwelTwins</a> does not run away, which is deadly against <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a>. It just says "come to daddy" and blows you away when you're closing in. Not the best strategy against advanced targeting and/or movement, but very effective in the early stages of melee (read close combat).  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+By the way, just tested now, and as of the updates I've made so far for 1.1, <a href="robowiki?GruwelTwins" class=wikipagelink>GruwelTwins</a> is somewhat less of a big problem, however it can still beat me 50-25, though on the other hand I can beat it 50-25 too in another trial. This is looking interesting, I think I might make a graph like the one above, for my performance against <a href="robowiki?GruwelTwins" class=wikipagelink>GruwelTwins</a>... It will probably show a very broad range... -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Update: Well this is rather odd... I'm having a lot of difficulty reproducing that 50/25 loss to <a href="robowiki?GruwelTwins" class=wikipagelink>GruwelTwins</a>. Maybe I just didn't see right when I looked the first time, however running a large number of matches for the graph, is so far indicating that it's harder to beat than <a href="robowiki?LuminariousDuo" class=wikipagelink>LuminariousDuo</a> but I still beat it very often. I guess the changes I've made so far for 1.1 have had a massive impact  on its <a href="robowiki?GruwelTwins" class=wikipagelink>GruwelTwin</a> performance though I'm not sure how. This kind of tempts me to release 1.1 for this week's <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a>....  -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Well... I give in... I'll make the 1.1 release, because I don't want to stuff too many changes into one release, and want to have a code backup before I got into a <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> reducing spree and start exploring some more disruptive enhancements.... hopefully I can find enough places to reduce <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Well I'm glad I just released at that point... becuase in trying to rewrite the scanning code for smaller <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a>, I seem to keep introducing bugs I can't track down... Not that it managed to get rid of much <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> anyways... -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Well, for a fun test I set up a <a href="robowiki?ShadowTeam" class=wikipagelink>ShadowTeam</a> with 2 Shadows instead of 5, and tested it against <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> 1.1, the results were <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> winning 39-36, 40-35, and 49-26, then <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> losing 37-38. In other words, it seems <a href="robowiki?ShadowTeam" class=wikipagelink>ShadowTeam</a> is a closer match for <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> than anything in <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> but even with it's massive megabot intelligence and learning it cannot reliably beat the tactics of <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a>. This makes me feel a little warm inside :-) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Cool! Did <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> also win on points? I never optimised <a href="robowiki?ShadowTeam" class=wikipagelink>ShadowTeam</a> for survival, it's just 2 Shadows with a slightly modified melee strategy and scan sharing. Maybe I can use your team for 2vs2 optimisations, did you use one of Shadow's latest versions? -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Yep, it won on points too. It gets about equal points in "Bullet Dmg" but has around double the "Survival" column points (which, should be noted is per-bot unlike survival as <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> defines it) and nearly double in the "Bullet Bonus" column. I used the same <a href="robowiki?ShadowTeam" class=wikipagelink>ShadowTeam</a> 3.66t that's currently entered in the team Roborumble. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Well, there's a bothersome amount of bug-finding as I've made codesize changes, but currently I've managed to cut the codesize from the 1.1 level by nearly 200 while maintaining identical functionality... I'm hoping to get another 100 or 200 cut off before I go back to features though not sure how realistic that will be... -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Now I got it cut to 1691 <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> with still identical functionality to 1.1... the code however is looking slightly messier than I'd like it in places. I'm not sure if I want to try to cut more <a href="robowiki?CodeSize" class=wikipagelink>CodeSize</a> off or if it's time to go back to feature development. Either way, I'm calling it a night now :) <br>
+Update: Well, spoke too soon, I got distraceted and reduced it to 1634 by hardcoding the field size as a static final variable. Anyways, now sleep :)<br>
+-- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Hmm... while 1.2 gave some improvements, I of course don't feel safe yet. As an experiment I tried switching form the <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> to <a href="robowiki?PatternMatching" class=wikipagelink>PatternMatching</a>. The results aren't good though, perhaps my <a href="robowiki?PatternMatcher" class=wikipagelink>PatternMatcher</a> just plain sucks, but it was under-shooting far more often causing the twins to hit eachother a lot... I wonder if I can manage to make something work better for <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> than the <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> (w/ <a href="robowiki?RollingAverage" class=wikipagelink>RollingAverage</a> <a href="robowiki?AngularVelocity" class=wikipagelink>AngularVelocity</a>) that I was using. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Well, in current absence of <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> running, I decided to do that fun little test against a twin-version of <a href="robowiki?ShadowTeam" class=wikipagelink>ShadowTeam</a> (3.66t as is in team <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>) again, now against <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> 1.2. The result? Well <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> won 51-24, 53-22, 53-22, 53-22, and 56-19. So, in other words, it seems that <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> 1.2 is really kicking some ass out there :)
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'> Rank </td><td colspan="0.5"> Robot Name </td><td colspan="0.5"> Total Score </td><td colspan="0.5"> Survival </td><td colspan="0.5"> Surv Bonus </td><td colspan="0.5"> Bullet Dmg </td><td colspan="0.5"> Bullet Bonus </td><td colspan="0.5"> Ram Dmg * 2 </td><td colspan="0.5"> Ram Bonus </td><td colspan="0.5"> 1sts </td><td colspan="0.5"> 2nds </td><td colspan="0.5"> 3rds </td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 1st </td><td colspan="0.5"> Team: <a href="robowiki?LunarTwins" class=wikipagelink>ags.lunartwins.LunarTwins</a> </td><td colspan="0.5"> 40564 </td><td colspan="0.5"> 11200 </td><td colspan="0.5"> 1840 </td><td colspan="0.5"> 22374 </td><td colspan="0.5"> 3891 </td><td colspan="0.5"> 1000 </td><td colspan="0.5"> 259 </td><td colspan="0.5"> 56 </td><td colspan="0.5"> 19 </td><td colspan="0.5"> 0</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 2nd </td><td colspan="0.5"> Team: <a href="robowiki?ShadowTeam" class=wikipagelink>abc.ShadowTeamTwin</a> </td><td colspan="0.5"> 27759 </td><td colspan="0.5"> 3800 </td><td colspan="0.5"> 460 </td><td colspan="0.5"> 20621 </td><td colspan="0.5"> 1614 </td><td colspan="0.5"> 1135 </td><td colspan="0.5"> 129 </td><td colspan="0.5"> 19 </td><td colspan="0.5"> 56 </td><td colspan="0.5"> 0</td></TR>
+</TABLE>
+-- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Very impressive! Could you try it with the latest Shadow? I made a lot of melee/teams tweaks but never updated the team rumble, versions after 3.76 should preform slightly better due to the gun improvements. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Sure! Just made a team of 2 Shadow 3.81f bots (latest in 1v1 rumble) and well... here's how that goes: <strike><a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> wins 48-27, 55-20, 50-25, 52-23, and then 50-25. It appears that the latest <a href="robowiki?Shadow" class=wikipagelink>Shadow</a> does indeed fare a little bit better:
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'> Rank </td><td colspan="0.5"> Robot Name </td><td colspan="0.5"> Total Score </td><td colspan="0.5"> Survival </td><td colspan="0.5"> Surv Bonus </td><td colspan="0.5"> Bullet Dmg </td><td colspan="0.5"> Bullet Bonus </td><td colspan="0.5"> Ram Dmg * 2 </td><td colspan="0.5"> Ram Bonus </td><td colspan="0.5"> 1sts </td><td colspan="0.5"> 2nds </td><td colspan="0.5"> 3rds </td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 1st </td><td colspan="0.5"> Team: <a href="robowiki?LunarTwins" class=wikipagelink>ags.lunartwins.LunarTwins</a> </td><td colspan="0.5"> 40293 </td><td colspan="0.5"> 10900 </td><td colspan="0.5"> 1660 </td><td colspan="0.5"> 22733 </td><td colspan="0.5"> 3831 </td><td colspan="0.5"> 1063 </td><td colspan="0.5"> 107 </td><td colspan="0.5"> 50 </td><td colspan="0.5"> 25</td><td colspan="0.5"> 0</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 2nd </td><td colspan="0.5"> Team: <a href="robowiki?ShadowTeam" class=wikipagelink>abc.ShadowTeamTwin2</a> </td><td colspan="0.5"> 28770 </td><td colspan="0.5"> 4100 </td><td colspan="0.5"> 540 </td><td colspan="0.5"> 20679 </td><td colspan="0.5"> 1987 </td><td colspan="0.5"> 1270 </td><td colspan="0.5"> 194 </td><td colspan="0.5"> 25 </td><td colspan="0.5"> 50 </td><td colspan="0.5"> 0</td></TR>
+</TABLE>
+</strike>A couple thoughts about <a href="robowiki?ShadowTeam" class=wikipagelink>ShadowTeam</a> that I notice here: Interestly it's ram damage is always higher than that of <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a>, so I think that means that both Shadows are occasionally hitting eachother, <strike>also the new version doesn't seem to do significantly better in bullet damage than the old version which makes me suspect that perhaps the largest gains that Shadow has made are in terms of the melee/team tweaks as opposed to the gun improvements.</strike>
+<br><b>Update:</b> Er... whoops, I did the trial with the new version in a 800x600 field when <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> is hardcoded for 800x800 (<a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> standard). Running it againwith the proper field size: <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> wins 57-18, 52-23, 57-18, 55-20, and 56-19
+<TABLE CELLSPACING='0' CELLPADDING='1' BORDER='1'>
+<TR VALIGN='CENTER' ><td colspan='0.5'> Rank </td><td colspan="0.5"> Robot Name </td><td colspan="0.5"> Total Score </td><td colspan="0.5"> Survival </td><td colspan="0.5"> Surv Bonus </td><td colspan="0.5"> Bullet Dmg </td><td colspan="0.5"> Bullet Bonus </td><td colspan="0.5"> Ram Dmg * 2 </td><td colspan="0.5"> Ram Bonus </td><td colspan="0.5"> 1sts </td><td colspan="0.5"> 2nds </td><td colspan="0.5"> 3rds </td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 1st </td><td colspan="0.5"> Team: <a href="robowiki?LunarTwins" class=wikipagelink>ags.lunartwins.LunarTwins</a> </td><td colspan="0.5"> 41011 </td><td colspan="0.5"> 11400 </td><td colspan="0.5"> 1860 </td><td colspan="0.5"> 22998 </td><td colspan="0.5"> 3845 </td><td colspan="0.5"> 671 </td><td colspan="0.5"> 238 </td><td colspan="0.5"> 56 </td><td colspan="0.5"> 19 </td><td colspan="0.5"> 0</td></TR>
+<TR VALIGN='CENTER' ><td colspan='0.5'> 2nd </td><td colspan="0.5"> Team: <a href="robowiki?ShadowTeam" class=wikipagelink>abc.ShadowTeamTwin2</a> </td><td colspan="0.5"> 27150 </td><td colspan="0.5"> 3600 </td><td colspan="0.5"> 400 </td><td colspan="0.5"> 20642 </td><td colspan="0.5"> 1577 </td><td colspan="0.5"> 842 </td><td colspan="0.5"> 88 </td><td colspan="0.5"> 19 </td><td colspan="0.5"> 56 </td><td colspan="0.5"> 0</td></TR>
+</TABLE>
+So, it looks like the newer version of <a href="robowiki?Shadow" class=wikipagelink>Shadow</a> doesn't perform significantly better against <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> really, perhaps a little worse event. My ponderings about the Shadows possibly hitting eachother still applies though for both versions.
+<br>-- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+Interesting, your strategy really is amazing for 2vs2. Are you ever going to release a killer robot team? -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Well, I have a <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> (5-bot) team based on the strategy of <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> on the drawing board (codname RedMoons), however, the difficulty is that I've been having is in adding proper scan sharing to the base of <a href="robowiki?RougeDC" class=wikipagelink>RougeDC</a> (which I'm using as the base for a couple reasons). Once I get that scan sharing figured out and working smoothly, I'll probably start getting towards a killer <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> team far faster :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+IIRC, there was one really bizarre thing I had to do with scan sharing - something like the constructor for a <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> expecting an angle in degrees instead of radians. (Since you can only send Serializable objects, you have to make your own class to send the data, then new up an SRE on the other end.) I was able to fit full scan sharing / locking into a <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> team, actually, but it surprisingly didn't seem to help at all when compared to Lumi's current optimal radar that just goes back and forth. It was only like 200 bytes bigger than Lumi's current radar, but Lumi's could also be made a bit smaller if I did it how <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a> does it. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Hmm that is interesting. Well, converting back to a SRE isn't really what my issue is. My issue is more to do with making my code able to handle receiving the 1-tick-old shared data, and ignore it when it already got that scan itself last tick, etc. It wouldn't be so so bad if my code wasn't making some assumptions that either location is either brand new or completely out of date. About usefulness of it: Well, some of my plans of how to best adapt <a href="robowiki?LunarTwins" class=wikipagelink>LunarTwins</a> tactics to a 5v5 setting, do require all of my robots to have the identical knowledge of enemy locations according to the scans last tick in order to cooperate as I intend ;) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=LunarTwins" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=LunarTwins">View other revisions</a><br>Last edited May 9, 2008 20:04 EST by <a href="robowiki?Rednaxela" title="ID 13292 from d198-53-128-24.abhsia.telus.net">Rednaxela</a> <a href="robowiki?action=browse&diff=1&id=LunarTwins">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

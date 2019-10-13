@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing Alpha - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Alpha'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing Alpha</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="Alpha"  />
+<input type="hidden" name="oldtime" value="1168587718"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="6"  />
+<input type="hidden" name="captchaArg2" value="2"  />
+<input type="hidden" name="captchaOp" value="+"  />
+<input type="hidden" name="captchaId" value="078803406869"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">&#39;&#39;&#39;[[/VersionHistory|Version History]]&#39;&#39;&#39;
+=== Bot Name ===
+Alpha
+
+==== Author ====
+MarijnK
+
+==== Extends ====
+AdvancedRobot
+
+==== What&#39;s special about it? ====
+It&#39;s my first attempt at a bot.
+
+==== Great, I want to try it. Where can I download it? ====
+http://coloelja.xs4all.nl/~mkruisselbrink/robocode/mk.Alpha_0.2.1.jar
+
+==== How competitive is it? ====
+It seems to do fairly well as a melee bot. My first version placed #21 in de melee rumble.
+
+==== How does it [[Movement|move]]? ====
+A simple form of MinimumRiskMovement
+
+==== How does it fire? ====
+It uses GuessFactorTargeting in the current version, although I didn&#39;t notice great improvements over the previous circular targetting gun. It uses bezier curves to estimate the speed/heading/location of enemies between scans.
+
+==== How does it [[DodgingBullets|dodge bullets]]? ====
+It doesn&#39;t.
+
+==== How does the [[Melee|melee]] strategy differ from [[OneOnOne|one-on-one]]  strategy? ====
+Currently it is only a melee bot, so no different strategy.
+
+==== How does it select a target to attack/avoid in [[Melee|melee]]? ====
+It simply chooses the closest target.
+
+==== What does it save between rounds and matches? ===
+Nothing.
+
+==== Where did you get the name? ====
+Alpha is the first letter of the Greek alphabet, and this is my first bot...
+
+==== Can I use your code? ====
+Currently it&#39;s not yet open source, but once I&#39;m satisfied with my bot I&#39;ll probable release the source for everyone to see/use.
+
+==== What&#39;s next for your robot? ====
+Improved gun, probably a better movement as well, and most likely a special 1on1 movement as well.
+
+==== Does it have any [[WhiteWhale]]s? ====
+Don&#39;t know yet :)
+
+==== What other robot(s) is it based on? ====
+None, it is my first bot.
+
+----
+==== Comments, questions, feedback: ====
+
+That&#39;s an interesting idea with the bezier curves - do you use them for interpolation or extrapolation? -- [[Kawigi]]
+
+I use them to interpolate date between two scans. This allows me to acquire quite accurate statistics even with quite a lot of ticks without a scan. Only when I&#39;m actually going to fire I need a pretty recent scan of my target. -- [[MarijnK]] 
+
+It seems like a fairly nice strategy, especially if you are planning on building a pattern matcher that is resilient to missed scans.  I also do interpolation of missed scans with my GuessFactor bots, but I use linear interpolation (under the assumption that the effect on either the final bearing or the timing of the wave hit is negligible almost all of the time).  By the way, you shouldn&#39;t be too surprised to not see a big difference in melee when upgrading from circular targeting to [[GuessFactorTargeting]] - I&#39;d expect you to find a much bigger difference one-on-one, and in melee, [[GuessFactorTargeting]] is only really even noticeably better against other more advanced bots.  It does get a bit better with smarter segmentation, however. -- [[Kawigi]]
+
+I was planning something like that to get a *perfect* factor, as the wave may come up a little to long or a little to short to be exactly on point with whrere would be the optimal place to record the guessfactor. So I would just interpolate and get the location of the enemy in this ghost space between ticks. I however haven&#39;t gotten around to coming up with the equation I need. --[[Chase-san]]
+
+Instead of recording wave hits after the wave has definitely passed the enemy (for now, ignoring the 1-tick adjustment because bullets advance an extra time before checking for collisions), I do it after they have passed (that distance - (bullet velocity / 2)) so that it should average out to being this &quot;perfect factor&quot;, as you call it. (If you wait until they&#39;ve definitely passed, on average they are (bullet velocity / 2) past the enemy instead of right on them.) However, I now have doubts that either of these ideas are worth the effort =) But it&#39;s always nice to be convinced your implementation is &quot;right&quot; even if you can&#39;t prove it performs better, IMO. -- [[Voidious]]
+
+Hmm, I currently calculate the distance the wave has passed by, distanceToImpact positive means it hasn&#39;t hit yet, negative it has already passed. All I really do is record it at waveSpeed (or there abouts) to aproximate the perfect factor, where as for you I would have to record at about -waveSpeed/2 (ranging from -5.5 to -9.85). But according to that I should check around waveSpeed*1.5? (Mind you I still plan to try my interpolation) --[[Chase-san]]
+
+Assuming you have the fire time, location, and speed correctly, yes, I make the wave break when it&#39;s at (distance to enemy - (1.5 * wave speed))... 1 for the extra &quot;wave speed&quot; the bullet goes before checking for collisions, and .5 for the averaging of things. How often this ends up as a different bin is something I haven&#39;t tested, though, and it&#39;s probably fairly rare. -- [[Voidious]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 6 + 2 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that Alpha has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=Alpha">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

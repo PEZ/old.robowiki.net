@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>GrauwuarG - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Grauwuar, G'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=GrauwuarG">GrauwuarG</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H3>Bot Name</H3>
+
+Twin: GrauwuarG<br>
+Bots: FirstBorn and TheOther, currently identical twins
+<p>
+<H4>Author</H4>
+
+<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+<H4>Extends</H4>
+
+<a href="robowiki?TeamRobot" class=wikipagelink>TeamRobot</a>
+<p>
+<H4>What's special about it?</H4>
+
+It is a twin especially (and only working) for the <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> Tournament, and has a (quite simple) teamstrategy .<br>
+<p>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+see <a rel="nofollow" href="http://www.dijitari.com/void/robocode/twinduel_20071103/">http://www.dijitari.com/void/robocode/twinduel_20071103/</a>
+<p>
+<H4>How competitive is it?</H4>
+
+It is in the subtop, dangling around fifth place
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+Double oscillator with the urge to fight close. Against some opponents it acts like <a href="robowiki?ProvocativeMovement" class=wikipagelink>ProvocativeMovement</a>, as they are forced to flee in a predictable way.
+<p>
+<H4>How does it fire?</H4>
+
+As of version 0.4 a GF-gun (segmented on distance, acceleration and heading) is used. It will fire at the closest with a preference for the enemy teamleader and weak prey.<br>
+Earlier versions used my standard iterative circular gun, known from almost all my other bots.
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+It doesn't.
+<p>
+<H4>Does it have a specific <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a> strategy?</H4>
+
+Although the bots focus their radar on different opponents, their movement is focussed on the enemy teamleader. Therefor it will close in on and try to corner the teamleader. Trying to avoid friendly fire is done by using a 'simulated' radarbeam.<br>
+Same strategy goes when one or more bots are killed (2-1, 1-2, 1-1). Alas the second enemy is not noticed anymore when fighting against a majority.
+<p>
+<H4>Does it use messaging and what is the content?</H4>
+
+The current versions only send own position and enemy position. The earlier versions also exchanged commands like 'move towards bot x', 'lock radar on bot x' and 'target bot x'. However, that was to complicated and errorprone.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+nothing.
+<p>
+<H4>Where did you get the name?</H4>
+
+It is a sort of growling to frighten the opponents and it starts with 'Gr' like all my bots. As they are an identical twin their name is a palindrome.
+<p>
+<H4>Can I use your code?</H4>
+
+It's in the .jar, released under the <a href="robowiki?RWPCL" class=wikipagelink>RWPCL</a>.
+<p>
+<H4>What's next for your robot?</H4>
+
+Tweaking the gun, some more tweaking to the movement and ofcourse some codesize optimizations.
+<p>
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+As it now (0.41) seems to consistantly beat <a href="robowiki?Coyote" class=wikipagelink>Coyote</a>Pair, <a href="robowiki?InevitableTeam" class=wikipagelink>InevitableTeam</a> and <a href="robowiki?Ravens" class=wikipagelink>Ravens</a>, the next candidates are <a href="robowiki?GeminiTeam" class=wikipagelink>GeminiTeam</a> and <a href="robowiki?YinYang" class=wikipagelink>YinYang</a>.
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+It is based on <a href="robowiki?Gruwel" class=wikipagelink>Gruwel</a> with some <a href="robowiki?GrubbmGroup" class=wikipagelink>GrubbmGroup</a> (messaging) and <a href="robowiki?Grinnik" class=wikipagelink>Grinnik</a> as GF-gun source.
+<p>
+<H4>Revision History</H4>
+
+<UL >
+<li><strong>0.41</strong> - 20071101  (wins 10 - 4 losses)
+<UL >
+<li> use simulated radarbeam iso real radarbeam to detect friendly fire situations
+<li> keep a bit more distance between brothers
+<li> bugfix in firing when gun not aimed
+</UL>
+<li><strong>0.4</strong> - 20071005  (wins 8 - 6 losses)
+<UL >
+<li> replaced CT-gun by GF-gun, segmented on acceleration, distance and (specific <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a>) heading
+<li> tweak to movement to be less predictable
+</UL>
+<li><strong>0.32</strong> - 20070508  (wins 8 - 6 losses)
+<UL >
+<li> simplified radartarget and movetarget selection (preparation for GF-gun)
+<li> try to reduce friendly fire
+</UL>
+<li><strong>0.31</strong> - 20070226  (wins 8 - 6 losses)
+<UL >
+<li> much more agressive distancing (close range)
+<li> bugfix startup enemy recognition
+</UL>
+<li><strong>0.3</strong> - 20070221  (wins 4 - 10 losses)
+<UL >
+<li> fixing radar- and move-Target selection
+<li> back to Gruwel-like oscillator
+</UL>
+<li><strong>0.2</strong> - 20061102  (wins 1 - 13 losses)
+<UL >
+<li> added communication
+<li> radarlock on different targets (including bug)
+<li> lousy movement
+<li> not very good strategies
+</UL>
+<li><strong>0.1</strong> - 20060817  (wins 5 - 5 losses)
+<UL >
+<li> basically <a href="robowiki?GruwelTwins" class=wikipagelink>GruwelTwins</a> with a preference for close-range and a small gun-tweak
+</UL>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+<p>
+I am now busy with a GF-gun for <a href="robowiki?GrauwuarG" class=wikipagelink>GrauwuarG</a>, but it performs similar to the existing <a href="robowiki?CircularTargeting" class=wikipagelink>CircularTargeting</a> <a href="robowiki?GrauwuarG" class=wikipagelink>GrauwuarG</a> 0.32. The gun is taken from <a href="robowiki?Grinnik" class=wikipagelink>Grinnik</a> with the addition of segmenting on heading to make use of the fact that opponents are driven into a corner. I expected a bit more performance than 7 wins, 7 losses and a percentage of 52%. Maybe I will put in the gun of Komarious (is <a href="robowiki?RaikoMicro" class=wikipagelink>RaikoMicro</a>) as a test to see under what circumstances I do something wrong, as I cannot find any bug yet.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Yeah, I've had a lot of trouble really finding success with improved targeting in the <a href="robowiki?TwinDuel" class=wikipagelink>TwinDuel</a>. I tend to think you want lower segmentation than <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> / <a href="robowiki?Komarious" class=wikipagelink>Komarious</a>, since you have a lot less data; but it is also a longer match, I guess. Consider how well <a href="robowiki?Shiz" class=wikipagelink>Shiz</a> does with just <a href="robowiki?HeadOnTargeting" class=wikipagelink>HeadOnTargeting</a>. Somehow, I still feel better having a GF gun in there... -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I have fitted in the gun of <a href="robowiki?KomariousTeam" class=wikipagelink>KomariousTeam</a> and it scores 8-6 with 52% . . . . doesn't that sound familiar? This means that my movement is the weak point and nothing else. As one of the few teams with a real team-strategy (even if it is a simple one) I don't want to overhaul it completely, but it is clear that the movement has to be adapted to the close-range strategy. And as the movement is basically the same as <a href="robowiki?Grinnik" class=wikipagelink>Grinnik</a>, <a href="robowiki?Gruwel" class=wikipagelink>Gruwel</a> and <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a>, I may win some points there too.   -- <a href="robowiki?GrubbmGrb" class=wikipagelink>GrubbmGrb</a>
+<p>
+With some minor bugfixes and changes I managed to pump-up my percentage from 59% to 66% with v0.41. It's time to retest some options I discarded earlier.
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=GrauwuarG" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=GrauwuarG">View other revisions</a><br>Last edited November 4, 2007 1:06 EST by <a href="robowiki?GrubbmGait" title="ID 11179 from ip44-76-208-87.adsl2.versatel.nl">GrubbmGait</a> <a href="robowiki?action=browse&diff=1&id=GrauwuarG">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

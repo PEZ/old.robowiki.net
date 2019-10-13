@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>SimpleRobot - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Simple, Robot'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=SimpleRobot">SimpleRobot</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?SimpleRobot" class=wikipagelink>SimpleRobot</a> will be a helper class to simplify the use of Robocode-Robots.
+A <a href="robowiki?SimpleRobot" class=wikipagelink>SimpleRobot</a> gets input each tick, process the data and returns an output.
+<p>
+<h4>Idea</h4>
+The design of Robot and <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> is very confusing to me, so I decide to create an easy interface.
+It seems to me, that the Robots are made for realtime battle, but the battles are no realtime battles.
+Battles are computed in ticks and every Tick the <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> can set some output (setXXX) and get some input (getXXX). The output will be
+performed when execute() called, which calls tick() from RobotPeer<a href="robowiki?action=edit&id=RobotPeer" class=wikipageedit>?</a> ( the real base of all Robots )
+It would be easier to create good Robots, if the Robot gets all inputs at beginning of a tick and returns all outputs at the end of a tick.
+<br>That might look like:<br>
+Output run(Input) {...}
+<p>
+A list of the minimum needed information for a Robot which I found out until now:
+<p>
+<h4>Outputs</h4>
+acceleration<br>
+bodyturn<br>
+gunturn<br>
+radarturn // ignored for Droid<br>
+bulletpower // 0 if no bullet should be fired, ignored if gunheat &gt; 0
+<p>
+<h4>Internal states</h4>
+position:(x,y)<br>
+velocity<br>
+bodyheading<br>
+gunheading<br>
+radarheading // if radar exist ( Droid )<br>
+energy // &lt;0 means dead, 0 means disabled<br>
+gunheat<br>
+Iterable&lt;event&gt; refilled after last processing
+<p>
+<h4>Inputs</h4>
+position:(x,y)<br>
+velocity<br>
+bodyheading<br>
+gunheading<br>
+radarheading<br>
+energy<br>
+gunheat<br>
+Iterable&lt;event&gt; occured between last turn and this turn
+<p>
+<h4>Threads</h4>
+I don't know if threads are allowed, but they work which allows processing "old" data between ticks without taking the risk for a skipped turn, but if the GUI needs much CPU time ( resizing, moving other windows over battlefield ) the Robots gets a skipped turn ).
+<p>
+<h4>Robocode</h4>
+Robocode could change it's implementation to this simple form. The base of all Robots should use a RobotPeer<a href="robowiki?action=edit&id=RobotPeer" class=wikipageedit>?</a> private! Every extended Robot can offer methods, which allows an easier use to write small Robots, like "move N pixels forwars", "turn N degrees left" and event handling ( which aren't real events because the game runs in ticks ).<br>
+The result could be:<br>
+RobotBase<a href="robowiki?action=edit&id=RobotBase" class=wikipageedit>?</a> ( uses RobotPeer<a href="robowiki?action=edit&id=RobotPeer" class=wikipageedit>?</a> ) // offers simple input/output methods<br>
+<a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> extends RobotBase<a href="robowiki?action=edit&id=RobotBase" class=wikipageedit>?</a> // offers event handling and advanced movement method<br>
+Robot extends <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> // offers very easy methods to control the Robot<br>
+which would allow, that every Robot or <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> runs like before.
+<p>
+<h4>Future</h4>
+An implementation of a <a href="robowiki?SimpleRobot" class=wikipagelink>SimpleRobot</a> will be shared.
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=SimpleRobot" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=SimpleRobot">View other revisions</a><br>Last edited November 8, 2006 23:14 EST by <a href="robowiki?Sin_Varg" title="ID 8501 from e181049082.adsl.alicedsl.de">Sin Varg</a> <a href="robowiki?action=browse&diff=1&id=SimpleRobot">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Hanji/GravPoint - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Hanji, Grav, Point'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/GravPoint">Hanji/GravPoint</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Hanji" class=wikipagelink>Hanji</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>GravPoint<a href="robowiki?action=edit&id=GravPoint" class=wikipageedit>?</a> is the class that represents an attracting or repelling point for <a href="robowiki?Hanji/AGravEngine" class=wikipagelink>/AGravEngine</a>:
+<hr noshade class=wikiline size=1>
+<pre>
+ package neh;
+
+ /**A simple class describing a point of gravity*/
+ public class GravPoint {
+	/**The x coordinate of the point*/
+	public double x;
+	/**The y coordinate of the point*/
+	public double y;
+	/**The attractiveness of the point(negative will repel)*/
+	public double strength;
+	/**The time at which the point was created*/
+	public long ctime;
+	/**The point's lifetime (a lifetime of 0 never dies)*/
+	public long life;
+	
+	/**Default constructor initializes all memebers to 0*/
+	public GravPoint() {
+		this(0,0,0,0,0);
+	}
+	
+	/**
+	 * Constructs a GravPoint with the specified position,
+	 * strength, and infinite life.
+	 */
+	public GravPoint(double x, double y, double strength) {
+		this(x,y,strength,0,0);
+	}
+	
+	/**Constructs a GravPoint with the specified attributes*/
+	public GravPoint(double x, double y, double strength, long ctime,
+							long life) {
+		this.x = x;
+		this.y = y;
+		this.strength = strength;
+		this.ctime = ctime;
+		this.life = life;
+	}
+	
+	/**
+	 * Update the point. Returns true if the point needs to be killed.
+	 * For GravPoint this merely checks if our lifetime has been
+	 * exceeded, but, since this is called before calculations are
+	 * made using the point, it could be used to adjust position and
+	 * strength in subclasses.
+	 *
+	 * @param time The current game time
+	 * @returns true if the point needs to be killed, false otherwise
+	 */
+	 public boolean update(long time) {
+	 	return ((life != 0) &amp;&amp; (ctime + life) &lt; time);
+	 }
+	 	
+ }
+</pre>
+<hr noshade class=wikiline size=1>
+GravPoint<a href="robowiki?action=edit&id=GravPoint" class=wikipageedit>?</a> is designed to be customizable. I have made subclasses that do things like randomly vary strength, or move with a given velocity, or activate after a given delay, and pretty much anything you can think of should be doable.
+<hr noshade class=wikiline size=1>
+<strong>Questions or comments:</strong>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Hanji" class=wikipagelink>Hanji</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Hanji/GravPoint" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Hanji/GravPoint">View other revisions</a><br>Last edited April 5, 2003 9:02 EST by <a href="robowiki?PEZ" title="ID 1052 from 192.168.0.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=Hanji/GravPoint">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

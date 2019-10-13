@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>NoFearTheWalls - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='No, Fear, The, Walls'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=NoFearTheWalls">NoFearTheWalls</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>A <a href="robowiki?Movement" class=wikipagelink>movement</a> philosphy introduced by <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>.
+<p>
+If you have gotten your movement to really work you shouldn't need bounce of the walls. Get your <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> good and the rest of the movement strategy and impementation right and wall segmenting enemies will find little help hitting you from  your near wall behaviour.
+<p>
+Bot's using:
+<UL >
+<li> <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a>
+<li> <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a>
+<li> <a href="robowiki?PPP" class=wikipagelink>PPP</a>
+<li> <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a>
+</UL>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<H3>Commments:</H3>
+
+<p>
+I don't get it.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+This is what I do in <a href="robowiki?DrussGT" class=wikipagelink>DrussGT</a>. I think you're doing this already. Basically, <a href="robowiki?NoFearTheWalls" class=wikipagelink>NoFearTheWalls</a> means that you don't special case your danger function (by adding danger) when you're wallsmoothing. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+<a href="robowiki?NoFearTheWalls" class=wikipagelink>NoFearTheWalls</a> predates <a href="robowiki?WaveSurfing" class=wikipagelink>WaveSurfing</a>, I think. It's actually just basically <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>, as far as I know. Before <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a>, people generally just stopped or reversed instead of hitting a wall (they feared them). -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+I think the term, as PEZ used it, meant that you don't have a "reverse if wall angle &gt; X" or any other term that makes your bot avoid <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> too much. <a href="robowiki?RaikoMX" class=wikipagelink>RaikoMX</a> did that. I think the term came about after <a href="robowiki?WallSmoothing" class=wikipagelink>WallSmoothing</a> was invented. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+Ah, I see.  So, is your technique to increase the danger of points closer to the enemy, thereby decreasing the probability "diving in", but not ruling out the option entirely, in case that really will get you to the safest place? -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+<UL >
+<li> That's what I do - getting closer is more dangerous, but never ruled out. David - is that <a href="robowiki?NoFearTheWalls" class=wikipagelink>NoFearTheWalls</a>? -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+</UL>
+<p>
+Somewhat. I think the original idea was to have no dive-in protection at all. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+That sounds silly.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+Wouldn't that be NoFearTheOtherBot<a href="robowiki?action=edit&id=NoFearTheOtherBot" class=wikipageedit>?</a>, not <a href="robowiki?NoFearTheWalls" class=wikipagelink>NoFearTheWalls</a>? -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<p>
+@<a href="robowiki?AaronR" class=wikipagelink>AaronR</a>, the walls are what would cause you to get too close to the enemy, because you would wallsmooth and that would change your attack angle. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+What you are really trying to do with special cases in danger functions is avoid limiting your <a href="robowiki?MaxEscapeAngle" class=wikipagelink>MaxEscapeAngle</a> and/or increasing your relative target size. Getting close to the enemy will cause the latter of these, while changing your attack angle causes the former. With special cases for MEA and relative botwidth, danger functions would <em>theoretically</em> be more effective. In practice, though, FearTheWalls<a href="robowiki?action=edit&id=FearTheWalls" class=wikipageedit>?</a> methods, like special-casing distance or attack angle, frequently get implemented for simplicity. -- <a href="robowiki?AaronR" class=wikipagelink>AaronR</a>
+<p>
+Yes, and your reverse MEA is also reduced when you draw nearer to the enemy, because the relative time you need to reverse in comparison to the bullet flight time is greater. Any other danger factor you can think of? I'll try to implement such a method. --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=NoFearTheWalls" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=NoFearTheWalls">View other revisions</a><br>Last edited November 1, 2007 21:10 EST by <a href="robowiki?Krabb" title="ID 4412 from d235.stw.stud.uni-saarland.de">Krabb</a> <a href="robowiki?action=browse&diff=1&id=NoFearTheWalls">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>HypoLeach - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Hypo, Leach'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=HypoLeach">HypoLeach</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?HypoLeach" class=wikipagelink>HypoLeach</a>, a <a href="robowiki?MiniBot" class=wikipagelink>MiniBot</a> by <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>.
+<H2>What's new?</H2>
+
+<UL >
+<li> October 26 2003 - First test version (0.1) about to be released.
+</UL>
+<H2>What's special about it?</H2>
+
+<UL >
+<li> It's acting on a movement idea of <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>s'. Trying to corner its enemy by a <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> derived movement going diagonally across the battle field.
+<li> Pretty cool colors, in'it? 
+</UL>
+<H2>Great, I want to try it. Where can I download it?</H2>
+
+<a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id">http://www.robocoderepository.com/BotDetail.jsp?id</a>=
+<H2>How competitive is it?</H2>
+
+We don't know yet.
+<H2>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H2>
+
+It tries to stay at a fix, close, distance along the axis defined by the right angle to one of the diagonals of the battle field. And there's some randomness added because of this being a minibot and I couldn't fit <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a>'s special cases for stationary (along the movement axis) and mirroring bots.
+<H2>How does it fire?</H2>
+
+A <a href="robowiki?ReducedDimensionalSegmentation" class=wikipagelink>ReducedDimensionalSegmentation</a> and <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> gun.
+<H2>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H2>
+
+Depending on the enemy, this bot dodges its own bullets at times.
+<H2>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H2>
+
+This bot doesn't know about <a href="robowiki?Melee" class=wikipagelink>Melee</a> battles.
+<H2>What does it save between rounds and matches?</H2>
+
+Aim factor visit counts. The small size of the data makes it possible to save data from 200+ bots. And this bot is not only leechy, it's cheesy too! Comes preloaded with data on most enemies. 
+<H2>Where did you get the name?</H2>
+
+It moves along one of the diagonal lines across the battle field, or the Hypothenuse (is that the correct spelling?) if you like. With the Bad Leech Spelling (TM) added.
+<H2>Can I use your code?</H2>
+
+The source is included in the jar file and you may use it under the terms of the <a href="robowiki?RWPCL" class=wikipagelink>RWPCL</a>.
+<H2>What's next for your robot?</H2>
+
+<UL >
+<li> Figure some more on the dimension to use for it's <a href="robowiki?ReducedDimensionalSegmentation" class=wikipagelink>ReducedDimensionalSegmentation</a>.
+<UL >
+<li> I think I might have gotten it wrong in the first test version...
+</UL>
+<li> Make it use both diagonals for movement.
+</UL>
+<H2>What other robot(s) is it based on?</H2>
+
+<a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a>
+<hr noshade class=wikiline size=1>
+<H2>Request for help</H2>
+
+My tests with <a href="robowiki?HypoLeach" class=wikipagelink>HypoLeach</a> says it more or less sucks ass against most bots. Firstly, very few bots actually gets cornered by it (I guess you'll find it hard to help me here until I have released the bot, but anyway this is the case). Secondly following the diagonal movement of your enemy is dangerous if your enemy doesn't back off and moves near the walls. (This makes Hypo stick to the wall almost without moving.) Thirdly I need a good scheme to choose which diagonal to follow. Right now I examine two destinations on either side of the enemy along the diagonal going from the upper-left corner to the bottom-right. Then I pick the destination closest to the center of the field. I am trying to figure out a simple way to follow either diagonal without it leading to switching diagonals all the time. (This would ruin the impression of distinct Hypo-movement.)
+<p>
+Forthly I am not able to figure out a good dimension to slice my stats along. <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> does this along the Y-axis of the field, which is very, very simple and very effective. Right now I am trying the normalized relative angle of the bot seen from the center of the field looking at the corner behind the bot.  This would probably be a better choice if indeed I was succesful in cornering the enemy. Right now this doesn't capture any particular situation at all... Do any of you have an idea how I could measure the position of the bot along the axis which I am moving by? Assume I'm facing the enemy and behind the enemy-line is the upper-left corner. Now if the enemy was close to the left wall this should be slice 0, if close to the right wall this is slice number (SLICES - 1). If the enemy is in the upper-left corner this should be the mid slice. I think this would be a good dimension to collect stats along, but I can't figure out how to calculate it. ...
+<p>
+Now is time to release this bot. Then I think you'll have a better chance helping me out. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<H2>Comments, questions, feedback:</H2>
+
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=HypoLeach" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=HypoLeach">View other revisions</a><br>Last edited May 18, 2006 21:45 EST by <a href="robowiki?Florent" title="ID 6624 from 148.187.103-84.rev.gaoland.net">Florent</a> <a href="robowiki?action=browse&diff=1&id=HypoLeach">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

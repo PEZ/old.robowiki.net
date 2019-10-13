@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RobocodeBugs/Discussions - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Robocode, Bugs, Discussions'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Discussions">RobocodeBugs/Discussions</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RobocodeBugs" class=wikipagelink>RobocodeBugs</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>So, the bullets have to intercept, not be the same line.  That sounds like a bug to me. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Eh, hardly a bug. It's just an implementation detail. Two parallell lines never intercepts of course. I think <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a> has posted collision test code that closely mimics the way Robocode does it somewhere on the wiki. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+2 parallell lines do not intercept, true, but if they are in fact the same line, then they still collide.  Robocode not detecting these collisions is a bug. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+It probably works with vectors, meaning it's simpler to ignore this normally extremely rare case and not have to get the positional data to check for coincidence. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+That's probably true, doesn't stop it being a bug though. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I refuse to label it a bug. Bullets are implemented as lines and this is known. The official FAQ tells the story. It's much rather a feature. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+The FAQ at no point says it does not detect 2 line segments that are segments of the same line and share at least one point as a collision. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Umm, no you are right. I have known it used Line2D.intersect() for so long so I assumed I had read it there. In any case you are barking up the wrong tree. No one here has written Robocode. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I know that.  I just like things to be recognised for what they are.  If it's a bug it should be called a bug. In fact, it might not be so much a bug in robocode as a bug in java itself, although java probably does have it documented as feature, it still isn't the best way for it to work (at least in this case).  I'll go and see if the java API mentions anything. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Well in the <a href="robowiki?JavaAPI" class=wikipagelink>JavaAPI</a> the methods are named intersects() and such so there's no real confusion as long as you, unlike me, keep remembering that two parallell lines never intersect. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Two lines that coincide intersect at every point on the line, however.  It is only the lines that are parallel but do <i>not</i> coincide that never instersect.  Nevertheless, if Mat had seen this "bug" he most certainly would have eliminated it.  Two stationary bots shooting directly at each other and not hitting each other is stupid.  After all, he wrote Fire.  -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+So you are agreeing that it's a bug?  If so, does anyone know where the official bug reports page/email is? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+=) Considering the enormous attention and development resources IBM pours into the Robocode projects I think your chances of getting this fixed are minimal. Besides I suspect Mat might want to keep this bug/feature. Since otherwise it would be too easy to create a bullet shield I think. (Just stand still and fire a 0.1 bullet in the direction the enemy was when it fired. Maybe fire slightly left and right too, to compensate for any lack in accuracy). -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It's an easy fix to make.  Just use intercepts() &amp;&amp; equals() i think.  I'd have to look at the api to be sure.  You have a point about if it is a good idea or not, though.  It should at least be noted in the FAQ that there is this feature, because an undocumented feature is a bug. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+IBM hasn't so much as touched robocode in over a year, don't expect this to be fixed. There are a number of other bugs (like <a href="robowiki?Teleport" class=wikipagelink>Teleport</a> and the bug where bullets on radar lines explode in mid-air for fun) which are rather more serious and have not been addressed, it looks like robocode is abandonware until it's released opensource. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+On the other hand, Mat has not mentioned anywhere that he has abandoned Robocode. So there's still hope. I'd say we start a <a href="robowiki?RobocodeBugs" class=wikipagelink>RobocodeBugs</a> page and keep it tidy and notify Mat about it so that he can check it whenever he has some time to fix bugs. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I've never heard of this radar bug.  How does it work? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I don't think it's ever been thoroughly detailed. I started a thread on it (when I first saw it) in the repository forums, and I believe that was the first time it was openly discussed. Several people noted having seen it earlier, however, it just seems to be another of those things that went unreported for awhile. I'd check the archives of the alphaWorks forum since the repository is down atm. Basically bullets explode for no apparent reason, and it seems to have something to do with when radar lines and bullet paths sync up.
+<p>
+As for Mat, he doesn't own robocode, IBM does, he's just the author. He is an employee of IBM and they tell him what to do, until you see him post something along the lines of 'Hey, I'm working on this in my spare time and IBM is cool with it.' expect no updates. That said, David Alves has said Mat is seeking permission to get robocode source published from big blue. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+I've just found another (extremely minor) bullet collision bug.  When bullets collide, the explosion is placed at the beginning of one of the bullets lines, rather than at the intersection.  I just made 2 bots that goTo(50,50) and (300,300) repectively (what is important is that the x-distance and the y-distance between them is the same), and then got one to point it's gun straight up, and one left, and then once getTime()&gt;200 (so they start at the same time), they start firing 0.1 bullets.  Every bullet is destroyed, but the explosions are misplaced.  It's only the graphics and has no real effect, but i thought i would say something anyway. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+The real existing bug is when you fire two bullets of the same speed and they hit each other.  Doesn't happen very often, and you pretty much have to be stationary shooting in one direction to do it, but if you have the patience, try watching it on PEZ's <a href="robowiki?BeerPoet" class=wikipagelink>BeerPoet</a>. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+I just watched two Walls, each in a corner and staring each other down, firing head-on against each other and every bullet collided. I would suggest the "bug" that Tango has pointed out is actually just the result of having to coincide with the line perfectly, which doesn't normally happen without firing assistance. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Doesn't sample.fire use firing assistance? (i can't check now as i am at college)-- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I have no idea, I've been unable to recreate the Walls result. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Indeed, fire does use firing assistance.  So that can't be it.  Could walls have been missing very slightly, and so hitting at a slight angle? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I would think that mathematically it's more likely to happen at some angles than others. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+I don't know how to upload images, but I took a screenshot of the score table of <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> 2.31 vs the sample bots and stopped the game at round 34 of 100. It shows that DT survived first 35 times and if I add up the second and third they are 34 and 35. A second round allowing the match to finish showed the correct data, but another interupted match once again showed incorrect survivial of rounds. I think that the score table is way too buggy, Why does it take such a long time to show the results? -- <a href="robowiki?RobocoderDan" class=wikipagelink>RobocoderDan</a>
+<p>
+For me it pops up within a second. Sometimes a bot gets both the 1st and 2nd rank when it is like a tie in a particular round. The other bot gets just one, so it is probably (partially) a bug? -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+I found what causes it. When the last robot left dies before the next round starts, the '2nd' counter of bot #1 increases, the '2nd' of #2 decreases, the '1st' of #2 increases, but the '1st' of #1 doesn't decrease. Why should this happen anyway? -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+Im not really sure why this happens, I got this alot when first testing Neo, against another HOT bot. I would end up with final stats of a 10 round battle totaling over 30 wins between the 2 bots... -- <a href="robowiki?Jokester" class=wikipagelink>Jokester</a>
+<hr noshade class=wikiline size=1>
+<p>
+Usually I get two onHitRobot<a href="robowiki?action=edit&id=HitRobot" class=wikipageedit>?</a>() events per turn. Anyone else? -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+From the robocode changelog/version history: <i>"An event is generated every time one robot hits another. If you are moving toward the other robot, you will get onHitRobotEvent<a href="robowiki?action=edit&id=HitRobotEvent" class=wikipageedit>?</a> with isMyFault<a href="robowiki?action=edit&id=MyFault" class=wikipageedit>?</a>() = true. If another robot is moving toward you, you will get an onHitRobotEvent<a href="robowiki?action=edit&id=HitRobotEvent" class=wikipageedit>?</a> with isMyFault<a href="robowiki?action=edit&id=MyFault" class=wikipageedit>?</a>() = false. If you are moving toward each other, you will get two events, with the isMyFault<a href="robowiki?action=edit&id=MyFault" class=wikipageedit>?</a>() = true, first."</i> So if you are both moving toward each other, however slightly, you will get two events. -- <a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+Thanks. But why does it consider <a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a> moving towards me? -- <a href="robowiki?Jonathan" class=wikipagelink>Jonathan</a>
+<p>
+Now that's kind of strange.... --<a href="robowiki?Pulsar" class=wikipagelink>Pulsar</a>
+<p>
+Actually, you ALWAYS get an event with isMyFault<a href="robowiki?action=edit&id=MyFault" class=wikipageedit>?</a>() returning false, and then you will get a <em>second</em> with isMyFault<a href="robowiki?action=edit&id=MyFault" class=wikipageedit>?</a>() returning true IF you were moving toward the other bot.  I believe this is documented (?). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+<hr noshade class=wikiline size=1>
+I know jikes 1.16 is not java 1.5 compatible, but jikes 1.22 works flawlessly together with java 1.5 in my setup. --<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+<p>
+Really? I keep getting this error message saying that my robots that are compiled using jikes 1.22 have an invalid version number (48.0). For example, even Kawigi's(?) enhanced version of Robocode doesn't work on my computer with java 1.5 at all. Also, doesn't Robocode require the usage of jave 1.3 (I have java 1.5 but run Robocode with 1.3)?
+<p>
+I run <a href="robowiki?Robocode" class=wikipagelink>Robocode</a> flawlessly with 1.5. Your version number problem is because jikes 1.22 is trying to compile a Java 1.5 "binary" with Java 1.4 packages. You need to find out where your Java 1.5 packages are and tell jikes to use those instead of your 1.3/1.4 packages. Oh, btw, you should put your name next to your comments :-p --<a href="robowiki?AaronKrill" class=wikipagelink>AaronKrill</a>
+<p>
+But, what if <a href="robowiki?Robocode" class=wikipagelink>Robocode</a> doesn't even run on java 1.5? -- <a href="robowiki?Kinsen" class=wikipagelink>Kinsen</a>
+<p>
+If you use Java 1.5, then you need Jikes 1.22, otherwise the compilertest will fail during startup. If you want to stay compatible with Java 1.4 or 1.3, you can add the flag <strong>-target 1.3</strong> (or 1.4.2 or whatever) to the Robot-&gt;Editor-&gt;Compiler-&gt;Options-&gt;Preferences-&gt;Compiler Options.  --<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Kinsen: <a href="robowiki?Robocode" class=wikipagelink>Robocode</a> works fine on java 1.5... didn't I just say that? And ya, if you want your compiled stuff to work right on prior versions, you gotta say "-target 1.3" or whatever. which sucks. but oh well. I compile my stuff with javac btw. --<a href="robowiki?AaronKrill" class=wikipagelink>AaronKrill</a>
+<p>
+Also, you should check the "Enable JDK 1.4 Source" flag in your compiler options in NetBeansIDE<a href="robowiki?action=edit&id=NetBeansIDE" class=wikipageedit>?</a> 3.6 --<a href="robowiki?UnderDark" class=wikipagelink>UnderDark</a>
+<p>
+Doesn't it say that it needs java 1.3 or is there an invisible version of <a href="robowiki?Robocode" class=wikipagelink>Robocode</a> somewhere? -- <a href="robowiki?Kinsen" class=wikipagelink>Kinsen</a>
+<p>
+I think <a href="robowiki?Robocode" class=wikipagelink>Robocode</a> needs <strong>at least</strong> 1.3, but I recommend 1.4.2 or 1.5, even with their compressed-serialization-bug. --<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+No, it checks the current version number in the registry (I use Windows) and then displays in the console window that the current version is 1.5 but that <a href="robowiki?Robocode" class=wikipagelink>Robocode</a> only supports 1.3. -- <a href="robowiki?Kinsen" class=wikipagelink>Kinsen</a>
+<p>
+I dont get anything like that in my console window (Windows 2k, Java 1.5 from SUN) --<a href="robowiki?AaronKrill" class=wikipagelink>AaronKrill</a>
+<p>
+Actually, I think Robocode 1.0.7 requires at least Java 1.4. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+No, I run it perfectly fine with Java 1.3, but not with Java 1.5. -- <a href="robowiki?Kinsen" class=wikipagelink>Kinsen</a>
+<p>
+Then I think you have a mixup of 1.3 and 1.5 somehow, because I only have 1.5 now (updated from 1.4.2), and everything is working fine.  --<a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+I do not think I have a mixup of 1.3 and 1.5 because one computer that only has 1.3 will work perfectly fine while another with 1.5 and 1.3 requires that I run <a href="robowiki?Robocode" class=wikipagelink>Robocode</a> with the 1.3 version while still rejecting certain robots. I can post the output in a few minutes, but the computer I am using right now doesn't let me access a removable drive. -- <a href="robowiki?Kinsen" class=wikipagelink>Kinsen</a>
+<p>
+This is the output I get when trying to run <a href="robowiki?Robocode" class=wikipagelink>Robocode</a> on Java 1.5:
+<pre>
+Registry key 'Software\JavaSoft\Java Runtime Environment\CurrentVersion'
+has value '1.5', but '1.3' is required.
+Error: could not find java.dll
+Error: could not find Java 2 Runtime Environment.
+</pre>
+-- <a href="robowiki?Kinsen" class=wikipagelink>Kinsen</a>
+<p>
+I betcha that you're trying to ue the 1.5 VM, but have your JAVA_HOME (or whatever the windows equiv is) to the 1.3 VM directory. Or something similar to that. Just out of curiosity, what version of robocode are you using? I'm running 1.0.7 with java 1.5 --<a href="robowiki?AaronKrill" class=wikipagelink>AaronKrill</a>
+<p>
+I am using 1.0.7. I would try to probe around, but I am afraid of messing up the Java settings without a good internet connection. I can still run <a href="robowiki?Robocode" class=wikipagelink>Robocode</a> with the Java 1.3 but it bugs me to not be able to run robots compiled with the Jikes 1.22. -- <a href="robowiki?Kinsen" class=wikipagelink>Kinsen</a>
+<p>
+Here's sumthing funny i found while testing out some code for yoda rewrite at the moment all he does is spins the radar and body and use HOT when i put him against sittingduck, the first round i noticed explosions on Yoda and his energy level dropping, now against sittingduck i don't expect that to happen. So i ran a bunch of round to reproduce this error and provide some debugging for it. It doesn't produce an onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a> but here 
+<PRE >
+ =========================
+ Round 1772 of 10000
+ =========================
+ SYSTEM: Bonus for killing sample.<a href="robowiki?SittingDuck" class=wikipagelink>SittingDuck</a>: 20
+ SYSTEM: rc.Yoda wins the round.
+ =========================
+ Round 1773 of 10000
+ =========================
+ Skipped Turn at: 717
+ SYSTEM: rc.Yoda has died
+</PRE>
+<p>
+<img src="http://img.photobucket.com/albums/v244/gorded/Sucide.png">
+<p>
+Tell me what you think, i try to get a picture of him being hit -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+EDIT : got the picture -- <a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+<p>
+I've got some more accurate output and found that this bug triggers an onBulletHitBullet<a href="robowiki?action=edit&id=BulletHitBullet" class=wikipageedit>?</a> event here some output
+<PRE >
+ rc.Yoda's bullet at: 159.6885119441082 529.9141577130586
+ collided with
+ rc.Yoda's bullet at: 145.49353821786548 542.5435963748238
+</PRE>
+<p>
+<PRE >
+ rc.Yoda's bullet at: 145.49353821786548 542.5435963748238
+ collided with
+ rc.Yoda's bullet at: 159.6885119441082 529.9141577130586
+</PRE>
+<p>
+--<a href="robowiki?Gorded" class=wikipagelink>Gorded</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RobocodeBugs" class=wikipagelink>RobocodeBugs</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RobocodeBugs/Discussions" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RobocodeBugs/Discussions">View other revisions</a><br>Last edited June 3, 2007 4:44 EST by <a href="robowiki?Gorded" title="ID 11030 from bas2-toronto47-1242398483.dsl.bell.ca">Gorded</a> <a href="robowiki?action=browse&diff=1&id=RobocodeBugs/Discussions">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

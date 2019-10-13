@@ -1,0 +1,392 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>WikiTargeting/Code - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Wiki, Targeting, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Code">WikiTargeting/Code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><b>SCHEMATICS</b>
+<p>
+<pre>
++----------------------------------------------------------------+
+| MyRobot ------ Node ------ Leaf ------ Bin                     |
+|         \           \           \                              |
+|          \           \           ----- Log -----&lt; Observation  |
+|           \           \                               |        |
+|            \           \                          Situation    |
+|             \           \                                      |
+|              \           - Splitter ------&lt; Node(recursive)    |
+|               \                                                |
+|                Recursionlevel                                  |
++----------------------------------------------------------------+
+</pre>
+(for some reason this schema gets warbled... could a Wiki expert look at it and get it right?) 
+<UL >
+<li> Eh, no expertise needed, just a nice border will do! --(19/1/2006) <a href="robowiki?Nfwu" class=wikipagelink>Nfwu</a>
+</UL>
+<p>
+<b>PSEUDOCODE</b>
+<p>
+<pre>
+Class MyRobot
+{
+	Node root = new Node();
+	RecursionLevel level = new Recursionlevel();
+
+	processWave()
+	{
+		Observation o = new Observation(Situation s, int GuessFactor);
+		level.reset();
+		root.addObservation(o, level);
+	}
+
+	getGuessFactor(Situation s)
+	{
+		level.reset();
+		root.getGuessFactor(s, level);
+	}
+}
+
+Class Node
+{
+	Leaf leaf = new Leaf();
+	Splitter splitter = null;
+
+	int getGuessFactor(Situation s, RecursionLevel level, double Distance)
+	{
+		if(leaf==null)
+		{
+			return Splitter.getGuessFactor(s, level)	//this node is not a leaf. continue recursion.
+		}
+		else
+		{
+			return leaf.getGuessFactor(Distance)
+		}
+		
+	}
+
+	addObservation(Observation o, RecursionLevel level)	
+	{
+		if(leaf==null)
+		{
+			Splitter.addObservation(o, level)		//this node is not a leaf. continue recursion.
+		}
+		else
+		{
+			Leaf.add(o);
+			if(leaf.size() &gt;= 40)
+			{
+				if(splitter == null) splitter = new Splitter();
+				if(splitter.split(leaf, level))	//splitter.split returns true if successful
+				{
+						// this nodes is no longer a leaf node. save memory space by deleting unused objects
+					leaf.discard();
+					leaf = null;
+				}
+			}
+		}
+	}
+
+	getPeakFactor()
+	{
+		return leaf.getPeakFactor();
+	}
+
+	clear()
+	{
+		leaf.clear();
+	}
+}
+
+Class RecursionLevel
+{
+	int level;
+	int min[numDimensions]; //inclusive
+	int max[numDimensions]; //exclusive
+
+	reset()
+	{
+		level = o;
+		for(i=0;i&lt;numDimensions;i++)
+		{
+			min[i] = 0;
+			max[i] = 127;
+		}
+	}
+
+	getSplitValue(int SplitDimension)
+	{
+		return (min[SplitDimension] + max[SplitDimension]) / 2.0D;
+	}
+
+	branchLow (int SplitDimension)
+	{
+		max[SplitDimension] = getSplitValue(SplitDimension);
+	}
+
+	branchHigh (int SplitDimension)
+	{
+		min[SplitDimension] = getSplitValue(SplitDimension);
+	}
+}
+
+Class Leaf
+{
+	Log log     = new Log();
+	Bin nodeBin = new Bin();
+	
+	int getGuessFactor(double Distance)
+	{
+		nodeBin.findBestIndex(Distance);
+	}
+
+	add(Observation o)
+	{
+		log.add(o);
+		nodeBin.add(o.getGF());
+	}
+
+	getPeakFactor()
+	{
+		double Distance = log.getAverageDistance();	//assume the distance is the average distance of all observations
+		return nodeBin.getPeakFactor(Distance);
+	}
+
+	int size()
+	{
+		return log.size();
+	}
+
+	discard()
+	{
+		log = null;	
+		nodeBin = null;
+	}
+
+	clear()
+	{
+		log.clear();
+		nodeBin.clear();
+	}
+}
+
+Class Splitter
+{
+	Node LChild = new Node();
+	Node HChild = new Node();
+	int SplitDimension;
+
+	int getGuessFactor(Situation s, Recursionlevel level)	
+	{
+		if(s.getDimension(SplitDimension) &lt; level.getSplitValue(SplitDimension))
+		{
+			level.diveLow(SplitDimension);
+			LChild.getGuessFactor(s, level);
+		}
+		else
+		{
+			level.diveHigh(SplitDimension);
+			HChild.getGuessFactor(s, level);
+		}
+	}
+
+	addObservation(Observation o, Recursionlevel level)
+	{
+		if(o.getDimension(SplitDimension) &lt; level.getSplitValue(SplitDimension))
+		{
+			level.diveLow(SplitDimension);
+			LChild.addObservation(o, level);
+		}
+		else
+		{
+			level.diveHigh(SplitDimension);
+			HChild.addObservation(o, level);
+		}
+	}
+
+	spawnChildren(List Log, int Dimension, int SplitValue, Node LChild, Node HChild)
+	{
+		for(j=0;j&lt;Log.size();j++)
+		{
+			Observation o = Log.get(j);
+			if(o.getDimension(i) &lt; SplitValue)
+			{
+				L.addObservation(o);
+			}
+			else
+			{
+				H.addObservation(o);
+			}
+		}
+	}
+
+
+	boolean split(Leaf parent, Recursionlevel level) 			//this function is called by the Node when it has enough Observations to justify splitting the Node up.
+	{
+		int BestPeakTotal = parent.getPeakFactor(); 			//children need to exceed parent's peak factor
+		int BestDim = -1;
+		int SplitValue;
+		for(i=0; i&lt;numDimensions; i++)					//iterate over all dimensions and remember the most efficient dimension for splitting
+		{
+			SplitValue = level.getSplitValue(i);
+			spawnChildren(parent.Log, i, SplitValue, LChild, HChild);			//temporarily split the parent log into two child nodes
+			if((LChild.getPeakFactor() + HChild.getPeakFactor()) &gt; BestPeakTotal)		//check how this split performs
+			{
+				BestDim = i;
+				BestPeakTotal = LChild.getPeakFactor() + HChild.getPeakFactor();
+			}
+			LChild.clear();
+			HChild.clear();
+		}
+		If(BestDim &gt; -1)									//if a good splitting dimension is found, make it permanent
+		{
+			SplitDimension = BestDim;
+			SplitValue = level.getSplitValue(SplitDimension);
+			spawnChildren(parent.Log, SplitDimension, SplitValue, LChild, HChild);		//permanently split the parent log into two child nodes
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+}
+
+
+Class Bin
+{
+	numBins = 75;
+
+	int bin[numBins];
+
+	add (int GF)
+	{
+		bin[GF]++;
+	}
+
+	clear()
+	{
+		for(i=0; i&lt;numBins; i++)
+		{
+			bin[i] = 0;
+		}
+	}		
+
+	int calcBotwidth()
+	{
+		//formula see Locke, botwidth is half the bot's width, expressed in GF indices
+	}
+
+
+	getPeakFactor(double Distance)	
+	{
+			//first find the best index, considering bot width
+		int botwidth = calcBotwidth(Distance);
+		int index = findBestIndex(botwidth);
+			//then, using this index, count the pure visits, considering bot width
+		int PeakFactor = 0;
+		for(i=(index-botwidth+1);i&lt;(index+botwidth);i++)
+		{
+			if(i&lt;0) i=0;
+			if(i&gt;=numBins) i=numBins;
+			PeakFactor += bin[i];
+		}
+	}
+
+	int findBestIndex(double Distance)
+	{
+		int botwidth = calcBotwidth(Distance);
+		int specialbin[numBins];
+		for(index=0; index&lt;numBins; index++)	
+		{
+			int imin = index-botwidth+1;
+			if(imin&lt;0) imin=0;
+			int imax = index+botwidth;
+			if(imax&gt;=numBins) imax=numBins-1;
+			for(i=imin;i&lt;imax;i++)
+			{
+				specialbin[index] += bin[i];
+			}
+			
+		}
+		int bestIndex=0;
+		int bestValue=0;
+		for(index=0; index&lt;numBins; index++)	
+		{
+			if(bestValue &lt; specialbin[index]) 
+			{
+				bestIndex = index;
+				bestValue = specialbin[index];
+			}
+		}
+		/*
+		TO DO: IN CASE OF "PLATEAU" FIND MIDDLE INDEX. SEE LOCKE FOR CODE.
+		*/
+		return bestIndex;
+	}
+}
+
+Class Log
+{
+	List Log = new List();
+
+	add(Observation o)
+	{
+		Log.add(o);
+	}
+
+	Observation get(int index)
+	{
+		return (Observation)Log.get(index);
+	}
+
+	int size()
+	{
+		return Log.size();
+	}
+
+	double getAverageDistance()
+	{	
+		int Total, Counter;
+		for(i=0; i&lt;size(); i++)
+		{
+			COunter++;
+			Total += (get(i)).getDimension(x); //x = dimension that represents distance
+		}
+		return (double)Total / (double)Counter;
+	}
+}
+
+Class Observation
+{
+	Situation s;
+	int GuessFactor;
+
+	getGF()
+	{
+		return GuessFactor;
+	}
+
+	getDimension(int d)
+	{
+		return s.getDimension(d);
+	}
+}
+
+
+Class Situation
+{
+	int Dimensions[numDimensions];
+
+	getDimension(int d)
+	{
+		return Dimensions[d];
+	}
+}
+</pre>
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?WikiTargeting" class=wikipagelink>WikiTargeting</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=WikiTargeting/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=WikiTargeting/Code">View other revisions</a><br>Last edited January 19, 2007 7:37 EST by <a href="robowiki?Nfwu" title="ID 8875 from d58-106-31-15.sbr2.nsw.optusnet.com.au">Nfwu</a> <a href="robowiki?action=browse&diff=1&id=WikiTargeting/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

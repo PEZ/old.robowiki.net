@@ -1,0 +1,226 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Synnalagma/TaskManager - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Synnalagma, Task, Manager'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/TaskManager">Synnalagma/TaskManager</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>This two classes can help you TestingBot<a href="robowiki?action=edit&id=TestingBot" class=wikipageedit>?</a>. For exemple I used them to set learning rate for <a href="robowiki?MiniNeural" class=wikipagelink>MiniNeural</a>, from the data I made the following graph, it's hit ratio but I only use 2 for bullet power so there's no need for roll ratio (on legend you see learning rate and momentum), it's against <a href="robowiki?ScruchiPu" class=wikipagelink>ScruchiPu</a> (always and again)using 10 battle for each learning rate. 
+<p>
+<img src="http://www.geocities.com/synnalagma/mini_shoot.png">
+<p>
+I use it in collaboration with <a href="robowiki?RoboLeague" class=wikipagelink>RoboLeague</a> with focused competitor. It can manage battle with differents bots but it must be 1-vs-1.
+<p>
+<pre>
+
+package synnalagma.util;
+
+import java.io.*;
+
+
+/**
+ * Class that manage different task in order to test your bot
+ * 
+ * You must have a task file that hold information like this
+ *
+ * Class name of the task
+ * number of battle to do with this task
+ * parameter line that will initialise your Task
+ *
+ * You must have three line like this. The file must finish on the last written line, no blank line.
+ * The class must implement de Task interface.
+ *
+ * @author Synnalagma
+ */
+public class TaskManager {
+	/**Singleton
+	*/
+	private static TaskManager singleton = new TaskManager();
+
+	/**List of the task that we must to
+	*/
+	private java.util.LinkedList toDo;
+
+	/**current task
+	*/
+	private Task current = null;
+
+	/**File that hold the task list for a specific bot
+	*/
+	private File robotTask;
+
+	/**Holding error informations
+	*/
+	private String lastError = "";
+
+	/**
+	 * Private for singleton
+	 */
+	private TaskManager() {
+	}
+
+	/**
+	 * Getter for the current task
+	 *
+	 * @return current task
+	 */
+	public Task getCurrentTask() {
+		return this.current;
+	}
+
+	/**
+	 * Get the instance of singleton
+	 *
+	 * @return TaskManager
+	 */
+	public static TaskManager getInstance() {
+		return singleton;
+	}
+
+	/**
+	 * Return the last error found (Exception message + internal message)
+	 *
+	 * @return last error message
+	 */
+	public String getLastError() {
+		return this.lastError;
+	}
+
+	/**
+	 * Initialise the TaskManager and load the current task.
+	 * You must call it at the beginning of a battle
+	 *
+	 * @param taskFile file that hold the tasklist for all bots
+	 * @param robotTask specific task file for one bot
+	 *
+	 * @return true if success, false otherwise
+	 */
+	public boolean init(File taskFile, File robotTask) {
+		this.robotTask = robotTask;
+
+		if(robotTask.exists()) {
+			try {
+				ObjectInputStream ois = new ObjectInputStream(new java.util.zip.GZIPInputStream(new FileInputStream(robotTask)));
+				this.toDo = (java.util.LinkedList) ois.readObject();
+				ois.close();
+			} catch(Exception e) {
+				this.lastError = "Exception in readind robot task file : " + e.getMessage();
+
+
+				return false;
+			}
+		} else {
+			try {
+				this.toDo = new java.util.LinkedList();
+
+				BufferedReader fp = new BufferedReader(new FileReader(taskFile));
+				String lineTaskName;
+
+				while((lineTaskName = fp.readLine()) != null) {
+					int nb = Integer.parseInt(fp.readLine());
+					String lineParam = fp.readLine();
+					this.toDo.add(new TaskManager.TaskIndex(lineTaskName, lineParam, nb));
+				}
+
+				fp.close();
+			} catch(IOException e) {
+				this.lastError = "Exception in reading main task file : " + e.getMessage();
+			}
+		}
+
+		TaskIndex t = (TaskIndex) this.toDo.getFirst();
+
+		try {
+			Class taskClass = Class.forName(t.taskName);
+
+			if(!Task.class.isAssignableFrom(taskClass)) { //doesn't implement Task
+
+				return false;
+			}
+
+			this.current = (Task) taskClass.newInstance();
+			t.nb--;
+			this.current.setParameters(t.line);
+
+			if(t.nb == 0) {
+				this.toDo.removeFirst();
+			}
+		} catch(Exception e) {
+			this.lastError = "Unable to load Task class : " + e.getMessage();
+
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * save the current task list, you must call this at the end of the battle (not the round)
+	 */
+	public void save() {
+		try {
+			if(this.toDo.isEmpty()) {
+				this.robotTask.delete();
+			} else {
+				ObjectOutputStream oos = new ObjectOutputStream(new java.util.zip.GZIPOutputStream(new robocode.RobocodeFileOutputStream(this.robotTask)));
+				oos.writeObject(this.toDo);
+				oos.flush();
+				oos.close();
+			}
+		} catch(IOException e) {
+			this.lastError = "Unable to write robot Task file : " + e.getMessage();
+		}
+	}
+	/**Internal class that holds task informations*/
+	
+	
+	static class TaskIndex implements java.io.Serializable {
+		/**Parameter line for bot
+		*/
+		String line;
+
+		/**class name of task
+		*/
+		String taskName;
+
+		/**number of battle to do with this configuration
+		*/
+		int nb;
+
+		/**
+		 * Basic constructor (field to field)
+		 *
+		 */
+		public TaskIndex(String taskName, String line, int nb) {
+			this.taskName = taskName;
+			this.line = line;
+			this.nb = nb;
+		}
+	}
+}
+
+package synnalagma.util;
+
+/**
+ * All task must implements this interface, setParameters will be called at initialisation of TaskManager
+ *
+ * The class must have an empty constructor (called by TaskManager);
+ *
+ * @author Synnalagma
+ */
+public interface Task extends java.io.Serializable {
+	/**
+	 * Initialise this task
+	 *
+	 * @param line The line you write in your task file
+	 */
+	public void setParameters(String line);
+}
+</pre>
+<p>
+====Comment and other welcome====
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Synnalagma" class=wikipagelink>Synnalagma</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Synnalagma/TaskManager" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Synnalagma/TaskManager">View other revisions</a><br>Last edited October 21, 2003 16:07 EST by <a href="robowiki?Synnalagma" title="ID 1813 from 212.109.72.xxx">Synnalagma</a> <a href="robowiki?action=browse&diff=1&id=Synnalagma/TaskManager">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

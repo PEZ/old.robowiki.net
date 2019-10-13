@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>VisitCountStats/LimitFileSize - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Visit, Count, Stats, Limit, File, Size'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/LimitFileSize">VisitCountStats/LimitFileSize</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?VisitCountStats" class=wikipagelink>VisitCountStats</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Visit count stats is simple and powerful. But if you save stats between battles you might find that the files tend to grow quite large as you fight more battles aginst an enemy. Here's a way to limit the size of your saved data files. 
+<p>
+Let's say you are using a guess factor gun much like the one of <a href="robowiki?VertiLeach/Code" class=wikipagelink>VertiLeach/Code</a>. To add decay to this gun look at the visit incrementor inside the <a href="robowiki?Wave" class=wikipagelink>Wave</a> class of <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a>:<pre>wAimFactors[(int)Math.round(Math.max(0D, Math.min(AIM_FACTORS - 1D,
+    ((sign(bearingDelta) * bearingDiff) / maxBearing) *
+    (AIM_FACTORS - 1D) / 2D + (AIM_FACTORS - 1D) / 2D)))]++;</pre>
+(It boils down to <pre>wAimFactors[visitIndex]++</pre>). To add decay to this we instead do:<pre>registerFactorVisits(wAimFactors, visitIndex)</pre>And implement that function like so:<pre>
+    public void registerFactorVisit(int[] factors, int index) {
+        if (factors[index] &lt; MAX_FACTOR_VISITS) {
+            factors[index]++;
+        }
+        else {
+            decrementTheOtherFactors(factors, index);
+        }
+    }
+
+    void decrementTheOtherFactors(int[] factors, int index) {
+        for (int i = 0, numFactors = factors.length; i &lt; numFactors; i++) {
+            if (i != index &amp;&amp; factors[i] &gt; 0) {
+                factors[i]--;
+            }
+        }
+    }
+</pre>
+What happens here is that visit counts never will exeed MAX_FACTOR_VISITS. When we are about to increment a visit count that has reached this maximum we instead decrement the surrounding visit counts.
+<p>
+If you set MAX_FACTOR_VISITS to 255 the visit count buckets will never grow above byte size and this sets a much lower limit on how big the files get. 
+<p>
+An added benefit with this approach is that it offers some <a href="robowiki?StatsDecay" class=wikipagelink>StatsDecay</a>. Rolling averages is very effective for this though not alwats applicable <a href="robowiki?VisitCountStats" class=wikipagelink>VisitCountStats</a> designs.
+<p>
+The trick is of course to set the max value correctly since it's not as easily figured as with rolling averages. You'll have to experiment some to get it right I guess. And what's right against one enemy might be wrong against some others. I guess that if you add <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> to this you can use some different maximums and let the VG array figure out what works or not against a given enemy.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<H3>Comments, questions and suggestions for improvement are entirely welcome.</H3>
+
+<p>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?VisitCountStats" class=wikipagelink>VisitCountStats</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=VisitCountStats/LimitFileSize" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=VisitCountStats/LimitFileSize">View other revisions</a><br>Last edited October 27, 2003 16:07 EST by <a href="robowiki?PEZ" title="ID 1817 from 192.168.0.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=VisitCountStats/LimitFileSize">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

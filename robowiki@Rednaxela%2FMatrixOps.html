@@ -1,0 +1,291 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Rednaxela/MatrixOps - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Rednaxela, Matrix, Ops'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/MatrixOps">Rednaxela/MatrixOps</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Here's a nice collection of matrix operation code written in Java. Feel free to use as you wish (or fix on this page if you find problems).
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<code><pre>
+package ags.util;
+
+import java.util.Arrays;
+
+/**
+ * A collection of matrix operations :)
+ * 
+ * @author Alex Schultz (aka Rednaxela)
+ */
+public class MatrixOps {
+    /**
+     * Transpose a matrix (flip it 90 degrees)
+     */
+    public static double[][] transpose(double [][] input) {
+        double[][] output = new double[input[0].length][input.length];
+        for (int x=0; x&lt;input.length; x++) {
+            for (int y=0; y&lt;input[0].length; y++) {
+                output[y][x] = input[x][y];
+            }
+        }
+        return output;
+    }
+
+    /**
+     * Multiply one matrix by another
+     */
+    public static double[][] multiply(double[][] i1, double[][] i2) {
+        if (i1[0].length != i2.length)
+            throw new IndexOutOfBoundsException("Incompatible!");
+        double[][] output = new double[i1.length][i2[0].length];
+
+        for (int x=0; x&lt;i1.length; x++) {
+            for (int y=0; y&lt;i2[0].length; y++) {
+                for (int z=0; z&lt;i2.length; z++) {
+                    output[x][y] += i1[x][z] * i2[z][y];
+                }
+            }
+        }
+
+        return output;
+    }
+
+    /*
+     * Output an identity matrix (all zeros except a diagonal of ones) of a given size
+     */
+    public static double[][] identity(int size) {
+        double[][] output = new double[size][size];
+
+        for (int x=0; x&lt;size; x++) {
+            output[x][x] = 1;
+        }
+
+        return output;
+    }
+
+    /**
+     * Do a deep copy of a matrix
+     */
+    public static double[][] copy(double[][] input) {
+        double[][] output = new double[input.length][];
+
+        for (int x=0; x&lt;input.length; x++) {
+            output[x] = Arrays.copyOf(input[x], input[x].length);
+        }
+
+        return output;
+    }
+    
+    public static void swapRows(double[][] input, int a, int b) {
+        final double[] temprow = input[a];
+        input[a] = input[b];
+        input[b] = temprow;
+    }
+    
+    /**
+     * Change a matrix to reduced row eschelon form
+     * Roughly based on psudocode on wikipedia
+     */
+    public static double[][] toReducedRowEschelon(double[][] input) {
+        double[][] output = copy(input);
+        
+        int lead = 0;
+        int rowCount = input.length;
+        int columnCount = input[0].length;
+        
+        for (int r=0; r&lt;rowCount; r++) {
+            if (columnCount &lt;= lead)
+                break;
+            int i = r;
+            while (output[i][lead] == 0) {
+                i++;
+                if (rowCount == i) {
+                    i = r;
+                    lead++;
+                    if (columnCount == lead)
+                        break;
+                }
+            }
+            swapRows(output, i, r);
+            
+            double d = output[r][lead];
+            for (int x=0; x&lt;columnCount; x++)
+                output[r][x] /= d;
+            
+            for (i=0; i&lt;rowCount; i++) {
+                if (i != r) {
+                    double m = output[i][lead];
+                    for (int x=0; x&lt;columnCount; x++) {
+                        output[i][x] -= output[r][x] * m;
+                    }
+                }
+            }
+            
+            lead++;
+        }
+        
+        return output;
+    }
+
+    /**
+     * Use the matrix inversion algorithm
+     */
+    public static double[][] inverse(double[][] input) {
+        if (input.length != input[0].length)
+            throw new IndexOutOfBoundsException("The matrix is not square!");
+
+        final int size = input.length;
+        double[][] output = identity(size);
+        input = copy(input);
+
+        for (int x=0; x&lt;size; x++) {
+            // Make row start with 1
+            double f = input[x][x];
+            if (f == 0)
+                continue;
+                //throw new java.lang.IllegalArgumentException("Matrix is not invertable!");
+            for (int y=0; y&lt;size; y++) {
+                input[x][y] /= f;
+                output[x][y] /= f;
+            }
+            input[x][x] = 1;
+
+
+            // Zero other rows
+            for (int y=0; y&lt;size; y++) {
+                if (y != x) {
+                    double v = input[y][x];
+                    for (int z=0; z&lt;size; z++) {
+                        input[y][z] -= input[x][z]*v;
+                        output[y][z] -= output[x][z]*v;
+                    }
+                    input[y][x] = 0;
+                }
+            }
+        }
+        return output;
+    }
+
+    /**
+     * Print out two double arrays side-by-side.
+     */
+    public static void print2Matrix(double[][] input, double[][] input2) {
+        for (int x=0; x&lt;input.length; x++) {
+            double[] line = input[x];
+            for (double value : line) {
+                System.out.print(value+"\t");
+            }
+            line = input2[x];
+            for (double value : line) {
+                System.out.print(value+"\t");
+            }
+            System.out.println();
+        }
+    }
+
+    /**
+     * Print out double array, seperated with tabs and newlines
+     */
+    public static void printMatrix(double[][] input) {
+        for (double[] line : input) {
+            for (double value : line) {
+                System.out.print(value+"\t");
+            }
+            System.out.println();
+        }
+    }
+
+    /**
+     * Some testing things. Just me checking that some functions work as expected 
+     */
+    public static void main(String[] args) {
+        System.out.println("Matrix test app:");
+
+        double[][] testmatrix = new double[][]{{1, 2}, {2, 1}};
+        System.out.println("Test matrix:");
+        printMatrix(testmatrix);
+        System.out.println();
+
+        System.out.println("Transpose matrix:");
+        printMatrix(transpose(testmatrix));
+        System.out.println();
+
+        double[][] t1 = new double[][]{{1, 0, 2}, {-1, 3, 1}};
+        double[][] t2 = new double[][]{{3, 1}, {2, 1}, {1, 0}};
+        System.out.println("Multiply matrix:");
+        printMatrix(multiply(t1, t2));
+        System.out.println();
+
+        System.out.println("Inverse matrix:");
+        printMatrix(inverse(testmatrix));
+        System.out.println();
+
+        System.out.println("Inverse times the test matrix:");
+        printMatrix(multiply(inverse(testmatrix), testmatrix));
+        System.out.println();
+
+        System.out.println("Special case of the Moore-Penrose pseudoinverse:");
+        printMatrix(partialPsudoInverse(testmatrix));
+        System.out.println();
+        
+        System.out.println("Reduced Row Eschelon form test:");
+        testmatrix = new double[][]{{1,2,6},{5,4,3}};
+        printMatrix(testmatrix);
+        System.out.println("to...");
+        printMatrix(toReducedRowEschelon(testmatrix));
+        System.out.println();
+    }
+
+    /**
+     * Partial Psudo Inverse function
+     */
+    public static double[][] partialPsudoInverse(double[][] input) {
+        double[][] transposed = transpose(input);
+        return multiply(inverse(multiply(transposed, input)),transposed);
+    }
+
+    /**
+     * The algorithm to fit a plane/hyperplane of best fit for a data set
+     */
+    public static double[] bestFitHyperplane(double[][] variables, double[] results) {
+        if (variables.length != results.length)
+            throw new IllegalArgumentException("Length of variables and results do not match!");
+        //if (variables.length &lt; variables[0].length+1)
+        //    throw new IllegalArgumentException("Not enough data!");
+
+        final int samples = variables.length;
+
+        final double [][] M = new double[samples][];
+        for (int x=0; x&lt;samples; x++) {
+            double[] line = new double[variables[x].length+1];
+            line[0] = 1;
+            for (int y=0; y&lt;variables[x].length; y++) {
+                line[y+1] = variables[x][y];
+            }
+            M[x] = line;
+        }
+
+        final double [][] Y = new double[samples][1];
+        for (int x=0; x&lt;samples; x++) {
+            Y[x][0] = results[x];
+        }
+
+        double[][] Z = multiply(partialPsudoInverse(M), Y);
+
+
+        double[] output = new double[Z.length];
+        for (int x=0; x&lt;Z.length; x++) {
+            output[x] = Z[x][0];
+        }
+
+        return output;
+    }
+}
+</pre></code>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Rednaxela/MatrixOps" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Rednaxela/MatrixOps">View other revisions</a><br>Last edited August 21, 2008 0:38 EST by <a href="robowiki?Simonton" title="ID 15092 from c-71-205-154-10.hsd1.mi.comcast.net">Simonton</a> <a href="robowiki?action=browse&diff=1&id=Rednaxela/MatrixOps">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

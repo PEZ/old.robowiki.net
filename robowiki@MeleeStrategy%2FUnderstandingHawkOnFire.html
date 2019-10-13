@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>MeleeStrategy/UnderstandingHawkOnFire - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Melee, Strategy, Understanding, Hawk, On, Fire'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/UnderstandingHawkOnFire">MeleeStrategy/UnderstandingHawkOnFire</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?MeleeStrategy" class=wikipagelink>MeleeStrategy</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><H2>Melee Strategy - Understanding <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a></H2>
+
+<p>
+<em>By <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a> - hopefully also looked over/edited by <a href="robowiki?Rozu" class=wikipagelink>Rozu</a></em>
+<p>
+<a href="robowiki?Rozu" class=wikipagelink>Rozu</a> released the source to his breakthrough melee bot, <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a>, when he saw that people were genuinely interested in it some time ago, but hasn't packaged it with the bot.  Since then, I think it's been on everyone's todo list to take a look at it.  You can go see by going to <a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=1575">http://www.robocoderepository.com/BotDetail.jsp?id=1575</a> and clicking on "Download Source".  If I refer to the source, I'll be referring to that source.  It appears that <a href="robowiki?Rozu" class=wikipagelink>Rozu</a> took some time to edit and fix up the code before uploading it here, and for the benefit of clarity, it compiles to be a bit larger than the barely-micro size that <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a> normally is.  That having been said, with some analysis and tweaking, I got HawkOnFireOS<a href="robowiki?action=edit&id=HawkOnFireOS" class=wikipageedit>?</a> under 700 bytes with no loss of functionality or performance that I can tell (so if you have something to use 50 bytes for, <a href="robowiki?Rozu" class=wikipagelink>Rozu</a>, let me know).
+<p>
+<H3>Classes</H3>
+
+<a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a> is made up of 2 classes:
+<UL >
+<li> The main robot class
+<li> the microEnemy class, which contains the location, energy, and whether or not the enemy is alive.  These are stored in a Hashtable in the robot class.
+</UL>
+<p>
+<H3>Functions</H3>
+
+There are a few typical utility functions, calcPoint (which projects a point some distance away from a base location at some angle) and calcAngle (which finds the absolute bearing from one point to another).
+<p>
+<a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a> also overrides the onRobotDeath<a href="robowiki?action=edit&id=RobotDeath" class=wikipageedit>?</a> method to mark enemies as dead.
+<p>
+The primary magic in <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a> lives in the <tt>evaluate</tt> and <tt>doMovementAndGun<a href="robowiki?action=edit&id=MovementAndGun" class=wikipageedit>?</a></tt> methods.  <tt>run</tt> doesn't do much besides set up and call these methods, and <tt>on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a></tt> just updates the enemies and handles target selection.
+<p>
+<H3>Globals</H3>
+
+Most of these are pretty self-explanitory, but the Points declared should be explained:
+<UL >
+<li> <tt>nextDestination</tt> is the point that <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a> is trying to get to.
+<li> <tt>lastPosition</tt> is the point that <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a> is coming from last.
+<li> <tt>myPos</tt> is where <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a> is now.
+</UL>
+<p>
+<H3>Radar</H3>
+
+Spins the radar in melee, InfiniteRadarLock<a href="robowiki?action=edit&id=InfiniteRadarLock" class=wikipageedit>?</a> in 1-on-1.
+<p>
+<H3>Gun</H3>
+
+Not too exciting, the enemy's position is set in <tt>on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a></tt>, lines 54-57 turn the gun and fire.  Contrary to rumors, <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a> does not always fire power-3 bullets - it's a little more aggressive than alot of small melee bots as far as firepower is concerned, but not as aggressive as bots with a dependable gun.  One feature that's worth pointing out is that target.energy/3 is in there, which is more than enough to kill the target at that point.  <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a> doesn't want a low-energy target to get lucky after being hit :-)  Also, <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a> always tries to target the closest living enemy, and likes to have its gun turned, and never fires when its energy is under 1.
+<p>
+<H3>Movement</H3>
+
+<a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a> is a textbook example of <a href="robowiki?MinimumRiskMovement" class=wikipagelink>MinimumRiskMovement</a>.  The point-generating function generates 200 points at random between 100 and 300 pixels away but no more than 80% of the distance to its current target (to avoid hitting other robots as much).
+<p>
+<H4>Risk Function</H4>
+
+The <tt>evaluate</tt> method is <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a>'s risk function, except for one part - the <tt>addLast</tt> variable that is passed in as a parameter is precomputed for consistency so that the same value is used when comparing for every point.  <tt>addLast</tt> is set to <tt>1 - Math.rint(Math.pow(Math.random(), getOthers()))</tt>, which makes it 1 most of the time with more bots on the field and 0 about half of the time in 1-on-1.  This variable determines whether <tt>lastPosition</tt> is used in the risk calculation.
+<p>
+Which leads us into <tt>evaluate</tt> itself.  Basically, after starting out the risk as addLast times an antigravity function on <tt>lastPosition</tt>, <a href="robowiki?Rozu" class=wikipagelink>Rozu</a> iterates through the enemies, and for each live one, adds the proposed risk to the total risk (called <tt>eval</tt>).  The formula is very simple and elegant (and I don't think I'm exaggerating to say that it's a breakthough in and of itself) - simply <tt>energy ratio * (1 + perpendicularity) / distanceSq</tt>.
+<UL >
+<li> The energy ratio is the enemy's energy / <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a>'s energy (but no more than 2) - this makes enemies with higher energy more "dangerous"
+<li> perpendicularity is the absolute value of the cosine of the difference between the angle from the point to <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a>'s current location and the angle from the point to the enemy.  This is 0 when the point is at a right angle and 1 if the point is directly toward or away from the enemy.
+<li> distanceSq is the distance from the point to the enemy.
+</UL>
+<p>
+Once you understand this formula, you pretty much understand <a href="robowiki?HawkOnFire" class=wikipagelink>HawkOnFire</a>.
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Great. Haven't read it yet, but I just must comment one of the first statement - "I think it's been on everyone's todo list to take a look at it." Ha! I have never even considered taking a look at it until this page came up. Now though I just might. Just need to fail in a few attempts at melee movements myself first. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I rather read pages like this than to look at the code. When looking at the code, I just see the code. When reading a description like above, I form my own ideas and try to implement them the way I see fit. Ofcourse once in a while I also copy things (like teamcommunication, circular targeting) but I still try to adapt and improve them to my needs. This is yet another excellent page. I wish that I could a) write such clear and informative page and  b) write such sophisticated and competetive bot.  -- <a href="robowiki?GrubbmGait" class=wikipagelink>GrubbmGait</a>
+<p>
+Code or prose. Not too much difference for me (as long as the code is somewhat readable). It's just that I don't want to get to "coloured" by other peoples ideas before I try myself. I want to get those "ahhhh!" feels when I later try look at how people have approached the problems I have stumbled across. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I do not know if this has been said yet, but welcome back <a href="robowiki?Kawigi" class=wikipagelink>kawigi</a>. Good to see you around the game still. -- <a href="robowiki?Jim" class=wikipagelink>jim</a>
+<p>
+Nice page! I don't think that I have something to edit here. But anyway, I'm open to answer any questions as required. --  <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?MeleeStrategy" class=wikipagelink>MeleeStrategy</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=MeleeStrategy/UnderstandingHawkOnFire" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=MeleeStrategy/UnderstandingHawkOnFire">View other revisions</a><br>Last edited May 18, 2006 20:04 EST by <a href="robowiki?GrubbmGait" title="ID 6861 from ip195-142-172-82.dyndsl.versatel.nl">GrubbmGait</a> <a href="robowiki?action=browse&diff=1&id=MeleeStrategy/UnderstandingHawkOnFire">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

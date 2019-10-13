@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>JuniorRobot - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Junior, Robot'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=JuniorRobot">JuniorRobot</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>The <a href="robowiki?JuniorRobot" class=wikipagelink>JuniorRobot</a> class was introduced with Robocode 1.4. This new robot type has been designed by the <a rel="nofollow" href="http://cubiccreative.org/">[Cubic Creative team]</a>.<br>
+<br>
+This robot class is simpler to use than the well-known <a href="robowiki?Robot" class=wikipagelink>Robot</a> and <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> classes and has a simplified model, in purpose of teaching programming skills to inexperienced in programming students.<br>
+<br>
+Experienced Robocode programmers should notice that the JuniorClass<a href="robowiki?action=edit&id=JuniorClass" class=wikipageedit>?</a> is <strong>not</strong> extended from any existing robot class, i.e. the Robot or <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a> class. It is a new robot class branch. Practically all method calls are "blocking" calls similar to those of the Robot class. However, the event handlers are simpler, and event info for e.g. on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>() are automatically stored in field variables. And fire is delayed until the gun has finished its turn and the gun is able to fire (gun heat = 0). <strong>They don't take damage when they hit walls.</strong><br>
+<br>
+<h3>Key features</h3>
+<b>1. run():</b> The run() method is automatically re-run when it has reached the last statement, meaning that there is no need of a 'while (true)'.<br>
+<b>2. radar:</b> The radar cannot move independently but is fixed with the gun rotation.<br>
+<b>3. gun:</b> The gun is always fixed on a body. Its angle movement will always relative to body rotation. No more set<a href="robowiki?AdjustGunForRobotTurn" class=wikipagelink>AdjustGunForRobotTurn</a>().<br>
+<b>4. 'int' vs 'double':</b> All values will be 'int' instead of 'double', except for 'fire()' only, will still have 'fire (double power)' overload.<br>
+<b>5. field values:</b> Values like the current position of the robot, and event info is automatically stored in specific field values.<br>
+<b>6. events:</b> Due to (5), events handler objects (like <a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> and HitRobotEvent<a href="robowiki?action=edit&id=HitRobotEvent" class=wikipageedit>?</a> classes) does not exist with the <a href="robowiki?JuniorRobot" class=wikipagelink>JuniorRobot</a>.<br>
+<b>7. fire:</b> When fire() is called, a bullet will first/automatically be fired when the gun has stopped its current turning and when the gun heat is 0.<br>
+<hr noshade class=wikiline size=1>
+How about velocity, scannedVelocity, etc? Actually, I submit that the name be changed to "speed" while there's the opportunity since that's what it really is. Though this might be confusing when making a transition to "Robot" or "<a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>", it may be worth the relearning of the term at that stage in order to make the introduction via <a href="robowiki?JuniorRobot" class=wikipagelink>JuniorRobot</a> that bit easier. --<a href="robowiki?Daniel" class=wikipagelink>Daniel</a>
+<UL >
+<li> I disagree.  Speed cannot be negative, can it?  I figured the fact that velocity was signed is what made its name make sense. --<a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li> Well whatever about the naming of it, I think it's a good idea to have it accessible to JuniorRobots<a href="robowiki?action=edit&id=JuniorRobots" class=wikipageedit>?</a>. --<a href="robowiki?Daniel" class=wikipagelink>Daniel</a>
+<li> I buy that!  :)  By the way, welcome to the wiki!  Make a home for yourself.  In fact, <a href="robowiki?Daniel" class=wikipagelink>here</a>, I'll help you get started :). -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<UL >
+<li>Thanks :) --<a href="robowiki?Daniel" class=wikipagelink>Daniel</a>
+</UL>
+</UL>
+<li> Thank you <a href="robowiki?Daniel" class=wikipagelink>Daniel</a>! Of course I will add scannedVelocity to the <a href="robowiki?JuniorRobot" class=wikipagelink>JuniorRobot</a> as it is obviously missing! . <a href="robowiki?Simonton" class=wikipagelink>Simonton</a> is right regarding speed versus velocity. <b>Velocity</b> is the robots speed and direction of motion. Thus, it can be negative, which means that the robot moves backwards. <b>Speed</b> is the absolute velocity, i.e. the distance travelled per unit time. ;-) --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<UL >
+<li>Yay, I've contributed something useful! Thanks for adding that. <a href="robowiki?JuniorRobot" class=wikipagelink>JuniorRobot</a> looks great! --<a href="robowiki?Daniel" class=wikipagelink>Daniel</a>
+</UL>
+<li> Check out <a rel="nofollow" href="http://sourceforge.net/project/showfiles.php?group_id=37202">[Robocode 1.4 Beta 2]</a> where the scannedVelocity has been added. --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<li> Yeah, we've totally forgot about robot's velocity. I'm just figured out that there're no 'velocity' field for self-speed check. Should we have it? -- Nutch
+<li> Yes, I think so. :-) --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+</UL>
+<p>
+scannedHeading? :-) --<a href="robowiki?Daniel" class=wikipagelink>Daniel</a>
+<UL >
+<li> Yes, this is also missing. It does not make much sense to know the velocity (moving forward or back) without knowing it's heading! I will add this too. ;-) --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<li> Done! --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<UL >
+<li>w00t! Now a <a href="robowiki?JuniorRobot" class=wikipagelink>JuniorRobot</a> can do predictive linear targeting! --<a href="robowiki?Daniel" class=wikipagelink>Daniel</a>
+<li> Heh.. I hope that should be okay? ;-) --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+</UL>
+</UL>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=JuniorRobot" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=JuniorRobot">View other revisions</a><br>Last edited August 9, 2007 19:30 EST by <a href="robowiki?Fnl" title="ID 11623 from 0x55518dc1.adsl.cybercity.dk">Fnl</a> <a href="robowiki?action=browse&diff=1&id=JuniorRobot">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

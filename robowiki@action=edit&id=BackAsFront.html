@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing BackAsFront - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Back, As, Front'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing BackAsFront</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="BackAsFront"  />
+<input type="hidden" name="oldtime" value="1068463260"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="1"  />
+<input type="hidden" name="captchaArg2" value="10"  />
+<input type="hidden" name="captchaOp" value="+"  />
+<input type="hidden" name="captchaId" value="422064633880"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">When moving your robot around you want it to respond as quickly as possible. Reversing your movement direction goes much faster if you drive backwards instead of forwards and turn the robot 180 degrees, right?
+
+There are several methods to do this.
+* Check [[Movement/CodeSnippetGoTo]] for one way of doing it.
+* Also [[BlackWidow/Code]] has code for it, though slightly different. This code originated somewhere. I found it in [[Cigaret]], which I think mentioned its source.
+&lt;p&gt;
+----
+I have observed, for a very long time, that my bots often fail to optimize the turn-angle. I don&#39;t understand why, but I have studied code from some OpenSource bots in the hopes of finding a GoToBot that succeeds in this. To my surprise I discovered that [[iiley]]&#39;s bots are goto-bots. Surprising because I have often studied the source of these bots without noticing this. Most of these bots are minis and they take quite a few turns in order to shrink codesize... Anyway, here&#39;s a translation of how [[iiley]] does it. (From comments in the code, credits should go to [[David Alves]] and [[Dummy]] here, but I&#39;m not sure if they mainly contributed to the obfuscation, eh ... shrinkage ... or the algorithm as such).
+
+&lt;pre&gt;
+    void moveWithBackAsFront(double distance, double bearing) {
+        double angle = Utils.normalRelativeAngle(bearing - getHeadingRadians());
+	double turnAngle = Math.atan(Math.tan(angle));
+        setTurnRightRadians(turnAngle);
+        int direction = angle == turnAngle ? 1 : -1;
+        setAhead(distance * direction);
+    }
+&lt;/pre&gt;
+You just pass the distance you want to travel and the bearing (in radians) to this function and it will sort out the shortest way to turn and what direction (forwards or backwards) to drive. The &quot;atan(tan(angle))&quot; stuff there does a sort of lossy normalization of any angle to the &quot;-PI/2 -&gt; +PI/2&quot; space. It works much better than in my old goTo() functions. So here is the quite codesize-small goTo() of the development version of [[Tityus]]:
+&lt;pre&gt;
+    void goTo(Point2D destination) {
+        double angle = Utils.normalRelativeAngle(absoluteBearing(robotLocation, destination) - getHeadingRadians());
+	double turnAngle = Math.atan(Math.tan(angle));
+        setTurnRightRadians(turnAngle);
+        setAhead(robotLocation.distance(destination) * (angle == turnAngle ? 1 : -1));
+    }
+&lt;/pre&gt;
+-- [[PEZ]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 1 + 10 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that BackAsFront has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=BackAsFront">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

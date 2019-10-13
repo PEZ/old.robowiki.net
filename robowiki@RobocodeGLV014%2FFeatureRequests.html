@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RobocodeGLV014/FeatureRequests - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Robocode, GLV014/Feature, Requests'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/FeatureRequests">RobocodeGLV014/FeatureRequests</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I added an option to show the score for each bot while the battle is running. Any other features you'd like to see? Keep in mind that I can only change how it looks, I can't change the physics or anything. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<hr noshade class=wikiline size=1>
+Maybe im not very good with Eclipse, but in order to program a GL bot, I had to include the Robocode GL files. And they needed the Robocode files. So i've had to import loadsa files into the workspace. Any chance of making it &amp; the RC source a seperate jar for ease of use? -<a href="robowiki?Wolfman" class=wikipagelink>wolfman</a>
+<p>
+You should be able to just include the robocode.jar file and the <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a> classes, but you're right, it does need to be packaged better. I'll look into packaging it as a jar. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+I thought taht, but when I tried it, no luck. I cant remember exactly what the problem was tho. Helpfull I know. :) -<a href="robowiki?Wolfman" class=wikipagelink>wolfman</a>
+<p>
+Try this:  From the command-line, create your jar (all one line -- broken for readability)
+<PRE >
+ jar cvf robocodeGL.jar robocode\robocodeGL\*.class robocode\robocodeGL\system\*.class 
+ robocode\battleview\BattleViewRenderer<a href="robowiki?action=edit&id=BattleViewRenderer" class=wikipageedit>?</a>.class
+</PRE>
+Include the .java files to include the source.
+<p>
+Then have Eclipse point to robocodeGL.jar.  --<a href="robowiki?JPrideaux" class=wikipagelink>JPrideaux</a>
+<hr noshade class=wikiline size=1>
+What about having a separate window with a Canvas we can draw inside. It would be good for watching variable values and whatever. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+The options window maybe should wait for a right-click before opening? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<hr noshade class=wikiline size=1>
+I figured out how to make it show the score as it accumulates, instead of only updating between rounds.  In <code>robocode.peer.robot.RobotStatistics</code>, just change this method:
+<br><pre>
+public double getTotalScore()
+{
+    return totalScore;
+}
+</pre>
+to this:
+<br><pre>
+public double getTotalScore()
+{
+    return totalScore + bulletDamageScore + rammingDamageScore + survivalScore + winnerScore + killedEnemyRammingScore + killedEnemyBulletScore;
+}
+</pre>
+Then add this to the end of the <code>generateTotals</code> method:
+<pre>
+bulletDamageScore = rammingDamageScore = survivalScore = winnerScore = killedEnemyRammingScore = killedEnemyBulletScore;
+</pre>
+This seems to not change any other values used or displayed in the game.
+-- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<hr noshade class=wikiline size=1>
+One more thing - I've been toying with threading the Results dialog box (the one that shows the table breaking down the score) so that it updates itself.  Is there any place I could reasonably create the dialog?  The battle would basically have to already be initialized (I.E. having robots in it already) I think, and this line of code:
+<pre>
+battle.getManager().getWindowManager().showResultsDialog(battle);
+</pre>
+...would have to go somewhere that a Battle object exists that has security permissions to create frames and start threads.  What do you think?  You could actually see leader changes and hits with scores in nearly real time ;-)  (of course, a few more quick tweaks would have to be made in the RobotStatistics<a href="robowiki?action=edit&id=RobotStatistics" class=wikipageedit>?</a> class, and the ResultsDialog<a href="robowiki?action=edit&id=ResultsDialog" class=wikipageedit>?</a> class would either have to be threaded or it would need an additional update method and the thread could be somewhere else.
+-- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+<p>
+You can turn on "show scores" in 0.1.4 to see total scores. As for your suggestion, I'd rather not modify any more of Robocode than is absolutely necessary until the source code is released. Once that happens, I think this is a great idea! :-)  --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RobocodeGLV014" class=wikipagelink>RobocodeGLV014</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RobocodeGLV014/FeatureRequests" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RobocodeGLV014/FeatureRequests">View other revisions</a><br>Last edited August 17, 2006 8:20 EST by 195.131.197.234 <a href="robowiki?action=browse&diff=1&id=RobocodeGLV014/FeatureRequests">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

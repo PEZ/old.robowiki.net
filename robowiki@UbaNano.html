@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>UbaNano - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Uba, Nano'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=UbaNano">UbaNano</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Could someone have a look at this code?  I am so confused... I think this should have <a href="robowiki?UbaNano" class=wikipagelink>UbaNano</a> (which isn't Nanosized yet, by the way) shoot at bullets that are fired with HOT and make them collide!  But it doesn't work.  What is wrong?
+<p>
+<pre>
+package bayen;
+import robocode.*;
+import java.awt.geom.Point2D;
+import robocode.util.Utils;
+
+/**
+ * UbaNano - a robot by Bayen
+ */
+public class UbaNano extends AdvancedRobot
+{
+	static double thenEnergy;
+	static double nowEnergy;
+	static double FORWARD = 1;
+	/**
+	 * CrazyTracker2's run method
+	 */
+	public void run() {
+		thenEnergy=100;
+		nowEnergy=100;
+		setAdjustGunForRobotTurn(true);//allow gun and radar
+		setAdjustRadarForGunTurn(true);//free movement
+		while (true)
+		{
+			turnRadarRight(360);//scan for enemies
+		}
+	}
+	/**
+	 * onScannedRobot:  We have a target.  Go get it.
+	 */
+	public void onScannedRobot(ScannedRobotEvent e) {
+		thenEnergy = nowEnergy;
+		nowEnergy = e.getEnergy();
+		setTurnRight(e.getBearing() + 90);
+if(thenEnergy&gt;nowEnergy){
+	FORWARD = -FORWARD;
+setAhead(10*FORWARD);
+}
+//here I get my enemy's statistics so that I can use
+//linear targeting
+		double bulletPower = 0.1;
+		double myX = getX();
+		double myY = getY();
+		double absoluteBearing =
+		 getHeadingRadians() + e.getBearingRadians();
+		double enemyX = getX() 
+		+ e.getDistance() * Math.sin(absoluteBearing);
+		double enemyY = getY() 
+		+ e.getDistance() * Math.cos(absoluteBearing);
+		double enemyHeading = getRadarHeadingRadians() + 3.141592653589793;
+		double enemyVelocity = 20 - 3*(thenEnergy-nowEnergy);
+//now I do my calculations for linear targeting so that
+//I know where my enemy will be once my bullet gets there
+		double deltaTime = 0;
+double battleFieldHeight=
+getBattleFieldHeight(),battleFieldWidth=
+getBattleFieldWidth();
+		double predictedX = enemyX, predictedY = enemyY;
+while((++deltaTime)*(20.0
+- 3.0*bulletPower)
+&lt;Point2D.Double.distance(myX, myY, predictedX, predictedY)){
+		predictedX += Math.sin(enemyHeading) 
+		* enemyVelocity;	
+		predictedY += Math.cos(enemyHeading) 
+		* enemyVelocity;
+			if(	predictedX &lt; 18.0 
+				|| predictedY &lt; 18.0
+				|| predictedX &gt; battleFieldWidth - 18.0
+				|| predictedY &gt; battleFieldHeight - 18.0){
+predictedX = 
+Math.min(Math.max(18.0, predictedX), battleFieldWidth 
+- 18.0);	
+predictedY = 
+Math.min(Math.max(18.0, predictedY), battleFieldHeight
+- 18.0);
+bulletPower=0;
+				break;}}
+double theta =
+Utils.normalAbsoluteAngle(Math.atan2(predictedX
+- getX(), predictedY - getY()));
+//now I can turn my gun...
+setTurnRadarRightRadians
+(Utils.normalRelativeAngle(absoluteBearing 
+- getRadarHeadingRadians()));
+setTurnGunRightRadians(Utils.normalRelativeAngle(theta
+- getGunHeadingRadians()));
+//...and fire!
+if(nowEnergy &lt; thenEnergy)
+		fire(bulletPower);
+	}
+	public void onBulletHitBullet(BulletHitBulletEvent e){
+		out.println("WORKED");
+	}
+}
+</pre>
+<p>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Have you read <a href="robowiki?BulletShielding" class=wikipagelink>BulletShielding</a>? -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=UbaNano" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=UbaNano">View other revisions</a><br>Last edited December 30, 2005 14:12 EST by <a href="robowiki?Tango" title="ID 5980 from user-478.lns3-c8.dsl.pol.co.uk">Tango</a> <a href="robowiki?action=browse&diff=1&id=UbaNano">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

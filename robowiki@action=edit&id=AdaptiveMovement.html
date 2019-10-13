@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing AdaptiveMovement - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Adaptive, Movement'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing AdaptiveMovement</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="AdaptiveMovement"  />
+<input type="hidden" name="oldtime" value="1146778904"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="10"  />
+<input type="hidden" name="captchaArg2" value="3"  />
+<input type="hidden" name="captchaOp" value="-"  />
+<input type="hidden" name="captchaId" value="580208878105"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">I think Paul Evan&#39;s or [[iiley]] better write this story.
+ 
+See also [[EnemyWave/MovementAdaption]]
+
+-- [[PEZ]] 
+
+come on. someone write something.--[[andrew]]
+
+I concur. -- [[Tango]]
+----
+Adaptive movement: using the enemy&#39;s hit rate as input to change your own movement in some way.
+
+# A way of doing it is choosing from a set of possible movements by measuring the relative success of each one of them in dodging enemy fire. PrairieWolf and [[Swiffer]] are good examples of this kind of AdaptiveMovement.
+#Another way of doing it is by slightly changing the parameters that govern your movement to counter specific &quot;spikes&quot; in the enemies shooting profile. It requires that you keep a statistic of the enemy&#39;s firing angles/guessFactors and know exactly what the parameter change will make to your movement. SandboxDT from 2.01 to 2.41 is, afaik, the best example of this.
+#The latest evolution in adaptive movement is the one where the sole input of your movement is the recent enemy firing history. You have to be able to precisely control your own movement profile, as percieved by the enemy, and change it at will. It&#39;s, imho, the &quot;holy grail&quot; of robocoding, a way to dodge almost any type of gun, and the only way you can really &quot;Dodge This&quot;. :)
+
+-- [[ABC]]
+
+is it necessary to use enemy figure out what guess factor they hit you with?--[[andrew]]
+
+It is necessary to do the two last tings in the list. At a minimum you need to know when you are hit at GF1 so you can try balance it, like [[Paolo]] does. But I do not really agree that what [[Swiffer]] does is &quot;simple&quot;. -- [[PEZ]]
+
+Agreed, it&#39;s actually very hard to do it right. The closest I ever got to [[MultiMode]] was a random choice at the begining of each round... -- [[ABC]]
+
+What I am currently implementing is a system of 5 to ten [[RandomMovement]] methods. Mostly I have been taking very similar algorithms from a variety of open source bots, and having my movement selector change between the algorithms every time I am hit and then a few random times.  This way while my movement possesses the same general concept, it will hopefully mess with most targeting attempts. -- [[Jokester]]
+
+Hopefully the algorithms will have different guess gactor peaks, otherwise this won&#39;t do a whole lot of good against the good GF guns. -- [[Alcatraz]]
+
+Well the goal of this is to have the movements utilize complimentary peaks.  That way, with a lot of tweaking, I can achieve an overall flat profile, but provide the GF guns with peaks.  As soon as the gun gets tuned to the peaks of one movement it will switch to a movement that very rarely is hit at those factors.  This could either work better than standard flattening, or be completely trounced by most guns. -- [[Jokester]]
+
+Sounds like something I tried to do some time back. I called it &#39;bait and switch&#39; and included many highly flawed movements just to mess with the guns, but I never made it work. So good luck to you : ) -- [[Kuuran]]
+
+You know, there&#39;s something to just trying things that have been tried and failed at - I wonder if time segmentation would have been simply given up on after Jamougha said he tried it with no success if I didn&#39;t chime in and say I&#39;d also experimented with it and only been successful with a smaller number of segments.
+
+About switching movements, have either of you added in a [[CoolMovement]]-based one?  That should have a very unique flaw as far as complimentary peaks.  It still may not be helpful against the good GF guns, but who knows? -- [[Kawigi]]
+
+I suspect people would have kept trying to segment on time, it&#39;s something that, to me at least, seems a very logical possibility for segmenting. Also, I&#39;ve always wondered about the difference between CoolMovement and straight BulletDodging. In the one you dodge when the bullet is fired, in the other you dodge either before this occurs, which is still a pattern, or just randomly, which really isn&#39;t cool after all. -- [[Alcatraz]]
+
+
+
+I agree, Kawigi. That idea in particular because I think I could have made it work if I wasn&#39;t attracted to working on nanos. :p And I tried this long before CoolMovement, so the answer for me is no.
+
+On the subject of segments: One other thing I&#39;ve never made a bot big enough for, but this I have had successes with, is dividing the battlefield up into 9 boxes and segmenting based on which box the opponent is in. The corner boxes were especially handy, and the only walls segment you need to go with it is a &#39;0 if not approaching, 1 if approaching&#39; type segment. It also messes with AdaptiveMovement by arbitrarily switching between valid peaks ;) Unfortunately for pure anti-adaptation purposes I never had too much luck in my attempt to convert it to a segment that just counts 0 1 2 0 1 2 ... incrementing one in the sequence on every bullet fire (maybe I should&#39;ve only counted bullet hits).
+
+@Alcatraz: It all depends on how you dodge. WaveSurfing is just a form of straight bullet dodging (dodge where they went last time), but latching onto a pattern in it isn&#39;t terribly helpful, since it is Borg-like an adapts. Tracking gun cool is just another handy element in making your dodging decisions, what you do with it can vary quite a bit. As I understand it some WaveSurfers track gun heat on their opponents just to verify bullets, for example.  -- [[Kuuran]]
+
+[[CoolMovement]] isn&#39;t really &#39;&#39;just&#39;&#39; bullet dodging - it&#39;s changing directions when the opponent is firing after having just barely changed directions earlier (when the enemy&#39;s gun is &quot;cooling&quot;).  I really should publish that cool-movement nano sometime or something, it can be the official bot with a negative spike in the rumble. -- [[Kawigi]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 10 - 3 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that AdaptiveMovement has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=AdaptiveMovement">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Galatea - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Galatea'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Galatea">Galatea</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>A test Robot of mine, an attempt to try and impliment a StatGun<a href="robowiki?action=edit&id=StatGun" class=wikipageedit>?</a>. The first class is the gun, the second is the wave class that compliments it. The RobocodeUtils<a href="robowiki?action=edit&id=RobocodeUtils" class=wikipageedit>?</a> calls are mostly availible in <a href="robowiki?Hanji/RobocodeUtils" class=wikipagelink>Hanji/RobocodeUtils</a>, others are scattered over the wiki. I'll update this with comments soon.--<a href="robowiki?Dan" class=wikipagelink>Dan</a><br> 
+<hr noshade class=wikiline size=1>
+<pre>
+ package dans;
+
+ import java.awt.geom.Point2D;
+ import java.awt.geom.Rectangle2D;
+ import java.util.Vector;
+
+ public class Galatea extends AdvancedRobot {
+ static Vector WaveBin=new Vector(100);
+ static double bearingOffsets[]= new double[91];
+ static int current=0;
+ static int connects=0;
+ static int hits=0;
+ static int shots=0;
+ static int misses=0;
+ static int hitBullet=0;
+ static final double degreesToGF=1.036888887852;
+	
+	public void run(){
+		setAdjustRadarForRobotTurn(true);
+		setAdjustGunForRobotTurn(true);
+		setAdjustRadarForGunTurn(true);
+		setTurnRadarRight(Double.POSITIVE_INFINITY);	
+		do{
+                execute();
+		}while(true);
+	}
+	public void onScannedRobot(ScannedRobotEvent e){
+		double curBearing=getHeading()+e.getBearing();
+		Point2D enemy = new Point2D.Double(RobocodeUtils.enemyX(curBearing,getX(),e.getDistance()) RobocodeUtils.enemyY(curBearing,getY(),e.getDistance()));
+		setTurnRadarLeft(getRadarTurnRemaining());
+		for(int r=0; r&lt;=WaveBin.size(); r++){
+			try{
+			if(WaveBin.elementAt(r) instanceof Wave){
+				Wave f=new Wave();
+				f=(Wave)WaveBin.elementAt(r);
+				f.Update();
+				if(f.checkIntercept(enemy)==true){
+					double k=Math.round(f.deltaBearing(enemy)/degreesToGF);
+					if(k&lt;0){
+						k=(k*-1)*2;
+					}
+					bearingOffsets[(int)Math.round(k)]+=1;
+					WaveBin.remove(f);
+				}
+			}
+		}
+		catch(NullPointerException s){}
+		catch(ArrayIndexOutOfBoundsException vs){}
+		}
+		int highest=0;
+		int last=0;
+		int secondbest=0;
+		for(int g=90; g&gt;=0;g--){
+			int a=last;
+			highest=Math.max(highest,(int)bearingOffsets[g]);
+			if(highest==bearingOffsets[g]){
+				last=g;
+				secondbest=a;
+			}
+		}
+		if(last&gt;44){
+			last=(last*-1)/2;
+		}
+		if(secondbest&gt;44){
+			secondbest=(secondbest*-1)/2;
+		}
+		double n=e.getDistance()/11;
+		double offset=(last+secondbest*degreesToGF)/2;
+		out.println(offset);
+		setTurnGunRightRadians(RobocodeUtils.normalizeBearing(Math.toRadians((curBearing+offset)
+                -getGunHeading())));
+		if(getEnergy()&gt;Math.min(e.getEnergy()/4,3)&amp;&amp;getGunHeat()==0){ 
+			setFire(e.getEnergy()/4);
+			Wave w= new Wave(new Point2D.Double(getX(),getY()),curBearing,e.getDistance());
+			WaveBin.add(w);
+		}
+		
+	}
+	public void onBulletMissed(BulletMissedEvent e){
+		misses++;
+		shots++;
+	}
+	public void onBulletHitBullet(BulletHitBulletEvent e){
+		misses++;
+		hitBullet++;
+		shots++;
+	} 
+	public void onDeath(DeathEvent e){
+		double hitPercent=Math.round((hits/shots)*100);	
+		double bulletToBulletPer=Math.round((hitBullet/shots)*100);
+		double missPercent=Math.round((misses/shots)*100);
+		out.println("We shot "+shots+" times.");
+		out.println("We hit "+hits+" times.");
+		out.println("We missed "+misses+" times.");
+		out.println("We hit other bullets "+hitBullet+" times.");
+		out.println("We hit " + hitPercent+" % of the time.");
+		out.println("We missed " + missPercent+" % of the time.");
+		out.println("We hit other bullets "+bulletToBulletPer+" % of the time.");
+		out.println("We had a "+hits/misses+" hit/miss ratio.");
+	}
+	public void onWin(WinEvent e){
+		double hitPercent=Math.round((hits/shots)*100);	
+		double bulletToBulletPer=Math.round((hitBullet/shots)*100);
+		double missPercent=Math.round((misses/shots)*100);
+		out.println("We shot "+shots+" times.");
+		out.println("We hit "+hits+" times.");
+		out.println("We missed "+misses+" times.");
+		out.println("We hit other bullets "+hitBullet+" times.");
+		out.println("We hit " + hitPercent+" % of the time.");
+		out.println("We missed " + missPercent+" % of the time.");
+		out.println("We hit other bullets "+bulletToBulletPer+" % of the time.");
+		out.println("We had a "+hits/misses+" hit/miss ratio.");
+		
+	}
+ }
+
+ package dans;
+
+ import java.awt.geom.Point2D;
+ public class Wave {
+	Point2D startPos= new Point2D.Double();
+	double tarDistance;
+	double tarBearing;
+	double radius=0;
+	public Wave(){
+	}
+	public Wave(Point2D start, double absBearing, double distance){
+		this.startPos=start;
+		this.tarBearing=absBearing;
+		this.radius+=11;
+		this.tarDistance=distance;	
+	}
+	public void Update(){
+		this.radius+=11;
+	}
+	public boolean checkIntercept(Point2D tarPoint){
+		if(this.radius&gt;=tarPoint.distance(this.startPos)){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	public double deltaBearing(Point2D enemy){
+		double a= this.tarBearing-Math.toDegrees(RobocodeUtils.getBearing(startPos,enemy));
+		return a;
+	}
+	public double getRadius(){
+		return this.radius;
+	}
+	public double getX(){
+		return this.startPos.getX();
+	}
+	public double getY(){
+		return this.startPos.getY();
+	}
+	public double getDistance(){
+		return this.tarDistance;
+	}
+ }
+</pre>
+<hr noshade class=wikiline size=1>
+Questions, Comments?
+<hr noshade class=wikiline size=1>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Galatea" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Galatea">View other revisions</a><br>Last edited February 6, 2004 2:55 EST by <a href="robowiki?Dan" title="ID 1961 from rrcs-central-24-92-130-234.biz.rr.com">Dan</a> <a href="robowiki?action=browse&diff=1&id=Galatea">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

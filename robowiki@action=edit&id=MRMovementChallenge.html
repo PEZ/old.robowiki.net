@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing MRMovementChallenge - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='MRMovement, Challenge'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing MRMovementChallenge</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="MRMovementChallenge"  />
+<input type="hidden" name="oldtime" value="1154281880"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="5"  />
+<input type="hidden" name="captchaArg2" value="1"  />
+<input type="hidden" name="captchaOp" value="-"  />
+<input type="hidden" name="captchaId" value="334881300645"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">Compare your melee movement with the top bots in the rumble!  
+
+With a common gun should be able to determine which movement performs best in RoboRumble melee battles. 
+
+Rules:
+
+* Stick [[HawkOnFire]]&#39;s gun on your movement and enter it into the melee rumble.
+* Post your results here after your robot has at least 1500 battles, ordered by Rating, descending.
+
+
+|     &#39;&#39;&#39;Name&#39;&#39;&#39;                               |  &#39;&#39;&#39;Movement author&#39;&#39;&#39;  | &#39;&#39;&#39;Rating&#39;&#39;&#39; | &#39;&#39;&#39;Date&#39;&#39;&#39; | &#39;&#39;&#39;Remarks&#39;&#39;&#39;
+| [[Logic]] 1.1                                | [[Kev]]                 | 1687         | 2006/07/26 |
+| [[Griezel]] 0.4a                             | [[GrubbmGait]]          | 1670         | 2006/07/29 | HOF + 0
+| [[HawkOnFire]]                               | [[rozu]]                | 1668         | 2006/07/23 |
+| [[Freya]] 0.82MRMC                           | [[Loki]]                | 1662         | 2006/07/29 |
+
+The code for [[HawkOnFire]]&#39;s bullet power selection is.
+&lt;pre&gt;setFire(Math.min(Math.min(myEnergy/6, 1300/distanceToTarget), target.energy/3));&lt;/pre&gt;
+The gun turn is standard [[HeadOnTargeting]] (shooting towards the last position you&#39;ve scanned the enemy at): &lt;pre&gt;setTurnGunRightRadians(Utils.normalRelativeAngle(absoluteBearing(target.position, myPosition) - getGunHeadingRadians()));&lt;/pre&gt;
+
+----
+chat: 
+
+The challenge is currently new and open to modification. As of now, I&#39;m leaving radar and target selection non standardized becuase they often have an effect on the movement. It may be better to switch to a stronger gun because a few movements may rely on their gun to attack other robot&#39;s in one-on-one style duels. However, it would mean adding a radar lock and more complex code, so it will be HOT for now (I don&#39;t have any open-source melee bots that would work well anyway). If anyone thinks we need a more structured setting, we could easily switch to [[Coriantumr]]&#39;s gun, radar, and target selection. -- [[Kev]]
+
+Can&#39;t add HawkOnFire for the same reason that you can&#39;t add Komarious to your gun challenge... the rules state that it must be a megabot =P --[[David Alves]]
+
+Again, &quot;rules&quot; really confuse me. -- [[Voidious]]
+
+does this rule concerning botsize matter at all for melee battles? I thought that the scores against bots from the same category are just picked out of the normal battles including also bots from different categories. -- [[rozu]]
+
+Anyway, nice that some of my bots are still around... ;) -- [[rozu]]
+
+Even in melee botsize dependent battles are fought, there are just not many new smallsized bots so it is hard to notice. As for your bots still around . . . as long as your bots are one of the two best in every weightclass, they are allowed to hang around. Although there are a lot of new faces from rank 7 till 20, the first 6 bots (with 2 of you) have not really been threatened in the last two(!!) years.  -- [[GrubbmGait]]
+
+The increased number of botsize dependent battles shouldn&#39;t have any affect in the general rumble because a micro bot will eventually fight every opponent and get a rating in the same way as a mega bot. However, this isn&#39;t always true in the melee rumble. My reasoning is that a micro bot in the melee rumble that does well a in a primarily micro bot battle will do better than a mega bot that does well against micro bots because the micro will fight more of the robots it&#39;s good against. On reflection, it seems like this shouldn&#39;t make much of a difference and we might as well not include micro bots in the general rumble if we are this picky about score, so I think I&#39;ll change the rule. -- [[Kev]]
+
+Could we agree on a minimum number of battles of 1500? At that point the ranking should be as stable as it can get in melee.   -- [[GrubbmGait]]
+* good idea, a higher number of battles will give more reliable results. But the results in this challenge will never be as exact as in the 1-vs-1 challenges as a drift of pm 4 points with increasing number of battles is not uncommon in the melee rumble. --[[Loki]]
+
+Sounds like a good idea to me also. I&#39;ll add a 1500 battle minimum to the rules. Even if it only gives a general rating, the challenge is still useful; I had no idea [[Logic]]&#39;s movement was so good (and its gun was so bad). -- [[Kev]]
+
+Ouch, I knew that my gun is OK for melee, but i expected that my movement was better than this. There is also s sunny side: if I can get my movement to the level of [[Logic]], I would be #4 !!!  -- [[GrubbmGait]]
+
+I&#39;ve changed my initial contribution to wait until my gun is cool before I fire. HawkOnFire uses a spinning radar and fires blind (in the mainloop), while Griezel uses a meleeradar (lock, fire, spin etc) while in the scannedrobotevent. Maybe it is a good idea to also include the radar from HawkOnFire, but only if it has not to much influence on the movement.  -- [[GrubbmGait]]
+* so you have even improved on your gun by wating until its cool! --[[Loki]]
+** with Griezel (and Gruwel) I have done that from the beginning, for this challenge I tried to take the gun from HawkOnFire &#39;as is&#39; but that influenced the performance considerately (I could hardly hit SittingDuck :-p). GriezelMRMC still fires HOT and uses the bulletpower of HawkOnFire, I think that is enough to qualify for this challenge.  --[[GrubbmGait]]
+
+For Freya the conclusion is similar: it&#39;s the gun that contributes more to the ranking than the movement. I have always known that, but i find improving movement much harder than improving the gun. --[[Loki]]
+
+I think the radar shouldn&#39;t have much effect on the score, and some movements rely on a radar lock to dected [[EnergyDrop]] for bullet dodging. For now, I&#39;m leaving the radar non-standardized. I&#39;ve also removed some of the sample code because it&#39;s confusing and doesn&#39;t behave the way it should in some cases. The gun doesn&#39;t have to be word for word from [[HawkOnFire]] as long as it&#39;s pure [[HeadOnTargeting]] (although the energy management must stay same). -- [[Kev]]
+
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 5 - 1 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that MRMovementChallenge has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=MRMovementChallenge">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

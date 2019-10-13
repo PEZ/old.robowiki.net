@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>MicroCatbert - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Micro, Catbert'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=MicroCatbert">MicroCatbert</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>A Microbot that mirrors it's opponent's movement.
+<H4>What's special about it?</H4>
+
+Uhm, not much, besides being the only one which I know of in Microbot size to mirror it's opponent's moves. Soon to have a pattern matcher which saves data between matches, but the I/O at the moment for Average Velocity Targeting isn't going to well, and I'm going to figure out PMing in a week or so.
+<p>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=1585">http://www.robocoderepository.com/BotDetail.jsp?id=1585</a>
+<p>
+<H4>How competitive is it?</H4>
+
+I think it will do ok, not meant to be super competitive at the moment. Allthough it might become.
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+<p>
+It Mirrors it's Opponents movements. Like this:
+<tt><pre>
+		dX= getBattleFieldWidth() -((mX=getX())+Math.sin(inf)*e.getDistance());
+		dY= getBattleFieldHeight() -((mY=getY())+Math.cos(inf)*e.getDistance());
+		setTurnRightRadians(nTA = Math.atan(Math.tan(tA = ((Math.atan2(dX - mX, dY - mY) - (inf = getHeadingRadians())) + (7.0 * Math.PI)) % (2.0 * Math.PI) - Math.PI)));
+		setAhead((tA == nTA ? 1.0 : -1.0) * Point2D.Double.distance(mX, mY, dX, dY));
+</pre></tt>
+<p>
+<H4>How does it fire?</H4>
+
+It uses Average Velocity Linear Targeting, soon to patternmatch.
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+It relies on it's opponent to dodge, because it mirrors it's opponent's movement.
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+It's strategy in <a href="robowiki?Melee" class=wikipagelink>Melee</a> is to get confused.
+<p>
+<H4>How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a>?</H4>
+
+Doesn't
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+I save velocity between rounds, and am trying to figure out how to fix a bug that keeps it from saving data between matches.
+<p>
+<H4>Where did you get the name?</H4>
+
+See <a rel="nofollow" href="http://www.dilbert.com">http://www.dilbert.com</a>
+<p>
+<H4>Can I use your code?</H4>
+
+Yes. If you use it and find improvements, please let me know. My e-mail is assasin595@hotmail.com
+Here is <a href="robowiki?MicroCatbert's_Code" class=wikipagelink>MicroCatbert's Code</a>.
+<p>
+<H4>What's next for your robot?</H4>
+
+Implement a Pattern matcher, fix several bugs.
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+Uhm, maybe <a href="robowiki?DuelistNanoMelee" class=wikipagelink>DuelistNanoMelee</a> 1.0 and Calypso 3.6
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+I'd like help fixing a few bugs here and there, specifically with the bug that makes me not write my files in the onDeath Event.
+<p>
+I actually played with a mirror-like movement in <a href="robowiki?FunkyChicken" class=wikipagelink>FunkyChicken</a>, which probably would have fit, too (with a pattern-matcher in a nano, even!)  Wouldn't have been an exact mirror, but a reasonably good one.  The smallest mirror-bot I know of is sgp.nano.<a href="robowiki?FurryLeech" class=wikipagelink>FurryLeech</a>, which is 245 bots, probably with random aim.  A lot of top nanos have a hard time with it, while others beat it easily.  It's pretty funny :-p (and hard to make a really good nano that beats <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a> and <a href="robowiki?FurryLeech" class=wikipagelink>FurryLeech</a>). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+If you're still interested in mimicking your opponent and pattern-matching them at the same time, you should check out a simple but reasonably accurate implementation I use - it's called <a href="robowiki?FunkyLeech" class=wikipagelink>FunkyLeech</a>.  The mirroring isn't by location like yours, it's by relative angle and speed.  I think it's pretty clever :-) -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=MicroCatbert" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=MicroCatbert">View other revisions</a><br>Last edited August 5, 2003 1:06 EST by <a href="robowiki?Kawigi" title="ID 1391 from tide78.microsoft.com">Kawigi</a> <a href="robowiki?action=browse&diff=1&id=MicroCatbert">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

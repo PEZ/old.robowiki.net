@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Lib - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Lib'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Lib">Lib</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><a href="robowiki?Lib" class=wikipagelink>Lib</a> is my melee nanobot (I never thought I'd get one that worked well...), named in the tradition of my other recent melee minis, <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a> and <a href="robowiki?Shiz" class=wikipagelink>Shiz</a>.  Of course, <a href="robowiki?Lib" class=wikipagelink>Lib</a> was nowhere near as glamourous as <a href="robowiki?Shiz" class=wikipagelink>Shiz</a> and <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a>, more of an also-ran, but he's still significant.  <a href="robowiki?Shiz" class=wikipagelink>Shiz</a> probably wouldn't have persisted in battle with <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a> and their civilization might have been saved had it not been for <a href="robowiki?Shiz" class=wikipagelink>Shiz</a>'s vengeance at <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a> for killing his brother, <a href="robowiki?Lib" class=wikipagelink>Lib</a>.
+<p>
+<H4>Author</H4>
+
+<p>
+<a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+<H4>What's special about it?</H4>
+
+<p>
+I think it's the first nano with really complex corner movement.  Previous melee nanos with corner movement have either just oscillated between two points or done a box shape or something, this one can use arbitrary setes of points.
+<p>
+<H4>Great, I want to try it. Where can I download it?</H4>
+
+<p>
+<a rel="nofollow" href="http://www.robocoderepository.com/BotDetail.jsp?id=2054">http://www.robocoderepository.com/BotDetail.jsp?id=2054</a>
+<p>
+<H4>How competitive is it?</H4>
+
+<p>
+Well, it's been in the RR@H overnight, and it's showing some promise.  It appears to be the #1 nano by some margin in the environment of the RR@H, which is basically competing against mostly more complex bots that won't let me run through them on the way to my corner.  Currently, it's #23 at 1612 in the general meleerumble, #9 at 1630 in mini, #3 at 1613 in micro, and #1 at 1650 in nano.  In all of these divisions, it's 40-50 rating points over the next nano, which is Graviton.
+<p>
+<H4>How does it <a href="robowiki?Movement" class=wikipagelink>move</a>?</H4>
+
+<p>
+I with it could fit <a href="robowiki?MinimumRiskMovement" class=wikipagelink>MinimumRiskMovement</a> like my other melee bots, this movement was more created because it was driving me nuts how well that silly melee movement in <a href="robowiki?SandboxLump" class=wikipagelink>SandboxLump</a> worked, even if it rams into robots that got in its predefined path.  I figured that such a movement could also be put into a nano (David seemed skeptical but didn't rule it out), and I did it.  It moves in a corner in this basic pattern:
+<pre>
+2
+4     5
+7
+1  3  6  8
+</pre>
+<p>
+The movement is basically symmetrical, because I was originally going to use the same set of coordinates in reverse order for the x and y coordinates.  It turned out to be smaller to index them the same way and have seperate coordinates, so that's what I do now, but I never did find a combination that worked better than this, at least against melee nanos.
+<p>
+<H4>How does it fire?</H4>
+
+<p>
+Fires head-on, normally at the closest enemy.  After it fires, it basically lets its radar slip so that it is more likely to notice an enemy getting closer to it than its current target.
+<p>
+<H4>How does it <a href="robowiki?DodgingBullets" class=wikipagelink>dodge bullets</a>?</H4>
+
+<p>
+Lib just sort of gets into its corner and hopes that no one will shoot at it.  But it moves around in the corner, too, just to make sure.
+<p>
+<H4>How does the <a href="robowiki?Melee" class=wikipagelink>melee</a> strategy differ from <a href="robowiki?OneOnOne" class=wikipagelink>one-on-one</a>  strategy?</H4>
+
+<p>
+It's the same either way, although it will favor that bottom-left corner if the battlefield is smaller than 1000x1000.
+<p>
+<H4>How does it select a target to attack/avoid in <a href="robowiki?Melee" class=wikipagelink>melee</a>?</H4>
+
+<p>
+It uses an infinite radar lock to *usually* pick the closest, and then lets its radar slip when it fires so that if there is someone it's not seeing, it might see them and choose them instead.
+<p>
+<H4>What does it save between rounds and matches?</H4>
+
+<p>
+Nil.
+<p>
+<H4>Where did you get the name?</H4>
+
+<p>
+Name of the brother of <a href="robowiki?Shiz" class=wikipagelink>Shiz</a> who was killed by <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a> when he tried to take power.
+<p>
+<H4>Can I use your code?</H4>
+
+<p>
+Eh, go for it.  Completely open, I don't even think it's worth putting under the QKPL, even if it may be the best nano melee bot to date.
+<p>
+<H4>What's next for your robot?</H4>
+
+<p>
+Eh, I don't know, finding some bytes to guarantee that I'm firing at the closest enemy would be nice, or maybe finding a movement pattern that works better.
+<p>
+<H4>Does it have any <a href="robowiki?WhiteWhale" class=wikipagelink>WhiteWhale</a>s?</H4>
+
+<p>
+It was tested to beat current melee nanos, like <a href="robowiki?DuelistNanoMelee" class=wikipagelink>DuelistNanoMelee</a>, Infinity and Gem.
+<p>
+<H4>What other robot(s) is it based on?</H4>
+
+<p>
+Hard to say.  I suppose in a way it's based on <a href="robowiki?SandboxLump" class=wikipagelink>SandboxLump</a>, simply because that's why I made a corner movement in the first place, but it's not the same corner movement (one more similar to <a href="robowiki?SandboxMiniMelee" class=wikipagelink>SandboxMiniMelee</a> is commented out in the source if you want to try it, it didn't work as well against the nanos, so I took it out), and I didn't use any actual code or anything else from it.  In fact, codewise, it's more like <a href="robowiki?NanoLauLectrik" class=wikipagelink>NanoLauLectrik</a> :-p.
+<p>
+<hr noshade class=wikiline size=1>
+<H4>Comments, questions, feedback:</H4>
+
+<p>
+Congratulation, with this very nice #1 nano melee bot you have completed your collection ;). Are you the only one with a complete collection? I don't know if David has a team...
+I allways failed to add such a bot even though I tried it at least 3 times. I still remember their names and it hurts =) -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+<p>
+Good work indeed! But is it complete? Where's the "haiku, perceptual, Robot, Droid"? I have <a href="robowiki?DroidPoet" class=wikipagelink>DroidPoet</a> =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+David does have a team, Phalanx.  I also have yet to do smaller teams, too, although it might be an interesting task.  I actually started a good number of melee nanos at various times, too, I could probably dig up a few somewhere.  Most of them were either too big (like my first attempt under this name) or really sucked.  On a side note, I started no less than 4 or 5 mini melee bots called <a href="robowiki?Coriantumr" class=wikipagelink>Coriantumr</a> before I had one that was worthwhile.
+<p>
+I may have one of the most diverse collections, though, if you add <a href="robowiki?HaikuTrogdor" class=wikipagelink>HaikuTrogdor</a>, <a href="robowiki?FemtoTrogdor" class=wikipagelink>FemtoTrogdor</a> and <a href="robowiki?FloodSonnet" class=wikipagelink>FloodSonnet</a> (my haiku, femto and sonnet all-around bots) in the mix, then there are three robots that are basically different variations on different versions of <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> with different targeting algorithms I wanted to try, one perceptual microbot that could beat <a href="robowiki?SandboxDT" class=wikipagelink>SandboxDT</a> (call it a fluke, though), one bloated multi-mode bot that sort of did the <a href="robowiki?MusashiTrick" class=wikipagelink>MusashiTrick</a> (since the first movement it tried was basically orbiting in one direction and the second was walls movement, with wall smoothing, btw), the list could probably go on.  And then there's the grapher.  The robot that comes with <a href="robowiki?FloodGrapher" class=wikipagelink>FloodGrapher</a> is so based around pluggable modules that the robot class doesn't even have any references to the <em>default</em> modules (so it would crash if its ini file were erased).
+<p>
+But I guess that one place I was lacking was a nano melee bot - and now I have one. -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+With collection I meant the classical categories the RR is running, I completely forgot the other ones. Just say if you make smaller teams, I'd then try it too. This is something I think of for some time now but I never did it because there is no active competition. -- <a href="robowiki?Rozu" class=wikipagelink>rozu</a>
+<p>
+Very impressive. I can honestly say i never thought that i'd see a <a href="robowiki?NanoBot" class=wikipagelink>NanoBot</a> outrank Prairiewolf in melee... --<a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+Lol - Ok time to party :) -- <a href="robowiki?Miked0801" class=wikipagelink>Miked0801</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Lib" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Lib">View other revisions</a><br>Last edited May 5, 2006 7:37 EST by <a href="robowiki?Florent" title="ID 6630 from ns.capgemini.fr">Florent</a> <a href="robowiki?action=browse&diff=1&id=Lib">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

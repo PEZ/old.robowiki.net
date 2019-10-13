@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>HaikuCircleBot - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Haiku, Circle, Bot'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=HaikuCircleBot">HaikuCircleBot</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Here's the code.  The setAhead bit makes it so if I run into a wall, I have a 50% chance of turning back the other way ('bouncing' off the wall like <a href="robowiki?CircleBot" class=wikipagelink>CircleBot</a> did).  The setTurnRight<a href="robowiki?action=edit&id=TurnRight" class=wikipageedit>?</a> line would be easily twice as long if I targeted a range of distances instead of just trying to be 200 away like in this code, but I figured this was good enough.  Ironically, this is basically equivalent to the original aiming/tracking code from <a href="robowiki?CircleBot" class=wikipagelink>CircleBot</a> (but not the original firing code).
+<pre>
+package kawigi.haiku;
+import robocode.*;
+
+/**
+ * HaikuCircleBot - a poem by Kawigi based on CircleBot, my first robot.  Like CircleBot, it beats all the sample bots :-)
+ */
+public class HaikuCircleBot extends AdvancedRobot
+{
+	public void run()
+	{
+		turnGunRight(Double.POSITIVE_INFINITY);
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e)
+	{
+		setAhead((getDistanceRemaining() == 0) ? (int)(Math.random()*2)*400-200 : getDistanceRemaining()*100);
+		setTurnRight(e.getBearing()-90 + (((getDistanceRemaining() &gt; 0) == (e.getDistance() &gt; 200)) ? 30 : -30));
+		setFire(e.getEnergy()/4);
+	}	
+}
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=HaikuCircleBot" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=HaikuCircleBot">View other revisions</a><br>Last edited August 6, 2003 23:11 EST by <a href="robowiki?Kawigi" title="ID 1391 from tide78.microsoft.com">Kawigi</a> <a href="robowiki?action=browse&diff=1&id=HaikuCircleBot">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

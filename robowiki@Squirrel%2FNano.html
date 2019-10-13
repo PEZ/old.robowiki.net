@@ -1,0 +1,203 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Squirrel/Nano - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Squirrel, Nano'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Nano">Squirrel/Nano</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Squirrel" class=wikipagelink>Squirrel</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+package bayen.nano;
+
+import robocode.AdvancedRobot;
+import robocode.ScannedRobotEvent;
+import robocode.HitByBulletEvent;
+import robocode.BulletHitEvent;
+import robocode.BulletMissedEvent;
+import robocode.HitWallEvent;
+
+import robocode.util.Utils;
+
+/**
+ * Squirrel - a robot by Bayen
+ *
+ * Codesize Reduction Help:  Voidious (Thanks!)
+ */
+public class Squirrel extends AdvancedRobot
+{
+	//CONSTANTS:
+	private static final double RADAR_EXTRA = 2.2;
+	private static final double RIGHT_ANGLE = 1.57;
+	private static final double POSITIVE_ONE = 1.0;
+	private static final double NEGATIVE_ONE = -1.0;
+	private static final double ZERO = 0.0;
+	private static final double BULLET_POWER = 3.0;
+	private static final double EIGHT = 8.0;
+	private static final double SIXTEEN = 16.0;
+	private static final double ONE_TENTH = 0.1;
+	private static final double HUNDRED = 100.0;
+	private static final double THIRTEEN = 13.0;
+
+	//VARIALBES:
+	private static double _gunCheck;
+	private static double _moveCheck = POSITIVE_ONE;
+	private static double _energy = HUNDRED;
+	private static double _direction = POSITIVE_ONE;
+	
+	public void run() {
+		do {
+			turnRadarRightRadians(HUNDRED);
+		} while(true);
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e) {
+		double bearing;
+		
+		setTurnRadarRightRadians(Utils.normalRelativeAngle(((bearing = e.getBearingRadians()) + getHeadingRadians() - getRadarHeadingRadians()) * RADAR_EXTRA));
+		
+		setTurnRightRadians(bearing + RIGHT_ANGLE);
+		
+		double difference;
+		if((difference = _energy - (_energy = e.getEnergy())) &lt;= BULLET_POWER &amp;&amp; difference &gt; ONE_TENTH) {
+			_direction *= _moveCheck;
+		}
+		setAhead(HUNDRED * _direction);
+
+		bearing += getHeadingRadians();
+		setTurnGunRightRadians(Utils.normalRelativeAngle(bearing - getGunHeadingRadians() + ((_gunCheck&lt;ZERO?((Math.random() * SIXTEEN) - EIGHT):e.getVelocity()) * Math.sin(e.getHeadingRadians() - bearing) / THIRTEEN)));
+		
+		setFire(POSITIVE_ONE);
+	}
+
+	public void onHitByBullet(HitByBulletEvent e) {
+		_moveCheck *= NEGATIVE_ONE;
+	}
+	
+	public void onBulletHit(BulletHitEvent e) {
+		_gunCheck -= (_gunCheck&lt;ZERO?POSITIVE_ONE:NEGATIVE_ONE);
+	}
+	
+	public void onBulletMissed(BulletMissedEvent e) {
+		_gunCheck += (_gunCheck&lt;ZERO?POSITIVE_ONE:NEGATIVE_ONE);
+	}
+	
+	public void onHitWall(HitWallEvent e) {
+		_direction *= NEGATIVE_ONE;
+	}
+	
+}</pre>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Here it is at 249 bytes. You could gain 2 more by doing "energy diff &gt; 0" instead of "energy diff &gt; 0.1".
+<pre>
+package bayen.nano;
+
+import robocode.AdvancedRobot;
+import robocode.ScannedRobotEvent;
+import robocode.HitByBulletEvent;
+import robocode.BulletHitEvent;
+import robocode.BulletMissedEvent;
+import robocode.HitWallEvent;
+
+import robocode.util.Utils;
+//import java.awt.Color;
+
+/**
+ * Squirrel - a robot by (your name here)
+ */
+public class Squirrel extends AdvancedRobot
+{
+	//private static final double INFINITY = Double.POSITIVE_INFINITY;
+	private static final double RADAR_EXTRA = 2.2;
+	private static final double RIGHT_ANGLE = 1.57;
+	private static final double POSITIVE_ONE = 1.0;
+	private static final double NEGATIVE_ONE = -1.0;
+	private static final double ZERO = 0.0;
+	private static final double BULLET_POWER = 3.0;
+	private static final double EIGHT = 8.0;
+	private static final double SIXTEEN = 16.0;
+	//private static final double THREE = 3.0;
+	private static final double ONE_TENTH = 0.1;
+	private static final double HUNDRED = 100.0;
+	private static final double THIRTEEN = 13.0;
+	
+	private static double _gunCheck;
+	private static double _moveCheck = POSITIVE_ONE;
+	private static double _energy = HUNDRED;
+	private static double _direction = POSITIVE_ONE;
+	
+	/**
+	 * run: Squirrel's default behavior
+	 */
+	public void run() {
+		// After trying out your robot, try uncommenting the import at the top,
+		// and the next line:
+		//setColors(Color.red,Color.blue,Color.green);
+		do {
+			turnRadarRightRadians(HUNDRED);
+		} while(true);
+	}
+
+	/**
+	 * onScannedRobot: What to do when you see another robot
+	 */
+	public void onScannedRobot(ScannedRobotEvent e) {
+		double bearing;
+		
+		setTurnRadarRightRadians(Utils.normalRelativeAngle(((bearing = e.getBearingRadians()) + getHeadingRadians() - getRadarHeadingRadians()) * RADAR_EXTRA));
+		
+		setTurnRightRadians(bearing + RIGHT_ANGLE);
+		
+		double difference;
+                // Voidious: this looks funky, but it really does work the same like this and is smaller.
+		if((difference = _energy - (_energy = e.getEnergy())) &lt;= BULLET_POWER &amp;&amp; difference &gt; ONE_TENTH) {
+			_direction *= _moveCheck;
+		}
+		setAhead(HUNDRED * _direction);
+
+                // Voidious: don't need an extra variable here
+		bearing += getHeadingRadians();
+		setTurnGunRightRadians(Utils.normalRelativeAngle(bearing - getGunHeadingRadians() + ((_gunCheck&lt;ZERO?((Math.random() * SIXTEEN) - EIGHT):e.getVelocity()) * Math.sin(e.getHeadingRadians() - bearing) / THIRTEEN)));
+		
+		setFire(BULLET_POWER);
+	}
+
+	/**
+	 * onHitByBullet: What to do when you're hit by a bullet
+	 */
+	public void onHitByBullet(HitByBulletEvent e) {
+		_moveCheck *= NEGATIVE_ONE;
+	}
+	
+	/**
+	 * onBulletHit: What to do when a bullet hits
+	 */
+	public void onBulletHit(BulletHitEvent e) {
+		_gunCheck -= (_gunCheck&lt;ZERO?POSITIVE_ONE:NEGATIVE_ONE);
+	}
+	
+	/**
+	 * onBulletMissed: What to do when a bullet misses
+	 */
+	public void onBulletMissed(BulletMissedEvent e) {
+		_gunCheck += (_gunCheck&lt;ZERO?POSITIVE_ONE:NEGATIVE_ONE);
+	}
+	
+	/**
+	 * onHitWall: What to do when you hit a wall
+	 */
+	public void onHitWall(HitWallEvent e) {
+		_direction *= NEGATIVE_ONE;
+	}
+	
+}
+</pre>
+<p>
+Whoah, sorry, I missed your previous update. Anyway, the second change I made could still apply, I think. Good luck. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+No, I prefer your changes because I don't have to sacrifice the accuracy of the Energy Drop prediction.  So thanks!  I replaced the code up top with the finalized version.  --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Squirrel" class=wikipagelink>Squirrel</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Squirrel/Nano" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Squirrel/Nano">View other revisions</a><br>Last edited October 31, 2006 13:22 EST by <a href="robowiki?Bayen" title="ID 8212 from pc249.dasd.org">Bayen</a> <a href="robowiki?action=browse&diff=1&id=Squirrel/Nano">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

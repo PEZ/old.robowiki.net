@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Justin Mallais - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Justin, Mallais'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Justin+Mallais">Justin Mallais</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><PRE >
+  I've always had an interest in programming (ever since I got  that Commodore64 when I was 8) I've never persued it till <a href="robowiki?RoboCode" class=wikipagelink>RoboCode</a>.  So it's been a hard learning curve, but <a href="robowiki?RoboCode" class=wikipagelink>RoboCode</a> is equally addictive :)  
+</PRE>
+<p>
+I just released my first advanced-bot : JavaDisturbance<a href="robowiki?action=edit&id=JavaDisturbance" class=wikipageedit>?</a> V0.59 .. which has been a work in progress, mostly a test-bed for me to learn.
+but I am  inspired by it ranking after 600 battles. :) 
+<p>
+I made an Anti gravity movement scheme for it; 
+I played around and learned from basicSurfer tutorialBot, which I used as a start point to make my guessFactor  Gun.
+I have since found the GFTargeting bot (tutorial) which has code is 100 times more effient than mine.. :)  but I opted to keep the code I worked hard for :) though I did improve the manner I segment. In keeping with that spirit I have removed the basicSurfer Code it had and used when it fought 1vrs1. I hope to add  my own 1 on 1 code in the future.. likely an implement of waveSurfing of some sort.. 
+<p>
+I have not figured out how  to properly declare/store data on multiple enemies for Melee, making use of The global Static Variables to hold the data for me between rounds...  I'll paste the base of my code structure here, in hopes One of you  can help me prevent it from writing to disk between rounds...  After that fix, I think I ready to start a fresh bot :)
+<p>
+I am oblivious to proper coding practices  and what not . Please help.. The internal class: wholeTank which I store  in tankList (an <a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a>).   
+I want the wholeTank class to retain its data between rounds..   heres the pertaining code :
+<p>
+<pre>
+
+
+// bla bla.. 
+
+</pre>
+<PRE >
+ edit " I got tire of seeing that crappy code there :P"
+</PRE>
+<hr noshade class=wikiline size=1>
+<p>
+I'm pretty sure the reason your tankList variable isn't working is because of the way your "tankList = new <a href="robowiki?ArrayList" class=wikipagelink>ArrayList</a>();" section is at the start of the run() method. Note that the run() method runs once per round, meaning that even though tankList is static, it's being overwritten by a new list every round. To fix it I'd suggest putting that code to create the list inside and if block like "if (tankList == null)" so you'll only run it once out of all the rounds. -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+wow, cool, never expected that.. will try asap in the morning !! :)
+<p>
+Welcome to the wiki! =) Please do feel free to ask questions, it's a pretty helpful community. Good luck to you and your bots. (Oh, and you should make a page for your bot!) -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Thx Voidoius for the welcome :)-Justin
+<p>
+YES Rednaxela !! that was the case!!!  Thx for the help :)  I probally would never of thought of it..   -Justin
+<p>
+No problem! And like I forgot to say before, welcome to the wiki! :) -- <a href="robowiki?Rednaxela" class=wikipagelink>Rednaxela</a>
+<p>
+<p>
+Hey guys ! I'm back at it again :)  I recently threw  Justin.MallaisV8<a href="robowiki?action=edit&id=MallaisV8" class=wikipageedit>?</a> in to the mix.. :)  Inspired by my new gun I have since completely rewritten it. Ridding it completely of my old bad code :)  I am happy with my progress, but once again I'm hoping someOne can help me out with a semantic Error I can't figure out. :
+<pre>
+Found 1 semantic error compiling "C:/robocode/robots/justin/Mallais.java":
+
+    18. public class Mallais extends AdvancedRobot {
+                     ^-----^
+*** Semantic Error: The class file "BulletHitEvent.class" in "libs\robocode.jar\robocode" has an invalid format (duplicate local variable type table).
+Compile Failed (1)
+
+</pre>
+<PRE >
+   I'll post code if needed..
+</PRE>
+Thx  - Justin
+<p>
+I haven't seen a semantic error in Robocode, but if you code maybe post all the lines you have before the class declaration, say which compiler you are using and how are you compiling it (which IDE or command line) I'll try to help more. I don't know how long the whole code is, so maybe posting it all is too much, but if you can upload it somewhere it may also be helpful. --<a href="robowiki?Zyx" class=wikipagelink>Zyx</a>
+<p>
+<PRE >
+ I just jumped out of bed as I realise the problem :) Got it up and running..   I was trying to create the same instance twice during start up.. It would compile intermetently which threw me off .  Thanks <a href="robowiki?Zyx" class=wikipagelink>Zyx</a> :)   -justin
+</PRE>
+<p>
+<DL >
+<dt><dd> When tired is hard to find them ;-), glad to know is fixed. --<a href="robowiki?Zyx" class=wikipagelink>Zyx</a>
+</DL>
+<p>
+<DL >
+<DL >
+<dt><dd> How can you fixed the problem? I think it's Jikes problem. (it has been mentioned many many time in robocode sourceforge.net forum, and all the answer is "Go and use javac instead of Jikes") --<a href="robowiki?Nat" class=wikipagelink>Nat</a>
+</DL>
+</DL>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Justin_Mallais" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Justin_Mallais">View other revisions</a><br>Last edited April 21, 2009 13:04 EST by <a href="robowiki?Nat" title="ID 18129 from ppp-58-8-252-99.revip2.asianet.co.th">Nat</a> <a href="robowiki?action=browse&diff=1&id=Justin_Mallais">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

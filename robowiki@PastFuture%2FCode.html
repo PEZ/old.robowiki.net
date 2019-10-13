@@ -1,0 +1,639 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>PastFuture/Code - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Past, Future, Code'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Code">PastFuture/Code</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?PastFuture" class=wikipagelink>PastFuture</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext><pre>
+
+// (C) 2007 Kim, Taegyoon
+
+// StatisticLogTargeting
+// version 1.0: 20071023. matches only on fire times
+// version 1.0b: 20071024. matches always
+
+package stelo;
+
+import robocode.*;
+import robocode.util.Utils;
+
+import java.awt.geom.*;     // for Point2D's
+import java.util.*;
+import java.awt.*;
+
+public class PastFuture extends AdvancedRobot {
+    public static int BINS = 47;
+	private static int DISTANCE_INDEXES = 5;
+	private static int VELOCITY_INDEXES = 5;
+//    public static double _surfStats[] = new double[BINS]; // we'll use 47 bins
+    private static double _surfStats1[][] = new double[VELOCITY_INDEXES][BINS];
+    private static double _surfStats2[][][] = new double[VELOCITY_INDEXES][DISTANCE_INDEXES][BINS];
+    
+    public static Point2D.Double _myLocation;     // our bot's location
+    public static Point2D.Double _enemyLocation;  // enemy bot's location
+
+    public ArrayList _enemyWaves;
+    public ArrayList _surfDirections;
+    public ArrayList _surfAbsBearings;
+	
+	private static double lateralDirection;
+	private static double lastEnemyVelocity;
+
+    // This is a rectangle that represents an 800x600 battle field,
+    // used for a simple, iterative WallSmoothing method (by Kawigi).
+    // If you're not familiar with WallSmoothing, the wall stick indicates
+    // the amount of space we try to always have on either end of the tank
+    // (extending straight out the front or back) before touching a wall.
+    public static final Rectangle2D.Double _fieldRect
+        = new java.awt.geom.Rectangle2D.Double(18, 18, 764, 564);
+    private static double lastEnemyEnergy;
+    private static double enemyBulletPower = 0.1;
+    private static double lastMyVelocity;
+
+	private static Vector velocities = new Vector(10000);
+	private static Vector headingChanges = new Vector(10000);
+	private static final int SLT_VELOCITY_INDEXES = 8 + 8 + 1;
+	private static final int SLT_VELOCITY_INDEXES2 = 8 + 1;
+	
+	// different segmentations
+	private static Vector[][] fireTimes2 = new Vector[SLT_VELOCITY_INDEXES][SLT_VELOCITY_INDEXES2];
+	private static Vector[] fireTimes1 = new Vector[SLT_VELOCITY_INDEXES];
+	private static Vector fireTimes0 = new Vector();
+			
+	private static double MAX_ESCAPE_ANGLE = 0.9;
+	private static double lastEnemyHeading;
+	private static double enemyDistance;
+	private static double absBearing;
+	private static double lastBearingOffset;
+	private static int vIndex1, vIndex2;
+	
+	private static int hitRobotCount;
+		    
+    public void run() {
+		setColors(Color.GREEN, Color.YELLOW, Color.RED);
+		lateralDirection = 1;
+		lastEnemyVelocity = 0;
+		
+        _enemyWaves = new ArrayList();
+        _surfDirections = new ArrayList();
+        _surfAbsBearings = new ArrayList();
+
+		if (getRoundNum() == 0) {
+			for (int i = 0; i &lt; SLT_VELOCITY_INDEXES; i++) {
+				fireTimes1[i] = new Vector();
+				for (int j = 0; j &lt; SLT_VELOCITY_INDEXES2; j++) {
+					fireTimes2[i][j] = new Vector();
+				}
+			}
+		}
+
+        setAdjustGunForRobotTurn(true);
+        setAdjustRadarForGunTurn(true);
+
+        do {
+            // basic mini-radar code
+            turnRadarRightRadians(Double.POSITIVE_INFINITY);
+        } while (true);
+    }
+
+    public void onScannedRobot(ScannedRobotEvent e) {
+        _myLocation = new Point2D.Double(getX(), getY());
+		
+        double lateralVelocity = getVelocity()*Math.sin(e.getBearingRadians());
+        absBearing = e.getBearingRadians() + getHeadingRadians();
+		enemyDistance = e.getDistance();
+		double enemyVelocity = e.getVelocity();
+		double myVelocity = getVelocity();
+				
+        setTurnRadarRightRadians(Utils.normalRelativeAngle(absBearing - getRadarHeadingRadians()) * 2);
+
+		{
+			velocities.add(new Double(e.getVelocity()));
+			headingChanges.add(new Double(Utils.normalRelativeAngle(e.getHeadingRadians() - lastEnemyHeading)));
+		}
+	
+        _surfDirections.add(0,
+            new Integer((lateralVelocity &gt;= 0) ? 1 : -1));
+        _surfAbsBearings.add(0, new Double(absBearing + Math.PI));	
+	
+        // check energyDrop
+        double energyDrop = lastEnemyEnergy - e.getEnergy();
+        if (energyDrop &lt; 3.01 &amp;&amp; energyDrop &gt; 0.09
+            &amp;&amp; _surfDirections.size() &gt; 2) {
+        	enemyBulletPower = energyDrop;
+//            EnemyWave ew = new EnemyWave();
+            EnemyWave ew = new EnemyWave(this.getVelocity(), enemyDistance);
+            ew.fireTime = getTime() - 1;
+            ew.bulletVelocity = bulletVelocity(enemyBulletPower);
+            ew.distanceTraveled = bulletVelocity(enemyBulletPower);
+            ew.direction = ((Integer)_surfDirections.get(2)).intValue();
+            ew.directAngle = ((Double)_surfAbsBearings.get(2)).doubleValue();
+            ew.fireLocation = (Point2D.Double)_enemyLocation.clone(); // last tick
+            _enemyWaves.add(ew);
+
+			if (Math.random() &lt; 0.5) direction = -direction;
+        }
+
+        updateWaves();
+        doSurfing();
+
+        // update after EnemyWave detection, because that needs the previous
+        // enemy location as the source of the wave
+        _enemyLocation = (Point2D.Double) project(_myLocation, absBearing, e.getDistance());
+//		System.out.println(_enemyLocation.getX() + " " + _enemyLocation.getY());
+		
+
+		double bulletPower = 1.9;
+		if (e.getDistance() &lt; 55) bulletPower = 3.0;
+		bulletPower = Math.min(getEnergy(), Math.min(bulletPower, e.getEnergy() / 5.0));
+		bulletPower = limit(0.1, bulletPower, 3.0);
+       
+		if (getGunHeat() &lt; getGunCoolingRate() * 4.0) {
+			lastBearingOffset = bestBearingOffset(e, bulletPower, absBearing, vIndex1, vIndex2);
+			Bullet b = setFireBullet(bulletPower);
+//			if (b != null) {
+				vIndex1 = (int) (enemyVelocity + 8.0);
+				vIndex2 = (int) Math.abs(lastEnemyVelocity);
+				fireTimes2[vIndex1][vIndex2].add(new Integer(velocities.size() - 1));
+				fireTimes1[vIndex1].add(new Integer(velocities.size() - 1));
+				fireTimes0.add(new Integer(velocities.size() - 1));
+//			}
+		}
+		setTurnGunRightRadians(Utils.normalRelativeAngle(absBearing - getGunHeadingRadians() + lastBearingOffset));
+		setTurnRadarRightRadians(Utils.normalRelativeAngle(absBearing - getRadarHeadingRadians()) * 2);		
+
+		lastEnemyHeading = e.getHeadingRadians();
+		lastEnemyVelocity = enemyVelocity;
+		lastEnemyEnergy = e.getEnergy();
+		lastMyVelocity = getVelocity();
+    }
+
+	public void onPaint(java.awt.Graphics2D g) {
+		g.draw(new Rectangle((int) getX() - 18, (int) getY() - 18, 36, 36));
+		
+        EnemyWave surfWave = null;
+
+        for (int x = 0; _enemyWaves != null &amp;&amp; x &lt; _enemyWaves.size(); x++) {
+            EnemyWave ew = (EnemyWave)_enemyWaves.get(x);
+
+			double eX = ew.fireLocation.getX() + ew.distanceTraveled * Math.sin(ew.directAngle);
+			double eY = ew.fireLocation.getY() + ew.distanceTraveled * Math.cos(ew.directAngle);
+
+			g.draw(new Rectangle((int) eX - 8, (int) eY - 8, 16, 16));
+			int maxBin = (BINS - 1) / 2;
+			for (int i = 0; i &lt; BINS; i++) {
+				if (ew.buffer[EnemyWave.BUFFERS - 1][i] &gt; ew.buffer[EnemyWave.BUFFERS - 1][maxBin]) {
+					maxBin = i;
+				}
+			}
+
+			double angle = ew.directAngle + maxEscapeAngle(ew.bulletVelocity) * ew.direction * (double) ((maxBin - (BINS - 1)) / 2) / ((BINS - 1) / 2);
+			eX = ew.fireLocation.getX() + ew.distanceTraveled * Math.sin(angle);
+			eY = ew.fireLocation.getY() + ew.distanceTraveled * Math.cos(angle);
+			g.draw(new Rectangle((int) eX - 4, (int) eY - 4, 8, 8));			
+        }		
+	}
+
+	public void onHitRobot(HitRobotEvent e) {
+		hitRobotCount++;
+		considerRamming();		
+	}
+
+	private void considerRamming() {
+		if (enemyDistance &lt; 55 &amp;&amp; hitRobotCount &gt; (getRoundNum() + 1) * 3) {
+			setFire(3.0);
+			goTo(_enemyLocation);
+		}
+	}
+
+	private static double direction = 1.0;
+	private void randomMove() {
+		Point2D robotDestination;
+		double angle = Math.PI / 2.0;
+		
+		do {
+			robotDestination = project(_myLocation, absBearing + direction * angle, 160.0);
+			angle -= 0.05;
+		} while (direction != 0.0 &amp;&amp; !_fieldRect.contains(robotDestination));
+	
+		goTo(robotDestination);
+		considerRamming();
+	}
+
+	private void goTo(Point2D destination) {
+		double angle = Utils.normalRelativeAngle(absoluteBearing(_myLocation,
+				destination)
+				- getHeadingRadians());
+		double turnAngle = Math.atan(Math.tan(angle));
+		
+		setTurnRightRadians(turnAngle);
+		setAhead(_myLocation.distance(destination)
+				* (angle == turnAngle ? 1 : -1));
+		// Hit the brake pedal hard if we need to turn sharply
+//		setMaxVelocity(Math.abs(getTurnRemaining()) &gt; 30 ? 0 : 8);
+		//setMaxVelocity(8.0 * (1.0 - Math.abs(getTurnRemaining()) / 30.0));
+		setMaxVelocity((Math.PI / 18 - Math.min(Math.abs(getTurnRemainingRadians()), Math.PI / 18)) / (Math.PI / 240));
+	}						
+
+	private Rectangle2D fieldRectangle(double margin) { 
+		return new Rectangle2D.Double(margin, margin, getBattleFieldWidth() - margin *
+		 2, getBattleFieldHeight() - margin * 2);
+	}
+
+    private static final Rectangle2D.Double field = new java.awt.geom.Rectangle2D.Double(0, 0, 800, 600);
+	private static final int MAX_SAMPLES = 500;	
+	// statistical movement reconstructor
+	private double bestBearingOffset(ScannedRobotEvent e, double bulletPower, double absBearing, int vIndex1, int vIndex2) {
+		double angleThreshold = 36.0 / e.getDistance();
+//		final double MAX_ESCAPE_ANGLE = maxEscapeAngle(bulletVelocity(bulletPower));
+		int binSize = (int) (MAX_ESCAPE_ANGLE * 2.0 / angleThreshold) + 1;
+//		final int CLOSEST_SIZE = binSize * 2 + 1;
+		final double bulletSpeed = (20.0 - 3.0 * bulletPower);
+		final int bulletTravelTime = (int) (enemyDistance / bulletSpeed);
+		
+		Vector ft = fireTimes2[vIndex1][vIndex2];
+		if (ft.size() == 0)
+			ft = fireTimes1[vIndex1];
+		if (ft.size() == 0)
+			ft = fireTimes0;
+		
+		int[] statBin = new int[binSize];
+		double[] metaAngle = new double[binSize];		
+		System.out.println("binSize: " + binSize + " choices: " + ft.size());
+
+		int maxIndex = 0;		
+		int lastIndex = velocities.size() - 1;
+		int count = 0;
+		final double heading = e.getHeadingRadians();
+		final double eV = e.getVelocity();
+		for (int fi = ft.size() - 1; fi &gt;= 0; fi--) {
+			count++;
+			if (count &gt; MAX_SAMPLES) break; // limit to recent samples
+			int i = ((Integer) ft.get(fi)).intValue();
+			
+			double initialEX = enemyDistance * Math.sin(absBearing);
+			double initialEY = enemyDistance * Math.cos(absBearing);
+		
+			// reconstruct enemy movement and find the most popular angle
+			double eX = initialEX;
+			double eY = initialEY;
+			double ww = heading;
+			double v = eV;
+			double db = 0;
+			int index = i;
+			boolean inField = true;
+	
+			do {
+				db += bulletSpeed;
+
+				eX += v * Math.sin(ww);
+				eY += v * Math.cos(ww);
+				
+				if (!field.contains(new Point2D.Double(eX + _myLocation.getX(), eY + _myLocation.getY()))) {
+					inField = false;
+					break;
+				}
+				v = ((Double) velocities.get(index)).doubleValue();
+				ww += ((Double) headingChanges.get(index)).doubleValue();
+				
+				if (index + 1 &lt; lastIndex) {
+					index++;
+				}
+			} while (db &lt; Point2D.distance(0, 0, eX, eY));
+		
+			if (inField) {
+				double angle = Utils.normalRelativeAngle(Math.atan2(eX, eY) - absBearing);
+				
+				int binIndex = (int) ((angle + MAX_ESCAPE_ANGLE) / angleThreshold);
+				metaAngle[binIndex] = angle;				
+				statBin[binIndex]++;
+				if (statBin[binIndex] &gt; statBin[maxIndex]) {
+					maxIndex = binIndex;
+				}
+			}
+		}
+	
+		return metaAngle[maxIndex];
+	}												
+
+    public void updateWaves() {
+        for (int x = 0; x &lt; _enemyWaves.size(); x++) {
+            EnemyWave ew = (EnemyWave)_enemyWaves.get(x);
+
+            ew.distanceTraveled = (getTime() - ew.fireTime) * ew.bulletVelocity;
+            if (ew.distanceTraveled &gt;
+                _myLocation.distance(ew.fireLocation) + 50) {
+	
+//				logHit(ew, _myLocation); // flatten
+                _enemyWaves.remove(x);
+                x--;
+            }
+        }
+    }
+
+    public EnemyWave getClosestSurfableWave() {
+        double closestDistance = 50000; // I juse use some very big number here
+        EnemyWave surfWave = null;
+
+        for (int x = 0; x &lt; _enemyWaves.size(); x++) {
+            EnemyWave ew = (EnemyWave)_enemyWaves.get(x);
+            double distance = _myLocation.distance(ew.fireLocation)
+                - ew.distanceTraveled;
+
+            if (distance &gt; ew.bulletVelocity &amp;&amp; distance &lt; closestDistance) {
+                surfWave = ew;
+                closestDistance = distance;
+            }
+        }
+
+        return surfWave;
+    }
+
+    // Given the EnemyWave that the bullet was on, and the point where we
+    // were hit, calculate the index into our stat array for that factor.
+    public static int getFactorIndex(EnemyWave ew, Point2D.Double targetLocation) {
+        double offsetAngle = (absoluteBearing(ew.fireLocation, targetLocation)
+            - ew.directAngle);
+        double factor = Utils.normalRelativeAngle(offsetAngle)
+            / maxEscapeAngle(ew.bulletVelocity) * ew.direction;
+
+        return (int)limit(0,
+            (factor * ((BINS - 1) / 2)) + ((BINS - 1) / 2),
+            BINS - 1);
+    }
+
+    // Given the EnemyWave that the bullet was on, and the point where we
+    // were hit, update our stat array to reflect the danger in that area.
+    public void logHit(EnemyWave ew, Point2D.Double targetLocation) {
+        int index = getFactorIndex(ew, targetLocation);
+
+        for (int x = 0; x &lt; BINS; x++) {
+            // for the spot bin that we were hit on, add 1;
+            // for the bins next to it, add 1 / 2;
+            // the next one, add 1 / 5; and so on...
+			double increment = 1.0 / (Math.pow(index - x, 2) + 1);
+			for (int b = 0; b &lt; EnemyWave.BUFFERS; b++) {
+            	ew.buffer[b][x] += increment;
+			}
+        }
+    }
+
+    public void onHitByBullet(HitByBulletEvent e) {
+        // If the _enemyWaves collection is empty, we must have missed the
+        // detection of this wave somehow.
+        if (!_enemyWaves.isEmpty()) {
+            Point2D.Double hitBulletLocation = new Point2D.Double(
+                e.getBullet().getX(), e.getBullet().getY());
+            EnemyWave hitWave = null;
+
+            // look through the EnemyWaves, and find one that could've hit us.
+            for (int x = 0; x &lt; _enemyWaves.size(); x++) {
+                EnemyWave ew = (EnemyWave)_enemyWaves.get(x);
+
+                if (Math.abs(ew.distanceTraveled -
+                    _myLocation.distance(ew.fireLocation)) &lt; 50
+                    &amp;&amp; Math.round(bulletVelocity(e.getBullet().getPower()) * 10)
+                       == Math.round(ew.bulletVelocity * 10)) {
+                    hitWave = ew;
+                    break;
+                }
+            }
+
+            if (hitWave != null) {
+                logHit(hitWave, hitBulletLocation);
+
+                // We can remove this wave now, of course.
+                _enemyWaves.remove(_enemyWaves.lastIndexOf(hitWave));
+            }
+        }
+    }    
+    public void onBulletHitBullet(BulletHitBulletEvent e) {
+        // If the _enemyWaves collection is empty, we must have missed the
+        // detection of this wave somehow.
+    	Bullet bullet = e.getHitBullet();
+        if (!_enemyWaves.isEmpty()) {
+            Point2D.Double hitBulletLocation = new Point2D.Double(
+            		bullet.getX(), bullet.getY());
+            EnemyWave hitWave = null;
+
+            // look through the EnemyWaves, and find one that could've hit us.
+            for (int x = 0; x &lt; _enemyWaves.size(); x++) {
+                EnemyWave ew = (EnemyWave)_enemyWaves.get(x);
+
+                if (Math.abs(ew.distanceTraveled -
+                    _myLocation.distance(ew.fireLocation)) &lt; 50
+                    &amp;&amp; Math.round(bulletVelocity(bullet.getPower()) * 10)
+                       == Math.round(ew.bulletVelocity * 10)) {
+                    hitWave = ew;
+                    break;
+                }
+            }
+
+            if (hitWave != null) {
+                logHit(hitWave, hitBulletLocation);
+
+                // We can remove this wave now, of course.
+                _enemyWaves.remove(_enemyWaves.lastIndexOf(hitWave));
+            }
+        }
+    }
+
+    // CREDIT: mini sized predictor from Apollon, by rozu
+    // http://robowiki.net?Apollon
+    public Point2D.Double predictPosition(EnemyWave surfWave, int direction) {
+    	Point2D.Double predictedPosition = (Point2D.Double)_myLocation.clone();
+    	
+    	double predictedVelocity = getVelocity();
+    	double predictedHeading = getHeadingRadians();
+    	double maxTurning, moveAngle, moveDir;
+
+        int counter = 0; // number of ticks in the future
+        boolean intercepted = false;
+    	if (direction == 0) { // brake
+    		while (predictedVelocity != 0.0) {
+    			double nextVelocity = predictedVelocity - Math.signum(predictedVelocity) * 2.0;
+    			if (nextVelocity * predictedVelocity &lt; 0.0) nextVelocity = 0.0;
+        		predictedVelocity = nextVelocity;
+        		// calculate the new predicted position
+        		predictedPosition = (Point2D.Double) project(predictedPosition, predictedHeading, predictedVelocity);
+   			
+    		}
+    		return predictedPosition;
+    	}
+
+
+    	do {
+    		moveAngle =
+                wallSmoothing(predictedPosition, absoluteBearing(surfWave.fireLocation,
+                predictedPosition) + (direction * (FAR_HALF_PI)), direction)
+                - predictedHeading;
+    		moveDir = 1;
+
+    		if(Math.cos(moveAngle) &lt; 0) {
+    			moveAngle += Math.PI;
+    			moveDir = -1;
+    		}
+
+    		moveAngle = Utils.normalRelativeAngle(moveAngle);
+
+    		// maxTurning is built in like this, you can't turn more then this in one tick
+    		maxTurning = Math.PI/720d*(40d - 3d*Math.abs(predictedVelocity));
+    		predictedHeading = Utils.normalRelativeAngle(predictedHeading
+                + limit(-maxTurning, moveAngle, maxTurning));
+
+    		// this one is nice ;). if predictedVelocity and moveDir have
+            // different signs you want to breack down
+    		// otherwise you want to accelerate (look at the factor "2")
+    		predictedVelocity += (predictedVelocity * moveDir &lt; 0 ? 2*moveDir : moveDir);
+    		predictedVelocity = limit(-8, predictedVelocity, 8);
+
+    		// calculate the new predicted position
+    		predictedPosition = (Point2D.Double) project(predictedPosition, predictedHeading, predictedVelocity);
+
+            counter++;
+
+            if (predictedPosition.distance(surfWave.fireLocation) &lt;
+                surfWave.distanceTraveled + (counter * surfWave.bulletVelocity)
+                + surfWave.bulletVelocity) {
+                intercepted = true;
+            }
+    	} while(!intercepted &amp;&amp; counter &lt; 500);
+
+    	return predictedPosition;
+    }
+
+    public double checkDanger(EnemyWave surfWave, int direction) {
+        int index = getFactorIndex(surfWave,
+            predictPosition(surfWave, direction));
+
+        int b = EnemyWave.BUFFERS - 1;
+		for (; b &gt;= 0; b--) {
+	        double sum = 0.0;
+	        for (int i = 0; i &lt; BINS; i++) {
+	        	sum += surfWave.buffer[b][i];
+	        }
+	        if (sum &gt; 0.0) break;
+        }
+		if (b &lt; 0) b = 0;
+
+        return surfWave.buffer[b][index];
+    }
+
+	private static final double FAR_HALF_PI = 1.3;
+    public void doSurfing() {
+        EnemyWave surfWave = getClosestSurfableWave();
+		
+		setMaxVelocity(8.0);
+		if (surfWave == null) {
+			randomMove();
+			return;
+		}
+        double leastDanger = Double.POSITIVE_INFINITY;
+        double dangerLeft = checkDanger(surfWave, -1);
+        double dangerRight = checkDanger(surfWave, 1);
+        double dangerMiddle = checkDanger(surfWave, 0);
+
+        double goAngle = absoluteBearing(surfWave.fireLocation, _myLocation);
+
+        if (dangerLeft &lt; dangerRight) {
+            goAngle = wallSmoothing(_myLocation, goAngle - (FAR_HALF_PI), -1);
+            leastDanger = dangerLeft;
+        } else {
+            goAngle = wallSmoothing(_myLocation, goAngle + (FAR_HALF_PI), 1);
+            leastDanger = dangerRight;
+        }
+        setBackAsFront(this, goAngle);
+        if (dangerMiddle &lt; leastDanger) {
+        	setAhead(0.0);
+        }
+		considerRamming();
+    }
+
+    // This can be defined as an inner class if you want.
+    static class EnemyWave {
+        Point2D.Double fireLocation;
+        long fireTime;
+        double bulletVelocity, directAngle, distanceTraveled;
+        int direction;
+		static final int BUFFERS = 3;
+		double[][] buffer = new double[BUFFERS][];
+		static double[] fastBuffer = new double[BINS];
+		private static final double MAX_DISTANCE = 1000.0;
+
+        public EnemyWave(double velocity, double distance) {
+			int velocityIndex = (int) Math.abs(velocity / 2);
+//			int lastVelocityIndex = (int) Math.abs(lastVelocity / 2);
+			int distanceIndex = (int)(distance / (MAX_DISTANCE / DISTANCE_INDEXES));
+			buffer[2] = _surfStats2[velocityIndex][distanceIndex];
+			buffer[1] = _surfStats1[velocityIndex];
+			buffer[0] = fastBuffer;
+		}        
+    }
+
+    // CREDIT: Iterative WallSmoothing by Kawigi
+    //   - return absolute angle to move at after account for WallSmoothing
+    // robowiki.net?WallSmoothing
+    public double wallSmoothing(Point2D.Double botLocation, double angle, int orientation) {
+        while (!_fieldRect.contains(project(botLocation, angle, 160))) {
+            angle += orientation*0.05;
+        }
+        return angle;
+    }
+
+    public static double limit(double min, double value, double max) {
+        return Math.max(min, Math.min(value, max));
+    }
+
+    public static double bulletVelocity(double power) {
+        return (20D - (3D*power));
+    }
+
+    public static double maxEscapeAngle(double velocity) {
+        return Math.asin(8.0/velocity);
+    }
+/*
+    public static void setBackAsFront(AdvancedRobot robot, double goAngle) {
+        double angle =
+            Utils.normalRelativeAngle(goAngle - robot.getHeadingRadians());
+        if (Math.abs(angle) &gt; (Math.PI/2)) {
+            if (angle &lt; 0) {
+                robot.setTurnRightRadians(Math.PI + angle);
+            } else {
+                robot.setTurnLeftRadians(Math.PI - angle);
+            }
+            robot.setBack(100);
+        } else {
+            if (angle &lt; 0) {
+                robot.setTurnLeftRadians(-1*angle);
+           } else {
+                robot.setTurnRightRadians(angle);
+           }
+            robot.setAhead(100);
+        }
+    }
+*/
+    public static void setBackAsFront(AdvancedRobot robot, double angle) {
+        angle =
+            Utils.normalRelativeAngle(angle - robot.getHeadingRadians());		
+		double turnAngle = Math.atan(Math.tan(angle));
+	    robot.setTurnRightRadians(turnAngle);
+        robot.setAhead(angle == turnAngle ? 100 : -100);
+	}
+	
+	static Point2D project(Point2D sourceLocation, double angle, double length) {
+		return new Point2D.Double(sourceLocation.getX() + Math.sin(angle) * length,
+				sourceLocation.getY() + Math.cos(angle) * length);
+	}
+	
+	static double absoluteBearing(Point2D source, Point2D target) {
+		return Math.atan2(target.getX() - source.getX(), target.getY() - source.getY());
+	}
+}																											
+
+</pre>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?PastFuture" class=wikipagelink>PastFuture</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=PastFuture/Code" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=PastFuture/Code">View other revisions</a><br>Last edited October 24, 2007 9:54 EST by <a href="robowiki?Stelokim" title="ID 9056 from 121.133.34.190">Stelokim</a> <a href="robowiki?action=browse&diff=1&id=PastFuture/Code">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

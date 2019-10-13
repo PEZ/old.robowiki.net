@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Rebot - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Rebot'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=Rebot">Rebot</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>This is a robot that just comunicates whith a brains class.
+I plan to create severall inheriting classes from the brain class for different modes of battling.
+As you can see it is nowhere near being finished.
+--DB
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+package db;
+import robocode.*;
+import java.awt.Color;
+/**
+<PRE >
+ * Rebot - a robot by (Darrel)
+ */
+</PRE>
+public class Rebot extends <a href="robowiki?TeamRobot" class=wikipagelink>TeamRobot</a>
+{
+<PRE >
+	Brains Logic = new Brains(this);
+	public void run() {
+		setColors(Color.black,Color.red,Color.orange);
+		while(true) {
+			turnRadarRight<a href="robowiki?action=edit&id=RadarRight" class=wikipageedit>?</a>(360);
+			ahead(200);
+		}
+	}
+	public void on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {
+		Logic.on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(e);
+	}
+	public void onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a>(HitByBulletEvent<a href="robowiki?action=edit&id=HitByBulletEvent" class=wikipageedit>?</a> e) {
+		Logic.onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a>(e);
+	}
+	public void onHitWall<a href="robowiki?action=edit&id=HitWall" class=wikipageedit>?</a>(HitWallEvent<a href="robowiki?action=edit&id=HitWallEvent" class=wikipageedit>?</a> e) {
+		Logic.onHitWall<a href="robowiki?action=edit&id=HitWall" class=wikipageedit>?</a>(e);
+	}
+	public void onHitRobot<a href="robowiki?action=edit&id=HitRobot" class=wikipageedit>?</a>(HitRobotEvent<a href="robowiki?action=edit&id=HitRobotEvent" class=wikipageedit>?</a> e) {
+		Logic.onHitRobot<a href="robowiki?action=edit&id=HitRobot" class=wikipageedit>?</a>(e);
+	}
+</PRE>
+}
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+Here is the brains class
+<p>
+package db;
+import robocode.*;
+<p>
+/**
+<PRE >
+ * Brains - a class by (Darrel)
+ */
+</PRE>
+public class Brains
+{
+<PRE >
+	Robot caller;
+	public Brains(Robot robot)
+	{
+		caller = robot;
+	}
+	public void on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>(<a href="robowiki?ScannedRobotEvent" class=wikipagelink>ScannedRobotEvent</a> e) {
+		caller.turnGunRight<a href="robowiki?action=edit&id=GunRight" class=wikipageedit>?</a>(e.getBearing());
+		if (e.getDistance()&gt;100)
+			caller.fire(2);
+		else
+			caller.fire(3);
+		caller.scan();
+		caller.turnGunLeft<a href="robowiki?action=edit&id=GunLeft" class=wikipageedit>?</a>(e.getBearing());
+	}
+</PRE>
+<p>
+<PRE >
+	public void onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a>(HitByBulletEvent<a href="robowiki?action=edit&id=HitByBulletEvent" class=wikipageedit>?</a> e) {
+		caller.turnRight(e.getBearing()+45);
+		caller.ahead(100);
+		caller.scan();
+	}
+</PRE>
+<p>
+<PRE >
+	public void onHitWall<a href="robowiki?action=edit&id=HitWall" class=wikipageedit>?</a>(HitWallEvent<a href="robowiki?action=edit&id=HitWallEvent" class=wikipageedit>?</a> e) {
+		caller.turnRight(e.getBearing()+180);
+	}
+</PRE>
+<p>
+<PRE >
+	public void onHitRobot<a href="robowiki?action=edit&id=HitRobot" class=wikipageedit>?</a>(HitRobotEvent<a href="robowiki?action=edit&id=HitRobotEvent" class=wikipageedit>?</a> e) {
+		caller.turnGunRight<a href="robowiki?action=edit&id=GunRight" class=wikipageedit>?</a>(e.getBearing());
+		for (double energy = e.getEnergy() ; energy &gt; 0 ; energy = energy - 12)
+			caller.fire(3);
+		caller.turnGunLeft<a href="robowiki?action=edit&id=GunLeft" class=wikipageedit>?</a>(e.getBearing());
+	}
+</PRE>
+}
+The Brains class should be way more simple, I admit, but here it is for right now.
+<p>
+<hr noshade class=wikiline size=1>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=Rebot" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=Rebot">View other revisions</a><br>Last edited May 12, 2006 16:57 EST by <a href="robowiki?DB" title="ID 6972 from 71-37-13-21.tukw.qwest.net">DB</a> <a href="robowiki?action=browse&diff=1&id=Rebot">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

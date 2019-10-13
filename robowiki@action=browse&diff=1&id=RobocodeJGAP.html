@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RobocodeJGAP - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Robocode, JGAP'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=RobocodeJGAP">RobocodeJGAP</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><b>Difference (from prior major revision)</b>
+(<a href="robowiki?action=browse&diff=3&id=RobocodeJGAP">author diff</a>)<br> <br><strong>Changed: 27c27,28</strong><br><table width="95%" bgcolor=#ffffaf class=wikidiffold><tr><td>
+   Good suggestion, I will follow that and integrate <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> right now (update: done adding <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> and removing <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>). -- <a href="robowiki?KM" class=wikipagelink>KM</a><br></td></tr></table><table width="95%" bgcolor=#cfffcf class=wikidiffnew><tr><td>
+ ***Good suggestion, I will follow that and integrate <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> right now (update: done adding <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> and removing <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>). -- <a href="robowiki?KM" class=wikipagelink>KM</a><br> ***Update: <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> is now used casually. Additionally <a href="robowiki?Aristocles" class=wikipagelink>Aristocles</a> instead of a weak sample robot is included. --<a href="robowiki?KM" class=wikipagelink>KM</a><br></td></tr></table>
+<hr class=wikilinediff>
+<div class=wikitext><H3>Table of Contents</H3>
+
+<dl><dt> </dt><dd><dl><dt> </dt><dd><a href="robowiki?RobocodeJGAP#Overview">Overview</a></dd>
+<dt> </dt><dd><dl><dt> </dt><dd><a href="robowiki?RobocodeJGAP#Testbed_and_fitness_computation">[Testbed and fitness computation]</a></dd>
+<dt> </dt><dd><a href="robowiki?RobocodeJGAP#General_Discussion">[General Discussion]</a></dd>
+<dt> </dt><dd><a href="robowiki?RobocodeJGAP#Code_snippets">[Code snippets]</a></dd>
+<dt> </dt><dd></dd></dl>
+
+<a href="robowiki?RobocodeJGAP#Bots_using_this_technique">Bots using this technique</a></dd>
+<dt> </dt><dd><a href="robowiki?RobocodeJGAP#Related_techniques">Related techniques</a></dd>
+<dt> </dt><dd></dd></dl>
+
+</dd></dl>
+
+
+<hr noshade class=wikiline size=1>
+<H3><a rel="nofollow"  name="Overview"></a>Overview</H3>
+
+Discussion about <a href="robowiki?RobocodeJGAP" class=wikipagelink>RobocodeJGAP</a>, an approach to automatically evolve Robocode via the Genetic Programming engine JGAP (Java Genetic Algorithms and Genetic Programming Package).<p>
+JGAP is an open source Java framework and can be found at <a rel="nofollow" href="http://jgap.sf.net">http://jgap.sf.net</a>. <a href="robowiki?RobocodeJGAP" class=wikipagelink>RobocodeJGAP</a> is based on JGAP.<br>
+The <a href="robowiki?RobocodeJGAP" class=wikipagelink>RobocodeJGAP</a> project can be downloaded from <a rel="nofollow" href="http://jgap.sourceforge.net/doc/robocode/robocode.html">http://jgap.sourceforge.net/doc/robocode/robocode.html</a><br>
+JGAP and <a href="robowiki?RobocodeJGAP" class=wikipagelink>RobocodeJGAP</a> are maintained by <a href="robowiki?KM" class=wikipagelink>Klaus Meffert</a><p>
+<p>
+<H4><a rel="nofollow"  name="Testbed_and_fitness_computation"></a>[Testbed and fitness computation]<a href="robowiki?action=edit&id=RobocodeJGAP/Testbed" class=wikipageedit>?</a></H4>
+
+<a href="robowiki?RobocodeJGAP" class=wikipagelink>RobocodeJGAP</a> evolves a robot and then let it fight against one or many robots in each evolution step (but only one opponent at a time). It can be configured whether one or more robots are registered as opponents. Currently 3 opponents are configured. The opponents are already existent, regular robots taken from the Robocode repository and the samples provides with robocode. The 3 robots are:
+<UL >
+<li> voidious.Dookious (the best robot in the overall ranking)
+<li> sample.<a href="robowiki?TrackFire" class=wikipagelink>TrackFire</a> (supplied with Robocode)
+<li> bestaspirant.Aspirant_winner (an evolved robot that has quite a good score)
+</UL>
+<p>
+Two modes of operation are possible:
+a) fight one of the three robots each evolution step (randomly chosen) in a one-to-one battle
+b)fight all of the three robots and calculate the average
+<p>
+Currently mode b) is set.
+<p>
+The fitness value of a robot is calculated after each battle. For that the ratio of the own score to the sum of both robots scores is taken. <strike>Thus, if the other robot wins the score is less than 1, if the evolved robot wins the score is higher than 1 (in good cases much higher, like 8000).</strike> To scale the score up, it is artifically multiplied by 1000.
+<p>
+If fighting against three enemies one after another in a single evolution round, and the difference between the best score of our evolved robot and the worst score is too high, the fitness average is reduced a bit. The idea behind that is that an enemy that could be quite good, may have a partial weakness we just explored. But that doesn't help much, normally, in fighting against 200 other robots, like in <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>.
+<p>
+<UL >
+<li> I suggest you use a non-surfer to test against - for example <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> (or <a href="robowiki?Aristocles" class=wikipagelink>Aristocles</a>). Getting high scores against <a href="robowiki?WaveSurfers" class=wikipagelink>WaveSurfers</a> doesn't say much about how well you will do against the majority of bots (who don't wavesurf). -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<UL >
+<UL >
+<li>Good suggestion, I will follow that and integrate <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> right now (update: done adding <a href="robowiki?Raiko" class=wikipagelink>Raiko</a> and removing <a href="robowiki?Dookious" class=wikipagelink>Dookious</a>). -- <a href="robowiki?KM" class=wikipagelink>KM</a>
+<li>Update: <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> is now used casually. Additionally <a href="robowiki?Aristocles" class=wikipagelink>Aristocles</a> instead of a weak sample robot is included. --<a href="robowiki?KM" class=wikipagelink>KM</a>
+</UL>
+</UL>
+</UL>
+<p>
+<H4><a rel="nofollow"  name="General_Discussion"></a>[General Discussion]<a href="robowiki?action=edit&id=RobocodeJGAP/Discussion" class=wikipageedit>?</a></H4>
+
+The reason for my post is to get a better understanding of how robots can be implemented best. This is for one main reason. Since a while I have been working on a Genetic Programming (GP) project called <a href="robowiki?RobocodeJGAP" class=wikipagelink>RobocodeJGAP</a>. <a href="robowiki?RobocodeJGAP" class=wikipagelink>RobocodeJGAP</a> evolves robots (full-blown Java source code) automatically by means of Genetic Programming. Main part of the project is <a href="robowiki?JGAP" class=wikipagelink>JGAP</a>, a mature GA/GP engine written in Java. The evolution is not specialized to, say, produce a sophisticated mechanism of predicting a movement. It is a general purpose evolution which can reproduce any program valid. Currently a lot of commands are built in <a href="robowiki?RobocodeJGAP" class=wikipagelink>RobocodeJGAP</a>, like turnGunRight<a href="robowiki?action=edit&id=GunRight" class=wikipageedit>?</a> or setFire. These can be used in the process of evolution.
+<p>
+After having exchanged a lot of general ideas with Flemming, the hands-on person of the Robocode project, I hope this is the place where I can get a better understanding of how good and at the same time structurally robots as simple as possible can be built.
+<p>
+I call a robot’s structure simple if it’s easy to evolve by JGAP. For example, it’s more difficult to have global variables that are used in two or more event handlers for exchanging information, than to have variables local to handlers. It is also easier to start with a fixed run-method than to have variable parts in it. For your information, <a href="robowiki?RobocodeJGAP" class=wikipagelink>RobocodeJGAP</a> is already capable of extending <a href="robowiki?AdvancedRobot" class=wikipagelink>AdvancedRobot</a>, not only Robot (both are supported optionally).
+<p>
+1)
+So, in which event handlers can I make what code blocks static without losing the chance of evolving good robots?
+<p>
+2)
+Is it OK to have something like the following in the run-method:
+<p>
+// variable block here
+…
+// fix block start
+do {
+<PRE >
+  turnRadarLeft<a href="robowiki?action=edit&id=RadarLeft" class=wikipageedit>?</a>(Double-INFINITY)
+</PRE>
+while(true);
+// fix block end
+<p>
+3)
+What could be in the above variable block?
+<p>
+4)
+Which events can I ignore? 
+<p>
+5)
+Is it necessary (does it bring benefits) to handle onHitWall<a href="robowiki?action=edit&id=HitWall" class=wikipageedit>?</a> or onHitRobot<a href="robowiki?action=edit&id=HitRobot" class=wikipageedit>?</a> or onRobotDeath<a href="robowiki?action=edit&id=RobotDeath" class=wikipageedit>?</a>? For the last one as well as for onWin I think it should not be necessary as <a href="robowiki?RobocodeJGAP" class=wikipagelink>RobocodeJGAP</a> evaluates the battle result afterwards in any way.
+<p>
+6)
+Which custom events are useful (with a simple approach)?
+<p>
+Code size is not a matter right now. At first because this is expected to come in the fine tuning phase later on. At second because it takes a lot of time to evolve full Java code, and even longer to produce longer programs. So the code will be quite short itself by the nature of the algorithm (at least until the JGAP grid is coming up).
+<p>
+Another interesting question is reusable code blocks. I browsed the code snippets section in this Wiki and found some few useful blocks.
+<p>
+7)
+Which utility functions, code blocks and maybe sort of “micro patterns” would you recommend to consider? By “micro patterns” I mean something like: “In onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a> count the number of hits and in on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> evaluate these to avoid being hit again” (of course this sentence underlied with a concrete implementation).
+<p>
+<UL >
+<li> Your evolved bots are quite good, but they lack of two basic things. They have no radar lock and they get pretty often stuck at walls.
+<UL >
+<li> It might be good to know in which direction the radar was rotating when you scan an enemy in order to get something like a radar lock.
+<UL >
+<li>Hmm, I think I already have this with getRadarHeading<a href="robowiki?action=edit&id=RadarHeading" class=wikipageedit>?</a>(), right? --<a href="robowiki?KM" class=wikipagelink>KM</a>
+<li>getRadarHeading<a href="robowiki?action=edit&id=RadarHeading" class=wikipageedit>?</a>() returns the direction that the robot's radar is facing, i thought of the direction it is moving(clockwise or counterclocwise). With that information your bot could do something like "if(clockwise) turnRadarLeft<a href="robowiki?action=edit&id=RadarLeft" class=wikipageedit>?</a>(xx); else turnRadarRight<a href="robowiki?action=edit&id=RadarRight" class=wikipageedit>?</a>(xx);" in the on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a> funktion.
+</UL>
+<li> You could try to add a wall distance function or at least a "distance to battlefield center" function. This this information your bots might be able to evolve something like wallsmoothing.
+<UL >
+<li>Maybe I need your help here. I think I could get to something you suggest, but I would definitvely have to think hard about that... --<a href="robowiki?KM" class=wikipagelink>KM</a>
+</UL>
+</UL>
+<li> Generally sin, cos and atan should be rewarding (But probably you already use them :P). --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a> 
+<UL >
+<li>Yes, I already had sin and cos, but atan was missing (now included). Thanx a lot! -- <a href="robowiki?KM" class=wikipagelink>KM</a>
+</UL>
+</UL>
+<p>
+<UL >
+<li>Another thing that is useful: Math.random(). -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<UL >
+<li>Great suggestion. I added it. -- <a href="robowiki?KM" class=wikipagelink>KM</a>
+</UL>
+</UL>
+<p>
+For now I hope to get some helpful feedback from you as a Robocoder. Share your thoughts and help to evolve <a href="robowiki?RobocodeJGAP" class=wikipagelink>RobocodeJGAP</a> itself!
+<p>
+Thanx for your help!
+<p>
+<a href="robowiki?KM" class=wikipagelink>Klaus Meffert</a>
+<p>
+<H4><a rel="nofollow"  name="Code_snippets"></a>[Code snippets]<a href="robowiki?action=edit&id=RobocodeJGAP/Sample" class=wikipageedit>?</a></H4>
+
+This section contains useful code snippets for Genetic Programming
+<p>
+<H3><a rel="nofollow"  name="Bots_using_this_technique"></a>Bots using this technique</H3>
+
+<UL >
+<li> TODO: Please enter
+</UL>
+<p>
+<H3><a rel="nofollow"  name="Related_techniques"></a>Related techniques</H3>
+
+<UL >
+<li> TODO: Please enter
+</UL>
+<hr noshade class=wikiline size=1> Comments <hr noshade class=wikiline size=1>
+<p>
+What are you using as a testbed (for the elimination part, whatever the terminology is)? You should use a selection of strong to weak bots (handcoded), if that's what you want it to do well against. -- <a href="robowiki?Skilgannon" class=wikipagelink>Skilgannon</a>
+<p>
+Please see above under Testbed<a href="robowiki?action=edit&id=Testbed" class=wikipageedit>?</a> for my answer. --<a href="robowiki?KM" class=wikipagelink>KM</a>
+<p>
+I actually discovered Robocode through a link on the JGAP site...  I am moderately familiar with GAs (I have written many), but not much with GP (never written one, but I know how they work)...  I'm curious what you are using for your fitness function, are you basing fitness strictly on victory / difference in score?  I'm not very experienced with Robocode myself, but I think that adapting to your opponent during a battle is probably quite an important trait to have (more experienced Robocoders could speak to this).  I suggest writing some bots of your own, to explore how it works.  There's no substitute for domain knowledge, after all there's no free lunch!  --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<p>
+Please see above under Testbed<a href="robowiki?action=edit&id=Testbed" class=wikipageedit>?</a> for my answer.
+After thinking about the fitness value, I think there is potential to optimize the process. Would love getting some input from you. In the meantime, I will try some alternatives coming to my mind. 
+What I already did is selectively choosing enemies, depending on the maturity of the current generation going on. --<a href="robowiki?KM" class=wikipagelink>KM</a>
+<p>
+The really cool thing with JGAP and <a href="robowiki?RobocodeJGAP" class=wikipagelink>RobocodeJGAP</a> especially, is that it already contains all the parts to start using GP, and we could use it as the common way of doing it, i.e. a platform for GP robots. This way people that wants to use GP for their robot would not have to write all the GP workers themselves, just to test if some ideas would work out the way they expect. What I mean is that the GP framework has already been set up and tested very carefully, so a GP robot programmer could start working with a GP robot almost immediately. If something is missing for <a href="robowiki?RobocodeJGAP" class=wikipagelink>RobocodeJGAP</a>, then we should supply all the ideas and mention the things missing, so it could be put into <a href="robowiki?RobocodeJGAP" class=wikipagelink>RobocodeJGAP</a>, at least in the future. ;-) --<a href="robowiki?Fnl" class=wikipagelink>Fnl</a>
+<p>
+Great to have your support, Flemming :-) Keep on rocking! --<a href="robowiki?KM" class=wikipagelink>KM</a>
+<p>
+If there were a way to evaluate parts of your program... for example if of the last 8 shots fired, 6 have hit, perhaps the decisions made recently have been good ones for the gun, if of the last 10 shots fired by your opponent, only 2 have hit, perhaps the decisions made recently have been good ones for movement.  I know there is interaction between offense and defense (moving around affects how well you can hit an enemy with a bullet)...  but perhaps, you could evolve them separately?  --<a href="robowiki?BenHorner" class=wikipagelink>BenHorner</a>
+<p>
+Hmm, yes, that sounds reasonable. We could use the events onBulletHit<a href="robowiki?action=edit&id=BulletHit" class=wikipageedit>?</a> (=hit enemy), onBulletHitBullet<a href="robowiki?action=edit&id=BulletHitBullet" class=wikipageedit>?</a> and onBulletMissed<a href="robowiki?action=edit&id=BulletMissed" class=wikipageedit>?</a> (=miss), onHitByBullet<a href="robowiki?action=edit&id=HitByBullet" class=wikipageedit>?</a> (=hit by enemy). Whenever such an event is fired, the program increases a corresponding counter. These counter variables could then be evaluated in a movement strategy. I think there are robots out there that work exactly this way. --<a href="robowiki?KM" class=wikipagelink>KM</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RobocodeJGAP" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RobocodeJGAP">View other revisions</a><br>Last edited September 18, 2007 7:45 EST by <a href="robowiki?KM" title="ID 12003 from dslb-084-058-005-213.pools.arcor-ip.net">KM</a> <a href="robowiki?action=browse&diff=1&id=RobocodeJGAP">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

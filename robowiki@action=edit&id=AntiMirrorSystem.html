@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>Editing AntiMirrorSystem - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Anti, Mirror, System'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a>Editing AntiMirrorSystem</h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="title" value="AntiMirrorSystem"  />
+<input type="hidden" name="oldtime" value="1161098586"  />
+<input type="hidden" name="oldconflict" value="0"  />
+<input type="hidden" name="captchaArg1" value="11"  />
+<input type="hidden" name="captchaArg2" value="9"  />
+<input type="hidden" name="captchaOp" value="-"  />
+<input type="hidden" name="captchaId" value="678142527656"  />
+<textarea name="text"  rows="20" cols="65" wrap="virtual" style="width:100%">&lt;b&gt;What is it?&lt;/b&gt;&lt;br&gt;
+
+The system used in [[Musashi]] to respond to [[MirrorMovement]] bots.&lt;br&gt;
+
+----
+&lt;b&gt;The idea.&lt;/b&gt;&lt;br&gt;
+
+There are a lot of possible approaches to that, but the one discused here is that: &quot;if they wan&#39;t to follow me, be my guest...&quot;, my wife is trying to convince me to call it &quot;Vem-Nenem&quot;, let&#39;s see (but u know the [[GirlPower]])...
+
+----
+&lt;b&gt;Bots using it.&lt;/b&gt;&lt;br&gt;
+*[[Musashi]] (obviously)
+*[[Okami]]
+*[[Marshmallow]] - Well, it uses an AntiMirrorGun even if it might not be like this system. It&#39;s one of the VirtualGuns and always fires at the future mirrorPoint (somewhat sloppily defined). When the virtual stats says it should be used it is used. Of course, later versions of M have broken VG arrays so it might not show that it can potentially trash mirrorers.
+&lt;p&gt;
+----
+&lt;b&gt;Known MirrorBots. (help to fill...)&lt;/b&gt;&lt;br&gt;
+*[[NaN]] - a Classical mirror (someone should change that [[NaN]] page, every robocoder knows what is a Double.NaN) 
+*[[HumblePie]]
+*[[HumblePieLite]] - a Classical mirror.
+*[[OldManXP]] - a &quot;loosen&quot; mirror ([[Musashi]]&#39;s headache)
+*[[PrairieWolf]] - mirror sometimes, and not based on the center-field.
+*[[Swiffer]] - sometimes. Probably not at all against [[Musashi]]. =) 
+*[[VertiLeach]] - though it is more like a bath room mirror.
+*[[Mirror]]
+
+&lt;p&gt;
+----
+&lt;b&gt;Why a system?&lt;/b&gt;&lt;br&gt;
+
+I have call it [[AntiMirrorSystem]] just because it can&#39;t fit in a Object Orientated Model any AntiMirrorTargeting by itself. The anti-mirror system concept that was used in [[Musashi]]&#39;s code relies in a tripod: Detecting, Moving &amp; Aiming. 
+
+----
+&lt;b&gt;The tripod (Detecting, Moving &amp; Aiming)&lt;/b&gt;&lt;br&gt;
+
+&lt;b&gt;Detecting:&lt;/b&gt;&lt;br&gt;
+That is probably the most important and sensible part of the system, if it&#39;s not well planned and implemented u might loose points against the non-mirror bots instead of only gaining points against the mirrors.&lt;br&gt;
+In [[Musashi]] this was thinked aiming bots that mirror using the center of the field as reference (at least for the present). What i&#39;ve done is quite simple: 
+* Calculate a vector that goes from me to the center (mirrorVector).
+* Multiply the module of mirrorVector by 2.
+* Get the end point of mirrorVector (mirrorPoint).
+* Calculate the distance of the enemy to mirrorPoint (mirrorDist).
+* Store the last 60 (empiric) mirrorDist values and calculate the average (mirrorAvg).
+* If that value is lesser than mirrorSlack (set to 30, empiric again) then i presume that i found a MirrorBot, and then switch to anti-mirror system.
+Disadvantages: 
+* It can&#39;t detect [[PrairieWolf]]&#39;s mirror moving, that is not based on the center of the field.
+* It fails a lot to detect [[OldManXP]]&#39;s mirror, witch i describe as a &quot;loosen&quot; mirror.
+Advantages:
+* Detects classical mirrors almost perfectly.
+* It doesn&#39;t detects mistakenly(?) non-mirrors bots, and as such, it doesn&#39;t affect the &quot;normal&quot; behaviour of my bots.
+That could obviously had beeing done without the vector issue, but since i have already a Vector class inside my bot... Another advantadge, i think, of using vectors is that it can easely adapted to detecting bots that doesn&#39;t mirror using the field center.&lt;br&gt;
+
+&lt;b&gt;Moving:&lt;/b&gt;&lt;br&gt;
+Here resides the soul of the &quot;Vem-Nenem&quot; or &quot;if they wan&#39;t to follow me, be my guest...&quot; philosophy.&lt;br&gt;
+That is: The mirror bots use your movement against you, so let&#39;s use our movement against them. Afterall, u can predict were u are going to, &lt;b&gt;they can&#39;t&lt;/b&gt;.&lt;br&gt;
+The key for accomplish this, is instead of deciding &quot;on-the-fly&quot; where you are going to move next, pre-calculate your positions for the next n ticks and store them somewhere (an ArrayList for example).&lt;br&gt;
+[[Musashi]]&#39;s particular implementation: Since [[Musashi]]&#39;s movement is based only in inversions of direction, i pre-calculate my next inversions for the next (2*(distance_to_enemy/11)) ticks and store them in an ArrayList. &lt;br&gt;
+My problem here, was to garantee that a wall wouldn&#39;t be on my way, and then mess out my pre-calculated inversions. I had also, to fix somehow it&#39;s trajectory, otherelse the pre-calculated inversions would be useless by themselves.&lt;br&gt;
+I had opted for a [[KISS]] solution for this: Once the mirror movement is detected, [[Musashi]] starts orbiting the center of the field instead of the enemy, and goes to a wall-safe orbit (radius = (int)Math.min(500, Math.min(field.height, field.width) - 100) / 2). 
+This is a particular implementation, other bots would probably fit better other approach, the important here is to have a way to predict your own moving. Another approach would be, for example, start moving in a simple pattern. But if the MirrorBot have a PM gun you can be vanished. Although that could be a simple and efficient approach if your gun is a PM (by moving in a predictable pattern, you can discard the pre-calculated moving, and you won&#39;t even need to link your gun to the moving... That is probably a good approach to a non-MegaBot.).&lt;br&gt;
+
+&lt;b&gt;Aiming:&lt;/b&gt;&lt;br&gt;
+The easy part: Once you&#39;ve had started moving in a pre-calculated way, it&#39;s only a matter of choosing the fire power, calculating the time that the bullet would take to reach him and &quot;play the film&quot; of your own stored moving applied and mirrored(?). Fire at will! It&#39;s like a simple PM without having to choose a sample and with almost 100% of chance in hitting it. 
+
+----
+&lt;b&gt;Conclusion and general considerations...&lt;/b&gt;&lt;br&gt;
+
+So, as i promissed to [[PEZ]], here it is. [[Musashi]]&#39;s implementation is yet too crude, it can&#39;t reach [[OldManXP]] nor [[PrairieWolf]] (at least for the present). But bots like [[NaN]] that were actually beating [[Musashi]] ([[Musashi]]&#39;s scored ~39% against [[NaN]], now it scores ~80%) now die like flies. I hope that this help other bots with the same problem, and also hope that it serves as an incentive on improving the MirrorBots themselves(yes, i know that is like a bayonet poking their belly, but it&#39;s still a stimulus :). As [[ABC]] would say: &quot;O mundo gira, a lusitana roda&quot;.&lt;br&gt;
+
+These are the general lines of the idea. You probably will find a better way to doing this, or a better way to fitting it into your bot. If I can give any recomendation, there it goes: do it [[KISS]]. Afterall, we aren&#39;t talking about beating [[DT]] nor [[Shadow]]...       
+
+-----
+&lt;b&gt;Talk-a-lot:&lt;/b&gt;&lt;br&gt;
+
+
+To detect if I&#39;m mirrored I just check if my enemy is within a certain distance of the mirrorPoint. This might make me mistakenly think I&#39;m mirrored at times, but only very momentarily. From my tests this is very accurate on plain center-mirrorers. Of course I also fail on OldManXP which uses velocity a bit to smart. -- [[PEZ]]
+
+I have started with that approach too, but taking an average had proved to be much more accurate. I can even detect and beat OldManXP if i adjust the mirrorSlack value to 50. The problem is that i start detecting other non-mirrors too... I strongly recommend u that averaging approach, it can last a little more to detect (depending on the wideness of the averaging), but is a lot more accurate. -- [[Axe]]
+
+I like the idea with cicling the center when in anti-mirror mode. Bloody brilliant! -- [[PEZ]]
+
+[[KISS]]es! (obviously straight ones, on the cheeks). Glad u liked! -- [[Axe]]
+
+Do you do anything to take into account the lag of the enemy&#39;s movement compared to yours? (ie. the enemy has to see what your doing, and then copy it, meaning it will be at least 1 tick behind, possibly more)  Could you not use a PM technique to detect, and basically compare your pattern to your enemy&#39;s pattern, and if they are the same, just mirrored, you have a mirror-bot regardless of the mirror-line (you would need to check horizontal, vertical and diagonal mirror-lines separately).  The easy way to counter this system is simply to move the mirror-line, a random mirror line (changed every round) would work quite well... -- [[Tango]]
+
+It&#39;s a very interesting idea. If you use old school heading-change and velocity the ideal mirror pattern will look exactly the same as the original. -- [[PEZ]]
+
+Expect heading change would be *-1, surely? -- [[Tango]]
+
+Would it? -- [[PEZ]]
+
+* Yes.  You are mirroring me, I turn right, you are going to turn left, aren&#39;t you? -- [[Tango]]
+* No. I also turn right. Unless you are talking about VertiLeach style mirroring. -- [[PEZ]]
+* VertiLeach would turn right, a normal mirror would turn left.  Imagine this: The mirror line is vertical and in the middle.  I am in the middle of the left half, you are in the middle of the right half.  I turn right 90 degrees, so i am facing the mirror line.  You turn left 90 degrees so you are facing the mirror line too.  If you turned right, i would be looking at the back of my reflection, which is impossible in a single mirror. -- [[Tango]]
+* Think again - if you were in the middle of the top-left quadrant facing up, a normal (non-VertiLeach-style) mirrorer would be in the bottom right quadrant facing down.  When you turn right 90 degrees to face right, the mirrorer turns right 90 degrees to face left.  VertiLeach, however, would be in the top-right quadrant facing up and then would turn 90 degrees left to face you (of course, in reality, VertiLeach would turn either left or right to attempt to be 300 or so pixels away from you). -- [[Kawigi]]
+* Come on people... Don&#39;t you have a mirror at home? -- [[Axe]]
+* Not a [[HumplePieLite]] kind of mirror. Do you? =) A VertiLeach kind of mirror we all have I guess. [[Tango]] consider a classic PM gun. You don&#39;t have to think about what quadrant the enemy lives in at the moment, right? You just play forward its matching heading change and velocity history. -- [[PEZ]]
+* If you are in the oposite corner, surely that means you are using a diagonal mirrorline, not a vertical one, like I was talking about... -- [[Tango]]
+* OK, for the record. In my book &quot;normal&quot; mirroring is the diagonal one. VertiLeach was the first of its kind using real world mirroring I think. And it&#39;s still alone with it too. Some version of OldMan used it, but not any longer. And I challenge any of you to make a detection system that accurately can identify VertiLeach as a mirrorer. It might prove as hard as with OldManXP which I think is a bit inspired by Verti&#39;s mirror fuzzying. -- [[PEZ]]
+* mathematically spoken, mirroring in this case is point reflection. it is easy to see that point reflections can be constructed with two line reflections (where a line reflection is normal mirroring like VertiLeach does). with one line reflection the direction of rotation will change with two it will be the same as before (draw a triangle with edges A, B and C in clockwise direction, now make a point reflection and the mirrored points A&#39;, B&#39; and C&#39; will also be in clockwise direction). so if bot A turns right bot B has to turn right too. -- [[rozu]]
+
+About the lag, u r right, very good observation. Indeed i use something to compensate it: the mirrorSlack (see the definition above), witch is precisely the lag.&lt;br&gt;
+About using vel &amp; heading change in detection: As i said, there are countless ways on doing it, that is one, no doubts (probably it wouldn&#39;t get [[OldManXP]] either, but it should work for [[PrairieWolf]]). I use vector operations because is what i use in my PM gun (i don&#39;t use directly vel &amp; heading for PM, but vector operations on the stored positions). Another reason that I found for using that kind of detection, is based on my particular solution of moving in a wall-safe orbit (see above), it seems more natural to me.&lt;br&gt;
+The important thing is to find a way on doing the detection and moving that seems natural to you and fit well in your bot. Regardless of the path that you trail, less is better. So, if you feel more comfortable in not using vectors, the best is not to use it. -- [[Axe]] 
+
+I also thought many times about how to make a working AntiMirrorSystem and the most effective way to find out if an enemy is mirroring me seems to me a mirror counter: Everytime you scan your opponent check if it mirrors you like: &lt;pre&gt; boolean mirroring=Point2D.Double.distance(getX(),getY(),getBattleFieldWidth()-e_x,getBattleFieldHeight()-e_y)&lt;16 &lt;/pre&gt;.If it does, add 1 to your mirror-counter if not reset it to 0.Then you just have to check each tick if this mirror counter is higher then a certain value and you can decide if you should use your &#39;&#39;normal&#39;&#39; behavior ( movement and gun ) or an AntiMirrorBehavior that slaughters the mirror bot with a hit rate of 100% :D --[[deathcon]]
+
+Deathcon, that is precisely how I implemented my mirror detection in [[Unnamed]] (although you have to widen the distance to about 30 for it to be effective). I also have an &quot;anti-mirror counter&quot; to detect if the enemy has stopped mirroring.  This gives a buffer at both ends.  -- [[nano]]
+
+Damn it.I thought i was the first one that had this idea. :(((  --[[deathcon]]
+</textarea><p>Summary:<input type="text" name="summary" value="*" size="60" maxlength="200" /><BR>Consciousness check: 11 - 9 = <input type="text" name="capAnswer"  size="3" maxlength="3" /><br><label><input type="checkbox" name="recent_edit" value="on" />This change is a minor edit.</label>&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="do_email_notify" value="on" />Send email notification that AntiMirrorSystem has been changed.</label><br><input type="submit" name="Save" value="Save" />
+ (Visit <a href="robowiki?action=editprefs">Preferences</a> to set your user name.) <input type="submit" name="Preview" value="Preview" />
+<hr class=wikilinefooter>
+<div class=wikifooter><a href="robowiki?action=history&id=AntiMirrorSystem">View other revisions</a><br>
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<div><input type="hidden" name=".cgifields" value="recent_edit"  /><input type="hidden" name=".cgifields" value="do_email_notify"  /></div></form></div>
+</body>
+</html>

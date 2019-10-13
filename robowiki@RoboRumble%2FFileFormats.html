@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RoboRumble/FileFormats - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Robo, Rumble, File, Formats'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/FileFormats">RoboRumble/FileFormats</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>Can you send me some sample datafiles so that I can update the totalling script before I activate the new servlets? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+The totals file is ratings_roborumble.txt and has the following format (current rating, number of battles fought, time of the last battle):
+<pre>
+#Rankings summary, updated 1062671060108
+#Thu Sep 04 12:24:20 CEST 2003
+wee.Dram_1.0.0=1600.0,1,1062658671268
+intruder.PrairieWolf_2.61=1600.0,1,1062658671148
+cx.BlestPain_1.20=1611.2253562152573,790,1062671059878
+</pre>
+<p>
+The indiviudal files have the same names as before and following format:
+<pre>
+#Ratings file for pe.SandboxDT 2.11
+#Thu Sep 04 12:24:20 CEST 2003
+kawigi.sbf.FloodMini_1.4=0.5782274784446017,200,1062671059617
+cx.test.CigaretST_0.11=0.45781816387770813,180,1062671059668
+wiki.mini.Sedan_1.0=0.5608851563910405,160,1062671060068
+cx.mini.Cigaret_1.31=0.6308681672220942,150,1062671059287
+rating=1651.7666805815882
+battles=860
+lastbattle=1062671060108
+cx.BlestPain_1.20=0.473773191241761,170,1062671058175
+</pre>
+There is a details line per enemy fought, with the rolling %score, the number of battles agains that enemy, and the time of the last battle. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Aha, this should mean that I do not need bother with the individual files to produce the rankings wiki page. I just transform the totals data file. We no longer have the number of rounds fought? I'll display the number of battles instead then. Is the totals data file containing only the current version of a bot? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+If we are going to have to restart the rankings, now would seem to be a good time to stop people running battles with different rules to the defaults.  You could remove the code from the client, and replace it with hardcoded values, or you could add code to the server to ignore such results (with a suitable error message sent to the client, so you know why none of your battles are counting). -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+All bots are in the file. For now, I think the better way is to just ingore the bots that have not fought for, lets say, 3 days (that's the difference between current time and the time in the file is greater than 3600000*24*3).  -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+As the battles are currently picked at random, it is possible (and with the number of competitors increasing, it could become likely) for a bot to just be missed out for 3 days.  Especially if it has only recently been added and the repository has been down, so few people have it on their computers.  -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+We have been running about 15.000 battles per day. Assuming 200 bots in the rumble, it means 75x2 battles per bot and day. 150 battles should be enough... May be we need to change it in the future, but I would not worry about it for now. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Albert, do you think that you could change the format just a little. It would be more consistant if that "=" would be a "," instead. I'll write a small filter changing this which I can remove if you decide to change the format. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Additionally if we could identify each record with it's type I would be more comfy. In the total file each record corresponding to a bot could have a first field with the contents "BOT" or "PARTICIPANT". In the individual files I suggest the type names; "PAIRING" and "OPPONENT" for the yet unlabled records. The other records could follow the convention of having the type name in all uppercase. Also I would like to get back the rounds count. The number of rounds is more interesting than the number of battles I think, but we could keep both figures in the raw data and then later decide what we display or not. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> 
+<p>
+The number of rounds needs to be tracked seperately, probably uploaded from client with the results, and then summed from that data on server side. Going by summing the win or loss column (which I assume is how it's being done now) gives inaccurate figures. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+About record types, I don't uderstand what you mean (could you post an example). The totals file has only one type of record (the bot ranking). Also the individual file have (excluding the fields rating, battles and lastbattle) only one record type (that shows the rolling results of the bot to which the file corresponds against the bot that names the record). ¿¿¿¿???? 
+<p>
+About the number of rounds, it's as easy to multiply the number of battles x 35. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Not if the client is set to run something else than 35 rounds per battle. Here's a proposed summary file format:<pre>
+#Rankings summary, updated 1062671060108
+#Thu Sep 04 12:24:20 CEST 2003
+BOT,wee.Dram_1.0.0,1600.0,1,1062658671268
+BOT,intruder.PrairieWolf_2.61,1600.0,1,1062658671148
+BOT,cx.BlestPain_1.20,1611.2253562152573,790,1062671059878
+</pre>Maybe it's not strictly necessary when there's onlt one record type, but it's more robust to match lines where the first field says "BOT" than to exclude lines matching a pattern which is not really defined.
+<p>
+And for individual files:
+<pre>
+#Ratings file for pe.SandboxDT 2.11
+#Thu Sep 04 12:24:20 CEST 2003
+PAIRING,kawigi.sbf.FloodMini_1.4,0.5782274784446017,200,1062671059617
+PAIRING,cx.test.CigaretST_0.11,0.45781816387770813,180,1062671059668
+PAIRING,wiki.mini.Sedan_1.0,0.5608851563910405,160,1062671060068
+PAIRING,cx.mini.Cigaret_1.31,0.6308681672220942,150,1062671059287
+RATING,1651.7666805815882
+BATTLES,860
+ROUNDS,25500
+LASTBATTLETIME,1062671060108
+PAIRING,cx.BlestPain_1.20,0.473773191241761,170,1062671058175
+</pre>Again this is for robustness and clarity in the scripts dealing with this format. Nothing of this is crucial and there's no hurry. But if you have no heavy reasons not to do this  maybe you could just make the changes to keep me calm or something. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It would mean to rewrite the full servlets. Because there is the idea of moving later to a mySQL data base, I think robustness is not crucial now. What I feel is important is to have a full model working in a short time so we can be confortable and move to a more secure environment later. Right now I'm working in checking the results when they are uploaded (so it rejects the ones not conforming with rounds and field size) and adding to the clients the ability to reuse results and feed the server with mini/micro/nano results, so we can have ratings for each category. Also, I think that moving to the proposed file format will affect server performance, because it takes far more time to read a file line by line and process it (and two files must be completely readed when a result is uploaded - bot file and rankings file) than to upload it into a Properties() object using a single native java method. So I'w not change the data files rigth now, unless you feel it strongly necessary. But if you feel scripting is not powerful enough to safely create the rankings page, I can try to develop a servet that creates it (the only problem I see to it is that it will not be static). 
+<p>
+Note also that the use of a Properties() objects guarantees that there will not be duplicated keys (ie. you will never find two fields called "rating", nor the name of a bot duplicated). -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Fair enough. Though I wonder if there's a reason to introduce a database handler when the file is this neat and small. And there's power enough in the scripting languages to deal with the current format. I wasn't aware that it was a properties file and am happy to know what guarantees I have. On the other hand I do not think you should bother with the perfomance of this or that implementation at this stage. Java reads files like that fast enough and it's always much better to focus on clarity and design than performance. I agree with you when you say above that we work faster the quick-and-dirty way than with a full-blown, catch-all modelling way. That goes for performance optimizations as well. Better leave them out until we see where the real bottlenecks are and even then we should hesitate to sacrifice design for perfomance. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+The rounds can be got by battles*35, because the intention is to stop people changing the rounds setting in the client, at least i thought it was.  If it's not, then it really should be. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+PEZ, if you're still planning on using XML and XSLT, I suggest we change the input XML layout a bit (or a lot :)). It's easy for me to adapt the XSLT files (the last ones were less than an hour work). If you just XMLize the proposed file-layout the different XSLT's we would need would be very straight-forward. -- <a href="robowiki?FnH" class=wikipagelink>FnH</a>
+<p>
+Yes, but as long as the original data file is not XML I still have the work with getting the files to such an XML-file. But now that I have realized that it is properties files I think that process is robust enough. We're working together so tightly through the wiki so a change in the input format can easily be sorted out. And yes, I think XML is the way to go. But I also agree with Albert when he says we wait with making things the "right" way until we have gotten results we feel satisfied with. Meanwhile you can improve your XSLT's. When you do that, assume the file you work from has the bot names splitted up in pieces; "main" package, full package, name and version. Have you ever worked with <a href="robowiki?XPathScript" class=wikipagelink>XPathScript</a>? If you have I think we could consider that instead of XSLT. It keeps us in touch with the OS and the power of Perl while we can utilize the transformation model of XSLT as well as the power of XPath. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Have never worked with <a href="robowiki?XPathScript" class=wikipagelink>XPathScript</a> or written anything in Perl, but I'll look into it. -- <a href="robowiki?FnH" class=wikipagelink>FnH</a>
+<p>
+There's also JXPath, but I think XSLT will do in any case. <a href="robowiki?XPathScript" class=wikipagelink>XPathScript</a> is interesting in itself so you won't waste time looking some at it. It's at the hart of Axkit, the Perl Cocoon lookalike. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RoboRumble/FileFormats" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RoboRumble/FileFormats">View other revisions</a><br>Last edited May 18, 2006 20:02 EST by <a href="robowiki?GrubbmGait" title="ID 6861 from ip195-142-172-82.dyndsl.versatel.nl">GrubbmGait</a> <a href="robowiki?action=browse&diff=1&id=RoboRumble/FileFormats">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

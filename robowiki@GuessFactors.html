@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>GuessFactor - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Guess, Factor'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h3>(redirected from <a href="robowiki?action=edit&id=GuessFactors" class=wikipageedit>GuessFactors</a>)</h3><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=GuessFactor">GuessFactor</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>An invention signed <a href="robowiki?Paul_Evans" class=wikipagelink>Paul Evans</a>. A key component of <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> and also of some <a href="robowiki?AdaptiveMovement" class=wikipagelink>AdaptiveMovement</a> schemes. It's quite basic and works like so:
+<OL >
+<li> Bot A sees Bot B move lateraly clockwise or counterclockwise
+<li> Bot A guesses where Bot B will be when a bullet fired now arrives at the current distance.
+<OL >
+<li> If Bot B continues its lateral travel to the maximum this is regarded as guess factor 1.0
+<li> If Bot B reverses its lateral travel and goes to the maximum it is regarded as guess factor -1.0
+<li> If Bot B ends up at the same bearing as it had when the bullet was fired this is guess factor 0.0
+</OL>
+<li> Thus the scale go from guess factor -1.0 to +1.0 inclusive.
+</OL>
+We have at least two different types of guess factors.
+<OL >
+<li> Relative guess factors
+</OL><UL>
+<UL >
+<li> Bot B's maximum travel is calculated from it's current velocity
+</UL>
+</UL><OL>
+<li> Absolute guess factors
+</OL><UL>
+<UL >
+<li> Bot B's maximum travel is calculated from the maximum robot velocity (8).
+</UL>
+</UL>
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Which type is better? <a href="robowiki?Andrew" class=wikipagelink>Andrew</a>
+<p>
+The other type is linear guess factors - where you take GF 1 as being the maximum distance the bot can travel at it's current velocity and bearing - the formula for the maximum escape angle should be Math.asin(enemyVelocity*Math.sin(enemyHeading - enemyAbsoluteBearing<a href="robowiki?action=edit&id=AbsoluteBearing" class=wikipageedit>?</a>)/bulletVelocity).  As for the best type - if you can only use one, use absolute guess factors.  However I think Paul gets some benefit out of using linear guess factors in his VG array.  -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Well, absolute guess factors are a bit easier to deal with since you really have constrained things to be between -1 and 1. With relative guess factors and a slow moving bot the actual guess factor can get between -8 and 8 I think. On the other hand it saves you from segmenting on velocity I guess... I can't answer your question. But I use absolute guess factors myself and it seems pretty effective. But I might try doing a bot with both types of guess factors in a <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> array. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I'm not sure if I'm aware of any kind of relative guess-factor gun that isn't also based on bearing like Jamougha's description.  Intuitively, I'd say the linear is not as good in general, but possibly more effective in Melee.  And rather than taking a VG approach with those two variations, I'd suggest doing both and picking the highest guess-factor between them (like <a href="robowiki?SandboxMini" class=wikipagelink>SandboxMini</a> does). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Interesting, you mean in a best-P-space sort of way?  Now that makes a whole lot of sense.  I'll have to dig into <a href="robowiki?SandboxMini" class=wikipagelink>SandboxMini</a>'s code and take a look. -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+I have a question to you GF experts, since i'm very green on that soil...<br> 
+I'm currently developping a AM system to my next bot, so I need to calculate my bot's GF using <a href="robowiki?EnemyWaves" class=wikipagelink>EnemyWaves</a>. Talking about absolute GFs, the Math.asin(8/enemy_bullet_vel) shall give me the max escape angle right? But something is bothering me: Assuming that my bot moves orbitating the enemy, wouldn't be more correct if I use a formula like (8/(2*Math.PI*enemy_bullet_vel)), that is the max. escape angle assuming a circular trajectory? I think that the pitagoras formula might give me a almost-never reachable GF 1.0 (unless the enemy is traveling at max speed in a straight line) however, the circular formula might give me a more than 1.0 GF (unless the enemy have a delta position of 0)... Am i correct in these assumptions? If am i, witch one would be more appropriated for me to use? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>   
+<p>
+The asin(8/enemy_bullet_vel) is the max escape angle, and it is reached by moving in a straight line perpendicular to the head-on trajectory.  If you're moving circular, assuming your enemy is stationary, the max escape angle will be just 8/enemy_bullet_vel, you don't even need to put 2*PI in there.  Normally you'd find the arclength using <tt>arclength = angle/(2*PI)*circumference</tt>, where circumference is 2*PI*radius, so <tt>arclength = angle*radius</tt>, and <tt>angle = arclength/radius</tt>.  arclength is 8*time and radius is enemy_bullet_vel*time, so the max escape angle in a circle is just 8/enemy_bullet_vel.  Note that this is less than asin(8/enemy_bullet_vel).  Also note that it assumes you move in an exact orbit around where your enemy was when he fired.  If your enemy is orbiting in the opposite clock direction from you (like <a href="robowiki?VertiLeach" class=wikipagelink>VertiLeach</a> often would), you may end up still moving in a straight line and reaching Math.asin(8/11) anyways.  And if your opponent is *perfectly* mirroring you across a point, you won't make it to GF 1 under either formula - actually, I can't figure out right off where you would be in general, but I assume it would still be constant for all distances.
+<p>
+Anyways, so after all that, I'd still just suggest you stick with the asin one... -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<UL >
+<li> Thanks <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>! The 2*PI was a stupidity of mine, i was actually using (8/enemy_bullet_vel)*(360/(2*PI) to give me the value in degrees, when i wrote that above i took out the 360 (and forgot the 2*PI there) to give me it in radians (duhh :P)... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+</UL>
+<p>
+<UL >
+<li> how many bins should i have?is 17 a good number to have.
+<li> how would i take the angle that i fired a virtual bullet that hit and convert that into the distance the enemy moved (in order to scale that into a bin if you haven't noticed from my posts, i can't do math--<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+</UL>
+<p>
+The number of bins you need varies with distance. See <a href="robowiki?VisitCountStats/Dynamic" class=wikipagelink>VisitCountStats/Dynamic</a> for some discussion about that. But most bots use a high number of bins and live with the excess number of bins on closer ranges. 25 is a good number. Unless you are often fighting at distances above 700 or so. When it comes to scaling the distance to a bin. Firstly, most people doesn't use plain distance, we use angular distance. Secondly, don't use <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>, use <a href="robowiki?Wave" class=wikipagelink>Wave</a>s. <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> was a side track in Robocode development. <a href="robowiki?Wave" class=wikipagelink>Wave</a>s are much more efficient. Thirdly to go back and forth between anglular distance traveled, guess factor and bins. See if you can figure out how it's done in <a href="robowiki?VertiLeach/Code" class=wikipagelink>VertiLeach/Code</a>. I think I have simplifyed it further in <a href="robowiki?Aristocles" class=wikipagelink>Aristocles</a>. Unpack that jar and see if it makes sense. Then come back with any questions you might still have. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Simply using a large number of bins and recording every bin that would have hit can also be handy if you're having trouble deciding on a number. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+<a href="robowiki?PEZ" class=wikipagelink>PEZ</a> is correct that most people use <a href="robowiki?Wave" class=wikipagelink>Wave</a>s these day but I think that a VirtualBullet<a href="robowiki?action=edit&id=VirtualBullet" class=wikipageedit>?</a> system is still an easier concept to grasp from the begining. It "makes sense" where as <a href="robowiki?Wave" class=wikipagelink>Wave</a>s make sense once you realize that it is just a way to make "finer grained" <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>. One plus of <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> that you will not get from <a href="robowiki?Wave" class=wikipagelink>Wave</a>s without a lot of extra coding is that every <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> that whould have hit your target will record a hit. This can happen with <a href="robowiki?Wave" class=wikipagelink>Wave</a>s too, and you can do even more things with them if you choose to live with the complexity and bytes that they require. If you are still interested in <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> take a look at <a href="robowiki?SandboxMini" class=wikipagelink>SandboxMini</a>. It uses <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> and the code is in the jar. <a href="robowiki?Paul" class=wikipagelink>Paul</a> uses two types in there so come back if you have any questions. Also early versions of <a href="robowiki?Jekyl" class=wikipagelink>Jekyl</a> used a VirtualBullet<a href="robowiki?action=edit&id=VirtualBullet" class=wikipageedit>?</a> system and I could send you that code if you wanted as well. Best of luck. -- jim
+<p>
+The other good thing about <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> is they are much easier to use with <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a>, so if you're going to have a VG system, you may as well use VBs for your GF gun, and save some bytes. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I don't agree that <a href="robowiki?Wave" class=wikipagelink>Wave</a>s are just a way to do finer grained <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>. When I started Robocoding I did waves without even knowing about virtual bullets. I think waves make the most sense of the two. My first approach with waves was to iterate over the bins and update every hit. It's not a lot of extra coding. Compared to vitual bullets you'd have to d that iteration somewhere anyways so it's probably not more coding with waves. Lately, working with minibots, I have restricted myself to update only the bin with the widest coverage on the hit, <a href="robowiki?FloodMini" class=wikipagelink>FloodMini</a> style. It seems this works just as well as my first approach.
+<p>
+I guess you can regard the bullet fired from a virtual gun as a virtual bullet of course. But that will come naturally when, if, you try <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a>.
+<p>
+So, <a href="robowiki?Andrew" class=wikipagelink>Andrew</a>. Make yourself resistant to the advices about going the <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> way. It offers nothing you don't get with <a href="robowiki?Wave" class=wikipagelink>Wave</a>s. Except for loss of granularity and complexity of course.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I've been thinking it's about time I write a <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a> tutorial somewhere... -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<UL >
+<li> yes, please do! Maybe with that tutorial i learn how to get rid of this enormous spike at maximum guesfactor in my first bot with a guessfactor gun. It's shooting at ghosts right now ;-)  --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+</UL>
+<p>
+How about here: <a href="robowiki?GuessFactorTargeting/Tutorial" class=wikipagelink>GuessFactorTargeting/Tutorial</a> -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yes, <a href="robowiki?Waves" class=wikipagelink>Waves</a> are better than <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>, and you should certainly use them instead, I was just arguing the alternative, because someone has to. (see "Devil's Advocate") -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+There is no right or wrong here. They are both represent a way to get the job done. For me personally I found that I understood <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> when I started. They made sense to me where as <a href="robowiki?Wave" class=wikipagelink>Wave</a>s did not. Once I figured out how they worked though, I was able to move on to <a href="robowiki?Wave" class=wikipagelink>Wave</a>s. I do believe that Iteration over <a href="robowiki?Wave" class=wikipagelink>Wave</a>s to get all the hit bins will require a second loop. One to iterate all your <a href="robowiki?Wave" class=wikipagelink>Wave</a>s and one to iterate all your bins. As <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> (as I coded them) contained the bin in them I could make one loop to check and iterate. Maybe now it is my turn to be picky =^&gt; -- jim
+<p>
+But you also need one loop to create the bullets, right? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Thankyou very much for your posts everyone. I am looking through most of the open source bots you guys sugested right now for ideas. Right now, I am doing virtual bullets as this is my first attempt at a Guess Factor gun and I have almost completly implemented them. If I get it working, I will go back and change it to waves, that will give me the most coding experience anyway. I understand a wave as sort of a big circle of a virtual bullet that in this situation you would shoot at your enemy. You figure out which part of the circle would hit them and draw a line through that point and the radius, and that is where a virtual bullet would have gone that hit them. Is my idea of waves correct? And yes, a <a href="robowiki?GuessFactorTargeting/Tutorial" class=wikipagelink>GuessFactorTargeting/Tutorial</a> would be much appreciated. --<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+Yes, that is indeed one of the best descriptions of <a href="robowiki?Wave" class=wikipagelink>Wave</a>s I've yet seen. Provided the target audience understand virtual bullets first of course. 
+<p>
+I know of the Devil's Advocate. But in this case it would have been much more productive and helpful to state your opinion instead. Though, I certainly act the devil's advocate myself at times, just for the fun of it. =)
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+So as the <a href="robowiki?GuessFactorTargeting" class=wikipagelink>GuessFactorTargeting</a>'s advocate, the tutorial is done (version 1.0?) -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+If you're making a <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> system as well as a <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> gun using <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> is much smaller. As for granularity, umm.. I don't see how that's relevant, you're taking your high-precision data from the wave and stuffing it into a very low precision bin anyway. Since you'd never have fewer <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> than bins I don't see the problem for a <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> gun. The advantage of <a href="robowiki?Waves" class=wikipagelink>waves</a> is that they are much faster, <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> are more versatile with less code, though a wave can eventually be made to do just about anything a VirtualBullet<a href="robowiki?action=edit&id=VirtualBullet" class=wikipageedit>?</a> can. <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> also have the advantage of keeping your angle to bin mapping consistent, with waves this becomes incosistent depending on where relative to the opponent's center the impact took place. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+With a bit of extra effort you can get over that problem with waves.  If you increment all the bins that would have hit as the wave travels over the enemy, you will get it correct (you simply don't remove the wave until it's completely passed the enemy).  If you are doing that,  you can probably get it to work quite easily with VGs as well, just record the angle each gun picks, and see if that angle is in the range the wave says would have hit. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+That has nothing to do with angle to bin consistency, you can get over that problem, but it requires significantly more work than that. The problem is that the wave, upon impact, is automatically moved to the middle of the opponent bot for calculation purposes, a place which it may never reach and which it certainly isn't at on first impact. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Of course it will always reach the middle, what do you mean?  You don't have to move it to the middle, that's just one method of implementation.  If you have the enemy as a rectangle, rather than a point, it should all work. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+I don't see how <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a> are thrown into this discussion at all. You only need one bullet per gun. Collecting stats for your guns is still just as easy with <a href="robowiki?Wave" class=wikipagelink>Wave</a>s. You can't honestly say that <a href="robowiki?Aristocles" class=wikipagelink>Aristocles</a> uses very much code for its <a href="robowiki?Wave" class=wikipagelink>Wave</a>s, can you? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+*sighs* I said doing waves to do everything vbullets can do takes more code, Aristocles hardly does everything a vbullet can do. As for what Tango said, the bullet travel discretely, the slowest ones travel at velocity 11, the bot is 36x30 non-rotating, explain why even the slowest bullet needs to touch more than 4 points and/or why the middle has to be one of those points? I'm going to let what I said stand until someone actually responds to what I said and not what they would've liked me to say so they could reinforce their points. In a codesize restricted environment vbullets are better but slower, in a codesize free environment waves are better due to speed, but often poorly implemented. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Ah, so you mean I could save codesize by using virtual bullets? I would like that very much! I need some bytes in Aristocles more than anything else. I can live with having been wrong about virtual bullets all the time. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I am pretty certain waves are smaller than virtual bullets for a basic application, after trying both ways.  You do get some added functionality with virtual bullets, but in a codesize-constrained environment I'd prefer waves, as I don't believe bin smoothing is worth enough to offset the codesize advantage. -- <a href="robowiki?Jamougha" class=wikipagelink>Jamougha</a>
+<p>
+Waves are smaller the way you implement them. They're just less accurate. The reason I prefer virtual bullets in a codesize limited environment is because I wouldn't ever implement waves the way you do, and because one of my micros uses virtualguns, vbullets can handle this with almost no additional code, waves would require extra special case code. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+Ah, you should have said so to begin with. But now I think you'll have to show us  how you do virtual bullets and how you would do wave´s. It's unfair that you can judge our way to do things and we can't see yours. =) It's also an open question how much accuracy you really need. <a href="robowiki?RaikoMicro" class=wikipagelink>RaikoMicro</a> scrifices accuracy for added features in several ways. It sure looks like that trade-off pays off. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+It is my contention that virtual bullet systems inherently lack precision compared to wave systems.  A wave can give you easily the guess factor that is at the center of the bot for each hit, while virtual bullets give you only the general area of the bot.  This should lead to smoother profiles, which is good for fast learning and bad for precision.  A better idea than virtual bullets (to quicken the learning of wave-based stat systems) might be to update guess factors using a gaussian function based around the center of the enemy bot.  This would be a kind of inline density estimator.  Of course, that's merely speculative, as I haven't tried it (yet!). -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+I've actually given some thought to exactly what you're describing, but I personally don't think it's worthwhile, here's my reasoning: if you're consistently hitting the edge of your opponent all is well, it doesn't matter that it's not a dead center hit. Let's say they travel to GFs .8 and 1.0 consistently at mid range in such a way that you can always tag them at .9, a gaussian function would make these edge of bot hits worth very little and you probably would shoot at .8 or 1.0. A wave that updates all bins in the bot width or <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a>, however, will nail the poor bastard at .9 every time. Basically if you're registering hits consistently a bin will be high and that's your best place to shoot, regardless of if that hit is on a "flakey" spot, it's consistent so use it. If the hit is on a spot where it'll be inconsistent then the bin won't be high, and as far as I can tell weighing the center for more is a fear of inconsistency on the edges. If you're worried about hitting the edge of the bot on the edge of the bin then shooting down the center of the bin, thus missing, that's a wave-only issue that I haven't thought about much. <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> travel down the same part of your bin as your real bullets if you're doing it right, so if they're hitting you'd be hitting. As for the precision issue, the first thing everyone does with this precise data is lump it into a low precision bin, so it seems like a waste. Besides, the function everyone uses for determining angle is off by as much as 20% on a routine basis. Very precise and extremely inaccurate isn't helping anyone. <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> are defined by their angle and the mapping has no error, you just check if the bullet is inside the other bot, if it is, that angle would hit, no questions.
+<p>
+As for how I would implement a wave, I would implement a wave that figures out precisely where on the bot the hit took place and calculates the angle to there, but this isn't codesize friendly. As for how I implement <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> the only real shortcut I do compared to other implementations around is with my <a href="robowiki?VirtualGuns" class=wikipagelink>VirtualGuns</a>. They're just two more bins in my <a href="robowiki?GuessFactor" class=wikipagelink>GuessFactor</a> array (think of them as GFs 1.1 and 1.2) which my stat gun's <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> can't ever place data into, and I fire two more <a href="robowiki?VirtualBullets" class=wikipagelink>VirtualBullets</a> at the angles my guns give me which map to those bins. -- <a href="robowiki?Kuuran" class=wikipagelink>Kuuran</a>
+<p>
+in order to improove learning, or get stats for multiple bullet powers, would it be unreasonable speed wise to fire more than one wave per tick? --<a href="robowiki?Andrew" class=wikipagelink>andrew</a>
+<p>
+Sure, you could do it, but it won't dependably work if your actual bullet power is a parameter to your opponent's movement.  Spark and <a href="robowiki?CigaretBH" class=wikipagelink>CigaretBH</a> do something like that though (of course, they're using their waves with a patternmatcher instead of a guess-factor gun) .-- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+After a little work I simplified the precise prediction needed to get the max escape angle, as per the fact that asin(8/bulletSpeed) seemed a little off, I did some work in Illustrator, and came up with this very messy code. It assumes the robot travels at a 45 degree path towards the source from where it was. I wasn't sure if ceil was correct but it more closly matched asin(8/speed) then rounding or floor. I am often wrong, and I ahve found that out, but hopefully I didn't mess this one up. ;)
+<pre>
+double travelDistance = Math.ceil(distance/bulletSpeed) * 8;
+double maxEscapeAngle = Math.atan2((Math.cos(Math.PI/4)*travelDistance),300-(Math.sin(Math.PI/4)*travelDistance));
+
+A cheap way to make Math.asin more closely resemble the code above.
+double maxEscapeAngle = Math.asin(8.2/bulletSpeed);
+
+With that you wouldn't need the *1.1 trick.
+</pre>
+<p>
+--<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+Some thoughts:
+<p>
+<UL >
+<li> I don't think a 45 degree attack angle will give you max escape angle, I think purely perpendicular to the wave source gives you max. (<a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a> discussed / proved this somewhere on the wiki, I believe.)
+<li> Math.asin(8.2...) is not quite the same effect as multiplying by 1.1 because asin isn't linear like that. It should still work ok, but I think your bin size would be less consistent or something like that.
+<li> To be honest, I wouldn't call the above <a href="robowiki?PrecisePrediction" class=wikipagelink>PrecisePrediction</a>, it's just a different approximation. No accounting for walls, initial speed, or initial heading of the enemy.
+<li> If your bot is moving perpendicular at full speed and won't hit a wall, I think Math.asin(8/bullet speed) is precisely correct.
+</UL>
+<p>
+-- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+Well, all I can say is try it, if I can't convice with words, here it is with visual aids. <a rel="nofollow" href="http://jad.tfsnewworld.com/bots/PowerP1.gif">[Power 0.1]</a><a rel="nofollow" href="http://jad.tfsnewworld.com/bots/Power1.gif">[Power 1.0]</a><a rel="nofollow" href="http://jad.tfsnewworld.com/bots/Power2.gif">[Power 2.0]</a><a rel="nofollow" href="http://jad.tfsnewworld.com/bots/Power3.gif">[Power 3.0]</a> --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+You have to take into consideration that the bullet has to fly a shorter way to hit you if you are moving towards its source =&gt; no greater max escape angle. --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a> 
+<p>
+Just what I was going to say - distance/bulletSpeed is inherently wrong :-)  In the case that it were right, the maximum escape angle would be reached by moving perpendicular to the direction of the maximum escape angle (meaning there's a right angle between the movement line and bullet line). -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+<p>
+Hum, I guess i'm wrong again. It appeared correct based on my illustrations.  --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+In case anyone still isn't convinced, I'll throw in my two cents: I did the math.  Moving perpendicular to the wave source gives you max escape angle.  Just like everyone said.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+I figured my idea was solid, as such I considered the escape angle the maximum angle at any distance (as its an arc and thus exapnds), that the enemy could reach from. So I think the idea for this is right, just my execution is off. The travelDistance code was made for my testcase, which the distance was always the same so it always gave the the answer I was looking for. The distance I used was 300. My thought was to get the angle at the very outter angular edge of the movement oval, so that it would produce the greatest usable angle. My math was flawed, but tell me if my idea was too. As the bot traveling at that 45 degrees would put it outside the normal "arc" that is covered by asin(8/speed), leading me to believe that asin(8/speed) is not the edge of the oval. --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+As <a href="robowiki?Krabb" class=wikipagelink>Krabb</a> said, moving 45 degrees toward the source of the wave shortens the distance the bullet has to travel, meaning it could hit you sooner, meaning you can't physically move as far.  Even though each bit you DO move may increase your escape angle more, it is not enough to compensate.  Likewise, moving *away* from the wave source increases the time it takes for the bullet to hit, and therefore increases the physical distance the bot could travel.  BUT, each bit the bot moves increases its escape angle less.  It turns out that the sweet spot really is to travel exactly perpendicular to the HOT line.  I'm sure this discussion has been had elsewhere on the wiki, but I never saw it, either.  I actually went through a *lot* of math (including calculous) before I reached the same conclusion as everyone else.  -- <a href="robowiki?Simonton" class=wikipagelink>Simonton</a>
+<p>
+I have done this stuff too. Anyone intrested? :) --<a href="robowiki?Krabb" class=wikipagelink>Krabb</a>
+<p>
+Oh, I see what you mean, i'm rather thick huh. Then what makes up for the wierd 1.1 multiplier that many use? --<a href="robowiki?Chase-san" class=wikipagelink>Chase-san</a>
+<p>
+A combination of bad data collection and the discreteness of Robocode (i.e. - the fact you move by 8 at a time :-)
+<p>
+The proof that it really is asin(8/speed) comes from the same ideas as the "geometric" linear targeting formula.  That comes out to look like this:
+<p>
+<PRE >
+ asin(sin(enemyHeading - absBearing) * 8 / bulletVelocity))
+</PRE>
+<p>
+I'd explain that, but a search on the wiki for "law of sines" will probably turn up an answer.  Finding the max escape angle has to do with maximizing this value.  The asin function is increasing between -90 degrees and 90 degrees (and as long as we can't outrun bullets, we will be in that range), so we really want to maximize the sin(enemyHeading-absBearing) expression.  Sines will never be more than 1 (which they are at 90 degrees, by the way), so the entire expression will never be more than asin(8/bulletVelocity) :-) -- <a href="robowiki?Kawigi" class=wikipagelink>Kawigi</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=GuessFactor" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=GuessFactor">View other revisions</a><br>Last edited January 21, 2007 23:02 EST by <a href="robowiki?Kawigi" title="ID 4482 from pool-71-164-0-26.sttlwa.fios.verizon.net">Kawigi</a> <a href="robowiki?action=browse&diff=1&id=GuessFactor">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

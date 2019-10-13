@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>RoboRumble/Melee - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='Robo, Rumble, Melee'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=/Melee">RoboRumble/Melee</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I'd love to help out in creating the melee RR@H, even if its just throwing in ideas. However I don't want to put all (or any) of the responsibility on Albert if he's busy with other things. We can discuss what needs to be done, and then if others (such as myself) can help out that would be great. Anyway, seems like Paul and Amarok would know exactly all of the math that needs to be done, so they would be the people to ask for how it's gonna work... -- <a href="robowiki?Vuen" class=wikipagelink>Vuen</a>
+<p>
+Umm, yes. I didn't mean to imply I though Albert should do all the work. It's just that he probably knows where the efforts need to be put in. And I will work out a non-voodoo ranking system. (Just kidding.) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Not sure, but it should be quite easy:
+<p>
+<UL >
+<li> Create a class (or a method) that prepares the melee battles (this is a basically file basically where each line is a battle, with the bots separated by comas).
+<li> Change the BattlesRunner<a href="robowiki?action=edit&id=BattlesRunner" class=wikipageedit>?</a> class to deal with melee battles. I think that the only thing that should be changed is the part that reads the results from the table and stores them in a file. If the results are uploaded as "artificial" 1v1 pairings, then that's all you need to do.
+<li> In the server side, if you decide to change the number of rounds for melee, you will have to adjust the UploadedResults<a href="robowiki?action=edit&id=UploadedResults" class=wikipageedit>?</a> servlet to filter the melee results using the new number of rounds (now is 35 by default, 10 for teams).
+</UL>
+<p>
+About rankings, if I understod Paul correctly, it's just taking each possible pair of competitiors and uploading them as a single 1v1 battle. For example:
+<p>
+<UL >
+<li> 1rs: botA, score 5000
+<li> 2nd: botB, score 2500
+<li> 3rd: botC, score 1000
+</UL>
+<p>
+It will be uploaded like:
+<p>
+<UL >
+<li> botA,5005,botB,2500
+<li> botA,5000,botC,1000
+<li> botB,2500,botC,1000
+</UL>
+<p>
+-- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Im not helping or anything with the development but it seems to me that uploading the results as 1v1 battles is a major hack. Woudlnt it be better (In the long run) to update the framework to be able to upload custom battles of any type, such as 1v1, Melee, Deathmatch etc?? That way it would be easy to update when someone wants to run a different type of competition, rather than hacking it each time something new needs to be added. It just makes more work in the long run if you do a series of hacks. IMHO that is. :)
+<p>
+--<a href="robowiki?Wolfman" class=wikipagelink>Wolfman</a>
+<p>
+Melee ELO scoring is done with 1v1 results for each combination in the melee, it's nothing to do with the software. -- <a href="robowiki?Tango" class=wikipagelink>Tango</a>
+<p>
+Hrm that sounds mighty strange way of ranking. Why do we need all this ELO stuff in the first place? Why cant we just run battles and use the results like the old Gladitorial Leauge? That worked fine for melee. --<a href="robowiki?Wolfman" class=wikipagelink>Wolfman</a>
+<p>
+=) Because RR@H is about stable rankings. Not just providing fun. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=RoboRumble/Melee" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=RoboRumble/Melee">View other revisions</a><br>Last edited November 14, 2003 13:42 EST by <a href="robowiki?PEZ" title="ID 1836 from 212.75.87.xxx">PEZ</a> <a href="robowiki?action=browse&diff=1&id=RoboRumble/Melee">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>

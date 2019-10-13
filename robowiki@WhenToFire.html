@@ -1,0 +1,241 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD><TITLE>WhenToFire - Robo Wiki -= Collecting Robocode Knowledge =-</TITLE>
+<META NAME='KEYWORDS' CONTENT='When, To, Fire'/>
+<LINK REL="stylesheet" HREF="/robodocs/wiki.css">
+</HEAD><BODY BGCOLOR="white">
+<div class=wikiheader><h1><a href="robowiki?Robo_Home"><img src="/images/RoboWiki.png" alt="[Home]" border=0 align="right"></a><a href="robowiki?back=WhenToFire">WhenToFire</a></h1><a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<hr class=wikilineheader></div><div class=wikitext>I do it like this:
+<p>
+<UL >
+<li> In the run() method I registrer an event I call GunIsAimedCondition
+<UL >
+<li> In the test() method of this Condition I do:
+<UL >
+<li> return (getGunHeat() == 0 &amp;&amp; getGunTurnRemaining() == 0 &amp;&amp; (getEnergy() &gt; 0.2 || enemyDistance &lt; 250));
+</UL>
+</UL>
+<li> in on<a href="robowiki?ScannedRobot" class=wikipagelink>ScannedRobot</a>() I aim the gun
+<li> in on<a href="robowiki?CustomEvent" class=wikipagelink>CustomEvent</a>() I check for GunIsAimedCondition and when it's there I call setFireBullet
+</UL>
+<p>
+Check <a href="robowiki?MakoHT/Code" class=wikipagelink>MakoHT/Code</a> to see it "in action". But the problem with this is that my bots seem to fire more seldom than other hard-shooting bots. Does anyone have a better scheme?
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+get<a href="robowiki?GunHeat" class=wikipagelink>GunHeat</a>() and getGunTurnRemaining<a href="robowiki?action=edit&id=GunTurnRemaining" class=wikipageedit>?</a>() return double values.  You may want to put "== 0.0" or "== 0d" instead of "== 0".  Using "== 0" has caused problems for some robocoders in the past.  Also, you may want to shoot even if the gun turn remaining is <u>not</u> equal to zero.  If the gun turn remaining is very small relative to the calculated distance to target impact, you may want to fire.  Otherwise, you may find your robot spends more time turning its gun and less time actually firing.
+<p>
+-- <a href="robowiki?Ray_Vermette" class=wikipagelink>Ray Vermette</a>
+<p>
+Thanks! I'll start using .0 everywhere in my code then. I have tried using Math.abs(getGunTurnRemaining() &lt; 0.5) and such but it seems not to make a difference. I have even tried removing that part of the check entirely (which mean I fire whenever my gun is cool), but it doesn't seem to matter either... Surpisingly enough it doesn't matter for the hitrate either. Possibly because I check the gun heat and gun cooling rate before I aim the gun and that maybe makes the gun aimed well enough when the gun is cool.... WAIT! I don't think I do Math.abs() there. Maybe that's what causing the delay. I must check immediately. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+The "0" is actually automatically cast to a double in this case, so adding the ".0" isn't strictly necessary.  It shouldn't be that causing the problem.  In my bots, I extend the GunTurnCompleteCondition<a href="robowiki?action=edit&id=GunTurnCompleteCondition" class=wikipageedit>?</a> instead of redefining my own using "gunTurnRemaining<a href="robowiki?action=edit&id=TurnRemaining" class=wikipageedit>?</a> == 0", but I seem to fire as often as possible.  Perhaps you should check to make sure you are within the 250 minimum distance at all times?
+-- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+I was already using 0.0 in my code actually. I try to be consistant about that because Java's automatic casts has bit me hard before. Anyway, yes of course I should extend GunTurnCompleteCondition<a href="robowiki?action=edit&id=GunTurnCompleteCondition" class=wikipageedit>?</a> instead, haven't thought about that. Would it be too much to ask you to post your code for that extension? The 250 minimum distance you are referring to only is checked when my own energy is &lt;= 0.2. Do you have statistics on how often you fire and how often the enemy fires? Maybe if you pick up Orca 0.3.3 when I have uploaded it (soon) you could check its statistics and compare to yours and see if you fire more often? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Alright, I will check its statistics.  Watch this space. -- <a href="robowiki?Nano" class=wikipagelink>nano</a>
+<p>
+According to the Java language spec, "0" is suppose to be promoted to a double value, but "== 0" has caused problems before, and replacing it with "== 0.0" has fixed them.  Don't ask me why.  Search through the Alphaworks or <a href="robowiki?RobocodeRepository" class=wikipagelink>RobocodeRepository</a> forum archives for previous discussions on this topic.  BTW, you should also avoid using "==" with float/double values -- also discussed and explained in the Alphaworks forum.
+<p>
+Getting back on topic, I agree: I don't think "0" versus "0.0" is causing Pez to shoot less often.  You should fire if the gun turn remaining is close enough to zero that being a little off target won't matter.  In other words, if the gun hasn't finished turning, and firing now would cause your robot to hit the outside edge of the target versus dead center, then fire!  A hit is a hit.
+<p>
+You should only call one turn-ending method in your entire robot.  By turn-ending, I mean execute(), fire(), fireBullet(), or one of the blocking methods inherited from the Robot class.  If you are calling more than one turn-ending method in your robot, your robot may not be firing as often as it could. 
+<p>
+-- <a href="robowiki?Ray_Vermette" class=wikipagelink>Ray Vermette</a>
+<p>
+I'm not cheking for "gun alignment" when firing, so all my bots fire as fast as possible. The underlying logic is like follows: If your aiming system is good against your opponent, the predicted bearings will be consistent and the gun will be (aloms) correctly pointed (so no need to check). If your aiming system is not good, then it won't be a problem is the gun is aligned or not. Unsurprisingly, all my bots perform better without this check. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+Thanks. I needed a reasonable explanation to why I did not notice any real hit rate difference in any of my bots when removing the gun alignment check. Both <a href="robowiki?Mako" class=wikipagelink>Mako</a> which does quite good aiming and <a href="robowiki?Orca" class=wikipagelink>Orca</a> which does rather lousy aiming. =) Though I still seem to fire significantly less often than <a href="robowiki?MicroAspid" class=wikipagelink>MicroAspid</a>. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+May be they are skipping turns? -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+<a href="robowiki?Mako" class=wikipagelink>Mako</a> skip turns? Nah!!! I think it must be the fastest bot in the top-30. <a href="robowiki?Orca" class=wikipagelink>Orca</a> is a bit more CPU intensive, but it doesn't skip turns either. In the last 10k round battle I put it up in it skipped one (1!) turn. But, I think I now know what is causing this (perceived) problem. I did the simplest of tests (should have done that right away) to put up <a href="robowiki?Mako" class=wikipagelink>Mako</a> against <a href="robowiki?Orca" class=wikipagelink>Orca</a> and they both told me their enemy was fireing more often. =) I have been trusting the energy-drop test too much. I wrongly assumed that only a hit to the wall would result in a drop within the range 0.1 &lt;=&gt; 3.0. Now I realize that when I hit with really weak bullets this happens as well. Anyways, your suggestion and explanation made the code much more simple. Now I fire from the while (true) loop and it works excellently. Not giving me any more bullets in the air though, which is an interesting find, but simpler, so I'll stick with it. I think it might consume less bytes as well which means I now can fit in a thing in <a href="robowiki?Gouldingi" class=wikipagelink>Gouldingi</a> that I have not had room for before. A wiki, good advice from the experts and <a href="robowiki?EmpiricResearch" class=wikipagelink>EmpiricResearch</a> is a powerful combination. =)  -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+<b>Timed Firing:</b>
+<p>
+Most bots that I have seen usually shoot as fast as possible (shoot when gunheat is 0 and when gunturn is low enough).<br>
+Are there any bots that time their actions and wait until it recognizes a certain situation before shooting? (for example, when target bot reverses direction, or when a bot is accelerating after a full stop).
+<p>
+<p>
+-- <a href="robowiki?Dummy" class=wikipagelink>Dummy</a>, (I wish I had time to play with <a href="robowiki?Robocode" class=wikipagelink>Robocode</a>... :-( .)
+<p>
+I used to test a number of conditions before firing, e.g. if the gun was aligned, when i expected the opponent to reverse direction, if a match was found by the patternmatcher, but this resulted in far lower scores on bullet damage. Even when using different kind of aiming techniques, a randomly shot bullet is often equally effective. So i reverted to shooting as much as possible.
+<p>
+my 2 cts, <a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<p>
+Don't you just hate it when you type something click save, and it tells you someone else has already typed pretty much the same thing as you have?? bah: i'm gonna post it anyway:
+<p>
+I doubt it very much, as the problem then is that there may be certain enemies that don't trigger your condition (spinbot for example never reverses direction or accelerates) meaning that chances are you're going to lose. In development i have found that anytime you limit your rate of fire, although your survival can go up your bullet damage tends to go down, and so overall it isn't worth it. -- <a href="robowiki?Brainfade" class=wikipagelink>Brainfade</a>
+<p>
+CrazyGuns<a href="robowiki?action=edit&id=CrazyGuns" class=wikipageedit>?</a> (my first public bot) was doing it. It had a kind of rudimentary analyzer, and when it detected the enemy movement was oscillatory, it fired against it just when it was turning. It allowed CrazyGuns<a href="robowiki?action=edit&id=CrazyGuns" class=wikipageedit>?</a> to hit oscillators when using linear aiming. Latter on, when I switched to pattern matching, I found no need to use this trick and stopped using it. -- <a href="robowiki?Albert" class=wikipagelink>Albert</a>
+<p>
+<hr noshade class=wikiline size=1>
+One more thing... I'm probably doing it the wrong way, but always if I try to add some gun-alignement check before fire my gun loses performance quite much. Since you are one to pay attention to detail I guess you wait for your gun to be aligned with the guessed bearing before you fire? If so, you should try a version that does not do this. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yes, i do this... I already tried not to wait the alignment (in dev. tests), but it failed miserably... There goes some theories, facts &amp; observations about this:
+<UL >
+<li> GF guns have a low processing cost, so guns like CC<a href="robowiki?action=edit&id=CC" class=wikipageedit>?</a>큦 can stay every-tick updated in the correct (or almost) shooting bearing.
+<li> PM guns have a high processing cost (and <a href="robowiki?SS" class=wikipagelink>SS</a>큦 gun have a VERY hight processing cost), so i only calculate the shooting bearing once per shooting. The rest of the time, the gun stays pointing at the targets position (like <a href="robowiki?HOT" class=wikipagelink>HOT</a> guns).  
+<li> If i don큧 wait the alignment, <a href="robowiki?SS" class=wikipagelink>SS</a> ends shooting like a <a href="robowiki?HOT" class=wikipagelink>HOT</a>. In the other hand, if i wait the alignment, this cost me 1 tick of firing rate. So, my solution was to calculate the shooting bearing when the gun is ABOUT to be ready (cooling &lt;= 0.1), so when it큦 aligned (1 tick after the calculus most of the times) it큦 ready to shoot.
+<li> there is no sense to do this in GF guns, since it큦 already aligned for shooting every tick. Waiting for alignment would only waste 1 tick, and make u lose firing rate.
+</UL>
+Well, this is my opinions &amp; theories, i would like a lot to know if u agree with them. (<a href="robowiki?ABC" class=wikipagelink>ABC</a>큦 thoughts about this would be VERY welcome too. His gun is a lot similar to mine큦 and he probably have the same problems) -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+The funny thing is that my finding holds for my (lousy) PM gun too. Even with the low TC500 score of <a href="robowiki?Ali" class=wikipagelink>Ali</a>'s of 82 something. It's an improvement over <a href="robowiki?LeachPMC" class=wikipagelink>LeachPMC</a>'s score of 80 something and the only major difference is that I removed the gun alignment check. Though I start my aiming 4 ticks before the gun is cool. Starting only 1 tick before I can see why it would hurt your aimin. As much as I would hate to see SS slower than it is, it might be worth another try from your side. And the rest of us can pray it will not turn out to make your gun better. =) -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Dunno if i understood it correctly... U start the calculus 4 ticks before, but calculate it only once or every tick till is cool (probably the last, right?)? Interesting, ill take a try... The problem is that <a href="robowiki?SS" class=wikipagelink>SS</a> would be THE SLOWER BOT EVER!!! -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+@<a href="robowiki?ABC" class=wikipagelink>ABC</a>: What do u think about this? -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+I do exactly what you decribed, I only compute the firing angle one tick before firing (get<a href="robowiki?GunHeat" class=wikipagelink>GunHeat</a>() - getGunCoolingRate<a href="robowiki?action=edit&id=GunCoolingRate" class=wikipageedit>?</a> &lt;= 0). I would think that GF guns should also do it like that, if you shoot with the last tick's bearing you'll be slightly off, even if you compute it every tick. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+But <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>큦 idea has also merits, i큞l take a try later in my gunnery experiments. My gun gets a lot slow in the last rounds, and maybe i큟 losing firing rate computing only in gunHeat &lt;= 0.1... But this scheme probably would make it real heavy in processing, and could affect my movement. Anyway, i큞l try it later. Thanks for the sugestion, <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>! -- <a href="robowiki?Axe" class=wikipagelink>Axe</a> 
+<p>
+ABC, do you also wait for the gun to align before you fire? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+(edit conflict) I don't understand how computing the firing angle in a turn when you will not be able to fire can help your hit rate. If you do it correctly it will only miss in very extreme cases when your gun is unable to turn enough in 1 tick. Because of those (rare) cases, I keep the gun slightly ahead of the HOT angle when the enemy is close and traveling at top speed. But this logic aplies to all gun types, if a GF gun computes a -1 guess factor in the previous tick and then says you should fire at +1 the gun won't be able to turn quick enough and you will miss by much more than if you had the gun aligned with the enemy. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+I get your message about not letting my gun compute and aim every tick. I'll try it immediately. But with waiting for alignment I mean something like this:
+<pre>
+            double gunAlignmentDelta = normalRelativeAngle(getGunHeadingRadians() - guessedEnemyBearing);
+            if (Math.abs(gunAlignmentDelta) &lt; Math.atan2(HALF_BOT_WIDTH, enemyDistance)) {
+                setFire(bulletPower);
+            }
+</pre>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Yes I check if the gun has finished turning (getGunTurnRemaining<a href="robowiki?action=edit&id=GunTurnRemaining" class=wikipageedit>?</a>() == 0), but I don't think I need to, it's old redundant code. I remember making some tests that indicated it always turns enough in 1 tick. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Waiting for alignment like that is wrong, imo. With that code you'll only fire when the previous tick's prediction is close to the current tick's one. That will miss a lot of opportunities to fire. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Yup. So you don't do anything like that? You just trust the gun will have turned enough? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+What i meant is that if computing the shooting angle takes more than 1 round (if), i can be losing firing rate. Computing it earlier could correct this... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a> 
+<p>
+Or maybe (if i understood <a href="robowiki?ABC" class=wikipagelink>ABC</a>큦 words), just calculating and set<a href="robowiki?TurnGun" class=wikipagelink>TurnGun</a>(angle) in T-1 and firing at T (without the getGunTurnRemaining<a href="robowiki?action=edit&id=GunTurnRemaining" class=wikipageedit>?</a>() == 0) could also improve firing rate... -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+Yes. If I aimed the gun in the previous tick, I fire. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Axe, you mean it could take more than 1 tick to compute your guess? I don't think that's the case with my gun...  -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+If you take more than 1 tick to compute your guess, you need to find a faster way... :) -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+One more question. If I turn the gun and fire in the same tick. Isn't that the same as using the last ticks gunHeading to fire? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+(edit conflict!)Not yours for sure, <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>, but maybe that is happening with me (MAYBE) in the last turns... The problem is that this probably depends a lot in the environment that it is running. I큞l never know for sure. -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+iirc, my tests show me that: if u use set<a href="robowiki?TurnGunRight" class=wikipagelink>TurnGunRight</a>(angle) and set<a href="robowiki?FireBullet" class=wikipagelink>FireBullet</a>() in the same turn, the bullet will be fired, THEN the gun turns... (not 100% sure, i made this test a long time ago) -- <a href="robowiki?Axe" class=wikipagelink>Axe</a>
+<p>
+OK. So then I have been doing that particular thing right all the time I guess. But trying to keep my gun <a href="robowiki?HOT" class=wikipagelink>HOT</a> when it's hot and aim it 1 tick before it gets cold doesn't work for me. It dramatically lowers the guns performance. I must be doing it the wrong way I guess... <a href="robowiki?ABC" class=wikipagelink>ABC</a>, think you can describe in more detail the things you do around this and in what order and such? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Sure:
+<pre>
+if (bot.getGunHeat() &gt; bot.getGunCoolingRate() {
+	aiming = false;
+	bot.setTurnGunRight(BotUtils.normalizeBearing(HOTAngle - bot.getGunHeading()));
+}
+else {
+	if (aiming &amp;&amp; bot.getGunTurnRemaining() == 0) {
+		b = bot.setFireBullet(bulletPower);
+		aiming = false;
+	}
+	else {
+		fireAngle = getFireAngle(enemies.target);
+		bot.setTurnGunRight(BotUtils.normalizeBearing(fireAngle - bot.getGunHeading()));
+		aiming = true;
+	}
+}
+</pre>
+I simplified it for clarity. I also have a check to see if the enemy is disabled, I shoot .1 HOT in that case.
+<p>
+-- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+This is about what I tried... Strange. I'll try a carbon copy of your solution and see if it works then. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Simpler:
+<pre>
+if(getGunHeat() / getGunCoolingRate() &lt; 4){ //turns left until we can fire
+     goodAim();
+} else {
+     headOnAim();
+}
+</pre>
+--<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+And that's what I had tried before this discussion. =) But your simpler solution doesn't show where you fire so it could still be different from my attempts. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Just add this after the code I gave:
+<pre>
+if(getGunHeat()==0.0){
+	setFire(bulletPower);
+}
+</pre>
+<p>
+--<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+The problem is that, since firing is the first thing the Robocode engine does, you'll be firing with a prediction 1 tick old. Also, you'll make 3 redundant predictions, and with a slow PM gun that will have a big impact in your bot's speed. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+With your code you could be firing with data more than just one tick old... It might take more than one tick for the gun to turn from HOT to the angle you want. But you're right about my solution not being practical for slow guns. Thanks for being nice to us and aiming your slow gun as infrequently as possible. :-) --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+<UL >
+<li>And with your code you could be firing with a completely different angle than you intended, it might take more than one tick for the gun to turn from the angle you predicted in the last tick to the current one... -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+</UL>
+<p>
+But yous solution, David, doesn't solve any problem really, does it? What's the difference between your suggestion and just:
+<pre>
+    goodAim();
+    setFire(bulletPower);
+</pre>
+? -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I tried ABC's firing scheme described above with both a PM-gun and a GF-gun. Results against a 'real-life' bot (Ascendant 0.8.5) decreased with 10% in both cases. These results are also reflected by the lower rankings of Fenrir and <a href="robowiki?MiniWodan" class=wikipagelink>MiniWodan</a> in the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a>.<br>
+The results of the modified PM-gun against <a href="robowiki?PatternBot" class=wikipagelink>PatternBot</a> increased with about the same amount (7%). I had expected this improvement with the PM-gun, as PM implies that the behaviour is deterministic and that you can 'predict' the next t movements of your opponent. Thus aiming your gun at time t-1 and firing the gun at time t should improve results. But this appearantly does not hold (<i>for my gun</i>) with 'real-life' opponents. Dou you have any ideas why? <br>
+With a GF-gun you use a statistic approach. As i fire virtual waves every tick (therefore also when i do fire a real bullet) and provide the (virtual) wave with the angle towards the opponent at 'firing' time, i think this aiming at t-1 is not necessary as you fire in an optimal direction <i>for your statistics</i> which are biased because of the way they are build up. In other words, these statistics 'correct' themselves for the misalignment. Does this make any sense? --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<p>
+My statistics are collected in an ideal space. Which means there's no auto-correction to hope for from there. I too tested ABC's scheme. It resulted in a .4 point decrease in TC500 score. Could be within the margin of error of course. But at least I didn't keep it. My own scheme of every tick doing:
+<pre>
+    goodAim();
+    setFire(bulletPower);
+</pre>
+is simpler and seems to work at least equally well, if not better. I guess it's time for ABC to question this assumption of his and see if he can get rid of that piece of complexity in his code.
+<p>
+-- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+I could never use a setup like that, not without becoming a true <a href="robowiki?SlowBot" class=wikipagelink>SlowBot</a>. The significant result from Loki's tests is, for me, the increased hit rate against <a href="robowiki?PatternBot" class=wikipagelink>PatternBot</a>, that is the best indicator of precision. Ascendant is a dodger, many time a slightly buggy gun can hit wavesurfers better than a bug-free implementation of the same gun. I agree that GF guns can compensate for the misalignement because of their statistical nature. -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<p>
+Well, i would never suggest that you don't wait for the last tick before you compute. And I agree that it isn't wise testing a gun against a surfer unless it's an anti-surfer gun. But my results where from the TC. It's worth testing I would say. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+<p>
+Sure, TC500 results are always a good test. But a .4 decrease is not significant. There are a lot of good random movers in the TC, a classic PM gun will always be inferior to a statistical gun there. Loki, did you try the modified GF gun against <a href="robowiki?PatternBot" class=wikipagelink>PatternBot</a>? -- <a href="robowiki?ABC" class=wikipagelink>ABC</a>
+<UL >
+<li> no, not yet. I will try running this tonight. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+<li> the results of the modified GF-gun are between 4 and 5% down (i ran both 5*100 rounds and averaged the results and 1*2000 rounds). Maybe the modified gun shoots less often. I will verify this by adding a counter and run this test again. --<a href="robowiki?Loki" class=wikipagelink>Loki</a>
+</UL>
+<p>
+What I say is that if that extra code doesn't bring home more RR points or any other points then it's redundant. The .4 decrease is not significant, I know. A classic PM gun is inferior everywhere except in the PatternMatchingChallenge<a href="robowiki?action=edit&id=PatternMatchingChallenge" class=wikipageedit>?</a>. <a href="robowiki?LeachPMC" class=wikipagelink>LeachPMC</a> is pixel perfect there but is useless in the RR@H. -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a> 
+<p>
+<blockquote>
+In response to:
+"But yous solution, David, doesn't solve any problem really, does it? What's the difference between your suggestion and just:
+<pre>
+    goodAim();
+    setFire(bulletPower);
+</pre>
+?" -- <a href="robowiki?PEZ" class=wikipagelink>PEZ</a>
+</blockquote>
+The reason that I have setFire separate is that I have other code that needs to run only when I fire a real bullet. If you don't have any code that needs to run when you fire a real bullet you could put setFire() inside the if(timeToFire<a href="robowiki?action=edit&id=ToFire" class=wikipageedit>?</a> &lt; 4) block. --<a href="robowiki?David_Alves" class=wikipagelink>David Alves</a>
+<p>
+<hr noshade class=wikiline size=1>
+<p>
+This page hasn't been updated in a long time... Based on a lot of these comments, I went a long time without waiting for my gun to be aligned before firing, thinking that others had found it to not really be worth the decreased firing rate. But I felt it was only right to mention here that my TC scores went up significantly <em>and</em> <a href="robowiki?Dookious" class=wikipagelink>Dookious</a> gained 5 points in the <a href="robowiki?RoboRumble" class=wikipagelink>RoboRumble</a> from waiting for the gun to be aligned. I'd definitely recommend at least trying it for yourself if you aren't doing this with your gun. -- <a href="robowiki?Voidious" class=wikipagelink>Voidious</a>
+<p>
+It has long been Ugluk's policy to only fire when the gun is aimed at the previous round's firing solution <i>or</i> the target is close enough that it doesn't matter (in which case the shot is also full power).  When I tried ensuring that the enemy still had the same speed and rate of heading change as the firing solution's data, it meant anyone throwing a slight randomness to the speed or heading would prevent Ugluk from firing at all, so I nixed it. -- Martin
+<p>
+I think it is important to control when you fire.  Don't stop firing altogether when you are doing badly, just do it less often or with lower bulletpower.  <a href="robowiki?Uba" class=wikipagelink>Uba</a> reduces its firing rate if it is missing a lot, and it improved its battles a lot when I first implemented this. --<a href="robowiki?Bayen" class=wikipagelink>Bayen</a>
+</div><hr class=wikilinefooter>
+<div class=wikifooter><form method="post" action="robowiki" enctype="application/x-www-form-urlencoded">
+<a href="robowiki?Robo_Home" class=wikipagelink>Robo Home</a> | <a href="robowiki?Changes" class=wikipagelink>Changes</a> | <a href="robowiki?action=editprefs">Preferences</a> | <a href='?action=index'>AllPages</a><br>
+<a href="robowiki?action=edit&id=WhenToFire" class=wikipageedit>Edit text of this page</a> | <a href="robowiki?action=history&id=WhenToFire">View other revisions</a><br>Last edited February 18, 2006 21:18 EST by <a href="robowiki?Bayen" title="ID 5955 from pool-68-238-252-117.phlapa.fios.verizon.net">Bayen</a> <a href="robowiki?action=browse&diff=1&id=WhenToFire">(diff)</a><br>Search: <input type="text" name="search"  size="20" /><input type="hidden" name="dosearch" value="1"  /></form></div>
+</body>
+</html>
